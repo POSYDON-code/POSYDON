@@ -1,0 +1,4 @@
+.. automodule:: posydon.active_learning.psy_cris.run_params.run_psycris_sequence
+   :members:
+   :undoc-members:
+   :show-inheritance:

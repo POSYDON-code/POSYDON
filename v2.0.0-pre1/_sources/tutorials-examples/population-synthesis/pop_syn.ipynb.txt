@@ -1,0 +1,235 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Large-Scale Population Synthesis on HPC Facilities 🚀\n",
+    "\n",
+    "\n",
+    "This tutorial will cover how to setup and run a large, multi-metallicity population run on a HPC with slurm.\n",
+    "We will dive deeper into the `population_params.ini` file and how the `Population` class works for multi-metallicity populations."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Initialization File for multi-metallicity runs"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Let's copy the default population synthesis `ini` file to your working directory.\n",
+    "Make sure you're on a cluster to be able to run and submit the jobs!\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "import shutil\n",
+    "from posydon.config import PATH_TO_POSYDON\n",
+    "\n",
+    "path_to_params = os.path.join(PATH_TO_POSYDON, \"posydon/popsyn/population_params_default.ini\")\n",
+    "shutil.copyfile(path_to_params, './population_params.ini')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Open the `population_params.ini` file and you should see all 8 currently supported metallicities present. \n",
+    "\n",
+    "```\n",
+    "metallicity = [2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]\n",
+    "```\n",
+    "\n",
+    "For our test run, we do not require a large population, so set the number of binaries to 1000.\n",
+    "You might also want to make sure the `dump_rate` is set to 100 binaries for this example.\n",
+    "\n",
+    "\n",
+    "```\n",
+    "dump_rate = 100\n",
+    "...\n",
+    "number_of_binaries = 1000\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Setup the Population Synthesis Run"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "POSYDON provides `posydon-setup-popsyn` as a command line script that you can use to setup a (multi-metallicity) population run on a HPC facility.\n",
+    "This will split each metallicity into a separate slurm job-array and a dependent job which will automatically merge the output of the separate jobs.\n",
+    "This removes the need to manually setup each slurm job.\n",
+    "Below are two examples, but you might require to adjust the inputs for your email, cluster and available partitions.\n",
+    "\n",
+    "<div class=\"alert alert-warning\">\n",
+    "\n",
+    "**Older POSYDON installations**\n",
+    "\n",
+    "If the `posydon-setup-popsyn` command is not available, you might have to install POSYDON.\n",
+    "1. Go to the directory: `cd $PATH_TO_POSYDON`\n",
+    "2. Uninstall using pip `pip uninstall posydon`\n",
+    "3. Reinstall: if you're using the development version: `pip install .`\n",
+    "   \n",
+    "See the [Installation instructions](../../getting-started/installation-guide.rst) if any issues occur.\n",
+    "</div>\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "shellscript"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# example for yggdrasil\n",
+    "posydon-setup-popsyn population_params.ini --job_array=10 \\\n",
+    "                                            --walltime=00:14:00 \\ \n",
+    "                                            --mem_per_cpu=5G  \\\n",
+    "                                            --partition=debug-cpu \\ \n",
+    "                                            --email=max.briel@unige.ch \\ \n",
+    "                                            --account=fragkos"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "shellscript"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# example for quest cluster\n",
+    "posydon-setup-popsyn population_params.ini --job-array=10 \\\n",
+    "                                           --walltime=00:14:00 \\\n",
+    "                                           --partition=posydon-std \\ \n",
+    "                                           --email=max.briel@unige.ch \\\n",
+    "                                           --mem_per_cpu=5G \n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "`setup-popsyn --help` should provide a complete list of possible input parameters.\n",
+    "\n",
+    "\n",
+    "### Walltime and job_array number fine-tuning\n",
+    "\n",
+    "The above examples will setup the population run with an array of 10 jobs for each metallicity. As such, each job will run 100 binaries of the 1000 binaries per metallicity.\n",
+    "\n",
+    "Fine-tuning the `dump_rate`, `mem_per_cpu`, number of `job-array`'s, and `walltime` compared to the total number of binaries can be helpful in optimizing your cluster usage. See [the FAQ](../../troubleshooting-faqs/code-questions.rst) on more detailed guidance on the memory footprint of a population synthesis run in POSYDON.\n",
+    "By default, 5GB of RAM is requested per job, which fits well with the default `dump_rate` of 2000.\n",
+    "\n",
+    "As a rule of thumb for the `walltime`, a single binary takes about 1-2 seconds to run. In the example run, each job of 100 binaries should take around 2 to 3 minutes. However, some additional setup time for loading the grids is required! See [the FAQ](../../troubleshooting-faqs/code-questions.rst) for another example of ```walltime``` estimation."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "After you've ran the above setup, you should now have several files in your work directory.\n",
+    "\n",
+    "You can submit all job arrays and merged jobs using `slurm_submit.sh`\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "shellscript"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "sh slurm_submit.sh"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If one of your runs fails, you can manually submit them again after fixing the issue.\n",
+    "The `*_logs` folder will contain the logs of each job in the job_array.\n",
+    "\n",
+    "## Populations inspection\n",
+    "\n",
+    "Once the runs and the mergers have finished. You should have 8 files named `MET_Zsun_population.h5`, where `MET` are the metallicities.\n",
+    "\n",
+    "We will inspect two to check the number of binaries in the population."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import Population\n",
+    "\n",
+    "file1 = '1e-01_Zsun_population.h5'\n",
+    "file2 = '1e-02_Zsun_population.h5'\n",
+    "\n",
+    "pop1 = Population(file1)\n",
+    "print(pop1.mass_per_metallicity)\n",
+    "\n",
+    "pop2 = Population(file2)\n",
+    "print(pop2.mass_per_metallicity)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "In the next tutorial, we will look into selecting specific events and combining the different metallicity runs into a single population and selecting the binary black hole mergers in them! [BBH analysis](bbh_analysis.ipynb)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "posydon_env",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.grids.MODELS &mdash; posydon development documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=249f3023"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.grids.MODELS</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.grids.MODELS</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This file contains all core-collapse models</span>
+<span class="sd">we use in our post processing and, as a </span>
+<span class="sd">consequence, what the user will be able to </span>
+<span class="sd">select in the initial/final interpolation.</span>
+<span class="sd">Each model is a dictionary containing the </span>
+<span class="sd">properties of the model used by step_SN. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Max Briel &lt;max.briel@gmail.com&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.limits_thresholds</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+    <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">)</span>
+
+<span class="n">MODELS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;MODEL01&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;direct&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;MODEL02&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Fryer+12-rapid&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;MODEL03&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Fryer+12-delayed&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;MODEL04&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Sukhbold+16-engine&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;MODEL05&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Patton&amp;Sukhbold20-engine&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;MODEL06&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;direct&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;MODEL07&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Fryer+12-rapid&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;MODEL08&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Fryer+12-delayed&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;MODEL09&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Sukhbold+16-engine&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;MODEL10&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Patton&amp;Sukhbold20-engine&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="c1"># &quot;MODEL11&quot;: {</span>
+    <span class="c1">#     &quot;mechanism&quot;: &quot;Patton&amp;Sukhbold20-engine&quot;,</span>
+    <span class="c1">#     &quot;engine&quot;: &quot;N20&quot;,</span>
+    <span class="c1">#     &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
+    <span class="c1">#     &quot;PISN_CO_shift&quot;: 0.0,</span>
+    <span class="c1">#     &quot;PPI_extra_mass_loss&quot;: 0.0,</span>
+    <span class="c1">#     &quot;ECSN&quot;: &quot;Podsiadlowski+04&quot;,</span>
+    <span class="c1">#     &quot;conserve_hydrogen_envelope&quot; : True,</span>
+    <span class="c1">#     &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+    <span class="c1">#     &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
+    <span class="c1">#     &quot;use_interp_values&quot;: False,</span>
+    <span class="c1">#     &quot;use_profiles&quot;: True,</span>
+    <span class="c1">#     &quot;use_core_masses&quot;: False,</span>
+    <span class="c1">#     &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="c1"># },</span>
+    <span class="c1"># &quot;MODEL12&quot;: {</span>
+    <span class="c1">#     &quot;mechanism&quot;: &quot;Patton&amp;Sukhbold20-engine&quot;,</span>
+    <span class="c1">#     &quot;engine&quot;: &quot;N20&quot;,</span>
+    <span class="c1">#     &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
+    <span class="c1">#     &quot;PISN_CO_shift&quot;: 0.0,</span>
+    <span class="c1">#     &quot;PPI_extra_mass_loss&quot;: 0.0,</span>
+    <span class="c1">#     &quot;ECSN&quot;: &quot;Podsiadlowski+04&quot;,</span>
+    <span class="c1">#     &quot;conserve_hydrogen_envelope&quot; : False,</span>
+    <span class="c1">#     &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+    <span class="c1">#     &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
+    <span class="c1">#     &quot;use_interp_values&quot;: False,</span>
+    <span class="c1">#     &quot;use_profiles&quot;: True,</span>
+    <span class="c1">#     &quot;use_core_masses&quot;: False,</span>
+    <span class="c1">#     &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="c1"># },</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="get_MODEL_NAME">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.MODELS.get_MODEL_NAME">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_MODEL_NAME</span><span class="p">(</span><span class="n">input_MODEL</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Find MODEL_NAME that matches input_MODEL.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_MODEL : dict</span>
+<span class="sd">        Dictionary with the properties of the model.</span>
+<span class="sd">    verbose : bool (default: False)</span>
+<span class="sd">        Enables additional output.</span>
+<span class="sd">          </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    MODEL_NAME_SEL : str</span>
+<span class="sd">        Name of the model in MODELS.py that matches input_MODEL.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">MODEL_NAME_SEL</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">MODEL_NAME</span><span class="p">,</span> <span class="n">MODEL</span> <span class="ow">in</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">MODEL_NAME</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;use_&quot;</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">or</span> <span class="n">key</span><span class="o">==</span><span class="s2">&quot;ECSN&quot;</span><span class="p">:</span>
+                <span class="c1"># escape values, which are allowed to differ</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">input_MODEL</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">!=</span> <span class="n">val</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s1">&#39;mismatch:&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span>
+                            <span class="n">input_MODEL</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">val</span><span class="p">)</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">tmp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;matched to model:&#39;</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span>
+            <span class="n">MODEL_NAME_SEL</span> <span class="o">=</span> <span class="n">tmp</span>
+            
+    <span class="k">return</span> <span class="n">MODEL_NAME_SEL</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: dev
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.grids.scrubbing &mdash; posydon 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.grids.scrubbing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.grids.scrubbing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Methods for scrubbing MESA histories from backsteps etc.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+
+<div class="viewcode-block" id="scrub"><a class="viewcode-back" href="../../../api/posydon.grids.scrubbing.html#posydon.grids.scrubbing.scrub">[docs]</a><span class="k">def</span> <span class="nf">scrub</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">ages</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scrub binary and star histories of a MESA run in one go.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tables : list</span>
+<span class="sd">        All history tables to be returned scrubbed.</span>
+<span class="sd">    models : list</span>
+<span class="sd">        Model number columns corresponding to each table in `tables`.</span>
+<span class="sd">    ages : list</span>
+<span class="sd">        Age columns corresponding to each table in `tables`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        The list of scrubbed tables, ensuring monotonicity in age, and</span>
+<span class="sd">        overlap in model numbers.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># scrub each history separately</span>
+    <span class="n">scr_tables</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">scr_models</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">table</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">age</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">ages</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scr_tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">scr_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="n">userow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">userow</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">last_m</span><span class="p">,</span> <span class="n">last_t</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">age</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">t_i</span><span class="p">,</span> <span class="n">m_i</span> <span class="o">=</span> <span class="n">age</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">model</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">t_i</span> <span class="o">&lt;</span> <span class="n">last_t</span> <span class="ow">and</span> <span class="n">m_i</span> <span class="o">&lt;</span> <span class="n">last_m</span><span class="p">:</span>
+                    <span class="n">userow</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">last_m</span> <span class="o">=</span> <span class="n">m_i</span>
+                    <span class="n">last_t</span> <span class="o">=</span> <span class="n">t_i</span>
+            <span class="n">scr_tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">userow</span><span class="p">])</span>
+            <span class="n">scr_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="n">userow</span><span class="p">])</span>
+
+    <span class="c1"># find common models in scrubbed histories</span>
+    <span class="n">common_models</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">scr_model</span> <span class="ow">in</span> <span class="n">scr_models</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">scr_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">common_models</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">common_models</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">scr_model</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">common_models</span> <span class="o">&amp;=</span> <span class="nb">set</span><span class="p">(</span><span class="n">scr_model</span><span class="p">)</span>
+
+    <span class="c1"># return only the rows for which models appear in all histories</span>
+    <span class="n">final_tables</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">scr_table</span><span class="p">,</span> <span class="n">scr_model</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scr_tables</span><span class="p">,</span> <span class="n">scr_models</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">scr_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">final_tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">userow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">m</span> <span class="ow">in</span> <span class="n">common_models</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">scr_model</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">final_tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scr_table</span><span class="p">[</span><span class="n">userow</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">final_tables</span></div>
+
+
+<div class="viewcode-block" id="keep_after_RLO"><a class="viewcode-back" href="../../../api/posydon.grids.scrubbing.html#posydon.grids.scrubbing.keep_after_RLO">[docs]</a><span class="k">def</span> <span class="nf">keep_after_RLO</span><span class="p">(</span><span class="n">bh</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scrub histories from the initial steps without RLO mass transfer.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bh : array</span>
+<span class="sd">        The `binary_history` array.</span>
+<span class="sd">    h1 : array</span>
+<span class="sd">        The `history1` array.</span>
+<span class="sd">    h2 : array</span>
+<span class="sd">        The `history2` array.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple or arrays, or None</span>
+<span class="sd">        The binary, history1 and history2 arrays after removing the leading</span>
+<span class="sd">        steps without RLO overflow mass transfer from star1 or star2. If an</span>
+<span class="sd">        RLO phase is not detected, a warning is raised, and returns `None`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">bh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">bh</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span>
+
+    <span class="n">bh_colnames</span> <span class="o">=</span> <span class="n">bh</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+
+    <span class="k">if</span> <span class="s2">&quot;lg_mtransfer_rate&quot;</span> <span class="ow">in</span> <span class="n">bh_colnames</span><span class="p">:</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">bh</span><span class="p">[</span><span class="s2">&quot;lg_mtransfer_rate&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">12</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No `lg_mtransfer_rate` in binary history.&quot;</span><span class="p">)</span>
+
+    <span class="n">rlo1</span> <span class="o">=</span> <span class="p">(</span><span class="n">bh</span><span class="p">[</span><span class="s2">&quot;rl_relative_overflow_1&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">0.05</span>
+            <span class="k">if</span> <span class="s2">&quot;rl_relative_overflow_1&quot;</span> <span class="ow">in</span> <span class="n">bh_colnames</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">rlo2</span> <span class="o">=</span> <span class="p">(</span><span class="n">bh</span><span class="p">[</span><span class="s2">&quot;rl_relative_overflow_2&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">0.05</span>
+            <span class="k">if</span> <span class="s2">&quot;rl_relative_overflow_2&quot;</span> <span class="ow">in</span> <span class="n">bh_colnames</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rlo1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rlo_1_or_2</span> <span class="o">=</span> <span class="n">rlo2</span>
+    <span class="k">elif</span> <span class="n">rlo2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rlo_1_or_2</span> <span class="o">=</span> <span class="n">rlo1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rlo_1_or_2</span> <span class="o">=</span> <span class="n">rlo1</span> <span class="o">|</span> <span class="n">rlo2</span>
+
+    <span class="k">if</span> <span class="n">rlo_1_or_2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No `rl_relative_overflow` in any star history.&quot;</span><span class="p">)</span>
+
+    <span class="n">conditions_met</span> <span class="o">=</span> <span class="n">rlo_1_or_2</span> <span class="o">&amp;</span> <span class="n">rate</span>
+    <span class="n">where_conditions_met</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">conditions_met</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_conditions_met</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No RLO overflow for this binary.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">first_index</span> <span class="o">=</span> <span class="n">where_conditions_met</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">new_bh</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">bh</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">bh</span><span class="p">[</span><span class="n">first_index</span><span class="p">:]</span>
+    <span class="n">new_h1</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">h1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">h1</span><span class="p">[</span><span class="n">first_index</span><span class="p">:]</span>
+    <span class="n">new_h2</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">h2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">h2</span><span class="p">[</span><span class="n">first_index</span><span class="p">:]</span>
+
+    <span class="n">age_to_remove</span> <span class="o">=</span> <span class="n">new_bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">new_ages</span> <span class="o">=</span> <span class="n">new_bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">age_to_remove</span>
+
+    <span class="c1"># check if numerical precision was lost, and fix the issue</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_ages</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">new_ages</span><span class="p">))</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">min_dt</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">new_bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]))</span>
+        <span class="n">new_age_to_remove</span> <span class="o">=</span> <span class="p">(</span><span class="n">age_to_remove</span> <span class="o">//</span> <span class="n">min_dt</span><span class="p">)</span> <span class="o">*</span> <span class="n">min_dt</span>
+        <span class="n">relative_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">new_age_to_remove</span> <span class="o">-</span> <span class="n">age_to_remove</span><span class="p">)</span> <span class="o">/</span> <span class="n">age_to_remove</span>
+        <span class="k">if</span> <span class="n">relative_error</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Numerical precision fix too aggressive.&quot;</span><span class="p">)</span>
+        <span class="n">age_to_remove</span> <span class="o">=</span> <span class="n">new_age_to_remove</span>
+        <span class="n">new_ages</span> <span class="o">=</span> <span class="n">new_bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">age_to_remove</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">new_ages</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Numerical precision fix failed.&quot;</span><span class="p">)</span>
+
+    <span class="n">new_bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_ages</span>
+    <span class="k">if</span> <span class="n">new_h1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;star_age&quot;</span> <span class="ow">in</span> <span class="n">new_h1</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="n">new_h1</span><span class="p">[</span><span class="s2">&quot;star_age&quot;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">age_to_remove</span>
+    <span class="k">if</span> <span class="n">new_h2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;star_age&quot;</span> <span class="ow">in</span> <span class="n">new_h2</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="n">new_h2</span><span class="p">[</span><span class="s2">&quot;star_age&quot;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">age_to_remove</span>
+
+    <span class="k">return</span> <span class="n">new_bh</span><span class="p">,</span> <span class="n">new_h1</span><span class="p">,</span> <span class="n">new_h2</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.popsyn.binarypopulation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.popsyn.binarypopulation"></span><p>Create, evolve and save a binary star population.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">BinaryGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sampler=&lt;function</span> <span class="pre">generate_independent_samples&gt;</span></em>, <em class="sig-param"><span class="pre">RNG=None</span></em>, <em class="sig-param"><span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Generate binaries to be included in a BinaryPopulation.</p>
+<p>Initialize the BinaryGenerator instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_binary">
+<span class="sig-name descname"><span class="pre">draw_initial_binary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator.draw_initial_binary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_binary" title="Permalink to this definition"></a></dt>
+<dd><p>Return a binary for evolution in a population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Sets binary index. Defaults to number of generated binaries.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>binary</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar" title="posydon.binary_evol.binarystar.BinaryStar">BinaryStar</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_samples">
+<span class="sig-name descname"><span class="pre">draw_initial_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbital_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'separation'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator.draw_initial_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_samples" title="Permalink to this definition"></a></dt>
+<dd><p>Generate all random varibles.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator.get_binary_by_iter">
+<span class="sig-name descname"><span class="pre">get_binary_by_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator.get_binary_by_iter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator.get_binary_by_iter" title="Permalink to this definition"></a></dt>
+<dd><p>Get the nth binary as if n calls were made to draw_intial_binary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator.get_original_rng">
+<span class="sig-name descname"><span class="pre">get_original_rng</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator.get_original_rng"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator.get_original_rng" title="Permalink to this definition"></a></dt>
+<dd><p>Return the random-number generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator.reset_rng">
+<span class="sig-name descname"><span class="pre">reset_rng</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator.reset_rng"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator.reset_rng" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the RNG with the stored entropy.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">BinaryPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Handle a binary star population.</p>
+<p>Initialize the binary population object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Size of the population</p></li>
+<li><p><strong>population_properties</strong> (<a class="reference internal" href="posydon.binary_evol.simulationproperties.html#posydon.binary_evol.simulationproperties.SimulationProperties" title="posydon.binary_evol.simulationproperties.SimulationProperties"><em>SimulationProperties</em></a>) – Instance of simulationproperties holding steps.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close loaded h5 files from SimulationProperties.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.combine_saved_files">
+<span class="sig-name descname"><span class="pre">combine_saved_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">absolute_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'a'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.combine_saved_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.combine_saved_files" title="Permalink to this definition"></a></dt>
+<dd><p>Combine various temporary files in a given folder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.evolve">
+<span class="sig-name descname"><span class="pre">evolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.evolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.evolve" title="Permalink to this definition"></a></dt>
+<dd><p>Evolve a binary population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – Custom binary indices to use. Default is range(number_of_binaries).</p></li>
+<li><p><strong>breakdown_to_df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>True</em>) – Breakdown a binary after evolution, converting to dataframe and
+removing the binary instance from memory.</p></li>
+<li><p><strong>tqdm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>False</em>) – Show tqdm progress bar during evolution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.from_ini">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.from_ini" title="Permalink to this definition"></a></dt>
+<dd><p>Create a BinaryPopulation instance from an inifile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to an inifile to load in.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Print useful info.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new instance of a BinaryPopulation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#posydon.popsyn.binarypopulation.BinaryPopulation" title="posydon.popsyn.binarypopulation.BinaryPopulation">BinaryPopulation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.make_temp_fname">
+<span class="sig-name descname"><span class="pre">make_temp_fname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.make_temp_fname"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.make_temp_fname" title="Permalink to this definition"></a></dt>
+<dd><p>Get a valid filename for the temporary file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'a'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save BinaryPopulation to hdf file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">PopulationManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Manage a population of binaries.</p>
+<p>Initialize a PopulationManager instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.append" title="Permalink to this definition"></a></dt>
+<dd><p>Add a binary instance internaly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.breakdown_to_df">
+<span class="sig-name descname"><span class="pre">breakdown_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.breakdown_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.breakdown_to_df" title="Permalink to this definition"></a></dt>
+<dd><p>Breakdown to a pandas DataFrame.</p>
+<p>Breakdown a binary into more convenient data type, store it, and
+remove the BinaryStar instance from self.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.clear_dfs">
+<span class="sig-name descname"><span class="pre">clear_dfs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.clear_dfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.clear_dfs" title="Permalink to this definition"></a></dt>
+<dd><p>Remove all dfs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the HDF5 file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.find_failed">
+<span class="sig-name descname"><span class="pre">find_failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.find_failed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.find_failed" title="Permalink to this definition"></a></dt>
+<dd><p>Find any failed binaries in the population.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.from_hdf">
+<span class="sig-name descname"><span class="pre">from_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.from_hdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.from_hdf" title="Permalink to this definition"></a></dt>
+<dd><p>Load a BinaryStar instance from an hdf file of a saved population.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – Selects the binaries to load.</p></li>
+<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Query performed on disk to select history and oneline DataFrames.</p></li>
+<li><p><strong>restore</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Restore binaries back to initial conditions.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.generate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.generate" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a binary by drawing from the binary_generator.</p>
+<p>This can be a callable or a generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.remove" title="Permalink to this definition"></a></dt>
+<dd><p>Remove a binary instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'a'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save binaries to an hdf file using pandas HDFStore.</p>
+<p>Any object dtype columns not parsed by infer_objects() is converted to
+a string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of hdf file saved.</p></li>
+<li><p><strong>**kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.to_df">
+<span class="sig-name descname"><span class="pre">to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.to_df" title="Permalink to this definition"></a></dt>
+<dd><p>Convert all binaries to dataframe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager.to_oneline_df">
+<span class="sig-name descname"><span class="pre">to_oneline_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager.to_oneline_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager.to_oneline_df" title="Permalink to this definition"></a></dt>
+<dd><p>Convert all binaries to oneline dataframe.</p>
+</dd></dl>
+
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

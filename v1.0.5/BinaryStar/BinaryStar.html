@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The BinaryStar object &mdash; posydon 1.0.5 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Evolutionary Hooks" href="../advanced_pop_options/custom_hooks.html" />
+    <link rel="prev" title="The SingleStar object" href="../SingleStar/SingleStar.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.5
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The BinaryStar object</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-binarystar-object">Creating a BinaryStar object</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#binaryproperties">BINARYPROPERTIES</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#state-options">State options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#event-options">Event options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mass-transfer-case">Mass Transfer case</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#basic-example">Basic example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">The BinaryStar object</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/BinaryStar/BinaryStar.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="the-binarystar-object">
+<span id="binarystar"></span><h1>The BinaryStar object<a class="headerlink" href="#the-binarystar-object" title="Permalink to this headline"></a></h1>
+<p>The BinaryStar object is composed of two SingleStar objects and contains the
+current and past states of the binary. Only parameters in the BINARYPROPERTIES
+list are stored in the history. The current parameter value of the star object
+is accessed as, e.g. <cite>binary.orbital_period</cite> while his past history with
+<cite>binary.orbital_period_history</cite>. The two stars are accesses as, e.g.
+<cite>binary.star_1.mass</cite> while his past history with <cite>binary.star_1.mass_history</cite>.</p>
+<p>To use BinaryStar object import it using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">posydon.binary_evol.singlestar</span> <span class="kn">import</span> <span class="n">SingleStar</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.binarystar</span> <span class="kn">import</span> <span class="n">BinaryStar</span>
+</pre></div>
+</div>
+<section id="creating-a-binarystar-object">
+<h2>Creating a BinaryStar object<a class="headerlink" href="#creating-a-binarystar-object" title="Permalink to this headline"></a></h2>
+<section id="binaryproperties">
+<h3>BINARYPROPERTIES<a class="headerlink" href="#binaryproperties" title="Permalink to this headline"></a></h3>
+<p>The binary properties are defined as follows</p>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">BINARYPROPERTIES</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Properties</p></th>
+<th class="head"><p>Descriptions</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>state</cite></p></td>
+<td><p>The state of the binary, see state options.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>event</cite></p></td>
+<td><p>The event of the binary, see event options.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>time</cite></p></td>
+<td><p>Age of the binary system in yr.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>separation</cite></p></td>
+<td><p>Orbital separation in R_sun.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>orbital_period</cite></p></td>
+<td><p>Orbital period in days.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>eccentricity</cite></p></td>
+<td><p>Orbital eccentricity.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>V_sys</cite></p></td>
+<td><p>Velocity of the centre of mass of the binary [Vx, Vy, Vz] in km/s.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>mass_transfer_case</cite></p></td>
+<td><p>Mass transfer case, see MT case options.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="state-options">
+<h3>State options<a class="headerlink" href="#state-options" title="Permalink to this headline"></a></h3>
+<p>Binary states are defined according to the following table:</p>
+<table class="colwidths-given docutils align-default" id="id2">
+<caption><span class="caption-text">States</span><a class="headerlink" href="#id2" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>State</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>detached</cite></p></td>
+<td><p>The stars in the binary are in a detached state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>contact</cite></p></td>
+<td><p>The stars in the binary are in contact.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>RLO1</cite></p></td>
+<td><p>The binary is Roche Lobe overflowing, star 1 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>RLO2</cite></p></td>
+<td><p>The binary is Roche Lobe overflowing, star 2 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>CE</cite></p></td>
+<td><p>The binary is in a Common Envelope phase.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>disrupted</cite></p></td>
+<td><p>The binary was disrupted.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>MaxTimeChanged</cite></p></td>
+<td><p>Max time of the evolution was reached.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="event-options">
+<h3>Event options<a class="headerlink" href="#event-options" title="Permalink to this headline"></a></h3>
+<p>Binary events are defined according to the following table:</p>
+<table class="colwidths-given docutils align-default" id="id3">
+<caption><span class="caption-text">Events</span><a class="headerlink" href="#id3" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>State</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>CC1</cite></p></td>
+<td><p>Core collapse of star 1.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>CC2</cite></p></td>
+<td><p>Core collapse of star 2.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>oRLO1</cite></p></td>
+<td><p>The binary is at onset of Roche Lobe overflow, star 1 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>oRLO2</cite></p></td>
+<td><p>The binary is at onset of Roche Lobe overflow, star 2 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>oCE</cite></p></td>
+<td><p>The binary is at the onset of Common Envelope.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>None</cite></p></td>
+<td><p>No event occurred.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>END</cite></p></td>
+<td><p>The binary evolution was stopped.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mass-transfer-case">
+<h3>Mass Transfer case<a class="headerlink" href="#mass-transfer-case" title="Permalink to this headline"></a></h3>
+<p>The mass transfer cases are defined according to the following table: TODO: add the table below</p>
+<table class="colwidths-given docutils align-default" id="id4">
+<caption><span class="caption-text">Mass transfer cases</span><a class="headerlink" href="#id4" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>State</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>None</cite></p></td>
+<td><p>The binary is not Roche Lobe overflowing.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="basic-example">
+<h3>Basic example<a class="headerlink" href="#basic-example" title="Permalink to this headline"></a></h3>
+<p>The simplest method is to provide the two star objects and <cite>kwargs</cite> of the initial binary parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs1</span> <span class="o">=</span> <span class="p">{</span><span class="n">state</span><span class="o">=</span><span class="s1">&#39;MS&#39;</span><span class="p">,</span>
+           <span class="n">mass</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
+           <span class="n">metallicity</span><span class="o">=</span><span class="mf">0.014</span><span class="p">}</span>
+
+<span class="n">star_1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs1</span><span class="p">)</span>
+
+<span class="n">kwargs2</span> <span class="o">=</span> <span class="p">{</span><span class="n">state</span><span class="o">=</span><span class="s1">&#39;MS&#39;</span><span class="p">,</span>
+           <span class="n">mass</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+           <span class="n">metallicity</span><span class="o">=</span><span class="mf">0.014</span><span class="p">}</span>
+
+<span class="n">star_2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs2</span><span class="p">)</span>
+
+<span class="n">kwargs3</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;event&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="s1">&#39;time&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">&#39;orbital_period&#39;</span> <span class="p">:</span> <span class="mf">3.</span><span class="p">,</span>
+           <span class="s1">&#39;eccentricity&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">}</span>
+
+
+<span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">star_1</span><span class="p">,</span> <span class="n">star_2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs3</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../SingleStar/SingleStar.html" class="btn btn-neutral float-left" title="The SingleStar object" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../advanced_pop_options/custom_hooks.html" class="btn btn-neutral float-right" title="Evolutionary Hooks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.5
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

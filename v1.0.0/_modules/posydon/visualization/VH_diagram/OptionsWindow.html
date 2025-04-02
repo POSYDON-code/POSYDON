@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.visualization.VH_diagram.OptionsWindow &mdash; posydon 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.visualization.VH_diagram.OptionsWindow</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.visualization.VH_diagram.OptionsWindow</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Options  Window handler for the VH diagram.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Maxime Rambosson &lt;Maxime.Rambosson@etu.unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QApplication</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span>
+                             <span class="n">QCheckBox</span><span class="p">,</span> <span class="n">QComboBox</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">pyqtSignal</span>
+
+<span class="kn">from</span> <span class="nn">.PresenterMode</span> <span class="kn">import</span> <span class="n">PresenterMode</span>
+
+
+<div class="viewcode-block" id="OptionsWindow"><a class="viewcode-back" href="../../../../api/posydon.visualization.VH_diagram.OptionsWindow.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow">[docs]</a><span class="k">class</span> <span class="nc">OptionsWindow</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Window to display available options, emit signal for selected option.&quot;&quot;&quot;</span>
+
+    <span class="n">detail_requiered</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
+    <span class="n">reduce_required</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
+    <span class="n">simplify_required</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
+    <span class="n">diagram_required</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
+
+    <span class="n">distance_representation_required</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">_mode_to_text</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">:</span> <span class="s2">&quot;Detailled view&quot;</span><span class="p">,</span>
+        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">REDUCED</span><span class="p">:</span> <span class="s2">&quot;Reduced view&quot;</span><span class="p">,</span>
+        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">SIMPLIFIED</span><span class="p">:</span> <span class="s2">&quot;Simplified view&quot;</span><span class="p">,</span>
+        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">:</span> <span class="s2">&quot;Diagram view&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a OptionsWindow instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">OptionsWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Visualizer Options&quot;</span><span class="p">)</span>
+
+        <span class="n">screen_geometry</span> <span class="o">=</span> <span class="n">QApplication</span><span class="o">.</span><span class="n">desktop</span><span class="p">()</span><span class="o">.</span><span class="n">screenGeometry</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">screen_geometry</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.20</span><span class="p">,</span>
+                    <span class="n">screen_geometry</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.20</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options_signals</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mode_to_text</span><span class="p">[</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_detailled_callback</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mode_to_text</span><span class="p">[</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">REDUCED</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reduced_callback</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mode_to_text</span><span class="p">[</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">SIMPLIFIED</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_simplified_callback</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mode_to_text</span><span class="p">[</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_diagram_callback</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_main_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_main_layout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_options</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_additional_option</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare option showed only in special situation.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Distance representation&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">state</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_representation_required</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_show_additional_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_setup_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare the different options there callback.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options</span> <span class="o">=</span> <span class="n">QComboBox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options_signals</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">option</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options</span><span class="o">.</span><span class="n">textActivated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options_signals</span><span class="p">[</span><span class="n">text</span><span class="p">]()</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_additional_option</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_show_additional_option</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_diagram_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">emit</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_show_additional_option</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">emit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diagram_required</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_simplified_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">emit</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_show_additional_option</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">emit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">simplify_required</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_reduced_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">emit</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_show_additional_option</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">emit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reduce_required</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_detailled_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">emit</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_show_additional_option</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">emit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">detail_requiered</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+
+<div class="viewcode-block" id="OptionsWindow.set_distance_representation"><a class="viewcode-back" href="../../../../api/posydon.visualization.VH_diagram.OptionsWindow.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.set_distance_representation">[docs]</a>    <span class="k">def</span> <span class="nf">set_distance_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the distance representation.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">state</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OptionsWindow.set_showed_mode"><a class="viewcode-back" href="../../../../api/posydon.visualization.VH_diagram.OptionsWindow.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.set_showed_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_showed_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">PresenterMode</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the showed mode.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_to_text</span><span class="p">[</span><span class="n">mode</span><span class="p">])</span>
+
+        <span class="c1"># Active callback without emitting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options_signals</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_to_text</span><span class="p">[</span><span class="n">mode</span><span class="p">]](</span><span class="n">emit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

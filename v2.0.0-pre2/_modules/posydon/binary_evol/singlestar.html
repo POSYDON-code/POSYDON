@@ -1,0 +1,637 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.singlestar &mdash; posydon 2.0.0-pre2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7f6b3d60"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.singlestar</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.singlestar</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The star object describe the star current and past state.</span>
+
+<span class="sd">The star object contains the current and past states of the star. Only</span>
+<span class="sd">parameters in the STARPROPERTIES list are stored in the history. The</span>
+<span class="sd">current parameter value of the star object is accessed as, e.g. `star.mass`,</span>
+<span class="sd">while his past history with `star.mass_history`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Nam Tran &lt;tranhn03@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_state_of_star</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODELS</span>
+
+
+
+<span class="n">STARPROPERTIES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;state&#39;</span><span class="p">,</span>            <span class="c1"># the evolutionary state of the star. For more info see</span>
+                        <span class="c1"># `posydon.utils.common_functions.check_state_of_star`</span>
+    <span class="s1">&#39;metallicity&#39;</span><span class="p">,</span>      <span class="c1"># initial mass fraction of metals</span>
+    <span class="s1">&#39;mass&#39;</span><span class="p">,</span>             <span class="c1"># mass (solar units)</span>
+    <span class="s1">&#39;log_R&#39;</span><span class="p">,</span>            <span class="c1"># log10 of radius (solar units)</span>
+    <span class="s1">&#39;log_L&#39;</span><span class="p">,</span>            <span class="c1"># log10 luminosity (solar units)</span>
+    <span class="s1">&#39;lg_mdot&#39;</span><span class="p">,</span>          <span class="c1"># log10 of the absolulte mass change of the star due to</span>
+                        <span class="c1"># winds and RLO coming from binary history (Msun/yr)</span>
+    <span class="s1">&#39;lg_system_mdot&#39;</span><span class="p">,</span>   <span class="c1"># log10 of the system&#39;s absolute mass loss from around</span>
+                        <span class="c1"># the star due to inneficient mass transfer (Msun/yr)</span>
+    <span class="s1">&#39;lg_wind_mdot&#39;</span><span class="p">,</span>     <span class="c1"># log10 of the absolute wind mass loss of the star from</span>
+                        <span class="c1"># `lg_wind_mdot_1/2` in binary_history (Msun/yr)</span>
+    <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>     <span class="c1"># in solar units</span>
+    <span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span>   <span class="c1"># in solar units</span>
+    <span class="s1">&#39;c_core_mass&#39;</span><span class="p">,</span>      <span class="c1"># in solar units</span>
+    <span class="s1">&#39;c_core_radius&#39;</span><span class="p">,</span>    <span class="c1"># in solar units</span>
+    <span class="s1">&#39;o_core_mass&#39;</span><span class="p">,</span>      <span class="c1"># in solar units</span>
+    <span class="s1">&#39;o_core_radius&#39;</span><span class="p">,</span>    <span class="c1"># in solar units</span>
+    <span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span>     <span class="c1"># in solar units</span>
+    <span class="s1">&#39;co_core_radius&#39;</span><span class="p">,</span>   <span class="c1"># in solar units</span>
+    <span class="c1"># Central mass fractions</span>
+    <span class="s1">&#39;center_h1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;center_he4&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;center_c12&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;center_n14&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;center_o16&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;surface_h1&#39;</span><span class="p">,</span>
+    <span class="c1"># Mass fractions at the surface</span>
+    <span class="s1">&#39;surface_he4&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;surface_c12&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;surface_n14&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;surface_o16&#39;</span><span class="p">,</span>
+    <span class="c1"># Energy production from nuclear burning (solar units)</span>
+    <span class="s1">&#39;log_LH&#39;</span><span class="p">,</span>           <span class="c1"># H burning</span>
+    <span class="s1">&#39;log_LHe&#39;</span><span class="p">,</span>          <span class="c1"># He burning</span>
+    <span class="s1">&#39;log_LZ&#39;</span><span class="p">,</span>           <span class="c1"># non-H and non-He burning</span>
+    <span class="s1">&#39;log_Lnuc&#39;</span><span class="p">,</span>         <span class="c1"># total nuclear burning energy production</span>
+    <span class="s1">&#39;c12_c12&#39;</span><span class="p">,</span>          <span class="c1"># Carbon burning through c12-c12</span>
+    <span class="s1">&#39;center_gamma&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;avg_c_in_c_core&#39;</span><span class="p">,</span>  <span class="c1"># average carbon mass fraction at the carbon core</span>
+    <span class="s1">&#39;surf_avg_omega&#39;</span><span class="p">,</span>   <span class="c1"># surface average rotational angular velocity (rad/sec)</span>
+    <span class="s1">&#39;surf_avg_omega_div_omega_crit&#39;</span><span class="p">,</span>    <span class="c1"># ratio of `surf_avg_omega` to the</span>
+                                        <span class="c1"># surface critical rotation limit,</span>
+                                        <span class="c1"># taking into account centrifugal force</span>
+                                        <span class="c1"># &amp; radiation pressure (Eddington lim.)</span>
+    <span class="s1">&#39;total_moment_of_inertia&#39;</span><span class="p">,</span>      <span class="c1"># total moment of inertia (gr*cm^2)</span>
+    <span class="s1">&#39;log_total_angular_momentum&#39;</span><span class="p">,</span>   <span class="c1"># log10 of total ang. momentum (gr*cm^2/s)</span>
+    <span class="s1">&#39;spin&#39;</span><span class="p">,</span>                         <span class="c1"># the dimesionless spin of the star, if it</span>
+                                    <span class="c1"># is a compact object, which is equal to</span>
+                                    <span class="c1"># c*J/(GM^2).</span>
+    <span class="s1">&#39;conv_env_top_mass&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_bot_mass&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_top_radius&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_bot_radius&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_turnover_time_g&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_turnover_time_l_b&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_turnover_time_l_t&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;envelope_binding_energy&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mass_conv_reg_fortides&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;thickness_conv_reg_fortides&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;radius_conv_reg_fortides&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lambda_CE_1cent&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lambda_CE_10cent&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lambda_CE_30cent&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lambda_CE_pure_He_star_10cent&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;profile&#39;</span><span class="p">,</span>  <span class="c1"># the profile of the star, including extended information of</span>
+                <span class="c1"># its internal structure, for a specific timestep, usually for</span>
+                <span class="c1"># the end of the previous step including MESA psygrid.</span>
+<span class="p">]</span>
+
+<span class="c1"># attributes read from single-star grid runs</span>
+<span class="n">STAR_ATTRIBUTES_FROM_STAR_HISTORY_SINGLE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>                      <span class="c1"># to be computed after loading</span>
+    <span class="s1">&#39;metallicity&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>                <span class="c1"># from initial values</span>
+    <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="s2">&quot;star_mass&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="s1">&#39;spin_parameter&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;profile&#39;</span><span class="p">:</span> <span class="kc">None</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="properties_massless_remnant">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.singlestar.properties_massless_remnant">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">properties_massless_remnant</span><span class="p">():</span>
+    <span class="n">PROPERTIES_MASSLESS</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+        <span class="n">PROPERTIES_MASSLESS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">PROPERTIES_MASSLESS</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;massless_remnant&quot;</span>
+    <span class="n">PROPERTIES_MASSLESS</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">PROPERTIES_MASSLESS</span></div>
+
+
+<div class="viewcode-block" id="convert_star_to_massless_remnant">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.singlestar.convert_star_to_massless_remnant">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">star</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">properties_massless_remnant</span><span class="p">()[</span><span class="n">key</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">star</span></div>
+
+
+<div class="viewcode-block" id="SingleStar">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SingleStar</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class describing a single star.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the star.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">          List of initialization parameters for a star.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set the initial star properties</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)])</span>
+        <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+        <span class="c1"># store extra values in the star object without a history</span>
+
+        <span class="c1"># these quantities are updated in step_SN.py</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;natal_kick_array&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">natal_kick_array</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;spin_orbit_tilt_first_SN&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spin_orbit_tilt_first_SN</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;spin_orbit_tilt_second_SN&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spin_orbit_tilt_second_SN</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;f_fb&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">f_fb</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;SN_type&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SN_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;m_disk_accreted&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">m_disk_accreted</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;m_disk_radiated&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">m_disk_radiated</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;h1_mass_ej&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h1_mass_ej</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;he4_mass_ej&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">he4_mass_ej</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;M4&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">M4</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;mu4&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mu4</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+        <span class="c1"># the following quantities are updated in mesa_step.py</span>
+
+        <span class="c1"># common envelope quantities</span>
+        <span class="k">for</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;m_core_CE&#39;</span><span class="p">,</span> <span class="s1">&#39;r_core_CE&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;pure_He_star_10&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1">cent&#39;</span><span class="p">):</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1">cent&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># core masses at He depletion</span>
+        <span class="k">for</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;avg_c_in_c_core_at_He_depletion&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;co_core_mass_at_He_depletion&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quantity</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># core collapse quantities</span>
+        <span class="k">for</span> <span class="n">MODEL_NAME</span> <span class="ow">in</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MODEL_NAME</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MODEL_NAME</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SingleStar.append_state">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar.append_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append the new version of the star to the end of the star state.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="SingleStar.restore">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar.restore">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hooks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore the SingleStar() object to its i-th state, keeping the star history before the i-th state.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        i : int</span>
+<span class="sd">            Index of the star object history to reset the star to. By default</span>
+<span class="sd">            i == 0, i.e. the star will be restored to its initial state.</span>
+<span class="sd">        hooks : list</span>
+<span class="sd">            List of extra hooks associated with the SimulationProperties() of the BinaryStar()</span>
+<span class="sd">            object containing this SingleStar(), if applicable. This parameter is</span>
+<span class="sd">            automatically set when restoring a BinaryStar() object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">hooks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">hooks</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Move current star properties to the ith step, using its history</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_history&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))[</span><span class="n">i</span><span class="p">])</span>
+
+            <span class="c1">## delete the star history after the i-th index</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1">## if running with extra hooks, restore any extra hook columns</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="n">hooks</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">hook</span><span class="p">,</span> <span class="s1">&#39;extra_star_col_names&#39;</span><span class="p">):</span>
+                <span class="n">extra_columns</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">hook</span><span class="p">,</span> <span class="s1">&#39;extra_star_col_names&#39;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">extra_columns</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="SingleStar.to_df">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar.to_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return history parameters from the star in a DataFrame.</span>
+
+<span class="sd">        By default all parameters in STARPROPERTIES are included.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        extra_columns : dict( &#39;name&#39;:dtype, .... )</span>
+<span class="sd">            Extra star history parameters to return in DataFrame that are not</span>
+<span class="sd">            included in STARPROPERTIES. All columns must have an</span>
+<span class="sd">            associated pandas data type.</span>
+<span class="sd">            Can be used in combination with `only_select_columns`.</span>
+<span class="sd">            Assumes names have no suffix.</span>
+<span class="sd">        ignore_columns : list</span>
+<span class="sd">            Names of STARPROPERTIES parameters to ignore.</span>
+<span class="sd">            Assumes names have `_history` suffix.</span>
+<span class="sd">        only_select_columns : list</span>
+<span class="sd">            Names of the only columns to include.</span>
+<span class="sd">            Can be used in combination with `extra_columns`.</span>
+<span class="sd">            Assumes names have `_history` suffix.</span>
+<span class="sd">        include_profile : bool</span>
+<span class="sd">            Include the star&#39;s profile in the dataframe (NOT RECOMMENDED)</span>
+<span class="sd">        null_value : float, optional</span>
+<span class="sd">            Replace all None values with something else (for saving).</span>
+<span class="sd">            Default is np.nan.</span>
+<span class="sd">        prefix : str, optional</span>
+<span class="sd">            Prefix to all column names. (e.g. &#39;star_1&#39;, &#39;S1&#39;)</span>
+<span class="sd">            Default has no prefix.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">extra_cols_dict</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extra_columns&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">extra_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">extra_cols_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">extra_columns_dtypes_user</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">extra_cols_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="n">all_keys</span> <span class="o">=</span> <span class="p">([</span><span class="n">key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="n">extra_columns</span><span class="p">)</span>
+
+        <span class="n">ignore_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ignore_columns&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+
+        <span class="c1"># Do we want to include stellar profiles in output df</span>
+        <span class="n">include_profile</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;include_profile&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_profile</span><span class="p">:</span>
+            <span class="n">ignore_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">)</span>
+
+        <span class="n">keys_to_save</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_keys</span> <span class="k">if</span> <span class="ow">not</span>
+                        <span class="p">((</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">ignore_cols</span><span class="p">)</span>
+                         <span class="ow">or</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">ignore_cols</span><span class="p">))]</span>
+
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;only_select_columns&#39;</span><span class="p">)):</span>
+            <span class="n">user_keys_to_save</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;only_select_columns&#39;</span><span class="p">))</span>
+            <span class="n">keys_to_save</span> <span class="o">=</span> <span class="p">([</span><span class="n">key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">user_keys_to_save</span><span class="p">]</span>
+                            <span class="o">+</span> <span class="n">extra_columns</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># shape of data_to_save (history columns , time steps)</span>
+            <span class="n">data_to_save</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys_to_save</span><span class="p">]</span>
+
+
+            <span class="n">col_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data_to_save</span><span class="p">]</span>
+            <span class="n">max_col_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">col_lengths</span><span class="p">)</span>
+
+            <span class="c1"># If a singlestar fails, usually history cols have diff lengths.</span>
+            <span class="c1"># This should append NAN to create even columns.</span>
+            <span class="n">all_equal_length_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">col_lengths</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">all_equal_length_cols</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">data_to_save</span><span class="p">:</span>
+                    <span class="n">col</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">max_col_length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
+
+
+            <span class="n">where_none</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="kc">True</span> <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">column</span><span class="p">]</span>
+                 <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">data_to_save</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Available attributes in SingleStar: </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span>
+                <span class="nb">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+        <span class="c1"># casting into object array keeps things general</span>
+        <span class="n">star_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_to_save</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+        <span class="c1"># Convert None to np.nan by default</span>
+        <span class="n">star_data</span><span class="p">[</span><span class="n">where_none</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;null_value&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="c1"># sets rows as time steps, columns as history output</span>
+        <span class="n">star_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">star_data</span><span class="p">)</span>
+
+        <span class="c1"># add star prefix and remove the &#39;_history&#39; at the end of all column names</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;prefix&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">keys_to_save</span><span class="p">]</span>
+
+        <span class="n">star_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">star_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span>
+
+        <span class="c1"># try to coerce data types automatically</span>
+        <span class="n">star_df</span> <span class="o">=</span> <span class="n">star_df</span><span class="o">.</span><span class="n">infer_objects</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">star_df</span></div>
+
+
+<div class="viewcode-block" id="SingleStar.to_oneline_df">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar.to_oneline_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_oneline_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert SingleStar into a single row DataFrame.</span>
+
+<span class="sd">        By default, initial final values of history are used with the `to_df`</span>
+<span class="sd">        method. Any scalar values can also be added.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        scalar_names : list of str</span>
+<span class="sd">            Names of any values to be added to the oneline DataFrame.</span>
+<span class="sd">        history : bool</span>
+<span class="sd">            Include the history initial-final values from to_df method.</span>
+<span class="sd">        prefix : str</span>
+<span class="sd">            Any prefix to go at the beginning of all columns names.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            All options for the to_df method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        oneline_df</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scalar_names</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scalar_names&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="n">history</span><span class="p">:</span>
+            <span class="n">output_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="c1"># first last row, all cols</span>
+            <span class="n">initial_final_data</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">values</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>
+
+            <span class="n">oneline_names</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s1">&#39;_i&#39;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)]</span>
+                <span class="o">+</span> <span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s1">&#39;_f&#39;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)])</span>
+            <span class="n">oneline_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">initial_final_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()]</span>
+            <span class="n">oneline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">oneline_data</span><span class="p">],</span>
+                                      <span class="n">columns</span><span class="o">=</span><span class="n">oneline_names</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">oneline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">scalar_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;natal_kick_array&#39;</span><span class="p">:</span>
+                    <span class="n">natal_kick_array</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                        <span class="n">col_name</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">+</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39;_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                        <span class="n">oneline_df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">natal_kick_array</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">oneline_df</span><span class="p">[</span><span class="n">prefix</span><span class="o">+</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">oneline_df</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the object representation when print is called.&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1"> at </span><span class="si">{}</span><span class="s1">&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">s</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<div class="viewcode-block" id="SingleStar.from_run">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar.from_run">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_run</span><span class="p">(</span><span class="n">run</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">which_star</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a SingleStar object from a single-star grid run.&quot;&quot;&quot;</span>
+        <span class="n">star</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">()</span>
+        <span class="n">star_history</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">history1</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;S1&quot;</span>
+        <span class="k">if</span> <span class="n">star_history</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">star</span>
+
+        <span class="n">n_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">star_history</span><span class="p">[</span><span class="s2">&quot;star_age&quot;</span><span class="p">])</span> <span class="k">if</span> <span class="n">history</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="n">h_colnames</span> <span class="o">=</span> <span class="n">star_history</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+            <span class="c1"># get the corresponding column name (default=same name)</span>
+            <span class="n">colname</span> <span class="o">=</span> <span class="n">STAR_ATTRIBUTES_FROM_STAR_HISTORY_SINGLE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">colname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">h_colnames</span><span class="p">:</span>
+                <span class="n">final_value</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">colname</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">history</span><span class="p">:</span>
+                    <span class="n">col_history</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">star_history</span><span class="p">[</span><span class="n">colname</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">col_history</span> <span class="o">=</span> <span class="p">[</span><span class="n">final_value</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">final_value</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">col_history</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_steps</span>
+            <span class="k">assert</span> <span class="n">n_steps</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_history</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="n">col_history</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">final_value</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">metallicity</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">&quot;Z&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">metallicity</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># add values at He depletion</span>
+        <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">run</span><span class="o">.</span><span class="n">final_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;at_He_depletion&quot;</span> <span class="ow">in</span> <span class="n">colname</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">colname</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;S1_&quot;</span><span class="p">:</span>
+                    <span class="n">attr</span> <span class="o">=</span> <span class="n">colname</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+                    <span class="n">final_value</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">final_value</span><span class="p">)</span>
+
+        <span class="n">star</span><span class="o">.</span><span class="n">state_history</span> <span class="o">=</span> <span class="p">[</span><span class="n">check_state_of_star</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                              <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">)]</span>
+        <span class="n">star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">state_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">profile</span><span class="p">:</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">profile_history</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">n_steps</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="n">run</span><span class="o">.</span><span class="n">final_profile1</span><span class="p">]</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">star</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.0-pre2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

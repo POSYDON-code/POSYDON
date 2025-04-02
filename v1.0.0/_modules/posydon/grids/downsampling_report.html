@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.grids.downsampling_report &mdash; posydon 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.grids.downsampling_report</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.grids.downsampling_report</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Provides functions to evaluate the performance of grid downsampling.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">from</span> <span class="nn">posydon.grids.psygrid</span> <span class="kn">import</span> <span class="n">PSyGrid</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+
+
+<div class="viewcode-block" id="report_DS"><a class="viewcode-back" href="../../../api/posydon.grids.downsampling_report.html#posydon.grids.downsampling_report.report_DS">[docs]</a><span class="k">def</span> <span class="nf">report_DS</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">path_DS</span><span class="p">,</span> <span class="n">max_err_used</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">nmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">emax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">emin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Report on compression ratio and interpolation error statistics.&quot;&quot;&quot;</span>
+    <span class="n">TABLES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;binary_history&quot;</span><span class="p">,</span> <span class="s2">&quot;history1&quot;</span><span class="p">,</span> <span class="s2">&quot;history2&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;final_profile1&quot;</span><span class="p">,</span> <span class="s2">&quot;final_profile2&quot;</span><span class="p">]</span>
+    <span class="n">STEP</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">grid_DS</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">path_DS</span><span class="p">)</span>
+
+    <span class="n">x_H</span><span class="p">,</span> <span class="n">x_P1</span><span class="p">,</span> <span class="n">x_P2</span><span class="p">,</span> <span class="n">y_H</span><span class="p">,</span> <span class="n">y_P1</span><span class="p">,</span> <span class="n">y_P2</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
+
+    <span class="n">avg_interp_errors</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">max_interp_errors</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">med_interp_errors</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">lengths</span><span class="p">(</span><span class="n">arrays1</span><span class="p">,</span> <span class="n">arrays2</span><span class="p">):</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arrays1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays2</span><span class="p">))</span>
+        <span class="n">result1</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">result2</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">arr1</span><span class="p">,</span> <span class="n">arr2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">arrays1</span><span class="p">,</span> <span class="n">arrays2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">arr1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span><span class="p">(</span><span class="n">arr2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">result1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">result2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span><span class="p">(</span><span class="n">arr2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">result1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr1</span><span class="p">))</span>
+                <span class="n">result2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result1</span><span class="p">,</span> <span class="n">result2</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">run</span><span class="p">,</span> <span class="n">run_DS</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">grid_DS</span><span class="p">))):</span>
+        <span class="k">if</span> <span class="n">nmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">nmax</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">BH</span><span class="p">,</span> <span class="n">H1</span><span class="p">,</span> <span class="n">H2</span><span class="p">,</span> <span class="n">P1</span><span class="p">,</span> <span class="n">P2</span> <span class="o">=</span> <span class="p">[</span><span class="n">run</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">]</span>
+        <span class="n">BH_DS</span><span class="p">,</span> <span class="n">H1_DS</span><span class="p">,</span> <span class="n">H2_DS</span><span class="p">,</span> <span class="n">P1_DS</span><span class="p">,</span> <span class="n">P2_DS</span> <span class="o">=</span> <span class="p">[</span><span class="n">run_DS</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">]</span>
+
+        <span class="p">(</span><span class="n">x_h</span><span class="p">,</span> <span class="n">x_p1</span><span class="p">,</span> <span class="n">x_p2</span><span class="p">),</span> <span class="p">(</span><span class="n">y_h</span><span class="p">,</span> <span class="n">y_p1</span><span class="p">,</span> <span class="n">y_p2</span><span class="p">)</span> <span class="o">=</span> <span class="n">lengths</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">BH</span><span class="p">,</span> <span class="n">P1</span><span class="p">,</span> <span class="n">P2</span><span class="p">],</span> <span class="p">[</span><span class="n">BH_DS</span><span class="p">,</span> <span class="n">P1_DS</span><span class="p">,</span> <span class="n">P2_DS</span><span class="p">])</span>
+        <span class="n">x_H</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_h</span><span class="p">)</span>
+        <span class="n">x_P1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_p1</span><span class="p">)</span>
+        <span class="n">x_P2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_p2</span><span class="p">)</span>
+        <span class="n">y_H</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_h</span><span class="p">)</span>
+        <span class="n">y_P1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_p1</span><span class="p">)</span>
+        <span class="n">y_P2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_p2</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">tables</span><span class="p">,</span> <span class="n">fromwhere</span><span class="p">,</span> <span class="n">independent</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="p">[[</span><span class="n">BH</span><span class="p">,</span> <span class="n">BH_DS</span><span class="p">],</span> <span class="p">[</span><span class="n">H1</span><span class="p">,</span> <span class="n">H1_DS</span><span class="p">],</span> <span class="p">[</span><span class="n">H2</span><span class="p">,</span> <span class="n">H2_DS</span><span class="p">],</span>
+                 <span class="p">[</span><span class="n">P1</span><span class="p">,</span> <span class="n">P1_DS</span><span class="p">],</span> <span class="p">[</span><span class="n">P2</span><span class="p">,</span> <span class="n">P2_DS</span><span class="p">]],</span>
+                <span class="p">[</span><span class="s2">&quot;BH&quot;</span><span class="p">,</span> <span class="s2">&quot;H1&quot;</span><span class="p">,</span> <span class="s2">&quot;H2&quot;</span><span class="p">,</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span> <span class="s2">&quot;P2&quot;</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">,</span> <span class="s2">&quot;star_age&quot;</span><span class="p">,</span> <span class="s2">&quot;star_age&quot;</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">orig</span><span class="p">,</span> <span class="n">down</span> <span class="o">=</span> <span class="n">tables</span>
+            <span class="k">if</span> <span class="n">orig</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">down</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">colnames</span> <span class="o">=</span> <span class="n">orig</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+            <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">colnames</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">colname</span> <span class="o">==</span> <span class="n">independent</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">fullname</span> <span class="o">=</span> <span class="n">fromwhere</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">colname</span>
+
+                <span class="n">t_orig</span> <span class="o">=</span> <span class="n">orig</span><span class="p">[</span><span class="n">independent</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_orig</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">t_down</span> <span class="o">=</span> <span class="n">down</span><span class="p">[</span><span class="n">independent</span><span class="p">]</span>
+                <span class="n">X_orig</span> <span class="o">=</span> <span class="n">orig</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">colname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">down</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">colname</span> <span class="o">==</span> <span class="s2">&quot;model_number&quot;</span><span class="p">:</span>
+                        <span class="c1"># ignore it... probably comparing original vs EEP grid</span>
+                        <span class="k">continue</span>
+                <span class="n">X_down</span> <span class="o">=</span> <span class="n">down</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">fromwhere</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;P1&quot;</span><span class="p">,</span> <span class="s2">&quot;P2&quot;</span><span class="p">]:</span>
+                    <span class="n">X_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">t_orig</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">t_down</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">X_down</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">X_int</span> <span class="o">=</span> <span class="n">X_int</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">X_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">t_orig</span><span class="p">,</span> <span class="n">t_down</span><span class="p">,</span> <span class="n">X_down</span><span class="p">)</span>
+                <span class="n">errors</span> <span class="o">=</span> <span class="n">X_int</span> <span class="o">-</span> <span class="n">X_orig</span>
+
+                <span class="c1"># ignore cases where interpolation breaks anyway</span>
+                <span class="n">where_ok</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">t_orig</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+                <span class="n">where_ok</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">t_orig</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="n">where_ok</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">&amp;=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">t_orig</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="n">errors</span> <span class="o">=</span> <span class="n">errors</span><span class="p">[</span><span class="n">where_ok</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">errors</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">):</span>
+                    <span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">errors</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X_orig</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X_orig</span><span class="p">)))</span>
+
+                <span class="n">avg_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+                <span class="n">max_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+                <span class="n">med_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">fullname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">avg_interp_errors</span><span class="p">:</span>
+                    <span class="n">avg_interp_errors</span><span class="p">[</span><span class="n">fullname</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">avg_error</span><span class="p">]</span>
+                    <span class="n">med_interp_errors</span><span class="p">[</span><span class="n">fullname</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">med_error</span><span class="p">]</span>
+                    <span class="n">max_interp_errors</span><span class="p">[</span><span class="n">fullname</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">max_error</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">avg_interp_errors</span><span class="p">[</span><span class="n">fullname</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">avg_error</span><span class="p">)</span>
+                    <span class="n">med_interp_errors</span><span class="p">[</span><span class="n">fullname</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">med_error</span><span class="p">)</span>
+                    <span class="n">max_interp_errors</span><span class="p">[</span><span class="n">fullname</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">max_error</span><span class="p">)</span>
+
+    <span class="n">x_H</span><span class="p">,</span> <span class="n">x_P1</span><span class="p">,</span> <span class="n">x_P2</span><span class="p">,</span> <span class="n">y_H</span><span class="p">,</span> <span class="n">y_P1</span><span class="p">,</span> <span class="n">y_P2</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="p">[</span><span class="n">x_H</span><span class="p">,</span> <span class="n">x_P1</span><span class="p">,</span> <span class="n">x_P2</span><span class="p">,</span> <span class="n">y_H</span><span class="p">,</span> <span class="n">y_P1</span><span class="p">,</span> <span class="n">y_P2</span><span class="p">]]</span>
+
+    <span class="n">grid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">grid_DS</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">x_H</span><span class="p">,</span> <span class="n">x_P1</span><span class="p">,</span> <span class="n">x_P2</span><span class="p">],</span>
+                           <span class="p">[</span><span class="n">y_H</span><span class="p">,</span> <span class="n">y_P1</span><span class="p">,</span> <span class="n">y_P2</span><span class="p">],</span>
+                           <span class="p">[</span><span class="s2">&quot;History&quot;</span><span class="p">,</span> <span class="s2">&quot;Profile1&quot;</span><span class="p">,</span> <span class="s2">&quot;Profile2&quot;</span><span class="p">]):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">ratios</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">x</span>
+        <span class="n">x_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span> <span class="o">/</span> <span class="n">STEP</span><span class="p">)</span> <span class="o">*</span> <span class="n">STEP</span> <span class="o">-</span> <span class="n">STEP</span>
+        <span class="n">x_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span> <span class="o">/</span> <span class="n">STEP</span><span class="p">)</span> <span class="o">*</span> <span class="n">STEP</span><span class="p">)</span> <span class="o">+</span> <span class="n">STEP</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">+</span> <span class="n">STEP</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">STEP</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="s2">&quot;fd&quot;</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="o">+</span><span class="s2">&quot; (n=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)))</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Compression ratio&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Number of runs&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Original size&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Downsampled size&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">sorted_avg_interp_errors</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="n">avg_interp_errors</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]))}</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+    <span class="n">tick_labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tick_positions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_avg_interp_errors</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
+        <span class="n">tick_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">tick_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">max_interp_errors</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">y</span><span class="p">,</span> <span class="s2">&quot;r.&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s2">&quot;ko&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">med_interp_errors</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">y</span><span class="o">+</span><span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;g.&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Maximum&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot;ko&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Average&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">&quot;g.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Median&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">tick_positions</span><span class="p">,</span> <span class="n">tick_labels</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">tick_positions</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">tick_positions</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_err_used</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">max_err_used</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;max_err=</span><span class="si">{:.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_err_used</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="n">emin</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="n">emax</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Average interpolation error&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="compare_DS"><a class="viewcode-back" href="../../../api/posydon.grids.downsampling_report.html#posydon.grids.downsampling_report.compare_DS">[docs]</a><span class="k">def</span> <span class="nf">compare_DS</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">path_DS</span><span class="p">,</span> <span class="n">runs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">useonly</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare the data in original and downsampled grids.&quot;&quot;&quot;</span>
+    <span class="n">TABLES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;binary_history&quot;</span><span class="p">,</span> <span class="s2">&quot;history1&quot;</span><span class="p">,</span> <span class="s2">&quot;history2&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;final_profile1&quot;</span><span class="p">,</span> <span class="s2">&quot;final_profile2&quot;</span><span class="p">]</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">grid_DS</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">path_DS</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">lengths</span><span class="p">(</span><span class="n">arrays1</span><span class="p">,</span> <span class="n">arrays2</span><span class="p">):</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arrays1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays2</span><span class="p">))</span>
+        <span class="n">result1</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">result2</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">arr1</span><span class="p">,</span> <span class="n">arr2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">arrays1</span><span class="p">,</span> <span class="n">arrays2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">arr1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span><span class="p">(</span><span class="n">arr2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">result1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">result2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span><span class="p">(</span><span class="n">arr2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">result1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr1</span><span class="p">))</span>
+                <span class="n">result2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result1</span><span class="p">,</span> <span class="n">result2</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">run</span><span class="p">,</span> <span class="n">run_DS</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">grid_DS</span><span class="p">))):</span>
+        <span class="k">if</span> <span class="n">runs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">runs</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">BH</span><span class="p">,</span> <span class="n">H1</span><span class="p">,</span> <span class="n">H2</span><span class="p">,</span> <span class="n">P1</span><span class="p">,</span> <span class="n">P2</span> <span class="o">=</span> <span class="p">[</span><span class="n">run</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">]</span>
+        <span class="n">BH_DS</span><span class="p">,</span> <span class="n">H1_DS</span><span class="p">,</span> <span class="n">H2_DS</span><span class="p">,</span> <span class="n">P1_DS</span><span class="p">,</span> <span class="n">P2_DS</span> <span class="o">=</span> <span class="p">[</span><span class="n">run_DS</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">tables</span><span class="p">,</span> <span class="n">fromwhere</span><span class="p">,</span> <span class="n">independent</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="p">[[</span><span class="n">BH</span><span class="p">,</span> <span class="n">BH_DS</span><span class="p">],</span> <span class="p">[</span><span class="n">H1</span><span class="p">,</span> <span class="n">H1_DS</span><span class="p">],</span> <span class="p">[</span><span class="n">H2</span><span class="p">,</span> <span class="n">H2_DS</span><span class="p">],</span>
+                 <span class="p">[</span><span class="n">P1</span><span class="p">,</span> <span class="n">P1_DS</span><span class="p">],</span> <span class="p">[</span><span class="n">P2</span><span class="p">,</span> <span class="n">P2_DS</span><span class="p">]],</span>
+                <span class="p">[</span><span class="s2">&quot;BH&quot;</span><span class="p">,</span> <span class="s2">&quot;H1&quot;</span><span class="p">,</span> <span class="s2">&quot;H2&quot;</span><span class="p">,</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span> <span class="s2">&quot;P2&quot;</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">,</span> <span class="s2">&quot;star_age&quot;</span><span class="p">,</span> <span class="s2">&quot;star_age&quot;</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">orig</span><span class="p">,</span> <span class="n">down</span> <span class="o">=</span> <span class="n">tables</span>
+            <span class="k">if</span> <span class="n">orig</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">down</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">colnames</span> <span class="o">=</span> <span class="n">orig</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+            <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">colnames</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">colname</span> <span class="o">==</span> <span class="n">independent</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">fullname</span> <span class="o">=</span> <span class="n">fromwhere</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">colname</span>
+
+                <span class="k">if</span> <span class="n">useonly</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([</span><span class="n">fullname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">useonly</span><span class="p">]):</span>
+                        <span class="k">continue</span>
+
+                <span class="n">t_orig</span> <span class="o">=</span> <span class="n">orig</span><span class="p">[</span><span class="n">independent</span><span class="p">]</span>
+                <span class="n">t_down</span> <span class="o">=</span> <span class="n">down</span><span class="p">[</span><span class="n">independent</span><span class="p">]</span>
+                <span class="n">X_orig</span> <span class="o">=</span> <span class="n">orig</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span>
+                <span class="n">X_down</span> <span class="o">=</span> <span class="n">down</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">fromwhere</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;P1&quot;</span><span class="p">,</span> <span class="s2">&quot;P2&quot;</span><span class="p">]:</span>
+                    <span class="n">X_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
+                        <span class="n">t_orig</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">t_down</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">X_down</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">X_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">t_orig</span><span class="p">,</span> <span class="n">t_down</span><span class="p">,</span> <span class="n">X_down</span><span class="p">)</span>
+                <span class="n">errors</span> <span class="o">=</span> <span class="n">X_int</span> <span class="o">-</span> <span class="n">X_orig</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">errors</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">):</span>
+                    <span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">errors</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X_orig</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X_orig</span><span class="p">)))</span>
+
+                <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">))</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Run </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_orig</span><span class="p">,</span> <span class="n">X_orig</span><span class="p">,</span> <span class="s2">&quot;k.--&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_down</span><span class="p">,</span> <span class="n">X_down</span><span class="p">,</span> <span class="s2">&quot;r.:&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">fullname</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_orig</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="s2">&quot;k-&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">grid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">grid_DS</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2D plotting functionalities for POSYON GRIDS &mdash; posydon 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Van den Heuvel diagrams" href="../VHD/VHD.html" />
+    <link rel="prev" title="1D plotting functionalities for POSYON GRIDS" href="../plot1D/plot1D.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2D plotting functionalities for POSYON GRIDS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-plot-the-mesa-termination-flags">How to plot the MESA termination flags</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#termination-flag-1-2-combined">Termination flag 1 &amp; 2 combined</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#termination-flag-1">Termination flag 1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#termination-flag-2">Termination flag 2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#termination-flag-3">Termination flag 3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#termination-flag-4">Termination flag 4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#all-termination-flags">All termination flags</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#display-custom-quantities">Display custom quantities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#relative-change-of-a-final-quantity">Relative change of a final quantity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-quantities">Custom quantities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#core-collapse-quantities">Core collapse quantities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#displaying-final-quantities-also-for-initial-and-unstable-mass-transfer">Displaying final quantities also for initial and unstable mass transfer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-plotting-options">Advanced plotting options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-plot-up-to-onset-of-rlo">How to plot up to onset of RLO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overplot-grids">Overplot grids</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">2D plotting functionalities for POSYON GRIDS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/visualization/plot2D/plot2D.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="d-plotting-functionalities-for-posyon-grids">
+<span id="plot2d"></span><h1>2D plotting functionalities for POSYON GRIDS<a class="headerlink" href="#d-plotting-functionalities-for-posyon-grids" title="Permalink to this headline"></a></h1>
+<p>Similar to our 1D plotting functions, we provide a series of 2D plotting
+functionalities within POSYDON. The <code class="docutils literal notranslate"><span class="pre">plot2D</span></code> method supports either a MESA
+grid which samples the 2D parameter space of binary initial conditions or a
+4D or 3D MESA grid sampling, e.g., star_1_mass, star_2_mass, period_days,
+metallicity. In the latter case the grid will be sliced along two dimensions
+specified by the user.</p>
+<p>We illustrate some of the plotting capabilities of <code class="docutils literal notranslate"><span class="pre">plot2D</span></code> by loading the
+<code class="docutils literal notranslate"><span class="pre">HMS-HMS</span></code> grid and reproduce some figures included in the POSYDON
+instrument paper.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># to load a grid</span>
+<span class="kn">from</span> <span class="nn">posydon.grids.psygrid</span> <span class="kn">import</span> <span class="n">PSyGrid</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s2">&quot;/PATH_TO_POSYDON_DATA/HMS-HMS/grid_0.0142_</span><span class="si">%d</span><span class="s2">.h5&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="how-to-plot-the-mesa-termination-flags">
+<h2>How to plot the MESA termination flags<a class="headerlink" href="#how-to-plot-the-mesa-termination-flags" title="Permalink to this headline"></a></h2>
+<section id="termination-flag-1-2-combined">
+<h3>Termination flag 1 &amp; 2 combined<a class="headerlink" href="#termination-flag-1-2-combined" title="Permalink to this headline"></a></h3>
+<p>Any plotting parameter is passed to the <code class="docutils literal notranslate"><span class="pre">plot2D</span></code> method through the kwarg
+<code class="docutils literal notranslate"><span class="pre">PLOT_PROPERTIES</span></code>. In our case we would like to visualize the figure, save it
+to a given <code class="docutils literal notranslate"><span class="pre">path_to_file</span></code> with filename <code class="docutils literal notranslate"><span class="pre">fname</span></code> and then close it.
+Recall that the <code class="docutils literal notranslate"><span class="pre">HMS-HMS</span></code> grid sampled the initial binary parameter space in
+star_1_mass, period_days and mass_ratio. To reproduce Fragos et al. (2022)
+Figure 1, we will slice the 3D parameter space along the mass ratio at <code class="docutils literal notranslate"><span class="pre">q=0.7</span></code>.
+We will also set the x and y axis to be displayed in log-space and reduce
+the default marker size with the following code</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">PLOT_PROPERTIES_TF12</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;figsize&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">4.</span><span class="p">),</span>
+    <span class="s1">&#39;show_fig&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;close_fig&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;path_to_file&#39;</span><span class="p">:</span> <span class="s1">&#39;./plots_demo/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fname&#39;</span><span class="p">:</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_TF12.png&#39;</span><span class="o">%</span><span class="n">q</span><span class="p">,</span>
+    <span class="s1">&#39;title&#39;</span> <span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;$q = </span><span class="si">%1.1f</span><span class="s1">$&#39;</span><span class="o">%</span><span class="n">q</span><span class="p">,</span>
+    <span class="s1">&#39;log10_x&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;log10_y&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;combined_TF12&#39;</span><span class="p">,</span>
+             <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+             <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_TF12</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_TF12.png" src="../../_images/q_0.7_TF12.png" />
+</section>
+<section id="termination-flag-1">
+<h3>Termination flag 1<a class="headerlink" href="#termination-flag-1" title="Permalink to this headline"></a></h3>
+<p>Similarly we can plot the termination flag 1 which indicates how the MESA
+simulation ended. We can display as a color map any final value stored in
+<code class="docutils literal notranslate"><span class="pre">final_values</span></code>.
+This code shows how to reproduce Fig. 10
+of Fragos et al. (2022).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_TF1</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_TF12</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_TF1.png&#39;</span><span class="o">%</span><span class="n">q</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span><span class="mf">6.</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_surf_avg_omega_div_omega_crit&#39;</span><span class="p">,</span>
+             <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;termination_flag_1&#39;</span><span class="p">,</span>
+             <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+             <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_TF1</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_TF1.png" src="../../_images/q_0.7_TF1.png" />
+</section>
+<section id="termination-flag-2">
+<h3>Termination flag 2<a class="headerlink" href="#termination-flag-2" title="Permalink to this headline"></a></h3>
+<p>The termination flag 2 shows a summary of all mass transfer cases which
+occurred during the binaries’ evolution.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_TF2</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_TF12</span>
+<span class="n">PLOT_PROPERTIES_TF2</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_TF2.png&#39;</span><span class="o">%</span><span class="n">q</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;termination_flag_2&#39;</span><span class="p">,</span>
+             <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+             <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_TF2</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_TF2.png" src="../../_images/q_0.7_TF2.png" />
+</section>
+<section id="termination-flag-3">
+<h3>Termination flag 3<a class="headerlink" href="#termination-flag-3" title="Permalink to this headline"></a></h3>
+<p>The termination flag 3 shows the final stellar state of star 1.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_TF3</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_TF12</span>
+<span class="n">PLOT_PROPERTIES_TF3</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_TF3.png&#39;</span><span class="o">%</span><span class="n">q</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;termination_flag_3&#39;</span><span class="p">,</span>
+             <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+             <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_TF3</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_TF3.png" src="../../_images/q_0.7_TF3.png" />
+</section>
+<section id="termination-flag-4">
+<h3>Termination flag 4<a class="headerlink" href="#termination-flag-4" title="Permalink to this headline"></a></h3>
+<p>The termination flag 4 shows the final stellar state of star 2.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_TF4</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_TF12</span>
+<span class="n">PLOT_PROPERTIES_TF4</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_TF4.png&#39;</span><span class="o">%</span><span class="n">q</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;termination_flag_4&#39;</span><span class="p">,</span>
+             <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+             <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_TF4</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_TF4.png" src="../../_images/q_0.7_TF4.png" />
+</section>
+<section id="all-termination-flags">
+<h3>All termination flags<a class="headerlink" href="#all-termination-flags" title="Permalink to this headline"></a></h3>
+<p>We plot all termination flags at once in a large subplot of panels with
+the option <code class="docutils literal notranslate"><span class="pre">termination_flag='all'</span></code>.
+In order to fit all legends we suggest to increase the figure size and marker
+size to, e.g. <code class="docutils literal notranslate"><span class="pre">(25,25)</span></code> and <code class="docutils literal notranslate"><span class="pre">30</span></code>, respectively.</p>
+</section>
+</section>
+<section id="display-custom-quantities">
+<h2>Display custom quantities<a class="headerlink" href="#display-custom-quantities" title="Permalink to this headline"></a></h2>
+<section id="relative-change-of-a-final-quantity">
+<h3>Relative change of a final quantity<a class="headerlink" href="#relative-change-of-a-final-quantity" title="Permalink to this headline"></a></h3>
+<p>The relative change of any value stored within <code class="docutils literal notranslate"><span class="pre">final_values</span></code> can be
+displayed by adding the prefix <code class="docutils literal notranslate"><span class="pre">relative_change_</span></code> to the z-variable displayed
+as a colorbar. E.g. we can display the relative change of star_1_mass:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_TF1</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_TF12</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_TF1_DM1.png&#39;</span><span class="o">%</span><span class="n">q</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span><span class="mf">6.</span><span class="p">)</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;colorbar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span> <span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;$(M_\mathrm{1,f}-M_\mathrm{1,i})/M_\mathrm{1,i}$&#39;</span><span class="p">,}</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="s1">&#39;relative_change_star_1_mass&#39;</span><span class="p">,</span>
+             <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;termination_flag_1&#39;</span><span class="p">,</span>
+             <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+             <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_TF1</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_TF1_DM1.png" src="../../_images/q_0.7_TF1_DM1.png" />
+</section>
+<section id="custom-quantities">
+<h3>Custom quantities<a class="headerlink" href="#custom-quantities" title="Permalink to this headline"></a></h3>
+<p>The user can plot custom quantities as a color map on termination flag 1.
+For example, we display the maximum surf_avg_omega_div_omega_crit during
+the history of star 2 as follows</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_TF1</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_TF12</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_TF1_max.png&#39;</span><span class="o">%</span><span class="n">q</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span><span class="mf">6.</span><span class="p">)</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;colorbar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span> <span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;$\max(\omega_\mathrm</span><span class="si">{s}</span><span class="s1">/\omega_\mathrm{s,crit})_1$&#39;</span><span class="p">}</span>
+
+<span class="n">max_omega</span> <span class="o">=</span> <span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">history2</span><span class="p">[</span><span class="s1">&#39;surf_avg_omega_div_omega_crit&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">history2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">MESA_dirs</span><span class="p">))]</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">max_omega</span><span class="p">),</span>
+             <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;termination_flag_1&#39;</span><span class="p">,</span>
+             <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+             <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_TF1</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_TF1_max.png" src="../../_images/q_0.7_TF1_max.png" />
+</section>
+<section id="core-collapse-quantities">
+<h3>Core collapse quantities<a class="headerlink" href="#core-collapse-quantities" title="Permalink to this headline"></a></h3>
+<p>Numerical post processed quantities can be displayed using the z variable option
+as shown with termination flag 1.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_CC</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_TF12</span>
+<span class="n">PLOT_PROPERTIES_CC</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_CC_spin.png&#39;</span><span class="o">%</span><span class="n">q</span>
+<span class="n">PLOT_PROPERTIES_CC</span><span class="p">[</span><span class="s1">&#39;figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span><span class="mf">6.</span><span class="p">)</span>
+<span class="n">PLOT_PROPERTIES_CC</span><span class="p">[</span><span class="s1">&#39;colorbar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span> <span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;$a_\mathrm{CO,1}$&#39;</span><span class="p">}</span>
+<span class="n">PLOT_PROPERTIES_CC</span><span class="p">[</span><span class="s1">&#39;zmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="n">PLOT_PROPERTIES_CC</span><span class="p">[</span><span class="s1">&#39;zmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.3</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_Patton&amp;Sukhbold20-engineN20_spin&#39;</span><span class="p">,</span>
+             <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;termination_flag_1&#39;</span><span class="p">,</span>
+             <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+             <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_CC</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_CC_spin.png" src="../../_images/q_0.7_CC_spin.png" />
+<p>On the other hand supernova type and compact object states are stored as
+strings in the dataset. These quantities can be plotted using the
+<code class="docutils literal notranslate"><span class="pre">termination_flag</span></code> option of <code class="docutils literal notranslate"><span class="pre">plot2D</span></code>, as</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_CC</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_TF12</span>
+<span class="n">PLOT_PROPERTIES_CC</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_CC_SN.png&#39;</span><span class="o">%</span><span class="n">q</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;S1_Patton&amp;Sukhbold20-engineN20_SN_type&#39;</span><span class="p">,</span>
+             <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+             <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_CC</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_CC_SN.png" src="../../_images/q_0.7_CC_SN.png" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_CC</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_TF12</span>
+<span class="n">PLOT_PROPERTIES_CC</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_CC_state.png&#39;</span><span class="o">%</span><span class="n">q</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;S1_Patton&amp;Sukhbold20-engineN20_state&#39;</span><span class="p">,</span>
+            <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+            <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_CC</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_CC_state.png" src="../../_images/q_0.7_CC_state.png" />
+</section>
+<section id="displaying-final-quantities-also-for-initial-and-unstable-mass-transfer">
+<h3>Displaying final quantities also for initial and unstable mass transfer<a class="headerlink" href="#displaying-final-quantities-also-for-initial-and-unstable-mass-transfer" title="Permalink to this headline"></a></h3>
+<p>We have a debug <code class="docutils literal notranslate"><span class="pre">termination_flag</span></code> option which allows us to display
+as a colormap the final value also for the tracks that ends because of
+initial or unstable mass transfer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_TF1</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_TF12</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;q_</span><span class="si">%1.1f</span><span class="s1">_debug.png&#39;</span><span class="o">%</span><span class="n">q</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span><span class="mf">6.</span><span class="p">)</span>
+<span class="n">PLOT_PROPERTIES_TF1</span><span class="p">[</span><span class="s1">&#39;log10_z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span>
+             <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span>
+             <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">,</span>
+             <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mf">0.025</span><span class="p">),</span>
+             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_TF1</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/q_0.7_debug.png" src="../../_images/q_0.7_debug.png" />
+</section>
+</section>
+<section id="advanced-plotting-options">
+<h2>Advanced plotting options<a class="headerlink" href="#advanced-plotting-options" title="Permalink to this headline"></a></h2>
+<section id="how-to-plot-up-to-onset-of-rlo">
+<h3>How to plot up to onset of RLO<a class="headerlink" href="#how-to-plot-up-to-onset-of-rlo" title="Permalink to this headline"></a></h3>
+<p>This functionality allows to slice the MESA runs at onset of Roche-Lobe
+overflow and display with a color a quantity in <code class="docutils literal notranslate"><span class="pre">history1</span></code> or
+<code class="docutils literal notranslate"><span class="pre">binary_history</span></code>
+at onset RLO, or, alternatively one of the termination flags. Use
+<code class="docutils literal notranslate"><span class="pre">slice_at_RLO=True</span></code> option of <code class="docutils literal notranslate"><span class="pre">plot2D</span></code> to allow for this.
+Note: depending on how many
+runs you intend to display this might take a while.</p>
+</section>
+<section id="overplot-grids">
+<h3>Overplot grids<a class="headerlink" href="#overplot-grids" title="Permalink to this headline"></a></h3>
+<p>Sometimes you want to rerun a subsample of the grid. This option will allow you
+to stack as many grid reruns as you wish.
+You can combine the new grid by passing it to the option <code class="docutils literal notranslate"><span class="pre">extra_grid=new_grid</span></code>.
+If you want to stack more than one grid, pass them in a list, e.g.
+<code class="docutils literal notranslate"><span class="pre">extra_grid=[new_grid_1,new_grid_2,new_grid_3]</span></code>, they will be stacked in
+the order provided where the last extra grid of the list will stacked as last.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../plot1D/plot1D.html" class="btn btn-neutral float-left" title="1D plotting functionalities for POSYON GRIDS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../VHD/VHD.html" class="btn btn-neutral float-right" title="Van den Heuvel diagrams" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.active_learning.psy_cris.sample.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.active_learning.psy_cris.sample"></span><p>The definition of the <cite>Sampler</cite> class in PSY-CRIS.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.active_learning.psy_cris.sample.</span></span><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regressor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class implementing PTMCMC and MCMC for PSY-CRIS algorith.</p>
+<p>Modular implementation of PTMCMC and MCMC designed to
+implement the PSY-CRIS algorithm of sampling points
+in a target distribution constructed with a Classifier
+and Regressor. After a posterior is generated, methods
+in this class are also used to downsample.</p>
+<p>Initialize the sampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier</strong> (<em>instance of &lt;class</em><em>, </em><em>Classifier&gt;</em>) – A trained classifier object.</p></li>
+<li><p><strong>regressor</strong> (<em>instance of &lt;class</em><em>, </em><em>Regressor&gt;</em><em>, </em><em>optional</em>) – A trained regressor object.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.TD_2d_analytic">
+<span class="sig-name descname"><span class="pre">TD_2d_analytic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.TD_2d_analytic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.TD_2d_analytic" title="Permalink to this definition"></a></dt>
+<dd><p>2-dimensional analytic target distribution for testing MCMC/PTMCMC.</p>
+<p>The function:
+$frac{16}{3pi} left( expleft[-mu^2 - (9 + 4mu^2 + 8nu)^2right]
++ frac{1}{2} expleft[- 8 mu^2 - 8 (nu-2)^2right] right)$</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of algorithm to use. For this method None.</p></li>
+<li><p><strong>args</strong> (<em>array</em>) – 2D location to get the value of the function.</p></li>
+<li><p><strong>**kwargs</strong> – Kwargs for more complex target distributions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.TD_classification">
+<span class="sig-name descname"><span class="pre">TD_classification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.TD_classification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.TD_classification" title="Permalink to this definition"></a></dt>
+<dd><p>Target distribution using classification.</p>
+<p>$f(x) = 1 - max[P_{rm class}(x)]$</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String to specify the trained classification algorithm to use.</p></li>
+<li><p><strong>position</strong> (<em>array</em>) – Single location in parameter space for the target distribution to
+be evaluated at.</p></li>
+<li><p><strong>**kwargs</strong> – <dl class="simple">
+<dt>TD_BETA<span class="classifier">float</span></dt><dd><p>Exponent of target distribution - $f(x)^{rm TD_BETA}$
+Used for smoothing or sharpening.</p>
+</dd>
+<dt>TD_verbose<span class="classifier">bool</span></dt><dd><p>Extra print output every method call.</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If classification probability is Nan: f(x) = 1E-16</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.TD_classification_regression">
+<span class="sig-name descname"><span class="pre">TD_classification_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.TD_classification_regression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.TD_classification_regression" title="Permalink to this definition"></a></dt>
+<dd><p>Target distribution using both classification &amp; regression.</p>
+<p>Classification: $1 - max[P_{rm class}(x)]$
+Regression: $ A_0 log( A_1* abs( max[APC_n [loc]]) + 1 )$</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>names</strong> (<em>list like</em>) – Iterable containing the two strings specifying the classification
+and regression algorithm to use.</p></li>
+<li><p><strong>args</strong> (<em>array</em>) – Position in parameter space to evaluate the target distribution at.</p></li>
+<li><p><strong>**kwargs</strong> – <dl class="simple">
+<dt>TD_A1<span class="classifier">float, optional</span></dt><dd><p>Scaling factor inside the Log regression error term.
+(Default = 0.5)</p>
+</dd>
+<dt>TD_TAU<span class="classifier">float, optional</span></dt><dd><p>Relative weight of classification to regression term.
+(Default = 0.5)</p>
+</dd>
+<dt>TD_BETA<span class="classifier">float, optional</span></dt><dd><p>Exponent of the entire target distribution. Used
+for smoothing or sharpening the distribution. Default is 1.</p>
+</dd>
+<dt>TD_verbose<span class="classifier">bool, optional</span></dt><dd><p>Print more diagnostic information.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>Rreturns</strong> – </p></li>
+<li><p><strong>--------</strong> – </p></li>
+<li><p><strong>array</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.do_density_logic">
+<span class="sig-name descname"><span class="pre">do_density_logic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kappa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_mult</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_mvns_together</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_acc_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.do_density_logic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.do_density_logic" title="Permalink to this definition"></a></dt>
+<dd><p>Do the density based of the normal gaussian kernel on each point.</p>
+<p>This method automatically takes out the first 5% of steps of the MCMC
+so that the initial starting points are not chosen automatically
+(if you start in a non-ideal region). Wait for the burn in.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_history</strong> (<em>ndarray</em>) – </p></li>
+<li><p><strong>N_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – </p></li>
+<li><p><strong>Kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – </p></li>
+<li><p><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>norm_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>var_mult</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>add_mvns_together</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>accepted_points</strong> (<em>ndarray</em>)</p></li>
+<li><p><strong>rejected_points</strong> (<em>ndarray</em>)</p></li>
+<li><p><strong>accepted_sigmas</strong> (<em>ndarray</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.do_simple_density_logic">
+<span class="sig-name descname"><span class="pre">do_simple_density_logic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kappa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_mult</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_mvns_together</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_training_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.do_simple_density_logic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.do_simple_density_logic" title="Permalink to this definition"></a></dt>
+<dd><p>Perform multivariate normal density logic on a given step history.</p>
+<p>This is a simplified version of the method ‘do_density_logic’.
+It assumes that every accepted point will have the same exact MVN.</p>
+<p>Each proposal distribution starts with the training set from TableData
+which keeps training data from being proposed again.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_history</strong> (<em>ndarray</em>) – List of points from a PTMCMC or MCMC. (posterior)</p></li>
+<li><p><strong>N_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of points desired to be drawn from the posterior but may not
+actually be the number of points accepted. Contributes to the
+length scale of the MVN distribution of accepted points
+(along with kappa).</p></li>
+<li><p><strong>Kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Scaling factor that sets the initial size of the MVN for accepted
+points. This should be proportional to the filling factor of the
+area of iterest described by the target distribution used to
+create the posterior.</p></li>
+<li><p><strong>var_mult</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>ndarray</em><em>, </em><em>optional</em>) – Variance multiplier for the MVN of accepted points.</p></li>
+<li><p><strong>add_mvns_together</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Add MVNs together when creating the accepted point distribution.</p></li>
+<li><p><strong>include_training_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Include the trainind data in the target distribution before
+sampling.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print useful diagnostic information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>accepted_points</strong> (<em>ndarray</em>) – Accepted points from the posterior to be labled by the user.
+(query points)</p></li>
+<li><p><strong>rejected_points</strong> (<em>ndarray</em>) – Rejected points from the posterior.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The accepted laguage here is indicative of query points for the oracle
+to label in an active learning scheme. It is not accepted vs rejected
+normally used for MCMC.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.get_TD_classification_data">
+<span class="sig-name descname"><span class="pre">get_TD_classification_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.get_TD_classification_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.get_TD_classification_data" title="Permalink to this definition"></a></dt>
+<dd><p>Get target-distribution classification data.</p>
+<p>Calculate terms relevant for creating target distributions
+with classification terms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Trained classifier name to use for predictions.</p></li>
+<li><p><strong>position</strong> (<em>array</em>) – Position in parameter space to eval</p></li>
+<li><p><strong>**kwargs</strong> – <dl class="simple">
+<dt>TD_verbose<span class="classifier">bool</span></dt><dd><p>Print useful output</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>max_probs</strong> (<em>array</em>) – Maximum probabilities at each query point</p></li>
+<li><p><strong>position</strong> (<em>array</em>) – Position in parameter space being queried</p></li>
+<li><p><strong>cls_key</strong> (<em>array</em>) – Classification key predicted for each query position</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.get_proposed_points">
+<span class="sig-name descname"><span class="pre">get_proposed_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kappa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_mvns_together</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_training_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_mult</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_repeats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.get_proposed_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.get_proposed_points" title="Permalink to this definition"></a></dt>
+<dd><p>Get proposed points in parameter space given a MCMC step history.</p>
+<p>The desnity logic is not deterministic, so multiple iterations
+may be needed to converge on a desired number of proposed points.
+This method performs multiple calls to do_density_logic while
+changing Kappa in order to return the desired number of points. After
+n_iters instances of the correct number of N_points, the distibution
+with the largest average distance is chosen.</p>
+<dl class="simple">
+<dt>Warning: This algorithm has not been tested for large N data sets and</dt><dd><p>may struggle to converge.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_history</strong> (<em>ndarray</em>) – Posterior from which to sample new query points.</p></li>
+<li><p><strong>N_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – N query points to converge to.</p></li>
+<li><p><strong>Kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Multiplies the length scale of MVNs and changes such that the
+desired number of query points is found.</p></li>
+<li><p><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Shuffle points in posterior in place before sampling.</p></li>
+<li><p><strong>norm_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Normalize steps before sampling.</p></li>
+<li><p><strong>add_mvns_together</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Add MVNs of accepted point distribution together.</p></li>
+<li><p><strong>include_training_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Include training data in the accpeted point distribution before
+sampling.</p></li>
+<li><p><strong>var_mult</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Variance multiplier.</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Random seed to use for random sampling.</p></li>
+<li><p><strong>n_repeats</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of times to converge to the correct number of points. Each
+iteration may be a different realization of the posterior.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print useful information.</p></li>
+<li><p><strong>**kwargs</strong> – show_plots : bool, optional
+Show 2D plot of proposed points with step history &amp; training data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>acc_pts</strong> (<em>ndarray</em>) – Array of proposed points to be used as initial
+conditions in new simulations.</p></li>
+<li><p><strong>Kappa</strong> (<em>float</em>) – Scaling factor which reproduced the desired number
+of accepted points.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Will automatically exit if it goes through max_iters iterations
+without converging on the desired number of points.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.get_saved_chain_step_history">
+<span class="sig-name descname"><span class="pre">get_saved_chain_step_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.get_saved_chain_step_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.get_saved_chain_step_history" title="Permalink to this definition"></a></dt>
+<dd><p>Return the saved chain step history.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.make_prop_points_plots">
+<span class="sig-name descname"><span class="pre">make_prop_points_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_hist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.make_prop_points_plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.make_prop_points_plots" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the proposed / accepted points over the step history.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.make_trace_plot">
+<span class="sig-name descname"><span class="pre">make_trace_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chain_holder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.make_trace_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.make_trace_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Make a <cite>step number</cite> vs. <cite>position of a sampler in an axis</cite> plot.</p>
+<p>This function makes titles assuming you are using the data
+from the classifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.normalize_step_history">
+<span class="sig-name descname"><span class="pre">normalize_step_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_history</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.normalize_step_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.normalize_step_history" title="Permalink to this definition"></a></dt>
+<dd><p>Take steps and normalize [0,1] according to min/max in each axis.</p>
+<p>The max and min are taken from the original data set from TableData.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.run_MCMC">
+<span class="sig-name descname"><span class="pre">run_MCMC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N_trials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_limit_reject</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">TD_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.run_MCMC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.run_MCMC" title="Permalink to this definition"></a></dt>
+<dd><p>Run a Markov chain Monte Carlo given a target distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N_trials</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of proposals or trial steps to take before stopping.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Related to the step size of the MCMC walker.
+Defines the standard deviation of a zero mean normal
+from which the step is randomly drawn.</p></li>
+<li><p><strong>step_history</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – Initial starting location in parameter space.
+Could contain an arbitrary number of previous steps
+but a walker will start at the last step in the list.</p></li>
+<li><p><strong>targe_dist</strong> (<em>callable</em>) – The target distribution to sample.
+Must take arguments ( method_name, element_of_step_history )
+(A 2D analytic function is provided - TD_2d_analytic)</p></li>
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of interpolation technique used in the target_dist.</p></li>
+<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Temperature of the MCMC.</p></li>
+<li><p><strong>upper_limit_reject</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Sets the maximum number of rejected steps before the MCMC
+stops walking. Avoiding a slowly converging walk with few
+accepted points.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>step_history</strong> (<em>array</em>) – An array containing all accepted steps of the MCMC.</p></li>
+<li><p><strong>accept</strong> (<em>int</em>) – Total number of accepted steps.</p></li>
+<li><p><strong>reject</strong> (<em>int</em>) – Total number of rejected steps.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Assumes uniform priors and a symetric jump proposal (gaussian).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.run_PTMCMC">
+<span class="sig-name descname"><span class="pre">run_PTMCMC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_tot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_draws_per_swap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_limit_reject</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace_plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">TD_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.run_PTMCMC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.run_PTMCMC" title="Permalink to this definition"></a></dt>
+<dd><p>Run a Paralel Tempered MCMC with user-specified target distribution.</p>
+<p>Calls the method <cite>run_MCMC</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Sets the maximum temperature MCMC in the chain.</p></li>
+<li><p><strong>N_tot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The total number of iterations for the PTMCMC.</p></li>
+<li><p><strong>target_dist</strong> (<em>callable</em>) – The target distribution to sample.
+Must take arguments (method_name, location_to_eval)
+(A 2D analytic function is provided - analytic_target_dist)</p></li>
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – A single string or list of strings specifying the interpolator to
+use for classification or classification &amp; regression respectively.</p></li>
+<li><p><strong>init_pos</strong> (<em>array</em>) – Initial position of walkers in each axis. Default is the median of
+the input data in TableData.</p></li>
+<li><p><strong>N_draws_per_swap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of draws to perform for each MCMC before swap proposals.</p></li>
+<li><p><strong>c_spacing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Sets the spacing of temperatures in each chain.
+T_{i+1} = T_{i}^{1/c}, range: [T_max , T=1]</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Sets the standard deviation of steps taken by the walkers. Default
+is 1/5 the range of training data from TableData.</p></li>
+<li><p><strong>upper_limit_reject</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Sets the upper limit of rejected points.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Useful print statements during execution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>chain_step_history</strong> (<em>dict</em>) – Hold the step history for every chain. Keys are integers that range
+from 0 (max T) to the total number of chains -1 (min T).</p></li>
+<li><p><strong>T_list</strong> (<em>array</em>) – Array filled with the temperatures of each chain from max to min.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>There is a zero prior on the PTMCMC outside the range of training data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.save_chain_step_history">
+<span class="sig-name descname"><span class="pre">save_chain_step_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_step_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.save_chain_step_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.save_chain_step_history" title="Permalink to this definition"></a></dt>
+<dd><p>Save PTMCMC output chain_step_history inside the sampler object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler.undo_normalize_step_history">
+<span class="sig-name descname"><span class="pre">undo_normalize_step_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normed_steps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler.undo_normalize_step_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler.undo_normalize_step_history" title="Permalink to this definition"></a></dt>
+<dd><p>Rescale step history.</p>
+<p>Take normed steps from [0,1] and return their value
+in the original range of the axes based off the range in TableData.</p>
+</dd></dl>
+
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

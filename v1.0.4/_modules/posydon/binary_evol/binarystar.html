@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.binarystar &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.binarystar</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.binarystar</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The binary object describes current and past state of the binary.</span>
+
+<span class="sd">The binary object is composed of two star objects and contains the current and</span>
+<span class="sd">past states of the binary. Only parameters in the BINARYPROPERTIES list are</span>
+<span class="sd">stored in the history.</span>
+
+<span class="sd">The current parameter value of the star object is accessed as, e.g.</span>
+<span class="sd">`binary.orbital_period` while its past history with</span>
+<span class="sd">`binary.orbital_period_history`.</span>
+
+<span class="sd">The two stars are accessed as, e.g. `binary.star_1.mass`</span>
+<span class="sd">while their past history with `binary.star_1.mass_history`.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Nam Tran &lt;tranhn03@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Philipp Moura Srivastava &lt;philipp.msrivastava@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.simulationproperties</span> <span class="kn">import</span> <span class="n">SimulationProperties</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.singlestar</span> <span class="kn">import</span> <span class="n">SingleStar</span><span class="p">,</span> <span class="n">STARPROPERTIES</span>
+<span class="kn">from</span> <span class="nn">posydon.utils.common_functions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_state_of_star</span><span class="p">,</span> <span class="n">orbital_period_from_separation</span><span class="p">,</span>
+    <span class="n">orbital_separation_from_period</span><span class="p">,</span> <span class="n">get_binary_state_and_event_and_mt_case</span><span class="p">)</span>
+
+
+<span class="c1"># star property: column names in binary history for star 1 and star 2</span>
+<span class="n">STAR_ATTRIBUTES_FROM_BINARY_HISTORY</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;mass&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;star_2_mass&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;lg_mdot&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;lg_mstar_dot_1&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_mstar_dot_2&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;lg_system_mdot&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;lg_system_mdot_1&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_system_mdot_2&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;lg_wind_mdot&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;lg_wind_mdot_1&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_wind_mdot_2&quot;</span><span class="p">],</span>
+<span class="p">}</span>
+
+<span class="c1"># only mention those with names different from the column names in history data</span>
+<span class="n">STAR_ATTRIBUTES_FROM_STAR_HISTORY</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>                      <span class="c1"># to be computed after loading</span>
+    <span class="s1">&#39;metallicity&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>                <span class="c1"># from initial values</span>
+    <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>                       <span class="c1"># from binary history</span>
+    <span class="s1">&#39;lg_mdot&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>                    <span class="c1"># from binary history</span>
+    <span class="s1">&#39;lg_system_mdot&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>             <span class="c1"># from binary history</span>
+    <span class="s1">&#39;lg_wind_mdot&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>               <span class="c1"># from binary history</span>
+    <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="s1">&#39;spin_parameter&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;profile&#39;</span><span class="p">:</span> <span class="kc">None</span>
+<span class="p">}</span>
+
+
+<span class="n">BINARY_ATTRIBUTES_FROM_HISTORY</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;separation&#39;</span><span class="p">:</span> <span class="s1">&#39;binary_separation&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;orbital_period&#39;</span><span class="p">:</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;eccentricity&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;V_sys&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;mass_transfer_case&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;nearest_neighbour_distance&#39;</span><span class="p">:</span> <span class="kc">None</span>
+<span class="p">}</span>
+
+
+<span class="n">BINARYPROPERTIES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># The state and event of the system. For more information, see</span>
+    <span class="c1"># `posydon.utils.common_functions.get_binary_state_and_event_and_mt_case()</span>
+    <span class="s1">&#39;state&#39;</span><span class="p">,</span>                    <span class="c1">#</span>
+    <span class="s1">&#39;event&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;time&#39;</span><span class="p">,</span>                     <span class="c1"># age of the system (yr)</span>
+    <span class="s1">&#39;separation&#39;</span><span class="p">,</span>               <span class="c1"># binary orbital separation (solar radii)</span>
+    <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span>           <span class="c1"># binary orbital period (days)</span>
+    <span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span>             <span class="c1"># binary eccentricity</span>
+    <span class="s1">&#39;V_sys&#39;</span><span class="p">,</span>                    <span class="c1"># list of the 3 systemic velocity coordinates</span>
+    <span class="c1"># (R_{star} - R_{Roche_lobe}) / R_{Roche_lobe}...</span>
+    <span class="s1">&#39;rl_relative_overflow_1&#39;</span><span class="p">,</span>   <span class="c1"># ...for star 1</span>
+    <span class="s1">&#39;rl_relative_overflow_2&#39;</span><span class="p">,</span>   <span class="c1"># ...for star 2</span>
+    <span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">,</span>        <span class="c1"># log10 of mass lost from the donor (Msun/yr)</span>
+    <span class="s1">&#39;mass_transfer_case&#39;</span><span class="p">,</span>       <span class="c1"># current mass transfer case of the system.</span>
+                                <span class="c1"># See `get_binary_state_and_event_and_mt_case`</span>
+                                <span class="c1"># in `posydon.utils.common_functions`.</span>
+    <span class="s1">&#39;trap_radius&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;acc_radius&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t_sync_rad_1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t_sync_conv_1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t_sync_rad_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t_sync_conv_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;nearest_neighbour_distance&#39;</span><span class="p">,</span>   <span class="c1"># the distance of system from its nearest</span>
+                                    <span class="c1"># neighbour of MESA binary system  in case</span>
+                                    <span class="c1"># of interpolation during the the end of</span>
+                                    <span class="c1"># the previous step including MESA psygrid.</span>
+                                    <span class="c1"># The distance is normalized in the</span>
+                                    <span class="c1"># parameter space and limits at which it</span>
+                                    <span class="c1"># was calculated. See `mesa_step` for more.</span>
+<span class="p">]</span>
+
+
+<span class="n">MAXIMUM_STEP_TIME</span> <span class="o">=</span> <span class="mi">120</span>
+
+
+<div class="viewcode-block" id="signal_handler"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.signal_handler">[docs]</a><span class="k">def</span> <span class="nf">signal_handler</span><span class="p">(</span><span class="n">signum</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;React to a maximum time signal.&quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Binary Step Exceeded Alloted Time: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span>
+                    <span class="nb">format</span><span class="p">(</span><span class="n">MAXIMUM_STEP_TIME</span><span class="p">))</span></div>
+
+
+<span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGALRM</span><span class="p">,</span> <span class="n">signal_handler</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BinaryStar"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar">[docs]</a><span class="k">class</span> <span class="nc">BinaryStar</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class containing the state and history of a stellar binary.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">star_1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">star_2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">binary_kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a binary star.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        properties : SimulationProperties</span>
+<span class="sd">            Instance of the SimulationProperties class (default: None)</span>
+<span class="sd">        star_1 : SingleStar</span>
+<span class="sd">            The first star of the binary.</span>
+<span class="sd">        star_2 : Star</span>
+<span class="sd">            The second star of the binary.</span>
+<span class="sd">        **binary_kwargs : dictionary</span>
+<span class="sd">            List of initialization parameters for a binary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Binary Index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="c1"># Create the two stars</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">star_1</span> <span class="o">=</span> <span class="n">star_1</span> <span class="k">if</span> <span class="n">star_1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">SingleStar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">star_2</span> <span class="o">=</span> <span class="n">star_2</span> <span class="k">if</span> <span class="n">star_2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">SingleStar</span><span class="p">()</span>
+
+        <span class="c1"># Set the initial binary properties</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;V_sys&#39;</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;mass_transfer_case&#39;</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;None&#39;</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;nearest_neighbour_distance&#39;</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;None&#39;</span><span class="p">,</span>
+                                                             <span class="s1">&#39;None&#39;</span><span class="p">,</span>
+                                                             <span class="s1">&#39;None&#39;</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)])</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;inspiral_time&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inspiral_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;mass_transfer_case&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mass_transfer_case</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+        <span class="c1"># if not hasattr(self, &#39;V_sys&#39;):</span>
+        <span class="c1">#     self.V_sys = [0, 0, 0]</span>
+
+        <span class="c1"># SimulationProperties object - parameters &amp; parameterizations</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="n">SimulationProperties</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">properties</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BinaryStar.evolve"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.evolve">[docs]</a>    <span class="k">def</span> <span class="nf">evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evolve a binary from start to finish.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Code to make sure start time is less than max_simulation_time</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">max_simulation_time</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The binary&#39;s birth time (</span><span class="si">{0}</span><span class="s2">) is greater than &quot;</span>
+                <span class="s2">&quot;`max_simulation_time` (</span><span class="si">{1}</span><span class="s2">).&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">max_simulation_time</span><span class="p">))</span>
+
+        <span class="n">max_n_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">max_n_steps_per_binary</span>
+        <span class="n">n_steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span> <span class="o">!=</span> <span class="s1">&#39;END&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span> <span class="o">!=</span> <span class="s1">&#39;FAILED&#39;</span>
+                   <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">end_events</span>
+                   <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">end_states</span><span class="p">):</span>
+                <span class="n">signal</span><span class="o">.</span><span class="n">alarm</span><span class="p">(</span><span class="n">MAXIMUM_STEP_TIME</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">run_step</span><span class="p">()</span>
+
+                <span class="n">n_steps</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">max_n_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">n_steps</span> <span class="o">&gt;</span> <span class="n">max_n_steps</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Exceeded maximum number of steps (</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_n_steps</span><span class="p">))</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">alarm</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>     <span class="c1"># turning off alarm</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BinaryStar.run_step"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.run_step">[docs]</a>    <span class="k">def</span> <span class="nf">run_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evolve the binary through one evolutionary step.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">total_state</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+            <span class="n">next_step_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">flow</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">total_state</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">next_step_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Undefined next step given stars/binary states &quot;</span>
+                              <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total_state</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s1">&#39;END&#39;</span>
+                <span class="k">return</span>
+
+            <span class="n">next_step</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span> <span class="n">next_step_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">next_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Next step name &#39;</span><span class="si">{}</span><span class="s2">&#39; does not correspond to a function in &quot;</span>
+                    <span class="s2">&quot;SimulationProperties.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">next_step_name</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_step_name</span><span class="p">)</span>
+            <span class="n">next_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">append_state</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_step_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BinaryStar.append_state"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.append_state">[docs]</a>    <span class="k">def</span> <span class="nf">append_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the history of the binaries&#39; properties.&quot;&quot;&quot;</span>
+        <span class="c1"># Append to the binary history lists</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
+
+        <span class="c1"># Append to the individual star history lists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">append_state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">append_state</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BinaryStar.switch_star"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.switch_star">[docs]</a>    <span class="k">def</span> <span class="nf">switch_star</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Switch stars.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_1</span></div>
+
+<div class="viewcode-block" id="BinaryStar.restore"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delete_history</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore the object to the i-th state.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        i : int</span>
+<span class="sd">            The index of the binary object history to reset the binary to.</span>
+<span class="sd">            By default 0, i.e. the star will be restored to its initial state.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Move current binary properties to the ith step, using its history</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_history&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">star</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="p">):</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># Remove the obsolete history data</span>
+        <span class="k">if</span> <span class="n">delete_history</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span><span class="p">,</span>
+                        <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="BinaryStar.reset"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the binary to its ZAMS state.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        properties : SimulationProperties</span>
+<span class="sd">            Instance of the SimulationProperties class (default: None)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If provided, update the simulation properties class</span>
+        <span class="k">if</span> <span class="n">properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
+
+        <span class="c1"># Use the restore function to move the binary back to its initial state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BinaryStar.update_star_states"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.update_star_states">[docs]</a>    <span class="k">def</span> <span class="nf">update_star_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the states of the two stars in the binary.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;WD&quot;</span><span class="p">,</span> <span class="s2">&quot;BH&quot;</span><span class="p">,</span> <span class="s2">&quot;NS&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;WD&quot;</span><span class="p">,</span> <span class="s2">&quot;BH&quot;</span><span class="p">,</span> <span class="s2">&quot;NS&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="BinaryStar.to_df"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.to_df">[docs]</a>    <span class="k">def</span> <span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return history parameters from the binary in a DataFrame.</span>
+
+<span class="sd">        Includes star 1 and 2 (S1, S2) data and an extra column &#39;binary_index&#39;.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        extra_columns : list</span>
+<span class="sd">            Extra binary parameters to return in DataFrame that are not</span>
+<span class="sd">            included in BINARYPROPERTIES.</span>
+<span class="sd">            Can be used in combination with `only_select_columns`.</span>
+<span class="sd">            Assumes names have no suffix.</span>
+<span class="sd">        ignore_columns : list</span>
+<span class="sd">            Names of binary parameters to ignore.</span>
+<span class="sd">            Assumes names have `_history` suffix.</span>
+<span class="sd">        only_select_columns : list</span>
+<span class="sd">            Names of the only columns to include.</span>
+<span class="sd">            Assumes names have `_history` suffix.</span>
+<span class="sd">            Can be used in combination with `extra_columns`.</span>
+<span class="sd">        null_value : float</span>
+<span class="sd">            Replace all None values with something else (for saving).</span>
+<span class="sd">            Default is np.NAN.</span>
+<span class="sd">        include_S1, include_S2 : bool</span>
+<span class="sd">            Choose to include star 1 or 2 data to the DataFrame.</span>
+<span class="sd">            The default is to include both.</span>
+<span class="sd">        S1_kwargs, S2_kwargs : dict</span>
+<span class="sd">            kwargs to pass to each star&#39;s &#39;to_df&#39; method (extra/ignore columns)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas DataFrame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_keys</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;binary_index&quot;</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="p">[</span><span class="n">key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extra_columns&#39;</span><span class="p">,</span> <span class="p">[])))</span>
+
+        <span class="n">ignore_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ignore_columns&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+        <span class="n">keys_to_save</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_keys</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">ignore_cols</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">ignore_cols</span><span class="p">))]</span>
+
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;only_select_columns&#39;</span><span class="p">)):</span>
+            <span class="n">user_keys_to_save</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;only_select_columns&#39;</span><span class="p">))</span>
+            <span class="n">keys_to_save</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;binary_index&quot;</span><span class="p">]</span>
+                            <span class="o">+</span> <span class="p">[</span><span class="n">key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">user_keys_to_save</span><span class="p">]</span>
+                            <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extra_columns&#39;</span><span class="p">,</span> <span class="p">[])))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data_to_save</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys_to_save</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+            <span class="n">col_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data_to_save</span><span class="p">]</span>
+            <span class="n">max_col_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">col_lengths</span><span class="p">)</span>
+
+            <span class="c1"># binary_index</span>
+            <span class="n">data_to_save</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">*</span><span class="n">max_col_length</span><span class="p">)</span>
+
+            <span class="n">where_none</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">True</span> <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">False</span>
+                                    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">column</span><span class="p">]</span>
+                                   <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">data_to_save</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+            <span class="c1"># If a binary fails, usually history cols have diff lengths.</span>
+            <span class="c1"># This should append NAN to create even columns.</span>
+            <span class="n">all_equal_length_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">col_lengths</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">all_equal_length_cols</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">data_to_save</span><span class="p">:</span>
+                    <span class="n">col</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;NAN&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">max_col_length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
+
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Available attributes in BinaryStar: </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span>
+                <span class="nb">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+        <span class="c1"># Convert None to np.NAN by default</span>
+        <span class="n">bin_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_to_save</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+        <span class="n">bin_data</span><span class="p">[</span><span class="n">where_none</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;null_value&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NAN</span><span class="p">)</span>
+
+        <span class="n">bin_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">bin_data</span><span class="p">)</span>
+
+        <span class="c1"># remove the _history at the end of all column names</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">keys_to_save</span><span class="p">]</span>
+        <span class="n">bin_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">bin_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span>
+
+        <span class="c1"># Add 3 columns for V_sys</span>
+        <span class="k">if</span> <span class="s1">&#39;V_sys&#39;</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">:</span>
+            <span class="n">V_sys_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_df</span><span class="p">))</span>
+            <span class="n">V_sys_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_df</span><span class="p">))</span>
+            <span class="n">V_sys_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_df</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_df</span><span class="p">)):</span>
+                <span class="n">V_sys_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bin_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;V_sys&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">V_sys_y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bin_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;V_sys&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">V_sys_z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bin_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;V_sys&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="n">bin_df</span><span class="p">[</span><span class="s1">&#39;V_sys_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">V_sys_x</span><span class="p">)</span>
+            <span class="n">bin_df</span><span class="p">[</span><span class="s1">&#39;V_sys_y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">V_sys_y</span><span class="p">)</span>
+            <span class="n">bin_df</span><span class="p">[</span><span class="s1">&#39;V_sys_z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">V_sys_z</span><span class="p">)</span>
+
+            <span class="c1"># Lose the V_sys list</span>
+            <span class="n">bin_df</span> <span class="o">=</span> <span class="n">bin_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;V_sys&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">bin_df</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;include_S1&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;S1_&#39;</span><span class="p">,</span> <span class="n">null_value</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;null_value&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NAN</span><span class="p">),</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;S1_kwargs&#39;</span><span class="p">,</span> <span class="p">{})))</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;include_S2&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;S2_&#39;</span><span class="p">,</span> <span class="n">null_value</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;null_value&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NAN</span><span class="p">),</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;S2_kwargs&#39;</span><span class="p">,</span> <span class="p">{})))</span>
+        <span class="n">binary_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">binary_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;binary_index&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary_df</span></div>
+
+<div class="viewcode-block" id="BinaryStar.from_df"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.from_df">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_df</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a binary from a pandas DataFrame to BinaryStar instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataframe : Pandas DataFrame</span>
+<span class="sd">            data to turn into a BinaryStar instance.</span>
+<span class="sd">        index : int, optional</span>
+<span class="sd">            Sets the binary index.</span>
+<span class="sd">        extra_columns : list, optional</span>
+<span class="sd">            Column names to be added directly to binary</span>
+<span class="sd">            not in BINARYPROPERTIES.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            New instance of BinaryStar</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+            <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dataframe</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># split input dataframe into kwargs dicts</span>
+        <span class="n">binary_params</span><span class="p">,</span> <span class="n">star1_params</span><span class="p">,</span> <span class="n">star2_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span> <span class="nb">dict</span><span class="p">(),</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">extra_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">extra_columns</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extra_columns&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">hist_lengths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;S1&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">corr_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;S1_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span>
+                <span class="n">star1_params</span><span class="p">[</span><span class="n">corr_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">hist_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">star1_params</span><span class="p">[</span><span class="n">corr_name</span><span class="p">]))</span>
+            <span class="k">elif</span> <span class="s1">&#39;S2&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">corr_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;S2_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span>
+                <span class="n">star2_params</span><span class="p">[</span><span class="n">corr_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">hist_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">star2_params</span><span class="p">[</span><span class="n">corr_name</span><span class="p">]))</span>
+            <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">extra_columns</span><span class="p">:</span>
+                <span class="c1"># this assumes extra cols in binary, not star 1 or 2</span>
+                <span class="n">extra_params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">hist_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">extra_params</span><span class="p">[</span><span class="n">name</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">corr_name</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span>
+                <span class="n">binary_params</span><span class="p">[</span><span class="n">corr_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">hist_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">binary_params</span><span class="p">[</span><span class="n">corr_name</span><span class="p">]))</span>
+
+        <span class="c1"># make sure all history columns have equal length</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">hist_lengths</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">history_length</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">hist_lengths</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;binary_index&#39;</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
+            <span class="n">binary_index</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dataframe</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">binary_index</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">binary</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">binary_index</span><span class="p">,</span>
+                     <span class="n">star_1</span><span class="o">=</span><span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">star1_params</span><span class="p">),</span>
+                     <span class="n">star_2</span><span class="o">=</span><span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">star2_params</span><span class="p">),</span>
+                     <span class="o">**</span><span class="n">binary_params</span><span class="p">)</span>
+
+        <span class="c1"># set extra history columns directly</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">extra_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+        <span class="c1"># set some orbital parameters that should exist by hand</span>
+        <span class="n">bp_keys</span> <span class="o">=</span> <span class="n">binary_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;eccentricity_history&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bp_keys</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;eccentricity_history&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">history_length</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;separation_history&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bp_keys</span>
+                <span class="ow">and</span> <span class="s1">&#39;orbital_period_history&#39;</span> <span class="ow">in</span> <span class="n">bp_keys</span><span class="p">):</span>
+            <span class="n">separation</span> <span class="o">=</span> <span class="n">orbital_separation_from_period</span><span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">orbital_period_history</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass_history</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass_history</span><span class="p">),)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;separation_history&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">separation</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;separation&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">separation</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;orbital_period_history&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bp_keys</span>
+                <span class="ow">and</span> <span class="s1">&#39;seperation_history&#39;</span> <span class="ow">in</span> <span class="n">bp_keys</span><span class="p">):</span>
+            <span class="n">period</span> <span class="o">=</span> <span class="n">orbital_period_from_separation</span><span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">seperation_history</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass_history</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass_history</span><span class="p">),)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;orbital_period_history&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">period</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">period</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># set the binary, star1, star2 parameters to last history value in df</span>
+        <span class="k">for</span> <span class="n">params</span><span class="p">,</span> <span class="n">pointer</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">star1_params</span><span class="p">,</span>  <span class="n">star2_params</span><span class="p">,</span>  <span class="n">binary_params</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">binary</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">pointer</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">val</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># make BINARYPROPERTIES, history columns same length if not given</span>
+        <span class="n">already_included_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                                 <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">binary_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="n">valid_binaryprop_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span>
+                                 <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">already_included_cols</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">prop_key</span> <span class="ow">in</span> <span class="n">valid_binaryprop_keys</span><span class="p">:</span>
+            <span class="n">last_default_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">prop_key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">len_default</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">prop_key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span><span class="p">))</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">history_length</span> <span class="o">-</span> <span class="n">len_default</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">prop_key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">last_default_value</span><span class="p">]</span>
+                                                        <span class="o">*</span> <span class="n">diff</span><span class="p">)</span>
+
+        <span class="c1"># make STARPROPERTIES, history columns same length if not given</span>
+        <span class="k">for</span> <span class="n">params</span><span class="p">,</span> <span class="n">star</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">star1_params</span><span class="p">,</span> <span class="n">star2_params</span><span class="p">],</span> <span class="p">[</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">]):</span>
+            <span class="n">already_included_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                                     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+            <span class="n">valid_starprop_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span>
+                                   <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">p</span> <span class="ow">in</span> <span class="n">already_included_cols</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">prop_key</span> <span class="ow">in</span> <span class="n">valid_starprop_keys</span><span class="p">:</span>
+                <span class="n">last_default_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">prop_key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">len_default</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">prop_key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span><span class="p">))</span>
+                <span class="n">diff</span> <span class="o">=</span> <span class="n">history_length</span> <span class="o">-</span> <span class="n">len_default</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">prop_key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">last_default_value</span><span class="p">]</span>
+                                                          <span class="o">*</span> <span class="n">diff</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+<div class="viewcode-block" id="BinaryStar.to_oneline_df"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.to_oneline_df">[docs]</a>    <span class="k">def</span> <span class="nf">to_oneline_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar_names</span><span class="o">=</span><span class="p">[],</span> <span class="n">history</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert binary into a single row DataFrame.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">history</span><span class="p">:</span>
+            <span class="n">bin_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">bin_kwargs</span><span class="p">[</span><span class="s1">&#39;include_S1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">bin_kwargs</span><span class="p">[</span><span class="s1">&#39;include_S2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">output_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="o">**</span><span class="n">bin_kwargs</span><span class="p">)</span>
+            <span class="n">initial_final_data</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">values</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>  <span class="c1"># first/last row</span>
+            <span class="n">col_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+            <span class="n">oneline_names</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;binary_index&#39;</span><span class="p">]</span>
+                             <span class="o">+</span> <span class="p">[</span><span class="n">s</span> <span class="o">+</span> <span class="s1">&#39;_i&#39;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">col_names</span><span class="p">]</span>
+                             <span class="o">+</span> <span class="p">[</span><span class="n">s</span> <span class="o">+</span> <span class="s1">&#39;_f&#39;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">col_names</span><span class="p">])</span>
+
+            <span class="n">oneline_data</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span>
+                                           <span class="n">initial_final_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()]</span>
+
+            <span class="n">bin_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">oneline_data</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">oneline_names</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bin_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="n">s1_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;S1_kwargs&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">s1_kwargs</span><span class="p">):</span>
+            <span class="n">s1_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">to_oneline_df</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;S1_&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">s1_kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s1_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="n">s2_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;S2_kwargs&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">s2_kwargs</span><span class="p">):</span>
+            <span class="n">s2_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">to_oneline_df</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;S2_&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">s2_kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s2_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="n">oneline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">bin_df</span><span class="p">,</span> <span class="n">s1_df</span><span class="p">,</span> <span class="n">s2_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">scalar_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+                <span class="n">oneline_df</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)]</span>
+
+        <span class="c1"># check for variables set in BinaryPopulation handling safe evolution</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;traceback&#39;</span><span class="p">):</span>
+            <span class="n">oneline_df</span><span class="p">[</span><span class="s1">&#39;FAILED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">oneline_df</span><span class="p">[</span><span class="s1">&#39;FAILED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;warning_message&#39;</span><span class="p">):</span>
+            <span class="n">oneline_df</span><span class="p">[</span><span class="s1">&#39;WARNING&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">oneline_df</span><span class="p">[</span><span class="s1">&#39;WARNING&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">oneline_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;binary_index&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">oneline_df</span></div>
+
+<div class="viewcode-block" id="BinaryStar.from_oneline_df"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.from_oneline_df">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_oneline_df</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">oneline_df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a oneline DataFrame into a BinaryStar.</span>
+
+<span class="sd">        The oneline DataFrame is expected to have initial-final</span>
+<span class="sd">        values from history and any individual values that don&#39;t have</span>
+<span class="sd">        histories.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        oneline_df : DataFrame</span>
+<span class="sd">            A oneline DataFrame describing a binary.</span>
+<span class="sd">        index : int, None</span>
+<span class="sd">            Binary index</span>
+<span class="sd">        extra_columns : list</span>
+<span class="sd">            Names of any extra history columns not inlcuded</span>
+<span class="sd">            in BINARYPROPERTIES</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            A new BinaryStar instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+            <span class="n">oneline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">oneline_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">binary_params</span><span class="p">,</span> <span class="n">star1_params</span><span class="p">,</span> <span class="n">star2_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span> <span class="nb">dict</span><span class="p">(),</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">extra_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">extra_columns</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extra_columns&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">hist_lengths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">oneline_df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;_f&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]:</span>
+                <span class="k">continue</span>    <span class="c1"># ignore final values</span>
+            <span class="n">param_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_i&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">special_cases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">i</span> <span class="ow">in</span> <span class="n">param_name</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">special_cases</span><span class="p">]):</span>
+                <span class="k">continue</span>    <span class="c1"># deal with special cases later</span>
+
+            <span class="c1"># ignore error and warning</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;FAILED&#39;</span><span class="p">,</span> <span class="s1">&#39;WARNING&#39;</span><span class="p">]:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="s1">&#39;S1&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">param_name</span> <span class="o">=</span> <span class="n">param_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;S1_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">ending_str</span> <span class="o">=</span> <span class="s1">&#39;_history&#39;</span> <span class="k">if</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">star1_params</span><span class="p">[</span><span class="n">param_name</span> <span class="o">+</span> <span class="n">ending_str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">hist_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">[</span><span class="n">name</span><span class="p">])))</span>
+            <span class="k">elif</span> <span class="s1">&#39;S2&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">param_name</span> <span class="o">=</span> <span class="n">param_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;S2_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">ending_str</span> <span class="o">=</span> <span class="s1">&#39;_history&#39;</span> <span class="k">if</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">star2_params</span><span class="p">[</span><span class="n">param_name</span> <span class="o">+</span> <span class="n">ending_str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">hist_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">[</span><span class="n">name</span><span class="p">])))</span>
+            <span class="k">elif</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">extra_columns</span><span class="p">:</span>
+                <span class="c1"># this assumes extra cols in binary, not star 1 or 2</span>
+                <span class="n">extra_params</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">hist_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">[</span><span class="n">name</span><span class="p">])))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># binary</span>
+                <span class="n">ending_str</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_history&#39;</span>
+                              <span class="k">if</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">binary_params</span><span class="p">[</span><span class="n">param_name</span> <span class="o">+</span> <span class="n">ending_str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">hist_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">[</span><span class="n">name</span><span class="p">])))</span>
+
+        <span class="c1"># make sure all history columns have equal length</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">hist_lengths</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">history_length</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">hist_lengths</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="s1">&#39;S1_natal_kick_array&#39;</span> <span class="ow">in</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">oneline_df</span><span class="o">.</span><span class="n">columns</span><span class="p">]):</span>
+            <span class="n">natalkick_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;S1_natal_kick_array_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                               <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+            <span class="n">star1_params</span><span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">oneline_df</span><span class="p">[</span><span class="n">natalkick_names</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="s1">&#39;S2_natal_kick_array&#39;</span> <span class="ow">in</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">oneline_df</span><span class="o">.</span><span class="n">columns</span><span class="p">]):</span>
+            <span class="n">natalkick_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;S2_natal_kick_array_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                               <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+            <span class="n">star2_params</span><span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">oneline_df</span><span class="p">[</span><span class="n">natalkick_names</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;binary_index&#39;</span> <span class="ow">in</span> <span class="n">oneline_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+            <span class="n">binary_index</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">oneline_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">binary_index</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">binary</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">binary_index</span><span class="p">,</span>
+                     <span class="n">star_1</span><span class="o">=</span><span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">star1_params</span><span class="p">),</span>
+                     <span class="n">star_2</span><span class="o">=</span><span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">star2_params</span><span class="p">),</span>
+                     <span class="o">**</span><span class="n">binary_params</span><span class="p">)</span>
+
+        <span class="c1"># set extra history columns directly</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">extra_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+        <span class="c1"># set some orbital parameters that should exist by hand</span>
+        <span class="n">bp_keys</span> <span class="o">=</span> <span class="n">binary_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;eccentricity_history&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bp_keys</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;eccentricity_history&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;separation_history&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bp_keys</span>
+                <span class="ow">and</span> <span class="s1">&#39;orbital_period_history&#39;</span> <span class="ow">in</span> <span class="n">bp_keys</span><span class="p">):</span>
+            <span class="n">separation</span> <span class="o">=</span> <span class="n">orbital_separation_from_period</span><span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">orbital_period_history</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass_history</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass_history</span><span class="p">),)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;separation_history&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">separation</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;separation&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">separation</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;orbital_period_history&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bp_keys</span>
+                <span class="ow">and</span> <span class="s1">&#39;seperation_history&#39;</span> <span class="ow">in</span> <span class="n">bp_keys</span><span class="p">):</span>
+            <span class="n">period</span> <span class="o">=</span> <span class="n">orbital_period_from_separation</span><span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">seperation_history</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass_history</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass_history</span><span class="p">),)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;orbital_period_history&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">period</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">period</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># set the binary, star1, star2 parameters to last history value in df</span>
+        <span class="k">for</span> <span class="n">params</span><span class="p">,</span> <span class="n">pointer</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">star1_params</span><span class="p">,</span>  <span class="n">star2_params</span><span class="p">,</span>  <span class="n">binary_params</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">binary</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">pointer</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">val</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># make BINARYPROPERTIES, history columns same length if not given</span>
+        <span class="n">already_included_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                                 <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">binary_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="n">valid_binaryprop_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span>
+                                 <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">p</span> <span class="ow">in</span> <span class="n">already_included_cols</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">prop_key</span> <span class="ow">in</span> <span class="n">valid_binaryprop_keys</span><span class="p">:</span>
+            <span class="n">last_default_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">prop_key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">len_default</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">prop_key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span><span class="p">))</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">history_length</span> <span class="o">-</span> <span class="n">len_default</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">prop_key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">last_default_value</span><span class="p">]</span>
+                                                        <span class="o">*</span> <span class="n">diff</span><span class="p">)</span>
+
+        <span class="c1"># if the binary errored, then set the final event</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">[</span><span class="s1">&#39;FAILED&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;FAILED&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the object representation when print is called.&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1"> at </span><span class="si">{}</span><span class="s1">&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;error_message&quot;</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;BINARY FAILED: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;warning_message&quot;</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;WARNING FOUND: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warning_message</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">star</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a printable description of the binary star.&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">gap</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">]:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span> <span class="o">+</span> <span class="n">gap</span>
+
+        <span class="k">def</span> <span class="nf">nan_if_not_int_or_float</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Return nan if `value` is neither int nor float.&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="n">orb_p</span> <span class="o">=</span> <span class="n">nan_if_not_int_or_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbital_period</span><span class="p">)</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">nan_if_not_int_or_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="n">nan_if_not_int_or_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span>
+
+        <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;p=</span><span class="si">{0:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">orb_p</span><span class="p">)</span> <span class="o">+</span> <span class="n">gap</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;S1=(</span><span class="si">{0}</span><span class="s1">,M=</span><span class="si">{1:.2f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">m1</span><span class="p">)</span> <span class="o">+</span> <span class="n">gap</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;S2=(</span><span class="si">{0}</span><span class="s1">,M=</span><span class="si">{1:.2f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;BinaryStar(&#39;</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+
+<div class="viewcode-block" id="BinaryStar.from_run"><a class="viewcode-back" href="../../../api/posydon.binary_evol.binarystar.html#posydon.binary_evol.binarystar.BinaryStar.from_run">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_run</span><span class="p">(</span><span class="n">run</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">profiles</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a BinaryStar object from a PSyGrid run.&quot;&quot;&quot;</span>
+        <span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">()</span>
+
+        <span class="c1"># get the data for the binary</span>
+        <span class="k">if</span> <span class="n">run</span><span class="o">.</span><span class="n">binary_history</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">run</span><span class="o">.</span><span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">])</span> <span class="k">if</span> <span class="n">history</span> <span class="k">else</span> <span class="mi">1</span>
+            <span class="n">bh_colnames</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">binary_history</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
+                <span class="n">colname</span> <span class="o">=</span> <span class="n">BINARY_ATTRIBUTES_FROM_HISTORY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">colname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">bh_colnames</span><span class="p">:</span>
+                    <span class="n">final_value</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">history</span><span class="p">:</span>
+                        <span class="n">col_history</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">run</span><span class="o">.</span><span class="n">binary_history</span><span class="p">[</span><span class="n">colname</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">col_history</span> <span class="o">=</span> <span class="p">[</span><span class="n">final_value</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">final_value</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">col_history</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_steps</span>
+                <span class="k">assert</span> <span class="n">n_steps</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_history</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="n">col_history</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">final_value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">binary</span>    <span class="c1"># if no binary history, return defaults</span>
+
+        <span class="c1"># get the data for each companion star</span>
+        <span class="k">for</span> <span class="n">star_history</span><span class="p">,</span> <span class="n">star</span><span class="p">,</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">run</span><span class="o">.</span><span class="n">history1</span><span class="p">,</span> <span class="n">run</span><span class="o">.</span><span class="n">history2</span><span class="p">],</span>
+                                              <span class="p">[</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">],</span>
+                                              <span class="p">[</span><span class="s2">&quot;S1&quot;</span><span class="p">,</span> <span class="s2">&quot;S2&quot;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">star_history</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">h_colnames</span> <span class="o">=</span> <span class="n">star_history</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># get the corresponding column name (default=same name)</span>
+                    <span class="n">colname</span> <span class="o">=</span> <span class="n">STAR_ATTRIBUTES_FROM_STAR_HISTORY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">colname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">h_colnames</span><span class="p">:</span>
+                        <span class="n">final_value</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">colname</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">history</span><span class="p">:</span>
+                            <span class="n">col_history</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">star_history</span><span class="p">[</span><span class="n">colname</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">col_history</span> <span class="o">=</span> <span class="p">[</span><span class="n">final_value</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">final_value</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="n">col_history</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_steps</span>
+                    <span class="k">assert</span> <span class="n">n_steps</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_history</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="n">col_history</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">final_value</span><span class="p">)</span>
+
+        <span class="c1"># set metallicities (if defined in the track)...</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">metallicity</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">&quot;Z&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">metallicity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># ...and other star parameters taken from the binary history</span>
+        <span class="k">for</span> <span class="n">star_index</span><span class="p">,</span> <span class="n">star</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">]):</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">metallicity</span> <span class="o">=</span> <span class="n">metallicity</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">metallicity_history</span> <span class="o">=</span> <span class="p">[</span><span class="n">metallicity</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_steps</span>
+            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">colnames</span> <span class="ow">in</span> <span class="n">STAR_ATTRIBUTES_FROM_BINARY_HISTORY</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">colname</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">[</span><span class="n">star_index</span><span class="p">]</span>
+                <span class="n">final_value</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">history</span><span class="p">:</span>
+                    <span class="n">col_history</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">run</span><span class="o">.</span><span class="n">binary_history</span><span class="p">[</span><span class="n">colname</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">col_history</span> <span class="o">=</span> <span class="p">[</span><span class="n">final_value</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">n_steps</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_history</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">final_value</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="n">col_history</span><span class="p">)</span>
+
+        <span class="c1"># update eccentricity</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity_history</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_steps</span>
+
+        <span class="c1"># update star states</span>
+        <span class="n">n_history</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">time_history</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">star</span><span class="p">,</span> <span class="n">track</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">],</span>
+                               <span class="p">[</span><span class="n">run</span><span class="o">.</span><span class="n">history1</span><span class="p">,</span> <span class="n">run</span><span class="o">.</span><span class="n">history2</span><span class="p">]):</span>
+            <span class="n">is_CO</span> <span class="o">=</span> <span class="n">track</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="n">state_history</span> <span class="o">=</span> <span class="p">[</span><span class="n">check_state_of_star</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="n">is_CO</span><span class="p">)</span>
+                             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_history</span><span class="p">)]</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">state_history</span> <span class="o">=</span> <span class="n">state_history</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">state_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># update binary state, event and MT case</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">state_history</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">event_history</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">mass_transfer_case_history</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_history</span><span class="p">):</span>  <span class="c1"># step-by-step: previous states matter!</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">get_binary_state_and_event_and_mt_case</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">mass_transfer_case</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">mass_transfer_case_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">mass_transfer_case</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">profiles</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">final_profile1</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">final_profile2</span>
+
+        <span class="k">return</span> <span class="n">binary</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
