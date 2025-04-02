@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.5 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.5
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.visualization.VH_diagram.GraphVisualizer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.visualization.VH_diagram.GraphVisualizer"></span><p>Graph Visualizer for the VH diagram.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">CaseInfos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centered_txt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bot_right_txt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bot_left_txt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_right_txt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tot_left_txt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">border_width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#CaseInfos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.Infos" title="posydon.visualization.VH_diagram.GraphVisualizer.Infos"><code class="xref py py-class docutils literal notranslate"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.Infos</span></code></a></p>
+<p>Informations to create a case widget.</p>
+<p>Initialize a CaseInfos instance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.border_width">
+<span class="sig-name descname"><span class="pre">border_width</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.border_width" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.bot_left_text">
+<span class="sig-name descname"><span class="pre">bot_left_text</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.bot_left_text" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.bot_right_text">
+<span class="sig-name descname"><span class="pre">bot_right_text</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.bot_right_text" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.centered_text">
+<span class="sig-name descname"><span class="pre">centered_text</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.centered_text" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.top_left_text">
+<span class="sig-name descname"><span class="pre">top_left_text</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.top_left_text" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.top_right_text">
+<span class="sig-name descname"><span class="pre">top_right_text</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos.top_right_text" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.ConnectedItem">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">ConnectedItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_item</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_item</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#ConnectedItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.ConnectedItem" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represent a visual link between 2 widgets.</p>
+<p>Initialize a ConnectedItem instance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.ConnectedItem.from_item">
+<span class="sig-name descname"><span class="pre">from_item</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.ConnectedItem.from_item" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.ConnectedItem.to_item">
+<span class="sig-name descname"><span class="pre">to_item</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.ConnectedItem.to_item" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">GraphVisualizer</span></span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
+<p>Widget used to display the different columns and add widget in them.</p>
+<p>Initialize a GraphVisualizer instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.add_column">
+<span class="sig-name descname"><span class="pre">add_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_span</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizer.add_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.add_column" title="Permalink to this definition"></a></dt>
+<dd><p>Create a column according to the column_type.</p>
+<p>It takes account for the column_span of the logical column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_type</strong> (<a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE" title="posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE"><em>columnTYPE</em></a>) – Type of the column to add.</p></li>
+<li><p><strong>column_span</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Nb of logical column used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ID of created column.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.add_line">
+<span class="sig-name descname"><span class="pre">add_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizer.add_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.add_line" title="Permalink to this definition"></a></dt>
+<dd><p>Add all lines based on all elements in <cite>infos</cite>.</p>
+<p>For each info in infos, create the corresponding widget and add it to
+the column with corresponding id (given in each info), only 1 widget
+per column by call, if one column haven’t any widget associated,
+column skip this row.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>infos</strong> (<em>Array of Infos</em>) – Array with derivated struct of Infos to create the different
+widget for this line.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizer.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Clear each column.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.get_column">
+<span class="sig-name descname"><span class="pre">get_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizer.get_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.get_column" title="Permalink to this definition"></a></dt>
+<dd><p>Return visual column with the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>column_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – ID of searched column.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>column with the given ID.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn">GraphVisualizercolumn</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizer.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.paintEvent" title="Permalink to this definition"></a></dt>
+<dd><p>Paint the event.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizer.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Clear all delete each column.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.saveAsPicture">
+<span class="sig-name descname"><span class="pre">saveAsPicture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizer.saveAsPicture"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.saveAsPicture" title="Permalink to this definition"></a></dt>
+<dd><p>Render this widget in a picture and save it a filename.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Destination file of the picture.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">GraphVisualizerCase</span></span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerCase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem</span></code></a></p>
+<p>Case widget in GraphVisualizer.</p>
+<p>Provides the ability to display 5 texts: 2 on the top 2 on the bottom,
+and 1 in center. Can have a border.</p>
+<p>Initialize a GraphVisualizerCase instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.get_attach_point_bot">
+<span class="sig-name descname"><span class="pre">get_attach_point_bot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerCase.get_attach_point_bot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.get_attach_point_bot" title="Permalink to this definition"></a></dt>
+<dd><p>Get coordinate to connect this widget with the next one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.get_attach_point_top">
+<span class="sig-name descname"><span class="pre">get_attach_point_top</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerCase.get_attach_point_top"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.get_attach_point_top" title="Permalink to this definition"></a></dt>
+<dd><p>Get coordinate to connect this widget with the previous one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_bottom_left_text">
+<span class="sig-name descname"><span class="pre">set_bottom_left_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerCase.set_bottom_left_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_bottom_left_text" title="Permalink to this definition"></a></dt>
+<dd><p>Set the text at the bottom left.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_bottom_rigth_text">
+<span class="sig-name descname"><span class="pre">set_bottom_rigth_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerCase.set_bottom_rigth_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_bottom_rigth_text" title="Permalink to this definition"></a></dt>
+<dd><p>Set the text at the bottom right.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_central_border">
+<span class="sig-name descname"><span class="pre">set_central_border</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerCase.set_central_border"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_central_border" title="Permalink to this definition"></a></dt>
+<dd><p>Set the text at the central border.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_central_text">
+<span class="sig-name descname"><span class="pre">set_central_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerCase.set_central_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_central_text" title="Permalink to this definition"></a></dt>
+<dd><p>Set the text at the center.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_top_left_text">
+<span class="sig-name descname"><span class="pre">set_top_left_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerCase.set_top_left_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_top_left_text" title="Permalink to this definition"></a></dt>
+<dd><p>Set the text at the top left.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_top_right_text">
+<span class="sig-name descname"><span class="pre">set_top_right_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerCase.set_top_right_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_top_right_text" title="Permalink to this definition"></a></dt>
+<dd><p>Set the text at the top right.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerConnectedcolumn">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">GraphVisualizerConnectedcolumn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_span</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerConnectedcolumn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerConnectedcolumn" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn</span></code></a></p>
+<p>Simple visual column with arrow between connected widget.</p>
+<p>Initialize a GraphVisualizerConnectedcolumn instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerConnectedcolumn.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerConnectedcolumn.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerConnectedcolumn.draw" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the surface.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">GraphVisualizerItem</span></span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
+<p>Define the mother-class for widget in GraphVisualizer.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.connected">
+<span class="sig-name descname"><span class="pre">connected</span></span><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.connected" title="Permalink to this definition"></a></dt>
+<dd><p>Indicate if this widget need to be connected with the previous one in
+the same column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialize a GraphVisualizerItem instrance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.get_attach_point_bot">
+<span class="sig-name descname"><span class="pre">get_attach_point_bot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerItem.get_attach_point_bot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.get_attach_point_bot" title="Permalink to this definition"></a></dt>
+<dd><p>Get coordinate to connect this widget with the next one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Coordinate to link the widget with the next one.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.get_attach_point_top">
+<span class="sig-name descname"><span class="pre">get_attach_point_top</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerItem.get_attach_point_top"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.get_attach_point_top" title="Permalink to this definition"></a></dt>
+<dd><p>Get coordinate to connect this widget with the previous one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Coordinate to link the widget with the previous one.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">GraphVisualizerPoint</span></span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerPoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem</span></code></a></p>
+<p>Widget containing GraphVisualizerPointDraw.</p>
+<p>Provides the ability to display 2 texts, one at each side.</p>
+<p>Initialize a GraphVisualizerPoint instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.get_attach_point_bot">
+<span class="sig-name descname"><span class="pre">get_attach_point_bot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerPoint.get_attach_point_bot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.get_attach_point_bot" title="Permalink to this definition"></a></dt>
+<dd><p>Get coordinate to connect this widget with the next one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.get_attach_point_top">
+<span class="sig-name descname"><span class="pre">get_attach_point_top</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerPoint.get_attach_point_top"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.get_attach_point_top" title="Permalink to this definition"></a></dt>
+<dd><p>Get coordinate to connect this widget with the previous one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.set_text">
+<span class="sig-name descname"><span class="pre">set_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerPoint.set_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.set_text" title="Permalink to this definition"></a></dt>
+<dd><p>Se the text of the label.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPointDraw">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">GraphVisualizerPointDraw</span></span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerPointDraw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPointDraw" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code></p>
+<p>Define an empty widget with a point drew.</p>
+<p>Initialize a GraphVisualizerPointDraw instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPointDraw.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerPointDraw.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPointDraw.paintEvent" title="Permalink to this definition"></a></dt>
+<dd><p>Paint an event.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">GraphVisualizerState</span></span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem</span></code></a></p>
+<p>Widget containing drawings.</p>
+<p>Provides the ability to display 4 texts on top &amp; bottom.</p>
+<p>Initialize a GraphVisualizerState instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.get_attach_point_bot">
+<span class="sig-name descname"><span class="pre">get_attach_point_bot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState.get_attach_point_bot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.get_attach_point_bot" title="Permalink to this definition"></a></dt>
+<dd><p>Get coordinate to connect this widget with the next one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.get_attach_point_top">
+<span class="sig-name descname"><span class="pre">get_attach_point_top</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState.get_attach_point_top"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.get_attach_point_top" title="Permalink to this definition"></a></dt>
+<dd><p>Get coordinate to connect this widget with the previous one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.paintEvent" title="Permalink to this definition"></a></dt>
+<dd><p>Paint the event.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.resizeEvent">
+<span class="sig-name descname"><span class="pre">resizeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState.resizeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.resizeEvent" title="Permalink to this definition"></a></dt>
+<dd><p>Resize the event.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_bot_text">
+<span class="sig-name descname"><span class="pre">set_bot_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState.set_bot_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_bot_text" title="Permalink to this definition"></a></dt>
+<dd><p>Se the text of the bottom label.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_distance">
+<span class="sig-name descname"><span class="pre">set_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState.set_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_distance" title="Permalink to this definition"></a></dt>
+<dd><p>Set the distance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_event">
+<span class="sig-name descname"><span class="pre">set_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState.set_event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_event" title="Permalink to this definition"></a></dt>
+<dd><p>Load the picture ‘filename’ and resize it if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name (+ path) to the picture.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Indicate if loading &amp; resize success.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_first_star">
+<span class="sig-name descname"><span class="pre">set_first_star</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState.set_first_star"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_first_star" title="Permalink to this definition"></a></dt>
+<dd><p>Load the picture ‘filename’ and resize it if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name (+ path) to the picture.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Indicate if loading &amp; resize success.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_second_star">
+<span class="sig-name descname"><span class="pre">set_second_star</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState.set_second_star"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_second_star" title="Permalink to this definition"></a></dt>
+<dd><p>Load the picture ‘filename’ and resize it if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name (+ path) to the picture.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Indicate if loading &amp; resize success.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_top_text">
+<span class="sig-name descname"><span class="pre">set_top_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerState.set_top_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_top_text" title="Permalink to this definition"></a></dt>
+<dd><p>Set the text of the top label.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerTimeline">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">GraphVisualizerTimeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_span</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerTimeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerTimeline" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn</span></code></a></p>
+<p>Draw a visual column, compressed by another other column.</p>
+<p>Initialize a GraphVisualizerTimeline instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerTimeline.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizerTimeline.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerTimeline.draw" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the surface.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">GraphVisualizercolumn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_span</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizercolumn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Mother-class of visual column in GraphVisualizer.</p>
+<p>Manage one visual column in the QGridLayout
+(can take several logical columns).</p>
+<p>Initialize a GraphVisualizercolumn instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>QGridLayout</em>) – Grid where column take place.</p></li>
+<li><p><strong>column_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Unique id of this column.</p></li>
+<li><p><strong>column_span</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of logical column used.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.add_item">
+<span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizercolumn.add_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.add_item" title="Permalink to this definition"></a></dt>
+<dd><p>Add one item in the column, connect it to previous if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>item</strong> (<a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem"><em>GraphVisualizerItem</em></a>) – Widget to add in column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizercolumn.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Delete all widget in the column, keep the title.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.get_id">
+<span class="sig-name descname"><span class="pre">get_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizercolumn.get_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.get_id" title="Permalink to this definition"></a></dt>
+<dd><p>Return the column id.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizercolumn.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Delete everythings (widget + title), reset logical column used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.set_title">
+<span class="sig-name descname"><span class="pre">set_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizercolumn.set_title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.set_title" title="Permalink to this definition"></a></dt>
+<dd><p>Set the title.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.skip">
+<span class="sig-name descname"><span class="pre">skip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#GraphVisualizercolumn.skip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.skip" title="Permalink to this definition"></a></dt>
+<dd><p>Skip one row.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">INFOSTYPE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#INFOSTYPE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></a></p>
+<p>Enumeration of different type of infos.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE.CASE">
+<span class="sig-name descname"><span class="pre">CASE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE.CASE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE.POINT">
+<span class="sig-name descname"><span class="pre">POINT</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE.POINT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE.STATE">
+<span class="sig-name descname"><span class="pre">STATE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE.STATE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.Infos">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">Infos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">infos_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connected</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#Infos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.Infos" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Mother-class with common informations uselful for all widget.</p>
+<p>Initialize an Infos instance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.Infos.column_id">
+<span class="sig-name descname"><span class="pre">column_id</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.Infos.column_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.Infos.connected">
+<span class="sig-name descname"><span class="pre">connected</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.Infos.connected" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.Infos.infos_type">
+<span class="sig-name descname"><span class="pre">infos_type</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE" title="posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.Infos.infos_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.PointInfos">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">PointInfos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#PointInfos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.PointInfos" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.Infos" title="posydon.visualization.VH_diagram.GraphVisualizer.Infos"><code class="xref py py-class docutils literal notranslate"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.Infos</span></code></a></p>
+<p>Informations to create a widget with a point drew.</p>
+<p>Initialize a PointInfos instance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.PointInfos.text">
+<span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.PointInfos.text" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.StateInfos">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">StateInfos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S1_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S2_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#StateInfos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.Infos" title="posydon.visualization.VH_diagram.GraphVisualizer.Infos"><code class="xref py py-class docutils literal notranslate"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.Infos</span></code></a></p>
+<p>Information to create a widget with a line of diagram inside.</p>
+<p>Initialize a StateInfos instance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.S1_filename">
+<span class="sig-name descname"><span class="pre">S1_filename</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.S1_filename" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.S2_filename">
+<span class="sig-name descname"><span class="pre">S2_filename</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.S2_filename" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.bot_texts">
+<span class="sig-name descname"><span class="pre">bot_texts</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.bot_texts" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.distance">
+<span class="sig-name descname"><span class="pre">distance</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.distance" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.top_texts">
+<span class="sig-name descname"><span class="pre">top_texts</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos.top_texts" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">columnTYPE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#columnTYPE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></a></p>
+<p>Enumeration of different column type.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE.CONNECTED">
+<span class="sig-name descname"><span class="pre">CONNECTED</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE.CONNECTED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE.TIMELINE">
+<span class="sig-name descname"><span class="pre">TIMELINE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE.TIMELINE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.prepare_case">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">prepare_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos" title="posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#prepare_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.prepare_case" title="Permalink to this definition"></a></dt>
+<dd><p>Help to create GraphVisualizerCase from CaseInfos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>infos</strong> (<a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos" title="posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos"><em>CaseInfos</em></a>) – Infos to create the widget.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Created widget with given infos.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase">GraphVisualizerCase</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.prepare_point">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">prepare_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.PointInfos" title="posydon.visualization.VH_diagram.GraphVisualizer.PointInfos"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.PointInfos</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#prepare_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.prepare_point" title="Permalink to this definition"></a></dt>
+<dd><p>Help to create GraphVisualizerPoint from PointInfos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>infos</strong> (<a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.PointInfos" title="posydon.visualization.VH_diagram.GraphVisualizer.PointInfos"><em>PointInfos</em></a>) – Infos to create the widget.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Created widget with given infos.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint">GraphVisualizerPoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.GraphVisualizer.prepare_state">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.</span></span><span class="sig-name descname"><span class="pre">prepare_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos" title="posydon.visualization.VH_diagram.GraphVisualizer.StateInfos"><span class="pre">posydon.visualization.VH_diagram.GraphVisualizer.StateInfos</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/GraphVisualizer.html#prepare_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.GraphVisualizer.prepare_state" title="Permalink to this definition"></a></dt>
+<dd><p>Help to create GraphVisualizerState from StateInfos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>infos</strong> (<a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos" title="posydon.visualization.VH_diagram.GraphVisualizer.StateInfos"><em>StateInfos</em></a>) – Infos to create the widget.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Created widget with given infos.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState" title="posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState">GraphVisualizerState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.5
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

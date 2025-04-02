@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1D plotting functionalities for POSYDON GRIDS &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="2D plotting functionalities for POSYDON GRIDS" href="../plot2D/plot2D.html" />
+    <link rel="prev" title="Initial-Final Interpolation" href="../../interpolation/IF-Interpolator/IFInterpolator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1D plotting functionalities for POSYDON GRIDS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-plot-one-track">How to plot one track</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plot-one-quantity-as-a-function-of-another">Plot one quantity as a function of another</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-multiple-quantities-as-a-function-of-one">Plot multiple quantities as a function of one</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-plot-many-tracks">How to plot many tracks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plot-one-or-more-quantities-as-a-function-of-another-for-multiple-tracks">Plot one or more quantities as a function of another for multiple tracks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#plot-third-quantity-as-a-color-map">Plot third quantity as a color map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plotting-an-hr-diagram">Plotting an HR diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">1D plotting functionalities for POSYDON GRIDS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/visualization/plot1D/plot1D.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="d-plotting-functionalities-for-posydon-grids">
+<span id="plot1d"></span><h1>1D plotting functionalities for POSYDON GRIDS<a class="headerlink" href="#d-plotting-functionalities-for-posydon-grids" title="Permalink to this headline"></a></h1>
+<p>We provide a variety of 1D MESA grids plotting functions within POSYDON.
+We start by loading a grid in a PSyGrid object. The <code class="docutils literal notranslate"><span class="pre">plot</span></code> method supports
+any POSYDON MESA grid. Here, we will use the <code class="docutils literal notranslate"><span class="pre">HMS-HMS</span></code> grid as an example.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># to load a grid</span>
+<span class="kn">from</span> <span class="nn">posydon.grids.psygrid</span> <span class="kn">import</span> <span class="n">PSyGrid</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s2">&quot;/PATH_TO_POSYDON_DATA/HMS-HMS/grid_0.0142_</span><span class="si">%d</span><span class="s2">.h5&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="how-to-plot-one-track">
+<h2>How to plot one track<a class="headerlink" href="#how-to-plot-one-track" title="Permalink to this headline"></a></h2>
+<section id="plot-one-quantity-as-a-function-of-another">
+<h3>Plot one quantity as a function of another<a class="headerlink" href="#plot-one-quantity-as-a-function-of-another" title="Permalink to this headline"></a></h3>
+<p>The properties to plot for a given MESA track (we have chosen the 42nd track in
+the grid) can be read from <code class="docutils literal notranslate"><span class="pre">history1</span></code>, <code class="docutils literal notranslate"><span class="pre">history2</span></code>, or <code class="docutils literal notranslate"><span class="pre">binary_history</span></code>.
+For example, to plot the mass evolution of <cite>star_1</cite>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_1</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;show_fig&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;close_fig&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;path_to_file&#39;</span><span class="p">:</span> <span class="s1">&#39;./plots_demo/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fname&#39;</span><span class="p">:</span> <span class="s1">&#39;1D_age_M1.png&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="s1">&#39;binary_history&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_1</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/1D_age_M1.png"><img alt="../../_images/1D_age_M1.png" src="../../_images/1D_age_M1.png" style="width: 400px;" /></a>
+<p>If, instead, we would like to plot the evolution of <cite>star_1</cite> within a
+Hertzsprung-Russell diagram:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_2</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_1</span>
+<span class="n">PLOT_PROPERTIES_2</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1D_logR_logL.png&#39;</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;log_R&#39;</span><span class="p">,</span> <span class="s1">&#39;log_L&#39;</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="s1">&#39;history1&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_2</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/1D_logR_logL.png"><img alt="../../_images/1D_logR_logL.png" src="../../_images/1D_logR_logL.png" style="width: 400px;" /></a>
+</section>
+<section id="plot-multiple-quantities-as-a-function-of-one">
+<h3>Plot multiple quantities as a function of one<a class="headerlink" href="#plot-multiple-quantities-as-a-function-of-one" title="Permalink to this headline"></a></h3>
+<p>We can display more properties as a function of another in a subplot like
+the following examples.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_4</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_1</span>
+<span class="n">PLOT_PROPERTIES_4</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1D_age_bin.png&#39;</span>
+<span class="n">PLOT_PROPERTIES_4</span><span class="p">[</span><span class="s1">&#39;figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">8.</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;star_2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;binary_separation&#39;</span><span class="p">],</span> <span class="n">history</span><span class="o">=</span><span class="s1">&#39;binary_history&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_4</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/1D_age_bin.png"><img alt="../../_images/1D_age_bin.png" src="../../_images/1D_age_bin.png" style="width: 400px;" /></a>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_3</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_1</span>
+<span class="n">PLOT_PROPERTIES_3</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1D_logR_logLs.png&#39;</span>
+<span class="n">PLOT_PROPERTIES_3</span><span class="p">[</span><span class="s1">&#39;figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">8.</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;log_R&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;log_LH&#39;</span><span class="p">,</span> <span class="s1">&#39;log_LHe&#39;</span><span class="p">,</span><span class="s1">&#39;log_LZ&#39;</span><span class="p">],</span> <span class="n">history</span><span class="o">=</span><span class="s1">&#39;history1&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_3</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/1D_logR_logLs.png"><img alt="../../_images/1D_logR_logLs.png" src="../../_images/1D_logR_logLs.png" style="width: 400px;" /></a>
+</section>
+</section>
+<section id="how-to-plot-many-tracks">
+<h2>How to plot many tracks<a class="headerlink" href="#how-to-plot-many-tracks" title="Permalink to this headline"></a></h2>
+<section id="plot-one-or-more-quantities-as-a-function-of-another-for-multiple-tracks">
+<h3>Plot one or more quantities as a function of another for multiple tracks<a class="headerlink" href="#plot-one-or-more-quantities-as-a-function-of-another-for-multiple-tracks" title="Permalink to this headline"></a></h3>
+<p>If one wants to compare multiple tracks on the same plot, the indices for all
+binaries can be provided as a list.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_5</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_1</span>
+<span class="n">PLOT_PROPERTIES_5</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1D_multi.png&#39;</span>
+<span class="n">PLOT_PROPERTIES_5</span><span class="p">[</span><span class="s1">&#39;legend1D&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">lines_legend</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;42&#39;</span><span class="p">,</span><span class="s1">&#39;43&#39;</span><span class="p">,</span> <span class="s1">&#39;44&#39;</span><span class="p">])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">42</span><span class="p">,</span><span class="mi">43</span><span class="p">,</span><span class="mi">44</span><span class="p">],</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;binary_separation&#39;</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="s1">&#39;binary_history&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_5</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/1D_multi.png"><img alt="../../_images/1D_multi.png" src="../../_images/1D_multi.png" style="width: 400px;" /></a>
+</section>
+</section>
+<section id="plot-third-quantity-as-a-color-map">
+<h2>Plot third quantity as a color map<a class="headerlink" href="#plot-third-quantity-as-a-color-map" title="Permalink to this headline"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_6</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_1</span>
+<span class="n">PLOT_PROPERTIES_6</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1D_color.png&#39;</span>
+<span class="n">PLOT_PROPERTIES_6</span><span class="p">[</span><span class="s1">&#39;log10_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;binary_separation&#39;</span><span class="p">,</span> <span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;lg_mstar_dot_1&#39;</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="s1">&#39;binary_history&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_6</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/1D_color.png"><img alt="../../_images/1D_color.png" src="../../_images/1D_color.png" style="width: 400px;" /></a>
+</section>
+<section id="plotting-an-hr-diagram">
+<h2>Plotting an HR diagram<a class="headerlink" href="#plotting-an-hr-diagram" title="Permalink to this headline"></a></h2>
+<p>One can use the <code class="docutils literal notranslate"><span class="pre">HR</span></code> method to display the HR diagram.
+Note that multiple tracks at once can also be displayed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PLOT_PROPERTIES_7</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES_1</span>
+<span class="n">PLOT_PROPERTIES_7</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;HR1.png&#39;</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">HR</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="s1">&#39;history1&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_7</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/HR1.png"><img alt="../../_images/HR1.png" src="../../_images/HR1.png" style="width: 400px;" /></a>
+<p>The <code class="docutils literal notranslate"><span class="pre">HR</span></code> diagram method has also an option to display the stellar state.
+Here we show how to reproduce the HR diagram of Fig. 5 in Fragos et al. (2022).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># load single HMS grid</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s2">&quot;/Volumes/T7/data_phd/POSYDON/data/POSYDON_data/single_HMS/grid_0.0142.h5&quot;</span><span class="p">)</span>
+
+<span class="n">PLOT_PROPERTIES_8</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;figsize&#39;</span> <span class="p">:</span> <span class="p">(</span><span class="mf">3.38</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="s1">&#39;show_fig&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;close_fig&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;path_to_file&#39;</span><span class="p">:</span> <span class="s1">&#39;./plots_demo/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fname&#39;</span><span class="p">:</span> <span class="s1">&#39;HR2.png&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;xmin&#39;</span> <span class="p">:</span> <span class="mf">3.</span><span class="p">,</span>
+    <span class="s1">&#39;xmax&#39;</span> <span class="p">:</span> <span class="mf">6.</span><span class="p">,</span>
+    <span class="s1">&#39;ymin&#39;</span> <span class="p">:</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="s1">&#39;ymax&#39;</span> <span class="p">:</span> <span class="mf">7.</span><span class="p">,</span>
+    <span class="s1">&#39;const_R_lines&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;legend1D&#39;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;loc&#39;</span> <span class="p">:</span> <span class="s1">&#39;upper center&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;bbox_to_anchor&#39;</span> <span class="p">:</span> <span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.27</span><span class="p">),</span>
+        <span class="s1">&#39;ncol&#39;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;prop&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">6</span>
+        <span class="p">},</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># chose a subsample of tracks</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;S1_star_mass&#39;</span><span class="p">]),</span><span class="mi">2</span><span class="p">)[::</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">-</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">166</span><span class="p">})</span><span class="o">+</span><span class="p">[</span><span class="mi">101</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">96</span><span class="p">,</span><span class="mi">191</span><span class="p">]</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">HR</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="s1">&#39;history1&#39;</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES_8</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/HR2.png"><img alt="../../_images/HR2.png" src="../../_images/HR2.png" style="width: 400px;" /></a>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../../interpolation/IF-Interpolator/IFInterpolator.html" class="btn btn-neutral float-left" title="Initial-Final Interpolation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../plot2D/plot2D.html" class="btn btn-neutral float-right" title="2D plotting functionalities for POSYDON GRIDS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

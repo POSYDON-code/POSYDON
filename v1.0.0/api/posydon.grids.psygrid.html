@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I. CREATING A GRID &mdash; posydon 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">I. CREATING A GRID</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.grids.psygrid.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.grids.psygrid"></span><p>Module defining the PSyGrid, the main grid object of POSYDON.</p>
+<section id="i-creating-a-grid">
+<h1>I. CREATING A GRID<a class="headerlink" href="#i-creating-a-grid" title="Permalink to this headline"></a></h1>
+<ol class="loweralpha">
+<li><p>One-liner for creating a grid without loading it in memory:</p>
+<blockquote>
+<div><p>mygrid = PSyGrid(verbose=True).create(“mysimulations/”, “mygrids/grid1.h5”)</p>
+</div></blockquote>
+</li>
+<li><p>Create a grid and keep it for processing:</p>
+<blockquote>
+<div><p>mygrid = PSyGrid()
+mygrid.create(“MESA_simulations/ZAMS_grid/”, “stored_grids/ZAMS_grid.h5”)
+print(mygrid)</p>
+</div></blockquote>
+</li>
+<li><p>Store only metadata and initial/final values of runs:</p>
+<blockquote>
+<div><p>mygrid = PSyGrid().create(in_dir_path, out_file_path, slim=True)</p>
+</div></blockquote>
+</li>
+<li><p>Various options (see definition of <cite>create</cite> and <cite>GRIDPROPERTIES</cite> for more):</p>
+<blockquote>
+<div><dl class="simple">
+<dt>mygrid = PSyGrid().create(in_dir_path, out_file_path,</dt><dd><p>overwrite=True,
+warn=”suppress”,
+max_number_of_runs=1000,
+description=”My 1000-run grid.”)</p>
+</dd>
+</dl>
+<p>NOTE: you can use a family of HDF5 files in case of file size restrictions.
+For example, using <cite>mygrid.h5.%d</cite> for the path when creating/loading grids,
+implied that split files will be <cite>mygrid.h5.0</cite>, <cite>mygrid.h5.1</cite>, and so on.
+When overwriting the file, all the family is overwritten (effectively, the
+files are emptied to avoid remainder split files from previous operations.)</p>
+</div></blockquote>
+</li>
+<li><p>The history/profile data can be downsampled to significantly reduce the size
+of the grid. There are three downsampling procedures: one combining all data
+from histories (binary / star 1 / star 2), and two for each star’s profile.
+The parameters of the downsampling of histories and profiles can be set via
+the <cite>GRIDPROPERTIES</cite> dictionary (see below). For example, for history down-
+sampling, you can set a tolerance level (between 0 and 1) which corresponds
+to the maximum interpolation error tolerated with respect to the range of
+the parameters:</p>
+<p>history_DS_error = 0.01.</p>
+<p>Columns to be ignored during the downsampling process are set using the
+<cite>history_DS_exclude</cite> parameter. The corresponding parameters for profile</p>
+<blockquote>
+<div><p>downsampling are <cite>profile_DS_error</cite> and <cite>profile_DS_exclude</cite>.</p>
+</div></blockquote>
+</li>
+<li><p>The input path can be a list of paths to indicate multiple folders with MESA
+runs. Each of the paths can have wildcard characters to select subfolders or
+even runs. E.g.:
+- [“/grid_part1”, “/grid_part2”]
+- “/grid_part*”
+- [“/grid/run1”, “/grid/run2*”]</p>
+<p>Note that all provided paths are searched recursively, allowing for hierar-
+chical organizations of the MESA runs. For example, the parent folder could
+look like this:</p>
+<dl class="simple">
+<dt>part_A/</dt><dd><p>run1/
+run2/</p>
+</dd>
+<dt>part_B/</dt><dd><p>run3/
+run4/</p>
+</dd>
+</dl>
+<p>extra_run1/
+extra_run2/</p>
+</li>
+<li><p>Only one run can be included for a specific set of initial parameters, being
+identified by the folder name (excluding the <cite>_grid_index*</cite> part). E.g.,</p>
+<p>reruns/m1_28_m2_11_initial_z_1.42e-02_initial_period_in_days_2_grid_index_0</p>
+<p>will be preferred over</p>
+<p>main/m1_28_m2_11_initial_z_1.42e-02_initial_period_in_days_2_grid_index_102</p>
+<p>if the PSyGrid is created with the appropriate order of input paths:</p>
+<blockquote>
+<div><p>mygrid = PSyGrid([“mygrid/main”, “mygrid/reruns”])</p>
+</div></blockquote>
+<p>The user is notified through warnings about such substitutions.</p>
+</li>
+<li><p>To include specific columns from MESA data files, set the grid properties of
+the form <cite>*_saved_columns</cite>. For example,</p>
+<blockquote>
+<div><dl class="simple">
+<dt>grid.create(“mygrid/”, “mygrid.h5”,</dt><dd><p>star1_history_saved_columns=[“star_mass”])</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>By default, the provided columns will be added to the default list. In order
+to select the exact set of columns, provide them in a tuple instead of list.</p>
+</li>
+</ol>
+</section>
+<section id="ii-reading-data-from-grid">
+<h1>II. READING DATA FROM GRID<a class="headerlink" href="#ii-reading-data-from-grid" title="Permalink to this headline"></a></h1>
+<p>mygrid = PSyGrid(“thegrid.h5”)  # opens a stored grid</p>
+<p># Indexing…
+t1 = mygrid[0][“binary_history”][“age”]
+t3 = mygrid[0].binary_history[“age”]</p>
+<p>tenth_run = mygrid[10]
+if tenth_run[“binary_history”] is None:</p>
+<blockquote>
+<div><p>print(“No binary history in 10th run.”)</p>
+</div></blockquote>
+<p>Use <cite>.close()</cite> method to close the HDF5 file, or delete the grid variable. E.g.</p>
+<blockquote>
+<div><p>mygrid.close()</p>
+<p>or</p>
+<p>del mygrid</p>
+</div></blockquote>
+</section>
+<section id="iii-other-functions">
+<h1>III. OTHER FUNCTIONS<a class="headerlink" href="#iii-other-functions" title="Permalink to this headline"></a></h1>
+<ol class="loweralpha">
+<li><dl>
+<dt>Printing / logging summary:</dt><dd><p>print(mygrid)</p>
+<dl class="simple">
+<dt>with open(“grid_summary.txt”, “w”) as f:</dt><dd><p>f.write(str(mygrid))</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><p>In <cite>for</cite> loop (<cite>iter</cite> and <cite>next</cite> are supported too):</p>
+<blockquote>
+<div><dl class="simple">
+<dt>for run in mygrid:</dt><dd><p>print(run)</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p>Getting number of runs:</p>
+<blockquote>
+<div><p>n_runs = len(psygrid)</p>
+</div></blockquote>
+</li>
+<li><p>Checking if run index is defined in grid:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>if (13 in grid):</dt><dd><p>print(“My good luck lasted for”, grid[13].binary_history.age[-1], “yr”)</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p>Getting list or set of runs (i.e., PSyGridView objects):</p>
+<blockquote>
+<div><p>run_lst = list(psygrid)
+run_set = set(psygrid)</p>
+</div></blockquote>
+</li>
+<li><p>Printing parameters used during the creation of the grid</p>
+<blockquote>
+<div><p>print(psygrid.config)</p>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="warning-reducing-reading-times-when-accessing-a-psygrid">
+<h1>WARNING: reducing reading times when accessing a PSyGrid<a class="headerlink" href="#warning-reducing-reading-times-when-accessing-a-psygrid" title="Permalink to this headline"></a></h1>
+<p>When accessing a table in a specific run, e.g.,</p>
+<blockquote>
+<div><p>mygrid[0].history1</p>
+<p>or</p>
+<dl class="simple">
+<dt>for run in mygrid:</dt><dd><p>do_something_with(run.history1)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>the table is loaded from the HDF5 file temporarily. This means that:</p>
+<blockquote>
+<div><p>myrun.history1.star_mass + myrun.history1.star_mass</p>
+</div></blockquote>
+<p>loads the table two times! To reduce reading times, store in local variables
+all the tables that are going to be needed more than once:</p>
+<blockquote>
+<div><p>myhistory1 = myrun.history1
+myhistory1.star_mass + myhistory1.star_mass</p>
+</div></blockquote>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">PSyGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class handling a grid of MESA runs encoded in HDF5 format.</p>
+<p>Initialize the PSyGrid, and if <cite>filename</cite> is provided, open it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the objects reports by printing to standard output.</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><em>None</em></a>) – If not None, it is the path of the HDF5 file to be loaded.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.HR">
+<span class="sig-name descname"><span class="pre">HR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'history1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.HR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.HR" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the HR diagram of one or more runs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><em>list of int</em>) – Index or indices of runs to plot.</p></li>
+<li><p><strong>history</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Which history is going to be used. The options are:
+“binary_history”, “history1”, or “history2”.</p></li>
+<li><p><strong>states</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If true the HR diagram shows the stellar state with a color map.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the object reports by printing to standard output.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary containing extra visualisation options
+(cf. <cite>PLOT_PROPERTIES</cite> in <cite>plot_defaults.py</cite>).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.add_column">
+<span class="sig-name descname"><span class="pre">add_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'final_values'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.add_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.add_column" title="Permalink to this definition"></a></dt>
+<dd><p>Add a new numerical column in the final values array.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the HDF5 file if open.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MESA_grid_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psygrid_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'end'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'posydon'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">grid_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.create" title="Permalink to this definition"></a></dt>
+<dd><p>Create a new PSyGrid object from a MESA grid and save it on disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>MESA_grid_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path of the top directory where the input grid is located.</p></li>
+<li><p><strong>psygrid_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path of the HDF5 file to be created (or overwritten). If not
+provided, it is assumed that it was defined during initialization.</p></li>
+<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to overwrite the HDF5 file if it already exists.</p></li>
+<li><p><strong>slim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, only the metadata and initial/final values are stored.</p></li>
+<li><p><strong>warn</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – How warnings are handled. If “normal”, then warnings are shown when
+they occur. If “end”, they are collected and shown at the end. If
+“suppress”, then warnings are not shown at all.</p></li>
+<li><p><strong>**grid_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Configuration of the new grid, passed as ddditional arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.generate_config">
+<span class="sig-name descname"><span class="pre">generate_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">grid_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.generate_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.generate_config" title="Permalink to this definition"></a></dt>
+<dd><p>Store the grid’s configuration in a ConfigFile object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.get_pandas_initial_final">
+<span class="sig-name descname"><span class="pre">get_pandas_initial_final</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.get_pandas_initial_final"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.get_pandas_initial_final" title="Permalink to this definition"></a></dt>
+<dd><p>Convert the initial/final values into a single Pandas dataframe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load up a previously created PSyGrid object from an HDF5 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filepath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Location of the HDF5 file to be loaded. If not provided, assume
+it was defined during the initialization (argument: <cite>filepath</cite>).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_var_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'binary_history'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.plot" title="Permalink to this definition"></a></dt>
+<dd><p>Plot a 1D track of x_var_str vs y_var_str.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><em>list of int</em>) – Index or indices of runs to plot.</p></li>
+<li><p><strong>x_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of values to plot on the x axis. Allowed strings are the
+one in <cite>psygrid.history.dtype.names</cite> where “history” needs to be
+chosen accordingly.</p></li>
+<li><p><strong>y_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><em>list of str</em>) – String or list of stringvalues to plot on the y axis. Allowed
+strings are the one in <cite>psygrid.history.dtype.names</cite> where
+“history” needs to be chosen accordingly.</p></li>
+<li><p><strong>z_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of values to plot on the z axis (displayed with a color).
+Allowed strings are the one in <cite>psygrid.history.dtype.names</cite> where
+“history” needs to be chosen accordingly.</p></li>
+<li><p><strong>history</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The x, y, z variables are read from either: “binary_history”,
+“history1”, “history2”.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the object reports by printing to standard output.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary containing extra visualisation options
+(cf. <cite>PLOT_PROPERTIES</cite> in <cite>plot_defaults.py</cite>).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.plot2D">
+<span class="sig-name descname"><span class="pre">plot2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_var_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'termination_flag_1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_3D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_3D_var_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_3D_var_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_4D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_4D_var_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_4D_var_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_at_RLO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MARKERS_COLORS_LEGENDS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.plot2D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.plot2D" title="Permalink to this definition"></a></dt>
+<dd><p>Plot a 2D slice of x_var_str vs y_var_str of one or more runs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of the initial value to plot on the x axis. Allowed strings
+are <cite>psygrid.initial_values.dtype.names</cite>.</p></li>
+<li><p><strong>y_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of the initial value to plot on the y axis. Allowed strings
+are <cite>psygrid.initial_values.dtype.names</cite>.</p></li>
+<li><p><strong>z_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of the initial value to plot on the z axis (displayed as
+a color). Allowed strings are
+<cite>psygrid.final_values.dtype.names</cite>, <cite>psygrid.history1.dtype.names</cite>,
+<cite>psygrid.binary_history.dtype.names</cite>.</p></li>
+<li><p><strong>termination_flag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Termination flag to display, allowed values are:
+“termination_flag_1”, “termination_flag_2”, “termination_flag_3”,
+“termination_flag_4”, “all”.</p></li>
+<li><p><strong>grid_3D</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the psygrid object is a 3D grid and needs to be sliced.</p></li>
+<li><p><strong>slice_3D_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Variable along which the 3D space will be sliced. Allowed values
+are <cite>psygrid.initial_values.dtype.names</cite>.</p></li>
+<li><p><strong>slice_3D_var_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a>) – Range between which you want to slice the variable slice_3D_var_str
+e.g., <cite>(2.5,3.)</cite>.</p></li>
+<li><p><strong>grid_4D</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the psygrid object is a 4D grid and needs to be sliced.</p></li>
+<li><p><strong>slice_4D_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Variable along which the 4D space will be sliced. Allowed values
+are <cite>psygrid.initial_values.dtype.names</cite>.</p></li>
+<li><p><strong>slice_4D_var_range</strong> (<em>toople</em>) – Range between which you want to slice the variable slice_4D_var_str
+e.g., <cite>(2.5,3.)</cite>.</p></li>
+<li><p><strong>extra_grid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a><em> or </em><em>array of objects</em>) – If subset of the grid was rerun a or an extention was added, one
+can overlay the new psygrid by passing it here.</p></li>
+<li><p><strong>slice_at_RLO</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the object plots the tracks until onset of Roche Lobe
+overflow.</p></li>
+<li><p><strong>MARKERS_COLORS_LEGENDS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Each termination flag is associated with a marker shape, size,
+color and label (cf. <cite>MARKERS_COLORS_LEGENDS</cite> in
+<cite>plot_defaults.py</cite>).</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the object reports by printing to standard output.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary containing extra visualisation options (cf.
+<cite>PLOT_PROPERTIES</cite> in <cite>plot_defaults.py</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.rerun">
+<span class="sig-name descname"><span class="pre">rerun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runs_to_rerun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_mesa_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.rerun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.rerun" title="Permalink to this definition"></a></dt>
+<dd><p>Create a CSV file with the PSyGrid initial values to rerun.</p>
+<p>This methods allows you to create a CSV file with the psygrid initial
+values you want to rerun.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_to_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path to the directory where the new <cite>grid.csv</cite> file will be
+saved. If the directory does not exist it will be created.</p></li>
+<li><p><strong>runs_to_rerun</strong> (<em>integer array</em>) – Array containing the indecies of the psygrid runs you want to rerun
+e.g., runs_to_rerun = np.array([2,3])</p></li>
+<li><p><strong>termination_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The runs with this termination flag will be rerun.
+e.g. termination_flags=’max_number_retries’</p></li>
+<li><p><strong>new_mesa_flag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary of flags with their value to add as extra columns to the
+<cite>grid.csv</cite>. The user can specify any arbitrary amount of flags.
+e.g. new_mesa_flag = {‘varcontrol_target’: 0.01}</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid.update_final_values">
+<span class="sig-name descname"><span class="pre">update_final_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid.update_final_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid.update_final_values" title="Permalink to this definition"></a></dt>
+<dd><p>Update the final values in the HDF5 file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGridIterator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">PSyGridIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGridIterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGridIterator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class for iterating runs (i.e., PSyRunView instances) in a PSyGrid.</p>
+<p>Initialize by pointing to the PSyGrid object.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.PSyRunView">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">PSyRunView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psygrid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyRunView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyRunView" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Access runs in HDF5 grid without opening all data.</p>
+<p class="rubric">Example</p>
+<p>mygrid = PSyGrid(“thegrid.h5”)  # opens a stored grid
+myrun = mygrid[0]               # get a “view” of the first run in the grid
+print(mygrid[1].history1.star_age)</p>
+<p>t1 = myrun[“binary_history”][“age”]
+t2 = myrun[“binary_history”].age
+t3 = myrun.binary_history[“age”]
+t4 = myrun.binary_history.age</p>
+<p>print(mygrid[1].history1.star_age)</p>
+<p>Initialize by linking to a PSyGrid object and setting run index.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.downsample_history">
+<span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">downsample_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#downsample_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.downsample_history" title="Permalink to this definition"></a></dt>
+<dd><p>Downsample history data of a run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bh</strong> (<em>record array</em>) – The binary history table.</p></li>
+<li><p><strong>h1</strong> (<em>record array</em>) – The history of star 1.</p></li>
+<li><p><strong>h2</strong> (<em>record array</em>) – The history of star 2.</p></li>
+<li><p><strong>params</strong> (<a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.ConfigFile" title="posydon.utils.configfile.ConfigFile"><em>ConfigFile</em></a>) – A ConfigFile instance holding the downsampling parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The three record arrays corresponding to the downsample binary,
+star 1, and star2 histories.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of record arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.downsample_profile">
+<span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">downsample_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#downsample_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.downsample_profile" title="Permalink to this definition"></a></dt>
+<dd><p>Downsample a profile table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<em>record array</em>) – The profile data with column names defined.</p></li>
+<li><p><strong>params</strong> (<a class="reference internal" href="posydon.utils.configfile.html#posydon.utils.configfile.ConfigFile" title="posydon.utils.configfile.ConfigFile"><em>ConfigFile</em></a>) – A ConfigFile instance holding the downsampling parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The downsampled profile.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>record array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.grids.psygrid.join_grids">
+<span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">join_grids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gzip9'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'joined'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#join_grids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.join_grids" title="Permalink to this definition"></a></dt>
+<dd><p>Join two or more PSyGrid HDF5 files into one.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

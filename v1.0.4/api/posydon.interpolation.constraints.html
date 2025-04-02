@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.interpolation.constraints.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.interpolation.constraints"></span><p>Module to enforce constraints on interpolated quantities.</p>
+<p>Constraints are split up into 3 types:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Astrophysical laws that must hold</p></li>
+<li><p>Inequalities between values interpolated upon which must hold</p></li>
+<li><p>Sums of values interpolated upon which must satisfy some inequality</p></li>
+</ol>
+</div></blockquote>
+<p>For each type of constraint, different parameter dictionaries are required.</p>
+<p>For type 1 constraints a dictionary with the following fields is required:</p>
+<blockquote>
+<div><p>type - the type of constraint
+name - the name of the constraint
+dependent - the field for which the constraint must be calculated
+independent - the field names which are used to compute the dependent
+function - a function that computes the dependent from the independent</p>
+</div></blockquote>
+<p>For type 2 constraints a dictionary with the following fields is required:</p>
+<blockquote>
+<div><p>type - the type of constraint
+name - the name of the constraint
+fields - a multi dimensional array containing the field names in the</p>
+<blockquote>
+<div><p>desired descending order (if usage with default enforcer is
+wanted)</p>
+</div></blockquote>
+<dl class="simple">
+<dt>log - a boolean denoting whether or not the largest (first) field in</dt><dd><p>each constraint list is in log scale (by default false)</p>
+</dd>
+<dt>function - a function that enforces the desired constraint (by default</dt><dd><p>inequality is corrected)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>For type 3 constraints a dictionary with the following fields is required:</p>
+<blockquote>
+<div><p>type - the type of constraint
+name - the name of the constraint
+sum - an array of fields whose sum needs to satisfy some inequality
+constraint - either a real number or fieldname that the sum needs to be</p>
+<blockquote>
+<div><p>constrained by</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.Lnuc_func">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">Lnuc_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_LH</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_LHe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_LZ</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#Lnuc_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.Lnuc_func" title="Permalink to this definition"></a></dt>
+<dd><p>Total nuclear luminosity should be the sum of H, He and the rest.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.boltzman_constraint_func">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">boltzman_constraint_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_R</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#boltzman_constraint_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.boltzman_constraint_func" title="Permalink to this definition"></a></dt>
+<dd><p>Boltzmann law constraint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.check_order_of_constraints">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">check_order_of_constraints</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#check_order_of_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.check_order_of_constraints" title="Permalink to this definition"></a></dt>
+<dd><p>Report possible issues with the order of application of constraints.</p>
+<p>TODO: this needs to be updated for the new types of constraints.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.correct_inequality">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">correct_inequality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fv_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_sets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#correct_inequality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.correct_inequality" title="Permalink to this definition"></a></dt>
+<dd><p>Apply an “unequality constraint” (type 2) if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The final values dictionary.</p></li>
+<li><p><strong>key_sets</strong> (<em>list of lists</em>) – List of collections of keys connected with &gt;= inequalities (descending
+order). E.g., if one constraint is <cite>a &gt;= b &gt;= c</cite>, then key_sets is
+[[a, b, c], …].</p></li>
+<li><p><strong>star</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – For which star (1 or 2), the constraint will be applied. E.g.,
+<cite>star_{}_mass</cite> will be either <cite>star_1_mass</cite> or <cite>star_2_mass</cite>.</p></li>
+<li><p><strong>log</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, then the largest parameter (first key), is given in log10
+scale, while all the rest are in linear scale.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The sanitized version of <cite>fv_dict</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.correct_sum">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">correct_sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fv_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sum_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#correct_sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.correct_sum" title="Permalink to this definition"></a></dt>
+<dd><p>Normalize quantities should their sum does not have the expected value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The final values dictionary.</p></li>
+<li><p><strong>sum_keys</strong> (<em>array-like</em>) – Which quantities should add up to a specific value.</p></li>
+<li><p><strong>constraint</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – If float, then the sum of the quantities should be eqaul to that.
+If str, the fieldname of the quanity that the sum is constrained by.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The sanitized version of the final values dictionary.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.find_constraints_to_apply">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">find_constraints_to_apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#find_constraints_to_apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.find_constraints_to_apply" title="Permalink to this definition"></a></dt>
+<dd><p>Find out which constraints can be applied.</p>
+<p>Find out which constraints can be applied based on the out_keys
+specified by the user. This function assumes that the keys for star 1
+have a corresponding key in star 2 when applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>out_keys</strong> (<em>list of strings</em>) – The keys specified in the IFInterpolator</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of constraints that can and will be applied</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dicts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.get_thickness_n_radius">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">get_thickness_n_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fv_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#get_thickness_n_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.get_thickness_n_radius" title="Permalink to this definition"></a></dt>
+<dd><p>Corrects thickness and radius constraint violation of one is present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The final values dictionary</p></li>
+<li><p><strong>constraint</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The dictionary specifying the constraint to be applied</p></li>
+<li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – A list of formatted key names</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The sanitized version of the final values dictionary.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.kepler_3rd_law_func">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">kepler_3rd_law_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">period_days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#kepler_3rd_law_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.kepler_3rd_law_func" title="Permalink to this definition"></a></dt>
+<dd><p>Kepler’s 3rd law constraint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.lg_system_mdot_func">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">lg_system_mdot_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lg_system_mdot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lg_mtransfer_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#lg_system_mdot_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.lg_system_mdot_func" title="Permalink to this definition"></a></dt>
+<dd><p>System mdot must be less than the total mass-transfer rate.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.sanitize_interpolated_quantities">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">sanitize_interpolated_quantities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraints</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#sanitize_interpolated_quantities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.sanitize_interpolated_quantities" title="Permalink to this definition"></a></dt>
+<dd><p>Apply constraints in final values returned from the IF interpolator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fvalues</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary containing the final values returned from the initial-final
+interpolator evaluation method.</p></li>
+<li><p><strong>constraints</strong> (<em>list of dicts</em>) – A list of constraints that are to be applied. Can be computed using the
+find_constraints_to_apply function</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, report the actions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The dictionary of sanitized final values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.xfer_fraction_func">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">xfer_fraction_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lg_system_mdot_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lg_mtransfer_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#xfer_fraction_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.xfer_fraction_func" title="Permalink to this definition"></a></dt>
+<dd><p>Infer the xfer_fraction from the system and mass-transfer rate.</p>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

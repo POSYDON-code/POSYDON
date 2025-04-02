@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debugging Failed Binaries &mdash; posydon 1.0.5 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Initial-Final Interpolation" href="../interpolation/IF-Interpolator/IFInterpolator.html" />
+    <link rel="prev" title="Evolutionary Hooks" href="custom_hooks.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.5
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Debugging Failed Binaries</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/advanced_pop_options/debugging_binaries.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="debugging-failed-binaries">
+<span id="debugging-binaries"></span><h1>Debugging Failed Binaries<a class="headerlink" href="#debugging-failed-binaries" title="Permalink to this headline"></a></h1>
+<p>During evolution in the <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code>, all <code class="docutils literal notranslate"><span class="pre">Exceptions</span></code> are caught
+to allow the population to keep evolving in the event a single binary
+enocunters an error. Here we go over some methods to help debug errors.
+We cause an error by using a broken evolutionary step:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">posydon.popsyn.binarypopulation</span> <span class="kn">import</span> <span class="n">BinaryPopulation</span>
+<span class="linenos"> 2</span><span class="kn">from</span> <span class="nn">posydon.binary_evol.simulationproperties</span> <span class="kn">import</span> <span class="n">SimulationProperties</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">posydon.binary_evol.flow_chart</span> <span class="kn">import</span> <span class="n">flow_chart</span>
+<span class="linenos"> 4</span><span class="kn">from</span> <span class="nn">posydon.binary_evol.CE.step_CEE</span> <span class="kn">import</span> <span class="n">StepCEE</span>
+<span class="linenos"> 5</span><span class="kn">from</span> <span class="nn">posydon.binary_evol.SN.step_SN</span> <span class="kn">import</span> <span class="n">StepSN</span>
+<span class="linenos"> 6</span><span class="kn">from</span> <span class="nn">posydon.binary_evol.step_end</span> <span class="kn">import</span> <span class="n">step_end</span>
+<span class="linenos"> 7</span><span class="kn">from</span> <span class="nn">posydon.binary_evol.MESA.step_mesa</span> <span class="kn">import</span> <span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">CO_HMS_RLO_step</span>
+<span class="linenos"> 8</span><span class="kn">from</span> <span class="nn">posydon.binary_evol.DT.step_detached</span> <span class="kn">import</span> <span class="n">detached_step</span>
+<span class="linenos"> 9</span><span class="kn">from</span> <span class="nn">posydon.binary_evol.DT.double_CO</span> <span class="kn">import</span> <span class="n">DoubleCO</span>
+<span class="linenos">10</span><span class="kn">from</span> <span class="nn">posydon.binary_evol.simulationproperties</span> <span class="kn">import</span> <span class="n">TimingHooks</span><span class="p">,</span> <span class="n">StepNamesHooks</span>
+<span class="linenos">11</span>
+<span class="hll"><span class="linenos">12</span><span class="k">class</span> <span class="nc">my_new_StepSN</span><span class="p">(</span><span class="n">StepSN</span><span class="p">):</span>
+</span><span class="hll"><span class="linenos">13</span>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+</span><span class="hll"><span class="linenos">14</span>        <span class="c1"># use the StepSN call</span>
+</span><span class="hll"><span class="linenos">15</span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+</span><span class="hll"><span class="linenos">16</span>        <span class="c1"># break here</span>
+</span><span class="hll"><span class="linenos">17</span>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span><span class="si">}</span><span class="s1"> failed in my new step&#39;</span><span class="p">)</span>
+</span><span class="linenos">18</span>
+<span class="linenos">19</span><span class="n">mesa_step_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+<span class="linenos">20</span>    <span class="n">interpolation_method</span><span class="o">=</span><span class="s1">&#39;linear3c_kNN&#39;</span><span class="p">,</span>
+<span class="linenos">21</span>    <span class="n">save_initial_conditions</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="linenos">22</span>    <span class="n">track_interpolation</span><span class="o">=</span><span class="kc">False</span>
+<span class="linenos">23</span><span class="p">)</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+<span class="linenos">26</span>    <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">27</span>    <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">mesa_step_kwargs</span><span class="p">),</span>
+<span class="linenos">28</span>    <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">mesa_step_kwargs</span><span class="p">),</span>
+<span class="linenos">29</span>    <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="n">mesa_step_kwargs</span><span class="p">),</span>
+<span class="linenos">30</span>    <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">31</span>    <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepCEE</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">core_definition_H_fraction</span><span class="o">=</span> <span class="mf">0.1</span><span class="p">,)),</span>
+<span class="hll"><span class="linenos">32</span>    <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">my_new_StepSN</span><span class="p">,</span> <span class="p">{}),</span>
+</span><span class="linenos">33</span>    <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">34</span>    <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">35</span>    <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">TimingHooks</span><span class="p">,</span> <span class="p">{}),(</span><span class="n">StepNamesHooks</span><span class="p">,</span> <span class="p">{})]</span>
+<span class="linenos">36</span><span class="p">)</span>
+<span class="linenos">37</span>
+<span class="linenos">38</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;number_of_binaries&#39;</span> <span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+<span class="linenos">39</span>          <span class="s1">&#39;primary_mass_min&#39;</span> <span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+<span class="linenos">40</span>          <span class="s1">&#39;primary_mass_max&#39;</span> <span class="p">:</span> <span class="mi">127</span><span class="p">,</span>
+<span class="linenos">41</span>          <span class="s1">&#39;secondary_mass_scheme&#39;</span> <span class="p">:</span> <span class="s1">&#39;flat_mass_ratio&#39;</span><span class="p">,</span>
+<span class="linenos">42</span>          <span class="s1">&#39;secondary_mass_min&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="linenos">43</span>          <span class="s1">&#39;secondary_mass_max&#39;</span><span class="p">:</span> <span class="mi">127</span><span class="p">,</span>
+<span class="linenos">44</span>          <span class="s1">&#39;orbital_separation_min&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="linenos">45</span>          <span class="s1">&#39;orbital_separation_max&#39;</span><span class="p">:</span> <span class="mf">3e3</span><span class="p">,</span>
+<span class="linenos">46</span>          <span class="s1">&#39;eccentricity_scheme&#39;</span><span class="p">:</span><span class="s1">&#39;zero&#39;</span><span class="p">,</span>
+<span class="linenos">47</span>          <span class="s1">&#39;extra_columns&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;step_times&#39;</span><span class="p">,</span><span class="s1">&#39;step_names&#39;</span><span class="p">],</span>
+<span class="linenos">48</span>          <span class="s1">&#39;only_select_columns&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">,</span>
+<span class="linenos">49</span>                                   <span class="s1">&#39;orbital_period&#39;</span><span class="p">],</span>
+<span class="linenos">50</span>          <span class="s1">&#39;include_S1&#39;</span> <span class="p">:</span> <span class="kc">True</span> <span class="p">,</span>
+<span class="linenos">51</span>          <span class="s1">&#39;S1_kwargs&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;only_select_columns&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span>
+<span class="linenos">52</span>                                  <span class="s1">&#39;log_R&#39;</span><span class="p">,</span> <span class="s1">&#39;center_h1&#39;</span><span class="p">,</span><span class="s1">&#39;center_he4&#39;</span><span class="p">,</span>
+<span class="linenos">53</span>                                  <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;surface_he4&#39;</span><span class="p">,</span> <span class="s1">&#39;surface_h1&#39;</span><span class="p">,</span>
+<span class="linenos">54</span>                                  <span class="s1">&#39;lg_mdot&#39;</span><span class="p">],</span>
+<span class="linenos">55</span>                        <span class="s1">&#39;scalar_names&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">,</span> <span class="s1">&#39;SN_type&#39;</span><span class="p">]},</span>
+<span class="linenos">56</span>          <span class="s1">&#39;include_S2&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="linenos">57</span>          <span class="s1">&#39;S2_kwargs&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;only_select_columns&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span>
+<span class="linenos">58</span>                                  <span class="s1">&#39;log_R&#39;</span><span class="p">,</span> <span class="s1">&#39;center_h1&#39;</span><span class="p">,</span><span class="s1">&#39;center_he4&#39;</span><span class="p">,</span>
+<span class="linenos">59</span>                                  <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;surface_he4&#39;</span><span class="p">,</span> <span class="s1">&#39;surface_h1&#39;</span><span class="p">,</span>
+<span class="linenos">60</span>                                  <span class="s1">&#39;lg_mdot&#39;</span><span class="p">],</span>
+<span class="linenos">61</span>                        <span class="s1">&#39;scalar_names&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">,</span> <span class="s1">&#39;SN_type&#39;</span><span class="p">]},</span>
+<span class="linenos">62</span>          <span class="s1">&#39;star_formation&#39;</span> <span class="p">:</span> <span class="s1">&#39;burst&#39;</span><span class="p">,</span>
+<span class="linenos">63</span>          <span class="s1">&#39;max_simulation_time&#39;</span> <span class="p">:</span> <span class="mf">13.7e9</span><span class="p">,</span>
+<span class="linenos">64</span>         <span class="p">}</span>
+<span class="linenos">65</span>
+<span class="linenos">66</span><span class="n">pop</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="p">(</span>
+<span class="linenos">67</span>    <span class="n">population_properties</span><span class="o">=</span><span class="n">sim_prop</span><span class="p">,</span>
+<span class="linenos">68</span>    <span class="n">entropy</span> <span class="o">=</span> <span class="mi">12345678</span><span class="p">,</span>
+<span class="linenos">69</span>    <span class="o">**</span><span class="n">kwargs</span>
+<span class="linenos">70</span><span class="p">)</span>
+<span class="linenos">71</span>
+<span class="linenos">72</span><span class="n">pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">breakdown_to_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">from_hdf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After running the script above we can use the <code class="docutils literal notranslate"><span class="pre">BinaryPopulation.find_failed</span></code>
+instance method which returns a list of the failed binaries in the population.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">failed_binaries</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">find_failed</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">failed_binaries</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span> <span class="n">failed_binaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">traceback</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> instances that fail during evolution will have a
+<code class="docutils literal notranslate"><span class="pre">traceback</span></code> attribute showing the string representation (not the actual
+stack
+<a class="reference external" href="https://docs.python.org/3/library/traceback.html">traceback</a>):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
+  File &quot;/Users/kylerocha/Private/Github/POSYDON/posydon/popsyn/binarypopulation.py&quot;, line 153, in _safe_evolve
+    binary.evolve()
+  File &quot;/Users/kylerocha/Private/Github/POSYDON/posydon/binary_evol/binarystar.py&quot;, line 183, in evolve
+    self.run_step()
+  File &quot;/Users/kylerocha/Private/Github/POSYDON/posydon/binary_evol/binarystar.py&quot;, line 214, in run_step
+    next_step(self)
+  File &quot;&lt;ipython-input-1-3023b4d9482c&gt;&quot;, line 32, in __call__
+    raise ValueError(f&#39;{str(binary)} failed in my new step&#39;)
+ValueError: BinaryStar(detached, None, p=6820.50, S1=(BH,M=26.79), S2=(H-rich_Shell_H_burning,M=35.61)) failed in my new step
+</pre></div>
+</div>
+<p>If we want to go further we could also take the binary out of the population
+and evolve it. If using a <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">notebook</span></code>, you can enter the python
+debugger by raising the error again and using the magic command <code class="docutils literal notranslate"><span class="pre">%debug</span></code>
+in another cell.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">failing_binary</span> <span class="o">=</span> <span class="n">failed_binaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">failing_binary</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+
+<span class="n">failing_binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">debug</span>
+</pre></div>
+</div>
+<p>See the debugger <a class="reference external" href="https://docs.python.org/3/library/pdb.html#debugger-commands">commands</a> for help.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="custom_hooks.html" class="btn btn-neutral float-left" title="Evolutionary Hooks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../interpolation/IF-Interpolator/IFInterpolator.html" class="btn btn-neutral float-right" title="Initial-Final Interpolation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.5
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

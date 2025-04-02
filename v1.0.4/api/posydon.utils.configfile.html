@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.utils.configfile.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.utils.configfile"></span><p>Module for providing support for configuration files.</p>
+<p>The ConfigClass loads, edits and saves configuration files in JSON format. The
+data are encapsulated in a single dictionary mapping the variable names (keys)
+to their values.</p>
+<p>ConfigFile is an alternative to the <cite>configparse</cite> module in Python’s standard
+libray. While <cite>configparser</cite> can handle only string values and requires using
+sections (as in .ini files), <cite>ConfigFile</cite> is simpler and faster to use, while
+permits keys and values of any type that a Python dictionary permits.</p>
+<p>As it relies on the Python <cite>json</cite> module, an internal function is called when
+a values is not known to <cite>json</cite>, e.g. numpy arrays.</p>
+<p>Finally, the function <cite>parse_inifile</cite> is defined to help reading .ini files.</p>
+<p class="rubric">Examples</p>
+<ol class="arabic">
+<li><p>Saving a dictionary:</p>
+<dl class="simple">
+<dt>D = {“username”: “konstantinos”,</dt><dd><p>“nodes”: [1, 5, 3],
+“memory”: 1024,
+“code”: 42,
+“std.out”: “/data/output/std.out”}</p>
+</dd>
+</dl>
+<p>config_file = ConfigFile(“tmp.cfg”)
+config_file.update(D)
+config_file.save()</p>
+<p>OR</p>
+<p>my_config_file = ConfigFile()
+my_config_file.update(D)
+my_config_file.save(filename)</p>
+</li>
+<li><p>Loading and printing configuration:</p>
+<p>config = ConfigFile(filename)
+print(“Loaded a config file with {} entries.”.format(len(config)))
+print(“The code is”, config[“code”])
+print(config)</p>
+</li>
+</ol>
+<ol class="arabic" start="4">
+<li><p>Altering entries (and creating if non-existing):</p>
+<p>config[“machine”] = “supercomputer”
+config[“code”] = 24
+config[“H0 and error”] = (67.8, 0.9)</p>
+</li>
+</ol>
+<ol class="arabic" start="3">
+<li><p>Loading configuration from multiple files:</p>
+<p>config = CongfigFile(“config1.json”)
+config.load(“config2.json”)</p>
+<p>OR</p>
+<p>config.load(“config1.json”)
+config.load(“config2.json”)</p>
+<p>If the two loaded configuration files have common keys, then an Exception
+will occur. To allow updates, e.g. in the case of default configuration
+and user configuration overriding the former, then:</p>
+<p>config = ConfigFile(“default.cfg”)
+config.load(“user.cfg”, can_update=True)</p>
+</li>
+</ol>
+<ol class="arabic" start="5">
+<li><p>Iterating entries:</p>
+<p>config = ConfigFile(“my_conf.json”)</p>
+<p>print(“All configuration items:”)
+for key in config:</p>
+<blockquote>
+<div><p>print(”    {}: {}”.format(key, config[key]))</p>
+</div></blockquote>
+<p>print(“Ok, I’ll repeat that…:”)
+for key, value in config.items():</p>
+<blockquote>
+<div><p>print(”    {}: {}”.format(key, value))</p>
+</div></blockquote>
+</li>
+</ol>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.utils.configfile.ConfigFile">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.utils.configfile.</span></span><span class="sig-name descname"><span class="pre">ConfigFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#ConfigFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.ConfigFile" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class handling input, process and output of configurations.</p>
+<p>Initialize a ConfigFile with or without a path.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.utils.configfile.ConfigFile.deepcopy">
+<span class="sig-name descname"><span class="pre">deepcopy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#ConfigFile.deepcopy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.ConfigFile.deepcopy" title="Permalink to this definition"></a></dt>
+<dd><p>Make a deep copy of the object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.utils.configfile.ConfigFile.items">
+<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#ConfigFile.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.ConfigFile.items" title="Permalink to this definition"></a></dt>
+<dd><p>Return (key, value) tuples of the configuration dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.utils.configfile.ConfigFile.keys">
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#ConfigFile.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.ConfigFile.keys" title="Permalink to this definition"></a></dt>
+<dd><p>Return the keys of the configuration dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.utils.configfile.ConfigFile.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">can_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#ConfigFile.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.ConfigFile.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load the entries from a JSON file containing a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><em>None</em></a>) – The path of the JSON file. If <cite>None</cite> it will use the path which
+which the ConfigFile instance was initialized.</p></li>
+<li><p><strong>can_update</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, if a key already exists, it will get the new value.
+If False, an Exception is thrown.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.utils.configfile.ConfigFile.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#ConfigFile.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.ConfigFile.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save the configuration entries into a JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><em>None</em></a>) – Where to save. If None, save to the path from the initialization.</p></li>
+<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, it will overwrite if the path exists.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.utils.configfile.ConfigFile.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#ConfigFile.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.ConfigFile.update" title="Permalink to this definition"></a></dt>
+<dd><p>Create new or update entries from an external dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.utils.configfile.ConfigFile.values">
+<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#ConfigFile.values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.ConfigFile.values" title="Permalink to this definition"></a></dt>
+<dd><p>Return the values of the configuration dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.utils.configfile.VariableKey">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.utils.configfile.</span></span><span class="sig-name descname"><span class="pre">VariableKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#VariableKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.VariableKey" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A dictionary key which is a variable.</p>
+<p>&#64;ivar item: The variable AST object.</p>
+<p>Construct the object by giving a <cite>name</cite> to it.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.configfile.parse_inifile">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.configfile.</span></span><span class="sig-name descname"><span class="pre">parse_inifile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inifile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#parse_inifile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.parse_inifile" title="Permalink to this definition"></a></dt>
+<dd><p>Parse an inifile and return dicts of each section.</p>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
