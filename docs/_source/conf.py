@@ -68,7 +68,7 @@ github_tags.remove('2.0.0-dev')
 # some old versions require the dirty tag to be removed, because files need
 # to be added to compile correctly
 # only allow old tag to be dirty
-old_tags = ['v1.0.0', 'v1.0.4', 'v1.0.5', 'v2.0.0-pre1', 'v2.0.0-pre2']
+old_tags = ['1.0.0', '1.0.4', '1.0.5', '2.0.0-pre1', '2.0.0-pre2']
 if posydon_version.startswith('2.0.0-dev'):
     current_version = 'dev'
     posydon_version = 'development'
