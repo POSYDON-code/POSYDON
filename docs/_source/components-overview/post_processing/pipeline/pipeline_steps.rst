@@ -182,7 +182,7 @@ For this step the csv file is called :samp:`rerun.csv` to avoid too much
 confusion with other steps. It clearly has to run after a step, but it is 
 not a usual step itself. It requires the path to a :samp:`PSyGrid` object to 
 get the models from, the path to which the rerun should be stored (it creates 
-the :samp:`grid.csv` and the ini file needed to
+the :samp:`grid.csv` and the :samp:`ini` file needed to
 :ref:`setup a new run <mesa-grids-api>`), the grid type, the metallicity, the
 type of the rerun specifying the logic and changes, and the cluster name.
 
