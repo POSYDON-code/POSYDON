@@ -63,11 +63,13 @@ github_tags = get_github_tags()
 # 2.0.0-dev needs to be removed from the list and replaced with development
 github_tags.remove('2.0.0-dev')
 
-
+print(posydon_version)
 # get current version
 if posydon_version.startswith('2.0.0-dev'):
     current_version = 'dev'
     posydon_version = 'development'
+elif posydon_version.contains('dirty'):
+    current_version = posydon_version.split('+')[0]
 
 # absolute path to the documentation
 base_url = 'https://posydon.org/POSYDON'
