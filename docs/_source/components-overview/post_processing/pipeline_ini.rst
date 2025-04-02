@@ -1,13 +1,13 @@
 .. _pipeline_ini:
 
 ##############################################################
-Documentation of the ini file for the post-processing pipeline
+Documentation of the :samp:`ini` file for the post-processing pipeline
 ##############################################################
 
-Aim of the ini file
+Aim of the :samp:`ini` file
 ===================
 
-Using an ini file should help to keep an overview on large grid repositories
+Using an :samp:`ini` file should help to keep an overview on large grid repositories
 and ensures that all workflows will be setup the same way.
 
 There is a script to setup the pipeline, it takes one argument:
@@ -16,7 +16,7 @@ There is a script to setup the pipeline, it takes one argument:
 
     posydon-setup-pipeline PATH_TO_INI
 
-The content of the ini file is described :ref:`below <pipeline_ini_sections>`.
+The content of the :samp:`ini` file is described :ref:`below <pipeline_ini_sections>`.
 It will create two files for each step, plot or check:
 
 1. \*.csv
@@ -38,7 +38,7 @@ all :ref:`tasks <pipeline>`. Hence, you can run all
 
 .. _pipeline_ini_sections:
 
-Sections in the ini file
+Sections in the :samp:`ini` file
 ========================
 
 Account and slurm settings
@@ -106,7 +106,7 @@ Step sections
 
 The path of each grid will be joint as
 :samp:`PATH_TO_GRIDS/GRID_TYPE/VERSION/METALLICITY/GRID_SLICE`. The
-corresponding h5 files will have names according to
+corresponding :samp:`h5` files will have names according to
 :samp:`PATH_TO_GRIDS/GRID_TYPE/VERSION/METALLICITY/COMPRESSION/GRID_SLICE.h5`.
 All sections have common keywords:
 
@@ -139,7 +139,7 @@ that step:
        4  INTERPOLATION_METHODS         a list of the interpolator types which are trained
        4  CONTROL_GRIDS                 a list of lists of control grids for the :samp:`GRID_SLICES`; it need to have the same number of entries as the :samp:`GRID_SLICES`, to specify no control grid use an empty string
        R  RERUN_TYPE                    a defined rerun type
-       R  CLUSTER                       cluster name to get the appropriate ini file
+       R  CLUSTER                       cluster name to get the appropriate :samp:`ini` file
     ====  ============================  ===========
 
 Here is an example of all the :ref:`steps <pipeline_steps>`:
