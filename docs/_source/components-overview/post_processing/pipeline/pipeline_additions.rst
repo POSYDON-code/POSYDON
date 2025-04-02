@@ -13,9 +13,9 @@ Creating plots
 --------------
 
 Plots can be created after each step with the data available from the previous
-step. Hence, each corresponding csv file is called :samp:`step_?_plots.csv`,
+step. Hence, each corresponding :samp:`csv` file is called :samp:`step_?_plots.csv`,
 where the question mark will be the number of the step the plots take the final
-:samp:`PSyGrid` object from. All the csv files for plotting have the same
+:samp:`PSyGrid` object from. All the :samp:`csv` files for plotting have the same
 structure:
 
 .. code-block::
