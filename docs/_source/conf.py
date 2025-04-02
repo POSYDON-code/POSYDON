@@ -72,7 +72,7 @@ old_tags = ['1.0.0', '1.0.4', '1.0.5', '2.0.0-pre1', '2.0.0-pre2']
 if posydon_version.startswith('2.0.0-dev'):
     current_version = 'dev'
     posydon_version = 'development'
-elif 'dirty' in posydon_version and posydon_version in old_tags:
+elif 'dirty' in posydon_version and posydon_version.split('+')[0] in old_tags:
     current_version = posydon_version.split('+')[0]
 else:
     current_version = posydon_version
