@@ -27,8 +27,8 @@ copyright =f'{datetime.datetime.now().year}, Tassos Fragos'
 author = u'POSYDON Collaboration'
 
 # -- Multi-version configuration -------------------------------------------
+# INJECTION GRAB START
 # Get versions from github tags
-
 def get_github_tags():
     '''Get the tags from the github repository
     
@@ -96,6 +96,9 @@ html_context = {
 version = posydon_version
 # The full version, including alpha/beta/rc tags.
 release = posydon_version
+# INJECTION GRAB END
+# -- VERSION END ---------------------------------------------------------
+
 
 # -- Path setup ----------------------------------------------------------
 # Point towards the posydon source code directory
