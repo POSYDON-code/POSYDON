@@ -11,7 +11,6 @@ import sys
 import os
 import re
 import datetime
-import subprocess
 
 from PSphinxTheme import utils
 from posydon import __version__ as posydon_version
@@ -28,6 +27,8 @@ author = u'POSYDON Collaboration'
 
 # -- Multi-version configuration -------------------------------------------
 # INJECTION GRAB START
+import subprocess
+
 # Get versions from github tags
 def get_github_tags():
     '''Get the tags from the github repository
