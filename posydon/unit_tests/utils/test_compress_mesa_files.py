@@ -179,7 +179,7 @@ class TestFunctions:
             totest.set_up_test(test_args)
         pass
 
-    def test_compress_dir(self, tmp_path):
+    def test_compress_dir(self, tmp_path, capsys):
         # missing argument
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'args'"):
@@ -209,6 +209,29 @@ class TestFunctions:
         test_args = totest.argparse.Namespace(mesa_dir=MESA_dir,\
                                               verbose=False, debug=False)
         totest.compress_dir(test_args)
+        # examples: with verbose and debug output
+        MESA_dir = get_MESA_dir(tmp_path, 2)
+        test_args = totest.argparse.Namespace(mesa_dir=MESA_dir,\
+                                              verbose=True, debug=True)
+        totest.compress_dir(test_args)
+        captured_out = capsys.readouterr().out.split('\n')
+        assert "remove" in captured_out[0]
+        assert "core dump files in" in captured_out[0]
+        assert "directories of" in captured_out[0]
+        assert "MESA runs" in captured_out[0]
+        assert "compress" in captured_out[1]
+        assert "files in" in captured_out[1]
+        assert "directories of" in captured_out[1]
+        assert "MESA runs" in captured_out[1]
+        assert "compress:" in captured_out[2]
+        assert "/MESA_data_index2/" in captured_out[2]
+        assert "Compressed MESA tracks" in captured_out[-3]
+        assert "Original size" in captured_out[-2]
+        assert "| Compressed size" in captured_out[-2]
+        assert "" == captured_out[-1]
+        # examples: with core dump files to remove
+        # examples: with link
+        # fail to remove/compress
         pass
 
     def test_compress_MESA(self, monkeypatch):
