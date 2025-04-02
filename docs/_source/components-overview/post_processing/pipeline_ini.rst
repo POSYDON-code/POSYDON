@@ -58,16 +58,18 @@ example to show the supported key words:
         EMAIL = 'matthias.kruckow@unige.ch'
         GROUP = 'GL_S_Astro_POSYDON'
 
-The last one :samp:`GROUP` is a bit special. If it is set, ownership of all the files
-created by the pipeline will be assigned to :samp:`GROUP`. This is especially helpful if more than one
+The last one :samp:`GROUP` is a bit special. If it is set, ownership 
+of all the files created by the pipeline will be assigned to :samp:`GROUP`. 
+This is especially helpful if more than one
 user is making changes to the data set.
 
 General pipeline settings
 -------------------------
 
-The next section outlines general information about the pipeline. The :samp:`PATH` specifies, where
-you would like to get the pipeline files being created. The :samp:`VERBOSE`
-option will be used for the creation of the pipeline files and during the run
+The next section outlines general information about the pipeline. The :samp:`PATH` 
+specifies, where you would like to get the pipeline files being created. The 
+:samp:`VERBOSE` option will be used for the creation of the pipeline files and 
+during the run
 of the pipeline.
 
 Finally, we have switches to turn on (:samp:`True`) and off (:samp:`False`)
