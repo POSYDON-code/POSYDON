@@ -4,7 +4,7 @@
 Pipeline steps
 ##############
 The post-processing pipeline is divided into several steps which build 
-on each other. Each step will take a csv file as input. The name of this 
+on each other. Each step will take a :samp:`csv` file as input. The name of this 
 file determines which pipeline step should be performed.
 
 The script to run the pipeline takes four arguments:
@@ -14,8 +14,8 @@ The script to run the pipeline takes four arguments:
     posydon-run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE DATA_ID VERBOSE
 
 1. [path] The path to the grids main directory (currently not used)
-2. [path] The path to the csv file
-3. [int] An index indicating the data entry to read from the csv file
+2. [path] The path to the :samp:`csv` file
+3. [int] An index indicating the data entry to read from the :samp:`csv` file
 4. [int] Whether one wants verbose output (1) or not (0)
 
 .. note::
@@ -178,7 +178,7 @@ fix arises. Additionally, before exporting a rerun, the logic for how to select
 a system to be included in the rerun and what should be changed needs to be 
 implemented first.
 
-For this step the csv file is called :samp:`rerun.csv` to avoid too much
+For this step the :samp:`csv` file is called :samp:`rerun.csv` to avoid too much
 confusion with other steps. It clearly has to run after a step, but it is 
 not a usual step itself. It requires the path to a :samp:`PSyGrid` object to 
 get the models from, the path to which the rerun should be stored (it creates 
