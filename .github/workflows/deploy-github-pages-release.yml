@@ -68,7 +68,7 @@ jobs:
         # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF 
         # THe _template folder and versioning code.
         # get the _template folder and move it out of the POSYDON folder
-        cp -r docs/_source/_template $GITHUB_WORKSPACE
+        cp -r $PATH_TO_POSYDON/docs/_source/_template $GITHUB_WORKSPACE
 
         # get the injection code from the release
         injection_code=$(awk '/# INJECTION GRAB START/,/# INJECTION GRAB END/' "${PATH_TO_POSYDON}/docs/_source/conf.py")
@@ -112,6 +112,7 @@ jobs:
         target_branch: gh-pages
         build_dir: _build/
         history: true
+        dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
@@ -176,7 +177,7 @@ jobs:
         # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF 
         # THe _template folder and versioning code.
         # get the _template folder and move it out of the POSYDON folder
-        cp -r docs/_source/_template $GITHUB_WORKSPACE
+        cp -r $PATH_TO_POSYDON/docs/_source/_template $GITHUB_WORKSPACE
 
         # get the injection code from the release
         injection_code=$(awk '/# INJECTION GRAB START/,/# INJECTION GRAB END/' "${PATH_TO_POSYDON}/docs/_source/conf.py")
@@ -225,6 +226,7 @@ jobs:
         target_branch: gh-pages
         build_dir: _build/
         history: true
+        dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_WORKSPACE: ${{ github.workspace }}
