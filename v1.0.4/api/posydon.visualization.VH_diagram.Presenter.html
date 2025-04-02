@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.visualization.VH_diagram.Presenter.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.visualization.VH_diagram.Presenter"></span><p>Data visualization in VH diagram.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.Presenter">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">Presenter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#Presenter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.Presenter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Charged to setup window and format data before calling display funcs.</p>
+<p>Initialize a Presenter instance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.Presenter.PATH_TO_DRAWS">
+<span class="sig-name descname"><span class="pre">PATH_TO_DRAWS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'/Users/max/Documents/projects/POSYDON_documentation_build/POSYDON/posydon/visualization/VH_diagram/draws'</span></em><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.Presenter.PATH_TO_DRAWS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.Presenter.PATH_TO_SCREENS">
+<span class="sig-name descname"><span class="pre">PATH_TO_SCREENS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'/Users/max/Documents/projects/POSYDON_documentation_build/POSYDON/docs/screens'</span></em><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.Presenter.PATH_TO_SCREENS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.Presenter.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#Presenter.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.Presenter.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.Presenter.present">
+<span class="sig-name descname"><span class="pre">present</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PresenterMode.DETAILED</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#Presenter.present"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.Presenter.present" title="Permalink to this definition"></a></dt>
+<dd><p>Preset the binary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.Presenter.screen">
+<span class="sig-name descname"><span class="pre">screen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#Presenter.screen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.Presenter.screen" title="Permalink to this definition"></a></dt>
+<dd><p>Take a screen of the displayed window.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.SimplifiedInfo">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">SimplifiedInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#SimplifiedInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.SimplifiedInfo" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Simple class to store an before/after info and simplfy dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state_before</strong> (<em>any value</em>) – Value for the older state.</p></li>
+<li><p><strong>state_after</strong> (<em>any value</em>) – Value for the younger state.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.SimplifiedInfo.state_before">
+<span class="sig-name descname"><span class="pre">state_before</span></span><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.SimplifiedInfo.state_before" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.SimplifiedInfo.state_after">
+<span class="sig-name descname"><span class="pre">state_after</span></span><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.SimplifiedInfo.state_after" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Initialize a SimplifiedInfo instance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.calculate_separation">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">calculate_separation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#calculate_separation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.calculate_separation" title="Permalink to this definition"></a></dt>
+<dd><p>For each row in dataframe, calculate the separation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Complete dataframe without ‘separation’.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of calculated separations, len(array) == nb rows.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Array of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.combine_simplified_data">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">combine_simplified_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_to</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_from</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#combine_simplified_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.combine_simplified_data" title="Permalink to this definition"></a></dt>
+<dd><p>Combine 2 dictionaries of SimplifiedInfo.</p>
+<p>data_to[].state_after take the value of data_from[].state_before.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_to</strong> (<em>dictionary of SimplifiedInfo</em>) – Informations who will be udpated.</p></li>
+<li><p><strong>data_from</strong> (<em>dictionary of SimplifiedInfo</em>) – Informations who will be combined.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.equal_with_epsilon">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">equal_with_epsilon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#equal_with_epsilon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.equal_with_epsilon" title="Permalink to this definition"></a></dt>
+<dd><p>Check if 2 numbers are equal up to epsilon.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nb_1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>double</em>) – Value 1 to compare.</p></li>
+<li><p><strong>nb_2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>double</em>) – Value 2 compare.</p></li>
+<li><p><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>double</em>) – Difference allowed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if numbers are equal up to epsilon, False if not.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.file_exist">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">file_exist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#file_exist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.file_exist" title="Permalink to this definition"></a></dt>
+<dd><p>Check if file exists.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.get_event_state_filename">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">get_event_state_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left_star_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_star_state</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#get_event_state_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.get_event_state_filename" title="Permalink to this definition"></a></dt>
+<dd><p>Get the name of the file illustrating the event with the 2 given star.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left_star_state</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – State’s name of the left star.</p></li>
+<li><p><strong>event_state</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – State’s name of the event.</p></li>
+<li><p><strong>right_star_state</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a>) – State’s name of the right star.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Name of the file illustrating this complete state.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.get_max_distance">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">get_max_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#get_max_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.get_max_distance" title="Permalink to this definition"></a></dt>
+<dd><p>Get max distance from a dictionary of SimplifiedInfo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dictionnary of SimplifiedInfo</em>) – Dictionnary, full of SimplifiedInfo, containing all infos</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Max distance of this row, accroding to before/after state</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.get_star_state_filename">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">get_star_state_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#get_star_state_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.get_star_state_filename" title="Permalink to this definition"></a></dt>
+<dd><p>Get the name of the file illustring the state of one star.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – State name of the star.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Name of the file illustrating this state.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.to_megayears">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">to_megayears</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#to_megayears"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.to_megayears" title="Permalink to this definition"></a></dt>
+<dd><p>Convert yr to Myr.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.VH_diagram.Presenter.to_simplified_data">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.VH_diagram.Presenter.</span></span><span class="sig-name descname"><span class="pre">to_simplified_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VH_diagram/Presenter.html#to_simplified_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VH_diagram.Presenter.to_simplified_data" title="Permalink to this definition"></a></dt>
+<dd><p>Convert dictionnary of SimplifiedInfo with values as <cite>.state_before</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>row</strong> (<em>dictionnary</em>) – Dictionnary of value to convert.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dictionnary of SimplifiedInfo containing the value as
+SimplifiedInfo.state_before.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionnary of SimplifiedInfo</p>
+</dd>
+</dl>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

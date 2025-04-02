@@ -1,0 +1,791 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.utils.gridutils &mdash; posydon 2.0.0-pre1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4893b70a"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.utils.gridutils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.utils.gridutils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Various utility functions used for the manipulating grid data.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">clight</span><span class="p">,</span> <span class="n">Msun</span><span class="p">,</span> <span class="n">Rsun</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">standard_cgrav</span> <span class="k">as</span> <span class="n">cgrav</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">secyer</span> <span class="k">as</span> <span class="n">secyear</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.limits_thresholds</span><span class="w"> </span><span class="kn">import</span> <span class="n">LG_MTRANSFER_RATE_THRESHOLD</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="join_lists">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.join_lists">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">join_lists</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a joint list of A and B without repetitions and keeping the order.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    A : iterable</span>
+<span class="sd">        The baseline list to be extended.</span>
+<span class="sd">    B : iterable</span>
+<span class="sd">        The second list from which additional elements will be appened.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        The joint list by merging A and B.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">A</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+    <span class="n">A_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">B</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">A_set</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="read_MESA_data_file">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.read_MESA_data_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_MESA_data_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read specific columns from a MESA output file to an array.</span>
+
+<span class="sd">    Note that this function also works with `.gz` files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The path to the file.</span>
+<span class="sd">    columns : list of strings</span>
+<span class="sd">        The list of names of the columns to be returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    array or None</span>
+<span class="sd">        The array containing the MESA data, or `None` if path was `None`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                               <span class="n">usecols</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+                                               <span class="n">invalid_raise</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Problems with reading file &quot;</span><span class="o">+</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;MissingFilesWarning&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="read_EEP_data_file">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.read_EEP_data_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_EEP_data_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an EEP file (can be `.gz`) - similar to `read_MESA_data_file()`.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">usecols</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">invalid_raise</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Problems with reading file &quot;</span><span class="o">+</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;MissingFilesWarning&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="fix_He_core">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.fix_He_core">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fix_He_core</span><span class="p">(</span><span class="n">history</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make He core mass/radius at least equal to CO core mass/radius.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">history</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+        <span class="k">if</span> <span class="s2">&quot;he_core_mass&quot;</span> <span class="ow">in</span> <span class="n">columns</span> <span class="ow">and</span> <span class="s2">&quot;co_core_mass&quot;</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="n">history</span><span class="p">[</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">history</span><span class="p">[</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">],</span>
+                                                 <span class="n">history</span><span class="p">[</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">&quot;he_core_radius&quot;</span> <span class="ow">in</span> <span class="n">columns</span> <span class="ow">and</span> <span class="s2">&quot;co_core_radius&quot;</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="n">history</span><span class="p">[</span><span class="s2">&quot;he_core_radius&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">history</span><span class="p">[</span><span class="s2">&quot;he_core_radius&quot;</span><span class="p">],</span>
+                                                   <span class="n">history</span><span class="p">[</span><span class="s2">&quot;co_core_radius&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">history</span></div>
+
+
+
+<div class="viewcode-block" id="add_field">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.add_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_field</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">descr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new array that is like `a`, but has additional fields.</span>
+
+<span class="sd">    The contents of `a` are copied over to the appropriate fields in the new</span>
+<span class="sd">    array, whereas the new fields are uninitialized. The arguments are not</span>
+<span class="sd">    modified.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : structured numpy array</span>
+<span class="sd">        The base array.</span>
+<span class="sd">    descr : str</span>
+<span class="sd">        A numpy type description of the new fields.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
+<span class="sd">        Description of returned object.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; sa = numpy.array([(1, &#39;Foo&#39;), (2, &#39;Bar&#39;)],</span>
+<span class="sd">                         dtype=[(&#39;id&#39;, int), (&#39;name&#39;, &#39;S3&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; sa.dtype.descr == numpy.dtype([(&#39;id&#39;, int), (&#39;name&#39;, &#39;S3&#39;)])</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; sb = add_field(sa, [(&#39;score&#39;, float)])</span>
+<span class="sd">    &gt;&gt;&gt; sb.dtype.descr == numpy.dtype([(&#39;id&#39;, int), (&#39;name&#39;, &#39;S3&#39;),</span>
+<span class="sd">                                       (&#39;score&#39;, float)])</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; numpy.all(sa[&#39;id&#39;] == sb[&#39;id&#39;])</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; numpy.all(sa[&#39;name&#39;] == sb[&#39;name&#39;])</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`A&#39; must be a structured numpy array&quot;</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">descr</span> <span class="o">+</span> <span class="n">descr</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="n">b</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">b</span></div>
+
+
+
+<div class="viewcode-block" id="get_cell_edges">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.get_cell_edges">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cell_edges</span><span class="p">(</span><span class="n">grid_x</span><span class="p">,</span> <span class="n">grid_y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the edges of grid cells to be used for plotting with pcolormesh.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_x : array</span>
+<span class="sd">        Center values of grid cells for X.</span>
+<span class="sd">    grid_y : array</span>
+<span class="sd">        Center values of grid cells for Y.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    array</span>
+<span class="sd">        X grid values.</span>
+<span class="sd">    array</span>
+<span class="sd">        Y grid values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">q</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">grid_x</span><span class="p">,</span> <span class="n">grid_y</span>
+
+    <span class="n">shift</span> <span class="o">=</span> <span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">new_q</span> <span class="o">=</span> <span class="n">q</span><span class="o">-</span><span class="n">shift</span>
+
+    <span class="n">last</span> <span class="o">=</span> <span class="n">q</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">shift</span>
+    <span class="n">new_q</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_q</span><span class="p">)</span>
+    <span class="n">new_q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+
+    <span class="n">shift</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">new_p</span> <span class="o">=</span> <span class="n">p</span><span class="o">-</span><span class="n">shift</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">shift</span>
+    <span class="n">new_p</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_p</span><span class="p">)</span>
+    <span class="n">new_p</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+
+    <span class="c1"># make mesh</span>
+    <span class="n">QQ</span><span class="p">,</span> <span class="n">PP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">new_q</span><span class="p">,</span> <span class="n">new_p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">QQ</span><span class="p">,</span> <span class="n">PP</span></div>
+
+
+
+<div class="viewcode-block" id="find_nearest">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.find_nearest">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_nearest</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the element of `array` closest to the value `val`.&quot;&quot;&quot;</span>
+    <span class="n">nearest_idx</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">val</span><span class="o">-</span><span class="n">array</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">array</span><span class="p">[</span><span class="n">nearest_idx</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="find_index_nearest_neighbour">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.find_index_nearest_neighbour">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_index_nearest_neighbour</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the index of `array` closest to the value.&quot;&quot;&quot;</span>
+    <span class="n">idex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">array</span> <span class="o">-</span> <span class="n">value</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">idex</span></div>
+
+
+
+<div class="viewcode-block" id="get_final_proposed_points">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.get_final_proposed_points">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_final_proposed_points</span><span class="p">(</span><span class="n">proposed_x</span><span class="p">,</span> <span class="n">grid_x</span><span class="p">,</span> <span class="n">proposed_y</span><span class="p">,</span> <span class="n">grid_y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map proposed simulation points to the center of a correspoding cell.</span>
+
+<span class="sd">    Only one mapped value is returned if more than one proposed point falls</span>
+<span class="sd">    within one cell.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    proposed_x : array</span>
+<span class="sd">        Proposed points for X.</span>
+<span class="sd">    grid_x : array</span>
+<span class="sd">        The values of X at the center of the grid cells.</span>
+<span class="sd">    proposed_y : array</span>
+<span class="sd">        Proposed points for Y.</span>
+<span class="sd">    grid_y : type</span>
+<span class="sd">        The values of Y at the center of the grid cells.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    array</span>
+<span class="sd">        Mapped X values.</span>
+<span class="sd">    array</span>
+<span class="sd">        Mapped Y values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mapped_x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">mapped_y</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">proposed_x</span><span class="p">):</span>
+        <span class="n">mapped_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">find_nearest</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">grid_x</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">proposed_y</span><span class="p">):</span>
+        <span class="n">mapped_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">find_nearest</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">grid_y</span><span class="p">))</span>
+
+    <span class="c1"># filtering: I only want one unique mapped value in each cell</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mapped_x</span><span class="p">,</span> <span class="n">mapped_y</span><span class="p">])</span>
+    <span class="n">unique_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">mapped_x</span><span class="p">,</span> <span class="n">mapped_y</span> <span class="o">=</span> <span class="n">unique_coord</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">unique_coord</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of unique mapped coordinates:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mapped_x</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">mapped_x</span><span class="p">,</span> <span class="n">mapped_y</span></div>
+
+
+
+<div class="viewcode-block" id="T_merger_P">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.T_merger_P">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">T_merger_P</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merger time given initial orbital period and masses of binary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    P : float</span>
+<span class="sd">        Orbital period (days).</span>
+<span class="sd">    m1 : float</span>
+<span class="sd">        Mass of first star (Msun).</span>
+<span class="sd">    m2 : float</span>
+<span class="sd">        Mass of second star (Msun).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Merger time (Gyr)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">T_merger_a</span><span class="p">(</span><span class="n">kepler3_a</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">),</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="beta_gw">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.beta_gw">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">beta_gw</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate the &quot;beta&quot; (equation 5.9) from Peters (1964).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    m1 : float</span>
+<span class="sd">        Mass of the first star.</span>
+<span class="sd">    m2 : type</span>
+<span class="sd">        Mass of the second star.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Peters&#39; beta in cgs units.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mf">64.</span> <span class="o">/</span> <span class="mf">5.</span> <span class="o">*</span> <span class="n">cgrav</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="n">clight</span><span class="o">**</span><span class="mi">5</span> <span class="o">*</span> <span class="n">m1</span> <span class="o">*</span> <span class="n">m2</span> <span class="o">*</span> <span class="p">(</span><span class="n">m1</span> <span class="o">+</span> <span class="n">m2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="kepler3_a">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.kepler3_a">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">kepler3_a</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the semimajor axis of a binary from its period and masses.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    P : float</span>
+<span class="sd">        Orbital period (days).</span>
+<span class="sd">    m1 : float</span>
+<span class="sd">        Mass of first star.</span>
+<span class="sd">    m2 : type</span>
+<span class="sd">        Mass of second star.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Semi-major axis (Rsun) using Kepler&#39;s third law.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">P</span> <span class="o">*</span> <span class="mf">24.0</span> <span class="o">*</span> <span class="mf">3600.0</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span>
+            <span class="o">*</span> <span class="n">cgrav</span> <span class="o">*</span> <span class="p">(</span><span class="n">m1</span> <span class="o">+</span> <span class="n">m2</span><span class="p">)</span> <span class="o">*</span> <span class="n">Msun</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">Rsun</span></div>
+
+
+
+<div class="viewcode-block" id="T_merger_a">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.T_merger_a">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">T_merger_a</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merger time given initial orbital separation and masses of binary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : float</span>
+<span class="sd">        Orbital separation (Rsun).</span>
+<span class="sd">    m1 : float</span>
+<span class="sd">        Mass of first star (Msun).</span>
+<span class="sd">    m2 : float</span>
+<span class="sd">        Mass of second star (Msun).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Merger time (Gyr) following Peters (1964), eq. (5.10).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">Rsun</span><span class="p">)</span><span class="o">**</span><span class="mi">4</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.</span> <span class="o">*</span> <span class="n">beta_gw</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span> <span class="o">*</span> <span class="n">Msun</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">secyear</span> <span class="o">*</span> <span class="mf">1.0e9</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="convert_output_to_table">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.convert_output_to_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_output_to_table</span><span class="p">(</span>
+    <span class="n">output_file</span><span class="p">,</span> <span class="n">binary_history_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">star1_history_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">star2_history_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="s2">&quot;CE_flag&quot;</span><span class="p">,</span> <span class="s2">&quot;M_1f(Msun)&quot;</span><span class="p">,</span> <span class="s2">&quot;M_2f(Msun)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Porb_f(d)&quot;</span><span class="p">,</span> <span class="s2">&quot;tmerge(Gyr)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;log_L_1&quot;</span><span class="p">,</span> <span class="s2">&quot;log_T_1&quot;</span><span class="p">,</span> <span class="s2">&quot;He_core_1(Msun)&quot;</span><span class="p">,</span> <span class="s2">&quot;C_core_1(Msun)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;log_L_2&quot;</span><span class="p">,</span> <span class="s2">&quot;log_T_2&quot;</span><span class="p">,</span> <span class="s2">&quot;He_core_2(Msun)&quot;</span><span class="p">,</span> <span class="s2">&quot;C_core_2(Msun)&quot;</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert output of a run, to a pandas dataframe.</span>
+
+<span class="sd">    Note that this function also works with `.gz` files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    output_file : str</span>
+<span class="sd">        Path to MESA output file.</span>
+<span class="sd">    binary_history_file : str</span>
+<span class="sd">        Path to binary history data.</span>
+<span class="sd">    star1_history_file : str</span>
+<span class="sd">        Path to history data for star1.</span>
+<span class="sd">    star2_history_file : str</span>
+<span class="sd">        Path to history data for star1.</span>
+<span class="sd">    column_names : list of str</span>
+<span class="sd">        Which columns to return.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas dataframe</span>
+<span class="sd">        The table containing the requested columns from the run&#39;s histories.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># read out.txt file (simulation terminal output)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File </span><span class="si">{0}</span><span class="s2"> does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_file</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span><span class="o">.</span><span class="n">st_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The output file does not have any data.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">binary_history_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">binary_history</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">binary_history_file</span><span class="p">,</span>
+                                                    <span class="n">skip_header</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;You have not supplied a binary history file to parse. &quot;</span>
+              <span class="s2">&quot;This will cause all binary history columns to be dashes.&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;MissingFilesWarning&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">star1_history_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">star1_history</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">star1_history_file</span><span class="p">,</span>
+                                                   <span class="n">skip_header</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;You have not supplied a star1 history file to parse. &quot;</span>
+              <span class="s2">&quot;This will cause all star1 history columns to be dashes.&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;MissingFilesWarning&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">star2_history_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">star2_history</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">star2_history_file</span><span class="p">,</span>
+                                                   <span class="n">skip_header</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;You have not supplied a star2 history file to parse. &quot;</span>
+              <span class="s2">&quot;This will cause all star2 history columns to be dashes.&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;MissingFilesWarning&quot;</span><span class="p">)</span>
+
+    <span class="c1"># TODO: is this necessary to be done with `popen`?</span>
+    <span class="c1"># outdata = os.popen(&#39;cat &#39; + output_file).read()</span>
+    <span class="k">if</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">outdata</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">outdata</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="c1"># Checking for individual terminating conditions</span>
+
+    <span class="c1"># carbon depletion</span>
+    <span class="n">depleted_c</span> <span class="o">=</span> <span class="n">outdata</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Terminate due to primary depleting carbon&#39;</span><span class="p">)</span>
+    <span class="c1"># evolved into contact</span>
+    <span class="n">contact</span> <span class="o">=</span> <span class="n">outdata</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Terminate because accretor &quot;</span>
+                           <span class="s2">&quot;(r-rl)/rl &gt; accretor_overflow_terminate&quot;</span><span class="p">)</span>
+    <span class="c1"># CE happened</span>
+    <span class="n">CE_flag</span> <span class="o">=</span> <span class="n">outdata</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;TURNING ON CE&quot;</span><span class="p">)</span>
+    <span class="c1"># initial RLOF overflow, too compact orbit</span>
+    <span class="n">overflow</span> <span class="o">=</span> <span class="n">outdata</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;model is overflowing at ZAMS&quot;</span><span class="p">)</span>
+    <span class="c1"># CE merger</span>
+    <span class="n">CE_merge</span> <span class="o">=</span> <span class="n">outdata</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;below CE_xa_diff_to_terminate&quot;</span><span class="p">)</span>
+    <span class="c1"># CE merger</span>
+    <span class="n">CE_merge2</span> <span class="o">=</span> <span class="n">outdata</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;CE_terminate_when_core_overflows&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">overflow</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">values</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ZAMS_RLOF&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">CE_flag</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;CE_flag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;CE_flag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">contact</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">CE_flag</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;contact&quot;</span>
+        <span class="k">elif</span> <span class="p">((</span><span class="n">CE_flag</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">CE_merge</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">CE_merge2</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+                                   <span class="ow">or</span> <span class="n">contact</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;CE_merger&quot;</span>
+
+        <span class="k">elif</span> <span class="n">depleted_c</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">star1_history_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">hist</span> <span class="o">=</span> <span class="n">star1_history</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;log_L_1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;log_L&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;log_T_1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;He_core_1(Msun)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;C_core_1(Msun)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;c_core_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">star2_history_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">hist</span> <span class="o">=</span> <span class="n">star2_history</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;log_L_2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;log_L&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;log_T_2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;He_core_2(Msun)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;C_core_2(Msun)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;c_core_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">binary_history_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">tmerge</span> <span class="o">=</span> <span class="n">T_merger_P</span><span class="p">(</span>
+                    <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;period_days&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">max_lg_mtransfer_rate</span> <span class="o">=</span> <span class="n">binary_history</span><span class="p">[</span>
+                    <span class="s2">&quot;lg_mtransfer_rate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;M_1f(Msun)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;M_2f(Msun)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;Porb_f(d)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;period_days&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;tmerge(Gyr)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmerge</span>
+
+            <span class="k">if</span> <span class="n">max_lg_mtransfer_rate</span> <span class="o">&lt;</span> <span class="n">LG_MTRANSFER_RATE_THRESHOLD</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;no_interaction&quot;</span>
+            <span class="k">elif</span> <span class="n">CE_flag</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tmerge</span> <span class="o">&gt;</span> <span class="mf">13.8</span><span class="p">:</span>
+                    <span class="n">values</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;CE_ejection&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">values</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;CE_ejection_m&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tmerge</span> <span class="o">&gt;</span> <span class="mf">13.8</span><span class="p">:</span>
+                    <span class="n">values</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stable_MT_to_wide_binary&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">values</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stable_MT_to_merger&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
+
+    <span class="c1"># If there is any reason that a column cannot be reported based on</span>
+    <span class="c1"># the MESA simulation we fill this value with a &quot;-&quot;</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">values</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="clean_inlist_file">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.clean_inlist_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_inlist_file</span><span class="p">(</span><span class="n">inlist</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get dictionary of possible parameters/values from the default inlist.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inlist : str</span>
+<span class="sd">        Path to inlist file.</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        TODO</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary of parameters and values from inlist.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">section</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;section&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inlist</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="c1"># clean inlist into nice list</span>
+        <span class="n">param_value_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="c1"># strip away all the comments and whitespace, etc</span>
+            <span class="n">param_and_value</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;!&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="c1"># check that this line actually has a parameter and value par</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">param_and_value</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;=&#39;</span> <span class="ow">in</span> <span class="n">param_and_value</span>
+                                       <span class="ow">or</span> <span class="s1">&#39;&amp;&#39;</span> <span class="ow">in</span> <span class="n">param_and_value</span><span class="p">)):</span>
+                <span class="n">param_value_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_and_value</span><span class="p">)</span>
+
+    <span class="c1"># does this inlist have multiple sections?</span>
+    <span class="n">dict_of_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">param_value_list</span> <span class="k">if</span> <span class="s1">&#39;&amp;&#39;</span> <span class="ow">in</span> <span class="n">k</span><span class="p">}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dict_of_parameters</span><span class="p">:</span>
+        <span class="c1"># mesa default files do not have sections,</span>
+        <span class="c1"># because controls and jobs are in separate files</span>
+        <span class="n">dict_of_parameters</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">param_value_list</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;.&#39;&quot;</span><span class="p">])}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># probably other people are sending the same inlist with</span>
+        <span class="c1"># both job and controls sections</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">param_value_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;&amp;&#39;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">current_key</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;.&#39;&quot;</span><span class="p">]):</span>
+                <span class="n">dict_of_parameters</span><span class="p">[</span><span class="n">current_key</span><span class="p">][</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> \
+                    <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">dict_of_parameters</span></div>
+
+
+<div class="viewcode-block" id="get_new_grid_name">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.gridutils.get_new_grid_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_new_grid_name</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">create_missing_directories</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the name of a new grid slice based on the path and the compression.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to grid slice data.</span>
+<span class="sd">    compression : str</span>
+<span class="sd">        Compression value. (Directory to put the new grid slice in.)</span>
+<span class="sd">    create_missing_directories : bool</span>
+<span class="sd">        Flag to create missing directories.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    grid_output</span>
+<span class="sd">        File name for the new grid slice.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grid_path</span><span class="p">,</span> <span class="n">grid_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">grid_path</span><span class="p">,</span> <span class="n">compression</span><span class="p">)</span>
+    <span class="n">grid_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">grid_name</span><span class="o">+</span><span class="s1">&#39;.h5&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">create_missing_directories</span><span class="p">:</span>
+        <span class="c1"># check that LITE/ or ORIGINAL/ directory exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">output_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grid_output</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.0-pre1
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

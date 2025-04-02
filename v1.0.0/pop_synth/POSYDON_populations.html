@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Running populations using POSYDON &mdash; posydon 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Running a POSYDON population synthesis" href="pop_synth.html" />
+    <link rel="prev" title="The PSyGrid Object" href="../PSyGrid/PSyGrid.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Running populations using POSYDON</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#run-a-basic-population">1. Run a basic population</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#all-the-required-posydon-imports">All the required POSYDON imports:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#define-the-posydon-evolutionary-steps">Define the POSYDON evolutionary steps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initializing-the-population-object">Initializing the population object</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#customize-the-script-to-run-more-complicated-populations">2. Customize the script to run more complicated populations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#define-the-posydon-steps-and-their-parameters">Define the POSYDON steps and their parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#define-the-properties-of-the-initial-generated-population">Define the properties of the initial generated population</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Initializing the population object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#evolve-it-and-covert-to-pandas-dataframe">Evolve it! And covert to pandas dataframe</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#identify-double-compact-objects">3. Identify double compact objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#identify-the-x-ray-binaries">4. Identify the X-ray Binaries</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Running populations using POSYDON</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/pop_synth/POSYDON_populations.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="running-populations-using-posydon">
+<h1>Running populations using POSYDON<a class="headerlink" href="#running-populations-using-posydon" title="Permalink to this headline"></a></h1>
+<section id="run-a-basic-population">
+<h2>1. Run a basic population<a class="headerlink" href="#run-a-basic-population" title="Permalink to this headline"></a></h2>
+<p>To run the most basic population with all the pre-set POSYDON defaults,
+you only need the following few lines of code. By default the code
+runs 100 initial binaries of a constant star formation for a duration of
+Hubble time (13.7e9 years).</p>
+<section id="all-the-required-posydon-imports">
+<h3>All the required POSYDON imports:<a class="headerlink" href="#all-the-required-posydon-imports" title="Permalink to this headline"></a></h3>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">posydon.popsyn.binarypopulation</span> <span class="kn">import</span> <span class="n">BinaryPopulation</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.simulationproperties</span> <span class="kn">import</span> <span class="n">SimulationProperties</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.flow_chart</span> <span class="kn">import</span> <span class="n">flow_chart</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.CE.step_CEE</span> <span class="kn">import</span> <span class="n">StepCEE</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.SN.step_SN</span> <span class="kn">import</span> <span class="n">StepSN</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.step_end</span> <span class="kn">import</span> <span class="n">step_end</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.MESA.step_mesa</span> <span class="kn">import</span> <span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">CO_HMS_RLO_step</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.DT.step_detached</span> <span class="kn">import</span> <span class="n">detached_step</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.DT.double_CO</span> <span class="kn">import</span> <span class="n">DoubleCO</span>
+</pre></div>
+</div>
+</section>
+<section id="define-the-posydon-evolutionary-steps">
+<h3>Define the POSYDON evolutionary steps<a class="headerlink" href="#define-the-posydon-evolutionary-steps" title="Permalink to this headline"></a></h3>
+<p>We should define all the evolutionary steps involved. By default, the parameters
+for these steps are pre-defined. Then, <code class="docutils literal notranslate"><span class="pre">SimulationProperties(**sim_kwargs)</span></code>
+initializes the population object with the steps defined, in <code class="docutils literal notranslate"><span class="pre">sim_prop</span></code>. This
+initialization step can take a few seconds as it requires loading large data
+files.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">MS_MS_step</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepCEE</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepSN</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="p">{})</span>
+<span class="p">)</span>
+
+<span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="initializing-the-population-object">
+<h3>Initializing the population object<a class="headerlink" href="#initializing-the-population-object" title="Permalink to this headline"></a></h3>
+<p>We invoke the population class <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code>, which is the
+population class with the function <code class="docutils literal notranslate"><span class="pre">evolve</span></code> that does the work of
+evolving the binaries. The population class takes in the simulation
+properties to initialize the population.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="p">(</span><span class="n">population_properties</span><span class="o">=</span><span class="n">sim_prop</span><span class="p">)</span>
+
+<span class="n">pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This evolved population can be converted to a pandas dataframe. The
+dataframe helps us in studying the evolved population by utilizing the
+benefits of the functionalities available for managing dataframes.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DF</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="customize-the-script-to-run-more-complicated-populations">
+<h2>2. Customize the script to run more complicated populations<a class="headerlink" href="#customize-the-script-to-run-more-complicated-populations" title="Permalink to this headline"></a></h2>
+<p>Now, for most science cases, the default POSYDON parameters would need
+to be changed. Below we show an example of how to run a population of
+1000 initial binaries with constant star-formation for a duration of
+Hubble time.</p>
+<section id="define-the-posydon-steps-and-their-parameters">
+<h3>Define the POSYDON steps and their parameters<a class="headerlink" href="#define-the-posydon-steps-and-their-parameters" title="Permalink to this headline"></a></h3>
+<p>If there is a need to change a parameter in the POSYDON steps that would
+be done in the simulation properties. For example, to change the
+<code class="docutils literal notranslate"><span class="pre">interpolation_method</span></code> for the steps that evolve the binaries
+according to the MESA grids, we introduce a new string
+<code class="docutils literal notranslate"><span class="pre">interp_str</span> <span class="pre">=</span> <span class="pre">'nearest_neighbour'</span></code> and add this string to the
+parameter <code class="docutils literal notranslate"><span class="pre">interpolation_method</span></code> for the steps <code class="docutils literal notranslate"><span class="pre">step_HMS_HMS</span></code>,
+<code class="docutils literal notranslate"><span class="pre">step_CO_HeMS</span></code>, and <code class="docutils literal notranslate"><span class="pre">step_CO_HMS_RLO</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">interp_str</span> <span class="o">=</span> <span class="s1">&#39;nearest_neighbour&#39;</span>
+
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">MS_MS_step</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">interpolation_method</span><span class="o">=</span><span class="n">interp_str</span><span class="p">)),</span>
+    <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">interpolation_method</span><span class="o">=</span><span class="n">interp_str</span><span class="p">)),</span>
+    <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">interpolation_method</span><span class="o">=</span><span class="n">interp_str</span><span class="p">)),</span>
+    <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepCEE</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepSN</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="p">)</span>
+
+<span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="define-the-properties-of-the-initial-generated-population">
+<h3>Define the properties of the initial generated population<a class="headerlink" href="#define-the-properties-of-the-initial-generated-population" title="Permalink to this headline"></a></h3>
+<p>If some parameters of the initial population are required to be changed,
+they are changed as follows in <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>. Here we change the
+<code class="docutils literal notranslate"><span class="pre">number_of_binaries</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;number_of_binaries&#39;</span> <span class="p">:</span> <span class="mi">1000</span>
+         <span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h3>Initializing the population object<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
+<p>As before, we invoke the population class, this time with the parameters
+of the initial population that we want to include in <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="p">(</span><span class="n">population_properties</span><span class="o">=</span><span class="n">sim_prop</span><span class="p">,</span>
+                       <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="evolve-it-and-covert-to-pandas-dataframe">
+<h3>Evolve it! And covert to pandas dataframe<a class="headerlink" href="#evolve-it-and-covert-to-pandas-dataframe" title="Permalink to this headline"></a></h3>
+<p>The boolean parameter <code class="docutils literal notranslate"><span class="pre">tqdm</span></code> shows the progress bar.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">breakdown_to_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">DF</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To save the population as an HDF5 file use the <code class="docutils literal notranslate"><span class="pre">save</span></code> function.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;population_1000.h5&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span> <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="identify-double-compact-objects">
+<h2>3. Identify double compact objects<a class="headerlink" href="#identify-double-compact-objects" title="Permalink to this headline"></a></h2>
+<p>Now, the evolved population has the complete evolution of all binaries. We
+only require the last row from all the binaries as we want to study the
+“current” properties of the double compact objects. The example is to
+search for binaries not <code class="docutils literal notranslate"><span class="pre">disrupted</span></code> in the end, in which <code class="docutils literal notranslate"><span class="pre">star_1</span></code> is
+a BH and <code class="docutils literal notranslate"><span class="pre">star_2</span></code> is an NS.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;event&#39;</span><span class="p">,</span><span class="s1">&#39;S1_state&#39;</span><span class="p">,</span><span class="s1">&#39;S2_state&#39;</span><span class="p">,</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span><span class="s1">&#39;eccentricity&#39;</span><span class="p">]</span>
+<span class="n">DF</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;NS&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;END&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;disrupted&#39;</span><span class="p">)</span>
+       <span class="p">,</span><span class="n">output_cols</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>To look at the evolution of one individual binary, choose proper
+quantities to display:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index_BHNS</span> <span class="o">=</span> <span class="n">DF</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;NS&#39;</span><span class="p">)</span><span class="o">&amp;</span>
+                    <span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;END&#39;</span><span class="p">)</span><span class="o">&amp;</span>
+                    <span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;disrupted&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span>
+<span class="n">DF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index_BHNS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">output_cols</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>To identify the BHNS binaries that specifically went through a common envelope
+phase with a BH and a donor:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DF_BHNS</span> <span class="o">=</span> <span class="n">DF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index_BHNS</span><span class="p">]</span>
+<span class="n">index_BHNS_CE</span> <span class="o">=</span> <span class="n">DF_BHNS</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">DF_BHNS</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;oCE2&quot;</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DF_BHNS</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index_BHNS_CE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">output_cols</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="identify-the-x-ray-binaries">
+<h2>4. Identify the X-ray Binaries<a class="headerlink" href="#identify-the-x-ray-binaries" title="Permalink to this headline"></a></h2>
+<p>In order to investigate the XRBs from this population, we need to look
+into the originally run population again. Again, we only require the
+last row from all the binaries as we want to study the “current”
+properties of the XRBs. Also, we want to pick out binaries where only
+one of the two stars at the end is a compact object (NS or BH), and the
+other star is definitively not a compact object (not even a white
+dwarf).</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DF_end</span> <span class="o">=</span> <span class="n">DF</span><span class="p">[</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;END&#39;</span><span class="p">]</span>
+<span class="n">star1_is_CO</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span><span class="n">DF_end</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NS&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">DF_end</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;BH&quot;</span><span class="p">)</span> <span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">DF_end</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;WD&quot;</span><span class="p">)</span>
+<span class="n">star2_is_CO</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span><span class="n">DF_end</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NS&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">DF_end</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;BH&quot;</span><span class="p">)</span> <span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">DF_end</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;WD&quot;</span><span class="p">)</span>
+<span class="n">exactly_one_CO</span> <span class="o">=</span> <span class="p">(</span><span class="n">star1_is_CO</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">star2_is_CO</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="o">~</span><span class="n">star1_is_CO</span> <span class="o">&amp;</span> <span class="n">star2_is_CO</span><span class="p">)</span>
+<span class="n">only_one_CO</span> <span class="o">=</span> <span class="n">DF_end</span><span class="p">[</span><span class="n">exactly_one_CO</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Looking at the final <code class="docutils literal notranslate"><span class="pre">state</span></code> of all the binaries, we can figure out
+the ones we want to keep. For XRBs, we are interested in states
+<code class="docutils literal notranslate"><span class="pre">detached</span></code> (corresponding to wind accretion) and <code class="docutils literal notranslate"><span class="pre">RLO1</span></code>/<code class="docutils literal notranslate"><span class="pre">RLO2</span></code>
+(corresponding to Roche-lobe overflow).</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">only_one_CO</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Most of our XRB RLO states would be <code class="docutils literal notranslate"><span class="pre">RLO2</span></code> (mass-transferred from
+<code class="docutils literal notranslate"><span class="pre">star_2</span></code> to <code class="docutils literal notranslate"><span class="pre">star_1</span></code>), because the primary (<code class="docutils literal notranslate"><span class="pre">star_1</span></code>) is always
+the initially more massive star which would evolve first and form a
+compact object. However, there might a rare case where <code class="docutils literal notranslate"><span class="pre">star_1</span></code>
+transferred mass to <code class="docutils literal notranslate"><span class="pre">star_2</span></code> making it more massive than <code class="docutils literal notranslate"><span class="pre">star_1</span></code>,
+leading to a compact object for <code class="docutils literal notranslate"><span class="pre">star_2</span></code>. Therefore, to be sure, we
+look for both <code class="docutils literal notranslate"><span class="pre">RLO1</span></code> (mass-transferred from <code class="docutils literal notranslate"><span class="pre">star_1</span></code> to <code class="docutils literal notranslate"><span class="pre">star_2</span></code>)
+and <code class="docutils literal notranslate"><span class="pre">RLO2</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DF_XRB</span> <span class="o">=</span> <span class="n">only_one_CO</span><span class="p">[(</span><span class="n">only_one_CO</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;detached&#39;</span><span class="p">)</span> <span class="o">|</span>
+                     <span class="p">(</span><span class="n">only_one_CO</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;RLO1&#39;</span><span class="p">)</span> <span class="o">|</span>
+                     <span class="p">(</span><span class="n">only_one_CO</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;RLO2&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Now we have our subset of binaries from the total population. To see
+them as XRBs, we need some information about their X-ray luminosities.
+We can use some simple functions to calculate the corresponding
+accretion efficiencies and luminosities.</p>
+<p>Importing some packages needed for these calculations.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">posydon.utils.common_functions</span> <span class="kn">import</span> <span class="n">CO_radius</span>
+<span class="kn">import</span> <span class="nn">posydon.utils.constants</span> <span class="k">as</span> <span class="nn">const</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<p>Since the accretor can be <code class="docutils literal notranslate"><span class="pre">star_1</span></code> or <code class="docutils literal notranslate"><span class="pre">star_2</span></code>, we need to do a
+check to see which star is the compact object. We calculate the
+accretion luminosity (<code class="docutils literal notranslate"><span class="pre">Lacc</span></code>) using the relation
+<code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">*</span> <span class="pre">mass_accretion_rate</span> <span class="pre">*</span> <span class="pre">light_speed^2</span></code>, where <code class="docutils literal notranslate"><span class="pre">eta</span></code> is the efficiency
+at which gravitational potential mass is converted to luminosity.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">Lx</span><span class="p">(</span><span class="n">S1_state</span><span class="p">,</span> <span class="n">S1_mass</span><span class="p">,</span> <span class="n">S1_lg_mdot</span><span class="p">,</span><span class="n">S2_state</span><span class="p">,</span> <span class="n">S2_mass</span><span class="p">,</span> <span class="n">S2_lg_mdot</span><span class="p">,</span> <span class="n">lg_mtransfer_rate</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">lg_mtransfer_rate</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">S1_state</span> <span class="o">==</span> <span class="s1">&#39;NS&#39;</span><span class="p">:</span>
+            <span class="n">eta</span> <span class="o">=</span> <span class="mf">0.1</span>
+            <span class="n">acc_lg_mdot</span> <span class="o">=</span> <span class="n">S1_lg_mdot</span>
+        <span class="k">elif</span> <span class="n">S1_state</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span><span class="p">:</span>
+            <span class="n">eta</span> <span class="o">=</span> <span class="mf">0.057</span>
+            <span class="n">acc_lg_mdot</span> <span class="o">=</span> <span class="n">S1_lg_mdot</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CO??&quot;</span><span class="p">,</span> <span class="n">S1_state</span><span class="p">,</span> <span class="n">S2_state</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">acc_lg_mdot</span> <span class="o">=</span> <span class="n">lg_mtransfer_rate</span>
+        <span class="k">if</span> <span class="n">S1_state</span> <span class="o">==</span> <span class="s1">&#39;NS&#39;</span><span class="p">:</span>
+            <span class="n">eta</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="k">elif</span> <span class="n">S1_state</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span><span class="p">:</span>
+            <span class="n">eta</span> <span class="o">=</span> <span class="mf">0.057</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CO??&quot;</span><span class="p">,</span> <span class="n">S1_state</span><span class="p">,</span> <span class="n">S2_state</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">eta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="n">acc_lg_mdot</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">secyer</span><span class="p">)</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">clight</span><span class="o">**</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>We define a new column <code class="docutils literal notranslate"><span class="pre">Lacc</span></code> which stands for the accretion
+luminosity and calculate it using the function defined above.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DF_XRB</span><span class="p">[</span><span class="s1">&#39;Lacc&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">DF_XRB</span><span class="p">[[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_lg_mdot&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;S2_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_lg_mdot&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Lx</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">],</span>
+                                                          <span class="n">x</span><span class="p">[</span><span class="s1">&#39;S1_lg_mdot&#39;</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">],</span>
+                                                          <span class="n">x</span><span class="p">[</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;S2_lg_mdot&#39;</span><span class="p">],</span>
+                                                          <span class="n">x</span><span class="p">[</span><span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s look at the properties of the XRBs, we can use
+<code class="docutils literal notranslate"><span class="pre">pd.set_option('display.max_columns',</span> <span class="pre">None)</span></code> to expand the columns.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1">#pd.set_option(&#39;display.max_columns&#39;, None)</span>
+
+<span class="n">DF_XRB</span><span class="p">[[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;event&#39;</span><span class="p">,</span><span class="s1">&#39;S1_state&#39;</span><span class="p">,</span><span class="s1">&#39;S2_state&#39;</span><span class="p">,</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">]]</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../PSyGrid/PSyGrid.html" class="btn btn-neutral float-left" title="The PSyGrid Object" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pop_synth.html" class="btn btn-neutral float-right" title="Running a POSYDON population synthesis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Running a POSYDON population synthesis &mdash; posydon 1.0.5 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Custom population synthesis" href="custom_flow.html" />
+    <link rel="prev" title="Running populations using POSYDON" href="POSYDON_populations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.5
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Running a POSYDON population synthesis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/pop_synth/pop_synth.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="running-a-posydon-population-synthesis">
+<span id="pop-synth"></span><h1>Running a POSYDON population synthesis<a class="headerlink" href="#running-a-posydon-population-synthesis" title="Permalink to this headline"></a></h1>
+<p>NOTE: this is a temporary tutorial until we have a proper API</p>
+<p>This script list all customisable option of a POSYDON population synthesis run.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">writefile</span> <span class="n">script</span><span class="o">.</span><span class="n">py</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span> <span class="nn">posydon.popsyn.binarypopulation</span> <span class="kn">import</span> <span class="n">BinaryPopulation</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol</span> <span class="kn">import</span> <span class="n">SimulationProperties</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.flow_chart</span> <span class="kn">import</span> <span class="n">flow_chart</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.MESA.step_mesa</span> <span class="kn">import</span> <span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">CO_HMS_RLO_step</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.DT.step_detached</span> <span class="kn">import</span> <span class="n">detached_step</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.CE.step_CEE</span> <span class="kn">import</span> <span class="n">StepCEE</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.SN.step_SN</span> <span class="kn">import</span> <span class="n">StepSN</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.DT.double_CO</span> <span class="kn">import</span> <span class="n">DoubleCO</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.step_end</span> <span class="kn">import</span> <span class="n">step_end</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.simulationproperties</span> <span class="kn">import</span> <span class="n">StepNamesHooks</span>
+
+<span class="c1"># STEP CUSTOMISATION</span>
+<span class="n">MESA_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">interpolation_path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># found by default</span>
+    <span class="n">interpolation_filename</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># found by default</span>
+    <span class="n">interpolation_method</span> <span class="o">=</span> <span class="s1">&#39;linear3c_kNN&#39;</span><span class="p">,</span> <span class="c1"># &#39;nearest_neighbour&#39; &#39;linear3c_kNN&#39; &#39;1NN_1NN&#39;</span>
+    <span class="n">save_initial_conditions</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># only for interpolation_method=&#39;nearest_neighbour&#39;</span>
+    <span class="n">track_interpolation</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># True False</span>
+    <span class="n">stop_method</span> <span class="o">=</span> <span class="s1">&#39;stop_at_max_time&#39;</span><span class="p">,</span> <span class="c1"># &#39;stop_at_end&#39; &#39;stop_at_max_time&#39; &#39;stop_at_condition&#39;</span>
+    <span class="n">stop_star</span> <span class="o">=</span> <span class="s1">&#39;star_1&#39;</span><span class="p">,</span> <span class="c1"># only for stop_method=&#39;stop_at_condition&#39; &#39;star_1&#39; &#39;star_2&#39;</span>
+    <span class="n">stop_var_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># only for stop_method=&#39;stop_at_condition&#39; str</span>
+    <span class="n">stop_value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># only for stop_method=&#39;stop_at_condition&#39; float</span>
+    <span class="n">stop_interpolate</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># True False</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># True False</span>
+<span class="p">)</span>
+
+<span class="n">DETACHED_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">matching_method</span> <span class="o">=</span> <span class="s1">&#39;minimize&#39;</span><span class="p">,</span> <span class="c1">#&#39;minimize&#39; &#39;root&#39;</span>
+    <span class="n">do_wind_loss</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># True False</span>
+    <span class="n">do_tides</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># True False</span>
+    <span class="n">do_gravitational_radiation</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># True False</span>
+    <span class="n">do_magnetic_braking</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># True False</span>
+    <span class="n">do_stellar_evolution_and_spin_from_winds</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># True False</span>
+    <span class="n">RLO_orbit_at_orbit_with_same_am</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># True False</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># True False</span>
+<span class="p">)</span>
+
+<span class="n">CE_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">prescription</span><span class="o">=</span><span class="s1">&#39;alpha-lambda&#39;</span><span class="p">,</span> <span class="c1"># &#39;alpha-lambda&#39;</span>
+    <span class="n">common_envelope_efficiency</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="c1"># float in (0, inf)</span>
+    <span class="n">common_envelope_option_for_lambda</span><span class="o">=</span><span class="s1">&#39;lambda_from_grid_final_values&#39;</span><span class="p">,</span> <span class="c1"># (1) &#39;default_lambda&#39;, (2) &#39;lambda_from_grid_final_values&#39;,</span>
+                                                  <span class="c1"># (3) &#39;lambda_from_profile_gravitational&#39;,</span>
+                                                  <span class="c1"># (4) &#39;lambda_from_profile_gravitational_plus_internal&#39;,</span>
+                                                  <span class="c1"># (5) &#39;lambda_from_profile_gravitational_plus_internal_minus_recombination&#39;</span>
+    <span class="n">common_envelope_lambda_default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="c1"># float in (0, inf) used only for option (1)</span>
+    <span class="n">common_envelope_option_for_HG_star</span><span class="o">=</span><span class="s2">&quot;optimistic&quot;</span><span class="p">,</span> <span class="c1"># &#39;optimistic&#39;, &#39;pessimistic&#39;</span>
+    <span class="n">common_envelope_alpha_thermal</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="c1"># float in (0, inf) used only for option for (4), (5)</span>
+    <span class="n">core_definition_H_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="c1"># 0.01, 0.1, 0.3</span>
+    <span class="n">core_definition_He_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="c1"># 0.1</span>
+    <span class="n">CEE_tolerance_err</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="c1"># float (0, inf)</span>
+    <span class="n">common_envelope_option_after_succ_CEE</span> <span class="o">=</span> <span class="s1">&#39;core_not_replaced_noMT&#39;</span><span class="p">,</span> <span class="c1"># &#39;core_not_replaced_noMT&#39; &#39;core_replaced_noMT&#39; &#39;core_not_replaced_stableMT&#39; &#39;core_not_replaced_windloss&#39;</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># True False</span>
+<span class="p">)</span>
+
+<span class="n">SN_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">mechanism</span><span class="o">=</span><span class="s1">&#39;Patton&amp;Sukhbold20-engine&#39;</span><span class="p">,</span> <span class="c1"># &#39;direct&#39;, Fryer+12-rapid&#39;, &#39;Fryer+12-delayed&#39;, &#39;Sukhbold+16-engine&#39;, &#39;Patton&amp;Sukhbold20-engine&#39;</span>
+    <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;N20&#39;</span><span class="p">,</span> <span class="c1"># &#39;N20&#39; for &#39;Sukhbold+16-engine&#39;, &#39;Patton&amp;Sukhbold20-engine&#39; or None for the others</span>
+    <span class="n">PISN</span><span class="o">=</span><span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span> <span class="c1"># None, &quot;Marchant+19&quot;</span>
+    <span class="n">ECSN</span><span class="o">=</span><span class="s2">&quot;Podsiadlowksi+04&quot;</span><span class="p">,</span> <span class="c1"># &quot;Tauris+15&quot;, &quot;Podsiadlowksi+04&quot;</span>
+    <span class="n">max_neutrino_mass_loss</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="n">kick</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="c1"># True, False</span>
+    <span class="n">kick_normalisation</span><span class="o">=</span><span class="s1">&#39;one_over_mass&#39;</span><span class="p">,</span> <span class="c1"># &quot;one_minus_fallback&quot;, &quot;one_over_mass&quot;, &quot;NS_one_minus_fallback_BH_one&quot;, &quot;one&quot;, &quot;zero&quot;</span>
+    <span class="n">sigma_kick_CCSN_NS</span><span class="o">=</span><span class="mf">265.0</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="n">sigma_kick_CCSN_BH</span><span class="o">=</span><span class="mf">265.0</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="n">sigma_kick_ECSN</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="n">max_NS_mass</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span>  <span class="c1"># float (0,inf)</span>
+    <span class="n">use_interp_values</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># True, False</span>
+    <span class="n">use_profiles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># True, False</span>
+    <span class="n">use_core_masses</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># True, False</span>
+    <span class="n">approx_at_he_depletion</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="c1"># True, False</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># True False</span>
+<span class="p">)</span>
+
+<span class="n">DCO_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">n_o_steps_interval</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">END_STEP</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># FLOW CHART CONFIGURATION</span>
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="n">DETACHED_STEP</span><span class="p">),</span>
+    <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepCEE</span><span class="p">,</span> <span class="n">CE_STEP</span><span class="p">),</span>
+    <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepSN</span><span class="p">,</span> <span class="n">SN_STEP</span><span class="p">),</span>
+    <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="n">DCO_STEP</span><span class="p">),</span>
+    <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="n">END_STEP</span><span class="p">),</span>
+    <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">StepNamesHooks</span><span class="p">,</span> <span class="p">{})]</span>
+<span class="p">)</span>
+
+<span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+
+<span class="c1"># SIMULATION CONFIGURATION</span>
+<span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;./batches/&#39;</span><span class="p">,</span>
+    <span class="n">optimize_ram</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">ram_per_cpu</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span> <span class="c1"># limit ram usage at 3GB</span>
+    <span class="n">dump_rate</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="c1"># limit batch size</span>
+
+    <span class="n">number_of_binaries</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="c1"># int</span>
+    <span class="n">star_formation</span><span class="o">=</span><span class="s1">&#39;burst&#39;</span><span class="p">,</span> <span class="c1"># &#39;constant&#39; &#39;burst&#39; &#39;custom_linear&#39; &#39;custom_log10&#39; &#39;custom_linear_histogram&#39; &#39;custom_log10_histogram&#39;</span>
+    <span class="n">max_simulation_time</span><span class="o">=</span><span class="mf">13.8e9</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+
+    <span class="n">primary_mass_scheme</span><span class="o">=</span><span class="s1">&#39;Kroupa2001&#39;</span><span class="p">,</span> <span class="c1"># &#39;Salpeter&#39;, &#39;Kroupa1993&#39;, &#39;Kroupa2001&#39;</span>
+    <span class="n">primary_mass_min</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="c1"># float (0,130)</span>
+    <span class="n">primary_mass_max</span><span class="o">=</span><span class="mf">150.</span><span class="p">,</span> <span class="c1"># float (0,130)</span>
+    <span class="n">secondary_mass_scheme</span><span class="o">=</span><span class="s1">&#39;flat_mass_ratio&#39;</span><span class="p">,</span> <span class="c1"># &#39;flat_mass_ratio&#39;, &#39;q=1&#39;</span>
+    <span class="n">secondary_mass_min</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="c1"># float (0,130)</span>
+    <span class="n">secondary_mass_max</span><span class="o">=</span><span class="mf">150.</span><span class="p">,</span> <span class="c1"># float (0,130)</span>
+    <span class="n">orbital_scheme</span> <span class="o">=</span> <span class="s1">&#39;period&#39;</span><span class="p">,</span> <span class="c1"># &#39;separation&#39;, &#39;period&#39;</span>
+    <span class="n">orbital_period_scheme</span> <span class="o">=</span> <span class="s1">&#39;Sana+12_period_extended&#39;</span><span class="p">,</span> <span class="c1"># used only for orbital_scheme = &#39;period&#39;</span>
+    <span class="n">orbital_period_min</span> <span class="o">=</span> <span class="mf">0.75</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="n">orbital_period_max</span> <span class="o">=</span> <span class="mf">6000.</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="c1">#orbital_separation_scheme=&#39;log_uniform&#39;, # used only for orbital_scheme = &#39;separation&#39;, &#39;log_uniform&#39;, &#39;log_normal&#39;</span>
+    <span class="c1">#orbital_separation_min=5., # float (0,inf)</span>
+    <span class="c1">#orbital_separation_max=1e5, # float (0,inf)</span>
+    <span class="c1">#log_orbital_separation_mean=None, # float (0,inf) used only for orbital_separation_scheme =&#39;log_normal&#39;</span>
+    <span class="c1">#log_orbital_separation_sigma=None, # float (0,inf) used only for orbital_separation_scheme =&#39;log_normal&#39;</span>
+    <span class="n">eccentricity_sche</span><span class="o">=</span><span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="c1"># &#39;zero&#39; &#39;thermal&#39; &#39;uniform&#39;</span>
+
+    <span class="c1"># IMPORT CUSTOM HOOKS</span>
+    <span class="n">extra_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;step_names&#39;</span><span class="p">],</span> <span class="c1"># &#39;step_times&#39; with from posydon.binary_evol.simulationproperties import TimingHooks</span>
+
+    <span class="c1"># LIST BINARY PROPERTIES TO SAVE</span>
+    <span class="n">only_select_columns</span><span class="o">=</span><span class="p">[</span>
+                        <span class="s1">&#39;state&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;event&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                        <span class="c1">#&#39;separation&#39;,</span>
+                        <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span>
+                        <span class="c1">#&#39;V_sys&#39;,</span>
+                        <span class="c1">#&#39;rl_relative_overflow_1&#39;,</span>
+                        <span class="c1">#&#39;rl_relative_overflow_2&#39;,</span>
+                        <span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">,</span>
+                        <span class="c1">#&#39;mass_transfer_case&#39;,</span>
+                        <span class="c1">#&#39;trap_radius&#39;,</span>
+                        <span class="c1">#&#39;acc_radius&#39;,</span>
+                        <span class="c1">#&#39;t_sync_rad_1&#39;,</span>
+                        <span class="c1">#&#39;t_sync_conv_1&#39;,</span>
+                        <span class="c1">#&#39;t_sync_rad_2&#39;,</span>
+                        <span class="c1">#&#39;t_sync_conv_2&#39;,</span>
+                        <span class="c1">#&#39;nearest_neighbour_distance&#39;,</span>
+                        <span class="p">],</span>
+
+    <span class="c1"># LIST STAR PROPERTIES TO SAVE</span>
+    <span class="n">include_S1</span><span class="o">=</span><span class="kc">True</span> <span class="p">,</span> <span class="c1"># True, False</span>
+    <span class="n">S1_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">only_select_columns</span><span class="o">=</span><span class="p">[</span>
+                                        <span class="s1">&#39;state&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;metallicity&#39;,</span>
+                                        <span class="s1">&#39;mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;log_R&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;log_L&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;lg_mdot&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;lg_system_mdot&#39;,</span>
+                                        <span class="c1">#&#39;lg_wind_mdot&#39;,</span>
+                                        <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;c_core_mass&#39;,</span>
+                                        <span class="c1">#&#39;c_core_radius&#39;,</span>
+                                        <span class="c1">#&#39;o_core_mass&#39;,</span>
+                                        <span class="c1">#&#39;o_core_radius&#39;,</span>
+                                        <span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;co_core_radius&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;center_h1&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;center_he4&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;center_c12&#39;,</span>
+                                        <span class="c1">#&#39;center_n14&#39;,</span>
+                                        <span class="c1">#&#39;center_o16&#39;,</span>
+                                        <span class="s1">&#39;surface_h1&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;surface_he4&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;surface_c12&#39;,</span>
+                                        <span class="c1">#&#39;surface_n14&#39;,</span>
+                                        <span class="c1">#&#39;surface_o16&#39;,</span>
+                                        <span class="c1">#&#39;log_LH&#39;,</span>
+                                        <span class="c1">#&#39;log_LHe&#39;,</span>
+                                        <span class="c1">#&#39;log_LZ&#39;,</span>
+                                        <span class="c1">#&#39;log_Lnuc&#39;,</span>
+                                        <span class="c1">#&#39;c12_c12&#39;,</span>
+                                        <span class="c1">#&#39;center_gamma&#39;,</span>
+                                        <span class="c1">#&#39;avg_c_in_c_core&#39;,</span>
+                                        <span class="c1">#&#39;surf_avg_omega&#39;,</span>
+                                        <span class="s1">&#39;surf_avg_omega_div_omega_crit&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;total_moment_of_inertia&#39;,</span>
+                                        <span class="c1">#&#39;log_total_angular_momentum&#39;,</span>
+                                        <span class="s1">&#39;spin&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;conv_env_top_mass&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_bot_mass&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_top_radius&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_bot_radius&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_g&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_l_b&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_l_t&#39;,</span>
+                                        <span class="c1">#&#39;envelope_binding_energy&#39;,</span>
+                                        <span class="c1">#&#39;mass_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;thickness_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;radius_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_1cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_10cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_30cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_pure_He_star_10cent&#39;,</span>
+                                        <span class="c1">#&#39;profile&#39;,</span>
+                                        <span class="p">],</span>
+                   <span class="n">scalar_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;SN_type&#39;</span><span class="p">,</span>
+                                 <span class="c1">#&#39;f_fb&#39;,</span>
+                                 <span class="c1">#&#39;spin_orbit_tilt&#39;,</span>
+                                <span class="p">]),</span>
+
+    <span class="c1"># LIST STAR PROPERTIES TO SAVE</span>
+    <span class="n">include_S2</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="c1"># True, False</span>
+    <span class="n">S2_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">only_select_columns</span><span class="o">=</span><span class="p">[</span>
+                                        <span class="s1">&#39;state&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;metallicity&#39;,</span>
+                                        <span class="s1">&#39;mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;log_R&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;log_L&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;lg_mdot&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;lg_system_mdot&#39;,</span>
+                                        <span class="c1">#&#39;lg_wind_mdot&#39;,</span>
+                                        <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;c_core_mass&#39;,</span>
+                                        <span class="c1">#&#39;c_core_radius&#39;,</span>
+                                        <span class="c1">#&#39;o_core_mass&#39;,</span>
+                                        <span class="c1">#&#39;o_core_radius&#39;,</span>
+                                        <span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;co_core_radius&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;center_h1&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;center_he4&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;center_c12&#39;,</span>
+                                        <span class="c1">#&#39;center_n14&#39;,</span>
+                                        <span class="c1">#&#39;center_o16&#39;,</span>
+                                        <span class="s1">&#39;surface_h1&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;surface_he4&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;surface_c12&#39;,</span>
+                                        <span class="c1">#&#39;surface_n14&#39;,</span>
+                                        <span class="c1">#&#39;surface_o16&#39;,</span>
+                                        <span class="c1">#&#39;log_LH&#39;,</span>
+                                        <span class="c1">#&#39;log_LHe&#39;,</span>
+                                        <span class="c1">#&#39;log_LZ&#39;,</span>
+                                        <span class="c1">#&#39;log_Lnuc&#39;,</span>
+                                        <span class="c1">#&#39;c12_c12&#39;,</span>
+                                        <span class="c1">#&#39;center_gamma&#39;,</span>
+                                        <span class="c1">#&#39;avg_c_in_c_core&#39;,</span>
+                                        <span class="c1">#&#39;surf_avg_omega&#39;,</span>
+                                        <span class="s1">&#39;surf_avg_omega_div_omega_crit&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;total_moment_of_inertia&#39;,</span>
+                                        <span class="c1">#&#39;log_total_angular_momentum&#39;,</span>
+                                        <span class="s1">&#39;spin&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;conv_env_top_mass&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_bot_mass&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_top_radius&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_bot_radius&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_g&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_l_b&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_l_t&#39;,</span>
+                                        <span class="c1">#&#39;envelope_binding_energy&#39;,</span>
+                                        <span class="c1">#&#39;mass_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;thickness_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;radius_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_1cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_10cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_30cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_pure_He_star_10cent&#39;,</span>
+                                        <span class="c1">#&#39;profile&#39;,</span>
+                                        <span class="p">],</span>
+                   <span class="n">scalar_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;SN_type&#39;</span><span class="p">,</span>
+                                 <span class="c1">#&#39;f_fb&#39;,</span>
+                                 <span class="c1">#&#39;spin_orbit_tilt&#39;,</span>
+                                <span class="p">]),</span>
+<span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">run_simulation</span><span class="p">(</span><span class="n">sim_prop</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_MPI</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">use_MPI</span><span class="p">:</span>
+        <span class="c1"># create binaries</span>
+        <span class="n">pop</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="p">(</span><span class="n">entropy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                               <span class="n">population_properties</span><span class="o">=</span><span class="n">sim_prop</span><span class="p">,</span>
+                               <span class="n">file_name</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+                               <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+        <span class="n">rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
+
+        <span class="c1"># create binaries</span>
+        <span class="n">pop</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="p">(</span><span class="n">entropy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">population_properties</span><span class="o">=</span><span class="n">sim_prop</span><span class="p">,</span>
+                                   <span class="n">file_name</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+                                   <span class="n">comm</span><span class="o">=</span><span class="n">comm</span><span class="p">,</span>
+                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">sim_prop</span><span class="o">.</span><span class="n">load_steps</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># evolve binaries</span>
+    <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;from_hdf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;indices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">indices</span>
+
+    <span class="n">pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">breakdown_to_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># save binaries</span>
+    <span class="n">pop</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;./population.h5&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pop</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span> <span class="p">:</span>
+    <span class="n">pop</span> <span class="o">=</span> <span class="n">run_simulation</span><span class="p">(</span><span class="n">sim_prop</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">use_MPI</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you want to run the script on a HPC cluster with MPI, you can do so
+by setting <code class="docutils literal notranslate"><span class="pre">use_MPI=True</span></code> in the above script and runnning the following
+Slurm magic command.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>%%sbatch
+#!/bin/bash
+#SBATCH --mail-user=my_email
+#SBATCH --job-name=pop-syn
+#SBATCH --output=log.out
+#SBATCH --error=log.err
+#SBATCH --partition=debug-cpu
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --mem-per-cpu=8G
+#SBATCH --time=00:15:00
+
+mpiexec -n ${SLURM_NTASKS} python script.py
+</pre></div>
+</div>
+<p>Notice that the <code class="docutils literal notranslate"><span class="pre">run_simulation</span></code> method allows to reevolve any binary, e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span> <span class="o">=</span> <span class="n">run_simulation</span><span class="p">(</span><span class="n">sim_prop</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="s1">&#39;./population.h5&#39;</span><span class="p">,</span> <span class="n">indicies</span><span class="o">=</span><span class="p">[</span><span class="mi">1334</span><span class="p">],</span> <span class="n">use_MPI</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>if the variable <code class="docutils literal notranslate"><span class="pre">indicies</span></code> is not specified, all binaries will be rerun.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="POSYDON_populations.html" class="btn btn-neutral float-left" title="Running populations using POSYDON" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="custom_flow.html" class="btn btn-neutral float-right" title="Custom population synthesis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.5
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

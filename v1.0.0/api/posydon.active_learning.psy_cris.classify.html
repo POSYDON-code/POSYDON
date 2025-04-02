@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.active_learning.psy_cris.classify.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.active_learning.psy_cris.classify"></span><p>The PSY-CRIS classification module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.active_learning.psy_cris.classify.</span></span><span class="sig-name descname"><span class="pre">Classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TableData_object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Classifier class.</p>
+<p>Perform one against all classification with a variety of different
+classification algorithms (interpolators). Different classifcation
+algorithms are trainined and stored for recall as instance variables
+inside nested dictionaries.
+This class also supports model validation through cross validation
+using the holdout method.</p>
+<p>Initialize the classifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>TableData_object</strong> (<em>instance of &lt;class</em><em>, </em><em>TableData&gt;</em>) – An instance of the TableData class with training data.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.cross_validate">
+<span class="sig-name descname"><span class="pre">cross_validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.cross_validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.cross_validate" title="Permalink to this definition"></a></dt>
+<dd><p>Cross validate classifiers on data from TableData object.</p>
+<p>For each iteration, the classifiers specified are all trained
+and tested on the same random subset of data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier_names</strong> (<em>array</em>) – Names of classifiers to train.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of data set to use for training. (0.05 = 5% of data set)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print statements with more information while training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>percent_correct</strong> (<em>ndarray</em>) – Percent correct classification on (1-alpha)% of the data set.
+Element order matches the order of classifier_names.</p></li>
+<li><p><strong>time_to_train</strong> (<em>ndarray</em>) – Time to train classifiers on a data set. Element order matches
+the order of classifier_names.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.fit_gaussian_process_classifier">
+<span class="sig-name descname"><span class="pre">fit_gaussian_process_classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">my_kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_restarts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.fit_gaussian_process_classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.fit_gaussian_process_classifier" title="Permalink to this definition"></a></dt>
+<dd><p>Fit a Gaussian Process classifier.</p>
+<p>Implementation from: sklearn.gaussian_process
+(<a class="reference external" href="https://scikit-learn.org/stable/modules/gaussian_process.html">https://scikit-learn.org/stable/modules/gaussian_process.html</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_interval</strong> (<em>array_int</em><em>, </em><em>optional</em>) – Array indicies of data used to train (training on a subset).
+if None (default) train on whole data set</p></li>
+<li><p><strong>my_kernel</strong> (<em>kernel</em>) – Set the kernel for the GPC.</p></li>
+<li><p><strong>n_restarts</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of restarts for the GPC.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print statements with more information while training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>binary_classifier_holder</strong> – Sorted by class, each key maps to a trained
+GaussianProcessClassifier object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.fit_linear_ND_interpolator">
+<span class="sig-name descname"><span class="pre">fit_linear_ND_interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.fit_linear_ND_interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.fit_linear_ND_interpolator" title="Permalink to this definition"></a></dt>
+<dd><p>Fit linear ND interpolator - binary one-against-all classification.</p>
+<p>Implementation from: scipy.interpolate.LinearNDInterpolator
+(<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/interpolate.html">https://docs.scipy.org/doc/scipy/reference/interpolate.html</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_interval</strong> (<em>array_int</em><em>, </em><em>optional</em>) – Array indicies of data used to train (training on a subset).
+if None (default) train on whole data set</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print statements with more information while training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>binary_classifier_holder</strong> – Sorted by class, each key maps to a trained linearNDinterpolator
+object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.fit_rbf_interpolator">
+<span class="sig-name descname"><span class="pre">fit_rbf_interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.fit_rbf_interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.fit_rbf_interpolator" title="Permalink to this definition"></a></dt>
+<dd><p>Fit RBF interpolator - binary classification (one against all).</p>
+<p>Implementation from: scipy.interpolate.Rbf
+(<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/interpolate.html">https://docs.scipy.org/doc/scipy/reference/interpolate.html</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_interval</strong> (<em>array_int</em><em>, </em><em>optional</em>) – Array indicies of data used to train (training on a subset).
+if None (default) train on whole data set</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print statements with more information while training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>binary_classifier_holder</strong> – Sorted by class, each key maps to a trained RBF object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.get_class_predictions">
+<span class="sig-name descname"><span class="pre">get_class_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.get_class_predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.get_class_predictions" title="Permalink to this definition"></a></dt>
+<dd><p>Return the class predictions.</p>
+<p>The predictions are in the form of class IDs or the original
+classification key. This method also returns the probability
+of the class that was predicted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of classification algorithm to use.</p></li>
+<li><p><strong>test_input</strong> (<em>ndarray</em>) – Input values to predict. Same shape as input data.</p></li>
+<li><p><strong>return_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If True (default), return class IDs.
+Else, return the original classification keys.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>pred_class_ids</strong> (<em>array</em>) – Predicted class IDs given test input.</p></li>
+<li><p><strong>max_probs</strong> (<em>array</em>) – Probability the classifier gives for the chosen class.</p></li>
+<li><p><strong>where_not_nan</strong> (<em>array</em>) – Inidices where there are no nans (from LinearNDInterpolator).
+You may use this to pick out which input data gives a valid
+classification.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.get_classifier_name_to_key">
+<span class="sig-name descname"><span class="pre">get_classifier_name_to_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.get_classifier_name_to_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.get_classifier_name_to_key" title="Permalink to this definition"></a></dt>
+<dd><p>Return the standard key (str) of a classifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of classification algorithm to use.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>key</strong> – Key to access trained classifier objects.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.get_cross_val_data">
+<span class="sig-name descname"><span class="pre">get_cross_val_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.get_cross_val_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.get_cross_val_data" title="Permalink to this definition"></a></dt>
+<dd><p>Randomly sample the data set and seperate training and test data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of data set to use for training. (0.05 = 5% of data set)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>sorted_rnd_int_vals</strong> (<em>array</em>) – Array indicies for data used to train interpolators.</p></li>
+<li><p><strong>cv_test_input_data</strong> (<em>array</em>) – Input test data to perform cross validation.</p></li>
+<li><p><strong>cv_test_output_data</strong> (<em>array</em>) – Output test data to perform cross validation.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.get_rnd_test_inputs">
+<span class="sig-name descname"><span class="pre">get_rnd_test_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.get_rnd_test_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.get_rnd_test_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Produce randomly sampled ‘test’ inputs inside domain of input_data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of test inputs to return.</p></li>
+<li><p><strong>other_rng</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Change the range of random sampling in desired axis. By default,
+the sampling is done in the range of the training data. The axis is
+specified with an integer key in [0,N-1] mapping to a list
+specifying the range. (e.g. {1:[my_min, my_max]})</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print diagnostic information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>rnd_test_points</strong> – Test points randomly sampled in the range of the training data
+in each axis unless otherwise specified in ‘other_rng’.
+Has the same shape as input data from TableData.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.make_cv_plot_data">
+<span class="sig-name descname"><span class="pre">make_cv_plot_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interp_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alphas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_iterations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cv_data/'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.make_cv_plot_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.make_cv_plot_data" title="Permalink to this definition"></a></dt>
+<dd><p>Script for running many instances of the method <cite>cross_validate()</cite>.</p>
+<p>Cross validation score and timing data produced are saved locally.</p>
+<p>! Time to train GaussianProcessClassifier becomes large for num
+training points &gt; 1000. !</p>
+<p>Files saved every 5 iterations to prevent loss of data for large
+N_iterations.
+Known expection occurs in GP classifier for low alpha due to data set
+with only one class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interp_type</strong> (<em>array_str</em>) – Names of classifiers to train.</p></li>
+<li><p><strong>alphas</strong> (<em>array_floats</em>) – Fractions of data set to use for training. (0.05 = 5% of data set)
+(ex. [0.01, 0.02, …])</p></li>
+<li><p><strong>N_iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of iterations to run cross validation at a given alpha.</p></li>
+<li><p><strong>folder_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Folder path where to save cross validation and timing data
+(“your_folder_path/”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.make_max_cls_plot">
+<span class="sig-name descname"><span class="pre">make_max_cls_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4000</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.make_max_cls_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.make_max_cls_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Make the maximum classification probablity plot.</p>
+<p>Not generalized yet to slice along redundant axes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.return_probs">
+<span class="sig-name descname"><span class="pre">return_probs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.return_probs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.return_probs" title="Permalink to this definition"></a></dt>
+<dd><p>Return probability that a given input corresponds to a class.</p>
+<p>The probability is calculated using trained classifiers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of classifier to train.</p></li>
+<li><p><strong>test_input</strong> (<em>ndarray</em>) – N dimensional inputs to be classified.
+The shape should be N_points x N_dimensions.</p></li>
+<li><p><strong>verbose</strong> (<em>optional</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Print useful information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>normalized_probs</strong> (<em>ndarray</em>) – Array holding the normalized probability for a point to be in any
+of the possible classes. Shape is N_points x N_classes.</p></li>
+<li><p><strong>where_not_nan</strong> (<em>ndarray</em>) – Indicies of the test inputs that did not result in nans.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">di</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.train" title="Permalink to this definition"></a></dt>
+<dd><p>Train a classifier.</p>
+<dl class="simple">
+<dt>Implemented classifiers:</dt><dd><p>LinearNDInterpolator (‘linear’, …)
+Radial Basis Function (‘rbf’, …)
+GaussianProcessClassifier (‘gp’, …)</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cl</span> <span class="o">=</span> <span class="n">Classifier</span><span class="p">(</span> <span class="n">TableData_object</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cl</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">di</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Ndatapoints</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of classifier to train.</p></li>
+<li><p><strong>di</strong> (<em>array_int</em><em>, </em><em>optional</em>) – Array indicies of data used to train (training on a subset).
+if None - train on whole data set</p></li>
+<li><p><strong>train_cross_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – For storing regular trained interpolators and cross val
+interpolators. Used in the cross_validate() method.
+if False - save normal interpolators
+if True  - save cross validation interpolators</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print statements with more information while training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.Classifier.train_everything">
+<span class="sig-name descname"><span class="pre">train_everything</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#Classifier.train_everything"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.Classifier.train_everything" title="Permalink to this definition"></a></dt>
+<dd><p>Trains multiple classifiers at once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>classifier_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of strings specifying classification algorithms to use.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.classify.makehash">
+<span class="sig-prename descclassname"><span class="pre">posydon.active_learning.psy_cris.classify.</span></span><span class="sig-name descname"><span class="pre">makehash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/classify.html#makehash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.classify.makehash" title="Permalink to this definition"></a></dt>
+<dd><p>Manage nested dictionaries.</p>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

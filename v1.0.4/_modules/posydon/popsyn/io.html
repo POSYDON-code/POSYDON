@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.popsyn.io &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.popsyn.io</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.popsyn.io</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Handle I/O operations for the population synthesis code.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">configparser</span> <span class="kn">import</span> <span class="n">ConfigParser</span>
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">errno</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.simulationproperties</span> <span class="kn">import</span> <span class="n">SimulationProperties</span>
+
+
+<div class="viewcode-block" id="parse_inifile"><a class="viewcode-back" href="../../../api/posydon.popsyn.io.html#posydon.popsyn.io.parse_inifile">[docs]</a><span class="k">def</span> <span class="nf">parse_inifile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an inifile for evolving binary populations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    path : str or list like</span>
+<span class="sd">        Path to inifile. If multiple files are given,</span>
+<span class="sd">        duplicate args are overwritten (stacked) first</span>
+<span class="sd">        to last.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Print helpful info.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    parser : &lt;class, ConfigParser&gt;</span>
+<span class="sd">        An instance of ConfigParser.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="c1"># Keys do not become lowercase by default</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">optionxform</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">option</span><span class="p">:</span> <span class="n">option</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading inifile: </span><span class="se">\n\t</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                  <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">strerror</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">),</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">path</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading inifiles: </span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="n">path</span><span class="p">)))</span>
+        <span class="n">bad_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                <span class="n">bad_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">bad_files</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                  <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">strerror</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">),</span> <span class="n">bad_files</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Path must be a string or list of strings. Given </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span>
+                         <span class="nb">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+    <span class="n">files_read</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="c1"># Catch silent errors from configparser.read</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files_read</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No files were read successfully. Given </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span>
+                         <span class="nb">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<div class="viewcode-block" id="simprop_kwargs_from_ini"><a class="viewcode-back" href="../../../api/posydon.popsyn.io.html#posydon.popsyn.io.simprop_kwargs_from_ini">[docs]</a><span class="k">def</span> <span class="nf">simprop_kwargs_from_ini</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an inifile into kwargs for the SimulationProperties class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    path : str or list like</span>
+<span class="sd">        Path to inifile. If multiple files are given,</span>
+<span class="sd">        duplicate args are overwritten (stacked) first</span>
+<span class="sd">        to last.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Print helpful info.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    parser_dict : &lt;class, dict&gt;</span>
+<span class="sd">        The inifile converted to the kwargs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">parse_inifile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+    <span class="n">parser_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">:</span>
+        <span class="c1"># skip default section</span>
+        <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;DEFAULT&#39;</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># evaluate str values as literal python and put</span>
+        <span class="c1"># into dict because parser only handles strings</span>
+        <span class="n">sect_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="c1"># only try imports from sections with &#39;import&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;import&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">sect_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="c1"># from posydon.... import ....</span>
+            <span class="c1">#      ^ import      as   ^ name</span>
+            <span class="n">import_and_name</span> <span class="o">=</span> <span class="n">sect_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;import&#39;</span><span class="p">)</span>
+            <span class="n">package</span> <span class="o">=</span> <span class="n">sect_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;absolute_import&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="c1"># import module</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">import_and_name</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                             <span class="n">package</span><span class="o">=</span><span class="n">package</span><span class="p">)</span>
+            <span class="c1"># extract class or function</span>
+            <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">import_and_name</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1"># match the form SimulationProperties expects</span>
+            <span class="n">parser_dict</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sect_dict</span><span class="p">)</span>
+
+        <span class="c1"># Try to find user defined hooks using absolute or</span>
+        <span class="c1"># relative imports. Requires slighltly different syntax.</span>
+        <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;extra_hooks&#39;</span><span class="p">:</span>
+            <span class="n">hooks_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">sect_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                     <span class="k">if</span> <span class="s1">&#39;extra&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">name</span><span class="p">]</span>
+            <span class="c1"># do not take extra_pre_step options etc.</span>
+
+            <span class="c1"># loop to try and find all hooks classes</span>
+            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)):</span>
+                <span class="n">valid_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span>
+                               <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">h</span><span class="p">]</span>
+
+                <span class="c1"># if there are no options with the index, continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_names</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">import_and_name</span> <span class="o">=</span> <span class="n">sect_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;import_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+                <span class="n">package</span> <span class="o">=</span> <span class="n">sect_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;absolute_import_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">class_kwargs</span> <span class="o">=</span> <span class="n">sect_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;kwargs_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="nb">dict</span><span class="p">())</span>
+
+                <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">import_and_name</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                 <span class="n">package</span><span class="o">=</span><span class="n">package</span><span class="p">)</span>
+                <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">import_and_name</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+                <span class="n">hooks_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">cls</span><span class="p">,</span> <span class="n">class_kwargs</span><span class="p">))</span>
+
+            <span class="n">parser_dict</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="n">hooks_list</span>
+
+    <span class="k">return</span> <span class="n">parser_dict</span></div>
+
+
+<div class="viewcode-block" id="binarypop_kwargs_from_ini"><a class="viewcode-back" href="../../../api/posydon.popsyn.io.html#posydon.popsyn.io.binarypop_kwargs_from_ini">[docs]</a><span class="k">def</span> <span class="nf">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an inifile into kwargs for the BinaryPopulation class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    path : str or list like</span>
+<span class="sd">        Path to inifile. If multiple files are given,</span>
+<span class="sd">        duplicate args are overwritten (stacked) first</span>
+<span class="sd">        to last.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Print helpful info.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    parser_dict : &lt;class, dict&gt;</span>
+<span class="sd">        The inifile converted to the kwargs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">parse_inifile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="c1"># make sure the inifile has all of these sections</span>
+    <span class="k">for</span> <span class="n">sect_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;BinaryPopulation_options&#39;</span><span class="p">,</span> <span class="s1">&#39;BinaryStar_output&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;SingleStar_1_output&#39;</span><span class="p">,</span> <span class="s1">&#39;SingleStar_2_output&#39;</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="n">sect_name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">sections</span><span class="p">())</span>
+
+    <span class="n">pop_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">sections</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;BinaryPopulation_options&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">pop_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="c1"># right now binary, S1, and S2 output kwargs are all passed</span>
+        <span class="c1"># into the BinaryPopulation during init</span>
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;BinaryStar_output&#39;</span><span class="p">:</span>
+            <span class="n">binary_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">binary_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">pop_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">pop_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">binary_kwargs</span><span class="p">}</span>
+
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;SingleStar_1_output&#39;</span><span class="p">:</span>
+            <span class="n">S1_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">S1_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;include_S1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">S1_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;include_S1&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;include_S1&#39;</span><span class="p">]:</span>
+                <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;S1_kwargs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">S1_kwargs</span>
+
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;SingleStar_2_output&#39;</span><span class="p">:</span>
+            <span class="n">S2_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">S2_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;include_S2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">S2_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;include_S2&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;include_S2&#39;</span><span class="p">]:</span>
+                <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;S2_kwargs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">S2_kwargs</span>
+
+    <span class="c1"># finally get the population properties</span>
+    <span class="n">sim_prop_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;population_properties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span>
+        <span class="o">**</span><span class="n">sim_prop_kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pop_kwargs</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+posydon.active\_learning.psy\_cris.run\_params package
+======================================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   posydon.active_learning.psy_cris.run_params.run_psycris_sequence
+
+Module contents
+---------------
+
+.. automodule:: posydon.active_learning.psy_cris.run_params
+   :members:
+   :undoc-members:
+   :show-inheritance:

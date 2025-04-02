@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.active_learning.psy_cris.regress.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.active_learning.psy_cris.regress"></span><p>The PSY-CRIS regression module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.active_learning.psy_cris.regress.</span></span><span class="sig-name descname"><span class="pre">Regressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TableData_object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Perform regression/interpolation with different regression algorithms.</p>
+<p>Regression algorithms are trained by class and by output column in the data
+set and stored as instance variables in nested dictionaries.</p>
+<p>This class inlcudes a ‘cross validation’ method that trains with the
+holdout method but calculates differences instead of a single accuracy.</p>
+<p>Initialize the Regressor instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>TableData_object</strong> (<em>instance of &lt;class</em><em>, </em><em>TableData&gt;</em>) – An instance of the TableData class.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.cross_validate">
+<span class="sig-name descname"><span class="pre">cross_validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regressor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.cross_validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.cross_validate" title="Permalink to this definition"></a></dt>
+<dd><p>Our method of cross validation for regression.</p>
+<p>Train on a subset of the data and predict values for the rest.
+Then calculate the difference between the true and predicted value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regressor_name</strong> – Regressor name to use for analysis.</p></li>
+<li><p><strong>class_key</strong> – Class key to take differences.</p></li>
+<li><p><strong>col_key</strong> – Column key to take differences.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of data set used to find differences.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print useful information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>percent_diffs</strong> (<em>array</em>) – Percent difference.</p></li>
+<li><p><strong>diffs</strong> (<em>array</em>) – Absolute difference.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.fit_gaussian_process_regressor">
+<span class="sig-name descname"><span class="pre">fit_gaussian_process_regressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.fit_gaussian_process_regressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.fit_gaussian_process_regressor" title="Permalink to this definition"></a></dt>
+<dd><p>Fit a Gaussian Process regressor.</p>
+<p>Implementation from: sklearn.gaussian_process
+(<a class="reference external" href="https://scikit-learn.org/stable/modules/gaussian_process.html">https://scikit-learn.org/stable/modules/gaussian_process.html</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_keys</strong> – List of classes to train on.</p></li>
+<li><p><strong>col_keys</strong> – If multiple classes are given, it is assumed they all contain
+the supplied columns.</p></li>
+<li><p><strong>data_interval</strong> (<em>array</em><em>, </em><em>optional</em>) – Array indicies of data used to train (training on a subset).
+if None (default) train on whole data set</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print statements with more information while training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>regressor_holder</strong> – Ordered by class specific data and then by column. Nested
+dictionary maps to a trained GaussianProcessRegressor object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.fit_linear_ND_interpolator">
+<span class="sig-name descname"><span class="pre">fit_linear_ND_interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.fit_linear_ND_interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.fit_linear_ND_interpolator" title="Permalink to this definition"></a></dt>
+<dd><p>Fit linear ND interpolator.</p>
+<p>Implementation from: scipy.interpolate.LinearNDInterpolator
+(<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/interpolate.html">https://docs.scipy.org/doc/scipy/reference/interpolate.html</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of classes to train on.</p></li>
+<li><p><strong>col_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of columns in the class to train on.
+If multiple classes are given, it is assumed they all contain
+the supplied columns.</p></li>
+<li><p><strong>data_interval</strong> (<em>array</em><em>, </em><em>optional</em>) – Array indicies of data used to train (training on a subset).
+If None (default) train on whole data set</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print statements with more information while training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>regressor_holder</strong> – Ordered by class specific data and then by column. Nested
+dictionary maps to a trained linearNDinterpolator object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.fit_rbf_interpolator">
+<span class="sig-name descname"><span class="pre">fit_rbf_interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.fit_rbf_interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.fit_rbf_interpolator" title="Permalink to this definition"></a></dt>
+<dd><p>Fit RBF interpolator - binary classification (one against all).</p>
+<p>Implementation from: scipy.interpolate.Rbf
+(<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/interpolate.html">https://docs.scipy.org/doc/scipy/reference/interpolate.html</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_keys</strong> – List of classes to train on.</p></li>
+<li><p><strong>col_keys</strong> – If multiple classes are given, it is assumed they all contain
+the supplied columns.</p></li>
+<li><p><strong>data_interval</strong> (<em>array</em><em>, </em><em>optional</em>) – Array indicies of data used to train (training on a subset).
+if None (default) train on whole data set</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print statements with more information while training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>regressor_holder</strong> – Ordered by class specific data and then by column. Nested
+dictionary maps to a trained RBF object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.get_cross_val_data">
+<span class="sig-name descname"><span class="pre">get_cross_val_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.get_cross_val_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.get_cross_val_data" title="Permalink to this definition"></a></dt>
+<dd><p>Randomly sample the data set and seperate training and test data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>class_dtype</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><em>other</em><em>)</em>) – Class key specifying the class to get data from.</p></li>
+<li><p><strong>col_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Column key specifying the output column to get data.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of data set to use for training. (0.05 = 5% of data set)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>cross_val_test_input_data</strong> (<em>ndarray</em>) – Input data used to test after training on a subset.</p></li>
+<li><p><strong>cross_val_test_output_data</strong> (<em>ndarray</em>) – Output data used to test after training on a subset.</p></li>
+<li><p><strong>sorted_rnd_int_vals</strong> (<em>array</em>) – Indicies of original data that were used as training points.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.get_max_APC_val">
+<span class="sig-name descname"><span class="pre">get_max_APC_val</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regressor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.get_max_APC_val"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.get_max_APC_val" title="Permalink to this definition"></a></dt>
+<dd><p>Return the maximum interpolated average percent change for a class.</p>
+<p>For a given class, and regression method. Return the maximum
+interpolated average percent change value across all APC columns in
+the class sorted data set. Helper method for constructing target
+distributions for the Sampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regressor_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of regression algorithm to use.</p></li>
+<li><p><strong>class_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Class key to use for data.</p></li>
+<li><p><strong>args</strong> (<em>array</em>) – Locations for the APC value to be predicted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>max_APC</strong> (<em>float</em>) – Maximum average percent change (APC) value.</p></li>
+<li><p><strong>which_col_max</strong> (<em>int</em>) – Index of which column had the maximum APC.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.get_predictions">
+<span class="sig-name descname"><span class="pre">get_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regressor_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.get_predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.get_predictions" title="Permalink to this definition"></a></dt>
+<dd><p>Get predictions from trained regressors for a set of inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regressor_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of regressor algorithm names to use to predict.</p></li>
+<li><p><strong>class_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of classes to get predictions for.</p></li>
+<li><p><strong>col_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of columns to get predictions for.</p></li>
+<li><p><strong>test_input</strong> (<em>ndarray</em>) – Array of input points for which predictions will be found.</p></li>
+<li><p><strong>return_std</strong> (<em>optional</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Return the STD is when using GaussianProcessRegressor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>predictions</strong> – Dictionary ordered by algorithm, class, and output column mapping
+to an array of predictions for the test input points.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.get_regressor_name_to_key">
+<span class="sig-name descname"><span class="pre">get_regressor_name_to_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.get_regressor_name_to_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.get_regressor_name_to_key" title="Permalink to this definition"></a></dt>
+<dd><p>Return the standard key (str) of a classifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.get_rnd_test_inputs">
+<span class="sig-name descname"><span class="pre">get_rnd_test_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.get_rnd_test_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.get_rnd_test_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Produce randomly sampled ‘test’ inputs inside domain of input_data.</p>
+<p>Input data is seperated by class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Class name to specify which input data you want to look at.</p></li>
+<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of test inputs to return.</p></li>
+<li><p><strong>other_rng</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Change the range of random sampling in desired axis. By default,
+the sampling is done in the range of the training data.
+The axis is specified with an integer key and the value
+is a list specifying the range. {1:[min, max]}</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print diagnostic information. (default False)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>rnd_test_points</strong> – Test points randomly sampled in the range of the training data
+in each axis unless otherwise specified in ‘other_rng’.
+Has the same shape as input data from TableData.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.mult_diffs">
+<span class="sig-name descname"><span class="pre">mult_diffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regressor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.mult_diffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.mult_diffs" title="Permalink to this definition"></a></dt>
+<dd><p>For multiple calls to cross_validate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regressor_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of regression algorithm to use.</p></li>
+<li><p><strong>class_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>class_dtype</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><em>other</em><em>)</em>) – Name of class data to use.</p></li>
+<li><p><strong>col_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Column keys to cross validate on.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of data set to cross validate on.</p></li>
+<li><p><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Sets the cutoff percentage at which to calculate
+the fraction of the data set above or below.</p></li>
+<li><p><strong>vebose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print useful diagnostic information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>p_diffs_holder</strong> (<em>ndarray</em>) – Percent differencs per column.</p></li>
+<li><p><strong>attr_holder</strong> (<em>ndarray</em>) – Contains the number of points outside the cutoff, mean,
+and standard deviation of the percent difference calculations.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.plot_regr_data">
+<span class="sig-name descname"><span class="pre">plot_regr_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.plot_regr_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.plot_regr_data" title="Permalink to this definition"></a></dt>
+<dd><p>Plot all regression data from the chosen class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>class_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Specify what class data will plotted.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Plots with all regression data for a given class.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.show_structure">
+<span class="sig-name descname"><span class="pre">show_structure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.show_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.show_structure" title="Permalink to this definition"></a></dt>
+<dd><p>Show (print) the structure of the regression data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regressor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">di</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.train" title="Permalink to this definition"></a></dt>
+<dd><p>Train a regression algorithm.</p>
+<dl class="simple">
+<dt>Implemented regressors:</dt><dd><p>LinearNDInterpolator (‘linear’, …)
+Radial Basis Function (‘rbf’, …)
+GaussianProcessRegressor (‘gp’, …)</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Regressor</span><span class="p">(</span> <span class="n">TableData_object</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">di</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Ndatapoints</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Trained regressor objects are uniquely defined by the algorithm used to
+train, the data set used to train (grouped by class), and finally the
+output column (there could be more than one). This motivates the data
+structure for storing the regressor objects as follows:</p>
+<blockquote>
+<div><p>Algorithm -&gt; Class -&gt; Output Column -&gt; Object</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Here is more realistic example of what it could look like:</dt><dd><p>{RBF: {“class_1”: {“output_1”: {instance of scipy.interpolate.rbf}}}}</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regressor_name</strong> (<em>string</em>) – Name of regressor to train.</p></li>
+<li><p><strong>class_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of class(es) to train on.</p></li>
+<li><p><strong>col_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><em>None</em></a>) – For a given class, what columns to train on.
+If None, it trains on all columns in one class.</p></li>
+<li><p><strong>di</strong> (<em>optional</em><em>, </em><em>array</em>) – Array indicies of data used to train (training on a subset).
+If None (default) - train on whole data set</p></li>
+<li><p><strong>verbose</strong> (<em>optional</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Print statements with more information while training.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></p>
+</dd>
+</dl>
+<p>Note: You can train mutliple classes at once as long as they have the
+same columns specified in col_keys.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.Regressor.train_everything">
+<span class="sig-name descname"><span class="pre">train_everything</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regressor_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#Regressor.train_everything"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.Regressor.train_everything" title="Permalink to this definition"></a></dt>
+<dd><p>Train all classes and columns with the specified list of regressors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regressor_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of strings specifying all the regressors to train.</p></li>
+<li><p><strong>verbose</strong> (<em>optional</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Print useful information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.regress.makehash">
+<span class="sig-prename descclassname"><span class="pre">posydon.active_learning.psy_cris.regress.</span></span><span class="sig-name descname"><span class="pre">makehash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/regress.html#makehash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.regress.makehash" title="Permalink to this definition"></a></dt>
+<dd><p>Manage nested dictionaries.</p>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

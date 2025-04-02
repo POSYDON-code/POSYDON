@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.utils.gridutils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.utils.gridutils"></span><p>Various utility functions used for the manipulating grid data.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.T_merger_P">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">T_merger_P</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#T_merger_P"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.T_merger_P" title="Permalink to this definition"></a></dt>
+<dd><p>Merger time given initial orbital period and masses of binary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Orbital period (days).</p></li>
+<li><p><strong>m1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Mass of first star (Msun).</p></li>
+<li><p><strong>m2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Mass of second star (Msun).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Merger time (Gyr)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.T_merger_a">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">T_merger_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#T_merger_a"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.T_merger_a" title="Permalink to this definition"></a></dt>
+<dd><p>Merger time given initial orbital separation and masses of binary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Orbital separation (Rsun).</p></li>
+<li><p><strong>m1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Mass of first star (Msun).</p></li>
+<li><p><strong>m2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Mass of second star (Msun).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Merger time (Gyr) following Peters (1964), eq. (5.10).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.add_field">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">add_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">descr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#add_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.add_field" title="Permalink to this definition"></a></dt>
+<dd><p>Return a new array that is like <cite>a</cite>, but has additional fields.</p>
+<p>The contents of <cite>a</cite> are copied over to the appropriate fields in the new
+array, whereas the new fields are uninitialized. The arguments are not
+modified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>structured numpy array</em>) – The base array.</p></li>
+<li><p><strong>descr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – A numpy type description of the new fields.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Description of returned object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)">type</a></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sa</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Foo&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Bar&#39;</span><span class="p">)],</span>
+<span class="go">                     dtype=[(&#39;id&#39;, int), (&#39;name&#39;, &#39;S3&#39;)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sa</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">descr</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;S3&#39;</span><span class="p">)])</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sb</span> <span class="o">=</span> <span class="n">add_field</span><span class="p">(</span><span class="n">sa</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sb</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">descr</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;S3&#39;</span><span class="p">),</span>
+<span class="go">                                   (&#39;score&#39;, float)])</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">sa</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sb</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">sa</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sb</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.beta_gw">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">beta_gw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#beta_gw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.beta_gw" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate the “beta” (equation 5.9) from Peters (1964).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Mass of the first star.</p></li>
+<li><p><strong>m2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a>) – Mass of the second star.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Peters’ beta in cgs units.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.clean_inlist_file">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">clean_inlist_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inlist</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#clean_inlist_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.clean_inlist_file" title="Permalink to this definition"></a></dt>
+<dd><p>Get dictionary of possible parameters/values from the default inlist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inlist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to inlist file.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – TODO</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dictionary of parameters and values from inlist.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.convert_output_to_table">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">convert_output_to_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_history_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star1_history_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star2_history_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['result',</span> <span class="pre">'CE_flag',</span> <span class="pre">'M_1f(Msun)',</span> <span class="pre">'M_2f(Msun)',</span> <span class="pre">'Porb_f(d)',</span> <span class="pre">'tmerge(Gyr)',</span> <span class="pre">'log_L_1',</span> <span class="pre">'log_T_1',</span> <span class="pre">'He_core_1(Msun)',</span> <span class="pre">'C_core_1(Msun)',</span> <span class="pre">'log_L_2',</span> <span class="pre">'log_T_2',</span> <span class="pre">'He_core_2(Msun)',</span> <span class="pre">'C_core_2(Msun)']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#convert_output_to_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.convert_output_to_table" title="Permalink to this definition"></a></dt>
+<dd><p>Convert output of a run, to a pandas dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to MESA output file.</p></li>
+<li><p><strong>binary_history_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to binary history data.</p></li>
+<li><p><strong>star1_history_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to history data for star1.</p></li>
+<li><p><strong>star2_history_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to history data for star1.</p></li>
+<li><p><strong>column_names</strong> (<em>list of str</em>) – Which columns to return.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The table containing the requested columns from the run’s histories.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.find_index_nearest_neighbour">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">find_index_nearest_neighbour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#find_index_nearest_neighbour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.find_index_nearest_neighbour" title="Permalink to this definition"></a></dt>
+<dd><p>Find the index of <cite>array</cite> closest to the value.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.find_nearest">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">find_nearest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#find_nearest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.find_nearest" title="Permalink to this definition"></a></dt>
+<dd><p>Find the element of <cite>array</cite> closest to the value <cite>val</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.fix_He_core">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">fix_He_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">history</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#fix_He_core"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.fix_He_core" title="Permalink to this definition"></a></dt>
+<dd><p>Make He core mass/radius at least equal to CO core mass/radius.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.get_cell_edges">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">get_cell_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#get_cell_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.get_cell_edges" title="Permalink to this definition"></a></dt>
+<dd><p>Return the edges of grid cells to be used for plotting with pcolormesh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_x</strong> (<em>array</em>) – Center values of grid cells for X.</p></li>
+<li><p><strong>grid_y</strong> (<em>array</em>) – Center values of grid cells for Y.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>array</em> – X grid values.</p></li>
+<li><p><em>array</em> – Y grid values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.get_final_proposed_points">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">get_final_proposed_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proposed_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proposed_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#get_final_proposed_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.get_final_proposed_points" title="Permalink to this definition"></a></dt>
+<dd><p>Map proposed simulation points to the center of a correspoding cell.</p>
+<p>Only one mapped value is returned if more than one proposed point falls
+within one cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>proposed_x</strong> (<em>array</em>) – Proposed points for X.</p></li>
+<li><p><strong>grid_x</strong> (<em>array</em>) – The values of X at the center of the grid cells.</p></li>
+<li><p><strong>proposed_y</strong> (<em>array</em>) – Proposed points for Y.</p></li>
+<li><p><strong>grid_y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a>) – The values of Y at the center of the grid cells.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>array</em> – Mapped X values.</p></li>
+<li><p><em>array</em> – Mapped Y values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.join_lists">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">join_lists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#join_lists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.join_lists" title="Permalink to this definition"></a></dt>
+<dd><p>Make a joint list of A and B without repetitions and keeping the order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>iterable</em>) – The baseline list to be extended.</p></li>
+<li><p><strong>B</strong> (<em>iterable</em>) – The second list from which additional elements will be appened.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The joint list by merging A and B.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.kepler3_a">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">kepler3_a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#kepler3_a"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.kepler3_a" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the semimajor axis of a binary from its period and masses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Orbital period (days).</p></li>
+<li><p><strong>m1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Mass of first star.</p></li>
+<li><p><strong>m2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a>) – Mass of second star.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Semi-major axis (Rsun) using Kepler’s third law.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.read_EEP_data_file">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">read_EEP_data_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#read_EEP_data_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.read_EEP_data_file" title="Permalink to this definition"></a></dt>
+<dd><p>Read an EEP file - similar to <cite>read_MESA_data_file()</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.gridutils.read_MESA_data_file">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.gridutils.</span></span><span class="sig-name descname"><span class="pre">read_MESA_data_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/gridutils.html#read_MESA_data_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.gridutils.read_MESA_data_file" title="Permalink to this definition"></a></dt>
+<dd><p>Read specific columns from a MESA output file to an array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path to the file.</p></li>
+<li><p><strong>columns</strong> (<em>list of strings</em>) – The list of names of the columns to be returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The array containing the MESA data, or <cite>None</cite> if path was <cite>None</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)">None</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

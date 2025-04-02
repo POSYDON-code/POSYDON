@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.active_learning.psy_cris.classify &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.active_learning.psy_cris.classify</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.active_learning.psy_cris.classify</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The PSY-CRIS classification module.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="c1"># -------- classifiers --------</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">LinearNDInterpolator</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">Rbf</span>
+<span class="kn">import</span> <span class="nn">sklearn.gaussian_process</span> <span class="k">as</span> <span class="nn">gp</span>
+
+<span class="c1"># -----------------------------</span>
+
+<span class="n">LinearNDInterpolator_names</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;lin&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;linearndinterpolator&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;linear nd interpolator&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">RBF_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span> <span class="s2">&quot;radialbasisfunction&quot;</span><span class="p">,</span> <span class="s2">&quot;radial basis function&quot;</span><span class="p">]</span>
+<span class="n">GaussianProcessClassifier_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;gp&quot;</span><span class="p">,</span> <span class="s2">&quot;gpc&quot;</span><span class="p">,</span> <span class="s2">&quot;gaussianprocessclassifier&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="makehash"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.makehash">[docs]</a><span class="k">def</span> <span class="nf">makehash</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage nested dictionaries.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="n">makehash</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Classifier"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier">[docs]</a><span class="k">class</span> <span class="nc">Classifier</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classifier class.</span>
+
+<span class="sd">    Perform one against all classification with a variety of different</span>
+<span class="sd">    classification algorithms (interpolators). Different classifcation</span>
+<span class="sd">    algorithms are trainined and stored for recall as instance variables</span>
+<span class="sd">    inside nested dictionaries.</span>
+<span class="sd">    This class also supports model validation through cross validation</span>
+<span class="sd">    using the holdout method.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TableData_object</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the classifier.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        TableData_object : instance of &lt;class, TableData&gt;</span>
+<span class="sd">            An instance of the TableData class with training data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span> <span class="o">=</span> <span class="n">TableData_object</span>
+
+        <span class="n">holder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">get_class_data</span><span class="p">(</span><span class="n">what_data</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_names</span> <span class="o">=</span> <span class="n">holder</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># _unique_class_keys_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classes_to_ids</span> <span class="o">=</span> <span class="n">holder</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># _class_col_to_ids_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_id_mapping</span> <span class="o">=</span> <span class="n">holder</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># _class_id_mapping_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binary_class_data</span> <span class="o">=</span> <span class="n">holder</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>  <span class="c1"># _binary_data_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">what_data</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interpolators_</span> <span class="o">=</span> <span class="n">makehash</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cv_interpolators_</span> <span class="o">=</span> <span class="n">makehash</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Classifier.train_everything"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.train_everything">[docs]</a>    <span class="k">def</span> <span class="nf">train_everything</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_names</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Trains multiple classifiers at once.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        classifier_names : list</span>
+<span class="sd">            List of strings specifying classification algorithms to use.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">cls_name</span> <span class="ow">in</span> <span class="n">classifier_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">di</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Classifier.train"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_name</span><span class="p">,</span> <span class="n">di</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train a classifier.</span>
+
+<span class="sd">        Implemented classifiers:</span>
+<span class="sd">            LinearNDInterpolator (&#39;linear&#39;, ...)</span>
+<span class="sd">            Radial Basis Function (&#39;rbf&#39;, ...)</span>
+<span class="sd">            GaussianProcessClassifier (&#39;gp&#39;, ...)</span>
+
+<span class="sd">        &gt;&gt;&gt; cl = Classifier( TableData_object )</span>
+<span class="sd">        &gt;&gt;&gt; cl.train(&#39;linear&#39;, di = np.arange(0, Ndatapoints, 5), verbose=True)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        classifier_name : str</span>
+<span class="sd">            Name of classifier to train.</span>
+<span class="sd">        di : array_int, optional</span>
+<span class="sd">            Array indicies of data used to train (training on a subset).</span>
+<span class="sd">            if None - train on whole data set</span>
+<span class="sd">        train_cross_val : bool, optional</span>
+<span class="sd">            For storing regular trained interpolators and cross val</span>
+<span class="sd">            interpolators. Used in the cross_validate() method.</span>
+<span class="sd">            if False - save normal interpolators</span>
+<span class="sd">            if True  - save cross validation interpolators</span>
+<span class="sd">        verbose: bool, optional</span>
+<span class="sd">            Print statements with more information while training.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">classifier_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_classifier_name_to_key</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">classifier_key</span> <span class="o">==</span> <span class="s2">&quot;LinearNDInterpolator&quot;</span><span class="p">:</span>
+            <span class="n">bi_cls_holder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_linear_ND_interpolator</span><span class="p">(</span><span class="n">data_interval</span><span class="o">=</span><span class="n">di</span><span class="p">,</span>
+                                                            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">classifier_key</span> <span class="ow">in</span> <span class="s2">&quot;RBF&quot;</span><span class="p">:</span>
+            <span class="n">bi_cls_holder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_rbf_interpolator</span><span class="p">(</span><span class="n">data_interval</span><span class="o">=</span><span class="n">di</span><span class="p">,</span>
+                                                      <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">classifier_key</span> <span class="ow">in</span> <span class="s2">&quot;GaussianProcessClassifier&quot;</span><span class="p">:</span>
+            <span class="n">bi_cls_holder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_gaussian_process_classifier</span><span class="p">(</span>
+                <span class="n">data_interval</span><span class="o">=</span><span class="n">di</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No classifiers with name </span><span class="si">{0}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">col_key</span><span class="p">,</span> <span class="n">cls_obj</span> <span class="ow">in</span> <span class="n">bi_cls_holder</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">dict loc: </span><span class="si">{0}</span><span class="s2"> </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">classifier_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cv_interpolators_</span><span class="p">[</span><span class="n">classifier_key</span><span class="p">][</span><span class="n">col_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cls_obj</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_interpolators_</span><span class="p">[</span><span class="n">classifier_key</span><span class="p">][</span><span class="n">col_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cls_obj</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done training </span><span class="si">{0}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">classifier_key</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Classifier.fit_linear_ND_interpolator"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.fit_linear_ND_interpolator">[docs]</a>    <span class="k">def</span> <span class="nf">fit_linear_ND_interpolator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit linear ND interpolator - binary one-against-all classification.</span>
+
+<span class="sd">        Implementation from: scipy.interpolate.LinearNDInterpolator</span>
+<span class="sd">        (https://docs.scipy.org/doc/scipy/reference/interpolate.html)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data_interval : array_int, optional</span>
+<span class="sd">            Array indicies of data used to train (training on a subset).</span>
+<span class="sd">            if None (default) train on whole data set</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print statements with more information while training.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary_classifier_holder : dict</span>
+<span class="sd">            Sorted by class, each key maps to a trained linearNDinterpolator</span>
+<span class="sd">            object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;N points: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;N points: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_interval</span><span class="p">)))</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">binary_classifier_holder</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cls_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_class_data</span><span class="p">):</span>
+            <span class="c1"># iter_time = time.time()</span>
+
+            <span class="c1"># for running with a subset of the data</span>
+            <span class="k">if</span> <span class="n">data_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">,</span> <span class="n">cls_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">di</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_interval</span><span class="p">)</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">[</span><span class="n">di</span><span class="p">],</span> <span class="n">cls_data</span><span class="p">[</span><span class="n">di</span><span class="p">])</span>
+
+            <span class="n">binary_classifier_holder</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">class_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">line</span>
+
+            <span class="n">time_print</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">len_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">class_ids</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;Time to fit </span><span class="si">%s</span><span class="s2"> classifiers ~ </span><span class="si">%.3f</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">len_classes</span><span class="p">,</span> <span class="n">time_print</span> <span class="o">*</span> <span class="n">len_classes</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;LinearNDInterpolator class </span><span class="si">%s</span><span class="s2"> -- current time: </span><span class="si">%.3f</span><span class="s2">&quot;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">time_print</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">binary_classifier_holder</span></div>
+
+<div class="viewcode-block" id="Classifier.fit_rbf_interpolator"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.fit_rbf_interpolator">[docs]</a>    <span class="k">def</span> <span class="nf">fit_rbf_interpolator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit RBF interpolator - binary classification (one against all).</span>
+
+<span class="sd">        Implementation from: scipy.interpolate.Rbf</span>
+<span class="sd">        (https://docs.scipy.org/doc/scipy/reference/interpolate.html)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data_interval : array_int, optional</span>
+<span class="sd">            Array indicies of data used to train (training on a subset).</span>
+<span class="sd">            if None (default) train on whole data set</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print statements with more information while training.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary_classifier_holder : dict</span>
+<span class="sd">            Sorted by class, each key maps to a trained RBF object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;N points: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;N points: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_interval</span><span class="p">)))</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">binary_classifier_holder</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cls_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_class_data</span><span class="p">):</span>
+            <span class="c1"># iter_time = time.time()</span>
+
+            <span class="c1"># for running with a subset of the data</span>
+            <span class="k">if</span> <span class="n">data_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">argList</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                    <span class="n">argList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+                <span class="n">argList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls_data</span><span class="p">)</span>
+
+                <span class="n">line</span> <span class="o">=</span> <span class="n">Rbf</span><span class="p">(</span><span class="o">*</span><span class="n">argList</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">di</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_interval</span><span class="p">)</span>
+                <span class="n">argList</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                    <span class="n">argList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="n">di</span><span class="p">])</span>
+                <span class="n">argList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls_data</span><span class="p">[</span><span class="n">di</span><span class="p">])</span>
+
+                <span class="n">line</span> <span class="o">=</span> <span class="n">Rbf</span><span class="p">(</span><span class="o">*</span><span class="n">argList</span><span class="p">)</span>
+
+            <span class="n">binary_classifier_holder</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">class_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">line</span>
+
+            <span class="n">time_print</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">len_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">class_ids</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;Time to fit </span><span class="si">%s</span><span class="s2"> classifiers ~ </span><span class="si">%.3f</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">len_classes</span><span class="p">,</span> <span class="n">time_print</span> <span class="o">*</span> <span class="n">len_classes</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RBF class </span><span class="si">%s</span><span class="s2"> -- current time: </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">time_print</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">binary_classifier_holder</span></div>
+
+<div class="viewcode-block" id="Classifier.fit_gaussian_process_classifier"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.fit_gaussian_process_classifier">[docs]</a>    <span class="k">def</span> <span class="nf">fit_gaussian_process_classifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">my_kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_restarts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                                        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit a Gaussian Process classifier.</span>
+
+<span class="sd">        Implementation from: sklearn.gaussian_process</span>
+<span class="sd">        (https://scikit-learn.org/stable/modules/gaussian_process.html)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data_interval : array_int, optional</span>
+<span class="sd">            Array indicies of data used to train (training on a subset).</span>
+<span class="sd">            if None (default) train on whole data set</span>
+<span class="sd">        my_kernel : kernel</span>
+<span class="sd">            Set the kernel for the GPC.</span>
+<span class="sd">        n_restarts : int</span>
+<span class="sd">            Number of restarts for the GPC.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print statements with more information while training.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary_classifier_holder : array_like</span>
+<span class="sd">            Sorted by class, each key maps to a trained</span>
+<span class="sd">            GaussianProcessClassifier object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;N points: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;N points: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_interval</span><span class="p">)))</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">binary_classifier_holder</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cls_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_class_data</span><span class="p">):</span>
+            <span class="c1"># iter_time = time.time()</span>
+
+            <span class="k">if</span> <span class="n">my_kernel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">num_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">starting_loc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dim</span><span class="p">)]</span>
+                <span class="n">axis_ranges</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dim</span><span class="p">)]</span>
+                <span class="c1"># kernel = gp.kernels.RBF([1,1,1], [(1e-3,1e3), (1e-3,1e3),</span>
+                <span class="c1">#                                   (1e-3, 1e3)])</span>
+                <span class="n">kernel</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">kernels</span><span class="o">.</span><span class="n">RBF</span><span class="p">(</span><span class="n">starting_loc</span><span class="p">,</span> <span class="n">axis_ranges</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kernel</span> <span class="o">=</span> <span class="n">my_kernel</span>
+
+            <span class="n">gpc</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">GaussianProcessClassifier</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
+                                               <span class="n">n_restarts_optimizer</span><span class="o">=</span><span class="n">n_restarts</span><span class="p">)</span>
+
+            <span class="c1"># for running with a subset of the data</span>
+            <span class="k">if</span> <span class="n">data_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">gpc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">,</span> <span class="n">cls_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">di</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_interval</span><span class="p">)</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">gpc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">[</span><span class="n">di</span><span class="p">],</span> <span class="n">cls_data</span><span class="p">[</span><span class="n">di</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2"> kernel:</span><span class="se">\n</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kernel</span><span class="p">))</span>
+
+            <span class="n">binary_classifier_holder</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">class_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">line</span>
+
+            <span class="n">time_print</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">len_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">class_ids</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;Time to fit </span><span class="si">%s</span><span class="s2"> classifiers ~ </span><span class="si">%.3f</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">len_classes</span><span class="p">,</span> <span class="n">time_print</span> <span class="o">*</span> <span class="n">len_classes</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;GaussianProcessClassifier class </span><span class="si">%s</span><span class="s2"> -- current time: </span><span class="si">%.3f</span><span class="s2">&quot;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">time_print</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">binary_classifier_holder</span></div>
+
+<div class="viewcode-block" id="Classifier.get_classifier_name_to_key"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.get_classifier_name_to_key">[docs]</a>    <span class="k">def</span> <span class="nf">get_classifier_name_to_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the standard key (str) of a classifier.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        classifier_name : str</span>
+<span class="sd">            Name of classification algorithm to use.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        key : str</span>
+<span class="sd">            Key to access trained classifier objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">classifier_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">LinearNDInterpolator_names</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;LinearNDInterpolator&quot;</span>
+        <span class="k">elif</span> <span class="n">classifier_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">RBF_names</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;RBF&quot;</span>
+        <span class="k">elif</span> <span class="n">classifier_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">GaussianProcessClassifier_names</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;GaussianProcessClassifier&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No classifiers with name &#39;</span><span class="si">{0}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">key</span></div>
+
+    <span class="k">def</span> <span class="nf">__remove_nans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trans_probs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given an array of probabilities, remove the nans.</span>
+
+<span class="sd">        Return where not nan</span>
+<span class="sd">        which is useful for finding good or bad values.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bool_row_index_where_nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">trans_probs</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># where_nan = np.where(bool_row_index_where_nan)[0]</span>
+        <span class="n">where_not_nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">bool_row_index_where_nan</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># how_many_rows = len(trans_probs.T[0])</span>
+        <span class="n">how_many_nans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">bool_row_index_where_nan</span><span class="p">)</span>
+
+        <span class="n">clean_trans_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">trans_probs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">where_not_nan</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Nans omitted: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">how_many_nans</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">clean_trans_probs</span><span class="p">,</span> <span class="n">where_not_nan</span>
+
+<div class="viewcode-block" id="Classifier.return_probs"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.return_probs">[docs]</a>    <span class="k">def</span> <span class="nf">return_probs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_name</span><span class="p">,</span> <span class="n">test_input</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return probability that a given input corresponds to a class.</span>
+
+<span class="sd">        The probability is calculated using trained classifiers.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        classifier_name : str</span>
+<span class="sd">            Name of classifier to train.</span>
+<span class="sd">        test_input : ndarray</span>
+<span class="sd">            N dimensional inputs to be classified.</span>
+<span class="sd">            The shape should be N_points x N_dimensions.</span>
+<span class="sd">        verbose : optional, bool</span>
+<span class="sd">            Print useful information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        normalized_probs : ndarray</span>
+<span class="sd">            Array holding the normalized probability for a point to be in any</span>
+<span class="sd">            of the possible classes. Shape is N_points x N_classes.</span>
+<span class="sd">        where_not_nan: ndarray</span>
+<span class="sd">            Indicies of the test inputs that did not result in nans.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_input</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">test_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_input</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">test_input</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">test_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">test_input</span><span class="p">])</span>
+
+        <span class="n">probs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interpolators_</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cv_interpolators_</span>
+        <span class="p">):</span>  <span class="c1"># if empty</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">No trained interpolators exist.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># convert the user input shorthand into a valid key for dict</span>
+        <span class="n">classifier_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_classifier_name_to_key</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span><span class="p">:</span>
+            <span class="n">interpolators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cv_interpolators_</span><span class="p">[</span><span class="n">classifier_name</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">interpolators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolators_</span><span class="p">[</span><span class="n">classifier_name</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">interp</span> <span class="ow">in</span> <span class="n">interpolators</span><span class="p">:</span>
+            <span class="c1"># - each interpolator is on a different class</span>
+            <span class="k">if</span> <span class="n">classifier_name</span> <span class="o">==</span> <span class="s2">&quot;RBF&quot;</span><span class="p">:</span>
+                <span class="n">argList</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_input</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                    <span class="n">argList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_input</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+                <span class="n">uncleaned_data</span> <span class="o">=</span> <span class="n">interp</span><span class="p">(</span>
+                    <span class="o">*</span><span class="n">argList</span>
+                <span class="p">)</span>  <span class="c1"># inherent overshoot occurs in rbf interpolation</span>
+                <span class="n">step_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                    <span class="n">uncleaned_data</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">uncleaned_data</span>
+                <span class="p">)</span>  <span class="c1"># values above 1 replace with 1</span>
+                <span class="n">cleaned_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                    <span class="n">step_1</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">step_1</span>
+                <span class="p">)</span>  <span class="c1"># negative values set to 0</span>
+                <span class="n">probs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cleaned_data</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">classifier_name</span> <span class="o">==</span> <span class="s2">&quot;GaussianProcessClassifier&quot;</span><span class="p">:</span>
+                <span class="c1"># print(key, interp.predict(test_input),</span>
+                <span class="c1">#       interp.predict_proba(test_input ).T[1])</span>
+                <span class="n">probs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interp</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">test_input</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="c1"># The [1] is selecting the second output from predict_proba for</span>
+                <span class="c1"># all points. The second output being the probability that it</span>
+                <span class="c1"># is the current class. This is a similar form to all the other</span>
+                <span class="c1"># classifier output.</span>
+            <span class="k">elif</span> <span class="n">classifier_name</span> <span class="o">==</span> <span class="s2">&quot;LinearNDInterpolator&quot;</span><span class="p">:</span>
+                <span class="n">unfiltered_output</span> <span class="o">=</span> <span class="n">interp</span><span class="p">(</span>
+                    <span class="n">test_input</span>
+                <span class="p">)</span>  <span class="c1"># can return nan if out of bounds</span>
+                <span class="n">probs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unfiltered_output</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Name not recognized: &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">))</span>
+        <span class="c1"># for loop - all test points do one interpolator</span>
+        <span class="c1"># 1st array in probs = [ &lt;class 0 prob on 1st test point&gt;,</span>
+        <span class="c1">#                        &lt;class 0 prob on 2nd test point&gt;,... ]</span>
+        <span class="c1"># to get a row where each element is P for a diff class -&gt; transpose</span>
+        <span class="c1"># probs</span>
+
+        <span class="n">trans_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">clean_trans_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remove_nans</span><span class="p">(</span>
+            <span class="n">trans_probs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+        <span class="p">)</span>  <span class="c1"># remove nans</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">totals_per_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">clean_trans_probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">normalized_probs</span> <span class="o">=</span> <span class="n">clean_trans_probs</span> <span class="o">/</span> <span class="n">totals_per_input</span><span class="p">[:,</span>
+                                                                    <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">normalized_probs</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="k">return</span> <span class="n">normalized_probs</span><span class="p">,</span> <span class="n">where_not_nan</span></div>
+
+<div class="viewcode-block" id="Classifier.get_class_predictions"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.get_class_predictions">[docs]</a>    <span class="k">def</span> <span class="nf">get_class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_name</span><span class="p">,</span> <span class="n">test_input</span><span class="p">,</span>
+                              <span class="n">return_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the class predictions.</span>
+
+<span class="sd">        The predictions are in the form of class IDs or the original</span>
+<span class="sd">        classification key. This method also returns the probability</span>
+<span class="sd">        of the class that was predicted.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        classifier_name : str</span>
+<span class="sd">            Name of classification algorithm to use.</span>
+<span class="sd">        test_input : ndarray</span>
+<span class="sd">            Input values to predict. Same shape as input data.</span>
+<span class="sd">        return_ids : bool, optional</span>
+<span class="sd">            If True (default), return class IDs.</span>
+<span class="sd">            Else, return the original classification keys.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pred_class_ids : array</span>
+<span class="sd">            Predicted class IDs given test input.</span>
+<span class="sd">        max_probs : array</span>
+<span class="sd">            Probability the classifier gives for the chosen class.</span>
+<span class="sd">        where_not_nan : array</span>
+<span class="sd">            Inidices where there are no nans (from LinearNDInterpolator).</span>
+<span class="sd">            You may use this to pick out which input data gives a valid</span>
+<span class="sd">            classification.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_probs</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">,</span>
+                                                     <span class="n">test_input</span><span class="p">)</span>
+        <span class="n">max_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">all_probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pred_class_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">all_probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_ids</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pred_class_ids</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pred_classes</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">class_id_mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pred_class_ids</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">pred_classes</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span></div>
+
+<div class="viewcode-block" id="Classifier.get_cross_val_data"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.get_cross_val_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_cross_val_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Randomly sample the data set and seperate training and test data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            Fraction of data set to use for training. (0.05 = 5% of data set)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sorted_rnd_int_vals : array</span>
+<span class="sd">            Array indicies for data used to train interpolators.</span>
+<span class="sd">        cv_test_input_data : array</span>
+<span class="sd">            Input test data to perform cross validation.</span>
+<span class="sd">        cv_test_output_data : array</span>
+<span class="sd">            Output test data to perform cross validation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
+        <span class="c1"># rnd_input_train = []</span>
+        <span class="c1"># rnd_outout_train = []</span>
+        <span class="n">rnd_int_vals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rnd_int_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="n">ct</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">rnd_int_vals</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">num_points</span> <span class="ow">and</span> <span class="n">ct</span> <span class="o">&lt;</span> <span class="mf">1e7</span><span class="p">:</span>
+            <span class="n">rnd_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">rnd_int</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rnd_int_set</span><span class="p">:</span>
+                <span class="n">rnd_int_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rnd_int</span><span class="p">)</span>
+                <span class="n">rnd_int_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rnd_int</span><span class="p">)</span>
+            <span class="n">ct</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">sorted_rnd_int_vals</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rnd_int_vals</span><span class="p">)</span>
+
+        <span class="c1"># Random training data</span>
+        <span class="c1"># self.cross_val_train_input_data = \</span>
+        <span class="c1">#    self.input_data[sorted_rnd_int_vals,:]</span>
+        <span class="c1"># self.cross_val_train_class_data = \</span>
+        <span class="c1">#    np.argmax(self.binary_class_data.T[sorted_rnd_int_vals,:], axis=1)</span>
+
+        <span class="n">test_int_vals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sorted_rnd_int_vals</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">test_int_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># The remainder which will be used to test fits</span>
+        <span class="n">cv_test_input_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">[</span><span class="n">test_int_vals</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">cv_test_output_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binary_class_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">test_int_vals</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sorted_rnd_int_vals</span><span class="p">,</span> <span class="n">cv_test_input_data</span><span class="p">,</span> <span class="n">cv_test_output_data</span></div>
+
+<div class="viewcode-block" id="Classifier.cross_validate"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.cross_validate">[docs]</a>    <span class="k">def</span> <span class="nf">cross_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_names</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cross validate classifiers on data from TableData object.</span>
+
+<span class="sd">        For each iteration, the classifiers specified are all trained</span>
+<span class="sd">        and tested on the same random subset of data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        classifier_names : array</span>
+<span class="sd">            Names of classifiers to train.</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            Fraction of data set to use for training. (0.05 = 5% of data set)</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print statements with more information while training.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        percent_correct: ndarray</span>
+<span class="sd">            Percent correct classification on (1-alpha)% of the data set.</span>
+<span class="sd">            Element order matches the order of classifier_names.</span>
+<span class="sd">        time_to_train : ndarray</span>
+<span class="sd">            Time to train classifiers on a data set. Element order matches</span>
+<span class="sd">            the order of classifier_names.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="p">(</span>
+            <span class="n">train_data_indicies</span><span class="p">,</span>
+            <span class="n">cv_test_input_data</span><span class="p">,</span>
+            <span class="n">cv_test_output_data</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cross_val_data</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+
+        <span class="n">classifier_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_classifier_name_to_key</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">classifier_names</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;alpha: </span><span class="si">{0}</span><span class="s2">, num_training_points: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">alpha</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_data_indicies</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">time_to_train</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Train classifiers</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">classifier_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">di</span><span class="o">=</span><span class="n">train_data_indicies</span><span class="p">)</span>
+            <span class="n">time_to_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+
+        <span class="n">predicted_class_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">where_not_nans_holder</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">num_corr_holder</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Test classification</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">classifier_names</span><span class="p">:</span>
+            <span class="n">pred_ids</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">cv_test_input_data</span>
+            <span class="p">)</span>
+
+            <span class="n">predicted_class_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred_ids</span><span class="p">)</span>
+            <span class="n">where_not_nans_holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">where_not_nan</span><span class="p">)</span>
+            <span class="c1"># pred_ids already has nans omitted...</span>
+            <span class="c1"># the output data needs to have those removed...</span>
+            <span class="n">num_correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="n">pred_ids</span> <span class="o">==</span> <span class="n">cv_test_output_data</span><span class="p">[</span><span class="n">where_not_nan</span><span class="p">])</span>
+            <span class="n">num_corr_holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_correct</span><span class="p">)</span>
+
+        <span class="n">percent_correct</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">num_corr_holder</span><span class="p">)):</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">num_corr_holder</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">bot</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cv_test_input_data</span><span class="p">[</span><span class="n">where_not_nans_holder</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span>
+            <span class="n">percent_correct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">top</span> <span class="o">/</span> <span class="n">bot</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;% Correct      Interpolator&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------    ----------------&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">classifier_names</span><span class="p">)):</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">classifier_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot; </span><span class="si">{1:.3f}</span><span class="s2"> </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">classifier_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">offset</span><span class="p">),</span> <span class="n">percent_correct</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">percent_correct</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">time_to_train</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Classifier.make_cv_plot_data"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.make_cv_plot_data">[docs]</a>    <span class="k">def</span> <span class="nf">make_cv_plot_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interp_type</span><span class="p">,</span> <span class="n">alphas</span><span class="p">,</span> <span class="n">N_iterations</span><span class="p">,</span>
+                          <span class="n">folder_path</span><span class="o">=</span><span class="s2">&quot;cv_data/&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Script for running many instances of the method `cross_validate()`.</span>
+
+<span class="sd">        Cross validation score and timing data produced are saved locally.</span>
+
+<span class="sd">        ! Time to train GaussianProcessClassifier becomes large for num</span>
+<span class="sd">        training points &gt; 1000. !</span>
+
+<span class="sd">        Files saved every 5 iterations to prevent loss of data for large</span>
+<span class="sd">        N_iterations.</span>
+<span class="sd">        Known expection occurs in GP classifier for low alpha due to data set</span>
+<span class="sd">        with only one class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        interp_type : array_str</span>
+<span class="sd">            Names of classifiers to train.</span>
+<span class="sd">        alphas : array_floats</span>
+<span class="sd">            Fractions of data set to use for training. (0.05 = 5% of data set)</span>
+<span class="sd">            (ex. [0.01, 0.02, ...])</span>
+<span class="sd">        N_iterations : int</span>
+<span class="sd">            Number of iterations to run cross validation at a given alpha.</span>
+<span class="sd">        folder_path : str</span>
+<span class="sd">            Folder path where to save cross validation and timing data</span>
+<span class="sd">            (&quot;your_folder_path/&quot;).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">N_total_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">frac</span> <span class="ow">in</span> <span class="n">alphas</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;alpha: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frac</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;N training points: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">N_total_points</span> <span class="o">*</span> <span class="n">frac</span><span class="p">)))</span>
+
+            <span class="n">cross_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">interp_type</span><span class="p">)</span>
+            <span class="n">time_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">interp_type</span><span class="p">)</span>
+
+            <span class="n">good_cv_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># iteration_counter = 0</span>
+            <span class="k">while</span> <span class="n">good_cv_count</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">N_iterations</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">percent_correct</span><span class="p">,</span> <span class="n">time_to_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_validate</span><span class="p">(</span>
+                        <span class="n">interp_type</span><span class="p">,</span> <span class="n">frac</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># .loc[i] is setting a row</span>
+                    <span class="n">cross_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">good_cv_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">percent_correct</span>
+                    <span class="n">time_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">good_cv_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_to_train</span>
+
+                    <span class="k">if</span> <span class="n">good_cv_count</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2"> iter&quot;</span><span class="p">,</span> <span class="n">good_cv_count</span><span class="p">)</span>
+                        <span class="n">cross_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">folder_path</span>
+                                        <span class="o">+</span> <span class="s2">&quot;cross_val_data_f</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">frac</span><span class="p">)))</span>
+                        <span class="n">time_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">folder_path</span>
+                                       <span class="o">+</span> <span class="s2">&quot;timing_data_f</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">frac</span><span class="p">)))</span>
+
+                    <span class="n">good_cv_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;!expection!&quot;</span><span class="p">,</span> <span class="n">ex</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">good_cv_count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time to run </span><span class="si">%i</span><span class="s2"> at alpha </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">N_iterations</span><span class="p">,</span>
+                                                            <span class="n">frac</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;~</span><span class="si">%.2f</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">time_to_train</span><span class="p">)</span>
+                                             <span class="o">*</span> <span class="n">N_iterations</span><span class="p">))</span>
+
+            <span class="n">cross_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s2">&quot;cross_val_data_f</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">frac</span><span class="p">)))</span>
+            <span class="n">time_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s2">&quot;timing_data_f</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">frac</span><span class="p">)))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; ------------ DONE ------------ &quot;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="Classifier.get_rnd_test_inputs"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.get_rnd_test_inputs">[docs]</a>    <span class="k">def</span> <span class="nf">get_rnd_test_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">other_rng</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce randomly sampled &#39;test&#39; inputs inside domain of input_data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        N : int</span>
+<span class="sd">            Number of test inputs to return.</span>
+<span class="sd">        other_rng : dict, optional</span>
+<span class="sd">            Change the range of random sampling in desired axis. By default,</span>
+<span class="sd">            the sampling is done in the range of the training data. The axis is</span>
+<span class="sd">            specified with an integer key in [0,N-1] mapping to a list</span>
+<span class="sd">            specifying the range. (e.g. {1:[my_min, my_max]})</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print diagnostic information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rnd_test_points : ndarray</span>
+<span class="sd">            Test points randomly sampled in the range of the training data</span>
+<span class="sd">            in each axis unless otherwise specified in &#39;other_rng&#39;.</span>
+<span class="sd">            Has the same shape as input data from TableData.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># find max and min in each axis</span>
+        <span class="n">a_max</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">a_min</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_axis</span><span class="p">):</span>
+            <span class="n">a_max</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">a_min</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="c1"># sample N points between max &amp; min in each axis</span>
+        <span class="n">axis_rnd_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_axis</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">other_rng</span><span class="p">:</span>
+                <span class="n">b_min</span><span class="p">,</span> <span class="n">b_max</span> <span class="o">=</span> <span class="n">other_rng</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">b_min</span><span class="p">,</span> <span class="n">b_max</span> <span class="o">=</span> <span class="n">a_min</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">a_max</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> - min: </span><span class="si">{1}</span><span class="s2">, max: </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">b_min</span><span class="p">,</span> <span class="n">b_max</span><span class="p">))</span>
+
+            <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">b_min</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">b_max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+
+            <span class="c1"># this reshape is necessary to concatenate</span>
+            <span class="n">axis_rnd_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
+
+        <span class="c1"># now put the random points back together with same shape as input_data</span>
+        <span class="n">rnd_test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">axis_rnd_points</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rnd_test_points</span></div>
+
+<div class="viewcode-block" id="Classifier.make_max_cls_plot"><a class="viewcode-back" href="../../../../api/posydon.active_learning.psy_cris.classify.html#posydon.active_learning.psy_cris.classify.Classifier.make_max_cls_plot">[docs]</a>    <span class="k">def</span> <span class="nf">make_max_cls_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_name</span><span class="p">,</span> <span class="n">axes_keys</span><span class="p">,</span> <span class="n">other_rng</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+                          <span class="n">N</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make the maximum classification probablity plot.</span>
+
+<span class="sd">        Not generalized yet to slice along redundant axes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rnd_test_inputs</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">other_rng</span><span class="o">=</span><span class="n">other_rng</span><span class="p">)</span>
+        <span class="n">class_vals</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span>
+            <span class="n">classifier_name</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">return_ids</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">cls_data</span><span class="p">,</span> <span class="n">prob</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width_ratios&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]}</span>
+        <span class="p">)</span>
+
+        <span class="n">input_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span>
+            <span class="n">what_data</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">output_cls_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">get_class_data</span><span class="p">(</span>
+            <span class="n">what_data</span><span class="o">=</span><span class="s2">&quot;class_col&quot;</span><span class="p">)</span>
+        <span class="n">x_data</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">axes_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">y_data</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">axes_keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">cls_data</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Input data from TableData&quot;</span><span class="p">)</span>
+        <span class="n">cls_data</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">axes_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">cls_data</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">axes_keys</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">color_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">color_str</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">_class_colors_</span><span class="p">):</span>
+            <span class="n">color_dict</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">color_str</span>
+
+        <span class="n">cls_data</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">y_data</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="p">[</span><span class="n">color_dict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                                            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">output_cls_data</span><span class="p">])</span>
+        <span class="c1"># You need to use a mapping to get classes to colors</span>
+        <span class="c1"># I should add this to data.py</span>
+        <span class="n">prob</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">axes_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">prob_plt</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">vals</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vals</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">probs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">cb</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">prob_plt</span><span class="p">)</span>
+        <span class="n">cb</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Maximum classification probability&quot;</span><span class="p">)</span>
+        <span class="n">prob</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_classifier_name_to_key</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">cls_data</span><span class="p">,</span> <span class="n">prob</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
