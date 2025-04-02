@@ -33,7 +33,7 @@ Training the Interpolator
 
 The interpolator can be trained using an instance of the ``PSyGrid`` 
 class which can be constructed by running ones own simulations or
-by loading a simulation from an h5 file stored in the data directory
+by loading a simulation from an :samp:`h5` file stored in the data directory
 of the POSYDON repository. For more details on the ``PSyGrid`` class
 please visit the ``PSyGrid`` documentation. The ``IFInterpolator``
 class relies on the ``BaseIFInterpolator`` class to perform the interpolation 
@@ -80,7 +80,7 @@ the ``BaseIFInterpolator``.
     from posydon.grids.psygrid import PSyGrid
     from posydon.interpolation.IF_interpolation import IFInterpolator
 
-    grid = PSyGrid("path/to/h5/file.h5") # loading grid from h5 file
+    grid = PSyGrid("path/to/h5/file.h5") # loading grid from :samp:`h5` file
 
     interp = IFInterpolator(grid = grid, interpolators = [
         { 
