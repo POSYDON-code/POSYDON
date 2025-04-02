@@ -25,7 +25,7 @@ You can instantiate a new :samp:`PSyGrid` object with
 
 This calls the initializer, which can take two optional arguments
 
-- :samp:`filepath`: this is the path to the associated h5 file; if the file
+- :samp:`filepath`: this is the path to the associated :samp:`h5` file; if the file
   exists, the initializer will load the contained `PSyGrid` object
 - :samp:`verbose`: this is a boolean indicating whether detailed output should 
   be, given when calling functions of the :samp:`PSyGrid` object
@@ -45,7 +45,7 @@ runs. There are several optional arguments as well:
     ===============  =========  ===========
     Argument         Default    Description
     ===============  =========  ===========
-    psygrid_path     None       the path to the associated h5 file (required if none was specified during initialization)
+    psygrid_path     None       the path to the associated :samp:`h5` file (required if none was specified during initialization)
     overwrite        False      if :samp:`True`, overwrite any file that exists
     slim             False      if :samp:`True`, only store initial/final values and metadata
     warn             "end"      if :samp:`normal`, warnings are printed, when they arise
@@ -117,7 +117,7 @@ based on MESA data:
 Loading a `PSyGrid` object
 --------------------------
 
-You can load an existing h5 file (e.g. "myPSyGrid.h5") into a :samp:`PSyGrid`
+You can load an existing :samp:`h5` file (e.g. "myPSyGrid.h5") into a :samp:`PSyGrid`
 object:
 
 .. code-block:: python
