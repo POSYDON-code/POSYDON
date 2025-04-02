@@ -38,7 +38,11 @@ def _parse_commandline():
                              "directory",
                         default=0.01)
     parser.add_argument("-v", "--verbose",
-                        help="enable/disable outputs",
+                        help="enable outputs",
+                        default=False,
+                        action='store_true')
+    parser.add_argument("-d", "--debug",
+                        help="enable debugging outputs",
                         default=False,
                         action='store_true')
     parser.add_argument("mesa_dir",
@@ -195,8 +199,8 @@ def compress_dir(args):
                 (len(new_compress_files)>0)):
                 compress_files.append((dirpath, new_compress_files))
                 n_compress_files += len(new_compress_files)
-        return total_size, remove_files, compress_files, n_runs,\
-            n_remove_files, n_compress_files
+        return (total_size, remove_files, compress_files, n_runs,
+                n_remove_files, n_compress_files)
 
     if args.mesa_dir is None:
         raise NameError("mesa_dir needs to be specified for set_up_test")
@@ -212,7 +216,8 @@ def compress_dir(args):
     for folder, files in tqdm(to_remove):
         for remove_file in files:
             if os.path.isfile(os.path.join(folder, remove_file)):
-#                print("remove:", os.path.join(folder, remove_file))
+                if args.debug:
+                    print("remove:", os.path.join(folder, remove_file))
                 try:
                     os.remove(os.path.join(folder, remove_file))
                 except:
@@ -224,7 +229,8 @@ def compress_dir(args):
     for folder, files in tqdm(to_compress):
         for compress_file in files:
             if os.path.isfile(os.path.join(folder, compress_file)):
-#                print(f"gzip -1 {os.path.join(folder, compress_file)}")
+                if args.debug:
+                    print("compress:", os.path.join(folder, compress_file))
                 os.system(f"gzip -1 {os.path.join(folder, compress_file)}")
 
     new_size, to_remove, to_compress, n_runs, n_remove_files, n_compress_files\

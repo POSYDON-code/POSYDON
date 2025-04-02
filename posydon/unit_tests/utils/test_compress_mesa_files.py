@@ -15,6 +15,7 @@ os = totest.os
 # module you like to test
 from pytest import fixture, raises, warns
 from inspect import isroutine
+from posydon.unit_tests._helper_functions_for_tests.MESA import get_MESA_dir
 
 # define test classes collecting several test functions
 class TestElements:
@@ -58,13 +59,6 @@ class TestElements:
 
 
 class TestFunctions:
-    @fixture
-    def Empty_dir(self, tmp_path):
-        # create an empty directory
-        dir_path = os.path.join(tmp_path, "empty")
-        os.mkdir(dir_path)
-        return dir_path
-
     # test functions
     def test_parse_commandline(self, monkeypatch, capsys):
         with monkeypatch.context() as mp:
@@ -74,13 +68,14 @@ class TestFunctions:
                 totest._parse_commandline()
             captured_out = capsys.readouterr().out
             assert "usage: compress-mesa [-h] [-td TEST_DIR] [-dsr DSR] [-v] "\
-                   + "mesa_dir" in captured_out
+                   + "[-d] mesa_dir" in captured_out
             assert "Compressing MESA files" in captured_out
             assert "positional arguments:\n  mesa_dir" in captured_out
             assert "options:\n  -h, --help" in captured_out
             assert "-td TEST_DIR, --test_dir TEST_DIR" in captured_out
             assert "-dsr DSR, --dsr DSR" in captured_out
             assert "-v, --verbose" in captured_out
+            assert "-d, --debug" in captured_out
             # missing argument
             tests = [(['compress-mesa-fail'], "the following arguments are "\
                                               +"required: mesa_dir"),\
@@ -100,21 +95,26 @@ class TestFunctions:
                 for test_dir in [None, 'test']:
                     for dsr in [0.01, 0.1]:
                         for verbose in [False, True]:
-                            commandline_args = ['compress-mesa-test']
-                            if mesa_dir is not None:
-                                commandline_args += [str(mesa_dir)]
-                            if test_dir is not None:
-                                commandline_args += ['--test_dir',\
-                                                     str(test_dir)]
-                            if dsr != 0.01:
-                                commandline_args += ['--dsr', str(dsr)]
-                            if verbose:
-                                commandline_args += ['--verbose']
-                            mp.setattr(totest.sys, "argv", commandline_args)
-                            assert totest._parse_commandline()\
-                                   == totest.argparse.Namespace(\
-                                       mesa_dir=mesa_dir, test_dir=test_dir,\
-                                       dsr=dsr, verbose=verbose)
+                            for debug in [False, True]:
+                                commandline_args = ['compress-mesa-test']
+                                if mesa_dir is not None:
+                                    commandline_args += [str(mesa_dir)]
+                                if test_dir is not None:
+                                    commandline_args += ['--test_dir',\
+                                                         str(test_dir)]
+                                if dsr != 0.01:
+                                    commandline_args += ['--dsr', str(dsr)]
+                                if verbose:
+                                    commandline_args += ['--verbose']
+                                if debug:
+                                    commandline_args += ['--debug']
+                                mp.setattr(totest.sys, "argv",\
+                                           commandline_args)
+                                assert totest._parse_commandline()\
+                                       == totest.argparse.Namespace(\
+                                           mesa_dir=mesa_dir,\
+                                           test_dir=test_dir, dsr=dsr,\
+                                           verbose=verbose, debug=debug)
 
     def test_textsize(self):
         # missing argument
@@ -179,7 +179,7 @@ class TestFunctions:
             totest.set_up_test(test_args)
         pass
 
-    def test_compress_dir(self, Empty_dir):
+    def test_compress_dir(self, tmp_path):
         # missing argument
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'args'"):
@@ -194,8 +194,20 @@ class TestFunctions:
                                               +"does not exist."):
             test_args = totest.argparse.Namespace(mesa_dir='does_not_exist')
             totest.compress_dir(test_args)
-        # examples
-        test_args = totest.argparse.Namespace(mesa_dir=Empty_dir, verbose=True)
+        # examples: empty directory
+        MESA_dir = get_MESA_dir(tmp_path, 0)
+        test_args = totest.argparse.Namespace(mesa_dir=MESA_dir,\
+                                              verbose=False, debug=False)
+        totest.compress_dir(test_args)
+        # examples: binary runs
+        MESA_dir = get_MESA_dir(tmp_path, 1)
+        test_args = totest.argparse.Namespace(mesa_dir=MESA_dir,\
+                                              verbose=False, debug=False)
+        totest.compress_dir(test_args)
+        # examples: single star runs
+        MESA_dir = get_MESA_dir(tmp_path, -1)
+        test_args = totest.argparse.Namespace(mesa_dir=MESA_dir,\
+                                              verbose=False, debug=False)
         totest.compress_dir(test_args)
         pass
 
@@ -208,29 +220,36 @@ class TestFunctions:
             self.compress_dir = args
         with monkeypatch.context() as mp:
             mp.setattr(totest, "_parse_commandline", mock_parse_commandline)
-            mp.setattr(totest, "set_up_test", mock_set_up_test)
+            # examples: run compress_dir
             mp.setattr(totest, "compress_dir", mock_compress_dir)
-            # examples
             for mesa_dir in ['.', 'unit']:
                 for verbose in [False, True]:
-                    self.compress_dir = None
-                    self.commandline_args = totest.argparse.Namespace(\
-                     mesa_dir=mesa_dir, test_dir=None, dsr=0.01,\
-                     verbose=verbose)
-                    totest._compress_MESA()
-                    assert self.compress_dir.mesa_dir == mesa_dir
-                    assert self.compress_dir.verbose == verbose
-            # examples
+                    for debug in [False, True]:
+                        self.compress_dir = None
+                        self.commandline_args = totest.argparse.Namespace(\
+                         mesa_dir=mesa_dir, test_dir=None, dsr=0.01,\
+                         verbose=verbose, debug=debug)
+                        totest._compress_MESA()
+                        assert self.compress_dir.mesa_dir == mesa_dir
+                        assert self.compress_dir.verbose == verbose
+                        assert self.compress_dir.debug == debug
+            # examples: run set_up_test
+            mp.setattr(totest, "set_up_test", mock_set_up_test)
             for mesa_dir in ['.', 'unit']:
                 for test_dir in ['test', 'dir']:
                     for dsr in [0.01, 0.1]:
                         for verbose in [False, True]:
-                            self.test_set_up = None
-                            self.commandline_args = totest.argparse.Namespace(\
-                             mesa_dir=mesa_dir, test_dir=test_dir, dsr=dsr,\
-                             verbose=verbose)
-                            totest._compress_MESA()
-                            assert self.test_set_up.mesa_dir == mesa_dir
-                            assert self.test_set_up.test_dir == test_dir
-                            assert self.test_set_up.dsr == dsr
-                            assert self.test_set_up.verbose == verbose
+                            for debug in [False, True]:
+                                self.test_set_up = None
+                                self.commandline_args =\
+                                 totest.argparse.Namespace(mesa_dir=mesa_dir,\
+                                                           test_dir=test_dir,\
+                                                           dsr=dsr,\
+                                                           verbose=verbose,\
+                                                           debug=debug)
+                                totest._compress_MESA()
+                                assert self.test_set_up.mesa_dir == mesa_dir
+                                assert self.test_set_up.test_dir == test_dir
+                                assert self.test_set_up.dsr == dsr
+                                assert self.test_set_up.verbose == verbose
+                                assert self.test_set_up.debug == debug
