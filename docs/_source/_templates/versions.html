@@ -9,8 +9,16 @@
     <div class="rst-other-versions">
         {% if version | length > 1 %}
         <dl>
-            <dt> {{ _('Versions') }}</dt>
-            {% for the_version, url in versions %}
+            <dt> {{ _('v1 versions') }}</dt>
+            {% for the_version, url in v1_versions %}
+            <dd><a href="{{ url }}/index.html">{{ the_version }}</a></dd>
+            {% endfor %}
+        </dL>
+        {% endif %}
+        {% if version | length > 1 %}
+        <dl>
+            <dt> {{ _('v2 versions') }}</dt>
+            {% for the_version, url in v2_versions %}
             <dd><a href="{{ url }}/index.html">{{ the_version }}</a></dd>
             {% endfor %}
         </dL>

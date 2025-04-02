@@ -57,21 +57,37 @@ def get_github_tags():
     except Exception as e:
         print(f"Error getting tags from github: {e}")
         return []
-    
+
 github_tags = get_github_tags()
 
-# get current version
-current_version = posydon_version
+# 2.0.0-dev needs to be removed from the list and replaced with development
+github_tags.remove('2.0.0-dev')
 
-url_list = [f'{tag}' for tag in github_tags]
-versions = [[tag, url] for tag, url in zip(github_tags, url_list)] 
+
+# get current version
+if posydon_version.startswith('2.0.0-dev'):
+    current_version = 'dev'
+    posydon_version = 'development'
+
+# absolute path to the documentation
+base_url = 'https://posydon.org/POSYDON'
+
+# get the list of versions
+url_list = [f'{base_url}/{tag}' for tag in github_tags]
+v1_versions = [[tag, url] for tag, url in zip(github_tags, url_list) if tag.startswith('1.')]
+v2_versions = [[tag, url] for tag, url in zip(github_tags, url_list) if tag.startswith('2.')]
+
+print(v1_versions)
+print(v2_versions)
+ 
 # add development version
-versions.append(['dev', 'development'])
+v2_versions.append(['dev', f'{base_url}/development/'])
 
 # Versions to be shown in the version dropdown
 html_context = {
   'current_version' : current_version,
-  'versions' : versions,
+  'v1_versions' : v1_versions,
+  'v2_versions' : v2_versions,
 }
 
 # -- Path setup ----------------------------------------------------------
