@@ -74,6 +74,7 @@ if posydon_version.startswith('2.0.0-dev'):
     posydon_version = 'development'
 elif 'dirty' in posydon_version and posydon_version.split('+')[0] in old_tags:
     current_version = posydon_version.split('+')[0]
+    posydon_version = posydon_version.split('+')[0]
 else:
     current_version = posydon_version
 
