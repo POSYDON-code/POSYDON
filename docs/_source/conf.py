@@ -68,7 +68,7 @@ print(posydon_version)
 if posydon_version.startswith('2.0.0-dev'):
     current_version = 'dev'
     posydon_version = 'development'
-elif posydon_version.contains('dirty'):
+elif 'dirty' in posydon_version:
     current_version = posydon_version.split('+')[0]
 
 # absolute path to the documentation
