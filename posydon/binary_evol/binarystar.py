@@ -218,8 +218,10 @@ class BinaryStar:
                 and self.event not in self.properties.end_events
                 and self.state not in self.properties.end_states):
             
+            print("testing...", self.event) # DEBUG
             signal.alarm(MAXIMUM_STEP_TIME)
             self.run_step()
+            print(self.event) # DEBUG
 
             n_steps += 1
             if max_n_steps is not None:
@@ -238,6 +240,7 @@ class BinaryStar:
 
         next_step_name = self.properties.flow.get(total_state)
         if next_step_name is None:
+            signal.alarm(0) # DEBUG 
             raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
 
         next_step = getattr(self.properties, next_step_name, None)

@@ -335,6 +335,7 @@ class detached_step:
             list_for_matching_HeStar=None
     ):
         """Initialize the step. See class documentation for details."""
+        print("DEBUG Z: ", metallicity)
         self.metallicity = convert_metallicity_to_string(metallicity)
         self.dt = dt
         self.n_o_steps_history = n_o_steps_history

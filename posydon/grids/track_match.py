@@ -832,14 +832,14 @@ class track_matcher:
                 
                 percent_diff = [
                                 "% difference",
-                                f'{100.0*abs(star.mass - self.get_track_val("mass", htrack, *best_sol.x))/star.mass :.3f}', 
-                                f'{100.0*abs(star.log_R - self.get_track_val("log_R", htrack, *best_sol.x))/star.log_R:.3f}',
-                                f'{100.0*abs(star.center_h1 - self.get_track_val("center_h1", htrack, *best_sol.x))/star.center_h1:.3f}',
-                                f'{100.0*abs(star.surface_h1 - self.get_track_val("surface_h1", htrack, *best_sol.x))/star.surface_h1:.4f}',
-                                f'{100.0*abs(star.he_core_mass - self.get_track_val("he_core_mass", htrack, *best_sol.x))/star.he_core_mass:.3f}',
-                                f'{100.0*abs(star.center_he4 - self.get_track_val("center_he4", htrack, *best_sol.x))/star.center_he4:.4f}',
-                                f'{100.0*abs(star.surface_he4 - self.get_track_val("surface_he4", htrack, *best_sol.x))/star.surface_he4:.4f}',    
-                                f'{100.0*abs(star.center_c12 - self.get_track_val("center_c12", htrack, *best_sol.x))/star.center_c12:.4f}'
+                                f'{np.nan_to_num(100.0*(star.mass - self.get_track_val("mass", htrack, *best_sol.x))/star.mass, 0):.3f}', 
+                                f'{np.nan_to_num(100.0*(star.log_R - self.get_track_val("log_R", htrack, *best_sol.x))/star.log_R, 0):.3f}',
+                                f'{np.nan_to_num(100.0*(star.center_h1 - self.get_track_val("center_h1", htrack, *best_sol.x))/star.center_h1, 0):.3f}',
+                                f'{np.nan_to_num(100.0*(star.surface_h1 - self.get_track_val("surface_h1", htrack, *best_sol.x))/star.surface_h1, 0):.4f}',
+                                f'{np.nan_to_num(100.0*(star.he_core_mass - self.get_track_val("he_core_mass", htrack, *best_sol.x))/star.he_core_mass, 0):.3f}',
+                                f'{np.nan_to_num(100.0*(star.center_he4 - self.get_track_val("center_he4", htrack, *best_sol.x))/star.center_he4, 0):.4f}',
+                                f'{np.nan_to_num(100.0*(star.surface_he4 - self.get_track_val("surface_he4", htrack, *best_sol.x))/star.surface_he4, 0):.4f}',    
+                                f'{np.nan_to_num(100.0*(star.center_c12 - self.get_track_val("center_c12", htrack, *best_sol.x))/star.center_c12, 0):.4f}'
                                ]
 
                 output_table = [val_names, initial_vals, matched_vals, percent_diff]
