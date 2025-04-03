@@ -67,7 +67,7 @@ General pipeline settings
 -------------------------
 
 The next section outlines general information about the pipeline. The :samp:`PATH` 
-specifies, where you would like to get the pipeline files being created. The 
+specifies, where you would like to have the pipeline files created. The 
 :samp:`VERBOSE` option will be used for the creation of the pipeline files and 
 during the run
 of the pipeline.
