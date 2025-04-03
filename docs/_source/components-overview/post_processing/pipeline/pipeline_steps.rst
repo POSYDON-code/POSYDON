@@ -60,7 +60,7 @@ Step 2: Combining `PSyGrid` objects
 
 Often, grids are split into batches, or reruns are done. In those cases,
 there will be individual :samp:`PSyGrid` objects created for each batch or rerun. This step
-will join them into one. The :samp:`step_2.csv` file should have a matrix
+will join them into a single combined :samp:`PSyGrid` object representing the complete grid. The :samp:`step_2.csv` file should have a matrix
 structure. The columns contain the grids which should be combined to the one
 specified in the header (first) row. The :samp:`DATA_ID` corresponds here to
 the column number (starting with 0). Here is an example:
