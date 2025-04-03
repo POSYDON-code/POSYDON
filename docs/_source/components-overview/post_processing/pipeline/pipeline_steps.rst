@@ -155,7 +155,7 @@ Step F: Exporting the data set
 
 After we have a complete data set, we would like to export it to be used for
 the population synthesis. We now go to the final step, step F.
-the final step even if more steps are introduced in the future. In
+In
 :samp:`step_F.csv`, there are again two paths required, a source and an export
 path. The step will simply copy the source to the export location. Hence, here
 the final :samp:`PSyGrid` objects and all the interpolator files are usually
