@@ -80,7 +80,7 @@ the column number (starting with 0). Here is an example:
 
 .. _pipeline_step3:
 
-Step 3: Calculating extra values from detailed data
+Step 3: Calculating extra values from stellar model time series and structure profile data
 --------------------------------------------------
 
 In this step we calculate extra quantities from the histories and profiles.
