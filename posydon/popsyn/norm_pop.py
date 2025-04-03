@@ -77,8 +77,7 @@ def get_pdf(kwargs):
     
     IMF_pdf = get_IMF_pdf(kwargs)
     q_pdf = get_mass_ratio_pdf(kwargs)
-    f_b_pdf = get_binary_fraction_pdf(kwargs)
-    
+    f_b_pdf = get_binary_fraction_pdf(kwargs)    
     pdf_function = lambda m1, q=0, binary=False: np.where(
         np.asarray(binary),
         f_b_pdf(np.asarray(binary)) * IMF_pdf(np.asarray(m1)) * q_pdf(np.asarray(q), np.asarray(m1)),
@@ -209,9 +208,7 @@ def calculate_model_weights(pop_data, M_sim, simulation_parameters, population_p
     weight_pop = PDF_pop(m1=pop_data['S1_mass_i'],
                          q=pop_data['S2_mass_i']/pop_data['S1_mass_i'],
                          binary=binary_mask)
-
     weight_sim = PDF_sim(m1=pop_data['S1_mass_i'],
                          q=pop_data['S2_mass_i']/pop_data['S1_mass_i'],
                          binary=binary_mask)
-    
     return (weight_pop / weight_sim) * factor
