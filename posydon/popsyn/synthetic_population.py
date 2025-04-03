@@ -1765,7 +1765,7 @@ class TransientPopulation(Population):
 
     """
 
-    def __init__(self, filename, transient_name, verbose=False, chunksize=1000000):
+    def __init__(self, filename, transient_name, verbose=False, chunksize=100000):
         """Initialise the TransientPopulation object.
 
         This method initializes the TransientPopulation object by linking it to the population file.
@@ -1930,7 +1930,7 @@ class TransientPopulation(Population):
             # calculate weights 
             met_mask = tmp_data['metallicity'] == self.mass_per_metallicity.index[i]
             met_indices = tmp_data.index[met_mask]
-            met_indices =np.unique(met_indices)
+            met_indices = np.unique(met_indices)
             M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
             pop_data = self.oneline.select(where='index in '+str(met_indices.tolist()),
                                            columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
@@ -1941,15 +1941,19 @@ class TransientPopulation(Population):
             pop_data['S1_mass_i'] = np.maximum(S1_tmp, S2_tmp)
             pop_data['S2_mass_i'] = np.minimum(S1_tmp, S2_tmp)
             del S1_tmp, S2_tmp
-            
             calculated_weights =  calculate_model_weights(
                                                     pop_data=pop_data,
                                                     M_sim=M_sim,
                                                     simulation_parameters=simulation_parameters,
                                                     population_parameters=population_parameters)
-            weight_mapping = dict(zip(met_indices, calculated_weights))
-            model_weights[model_weights_identifier] = model_weights.index.map(weight_mapping)
             
+            weight_mapping = dict(zip(met_indices, calculated_weights))
+
+            model_weights[model_weights_identifier] = (
+                model_weights.index.to_series().map(weight_mapping).fillna(model_weights[model_weights_identifier]))
+            
+            
+    
         with pd.HDFStore(self.filename, mode="a") as store:
             if '/transients/' + self.transient_name + '/weights/' + model_weights_identifier in store.keys():
                 Pwarn("Model weights already exist! Overwriting them!", "OverwriteWarning")
