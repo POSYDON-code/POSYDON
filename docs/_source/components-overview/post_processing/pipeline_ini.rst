@@ -33,7 +33,7 @@ all :ref:`tasks <pipeline>`. Hence, you can run all
 
 .. note::
     Currently, the user needs to take care of having a POSYDON_data directory
-    which includes the tables for the core-collapse prescriptions him or herself
+    which includes the tables for the core-collapse prescriptions themselves
     in the working directory.
 
 .. _pipeline_ini_sections:
