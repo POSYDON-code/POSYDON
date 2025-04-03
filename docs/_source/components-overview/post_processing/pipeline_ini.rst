@@ -132,7 +132,7 @@ that step:
     ====  ============================  ===========
     Step  Keyword                       Description
     ====  ============================  ===========
-       1  STOP_BEFORE_CARBON_DEPLETION  indicating, whether high mass HMS stars should get their history cropped short before carbon depletion (1) or not (0)
+       1  STOP_BEFORE_CARBON_DEPLETION  indicating, whether high mass HMS stars should get their history cropped before carbon depletion (set to 1 if so) or not (set to 0 if not)
        2  GRID_SLICES                   for this step, we have 3 layers of lists: the outermost is still the grid type, the inner most is still the grid slice, the middle layer is the combined grid
        2  GRIDS_COMBINED                a list of lists of combined grids; the outermost list is again referring to grid type; this is used as name for the new combined grid instead of :samp:`GRID_SLICE`
        3  ORIGINAL_COMPRESSIONS         a list of lists of the ORIGINAL compression to calculate the extra values from (the first one is used for all compressions for that grid type)
