@@ -179,7 +179,7 @@ a system to be included in the rerun and what should be changed needs to be
 implemented first.
 
 For this step the :samp:`csv` file is called :samp:`rerun.csv` to avoid too much
-confusion with other steps. It clearly has to run after a step, but it is 
+confusion with other steps. It clearly has to run after step 1 and step 2, but it is 
 not a usual step itself. It requires the path to a :samp:`PSyGrid` object to 
 get the models from, the path to which the rerun should be stored (it creates 
 the :samp:`grid.csv` and the :samp:`ini` file needed to
