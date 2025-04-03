@@ -137,7 +137,7 @@ that step:
        2  GRIDS_COMBINED                a list of lists of combined grids; the outermost list is again referring to grid type; this is used as name for the new combined grid instead of :samp:`GRID_SLICE`
        3  ORIGINAL_COMPRESSIONS         a list of lists of the ORIGINAL compression to calculate the extra values from (the first one is used for all compressions for that grid type)
        4  INTERPOLATION_METHODS         a list of the interpolator types which are trained
-       4  CONTROL_GRIDS                 a list of lists of control grids for the :samp:`GRID_SLICES`; it need to have the same number of entries as the :samp:`GRID_SLICES`, to specify no control grid use an empty string
+       4  CONTROL_GRIDS                 a list of lists of control grids for the :samp:`GRID_SLICES`; it needs to have the same number of entries as the :samp:`GRID_SLICES`; use an empty string to specify no control grid
        R  RERUN_TYPE                    a defined rerun type
        R  CLUSTER                       cluster name to get the appropriate :samp:`ini` file
     ====  ============================  ===========
