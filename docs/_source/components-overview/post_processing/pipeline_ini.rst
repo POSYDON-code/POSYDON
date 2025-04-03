@@ -121,7 +121,7 @@ All sections have common keywords:
     COMPRESSIONS        a list of lists of compression types
     DROP_MISSING_FILES  boolean to ignore missing files; it allows to have different substructures and taking the existing ones into account when specifying union of all possible substructures
     CREATE_PLOTS        a list of plots to make; this will be done independently whether the step is active or not; to make no plots put there an empty list or comment out such a line
-    DO_CHECKS           a list of checks to perform; this will be done independently whether the step is active or not; to omitt checks specify an empty list or comment out the line
+    DO_CHECKS           a list of checks to perform; this will be done independently whether the step is active or not; to omit checks, specify an empty list or comment out the line
     ==================  ===========
 
 Some :ref:`steps <pipeline_steps>` have more keywords, which are specific to
