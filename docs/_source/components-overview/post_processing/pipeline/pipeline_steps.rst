@@ -172,7 +172,7 @@ Step R: Exporting a rerun
 
 Often, a grid will not successfully converge every binary on the first go. So 
 there is a need to export reruns which use modified conditions to fix 
-non-converged models. This step is therefore only needed during the build of 
+non-converged models. This step is therefore only needed to build 
 a new grid. Usually, one would run the steps to the point where the need of a 
 fix arises. Additionally, before exporting a rerun, the logic for how to select 
 a system to be included in the rerun and what should be changed needs to be 
