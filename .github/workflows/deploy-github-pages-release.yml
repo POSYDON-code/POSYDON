@@ -230,3 +230,58 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_WORKSPACE: ${{ github.workspace }}
+
+  link_latest:
+    needs: [build_v1, build_v2]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download gh-pages
+      uses: actions/checkout@v4
+      with:
+        ref: gh-pages
+        path: '_build'
+        
+    - name: Find latest version and create symlink
+      run: |
+        cd _build
+        
+        # List all version directories
+        echo "All directories:"
+        ls -la
+        
+        # Find all version directories that match our version pattern
+        VERSIONS=$(ls -d v[0-9]* 2>/dev/null || echo "")
+        
+        if [ -z "$VERSIONS" ]; then
+          echo "No version directories found!"
+          exit 1
+        fi
+        
+        echo "Found versions: $VERSIONS"
+        
+        # Sort versions and get the latest
+        LATEST=$(echo "$VERSIONS" | sort -V | tail -n 1)
+        
+        echo "Latest version: $LATEST"
+        
+        # Remove existing latest symlink or directory if it exists
+        if [ -e "latest" ]; then
+          rm -rf latest
+        fi
+        
+        # Create symlink to the latest version
+        ln -s "$LATEST" latest
+        
+        # Verify the symlink
+        ls -la latest
+
+    - name: Deploy to GitHub Pages
+      if: success()
+      uses: crazy-max/ghaction-github-pages@v2
+      with:
+        target_branch: gh-pages
+        build_dir: _build/
+        history: true
+        dry_run: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
