@@ -150,7 +150,7 @@ the grid starts at RLO), and finally, the name of the interpolator object.
 
 .. _pipeline_stepF:
 
-Step F: exporting the data set
+Step F: Exporting the data set
 -----------------------------
 
 After we have a complete data set, we would like to export it to be used for
