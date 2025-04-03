@@ -202,7 +202,7 @@ type of the rerun specifying the logic and changes, and the cluster name.
     thermohaline_mixing    default in v3+  Uses thermohaline mixing in the inlist
     HeMB_MLTp_mesh         caution         Turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++ (this can cause significant changes in the radius evolution of stars); it changes some more input values to change the resulation close to the surface
     more_mesh              workaround      Modifies the remeshing and allows for more cells in MESA
-    conv_bdy_weight        caution         Disabled the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)
+    conv_bdy_weight        caution         Disables the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)
     dedt_energy_eqn        caution         Enables MESA's dedt-form of the energy equation for numerical stability during rapid (superthermal) mass transfer
     dedt_hepulse           caution         Enables MESA's dedt-form of the energy equation for rapid mass transfer; at stripped HeZAMS, several MLT++ changes, v_flag and lnPgas_flag set to .true., and convective_bdy_weight disabled to help with stripped He star superadiabatic envelopes, pulsations, and WD cooling
     LBV_wind               default in v3+  Turns on LBV winds when crossing the Humphreys-Davidson limit as intended (due to a bug this was only applied after a retry); additionally, there are reruns `LBV_wind+thermohaline_mixing`, `LBV_wind+dedt_energy_eqn`, which combine the two rerun types. Any additional changes to these reruns are described here as LBV_wind+rerun_type
