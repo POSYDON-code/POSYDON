@@ -73,7 +73,7 @@ the column number (starting with 0). Here is an example:
     ,OLD_H5_FILE23
 
 .. warning::
-    The data will be put on top of each other. E.g., if there is the same
+    The data will be layered on top of each other. E.g., if there is the same
     initial system in :samp:`OLD_H5_FILE11` and :samp:`OLD_H5_FILE12`, the one
     in :samp:`OLD_H5_FILE11` will be discarded and only the one in
     :samp:`OLD_H5_FILE12` will end up in :samp:`NEW_H5_FILE1`.
