@@ -6,7 +6,7 @@ Machine Learning Components
 
 
 Initial Final Classification & Interpolation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 ..  toctree::

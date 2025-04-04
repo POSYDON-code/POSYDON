@@ -14,7 +14,7 @@ To use the profile interpolator we first import the ``ProfileInterpolator`` and 
 
 
 Extracting Profile Data from :samp:`h5` Files for Training Interpolators
-===================================================================
+========================================================================
 
 To extract profile data from existing grids, we pass arguments ``train_path`` and ``test_path`` pointing to :samp:`h5` files containing instances of the ``PSyGrid`` class from which the training and testing grids can be loaded. These can be constructed by running one's own simulations or by loading a precomputed simulation stored in the data directory of the POSYDON repository. The ``profile_names`` argument denotes which profiles will be extracted from the grid and saved to ``filename`` using the function ``save``. The Boolean argument ``hms_s2`` should be set to True only to extract star 2 profiles from the HMS-HMS grid. 
 

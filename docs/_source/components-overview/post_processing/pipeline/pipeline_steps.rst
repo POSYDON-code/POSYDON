@@ -25,7 +25,7 @@ The script to run the pipeline takes four arguments:
 .. _pipeline_step1:
 
 Step 1: Creating a `PSyGrid` object
-----------------------------------
+-----------------------------------
 
 First, we need to create the :samp:`PSygrid` object. To do so, the pipeline
 needs to know the directory which contains the MESA runs, the compression, the
@@ -56,7 +56,7 @@ The currently supported compression types are:
 .. _pipeline_step2:
 
 Step 2: Combining `PSyGrid` objects
-----------------------------------
+-----------------------------------
 
 Often, grids are split into batches, or reruns are done. In those cases,
 there will be individual :samp:`PSyGrid` objects created for each batch or rerun. This step
@@ -81,7 +81,7 @@ the column number (starting with 0). Here is an example:
 .. _pipeline_step3:
 
 Step 3: Calculating extra values from stellar model time series and structure profile data
---------------------------------------------------
+------------------------------------------------------------------------------------------
 
 In this step we calculate extra quantities from the histories and profiles.
 Those extra values are key parameters at He depletion, at onset of common
@@ -120,7 +120,7 @@ type:
 .. _pipeline_step4:
 
 Step 4: Training the interpolators
-------------------------------------
+----------------------------------
 
 To get interpolated data from our grids, in this step we train an interpolator
 on the :samp:`PSyGrid` object. The file :samp:`step_4.csv` therefore has to
@@ -151,11 +151,10 @@ the grid starts at RLO), and finally, the name of the interpolator object.
 .. _pipeline_stepF:
 
 Step F: Exporting the data set
------------------------------
+------------------------------
 
 After we have a complete data set, we would like to export it to be used for
-the population synthesis. We now go to the final step, step F.
-In
+the population synthesis. We now go to the final step, step F. In
 :samp:`step_F.csv`, there are again two paths required, a source and an export
 path. The step will simply copy the source to the export location. Hence, here
 the final :samp:`PSyGrid` objects and all the interpolator files are usually
@@ -168,7 +167,7 @@ addressed by this step.
 .. _pipeline_stepR:
 
 Step R: Exporting a rerun
-------------------------
+-------------------------
 
 Often, a grid will not successfully converge every binary on the first go. So 
 we may need to export reruns which use modified conditions to fix 
