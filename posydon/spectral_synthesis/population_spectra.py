@@ -152,6 +152,13 @@ class population_spectra():
                     pop_spectrum[label2] += spectrum_2
             pop = pop.drop(i)
             labels.append([label1,label2])
+        pop_spectrum['Total'] = np.zeros(len(self.grids.lam_c))
+        if spectral_type:
+            for key in spectral_types:
+                pop_spectrum['Total'] += pop_spectrum[key]
+        else: 
+            for key in state_list:
+                pop_spectrum['Total'] += pop_spectrum[key]
 
         if self.save_data:
             return pop_spectrum,labels
@@ -260,7 +267,7 @@ class  sub_population_spectra(population_spectra):
         else:
             for state in state_list:
                 pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
-
+        pop_spectrum['Total'] = np.zeros(len(self.grids.lam_c))
         for i,binary in pop.iterrows():
             spectrum_1,state_1,label1 = regenerate_spectrum(self.grids,binary,'S1',**self.kwargs)
             spectrum_2,state_2,label2 = regenerate_spectrum(self.grids,binary,'S2',**self.kwargs)
@@ -279,6 +286,14 @@ class  sub_population_spectra(population_spectra):
                     pop_spectrum[state_2] += spectrum_2
                
             pop = pop.drop(i)
+
+        if spectral_type:
+            for key in spectral_types:
+                pop_spectrum['Total'] += pop_spectrum[key]
+        else: 
+            for key in state_list:
+                pop_spectrum['Total'] += pop_spectrum[key]
+
         return pop_spectrum,labels_S1,labels_S2
 
     
