@@ -1953,7 +1953,8 @@ class TransientPopulation(Population):
                                                     simulation_parameters=simulation_parameters,
                                                     population_parameters=population_parameters)
             weight_mapping = dict(zip(met_indices, calculated_weights))
-            model_weights[model_weights_identifier] = model_weights.index.map(weight_mapping)
+            model_weights[model_weights_identifier] = (
+                model_weights.index.to_series().map(weight_mapping).fillna(model_weights[model_weights_identifier]))
         
         with pd.HDFStore(self.filename, mode="a") as store:
             if '/transients/' + self.transient_name + '/weights/' + model_weights_identifier in store.keys():
