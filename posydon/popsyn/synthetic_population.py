@@ -40,7 +40,6 @@ from matplotlib import pyplot as plt
 
 from posydon.utils.constants import Zsun
 from posydon.popsyn.io import binarypop_kwargs_from_ini
-from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 import posydon.visualization.plot_pop as plot_pop
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
