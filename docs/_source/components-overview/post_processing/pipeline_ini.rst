@@ -7,8 +7,8 @@ Documentation of the :samp:`ini` file for the post-processing pipeline
 Aim of the :samp:`ini` file
 ===================
 
-Using an :samp:`ini` file should help to keep an overview on large grid repositories
-and ensures that all workflows will be setup the same way.
+Using an :samp:`ini` file should help to keep an overview on large grid 
+repositories and ensures that all workflows will be setup the same way.
 
 There is a script to setup the pipeline, it takes one argument:
 
@@ -16,8 +16,9 @@ There is a script to setup the pipeline, it takes one argument:
 
     posydon-setup-pipeline PATH_TO_INI
 
-The content of the :samp:`ini` file is described :ref:`below <pipeline_ini_sections>`.
-It will create two files for each step, plot or check:
+The content of the :samp:`ini` file is described :ref:`below 
+<pipeline_ini_sections>`. It will create two files for each step, plot or 
+check:
 
 1. \*.csv
 2. \*.slurm
@@ -66,11 +67,10 @@ user is making changes to the data set.
 General pipeline settings
 -------------------------
 
-The next section outlines general information about the pipeline. The :samp:`PATH` 
-specifies, where you would like to have the pipeline files created. The 
-:samp:`VERBOSE` option will be used for the creation of the pipeline files and 
-during the run
-of the pipeline.
+The next section outlines general information about the pipeline. The 
+:samp:`PATH` specifies where you would like to have the pipeline files created. 
+The :samp:`VERBOSE` option will be used for the creation of the pipeline files 
+and during the run of the pipeline.
 
 Finally, we have switches to turn on (:samp:`True`) and off (:samp:`False`)
 individual :ref:`steps <pipeline_steps>` and
