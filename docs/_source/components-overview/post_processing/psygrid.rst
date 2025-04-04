@@ -25,8 +25,8 @@ You can instantiate a new :samp:`PSyGrid` object with
 
 This calls the initializer, which can take two optional arguments
 
-- :samp:`filepath`: this is the path to the associated :samp:`h5` file; if the file
-  exists, the initializer will load the contained `PSyGrid` object
+- :samp:`filepath`: this is the path to the associated :samp:`h5` file; if the 
+  file exists, the initializer will load the contained `PSyGrid` object
 - :samp:`verbose`: this is a boolean indicating whether detailed output should 
   be, given when calling functions of the :samp:`PSyGrid` object
 
@@ -117,8 +117,8 @@ based on MESA data:
 Loading a `PSyGrid` object
 --------------------------
 
-You can load an existing :samp:`h5` file (e.g. "myPSyGrid.h5") into a :samp:`PSyGrid`
-object:
+You can load an existing :samp:`h5` file (e.g. "myPSyGrid.h5") into a 
+:samp:`PSyGrid` object:
 
 .. code-block:: python
 
@@ -301,11 +301,11 @@ Work on/with a `PSyGrid` object
 Loop over a `PSyGrid` object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Similarly to accessing a single value in the :samp:`PSyGrid` object, we can loop
-over a :samp:`PSyGrid` object, which will loop over the individual runs in the
-:samp:`PSyGrid` object. Hence the following two code snippets will produce the 
-same output. The first one loops through the numpy array of the initial 
-companion masses:
+Similarly to accessing a single value in the :samp:`PSyGrid` object, we can 
+loop over a :samp:`PSyGrid` object, which will loop over the individual runs 
+in the :samp:`PSyGrid` object. Hence the following two code snippets will 
+produce the same output. The first one loops through the numpy array of the 
+initial companion masses:
 
 .. code-block:: python
 
@@ -399,7 +399,8 @@ may want to rerun some of them with changed parameters. The function
 :samp:`rerun` exports runs from a :samp:`PSyGrid` object to be run again. 
 There are two options:
 
-1. Write your own logic and create a numpy array with the indices of the systems that you would like to run again.
+1. Write your own logic and create a numpy array with the indices of the 
+systems that you would like to run again.
 2. Specify which termination flag(s) necessitate a rerun of the system.
 
 ..
