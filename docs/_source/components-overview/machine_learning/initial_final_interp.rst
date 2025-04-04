@@ -1,7 +1,7 @@
 .. _initial-final-interp:
 
 ###########################################
-Initial Final Classification & Interpolation
+Initial-Final Classification & Interpolation
 ###########################################
 
 We showcase the initial-final interpolator which plays a critical role in the
