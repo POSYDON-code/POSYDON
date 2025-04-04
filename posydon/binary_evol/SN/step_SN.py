@@ -53,7 +53,7 @@ from posydon.binary_evol.SN.profile_collapse import (do_core_collapse_BH,
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
                                             STAR_STATES_C_DEPLETION)
 
-from posydon.grids.MODELS import MODELS
+from posydon.grids.MODELS import get_MODEL_NAME
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 from posydon.utils.common_functions import set_binary_to_failed
@@ -519,23 +519,7 @@ class StepSN(object):
             # use those, else continue with or without profile.
             if self.use_interp_values:
                 # find MODEL_NAME corresponding to class variable
-                MODEL_NAME_SEL = None
-                for MODEL_NAME, MODEL in MODELS.items():
-                    tmp = MODEL_NAME
-                    for key, val in MODEL.items():
-                        if "use_" in key or key=="ECSN":
-                            # escape values, which are allowed to differ
-                            continue
-                        if getattr(self, key) != val:
-                            if self.verbose:
-                                print(tmp, 'mismatch:', key,
-                                      getattr(self, key), val)
-                            tmp = None
-                            break
-                    if tmp is not None:
-                        if self.verbose:
-                            print('matched to model:', tmp)
-                        MODEL_NAME_SEL = tmp
+                MODEL_NAME_SEL = get_MODEL_NAME(vars(self), verbose=self.verbose)
 
                 # check if selected MODEL is supported
                 if MODEL_NAME_SEL is None:

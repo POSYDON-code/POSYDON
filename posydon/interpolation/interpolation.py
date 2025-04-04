@@ -391,7 +391,9 @@ class GRIDInterpolator():
                      'lambda_CE_30cent',
                      'co_core_mass',
                      'co_core_radius',
-                     'lambda_CE_pure_He_star_10cent')
+                     'lambda_CE_pure_He_star_10cent',
+                     'total_mass_h1',
+                     'total_mass_he4')
 
         self.translate = {
             'age': 'star_age',
@@ -451,6 +453,8 @@ class GRIDInterpolator():
             'thickness_conv_reg_fortides': 'thickness_conv_reg_fortides',
             'radius_conv_reg_fortides': 'radius_conv_reg_fortides',
             'surface_he3': 'surface_he3',
+            'total_mass_h1': 'total_mass_h1',
+            'total_mass_he4': 'total_mass_he4',
             }
 
         # processed keys

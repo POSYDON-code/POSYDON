@@ -95,6 +95,10 @@ The star properties are defined as follows
     - Angular momentum of the star in g*cm^2*s^-1 or dimensionless BH spin.
   * - ``profile``
     - Stellar profile from MESA. [not currently supported for the initial-final interpolator]
+  * - ``total_mass_h1``
+    - Total Hydrogen mass in M_sun.
+  * - ``total_mass_he4``
+    - Total Helium mass in M_sun.
 
 Additional scalar properties are added during the evolution depending on which steps the star has undergone. These properties are not stored in the history.
 

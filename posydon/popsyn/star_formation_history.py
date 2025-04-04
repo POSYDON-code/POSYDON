@@ -25,6 +25,8 @@ from posydon.utils.constants import Zsun
 from posydon.utils.interpolators import interp1d
 from astropy.cosmology import Planck15 as cosmology
 from abc import ABC, abstractmethod
+from posydon.utils.posydonwarning import Pwarn
+
 
 SFH_SCENARIOS = [
     "burst",
@@ -70,7 +72,7 @@ class SFHBase(ABC):
         
 
     @abstractmethod
-    def CSFRD(self, z):
+    def CSFRD(self, z): # pragma: no cover
         """Compute the cosmic star formation rate density.
         
         This is an abstract method that must be implemented by subclasses.
@@ -86,11 +88,15 @@ class SFHBase(ABC):
         -------
         float or array-like
             The cosmic star formation rate density at the given redshift(s).
+            
+        Raises
+        -------
+            NotImplementedError: If the subclass does not implement this method.  
         """
         pass
 
     @abstractmethod
-    def mean_metallicity(self, z):
+    def mean_metallicity(self, z): # pragma: no cover
         """Return the mean metallicity at redshift z.
 
         This is an abstract method that must be implemented by subclasses.
@@ -105,12 +111,16 @@ class SFHBase(ABC):
         Returns
         -------
         float or array-like
-            The mean metallicity at the given redshift(s).        
+            The mean metallicity at the given redshift(s).      
+            
+        Raises
+        -------
+            NotImplementedError: If the subclass does not implement this method.  
         """
         pass
         
     @abstractmethod
-    def fSFR(self, z, metallicity_bins):
+    def fSFR(self, z, metallicity_bins): # pragma: no cover
         """Compute the star formation rate fraction (fSFR) at a given redshift 
         using the specified metallicity bins.
 
@@ -153,21 +163,22 @@ class SFHBase(ABC):
             Fraction of the SFR in the given metallicity bin at the given redshift.
         '''
         fSFR = (np.array(cdf_func(metallicity_bins[1:]))
-                    - np.array(cdf_func(metallicity_bins[:-1])))
+                - np.array(cdf_func(metallicity_bins[:-1])))
                 
         # include material outside the metallicity bounds if requested
         if self.Z_max is not None:
             if self.Z_max >= metallicity_bins[-1]:
                 fSFR[-1] = cdf_func(self.Z_max) - cdf_func(metallicity_bins[-2])
             else:
-                print("Warning: Z_max is smaller than the highest metallicity bin.")
+                print(f"Z_max is smaller than the highest metallicity bin.")
+                Pwarn('Z_max is smaller than the highest metallicity bin.')
                 fSFR[-1] = 0.0
 
         if self.Z_min is not None:
             if self.Z_min <= metallicity_bins[0]:
                 fSFR[0] = cdf_func(metallicity_bins[1]) - cdf_func(self.Z_min)
             else:
-                print("Warning: Z_min is larger than the lowest metallicity bin.")
+                Pwarn('Z_min is larger than the lowest metallicity bin.')
                 fSFR[0] = 0.0
             
         if self.normalise:
@@ -489,12 +500,7 @@ class IllustrisTNG(SFHBase):
                 The maximum metallicity in absolute units.
             - select_one_met : bool
                 If True, the SFR is calculated for a single metallicity bin.
-        """
-        
-        self.Z_max = None
-        self.Z_min = None
-        self.normalise = False
-        
+        """        
         super().__init__(MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
@@ -505,7 +511,7 @@ class IllustrisTNG(SFHBase):
         self.Z = illustris_data["mets"]
         self.M = np.flip(illustris_data["M"], axis=0)  # Msun
         
-    def _get_illustrisTNG_data(self, verbose=False):
+    def _get_illustrisTNG_data(self, verbose=False): # pragma: no cover
         """Load IllustrisTNG SFR dataset into the class.
         
         Parameters
@@ -702,7 +708,7 @@ class Chruslinska21(SFHBase):
         mean_over_redshift = np.zeros_like(self.redshifts)
         for i in range(len(mean_over_redshift)):
             if np.sum(self.SFR_data[i]) == 0:
-                mean_over_redshift[i] = 0
+                mean_over_redshift[i] = np.nan
             else:
                 mean_over_redshift[i] = np.average(self.Z, weights=self.SFR_data[i,:]*self.dFOH)
         
@@ -743,7 +749,7 @@ class Chruslinska21(SFHBase):
                 fSFR[i, :] = self._distribute_cdf(cdf_fun, metallicity_bins)
         return fSFR
         
-    def _load_redshift_data(self, verbose=False):
+    def _load_redshift_data(self, verbose=False): # pragma: no cover
         """Load the redshift data from a Chruslinsk+21 model file.
         
         Returns
@@ -762,7 +768,7 @@ class Chruslinska21(SFHBase):
             os.path.join(self._data_folder, "Time_redshift_deltaT.dat"), unpack=True)
         return time, redshift, delt
              
-    def _load_raw_data(self):
+    def _load_raw_data(self): # pragma: no cover
         """Read the sub-model data from the file
         
         The data structure is as follows:
@@ -846,7 +852,7 @@ class Zavala21(MadauBase):
         super().__init__(MODEL)
         self._load_zavala_data()
         
-    def _load_zavala_data(self):
+    def _load_zavala_data(self): # pragma: no cover
         """Load the data from the Zavala+21 models
         Transforms the data to the format used in the classes.
         
@@ -857,6 +863,8 @@ class Zavala21(MadauBase):
                                skiprows=1,
                                sep="\s+")
         self.redshifts = tmp_data["redshift"].values
+        # The min / max values originally come from their obscured 
+        # and unobscured SFRD model.
         if self.sub_model == "min":
             self.SFR_data = tmp_data["SFRD_min"].values
         elif self.sub_model == "max":
@@ -921,7 +929,8 @@ def SFR_per_met_at_z(z, met_bins, MODEL):
     SFH = get_SFH_model(MODEL)
     return SFH(z, met_bins)
 
-def get_formation_times(N_binaries, star_formation="constant", **kwargs):
+# TODO: No testing coverage for the following function, but should be added
+def get_formation_times(N_binaries, star_formation="constant", **kwargs): # pragma: no cover
     """Get formation times of binaries in a population based on a SFH scenario.
 
     Parameters
