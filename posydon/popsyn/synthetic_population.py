@@ -1920,6 +1920,12 @@ class TransientPopulation(Population):
             print("Population parameters:")
             print(population_parameters)
         
+        if self.verbose:
+            print("Simulation parameters:")
+            print(simulation_parameters)
+            print("Population parameters:")
+            print(population_parameters)
+        
         tmp_data = self.population[['metallicity']]
         model_weights = pd.DataFrame(
                     {model_weights_identifier: np.zeros(len(tmp_data))},
