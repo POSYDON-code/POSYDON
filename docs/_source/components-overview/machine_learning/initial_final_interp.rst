@@ -18,9 +18,9 @@ Loading a Pretrained Interpolator
 
 To load a pretrained interpolator we need to
 pass in the ``filename`` argument into the ``IFInterpolator``
-constructor which specifies the path to a .pkl file where
+constructor which specifies the path to a :samp:`pkl` file where
 the pretrained interpolator can be loaded from. POSYDON provides
-various pretrained models whose corresponding .pkl files
+various pretrained models whose corresponding :samp:`pkl` files
 can be found in the data directory of the POSYDON repository.
 
 .. code-block:: python
@@ -53,8 +53,8 @@ be specified if ``interp_method`` is a list.
 3. ``class_method``: the classification method to be used, either ``kNN`` or
 ``1NN``.
 
-4. ``in_keys``: the keys to be used as the input to the interpolator, by default
-these are ``star_1_mass``, ``star_2_mass``, and ``period_days``.
+4. ``in_keys``: the keys to be used as the input to the interpolator, by 
+default these are ``star_1_mass``, ``star_2_mass``, and ``period_days``.
 
 5. ``out_keys``: the keys for which the interpolator is supposed to provide 
 values, by default all keys are used.
@@ -71,9 +71,9 @@ are optimized through Monte Carlo Cross Validation.
 interpolate binaries. Only to be specified in the MCInterpolator case.
 
 For most applications specifying only the first four parameters is recommended. 
-Provided below is an example instantiation of the ``IFInterpolator`` class. Note 
-that there are a total of six dictionaries corresponding to the six instances of 
-the ``BaseIFInterpolator``.
+Provided below is an example instantiation of the ``IFInterpolator`` class. 
+Note that there are a total of six dictionaries corresponding to the six 
+instances of the ``BaseIFInterpolator``.
 
 .. code-block:: python
 
@@ -139,9 +139,10 @@ the ``BaseIFInterpolator``.
 Using the Interpolator
 ======================
 
-Once the interpolator has been trained or loaded from a .pkl file it can be used
-to accomplish various tasks which most commonly are to classify a track into its class
-given an input vector and or to approximate a final vector given an input vector.
+Once the interpolator has been trained or loaded from a :samp:`pkl` file it 
+can be used to accomplish various tasks which most commonly are to classify a 
+track into its class given an input vector and or to approximate a final 
+vector given an input vector.
 
 .. code-block:: python
 
@@ -156,8 +157,8 @@ given an input vector and or to approximate a final vector given an input vector
     interpolation, classification = interp.evaluate(binary) # evaluating returns a tuple of dictionaries
 
 
-Finally a trained interpolator can be easily saved by specifying a path to a .pkl file
-where the interpolator will be saved to.
+Finally a trained interpolator can be easily saved by specifying a path to 
+a :samp:`pkl` file where the interpolator will be saved to.
 
 .. code-block:: python
 
