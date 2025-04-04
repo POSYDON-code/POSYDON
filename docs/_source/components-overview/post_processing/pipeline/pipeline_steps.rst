@@ -3,8 +3,8 @@
 ##############
 Pipeline steps
 ##############
-The post-processing pipeline is divided into several steps which build 
-on each other. Each step will take a :samp:`csv` file as input. The name of this 
+The post-processing pipeline is divided into several steps which build on each 
+other. Each step will take a :samp:`csv` file as input. The name of this 
 file determines which pipeline step should be performed.
 
 The script to run the pipeline takes four arguments:
@@ -38,8 +38,8 @@ grid type, and whether to crop the history for some certain runs. Hence, the
 
 And the lines below contain the data for each unique combination of the three
 parameters to be processed. Here the :samp:`DATA_ID` simply refers to the line
-below the header starting by 0. Thus, the second line in the file has the index
-0, the third one has index 1, and so on.
+below the header starting by 0. Thus, the second line in the file has the 
+index 0, the third one has index 1, and so on.
 
 The currently supported compression types are:
 
@@ -59,11 +59,12 @@ Step 2: Combining `PSyGrid` objects
 -----------------------------------
 
 Often, grids are split into batches, or reruns are done. In those cases,
-there will be individual :samp:`PSyGrid` objects created for each batch or rerun. This step
-will join them into a single combined :samp:`PSyGrid` object representing the complete grid. The :samp:`step_2.csv` file should have a matrix
-structure. The columns contain the grids which should be combined to the one
-specified in the header (first) row. The :samp:`DATA_ID` corresponds here to
-the column number (starting with 0). Here is an example:
+there will be individual :samp:`PSyGrid` objects created for each batch or 
+rerun. This step will join them into a single combined :samp:`PSyGrid` object 
+representing the complete grid. The :samp:`step_2.csv` file should have a 
+matrix structure. The columns contain the grids which should be combined to 
+the one specified in the header (first) row. The :samp:`DATA_ID` corresponds 
+here to the column number (starting with 0). Here is an example:
 
 .. code-block::
 
@@ -177,11 +178,11 @@ fix arises. Additionally, before exporting a rerun, the logic for how to select
 a system to be included in the rerun and what should be changed needs to be 
 implemented first.
 
-For this step the :samp:`csv` file is called :samp:`rerun.csv` to avoid too much
-confusion with other steps. It clearly has to run after step 1 and step 2, but it is 
-not a usual step itself. It requires the path to a :samp:`PSyGrid` object to 
-get the models to rerun from, the path to which the rerun should be stored (it creates 
-the :samp:`grid.csv` and the :samp:`ini` file needed to
+For this step the :samp:`csv` file is called :samp:`rerun.csv` to avoid too 
+much confusion with other steps. It clearly has to run after step 1 and step 2, 
+but it is not a usual step itself. It requires the path to a :samp:`PSyGrid` 
+object to get the models to rerun from, the path to which the rerun should be 
+stored (it creates the :samp:`grid.csv` and the :samp:`ini` file needed to
 :ref:`setup a new run <mesa-grids-api>`), the grid type, the metallicity, the
 type of the rerun specifying the logic and changes, and the cluster name.
 
