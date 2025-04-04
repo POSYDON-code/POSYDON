@@ -259,8 +259,13 @@ jobs:
         
         echo "Found versions: $VERSIONS"
         
-        # Sort versions and get the latest
-        LATEST=$(echo "$VERSIONS" | sort -V | tail -n 1)
+        # First try to find the latest non-pre-release version
+        LATEST=$(echo "$VERSIONS" | grep -v "-pre" | sort -V | tail -n 1)
+        
+        # If no non-pre-release version is found, use the latest including pre-releases
+        if [ -z "$LATEST" ]; then
+          LATEST=$(echo "$VERSIONS" | sort -V | tail -n 1)
+        fi
         
         echo "Latest version: $LATEST"
         
