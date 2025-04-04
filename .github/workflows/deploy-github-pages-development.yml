@@ -47,7 +47,6 @@ jobs:
 
     - name: Make Documentation
       env:
-        PATH_TO_POSYDON: ./
         PATH_TO_POSYDON_DATA: ./
         MESA_DIR: ./
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -67,6 +66,7 @@ jobs:
         # move and copy docs out of the POSYDON folder
         touch _build/html/.nojekyll
         cd ../
+        mkdir -p _build
         mv docs/_build/html/ _build/development
 
     - name: Deploy to GitHub Pages
