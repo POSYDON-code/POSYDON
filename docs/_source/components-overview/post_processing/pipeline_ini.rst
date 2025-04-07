@@ -104,7 +104,7 @@ as pages in a single PDF.
 Step sections
 -------------
 
-The path of each grid will be joint as
+The path of each grid will be joined as
 :samp:`PATH_TO_GRIDS/GRID_TYPE/VERSION/METALLICITY/GRID_SLICE`. The
 corresponding :samp:`h5` files will have names according to
 :samp:`PATH_TO_GRIDS/GRID_TYPE/VERSION/METALLICITY/COMPRESSION/GRID_SLICE.h5`.
