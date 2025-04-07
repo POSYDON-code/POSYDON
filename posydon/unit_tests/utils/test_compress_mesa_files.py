@@ -151,7 +151,7 @@ class TestFunctions:
         assert totest.textsize(1e+3, base=1000) == "1K"
         assert totest.textsize(1e+3, threshold=1024) == "1e+03b"
 
-    def test_set_up_test(self):
+    def test_set_up_test(self, tmp_path, capsys):
         # missing argument
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'args'"):
@@ -177,7 +177,20 @@ class TestFunctions:
             test_args = totest.argparse.Namespace(mesa_dir='does_not_exist',\
                                                   test_dir='.')
             totest.set_up_test(test_args)
-        pass
+        # examples: copy all MESA stuff (incl. extra stuff in batch directory)
+        MESA_dir = get_MESA_dir(tmp_path, 1)
+        os.mkdir(os.path.join(MESA_dir, "empty_dir")) # extra directory
+        with open(os.path.join(MESA_dir, "test.txt"), "w") as test_file:
+            test_file.write("Unit test:\nset_up_test\n") # extra file
+        with open(os.path.join(tmp_path, "test.txt"), "w") as test_file:
+            test_file.write("Unit test:\nset_up_test\n") # extra file
+        test_dir = os.path.join(tmp_path, "test1")
+        os.mkdir(test_dir)
+        test_args = totest.argparse.Namespace(mesa_dir=tmp_path,\
+                                              test_dir=test_dir, dsr=1.0)
+        totest.set_up_test(test_args)
+        assert capsys.readouterr().out == "Created Test Directory at "\
+                                          + f"{test_dir}.\n"
 
     def test_compress_dir(self, tmp_path, capsys):
         # missing argument
@@ -234,8 +247,7 @@ class TestFunctions:
         for i in [0, -1]:
             with open(os.path.join(MESA_dir, os.listdir(MESA_dir)[i],\
                                    "core.3"), "w") as core_dump_file:
-                core_dump_file.write(f"Test\n")
-                core_dump_file.write(f"remove\n")
+                core_dump_file.write("Test\nremove\n")
         test_args = totest.argparse.Namespace(mesa_dir=MESA_dir,\
                                               verbose=True, debug=True)
         totest.compress_dir(test_args)
@@ -261,8 +273,7 @@ class TestFunctions:
         for i in [0, -1]:
             with open(os.path.join(MESA_dir, os.listdir(MESA_dir)[i],\
                                    "core.3"), "w") as core_dump_file:
-                core_dump_file.write(f"Test\n")
-                core_dump_file.write(f"remove\n")
+                core_dump_file.write("Test\nremove\n")
         test_args = totest.argparse.Namespace(mesa_dir=MESA_dir,\
                                               verbose=True, debug=False)
         totest.compress_dir(test_args)
