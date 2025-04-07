@@ -478,12 +478,12 @@ def initial_values_from_dirname(mesa_dir):
     base_name = os.path.basename(dirname) # base name of the MESA run dir
     
     if "initial_mass" in base_name:                           # single-star grid
-        if "_v1/" in dirname: # version 1 dirnames don't contain initial_z
+        if "v1/" in dirname: # version 1 dirnames don't contain initial_z
             variable_names = ["initial_mass"]
         else:
             variable_names = ["initial_mass", "initial_z"]
     else:                                                   # binary-star grid
-        if "_v1/" in dirname: # version 1 dirnames don't contain initial_z
+        if "v1/" in dirname: # version 1 dirnames don't contain initial_z
             variable_names = ["m1", "m2", "initial_period_in_days"]
         else:
             variable_names = ["m1", "m2", "initial_period_in_days", "initial_z"]
