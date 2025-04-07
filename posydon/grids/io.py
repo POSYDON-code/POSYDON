@@ -469,20 +469,23 @@ def initial_values_from_dirname(mesa_dir):
             orbital period, and metallicity
 
     """
-    dirname = str(os.path.basename(os.path.normpath(mesa_dir)))
-    if "initial_mass" in dirname:                           # single-star grid
-        if "v1/" in str(mesa_dir): # version 1 dirnames don't contain initial_z
+    dirname = os.path.normpath(mesa_dir.decode("utf-8")) 
+    parent_path = os.path.dirname(dirname) # get path to parent dir
+    base_name = os.path.basename(dirname) # base name of the MESA run dir
+    
+    if "initial_mass" in base_name:                           # single-star grid
+        if "v1/" in parent_path: # version 1 dirnames don't contain initial_z
             variable_names = ["initial_mass"]
         else:
             variable_names = ["initial_mass", "initial_z"]
     else:                                                   # binary-star grid
-        if "v1/" in str(mesa_dir): # version 1 dirnames don't contain initial_z
+        if "v1/" in parent_path: # version 1 dirnames don't contain initial_z
             variable_names = ["m1", "m2", "initial_period_in_days"]
         else:
             variable_names = ["m1", "m2", "initial_period_in_days", "initial_z"]
         for variable_name in variable_names:
-            assert variable_name in dirname
+            assert variable_name in base_name
 
-    values = [dirname.split(variable_name+"_")[1].split("_")[0]
+    values = [base_name.split(variable_name+"_")[1].split("_")[0]
               for variable_name in variable_names]
     return tuple(values)
