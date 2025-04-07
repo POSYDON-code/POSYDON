@@ -220,8 +220,11 @@ def compress_dir(args):
                     print("remove:", os.path.join(folder, remove_file))
                 try:
                     os.remove(os.path.join(folder, remove_file))
-                except:
+                except: #pragma: no cover
                     print("Could not remove:", remove_file, "in", folder)
+            else: #pragma: no cover
+                raise FileNotFoundError(f"{os.path.join(folder, remove_file)}"
+                                        " is not a file.")
 
     if args.verbose:
         print("compress", n_compress_files, "files in", len(to_compress),\
@@ -232,6 +235,9 @@ def compress_dir(args):
                 if args.debug:
                     print("compress:", os.path.join(folder, compress_file))
                 os.system(f"gzip -1 {os.path.join(folder, compress_file)}")
+            else: #pragma: no cover
+                raise FileNotFoundError(f"{os.path.join(folder, remove_file)}"
+                                        " is not a file.")
 
     new_size, to_remove, to_compress, n_runs, n_remove_files, n_compress_files\
         = get_size(args.mesa_dir)
@@ -240,10 +246,10 @@ def compress_dir(args):
         print("Compressed MESA tracks")
         print(f"Original size {textsize(og_size)} | "\
               f"Compressed size {textsize(new_size)}")
-    if len(to_remove)>0:
+    if len(to_remove)>0: #pragma: no cover
     	Pwarn("Still files to remove: {}".format(to_remove),
     	      "IncompletenessWarning")
-    if len(to_compress)>0:
+    if len(to_compress)>0: #pragma: no cover
     	Pwarn("Still files to compress: {}".format(to_compress),
     	      "IncompletenessWarning")
 
