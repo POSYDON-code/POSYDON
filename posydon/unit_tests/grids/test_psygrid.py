@@ -1176,7 +1176,7 @@ class TestPSyGrid:
             # get run directories for index 0 to 2
             add_MESA_run_files(path, i, binary_run=True, with_histories=False,\
                                with_profiles=True)
-        return path.encode("utf-8")
+        return path
 
     @fixture
     def MESA_files_single(self, tmp_path):
