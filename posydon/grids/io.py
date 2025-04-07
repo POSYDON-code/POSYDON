@@ -469,7 +469,12 @@ def initial_values_from_dirname(mesa_dir):
             orbital period, and metallicity
 
     """
-    dirname = os.path.normpath(mesa_dir.decode("utf-8")) 
+
+    if isinstance(mesa_dir, bytes):
+        dirname = os.path.normpath(mesa_dir.decode("utf-8"))
+    else:
+        dirname = os.path.normpath(mesa_dir)
+        
     parent_path = os.path.dirname(dirname) # get path to parent dir
     base_name = os.path.basename(dirname) # base name of the MESA run dir
     
