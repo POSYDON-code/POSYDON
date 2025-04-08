@@ -539,6 +539,7 @@ def check_batches(run_folder, metallicity, batch_folder_name):
                         if "DUE TO TIME LIMIT" in lines[0]:
                             print("  Wall time exceeded")
                         else:
+                            print(f"{str_met}_logs/popsyn_{jobID}_{index}.out:")
                             for i, line in enumerate(lines):
                                 print(f"  {i+1}: {line.strip()}")
                 else:
