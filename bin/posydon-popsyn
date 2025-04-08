@@ -952,8 +952,7 @@ if __name__ == '__main__':
     setup_parser.add_argument(
         'ini_file', 
         help='a population ini file for which you want to setup a population run',
-        type=str, 
-        required=True)
+        type=str)
     setup_parser.add_argument(
         '-j', '--job_array',
         help='the number of job in the job array you want to run',
@@ -992,8 +991,7 @@ if __name__ == '__main__':
     check_parser.add_argument(
         'run_folder',
         help='the folder where the population run is located',
-        type=str,
-        required=True)
+        type=str)
     check_parser.set_defaults(func=check_popsyn_function)
     
     # Rescue the run subcommand
@@ -1003,8 +1001,7 @@ if __name__ == '__main__':
     rescue_parser.add_argument(
         'run_folder',
         help='the folder where the population run is located',
-        type=str,
-        required=True)
+        type=str)
     rescue_parser.add_argument(
         '-j', '--job_array',
         help='the number of job in the job array you want to run',
