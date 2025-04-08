@@ -26,7 +26,7 @@ class TestElements:
                     '__package__', '__spec__', '_compress_MESA',
                     '_parse_commandline', 'argparse', 'compress_dir', 'os',
                     'random', 'set_up_test', 'shutil', 'sys', 'textsize',
-                    'tqdm'}
+                    'tqdm', 'get_size'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -50,6 +50,9 @@ class TestElements:
 
     def test_instance_set_up_test(self):
         assert isroutine(totest.set_up_test)
+
+    def test_instance_get_size(self):
+        assert isroutine(totest.get_size)
 
     def test_instance_compress_dir(self):
         assert isroutine(totest.compress_dir)
@@ -192,6 +195,61 @@ class TestFunctions:
         assert capsys.readouterr().out == "Created Test Directory at "\
                                           + f"{test_dir}.\n"
 
+    def test_get_size(self, tmp_path):
+        # examples: empty directory
+        MESA_dir = get_MESA_dir(tmp_path, 0)
+        total_size, remove_files, compress_files, n_runs, n_remove_files,\
+         n_compress_files = totest.get_size(start_path=MESA_dir)
+        assert total_size == 0
+        assert remove_files == []
+        assert compress_files == []
+        assert n_runs == 0
+        assert n_remove_files == 0
+        assert n_compress_files == 0
+        # examples: binary runs
+        MESA_dir = get_MESA_dir(tmp_path, 1, n_runs=20)
+        total_size, remove_files, compress_files, n_runs, n_remove_files,\
+         n_compress_files = totest.get_size(start_path=MESA_dir)
+        assert total_size > 0
+        assert remove_files == []
+        assert len(compress_files) > 0
+        assert n_runs == 20
+        assert n_remove_files == 0
+        assert n_compress_files > 0
+        # examples: with core dump files to remove
+        MESA_dir = get_MESA_dir(tmp_path, 2, n_runs=20)
+        for i in [0, -1]:
+            with open(os.path.join(MESA_dir, os.listdir(MESA_dir)[i],\
+                                   "core.2"), "w") as core_dump_file:
+                core_dump_file.write("Test\nremove\n")
+        total_size, remove_files, compress_files, n_runs, n_remove_files,\
+         n_compress_files = totest.get_size(start_path=MESA_dir)
+        assert total_size > 0
+        assert len(remove_files) == 2
+        assert len(compress_files) > 0
+        assert n_runs == 20
+        assert n_remove_files == 2
+        assert n_compress_files > 0
+        # examples: with link
+        MESA_dir = get_MESA_dir(tmp_path, 3, n_runs=20)
+        MESA_runs = os.listdir(MESA_dir)
+        if len(MESA_runs)>0:
+            for i in [0, -1]:
+                MESA_run_dir = os.path.join(MESA_dir, MESA_runs[i])
+                os.symlink(MESA_run_dir, os.path.join(MESA_dir, f"link{i}"))
+                MESA_run_file = os.path.join(MESA_run_dir,\
+                                             os.listdir(MESA_run_dir)[0])
+                os.symlink(MESA_run_file, os.path.join(MESA_dir,\
+                                                       f"link{i}.file0"))
+        total_size, remove_files, compress_files, n_runs, n_remove_files,\
+         n_compress_files = totest.get_size(start_path=MESA_dir)
+        assert total_size > 0
+        assert len(remove_files) == 0
+        assert len(compress_files) > 0
+        assert n_runs == 20
+        assert n_remove_files == 0
+        assert n_compress_files > 0
+
     def test_compress_dir(self, tmp_path, capsys):
         # missing argument
         with raises(TypeError, match="missing 1 required positional "\
@@ -286,35 +344,6 @@ class TestFunctions:
         assert "files in" in captured_out[1]
         assert "directories of" in captured_out[1]
         assert "MESA runs" in captured_out[1]
-        assert "Compressed MESA tracks" in captured_out[-3]
-        assert "Original size" in captured_out[-2]
-        assert "| Compressed size" in captured_out[-2]
-        assert "" == captured_out[-1]
-        # examples: with link
-        MESA_dir = get_MESA_dir(tmp_path, 4)
-        MESA_runs = os.listdir(MESA_dir)
-        if len(MESA_runs)>0:
-            for i in [0, -1]:
-                MESA_run_dir = os.path.join(MESA_dir, MESA_runs[i])
-                os.symlink(MESA_run_dir, os.path.join(MESA_dir, f"link{i}"))
-                MESA_run_file = os.path.join(MESA_run_dir,\
-                                             os.listdir(MESA_run_dir)[0])
-                os.symlink(MESA_run_file, os.path.join(MESA_dir,\
-                                                       f"link{i}.file0"))
-        test_args = totest.argparse.Namespace(mesa_dir=MESA_dir,\
-                                              verbose=True, debug=True)
-        totest.compress_dir(test_args)
-        captured_out = capsys.readouterr().out.split('\n')
-        assert "remove" in captured_out[0]
-        assert "core dump files in" in captured_out[0]
-        assert "directories of" in captured_out[0]
-        assert "MESA runs" in captured_out[0]
-        assert "compress" in captured_out[1]
-        assert "files in" in captured_out[1]
-        assert "directories of" in captured_out[1]
-        assert "MESA runs" in captured_out[1]
-        assert "compress:" in captured_out[2]
-        assert "/MESA_data_index4/" in captured_out[2]
         assert "Compressed MESA tracks" in captured_out[-3]
         assert "Original size" in captured_out[-2]
         assert "| Compressed size" in captured_out[-2]

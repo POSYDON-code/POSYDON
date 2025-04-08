@@ -18,12 +18,12 @@ from tqdm import tqdm
 from posydon.utils.posydonwarning import Pwarn
 
 def _parse_commandline():
-    """Parse the arguments given on the command-line
+    """Parse the arguments given on the command line
 
         Returns
         -------
         Namespace
-            All the passed arguments from the commoand line or their defaults.
+            All the passed arguments from the command line or their defaults.
 
     """
     parser = argparse.ArgumentParser(description="Compressing MESA files")
@@ -98,7 +98,8 @@ def textsize(filesize, floatfmt=".3g", base=1024, threshold=1000):
 
 
 def set_up_test(args):
-    """Set up a testing directory in the requested directory.
+    """Set up a testing directory in the requested directory. It copies data
+    from the mesa_dir into the testing directory.
 
     Parameters (keys in `args`)
     ---------------------------
@@ -150,6 +151,48 @@ def set_up_test(args):
     print(f"Created Test Directory at {args.test_dir}.")
 
 
+def get_size(start_path="."):
+    total_size = 0
+    remove_files = []
+    compress_files = []
+    n_runs = 0
+    n_remove_files = 0
+    n_compress_files = 0
+    for dirpath, _, filenames in os.walk(start_path):
+        if "_grid_index_" in dirpath:   # checking if directory is mesa run
+            new_remove_files = []
+            new_compress_files = []
+            if "_grid_index_" in os.path.basename(dirpath):
+                n_runs += 1
+        else:
+            new_remove_files = None
+            new_compress_files = None
+        for filename in filenames:
+            filepath = os.path.join(dirpath, filename)
+            # skip if it is symbolic link
+            if not os.path.islink(filepath):
+                total_size += os.path.getsize(filepath)
+            # check for files in mesa run, whether to remove or compress it
+            if new_remove_files is not None:
+                name, ext = os.path.splitext(filename)
+                if name == "core":
+                    # remove core dump files
+                    new_remove_files.append(filename)
+                elif ext in [".data", ".mod", ".txt"]:
+                    # compress .data, .mod, .txt files
+                    new_compress_files.append(filename)
+        if ((new_remove_files is not None) and
+            (len(new_remove_files)>0)):
+            remove_files.append((dirpath, new_remove_files))
+            n_remove_files += len(new_remove_files)
+        if ((new_compress_files is not None) and
+            (len(new_compress_files)>0)):
+            compress_files.append((dirpath, new_compress_files))
+            n_compress_files += len(new_compress_files)
+    return (total_size, remove_files, compress_files, n_runs,
+            n_remove_files, n_compress_files)
+
+
 def compress_dir(args):
     """Compresses a directory containing tracks evolved with MESA.
 
@@ -161,47 +204,6 @@ def compress_dir(args):
         The directory where the MESA tracks are stored.
 
     """
-    def get_size(start_path="."):
-        total_size = 0
-        remove_files = []
-        compress_files = []
-        n_runs = 0
-        n_remove_files = 0
-        n_compress_files = 0
-        for dirpath, _, filenames in os.walk(start_path):
-            if "_grid_index_" in dirpath:   # checking if directory is mesa run
-                new_remove_files = []
-                new_compress_files = []
-                if "_grid_index_" in os.path.basename(dirpath):
-                    n_runs += 1
-            else:
-                new_remove_files = None
-                new_compress_files = None
-            for filename in filenames:
-                filepath = os.path.join(dirpath, filename)
-                # skip if it is symbolic link
-                if not os.path.islink(filepath):
-                    total_size += os.path.getsize(filepath)
-                # check for files in mesa run, whether to remove or compress it
-                if new_remove_files is not None:
-                    name, ext = os.path.splitext(filename)
-                    if name == "core":
-                        # remove core dump files
-                        new_remove_files.append(filename)
-                    elif ext in [".data", ".mod", ".txt"]:
-                        # compress .data, .mod, .txt files
-                        new_compress_files.append(filename)
-            if ((new_remove_files is not None) and
-                (len(new_remove_files)>0)):
-                remove_files.append((dirpath, new_remove_files))
-                n_remove_files += len(new_remove_files)
-            if ((new_compress_files is not None) and
-                (len(new_compress_files)>0)):
-                compress_files.append((dirpath, new_compress_files))
-                n_compress_files += len(new_compress_files)
-        return (total_size, remove_files, compress_files, n_runs,
-                n_remove_files, n_compress_files)
-
     if args.mesa_dir is None:
         raise NameError("mesa_dir needs to be specified for set_up_test")
     elif not os.path.isdir(args.mesa_dir):
@@ -262,5 +264,4 @@ def _compress_MESA():
     if args.test_dir is not None:
         set_up_test(args)
     else:
-        print(args)
         compress_dir(args)
