@@ -259,12 +259,18 @@ jobs:
         
         echo "Found versions: $VERSIONS"
         
-        # First try to find the latest non-pre-release version
-        LATEST=$(echo "$VERSIONS" | grep -v "-pre" | sort -V | tail -n 1)
+        # First try to find the overall latest
+        LATEST=$(echo "$VERSIONS" | sort -V | tail -n 1)
         
-        # If no non-pre-release version is found, use the latest including pre-releases
-        if [ -z "$LATEST" ]; then
-          LATEST=$(echo "$VERSIONS" | sort -V | tail -n 1)
+        # Second try to find the latest non-pre-release version
+        LATESTNOPRE=$(echo "$VERSIONS" | grep -v "pre" | sort -V | tail -n 1)
+        
+        # Third get the main version part of $LATEST
+        LATESTWITHOUTPRE=$(echo "$LATEST" | awk -F "-pre" '{print $1}')
+        
+        # If there is a version release after the last pre-release version, use the non pre-release
+        if [[ "$LATESTNOPRE" == "$LATESTWITHOUTPRE" ]]; then
+          LATEST=$LATESTNOPRE
         fi
         
         echo "Latest version: $LATEST"
