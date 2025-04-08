@@ -152,6 +152,15 @@ def set_up_test(args):
 
 
 def get_size(start_path="."):
+    """Gets the size of a directory and selects MESA files for compression and
+    removal.
+
+    Parameters
+    ----------
+    start_path : string
+        The directory root to start the file system walk.
+
+    """
     total_size = 0
     remove_files = []
     compress_files = []
