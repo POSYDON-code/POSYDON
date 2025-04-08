@@ -10,6 +10,7 @@ import posydon.utils.constants as const
 
 from posydon.utils.gridutils import find_index_nearest_neighbour
 from posydon.utils.limits_thresholds import NEUTRINO_MASS_LOSS_UPPER_LIMIT
+from posydon.utils.posydonwarning import Pwarn
 
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
@@ -45,18 +46,24 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
         Helium mass in the ejecta. (in Msun)
     """
 
-
+    if not (hasattr(star, 'profile') and isinstance(star.profile, np.ndarray)
+            and ('mass' in star.profile.dtype.names)
+            and ('x_mass_fraction_H' in star.profile.dtype.names)
+            and ('y_mass_fraction_He' in star.profile.dtype.names)):
+        Pwarn("The stellar profile does not contain enough information to get "
+              "the ejected hydrogen and helium mass.",
+              'InappropriateValueWarning')
+        return 0.0, 0.0
     # read star quantities
-    profile_mass_all = star.profile['mass'][::-1]  # cell outer total mass in Msun
+    # cell outer total mass in Msun
+    profile_mass_all = star.profile['mass'][::-1]
     # shell's mass
     dm_all = profile_mass_all[1:] - profile_mass_all[:-1]
+    # h1 mass fraction
+    XH_all = star.profile['x_mass_fraction_H'][::-1]
+    # he4 mass fraction
+    YHe_all = star.profile['y_mass_fraction_He'][::-1]
 
-    if 'x_mass_fraction_H' in star.profile.dtype.names:
-        XH_all = star.profile['x_mass_fraction_H'][::-1]  # h1 mass fraction
-    if 'y_mass_fraction_He' in star.profile.dtype.names:
-        YHe_all = star.profile['y_mass_fraction_He'][::-1]  # he4 mass fraction
-
-    #print("profile_mass_all[-1], compact_object_mass", profile_mass_all[-1], compact_object_mass)
     if profile_mass_all[-1] <= compact_object_mass:
         # This catches the case that all the star's profile is collapsed.
         h1_mass_ej = 0.0
@@ -64,14 +71,16 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
     else:
         # Find the index where the profile mass exceeds the compact object mass
         i_rem = np.argmax(profile_mass_all > compact_object_mass)
-        #print("i_rem, len(dm_all)", i_rem, len(dm_all))
-        #print("mass coordinate above which it is ejected", profile_mass_all[i_rem])
+        if verbose:
+            print("mass coordinate above which it is ejected:",
+                  profile_mass_all[i_rem])
 
         # Ensure the index is within bounds
         if i_rem < len(dm_all):
             # Calculate the ejected mass of H1 and He4
             dm_ejected = dm_all[i_rem:]
-            XH_ejected = XH_all[i_rem + 1:]  # +1 because dm_all has one less element than profile_mass_all
+            XH_ejected = XH_all[i_rem + 1:]   # +1 because dm_all has one less
+                                              # element than profile_mass_all
             YHe_ejected = YHe_all[i_rem + 1:]
 
             # Calculate the ejected masses only if the lengths match
@@ -79,14 +88,23 @@ def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
                 h1_mass_ej = np.sum(dm_ejected * XH_ejected)
                 he4_mass_ej = np.sum(dm_ejected * YHe_ejected)
             else:
+                Pwarn("Mismatch in array lengths(len(dm_ejected) = "
+                      f"{len(dm_ejected)}, len(XH_ejected) = "
+                      f"{len(XH_ejected)}, len(YHe_ejected) = "
+                      f"{len(YHe_ejected)}), cannot calculate ejected masses "
+                      "accurately.", 'InappropriateValueWarning')
                 h1_mass_ej = 0.0
                 he4_mass_ej = 0.0
-                print("Warning: Mismatch in array lengths, cannot calculate ejected masses accurately.")
         else:
+            Pwarn(f"Index out of bounds (i_rem = {i_rem} >= {len(dm_all)} = "
+                  "len(dm_all)), cannot calculate ejected masses.",
+                  'InappropriateValueWarning')
             h1_mass_ej = 0.0
             he4_mass_ej = 0.0
-            print("Warning: Index out of bounds, cannot calculate ejected masses.")
-        #print(h1_mass_ej, he4_mass_ej, np.sum(dm_ejected))
+
+        if verbose:
+            print("ejected mass (total, hydrogen, helium) in Msun: "
+                  f"{np.sum(dm_ejected)}, {h1_mass_ej}, {he4_mass_ej}")
     return h1_mass_ej, he4_mass_ej
 
 
@@ -122,21 +140,41 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
         Dimensionless spin of the initial BH.
     J_initial_BH : float
         Angular momentum of the initial BH in g*cm^2/s.
-    angular_frequency_i : array floats
+    angular_frequency_i : ndarray of floats
         Shell's angular frequencies in s^-1 collapsing onto the
         initially-formed BH.
-    enclosed_mass_i : array floats
+    enclosed_mass_i : ndarray of floats
         Shell's enclosed masses in g collapsing onto the initially formed BH.
-    radius_i : array floats
+    radius_i : ndarray of floats
         Shell's radii in cm collapsing onto the initially formed BH.
-    density_i : array floats
+    density_i : ndarray of floats
         Shell's densities in g/cm^3 collapsing onto the initially formed BH.
-    dm_i : array floats
+    dm_i : ndarray of floats
         Shell's masses in g collapsing onto the initially formed BH.
-    dm_i : array floats
+    dr_i : ndarray of floats
         Shell's width in cm collapsing onto the initially formed BH.
+    he3_i : ndarray of floats
+        Shell's Helium 3 fraction.
+    he4_i : ndarray of floats
+        Shell's Helium 4 fraction.
+    max_he_mass_ejected_SN : float
+        Maxium Helium in SN ejecta.
 
     """
+    if not (hasattr(star, 'profile') and isinstance(star.profile, np.ndarray)
+            and ('mass' in star.profile.dtype.names)
+            and ('radius' in star.profile.dtype.names)
+            and ('logRho' in star.profile.dtype.names)
+            and ('omega' in star.profile.dtype.names)
+#            and ('he3' in star.profile.dtype.names)
+            and ('he4' in star.profile.dtype.names)):
+        Pwarn("The stellar profile does not contain enough information to "
+              "collapse the star and determine the remnant properties.",
+              'InappropriateValueWarning')
+        return [np.nan, np.nan, np.nan, np.array([]), np.array([]),
+                np.array([]), np.array([]), np.array([]), np.array([]),
+                np.array([]), np.array([]), np.nan]
+
     if neutrino_mass_loss < 0.:
         raise ValueError(
             'Something went wrong, neutrino_mass_loss must be positive!')
