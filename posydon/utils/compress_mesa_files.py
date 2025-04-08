@@ -160,6 +160,21 @@ def get_size(start_path="."):
     start_path : string
         The directory root to start the file system walk.
 
+    Returns
+    -------
+    total_size : int
+        The size in bytes.
+    remove_files : list
+        List of files to remove.
+    compress_files : list
+        List of files to compress.
+    n_runs : int
+        Number of MESA run directories.
+    n_remove_files : int
+        Number of files to remove.
+    n_compress_files : int
+        Number of files to compress.
+
     """
     total_size = 0
     remove_files = []
