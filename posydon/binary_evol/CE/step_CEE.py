@@ -490,6 +490,7 @@ class StepCEE(object):
         state1_i = donor.state
         m2_i = comp_star.mass
         radius2 = 10**comp_star.log_R
+        he_core_radius1 = donor.he_core_radius
 
         if verbose:
             print("Pre CE")
@@ -544,13 +545,21 @@ class StepCEE(object):
         # will be filled if reached this final separation
         RL1 = cf.roche_lobe_radius(mc1_i, mc2_i, separation_postCEE/const.Rsun)
         RL2 = cf.roche_lobe_radius(mc2_i, mc1_i, separation_postCEE/const.Rsun)
-
+        
         if verbose:
-            print("donor radius / core radius / RL1:", radius1, rc1_i, RL1)
-            print("companion radius / core radius / RL2:", radius2, rc2_i, RL2)
+            if common_envelope_option_after_succ_CEE in ["core_not_replaced_stableMT"] and donor_type == 'He_core':
+                print("donor radius / core radius / RL1:", radius1, he_core_radius1, RL1)
+                print("companion radius / core radius / RL2:", radius2, rc2_i, RL2)
+            else:
+                print("donor radius / core radius / RL1:", radius1, rc1_i, RL1)
+                print("companion radius / core radius / RL2:", radius2, rc2_i, RL2)
 
         # Check if binary merges or survives
-        if ((rc1_i - RL1) < self.CEE_tolerance_err
+        if common_envelope_option_after_succ_CEE in ["core_not_replaced_stableMT"] and donor_type == 'He_core':
+            core_radius1 = he_core_radius1
+        else:
+            core_radius1 = rc1_i        
+        if ((core_radius1 - RL1) < self.CEE_tolerance_err
                 and (rc2_i - RL2) < self.CEE_tolerance_err):
             # system survives CEE, the whole CE is ejected
             # and the new orbital separation for the cores is returned
@@ -814,7 +823,7 @@ class StepCEE(object):
             if verbose:
                 print("system merges due to one of the two star's core filling"
                       "its RL")
-                print("Rdonor core vs RLdonor core = ", rc1_i, RL1)
+                print("Rdonor core vs RLdonor core = ", core_radius1, RL1)
                 print("Rcompanion vs RLcompanion= ", rc2_i, RL2)
 
             Mejected_donor = 0.0
