@@ -80,7 +80,7 @@ instances of the ``BaseIFInterpolator``.
     from posydon.grids.psygrid import PSyGrid
     from posydon.interpolation.IF_interpolation import IFInterpolator
 
-    grid = PSyGrid("path/to/h5/file.h5") # loading grid from :samp:`h5` file
+    grid = PSyGrid("path/to/h5/file.h5") # loading grid from h5 file
 
     interp = IFInterpolator(grid = grid, interpolators = [
         { 
