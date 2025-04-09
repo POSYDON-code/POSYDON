@@ -8,7 +8,7 @@ from posydon.utils.common_functions import (
     calculate_Patton20_values_at_He_depl,
     CEE_parameters_from_core_abundance_thresholds,
     check_state_of_star)
-from posydon.grids.MODELS import MODELS
+from posydon.grids.MODELS import get_MODEL, MODELS
 from posydon.visualization.combine_TF import combine_TF12, TF1_POOL_STABLE
 from posydon.visualization.plot_defaults import DEFAULT_MARKERS_COLORS_LEGENDS
 import numpy as np
@@ -52,10 +52,9 @@ def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i,
     if (not isinstance(star_i, int) or (star_i<1) or (star_i>2)):
         raise ValueError("'star_i' should be 1 or 2.")
     if MODEL_NAME is None:
-        for NAME, MODEL in MODELS.items():
+        for NAME in MODELS.keys():
             for quantity in CC_quantities:
-                EXTRA_COLUMNS[f'S{star_i}_{NAME}_{quantity}'
-                              ].append(None)
+                EXTRA_COLUMNS[f'S{star_i}_{NAME}_{quantity}'].append(None)
     elif isinstance(MODEL_NAME, str):
         for quantity in CC_quantities:
             EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
@@ -184,7 +183,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
             for val in [1, 10, 30, 'pure_He_star_10']:
                 EXTRA_COLUMNS[f'S{star}_{quantity}_{val}cent'] = []
         # Core collapse qunatities: [state, SN_type, f_fb, mass, spin]
-        for MODEL_NAME, MODEL in MODELS.items():
+        for MODEL_NAME in MODELS.keys():
             for quantity in CC_quantities:
                 EXTRA_COLUMNS[f'S{star}_{MODEL_NAME}_{quantity}'] = []
 
@@ -342,9 +341,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     if verbose:
                         print_CC_quantities(star)
 
-                    for MODEL_NAME, MODEL in MODELS.items():
+                    for MODEL_NAME in MODELS.keys():
+                        MODEL = get_MODEL(MODEL_NAME)
                         mechanism = MODEL['mechanism']+MODEL['engine']
-                        SN = StepSN(**MODEL, allow_spin_None=True)
+                        MODEL['allow_spin_None'] = True
+                        SN = StepSN(**MODEL)
                         star_copy = copy.copy(star)
                         try:
                             flush = False
@@ -408,9 +409,11 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                 if verbose:
                     print_CC_quantities(star)
 
-                for MODEL_NAME, MODEL in MODELS.items():
+                for MODEL_NAME in MODELS.keys():
+                    MODEL = get_MODEL(MODEL_NAME)
                     mechanism = MODEL['mechanism']+MODEL['engine']
-                    SN = StepSN(**MODEL, allow_spin_None=True)
+                    MODEL['allow_spin_None'] = True
+                    SN = StepSN(**MODEL)
                     star_copy = copy.copy(star)
                     try:
                         flush = False

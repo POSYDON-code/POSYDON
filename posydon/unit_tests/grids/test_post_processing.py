@@ -17,7 +17,8 @@ from inspect import isclass, isroutine
 import h5py
 import json
 import os
-from posydon.utils.posydonwarning import InappropriateValueWarning
+from posydon.utils.posydonwarning import InappropriateValueWarning,\
+                                         POSYDONWarning
 from posydon.grids.psygrid import PSyGrid
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 
@@ -187,7 +188,8 @@ class TestElements:
                     'assign_core_collapse_quantities_none',\
                     'calculate_Patton20_values_at_He_depl',\
                     'check_state_of_star', 'combine_TF12', 'copy', 'np',\
-                    'post_process_grid', 'print_CC_quantities', 'tqdm'}
+                    'post_process_grid', 'print_CC_quantities', 'tqdm',\
+                    'get_MODEL'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -539,7 +541,8 @@ class TestFunctions:
                         q = 'CO_type'
                     keys += [f'S{s}_{m}_{q}']
         # examples: all
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
+        with warns(POSYDONWarning): # warnings from SN
+            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
         # examples: run 2 only
@@ -550,31 +553,26 @@ class TestFunctions:
             assert k in EXTRA_COLUMNS
             assert len(EXTRA_COLUMNS[k]) == 1
         # examples: 1 and 2
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                                            index=[1,3])
+        with warns(POSYDONWarning): # warnings from SN
+            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                                                index=[1,3])
         assert MESA_dirs == test_PSyGrid.MESA_dirs[1:3]
         for k in keys:
             assert k in EXTRA_COLUMNS
             assert len(EXTRA_COLUMNS[k]) == 2
         # examples: HMS-HMS
-        with warns(InappropriateValueWarning, match="ended with "\
-                                                    +"TF1=gamma_center_limit "\
-                                                    +"however the star has "\
-                                                    +"center_gamma < 10. "\
-                                                    +"This star cannot go "\
-                                                    +"through step_SN "\
-                                                    +"appending NONE compact "\
-                                                    +"object properties!"):
-            with warns(InappropriateValueWarning, match="ended with "\
-                                                        +"TF=max_age and "\
-                                                        +"IC=stable_MT. This "\
-                                                        +"star cannot go "\
-                                                        +"through step_SN "\
-                                                        +"appending NONE "\
-                                                        +"compact object "\
-                                                        +"properties!"):
-                MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
-                                            test_PSyGrid, star_2_CO=False)
+        with warns(POSYDONWarning): # warnings from SN
+            with warns(InappropriateValueWarning,\
+                       match="ended with TF1=gamma_center_limit however the "\
+                             +"star has center_gamma < 10. This star cannot "\
+                             +"go through step_SN appending NONE compact "\
+                             +"object properties!"):
+                with warns(InappropriateValueWarning,\
+                           match="ended with TF=max_age and IC=stable_MT. "\
+                                 +"This star cannot go through step_SN "\
+                                 +"appending NONE compact object properties!"):
+                    MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
+                                                test_PSyGrid, star_2_CO=False)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
         # examples: less SN MODELS
@@ -582,8 +580,9 @@ class TestFunctions:
         for m,v in totest.MODELS.items():
             if m != 'MODEL01':
                 TEST_MODELS[m] = v
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                                            MODELS=TEST_MODELS)
+        with warns(POSYDONWarning): # warnings from SN
+            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                        MODELS=TEST_MODELS)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         for k in keys:
             if 'MODEL01' in k:
@@ -591,14 +590,16 @@ class TestFunctions:
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7,\
                             [k for k in keys if 'MODEL01' not in k])
         # examples: single
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                                            single_star=True)
+        with warns(POSYDONWarning): # warnings from SN
+            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                        single_star=True)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 7, keys)
         # examples: failing check_state_of_star
         with monkeypatch.context() as mp:
             mp.setattr(totest, "check_state_of_star", mock_check_state_of_star)
-            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
+            with warns(POSYDONWarning): # warnings from SN
+                MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
         # examples: failing collapse_star
@@ -627,8 +628,11 @@ class TestFunctions:
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 7, keys)
         # examples: verbose
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                                            verbose=True)
+        with warns(POSYDONWarning): # warnings from SN
+            with warns(InappropriateValueWarning, match="Failed to print "\
+                                                        +"star values!"):
+                MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
+                                            test_PSyGrid, verbose=True)
         output = capsys.readouterr().out
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
@@ -640,9 +644,12 @@ class TestFunctions:
         assert "while accessing aboundances in star" in output
         assert "in check_state_of_star(star_2) with IC=" in output
         # examples: single and verbose
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                                            single_star=True,\
-                                                            verbose=True)
+        with warns(POSYDONWarning): # warnings from SN
+            with warns(InappropriateValueWarning, match="Failed to print "\
+                                                        +"star values!"):
+                MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
+                                            test_PSyGrid, single_star=True,\
+                                            verbose=True)
         output = capsys.readouterr().out
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 7, keys)

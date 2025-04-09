@@ -22,7 +22,7 @@ class TestElements:
                     'STATE_NS_STARMASS_UPPER_LIMIT', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
-                    'get_MODEL_NAME'}
+                    'get_MODEL_NAME', 'DEFAULT_MODEL', 'get_MODEL'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -38,9 +38,16 @@ class TestElements:
                                       +"added on purpose and update this "\
                                       +"unit test."
 
+    def test_instance_DEFAULT_MODEL(self):
+        assert isinstance(totest.DEFAULT_MODEL, dict),\
+               "DEFAULT_MODEL is of type: " + str(type(totest.DEFAULT_MODEL))
+
     def test_instance_MODELS(self):
         assert isinstance(totest.MODELS, dict), "MODELS is of type: "\
-                                                +str(type(totest.MODELS))
+                                                + str(type(totest.MODELS))
+
+    def test_instance_get_MODEL(self):
+        assert isroutine(totest.get_MODEL)
 
     def test_instance_get_MODEL_NAME(self):
         assert isroutine(totest.get_MODEL_NAME)
@@ -48,43 +55,72 @@ class TestElements:
 
 class TestValues:
     # check that the values fit
+    def test_value_DEFAULT_MODEL(self):
+        for k in ['mechanism', 'engine', 'PISN', 'PISN_CO_shift',\
+                  'PPI_extra_mass_loss', 'ECSN', 'conserve_hydrogen_envelope',\
+                  'conserve_hydrogen_PPI', 'max_neutrino_mass_loss',\
+                  'max_NS_mass', 'use_interp_values', 'use_profiles',\
+                  'use_core_masses', 'allow_spin_None',\
+                  'approx_at_he_depletion']:
+            assert k in totest.DEFAULT_MODEL.keys()
+
     def test_value_MODELS(self):
         assert len(totest.MODELS) > 0
         for m in totest.MODELS:
             assert isinstance(totest.MODELS[m], dict)
-            assert 'mechanism' in totest.MODELS[m].keys()
-            assert 'engine' in totest.MODELS[m].keys()
 
 
 class TestFunctions:
-    @fixture
-    def bad_MODEL(self):
-        return {"mechanism": "",\
-                "engine": "",\
-                "PISN": "",\
-                "ECSN": "",\
-                "conserve_hydrogen_envelope": False,\
-                "max_neutrino_mass_loss":\
-                 totest.NEUTRINO_MASS_LOSS_UPPER_LIMIT,\
-                "max_NS_mass": totest.STATE_NS_STARMASS_UPPER_LIMIT,\
-                "use_interp_values": False,\
-                "use_profiles": False,\
-                "use_core_masses": False,\
-                "approx_at_he_depletion": False}
-
     # test functions
-    def test_get_MODEL_NAME(self, bad_MODEL, capsys):
+    def test_get_MODEL(self):
+        # missing argument
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'name'"):
+            totest.get_MODEL()
+        # examples: undefined
+        assert totest.get_MODEL("Test") == totest.DEFAULT_MODEL
+        # examples: pre defined models
+        for n, m in totest.MODELS.items():
+            model = totest.get_MODEL(n)
+            for k in totest.DEFAULT_MODEL.keys():
+                assert k in model
+            for k, v in m.items():
+                assert model[k] == v
+
+    def test_get_MODEL_NAME(self, capsys):
         # missing argument
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'input_MODEL'"):
             totest.get_MODEL_NAME()
         # bad input
-        with raises(TypeError, match="'NoneType' object is not subscriptable"):
+        with raises(TypeError, match="argument of type 'NoneType' is not "\
+                                     +"iterable"):
             totest.get_MODEL_NAME(None)
-        # examples: failed
-        assert totest.get_MODEL_NAME(bad_MODEL) is None
+        # examples: missing key
+        bad_MODEL = {}
+        for v in [True, False]:
+            assert totest.get_MODEL_NAME(bad_MODEL, verbose=v) is None
+            captured_output = capsys.readouterr().out
+            if v:
+                assert "missing key: mechanism" in captured_output
+            else:
+                assert captured_output == ""
+        # examples: wrong value
+        bad_MODEL = {"mechanism": ""}
+        for v in [True, False]:
+            assert totest.get_MODEL_NAME(bad_MODEL, verbose=v) is None
+            captured_output = capsys.readouterr().out
+            if v:
+                assert "mismatch: mechanism" in captured_output
+            else:
+                assert captured_output == ""
         # examples: pre-defined models
-        for n, m in totest.MODELS.items():
+        for n in totest.MODELS.keys():
+            try:
+                m = totest.get_MODEL(n)
+            except: # skip test as test on get_MODEL should fail
+                assert n in totest.MODELS
+                return
             for v in [True, False]:
                 assert totest.get_MODEL_NAME(m, verbose=v) == n
                 captured_output = capsys.readouterr().out
@@ -95,13 +131,25 @@ class TestFunctions:
                     assert captured_output == ""
         # examples: first model with allowed differences
         n = list(totest.MODELS.keys())[0]
+        try:
+            m = totest.get_MODEL(n)
+        except: # skip test as test on get_MODEL should fail
+            assert n in totest.MODELS
+            return
         for k in ["use_interp_values", "use_profiles", "use_core_masses"]:
-            m = totest.MODELS[n].copy()
             m[k] = not m[k]
             assert totest.get_MODEL_NAME(m) == n
-        m = totest.MODELS[n].copy()
+        try:
+            m = totest.get_MODEL(n)
+        except: # skip test as test on get_MODEL should fail
+            assert n in totest.MODELS
+            return
         m["use_test"] = "unit"
         assert totest.get_MODEL_NAME(m) == n
-        m = totest.MODELS[n].copy()
+        try:
+            m = totest.get_MODEL(n)
+        except: # skip test as test on get_MODEL should fail
+            assert n in totest.MODELS
+            return
         m["ECSN"] = "test"
         assert totest.get_MODEL_NAME(m) == n
