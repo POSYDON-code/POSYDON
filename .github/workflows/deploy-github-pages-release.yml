@@ -183,7 +183,7 @@ jobs:
         injection_code=$(awk '/# INJECTION GRAB START/,/# INJECTION GRAB END/' "${PATH_TO_POSYDON}/docs/_source/conf.py")
 
         # get the available tags
-        TAGS=$(git tag -l | sort -V | grep "v2" | grep -v "-dev")
+        TAGS=$(git tag -l | sort -V | grep "v2" | grep -v "dev")
 
         echo "v2 filtered tags:"
         echo $TAGS
