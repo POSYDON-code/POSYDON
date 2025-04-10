@@ -34,8 +34,7 @@ def _parse_commandline():
                         default=None)
     parser.add_argument("-dsr", "--dsr",
                         type=float,
-                        help="downsampling rate when creating testing "
-                             "directory",
+                        help="downsampling rate when creating test directory",
                         default=0.01)
     parser.add_argument("-v", "--verbose",
                         help="enable outputs",
@@ -108,7 +107,9 @@ def set_up_test(args):
     test_dir : string
         The directory where the test directory is to be set up.
     dsr : float
-        Downsampling rate when creating testing directory.
+        Downsampling rate when creating test directory. The test directory will
+        contain a random sample of the runs from mesa_dir, downsampled by the
+        factor set here.
 
     """
     if args.test_dir is None:
