@@ -169,7 +169,7 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         raise ValueError(f'pure_compression = {pure_compression} not '
                          f'supported! (compression={compression})')
     
-    if ('CO' in grid_type) and ('RLO' in compression):
+    if 'RLO' in compression:
         start_at_RLO = True
     else:
         start_at_RLO = False
