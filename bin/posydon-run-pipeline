@@ -27,7 +27,7 @@ STEP 2.2: check failure rate
 
 STEP 3: calculate extra values
 ['grid_low_res_combined','grid_random_1','grid_low_res_combined_rerun1']
---> do post processing on the ORIGINAL grid and append back on the LITE gird
+--> do post processing on the ORIGINAL grid and append back on the LITE grid
 the post processed quantities
 
 STEP 3.1: plot extra values
@@ -41,19 +41,19 @@ STEP 3.2: check rates of compact object types
 STEP 4: train interpolators
 ['grid_low_res_combined_rerun1'] --> train the interpolators
 
-STEP 4.1: plot interpolator accuracy and confusion matricies
+STEP 4.1: plot interpolator accuracy and confusion matrices
 ['grid_random_1']
 --> loop over all plot types
 
 STEP 5: train profile interpolators
-uses gird and initial-final interpolators to train the profile interpolators
+uses grid and initial-final interpolators to train the profile interpolators
 
 STEP F: export dataset
 
 STEP RERUN: rerun grid with a fix
 grid_low_res_combined.rerun(index=logic) --> grid_low_res_rerun_1/grid.csv
                                          --> grid_random_1_rerun_1/grid.csv
--- run gird fix and do next post processing
+-- run grid fix and do next post processing
 '''
 
 __authors__ = [
@@ -224,11 +224,11 @@ def combine_grid_slices(i, path_to_csv_file, verbose=False):
                        f'{i}>{len(df.keys())-1}.')
     # get values from csv file
     grid_combined_key = df.keys()[i]
-    gird_names = df[grid_combined_key].dropna().to_list()
+    grid_names = df[grid_combined_key].dropna().to_list()
     if verbose:
-        print(f'Combinining: {gird_names}')
+        print(f'Combinining: {grid_names}')
         print(f'into: {grid_combined_key}')
-    join_grids(gird_names, grid_combined_key, verbose=verbose)
+    join_grids(grid_names, grid_combined_key, verbose=verbose)
 
 
 def calculate_extra_values(i, path_to_csv_file, verbose=False):
@@ -1410,12 +1410,12 @@ def do_check(i, path_to_csv_file, verbose=False):
 
 if __name__ == '__main__':
 
-    # read commond line arguments
+    # read command line arguments
     n_args = len(sys.argv)
     
-    if n_args > 1: # path to girds
+    if n_args > 1: # path to grids
         if str(sys.argv[1])=='--help':
-            print('Programm to run a pipeline step')
+            print('Program to run a pipeline step')
             print('syntax: posydon-run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE'
                   ' [SLURM_I] [VERBOSE]')
             print('PATH_TO_GRIDS: path to the root directory with the grids')
@@ -1457,7 +1457,7 @@ if __name__ == '__main__':
         Pwarn('No verbose flag given, use True', "ReplaceValueWarning")
         VERBOSE = True
 
-    # chose grid slice given the slurm jobarray index
+    # choose grid slice given the slurm jobarray index
 
     # offset the start of each job
     # NOTE: this prevents job arrays starting at the same time to read
