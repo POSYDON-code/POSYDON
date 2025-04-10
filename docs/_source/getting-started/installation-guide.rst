@@ -89,7 +89,7 @@ For users interested in the latest features and developments, you can install PO
 
 1. **Clone the Repository**
 
-    In your terminal or command prompt (by default the repository will be placed in the current directory, hence please navigate to your desired location first):
+    In your terminal or command prompt (by default, the repository will be placed in the current directory, so navigate to your desired location before proceeding):
 
     .. code-block:: bash
 
@@ -98,7 +98,7 @@ For users interested in the latest features and developments, you can install PO
 2. **Install the Development Version**
 
     .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install `hdf5` and `pytables` through conda with `conda install hdf5 pytables`, before following the instractions below.
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install `hdf5` and `pytables` through conda with `conda install hdf5 pytables`, before following the instructions below.
 
     Navigate to the cloned repository's directory:
 
