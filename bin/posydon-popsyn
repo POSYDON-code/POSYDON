@@ -198,13 +198,15 @@ srun python ./merge_metallicity.py {metallicity}
     with open(filename, mode='w') as file:
         file.write(text)
 
-def check_SN_MODEL_validity(ini_file):
+def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
     '''Checks if the step_SN MODEL is valid for this script
 
     Parameters
     ----------
     ini_file : str
         the path to the ini file
+    verbose_on_fail : bool (default: True)
+        if `True` rerun the MODEL selection with verbose mode if this failed
     
     Returns
     -------
@@ -221,6 +223,8 @@ def check_SN_MODEL_validity(ini_file):
     MODEL_NAME_SEL = get_MODEL_NAME(step_SN_MODEL)
 
     if MODEL_NAME_SEL is None:
+        if verbose_on_fail:
+            get_MODEL_NAME(step_SN_MODEL, verbose=True)
         return False
     else:
         return True
@@ -237,8 +241,8 @@ def setup_popsyn_function(args):
         raise FileNotFoundError(f'File {args.ini_file} not found')
     
     if not check_SN_MODEL_validity(args.ini_file):
-        raise ValueError("The step_SN MODEL is not valid for this script."
-                        "Please check the MODEL in the ini file")
+        raise ValueError("The step_SN MODEL is not valid for this script. "
+                         "Please check the MODEL in the ini file")
 
     synpop_params = binarypop_kwargs_from_ini(args.ini_file)
     metallicities = synpop_params['metallicity']
