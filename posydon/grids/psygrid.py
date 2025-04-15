@@ -2551,10 +2551,11 @@ def join_grids(input_paths, output_path,
         new_initial_values = np.array(new_initial_values, dtype=initial_dtype)
         new_final_dtype = []
         for dtype in final_dtype.descr:
-            if (dtype[0].startswith("termination_flag") or
-                ("SN_type" in dtype[0]) or ("_state" in dtype[0]) or
-                ("_class" in dtype[0]) or ("S1_" in dtype[0]) or
-                ("S2_" in dtype[0]) or ("my_history" in dtype[0])):
+            #if (dtype[0].startswith("termination_flag") or
+            #    ("SN_type" in dtype[0]) or ("_state" in dtype[0]) or
+            #    ("_class" in dtype[0]) or ("S1_" in dtype[0]) or
+            #    ("S2_" in dtype[0]) or ("my_history" in dtype[0])):
+            if dtype[1] == "<U70":
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_final_dtype.append(dtype)
         new_final_values = np.array(new_final_values, dtype=new_final_dtype)
