@@ -139,6 +139,49 @@ class TestSFHBase:
         result = sfh._distribute_cdf(cdf_func, met_edges)
         np.testing.assert_allclose(np.sum(result), 1.0)
         
+        # Test minimum in lowest bin
+        model_dict = {"Z_min": 0.25}
+        sfh = ConcreteSFH(model_dict)
+        met_edges = np.array([0.2, 0.3, 0.6, 0.9])
+        result = sfh._distribute_cdf(cdf_func, met_edges)
+        expected = np.array([0.05, 0.3, 0.3])
+        np.testing.assert_allclose(result, expected)
+        
+        # Test minumum is higher than minimum bin
+        model_dict = {"Z_min": 0.35}
+        sfh = ConcreteSFH(model_dict)
+        met_edges = np.array([0.2, 0.3, 0.6, 0.9])
+        result = sfh._distribute_cdf(cdf_func, met_edges)
+        expected = np.array([0.0, 0.25, 0.3])
+        np.testing.assert_allclose(result, expected)
+
+        # Test minimum in lowest bin and maximum
+        model_dict = {"Z_min" : 0.25,
+                      'Z_max' : 0.8}
+        sfh = ConcreteSFH(model_dict)
+        met_edges = np.array([0.2, 0.3, 0.6, 0.9])
+        result = sfh._distribute_cdf(cdf_func, met_edges)
+        expected = np.array([0.05, 0.3, 0.2])
+        np.testing.assert_allclose(result, expected)
+        
+        # Test minumum is higher than minimum bin
+        model_dict = {"Z_min" : 0.35,
+                      'Z_max' : 0.4}
+        sfh = ConcreteSFH(model_dict)
+        met_edges = np.array([0.2, 0.3, 0.6, 0.9])
+        result = sfh._distribute_cdf(cdf_func, met_edges)
+        expected = np.array([0.0, 0.05, 0.0])
+        np.testing.assert_allclose(result, expected)
+        
+                # Test minumum is higher than minimum bin
+        model_dict = {"Z_min" : 0.35,
+                      'Z_max' : 0.65}
+        sfh = ConcreteSFH(model_dict)
+        met_edges = np.array([0.2, 0.3, 0.6, 0.9])
+        result = sfh._distribute_cdf(cdf_func, met_edges)
+        expected = np.array([0.0, 0.25, 0.05])
+        np.testing.assert_allclose(result, expected)
+
 
     def test_call_method(self):
         """Test the __call__ method."""

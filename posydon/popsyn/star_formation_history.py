@@ -164,23 +164,39 @@ class SFHBase(ABC):
         '''
         fSFR = (np.array(cdf_func(metallicity_bins[1:]))
                 - np.array(cdf_func(metallicity_bins[:-1])))
-                
+        
+        first_bin_index = 0
+        last_bin_index = len(fSFR) - 1
+        
         # include material outside the metallicity bounds if requested
         if self.Z_max is not None:
             if self.Z_max >= metallicity_bins[-1]:
                 fSFR[-1] = cdf_func(self.Z_max) - cdf_func(metallicity_bins[-2])
             else:
-                print(f"Z_max is smaller than the highest metallicity bin.")
                 Pwarn('Z_max is smaller than the highest metallicity bin.')
-                fSFR[-1] = 0.0
+                # find the index of the last bin that is smaller than Z_max
+                last_bin_index = np.searchsorted(metallicity_bins, self.Z_max) - 1
+                fSFR[last_bin_index] = cdf_func(self.Z_max) - cdf_func(metallicity_bins[last_bin_index])
+                fSFR[last_bin_index + 1:] = 0.0
 
         if self.Z_min is not None:
             if self.Z_min <= metallicity_bins[0]:
                 fSFR[0] = cdf_func(metallicity_bins[1]) - cdf_func(self.Z_min)
             else:
                 Pwarn('Z_min is larger than the lowest metallicity bin.')
-                fSFR[0] = 0.0
-            
+                # find the index of the first bin that is larger than Z_min
+                first_bin_index = np.searchsorted(metallicity_bins, self.Z_min) -1
+                print(first_bin_index)
+                fSFR[:first_bin_index] = 0.0
+                fSFR[first_bin_index] = cdf_func(metallicity_bins[first_bin_index+1]) - cdf_func(self.Z_min)
+        
+        # Check if in the same bin
+        if self.Z_max is not None and self.Z_min is not None:
+            if first_bin_index == last_bin_index:
+                fSFR[first_bin_index] = cdf_func(self.Z_max) - cdf_func(self.Z_min)
+                fSFR[first_bin_index + 1:] = 0.0
+                fSFR[:first_bin_index] = 0.0
+                
         if self.normalise:
             fSFR /= np.sum(fSFR)
             
