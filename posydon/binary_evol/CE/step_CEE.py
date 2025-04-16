@@ -511,7 +511,7 @@ class StepCEE(object):
             ebind_i = (-const.standard_cgrav / lambda1_CE
                        * (m1_i * const.Msun * (m1_i - mc1_i) * const.Msun)
                        / (radius1 * const.Rsun))
-        if (double_CE and (not pd.isna(lambda2_CE))):
+        if (double_CE and pd.notna(lambda2_CE)):
             ebind_i += (-const.standard_cgrav / lambda2_CE
                         * (m2_i * const.Msun * (m2_i - mc2_i) * const.Msun)
                         / (radius2 * const.Rsun))
@@ -749,6 +749,7 @@ class StepCEE(object):
                                             'he_core_mass',
                                             'he_core_radius'
                         ])
+                    #TODO: update 'total_mass_h1' and 'total_mass_he4'
                 elif star_type == 'CO_core':
                     star.he_core_mass = core_mass
                     star.he_core_radius = core_radius
@@ -773,6 +774,7 @@ class StepCEE(object):
                                             'co_core_radius'
 
                         ])
+                    #TODO: update 'total_mass_h1' and 'total_mass_he4'
                 elif star_type == "not_giant_companion":
                     continue
                 else:

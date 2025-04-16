@@ -52,8 +52,8 @@ STARPROPERTIES = [
     'center_c12',
     'center_n14',
     'center_o16',
-    'surface_h1',
     # Mass fractions at the surface
+    'surface_h1',
     'surface_he4',
     'surface_c12',
     'surface_n14',
@@ -94,6 +94,8 @@ STARPROPERTIES = [
     'profile',  # the profile of the star, including extended information of
                 # its internal structure, for a specific timestep, usually for
                 # the end of the previous step including MESA psygrid.
+    'total_mass_h1',   # total mass of Hydrogen throughout the star
+    'total_mass_he4',  # total mass of Helium throughout the star
 ]
 
 # attributes read from single-star grid runs
