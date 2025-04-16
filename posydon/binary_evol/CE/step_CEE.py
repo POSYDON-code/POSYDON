@@ -397,6 +397,477 @@ class StepCEE(object):
 
         return lambda_CE, mc1_i, rc1_i, donor_type
 
+
+    # def CEE_calc_post_CE_MT_parameters(
+    #         self, 
+    #         donor,
+    #         mc1_i,
+    #         rc1_i,
+    #         donor_type,
+    #         comp_star,
+    #         mc2_i,
+    #         rc2_i,
+    #         comp_type,
+    #         double_CE,
+    #         verbose):
+    #     """Calculate the final post-common-envelope parameters.
+
+    #     It uses the common_envelope_option_after_succ_CEE to determine the 
+    #     post-CE parameters due to either winds, stable mass transfer or no
+    #     mass transfer (either core replaced or not).
+
+    #     Parameters
+    #     ----------
+    #     donor : SingleStar object
+    #         The donor star
+    #     mc1_i : float
+    #         core mass of the donor
+    #     rc1_i : float
+    #         core radius of the donor
+    #     donor_type : string
+    #         String dictating whether the donor has a H-envelope or He-envelope
+    #     mc2_i : float
+    #         core mass of the companion
+    #     rc2_i : float
+    #         core radius of the companion
+    #     comp_type : string
+    #         String dictating whether the companion has a
+    #         H-envelope or He-envelope.
+    #     double_CE : bool
+    #         In case we have a double CE situation.
+    #     verbose : bool
+    #         In case we want information about the CEE.
+
+    #     """
+
+    #     if common_envelope_option_after_succ_CEE in ["core_replaced_noMT"]:
+    #         mc1_f = mc1_i
+    #         rc1_f = rc1_i
+    #         mc2_f = mc2_i
+    #         rc2_f = rc2_i
+    #         if verbose:
+    #             print("m1 core mass pre CEE (He,CO) / to after CEE : ",
+    #                     donor.he_core_mass, donor.co_core_mass, mc1_f)
+    #             print("m1 core radius pre CEE (He,CO) / to after CEE : ",
+    #                     donor.he_core_radius, donor.co_core_radius, rc1_f)
+    #             print("m2 core mass pre CEE (He,CO) / to after CEE : ",
+    #                     comp_star.he_core_mass, comp_star.co_core_mass, mc2_f
+    #                     )
+    #             print("m2 core radius pre CEE (He,CO) / to after CEE : ",
+    #                     comp_star.he_core_radius,
+    #                     comp_star.co_core_radius, rc2_f)
+                
+    #     elif common_envelope_option_after_succ_CEE in [
+    #             "core_not_replaced_noMT",
+    #             "core_not_replaced_stableMT",
+    #             "core_not_replaced_windloss"]:
+    #         if donor_type == 'He_core':
+    #             mc1_f = donor.he_core_mass
+    #             rc1_f = donor.he_core_radius
+    #         elif donor_type == "CO_core":
+    #             mc1_f = donor.co_core_mass
+    #             rc1_f = donor.co_core_radius
+    #         if mc1_f > mc1_i:
+    #             mc1_f = mc1_i
+    #             Pwarn(
+    #                 "The final donor core mass (even after stable, postCEE MT)"
+    #                 " is higher than the postCEE core mass. Now equalizing to "
+    #                 "postCEE mass", "ApproximationWarning")
+
+    #         if double_CE:
+    #             if comp_type == 'He_core':
+    #                 mc2_f = comp_star.he_core_mass
+    #                 rc2_f = donor.he_core_radius
+    #             elif comp_type == "CO_core":
+    #                 mc2_f = comp_star.co_core_mass
+    #                 rc2_f = donor.co_core_radius
+    #             elif comp_type == "not_giant_companion":
+    #                 mc2_f = comp_star.mass
+    #                 rc2_f = 10.**(comp_star.log_R)
+    #             if mc2_f > mc2_i:
+    #                 mc2_f = mc2_i
+    #                 Pwarn("The accretor's final core mass (even after "
+    #                                 "non-conservative stable, postCEE MT) is "
+    #                                 "higher that postCEE core mass. "
+    #                                 "Now equalizing to postCEE mass", "ApproximationWarning")
+    #             if verbose:
+    #                 print("difference between m1 core mass defined by CEE step"
+    #                       " / to the final one as pre CEE : ", mc1_f, mc1_i)
+    #                 print("difference between r1 core mass defined by CEE step"
+    #                       " / to the final one as pre CEE : ", rc1_f, rc1_i)
+    #                 print("difference between m2 core mass defined by CEE step"
+    #                       " / to the final one as pre CEE : ", mc2_f, mc2_i)
+    #                 print("difference between r2 core mass defined by CEE step"
+    #                       " / to the final one as pre CEE : ", rc2_f, rc2_i)
+                    
+    #         else:
+    #             mc2_f = mc2_i
+    #             rc2_f = rc2_i
+ 
+    #     else:
+    #         raise ValueError(
+    #             "Not accepted option in common_envelope_option_after_succ_"
+    #             "CEE = {}, dont know how to proceed".
+    #             format(common_envelope_option_after_succ_CEE))
+        
+    #     return mc1_f, rc1_f, mc2_f, rc2_f
+    
+
+    def CEE_adjust_post_CE_core_masses(
+            self,
+            donor,
+            mc1_i, 
+            rc1_i, 
+            donor_type, 
+            comp_star,
+            mc2_i, 
+            rc2_i, 
+            comp_type, 
+            double_CE,
+            verbose=False):
+
+        """Calculate the final post-common-envelope parameters.
+
+        It uses the common_envelope_option_after_succ_CEE to determine the 
+        post-CE parameters due to either winds, stable mass transfer or no
+        mass transfer (either core replaced or not).
+
+        Parameters
+        ----------
+        donor : SingleStar object
+            The donor star
+        mc1_i : float
+            core mass of the donor
+        rc1_i : float
+            core radius of the donor
+        donor_type : string
+            String dictating whether the donor has a H-envelope or He-envelope
+        comp_star : SingleStar object
+            The companion star
+        mc2_i : float
+            core mass of the companion
+        rc2_i : float
+            core radius of the companion
+        comp_type : string
+            String dictating whether the companion has a
+            H-envelope or He-envelope.
+        double_CE : bool
+            In case we have a double CE situation.
+        verbose : bool
+            In case we want information about the CEE.
+
+        """
+
+        if donor_type == 'He_core':
+            mc1_f = donor.he_core_mass
+            rc1_f = donor.he_core_radius
+        elif donor_type == "CO_core":
+            mc1_f = donor.co_core_mass
+            rc1_f = donor.co_core_radius
+        if mc1_f > mc1_i:
+            mc1_f = mc1_i
+            Pwarn(
+                "The final donor core mass (even after stable, postCEE MT)"
+                " is higher than the postCEE core mass. Now equalizing to "
+                "postCEE mass", "ApproximationWarning")
+        if not double_CE:
+            mc2_f = mc2_i
+            rc2_f = rc2_i
+        else:
+            if comp_type == 'He_core':
+                mc2_f = comp_star.he_core_mass
+                rc2_f = donor.he_core_radius
+            elif comp_type == "CO_core":
+                mc2_f = comp_star.co_core_mass
+                rc2_f = donor.co_core_radius
+            elif comp_type == "not_giant_companion":
+                mc2_f = comp_star.mass
+                rc2_f = 10.**(comp_star.log_R)
+            if mc2_f > mc2_i:
+                mc2_f = mc2_i
+                Pwarn("The accretor's final core mass (even after "
+                                "non-conservative stable, postCEE MT) is "
+                                "higher that postCEE core mass. "
+                                "Now equalizing to postCEE mass", "ApproximationWarning")
+        if verbose:
+            print("difference between m1 core mass defined by CEE step"
+                    " / to the final one as pre CEE : ", mc1_f, mc1_i)
+            print("difference between r1 core mass defined by CEE step"
+                    " / to the final one as pre CEE : ", rc1_f, rc1_i)
+            print("difference between m2 core mass defined by CEE step"
+                    " / to the final one as pre CEE : ", mc2_f, mc2_i)
+            print("difference between r2 core mass defined by CEE step"
+                    " / to the final one as pre CEE : ", rc2_f, rc2_i)
+            
+        return mc1_f, rc1_f, mc2_f, rc2_f
+
+
+    def CEE_check_for_merger(self, m1, r1, m2, r2, separation, tolerance):
+
+        # now we check if the Roche lobe of any of the cores that spiralled-in
+        # will be filled at the final separation
+        RL1 = cf.roche_lobe_radius(m1, m2, separation)
+        RL2 = cf.roche_lobe_radius(m2, m1, separation)
+
+        # Check for merger
+        if ((r1 - RL1) < tolerance and (r2 - RL2) < tolerance):
+            return False
+
+        return True
+
+    def CEE_core_replaced_noMT(
+            self,
+            binary,
+            donor,
+            mc1_i, 
+            rc1_i, 
+            donor_type, 
+            comp_star,
+            mc2_i, 
+            rc2_i, 
+            comp_type, 
+            double_CE,
+            separation_postCEE,
+            verbose=False):
+
+        mc1_f = mc1_i
+        rc1_f = rc1_i
+        mc2_f = mc2_i
+        rc2_f = rc2_i
+        if verbose:
+            print("m1 core mass pre CEE (He,CO) / to after CEE : ",
+                    donor.he_core_mass, donor.co_core_mass, mc1_f)
+            print("m1 core radius pre CEE (He,CO) / to after CEE : ",
+                    donor.he_core_radius, donor.co_core_radius, rc1_f)
+            print("m2 core mass pre CEE (He,CO) / to after CEE : ",
+                    comp_star.he_core_mass, comp_star.co_core_mass, mc2_f
+                    )
+            print("m2 core radius pre CEE (He,CO) / to after CEE : ",
+                    comp_star.he_core_radius,
+                    comp_star.co_core_radius, rc2_f)
+                
+        # now we check if the Roche lobe of any of the cores that spiralled-in
+        # will be filled at the final separation
+        RL1 = cf.roche_lobe_radius(mc1_i, mc2_i, separation_postCEE/const.Rsun)
+        RL2 = cf.roche_lobe_radius(mc2_i, mc1_i, separation_postCEE/const.Rsun)
+
+        # Check for merger
+        if ((rc1_f - RL1) < self.CEE_tolerance_err
+                and (rc2_f - RL2) < self.CEE_tolerance_err):
+            # system survives CEE, the whole CE is ejected
+            # and the new orbital separation for the cores is returned
+            merger = False
+
+            if verbose:
+                print("system survives CEE, the whole CE is ejected and the "
+                      "new orbital separation for the cores is returned")
+        else:
+            merger = True
+
+        # possible change of orbital period after CEE
+        orbital_period_f = cf.orbital_period_from_separation(
+            separation_postCEE / const.Rsun, mc1_i, mc2_i)
+        
+        separation_f = cf.orbital_separation_from_period(orbital_period_f,
+                                                            mc1_f, mc2_f)
+        
+        return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
+
+
+    def CEE_core_not_replaced_noMT(
+            self, 
+            binary,
+            donor,
+            mc1_i, 
+            rc1_i, 
+            donor_type,
+            comp_star,
+            mc2_i, 
+            rc2_i, 
+            comp_type, 
+            double_CE,
+            separation_postCEE,
+            verbose=verbose):
+        
+        # First find the post-CE parameters for each star
+        mc1_f, rc1_f, mc2_f, rc2_f = CEE_adjust_post_CE_core_masses(
+                                        donor,
+                                        mc1_i, 
+                                        rc1_i, 
+                                        donor_type,
+                                        comp_star,
+                                        mc2_i, 
+                                        rc2_i, 
+                                        comp_type, 
+                                        double_CE,
+                                        verbose=verbose)
+        
+
+        # possible change of orbital period after CEE
+        orbital_period_f = cf.orbital_period_from_separation(
+            separation_postCEE / const.Rsun, mc1_i, mc2_i)
+
+
+        # Now we check if the Roche lobe of any of the cores that spiralled-in
+        # will be filled
+        RL1 = cf.roche_lobe_radius(mc1_f, mc2_f, separation_postCEE/const.Rsun)
+        RL2 = cf.roche_lobe_radius(mc2_f, mc1_f, separation_postCEE/const.Rsun)
+
+        # Check for merger
+        if ((rc1_f - RL1) < self.CEE_tolerance_err
+                and (rc2_f - RL2) < self.CEE_tolerance_err):
+            # system survives CEE, the whole CE is ejected
+            # and the new orbital separation for the cores is returned
+            merger = False
+
+            if verbose:
+                print("system survives CEE, the whole CE is ejected and the "
+                      "new orbital separation for the cores is returned")
+        else:
+            merger = True
+
+        # possible change of orbital period after CEE
+        orbital_period_f = cf.orbital_period_from_separation(
+            separation_postCEE / const.Rsun, mc1_i, mc2_i)
+        
+        separation_f = cf.orbital_separation_from_period(orbital_period_f,
+                                                            mc1_f, mc2_f)
+        
+        return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
+
+
+
+    def CEE_core_not_replaced_stableMT(self, binary, verbose):
+        
+        # First find the post-CE parameters for each star
+        mc1_f, rc1_f, mc2_f, rc2_f = CEE_adjust_post_CE_core_masses(
+                                        mc1_i, 
+                                        rc1_i, 
+                                        donor_type,
+                                        donor,
+                                        mc2_i, 
+                                        rc2_i, 
+                                        comp_type, 
+                                        comp_star,
+                                        double_CE)
+        
+
+        # possible change of orbital period after CEE
+        orbital_period_postCEE = cf.orbital_period_from_separation(
+            separation_postCEE / const.Rsun, mc1_i, mc2_i)
+
+        # An assumed stable mass transfer case after postCEE with
+        # fully non-conservative MT and mass lost from the vicinity
+        # of the accretor:
+        orbital_period_f = cf.period_change_stable_MT(
+            orbital_period_postCEE, Mdon_i=mc1_i, Mdon_f=mc1_f,
+            Macc_i=mc2_i, alpha=0.0, beta=1.0)
+        if double_CE:
+            # a reverse stable MT assumed to be happening
+            # at the same time
+            orbital_period_f = cf.period_change_stable_MT(
+                orbital_period_f, Mdon_i=mc2_i, Mdon_f=mc2_f,
+                Macc_i=mc1_i, alpha=0.0, beta=1.0)
+        if verbose:
+            print("during the assumed stable MT phase after postCE")
+            print("with 'common_envelope_option_after_succ_CEE' :",
+                    common_envelope_option_after_succ_CEE)
+            print("the orbit changed from postCEE : ", orbital_period_postCEE)
+            print("to : ", orbital_period_f)
+
+
+
+        # Now we check if the Roche lobe of any of the cores that spiralled-in
+        # will be filled
+        RL1 = cf.roche_lobe_radius(mc1_i, mc2_i, separation_postCEE/const.Rsun)
+        RL2 = cf.roche_lobe_radius(mc2_i, mc1_i, separation_postCEE/const.Rsun)
+
+        # Check for merger
+        if ((core_radius1 - RL1) < self.CEE_tolerance_err
+                and (rc2_i - RL2) < self.CEE_tolerance_err):
+            # system survives CEE, the whole CE is ejected
+            # and the new orbital separation for the cores is returned
+            merger = False
+
+            if verbose:
+                print("system survives CEE, the whole CE is ejected and the "
+                      "new orbital separation for the cores is returned")
+        else:
+            merger = True
+        
+        separation_f = cf.orbital_separation_from_period(orbital_period_f,
+                                                            mc1_f, mc2_f)
+        
+        return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
+
+
+
+    def CEE_core_not_replaced_windloss(self, binary, verbose):
+        
+        # First find the post-CE parameters for each star
+        mc1_f, rc1_f, mc2_f, rc2_f = CEE_adjust_post_CE_core_masses(
+                                        mc1_i, 
+                                        rc1_i, 
+                                        donor_type,
+                                        donor,
+                                        mc2_i, 
+                                        rc2_i, 
+                                        comp_type, 
+                                        comp_star,
+                                        double_CE)
+        
+
+        # possible change of orbital period after CEE
+        orbital_period_postCEE = cf.orbital_period_from_separation(
+            separation_postCEE / const.Rsun, mc1_i, mc2_i)
+
+
+
+        # An assumed wind loss after postCEE with mass lost
+        # from the vicinity of the donor
+        orbital_period_f = cf.period_change_stable_MT(
+            orbital_period_postCEE, Mdon_i=mc1_i, Mdon_f=mc1_f,
+            Macc_i=mc2_i, alpha=1.0, beta=0.0)
+        if double_CE:
+            # a wind mass loss from the 2nd star assumed to be
+            # happening at the same time
+            orbital_period_f = cf.period_change_stable_MT(
+                orbital_period_f, Mdon_i=mc2_i, Mdon_f=mc2_f,
+                Macc_i=mc1_i, alpha=1.0, beta=0.0)
+        if verbose:
+            print("during the assumed windloss phase after postCE")
+            print("with 'common_envelope_option_after_succ_CEE' :",
+                    common_envelope_option_after_succ_CEE)
+            print("the orbit changed from postCEE : ", orbital_period_postCEE)
+            print("to : ", orbital_period_f)
+
+
+        # Now we check if the Roche lobe of any of the cores that spiralled-in
+        # will be filled
+        RL1 = cf.roche_lobe_radius(mc1_i, mc2_i, separation_postCEE/const.Rsun)
+        RL2 = cf.roche_lobe_radius(mc2_i, mc1_i, separation_postCEE/const.Rsun)
+
+        # Check for merger
+        if ((core_radius1 - RL1) < self.CEE_tolerance_err
+                and (rc2_i - RL2) < self.CEE_tolerance_err):
+            # system survives CEE, the whole CE is ejected
+            # and the new orbital separation for the cores is returned
+            merger = False
+
+            if verbose:
+                print("system survives CEE, the whole CE is ejected and the "
+                      "new orbital separation for the cores is returned")
+        else:
+            merger = True
+        
+        separation_f = cf.orbital_separation_from_period(orbital_period_f,
+                                                            mc1_f, mc2_f)
+        
+        return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
+
+
+
+
     def CEE_simple_alpha_prescription(
             self, binary, donor, comp_star, lambda1_CE, mc1_i, rc1_i,
             donor_type, lambda2_CE, mc2_i, rc2_i, comp_type, double_CE=False,
@@ -540,6 +1011,66 @@ class StepCEE(object):
             print("DEorb", eorb_postCEE - eorb_i)
             print("separation_i in Rsun", separation_i/const.Rsun)
             print("separation_postCEE in Rsun", separation_postCEE/const.Rsun)
+
+
+        # Calculate the post-CE binary properties
+        if common_envelope_option_after_succ_CEE == "CEE_core_replaced_noMT":
+            mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
+                    = CEE_core_replaced_noMT(
+                                            mc1_i,
+                                            rc1_i,
+                                            donor_type,
+                                            mc2_i,
+                                            rc2_i,
+                                            comp_type,
+                                            double_CE,
+                                            separation_postCEE,
+                                            verbose)
+        elif common_envelope_option_after_succ_CEE == "CEE_core_not_replaced_noMT":
+            mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
+                    = CEE_core_not_replaced_noMT(
+                                            mc1_i,
+                                            rc1_i,
+                                            donor_type,
+                                            mc2_i,
+                                            rc2_i,
+                                            comp_type,
+                                            double_CE,
+                                            separation_postCEE,
+                                            verbose)
+        elif common_envelope_option_after_succ_CEE == "CEE_core_not_replaced_stableMT":
+            mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
+                    = CEE_core_not_replaced_stableMT(
+                                            mc1_i,
+                                            rc1_i,
+                                            donor_type,
+                                            mc2_i,
+                                            rc2_i,
+                                            comp_type,
+                                            double_CE,
+                                            separation_postCEE,
+                                            verbose)
+        elif common_envelope_option_after_succ_CEE == "CEE_core_not_replaced_windloss":
+            mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
+                    = CEE_core_not_replaced_windloss(
+                                            mc1_i,
+                                            rc1_i,
+                                            donor_type,
+                                            mc2_i,
+                                            rc2_i,
+                                            comp_type,
+                                            double_CE,
+                                            separation_postCEE,
+                                            verbose)
+        else:
+            raise ValueError(
+                "Not accepted option in common_envelope_option_after_succ_"
+                "CEE = {}, dont know how to proceed".
+                format(common_envelope_option_after_succ_CEE))        
+
+
+
+
 
         # now we check if the roche Lobe of any of the cores that spiralled-in
         # will be filled if reached this final separation
@@ -691,6 +1222,9 @@ class StepCEE(object):
                     binary.event = 'CC2'
             else:
                 binary.event = None
+
+
+
 
             # Adjust binary properties
             binary.separation = separation_f
