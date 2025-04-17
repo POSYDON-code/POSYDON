@@ -191,6 +191,9 @@ class TestElements:
     def test_instance_roche_lobe_radius(self):
         assert isroutine(totest.roche_lobe_radius)
 
+    def test_instance_check_for_RLO(self):
+        assert isroutine(totest.check_for_RLO)
+
     def test_instance_orbital_separation_from_period(self):
         assert isroutine(totest.orbital_separation_from_period)
 
@@ -555,6 +558,21 @@ class TestFunctions:
         for m in [1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7]:
             assert totest.roche_lobe_radius(m, 1.0)\
                    + totest.roche_lobe_radius(1.0, m) < 1.0
+
+    def test_check_for_RLO(self):
+        # missing argument
+        with raises(TypeError, match="missing 6 required positional "\
+                                     +"arguments: 'm1', 'r1', 'm2', 'r2', "\
+                                     +"'separation', and 'tolerance'"):
+            totest.check_for_RLO()
+
+        # examples
+        tests = [(1.0, 1.0, 1.0, 1.0, 1.0, 1e-3, True),
+                 (1.0, 1.0, 1.0, 1.0, 4.0, 1e-3, False)]
+
+        for (m1, r1, m2, r2, separation, tolerance, RLO) in tests:
+            assert totest.check_for_RLO(m1, r1, m2, r2, separation, \
+                            tolerance) == RLO
 
     def test_orbital_separation_from_period(self):
         # missing argument
