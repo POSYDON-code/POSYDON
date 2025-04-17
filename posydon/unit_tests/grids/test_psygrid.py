@@ -20,290 +20,12 @@ from shutil import rmtree
 from posydon.utils.posydonwarning import (InappropriateValueWarning,\
                                           MissingFilesWarning,\
                                           ReplaceValueWarning)
-from posydon.grids.io import SINGLE_OUTPUT_FILE, BINARY_OUTPUT_FILE
 from posydon.grids.scrubbing import keep_after_RLO
 from posydon.utils.common_functions import initialize_empty_array
-
-# helper functions
-def add_MESA_run_files(path, idx, binary_run=True, with_histories=True,\
-                       with_profiles=True):
-    """Create files of one MESA run
-
-    Parameters
-    ----------
-    path : str
-        The path to the directory containing all the runs.
-    idx : int
-        Run index. (1, 3, 4, 5, 8, 11, 14, and 17 have a special meaning)
-    binary_run : bool (default: True)
-        If `True` files of a binary run are created, otherwise run of a single
-        star.
-    with_histories : bool (default: True)
-        If `True` creates history files.
-    with_profiles : bool (default: True)
-        If `True` creates final profile files.
-
-    Returns
-    -------
-    str
-        Path to the added run.
-
-    """
-    if not os.path.exists(path):
-        raise NotADirectoryError(f"Wrong path: {path}")
-    if not isinstance(idx, int):
-        raise TypeError("idx must be an integer")
-    elif idx < 0:
-        raise ValueError("idx cannot be negative")
-    if not isinstance(binary_run, bool):
-        raise TypeError("binary_run must be a boolean")
-    if not isinstance(with_histories, bool):
-        raise TypeError("with_histories must be a boolean")
-    # create files expected from a MESA run
-    idx_str = "{:.4f}".format(1.0+0.1*idx)
-    # get run directory
-    if binary_run:
-        run_name = f"Zbase_0.0142_m1_{idx_str}_m2_0.9000_initial_z_"\
-                   +f"1.4200e-02_initial_period_in_days_{idx_str}e-01_"\
-                   +f"grid_index_{idx}"
-        if path[-2:] == 'v1': # v1 name
-            run_name = f"m1_{idx_str}_m2_0.9000_initial_period_in_days_"\
-                   +f"{idx_str}e-01_grid_index_{idx}"
-    else:
-        run_name = f"Zbase_0.0142_initial_mass_{idx_str}_initial_z_"\
-                   +f"1.4200e-02_grid_index_{idx}"
-        if path[-2:] == 'v1': # v1 name
-            run_name = f"initial_mass_{idx_str}_grid_index_{idx}"
-    run_path = os.path.join(path, run_name)
-    os.mkdir(run_path)
-    # get MESA output file
-    if binary_run:
-        OUTPUT_FILE = BINARY_OUTPUT_FILE
-    else:
-        OUTPUT_FILE = SINGLE_OUTPUT_FILE
-    with open(os.path.join(run_path, OUTPUT_FILE), "w") as out_file:
-        out_file.write(f"Test{idx}")
-    # get inlist_grid_points file: containing masses and period
-    with open(os.path.join(run_path, "inlist_grid_points"), "w") as\
-         inlist_file:
-        if binary_run:
-            inlist_file.write("&binary_controls\n")
-            if idx != 20:
-                inlist_file.write(f"\tm1 = 1.{idx}d0\n")
-                inlist_file.write("\tm2 = 0.9d0\n")
-                inlist_file.write(f"\tinitial_period_in_days = 1.{idx}d-1\n")
-            if idx == 1:
-                # add value to get Z set in case of getting ignored
-                inlist_file.write(f"\tZ = 0.0142d0\n")
-                # add fake value
-                inlist_file.write(f"\ttest = 0.0\n")
-            inlist_file.write("/ ! end of binary_controls namelist")
-        else:
-            inlist_file.write("&controls\n")
-            inlist_file.write(f"\tinitial_mass = 1.{idx}d0\n")
-            inlist_file.write("\tinitial_z = 0.0142d0\n")
-            inlist_file.write(f"\tZbase = 0.0142d0\n")
-            inlist_file.write("/ ! end of star_controls namelist")
-    if binary_run and with_histories and (idx != 3):
-        # get binary_history.data
-        with open(os.path.join(run_path, "binary_history.data"), "w")\
-             as binary_history_file:
-            for j in range(5):
-                # initial values are read from header, rest does not matter
-                if j == 1:
-                    names = "initial_don_mass initial_acc_mass "\
-                            +"initial_period_days\n"
-                    binary_history_file.write(names)
-                elif j == 2:
-                    vals = f"             1.{idx}              0.9 "\
-                           +f"            1.{idx}E-01\n"
-                    binary_history_file.write(vals)
-                else:
-                    binary_history_file.write(f"Test HEADER{j}\n")
-            # table with column headers and two rows of all the required
-            # columns
-            row1 = "\n"
-            row2 = "\n"
-            for j,c in enumerate(totest.DEFAULT_BINARY_HISTORY_COLS):
-                if (((idx == 4) or (idx == 11)) and
-                    (c in ["model_number", "age"])):
-                    # skip special columns
-                    continue
-                l = len(c)
-                fmt = " {:" + f"{l}" + "}"
-                binary_history_file.write(fmt.format(c))
-                fmt = " {:>" + f"{l}" + "}"
-                if ((idx == 1) and (c == "star_1_mass")):
-                    # get a high mass star for stop_before_carbon_depletion
-                    row1 += fmt.format(j+100)
-                else:
-                    row1 += fmt.format(j)
-                row2 += fmt.format(j+1)
-            if idx == 11:
-                # add special columns at end for header and first row
-                for j,c in enumerate(["model_number", "age"]):
-                    l = len(c)
-                    fmt = " {:" + f"{l}" + "}"
-                    binary_history_file.write(fmt.format(c))
-                    fmt = " {:>" + f"{l}" + "}"
-                    row1 += fmt.format(j)
-            if idx != 14:
-                # add data rows
-                binary_history_file.write(row1)
-                binary_history_file.write(row2)
-            if ((idx == 8) and (len(totest.DEFAULT_BINARY_HISTORY_COLS) > 1)):
-                # add frist two columns of third row
-                l = len(totest.DEFAULT_BINARY_HISTORY_COLS[0])
-                fmt = " {:>" + f"{l}" + "}"
-                binary_history_file.write("\n"+fmt.format(2))
-                l = len(totest.DEFAULT_BINARY_HISTORY_COLS[1])
-                fmt = " {:>" + f"{l}" + "}"
-                binary_history_file.write(fmt.format(3))
-    # get LOGS directories
-    if binary_run: # (none, one, two, none, one, two, ...)
-        limit_log_dir = 3
-    else: # (none, one, none, one, ...)
-        limit_log_dir = 2
-    for k in range(1, idx%limit_log_dir+1):
-        if ((idx==17) and (k==1)):
-            continue
-        logs_path = os.path.join(run_path, f"LOGS{k}")
-        os.mkdir(logs_path)
-        if with_histories:
-            # get history.data
-            with open(os.path.join(logs_path, "history.data"), "w") as\
-                 history_file:
-                for j in range(5):
-                    # initial values are read from header, rest does not matter
-                    if j == 1:
-                        names = "initial_Z initial_Y initial_m\n"
-                        history_file.write(names)
-                    elif j == 2:
-                        vals = f"   0.0142      0.25       1.{idx}\n"
-                        history_file.write(vals)
-                    else:
-                        history_file.write(f"Test HEADER{j}\n")
-                # table with column headers and two rows of all the required
-                # columns (model_number and star_age need to align with the
-                # binary_history.data where they are the first two columns)
-                row1 = "\n"
-                row2 = "\n"
-                if binary_run:
-                    cols = ["model_number", "star_age"]\
-                           + totest.DEFAULT_STAR_HISTORY_COLS
-                else:
-                    cols = totest.DEFAULT_SINGLE_HISTORY_COLS
-                for j,c in enumerate(cols):
-                    if (((idx == 5) or (idx == 11)) and
-                        (c in ["model_number", "star_age"])):
-                        # skip extra columns
-                        continue
-                    l = len(c)
-                    fmt = " {:" + f"{l}" + "}"
-                    history_file.write(fmt.format(c))
-                    fmt = " {:>" + f"{l}" + "}"
-                    row1 += fmt.format(j)
-                    if "center_h" in c:
-                        # creates he depletion
-                        row2 += fmt.format(0)
-                    else:
-                        row2 += fmt.format(j+1)
-                if (binary_run and (idx == 11)):
-                    # add extra columns at end for header and first row
-                    for j,c in enumerate(["model_number", "star_age"]):
-                        l = len(c)
-                        fmt = " {:" + f"{l}" + "}"
-                        history_file.write(fmt.format(c))
-                        fmt = " {:>" + f"{l}" + "}"
-                        row1 += fmt.format(j)
-                if idx != 14:
-                    # add data rows
-                    history_file.write(row1)
-                    history_file.write(row2)
-                if ((idx == 8) and (len(cols) > 1)):
-                    # add frist two columns of third row
-                    l = len(cols[0])
-                    fmt = " {:>" + f"{l}" + "}"
-                    history_file.write("\n"+fmt.format(2))
-                    l = len(cols[1])
-                    fmt = " {:>" + f"{l}" + "}"
-                    history_file.write(fmt.format(3))
-        if with_profiles:
-            # get final_profile.data
-            with open(os.path.join(logs_path, "final_profile.data"), "w")\
-                 as final_profile_file:
-                for j in range(5):
-                    # the first 5 lines are skipped
-                    final_profile_file.write(f"Test HEADER{j}\n")
-                # table with column headers and two rows of all the required
-                # columns
-                row1 = "\n"
-                row2 = "\n"
-                for j,c in enumerate(totest.DEFAULT_PROFILE_COLS):
-                    l = len(c)
-                    fmt = " {:" + f"{l}" + "}"
-                    final_profile_file.write(fmt.format(c))
-                    fmt = " {:>" + f"{l}" + "}"
-                    row1 += fmt.format(j)
-                    row2 += fmt.format(j+1)
-                final_profile_file.write(row1)
-                final_profile_file.write(row2)
-    return run_path
-
-def get_PSyGrid(dir_path, idx, binary_history, star_history, profile):
-    """Create a PSyGrid file with two runs
-
-    Parameters
-    ----------
-    dir_path : str
-        The path to the directory where to create the PSyGrid.
-    idx : int
-        Grid index.
-    binary_history : ndarray
-        Binary history data.
-    star_history : ndarray
-        Star history data.
-    profile : ndarray
-        Final profile data.
-
-    Returns
-    -------
-    str
-        Path to the PSyGrid file.
-
-    """
-    path = os.path.join(dir_path, f"grid{idx}.h5")
-    PSyGrid = totest.PSyGrid()
-    PSyGrid.filepath = path
-    PSyGrid.generate_config()
-    mesa_dir1 = os.path.join(dir_path, "m1_1.0_m2_1.0_initial_period_in_days"\
-                                       +"_0.0_initial_z_0.01_idx_0")
-    mesa_dir2 = os.path.join(dir_path, "m1_1.0_m2_1.0_initial_period_in_days"\
-                                       +"_{}_initial_z_0.01_idx_1".format(\
-                                        binary_history['period_days'][0]))
-    with h5py.File(path, "w") as hdf5_file:
-        hdf5_file.create_group("/grid/run0/")
-        hdf5_file.create_dataset("/grid/run1/binary_history",\
-                                 data=binary_history)
-        hdf5_file.create_dataset("/grid/run1/history1", data=star_history)
-        hdf5_file.create_dataset("/grid/run1/history2", data=star_history)
-        hdf5_file.create_dataset("/grid/run1/final_profile1", data=profile)
-        hdf5_file.create_dataset("/grid/run1/final_profile2", data=profile)
-        ini_val = np.array([(np.nan), (binary_history['period_days'][0])],\
-                           dtype=[('period_days', '<f8')])
-        hdf5_file.create_dataset("/grid/initial_values", data=ini_val)
-        fin_val = np.array([(np.nan, "TF1"),\
-                            (binary_history['period_days'][-1], "TF1")],\
-                           dtype=[('period_days', '<f8'),\
-                                  ('termination_flag_1',\
-                                   totest.H5_UNICODE_DTYPE)])
-        hdf5_file.create_dataset("/grid/final_values", data=fin_val)
-        hdf5_file.attrs["config"] =\
-         totest.json.dumps(str(dict(PSyGrid.config)))
-        rel_paths = np.array([(mesa_dir1), (mesa_dir2)],\
-                             dtype=totest.H5_UNICODE_DTYPE)
-        hdf5_file.create_dataset("relative_file_paths", data=rel_paths)
-    return path
+from posydon.unit_tests._helper_functions_for_tests.MESA import\
+ add_MESA_run_files
+from posydon.unit_tests._helper_functions_for_tests.psygrid import\
+ get_simple_PSyGrid
 
 @fixture
 def star_history():
@@ -722,34 +444,33 @@ class TestFunctions:
     @fixture
     def grid1_path(self, tmp_path, binary_history, star_history, profile):
         # a path to a psygrid file for testing
-        path = get_PSyGrid(tmp_path, 1, binary_history, star_history, profile)
+        path = get_simple_PSyGrid(tmp_path, 1, binary_history, star_history,\
+                                  profile)
         # modify hdf5 file: 'ignored_no_RLO' flag
         with h5py.File(path, "a") as hdf5_file:
+            fin_val = hdf5_file["/grid/final_values"][()]
             del hdf5_file["/grid/final_values"]
-            fin_val = np.array([(np.nan, "TF1"),\
-                                (binary_history['period_days'][-1], \
-                                 "ignored_no_RLO")],\
-                               dtype=[('period_days', '<f8'),\
-                                      ('termination_flag_1',\
-                                       totest.H5_UNICODE_DTYPE)])
+            fin_val['termination_flag_1'][1] = "ignored_no_RLO"
             hdf5_file.create_dataset("/grid/final_values", data=fin_val)
         return path
 
     @fixture
     def grid2_path(self, tmp_path, binary_history, star_history, profile):
         # a path to a psygrid file for testing
-        return get_PSyGrid(tmp_path, 2, binary_history, star_history, profile)
+        return get_simple_PSyGrid(tmp_path, 2, binary_history, star_history,\
+                                  profile)
 
     @fixture
     def grid_path_bad_ini(self, tmp_path, binary_history, star_history,\
                           profile):
         # a path to a psygrid file for testing
-        path = get_PSyGrid(tmp_path, 3, binary_history, star_history, profile)
+        path = get_simple_PSyGrid(tmp_path, 3, binary_history, star_history,\
+                                  profile)
         # modify hdf5 file: 'bad' in initial_values
         with h5py.File(path, "a") as hdf5_file:
+            ini_val = hdf5_file["/grid/initial_values"][()]
             del hdf5_file["/grid/initial_values"]
-            ini_val = np.array([(np.nan), (binary_history['period_days'][0])],\
-                               dtype=[('bad', '<f8')])
+            ini_val = np.array(ini_val, dtype=[('bad', '<f8')])
             hdf5_file.create_dataset("/grid/initial_values", data=ini_val)
         return path
 
@@ -757,15 +478,15 @@ class TestFunctions:
     def grid_path_bad_fin(self, tmp_path, binary_history, star_history,\
                           profile):
         # a path to a psygrid file for testing
-        path = get_PSyGrid(tmp_path, 4, binary_history, star_history, profile)
+        path = get_simple_PSyGrid(tmp_path, 4, binary_history, star_history,\
+                                  profile)
         # modify hdf5 file: 'termination_flag_bad' in final_values
         with h5py.File(path, "a") as hdf5_file:
+            fin_val = hdf5_file["/grid/final_values"][()]
             del hdf5_file["/grid/final_values"]
-            fin_val = np.array([(np.nan, "TF1"),\
-                                (binary_history['period_days'][-1], "TF1")],\
-                               dtype=[('period_days', '<f8'),\
-                                      ('termination_flag_bad',\
-                                       totest.H5_UNICODE_DTYPE)])
+            fin_val = np.array(fin_val, dtype=[('period_days', '<f8'),\
+                                               ('termination_flag_bad',\
+                                                totest.H5_UNICODE_DTYPE)])
             hdf5_file.create_dataset("/grid/final_values", data=fin_val)
         return path
 
@@ -773,7 +494,8 @@ class TestFunctions:
     def grid_path_start_RLO(self, tmp_path, binary_history, star_history,\
                             profile):
         # a path to a psygrid file for testing
-        path = get_PSyGrid(tmp_path, 5, binary_history, star_history, profile)
+        path = get_simple_PSyGrid(tmp_path, 5, binary_history, star_history,\
+                                  profile)
         # modify hdf5 file: replace 'start_at_RLO' in config
         with h5py.File(path, "a") as hdf5_file:
             old_text = "'start_at_RLO': False"
@@ -1012,7 +734,7 @@ class TestFunctions:
         # examples: one grid
         totest.join_grids([grid2_path], h5_out_path, verbose=False)
         rd = {}
-        for group in ['/', '/grid/', '/grid/run0/', '/grid/run1/']:
+        for group in ['/', '/grid/']+[f'/grid/run{i}/' for i in range(3)]:
             for key in h5py.File(grid2_path, "r")[group].keys():
                 rd[group+key] = None
         ra = {"config": ["'description': 'joined'", "'compression': 'gzip9'"]\
@@ -1086,8 +808,12 @@ class TestFunctions:
                             mock_get_detected_initial_RLO)
         monkeypatch.setattr(totest, "get_nearest_known_initial_RLO",\
                             mock_get_nearest_known_initial_RLO)
+        rd6 = {}
+        for group in ['/', '/grid/']+[f'/grid/run{i}/' for i in range(6)]:
+            for key in h5py.File(grid_path_initial_RLO, "r")[group].keys():
+                rd6[group+key] = None
         totest.join_grids([grid_path_initial_RLO], h5_out_path, verbose=False)
-        check_h5_content(h5_out_path, required_data=rd, required_attrs=ra)
+        check_h5_content(h5_out_path, required_data=rd6, required_attrs=ra)
         with h5py.File(grid_path_initial_RLO, "r") as hdf5_file:
             ini_val = hdf5_file['/grid/initial_values'][()]
             fin_val = hdf5_file['/grid/final_values'][()]
@@ -1236,13 +962,15 @@ class TestPSyGrid:
     @fixture
     def grid_path(self, tmp_path, binary_history, star_history, profile):
         # a path to a psygrid file for testing
-        return get_PSyGrid(tmp_path, 1, binary_history, star_history, profile)
+        return get_simple_PSyGrid(tmp_path, 1, binary_history, star_history,\
+                                  profile)
 
     @fixture
     def grid_path_negative_run(self, tmp_path, binary_history, star_history,\
                                profile):
         # a path to a psygrid file for testing
-        path = get_PSyGrid(tmp_path, 2, binary_history, star_history, profile)
+        path = get_simple_PSyGrid(tmp_path, 2, binary_history, star_history,\
+                                  profile)
         # modify hdf5 file: add group for run -1
         with h5py.File(path, "a") as hdf5_file:
             hdf5_file.create_group("/grid/run-1/")
@@ -1252,7 +980,8 @@ class TestPSyGrid:
     def grid_path_additional_run(self, tmp_path, binary_history, star_history,\
                                  profile):
         # a path to a psygrid file for testing
-        path = get_PSyGrid(tmp_path, 3, binary_history, star_history, profile)
+        path = get_simple_PSyGrid(tmp_path, 3, binary_history, star_history,\
+                                  profile)
         # modify hdf5 file: add group for run 1000
         with h5py.File(path, "a") as hdf5_file:
             hdf5_file.create_group("/grid/run1000/")
@@ -1262,8 +991,9 @@ class TestPSyGrid:
     def grid_path_missing_run(self, tmp_path, binary_history, star_history,\
                               profile):
         # a path to a psygrid file for testing
-        path = get_PSyGrid(tmp_path, 4, binary_history, star_history, profile)
-        # modify hdf5 file: add group for run 1000
+        path = get_simple_PSyGrid(tmp_path, 4, binary_history, star_history,\
+                                  profile)
+        # modify hdf5 file: remove group for run 1
         with h5py.File(path, "a") as hdf5_file:
             del hdf5_file["/grid/run1/"]
         return path
@@ -1272,11 +1002,13 @@ class TestPSyGrid:
     def grid_path_no_runs(self, tmp_path, binary_history, star_history,\
                           profile):
         # a path to a psygrid file for testing
-        path = get_PSyGrid(tmp_path, 5, binary_history, star_history, profile)
-        # modify hdf5 file: add group for run 1000
+        path = get_simple_PSyGrid(tmp_path, 5, binary_history, star_history,\
+                                  profile)
+        # modify hdf5 file: remove group for all runs
         with h5py.File(path, "a") as hdf5_file:
-            del hdf5_file["/grid/run0/"]
-            del hdf5_file["/grid/run1/"]
+            for key in hdf5_file["/grid/"].keys():
+                if "run" in key:
+                    del hdf5_file[f"/grid/{key}/"]
         return path
 
     # test the PSyGrid class
@@ -2101,7 +1833,7 @@ class TestPSyGrid:
             PSyGrid.load(grid_path_missing_run)
         # examples
         PSyGrid.load(grid_path)
-        assert PSyGrid.n_runs == 2
+        assert PSyGrid.n_runs == 3
         # examples: no runs
         PSyGrid.load(grid_path_no_runs)
         assert PSyGrid.n_runs == 0
@@ -2141,11 +1873,11 @@ class TestPSyGrid:
             return
         PSyGrid_str = PSyGrid.__str__()
         assert f"{PSyGrid.n_runs} runs found. They include:" in PSyGrid_str
-        assert "1 binary_history files." in PSyGrid_str
-        assert "1 history1 files." in PSyGrid_str
-        assert "1 history2 files." in PSyGrid_str
-        assert "1 final_profile1 files." in PSyGrid_str
-        assert "1 final_profile2 files." in PSyGrid_str
+        assert "2 binary_history files." in PSyGrid_str
+        assert "2 history1 files." in PSyGrid_str
+        assert "2 history2 files." in PSyGrid_str
+        assert "2 final_profile1 files." in PSyGrid_str
+        assert "2 final_profile2 files." in PSyGrid_str
         assert "Columns in binary_history: (" in PSyGrid_str
         assert "Columns in history1: (" in PSyGrid_str
         assert "Columns in history2: (" in PSyGrid_str
@@ -2385,15 +2117,15 @@ class TestPSyGrid:
         check_grid_csv(os.path.join(new_path, "grid.csv"))
         # examples: termination_flags, specify flag(s) (tuple)
         new_path = os.path.join(tmp_path, "termination_flags_test4")
-        PSyGrid.rerun(path_to_file=new_path, termination_flags=("test",\
-                                                                "TF1"),\
+        PSyGrid.rerun(path_to_file=new_path,\
+                      termination_flags=("test", "gamma_center_limit"),\
                       flags_to_check=('termination_flag_1',\
                                       'termination_flag_2'))
         check_grid_csv(os.path.join(new_path, "grid.csv"), runs=2)
         # examples: list of runs and termination_flags
         new_path = os.path.join(tmp_path, "termination_flags_test5")
         PSyGrid.rerun(path_to_file=new_path, runs_to_rerun=[1],\
-                      termination_flags="TF1")
+                      termination_flags="gamma_center_limit")
         check_grid_csv(os.path.join(new_path, "grid.csv"), runs=2)
         # examples: list of runs and termination_flags, no initial values
         new_path = os.path.join(tmp_path, "termination_flags_test6")
@@ -2733,7 +2465,8 @@ class TestPSyGridIterator:
     @fixture
     def grid_path(self, tmp_path, binary_history, star_history, profile):
         # a path to a psygrid file for testing
-        return get_PSyGrid(tmp_path, 1, binary_history, star_history, profile)
+        return get_simple_PSyGrid(tmp_path, 1, binary_history, star_history,\
+                                  profile)
 
     @fixture
     def PSyGrid(self, grid_path):
@@ -2777,7 +2510,8 @@ class TestPSyRunView:
     @fixture
     def grid_path(self, tmp_path, binary_history, star_history, profile):
         # a path to a psygrid file for testing
-        return get_PSyGrid(tmp_path, 1, binary_history, star_history, profile)
+        return get_simple_PSyGrid(tmp_path, 1, binary_history, star_history,\
+                                  profile)
 
     @fixture
     def PSyGrid(self, grid_path):
