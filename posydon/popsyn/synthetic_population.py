@@ -32,7 +32,6 @@ __authors__ = [
     "Max Briel <max.briel@unige.ch>",
 ]
 
-import warnings
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -44,7 +43,7 @@ from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 import posydon.visualization.plot_pop as plot_pop
 from posydon.utils.common_functions import convert_metallicity_to_string
-
+from posydon.utils.posydonwarning import Pwarn
 from astropy.cosmology import Planck15 as cosmology
 from astropy import constants as const
 
@@ -225,8 +224,118 @@ class PopulationRunner:
 # Helper classes #
 ##################
 
+class DFInterface:
+    """A class to handle the interface between the population file and the History and Oneline classes."""
+    
+    def __init__(self):
+        self.filename = None
+        self.chunksize = None
 
-class History:
+    def head(self, key, n=10):
+        """Return the first n rows of the key table
+
+        Parameters
+        ----------
+        key: str
+            The key of the table
+        n : int, optional
+            The number of rows to return. Default is 10.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The first n rows of the key table.
+
+        """
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select(key, start=0, stop=n)
+        
+    def tail(self, key, n=10):
+        """
+        Get the last n rows of the key table.
+
+        Parameters
+        ----------
+        key : str
+            The key of the table.
+        n : int, optional
+            The number of rows to return. Default is 10.
+
+        Returns
+        -------
+        pd.DataFrame
+            The last n rows of the key table.
+        """
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select(key, start=-n)
+        
+    
+    def select(self, key, where=None, start=None, stop=None, columns=None):
+        '''Select a subset of the key table based on the given conditions.
+        
+        Parameters
+        ----------
+        key : str
+            The key of the table to select from.
+        where : str, optional
+            A string representing the query condition to apply to the data.
+        start : int, optional
+            The starting index of the data to select.
+        stop : int, optional
+            The ending index of the data to select.
+        columns : list, optional
+            A list of column names to select.
+        
+        Returns
+        -------
+        pandas.DataFrame
+            The selected data as a DataFrame.
+        '''
+        # we have to chunk the read because of memory issues
+        with pd.HDFStore(self.filename, mode="r") as store:
+            iterator = store.select(key, where=where, start=start, stop=stop, columns=columns, chunksize=self.chunksize)
+            # read the data in chunks and concatenate once (faster than concat every chunk!)
+            out = []
+            for chunk in iterator:
+                out.append(chunk)
+            out = pd.concat(out, axis=0)
+        return out
+    
+    def get_repr(self, key):
+        '''Return a string representation of the key table.
+        
+        Parameters
+        ----------
+        key : str
+            The key of the table to return the string representation of.
+            
+        Returns
+        -------
+        str
+            The string representation of the key table.
+        
+        '''
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select(key, start=0, stop=10).__repr__()
+        
+    def get_html_repr(self, key):
+        """Return the HTML representation of the key table.
+        
+        Parameters
+        ----------
+        key : str
+            The key of the table to return the HTML representation of.
+            
+        Returns
+        -------
+        str
+            The HTML representation of the key table.
+        """
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store.select(key, start=0, stop=10)._repr_html_()
+
+
+class History(DFInterface):
     """A class to handle the history dataframe of a population file.
 
     This class provides methods to handle the history dataframe of a population file.
@@ -354,52 +463,52 @@ class History:
             else:
                 chunk = key.stop - pre
             indices = list(range(pre, pre + chunk))
-            return pd.read_hdf(self.filename, key="history", where='index in indices')       
-        
+            return self.select(where=f'index in {indices}')
+            
+        # single index
         elif isinstance(key, int):
-            return pd.read_hdf(self.filename, where="index == key", key="history")
-        
+            return self.select(where=f"index == {key}")
+                
         # list of indices
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
             if len(key) == 0:
                 return pd.DataFrame()
             else:
-                with pd.HDFStore(self.filename, mode="r") as store:
-                    return store.select("history", where="index in key")
+                return self.select(where=f"index in {key}")
+                
         # numpy array
         elif isinstance(key, np.ndarray) and (key.dtype == int):
             if len(key) == 0:
                 return pd.DataFrame()
             else:
                 indices = key.tolist()
-                with pd.HDFStore(self.filename, mode="r") as store:
-                    return store.select("history", where="index in indices")
+                return self.select(where=f"index in {indices}")
                 
         # boolean mask
         elif (isinstance(key, np.ndarray) and key.dtype == bool) or (isinstance(key, pd.DataFrame) and all(key.dtypes == bool)):
             # return empty if no values
             if len(key) == 0:
                 return pd.DataFrame()
-            
-            out_df = pd.DataFrame()
-            for i in range(0, len(key), self.chunksize):
-                tmp_df = pd.read_hdf(
-                    self.filename, key="history", start=i, stop=i + self.chunksize
-                )[key[i : i + self.chunksize]]
-                out_df = pd.concat([out_df, tmp_df])
-            return out_df
+            # We cannot use self.select because we're using a boolean mask across the entire table
+            # This can be optimized by only selecting indices that are True instead of the entire table
+            with pd.HDFStore(self.filename, mode="r") as store:
+                iterator = store.select("history", chunksize=self.chunksize)
+                out = []
+                for i, chunk in enumerate(iterator):
+                    out.append(chunk[key[i : i + self.chunksize]])
+                return pd.concat(out, axis=0)
         
         # single column
         elif isinstance(key, str):
             if key in self.columns:
-                return pd.read_hdf(self.filename, key="history", columns=[key])
+                return self.select(columns=[key])
             else:
                 raise ValueError(f"{key} is not a valid column name!")
             
         # multiple columns
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
-                return pd.read_hdf(self.filename, key="history", columns=key)
+                return self.select(columns=key)
             else:
                 raise ValueError(f"Not all columns in {key} are valid column names!")
         else:
@@ -429,7 +538,7 @@ class History:
             The first n rows of the history table.
 
         """
-        return pd.read_hdf(self.filename, key="history", start=0, stop=n)
+        return super().head("history", n)
 
     def tail(self, n=10):
         """Return the last n rows of the history table.
@@ -445,7 +554,7 @@ class History:
             The last n rows of the history table.
 
         """
-        return pd.read_hdf(self.filename, key="history", start=-n)
+        return super().tail("history", n)
 
     def __repr__(self):
         """Return a string representation of the object.
@@ -453,8 +562,8 @@ class History:
         Returns:
             str: A string representation of the object.
         """
-        return pd.read_hdf(self.filename, key="history").__repr__()
-
+        return super().get_repr("history")
+        
     def _repr_html_(self):
         """Return the HTML representation of the history dataframe.
 
@@ -467,8 +576,7 @@ class History:
         str
             The HTML representation of the history dataframe.
         """
-        return pd.read_hdf(self.filename, key="history")._repr_html_()
-
+        return super().get_html_repr("history")
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the history table based on the given conditions.
@@ -484,6 +592,7 @@ class History:
         ----------
         where : str, optional
             A string representing the query condition to apply to the data.
+            It is only possible to query on the index or string columns. 
         start : int, optional
             The starting index of the data to select.
         stop : int, optional
@@ -496,13 +605,14 @@ class History:
         pandas.DataFrame
             The selected data as a DataFrame.
         """
-        with pd.HDFStore(self.filename, mode="r") as store:
-            return store.select(
-                "history", where=where, start=start, stop=stop, columns=columns
-            )
+        return super().select(key='history',
+                              where=where,
+                              start=start,
+                              stop=stop,
+                              columns=columns)
 
 
-class Oneline:
+class Oneline(DFInterface):
     """A class to handle the oneline dataframe of a population file.
 
     The `Oneline` class provides methods to manipulate and retrieve data from the oneline dataframe of a population file.
@@ -597,32 +707,32 @@ class Oneline:
                 chunk = self.number_of_systems
             else:
                 chunk = key.stop - pre
-            return pd.read_hdf(
-                self.filename, key="oneline", start=pre, stop=pre + chunk
-            )            
+            indices = list(range(pre, pre + chunk))
+            return self.select(where=f'index in {indices}')
+        
         elif isinstance(key, int):
-            return pd.read_hdf(self.filename, where="index == key", key="oneline")
+            return self.select(where=f"index == {key}")
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
-            return pd.read_hdf(self.filename, where="index in key", key="oneline")
+            return self.select(where=f"index in {key}")
         elif isinstance(key, np.ndarray) and (key.dtype == int):
             indices = key.tolist()
-            return pd.read_hdf(self.filename, where="index in indices", key="oneline")
+            return self.select(where=f"index in {indices}")
         elif isinstance(key, list) and all(isinstance(x, float) for x in key):
             raise ValueError("elements in list are not integers! Try casting to int.")
         elif isinstance(key, pd.DataFrame) and all(key.dtypes == bool):
             indices = self.indices[key.to_numpy().flatten()].tolist()
-            return pd.read_hdf(self.filename, where="index in indices", key="oneline")
+            return self.select(where=f"index in {indices}")
         elif isinstance(key, np.ndarray) and key.dtype == bool:
             indices = self.indices[key].tolist()
-            return pd.read_hdf(self.filename, where="index in indices", key="oneline")
+            return self.select(where=f"index in {indices}")
         elif isinstance(key, str):
             if key in self.columns:
-                return pd.read_hdf(self.filename, key="oneline", columns=[key])
+                return self.select(columns=[key])
             else:
                 raise ValueError(f"{key} is not a valid column!")
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
-                return pd.read_hdf(self.filename, key="oneline", columns=key)
+                return self.select(columns=key)
             else:
                 raise ValueError(f"Not all columns in {key} are valid column names!")
         else:
@@ -652,7 +762,7 @@ class Oneline:
         pd.DataFrame
             The first n rows of the oneline table.
         """
-        return pd.read_hdf(self.filename, key="oneline", start=0, stop=n)
+        return super().head("oneline", n)
 
     def tail(self, n=10):
         """
@@ -668,7 +778,7 @@ class Oneline:
         pd.DataFrame
             The last n rows of the oneline table.
         """
-        return pd.read_hdf(self.filename, key="oneline", start=-n)
+        return super().tail("oneline", n)
 
     def __repr__(self):
         """
@@ -679,7 +789,7 @@ class Oneline:
         str
             The string representation of the oneline table.
         """
-        return pd.read_hdf(self.filename, key="oneline").__repr__()
+        return super().get_repr("oneline")
 
     def _repr_html_(self):
         """
@@ -690,8 +800,7 @@ class Oneline:
         str
             The HTML representation of the oneline table.
         """
-        return pd.read_hdf(self.filename, key="oneline")._repr_html_()
-
+        return super().get_html_repr("oneline")
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the oneline table based on the given conditions.
@@ -702,7 +811,8 @@ class Oneline:
         Parameters
         ----------
         where : str, optional
-            A condition to filter the rows of the oneline table. Default is None.
+            A condition to filter the rows of the oneline table. Default is None. 
+            It is only possible to query on the index or string columns. 
         start : int, optional
             The starting index of the subset. Default is None.
         stop : int, optional
@@ -718,7 +828,7 @@ class Oneline:
         Examples
         --------
         # Select rows based on a condition
-        >>> df = Oneline.select(where="S2_mass_i > 30")
+        >>> df = Oneline.select(where="event == 'ZAMS'")
 
         # Select rows from index 10 to 20
         >>> df = Oneline.select(start=10, stop=20)
@@ -726,10 +836,11 @@ class Oneline:
         # Select specific columns
         >>> df = Oneline.select(columns=['S1_mass_i', 'S1_mass_f'])
         """
-        with pd.HDFStore(self.filename, mode="r") as store:
-            return store.select(
-                "oneline", where=where, start=start, stop=stop, columns=columns
-            )
+        return super().select(key='oneline',
+                              where=where,
+                              start=start,
+                              stop=stop,
+                              columns=columns)
 
 
 class PopulationIO:
@@ -957,7 +1068,7 @@ class Population(PopulationIO):
         # check if formation channels are present
         if "/formation_channels" not in keys:
             if self.verbose:
-                warnings.warn(f"{filename} does not contain formation channels!")
+                print(f"{filename} does not contain formation channels!")
             self._formation_channels = None
         else:
             self._formation_channels = pd.read_hdf(
@@ -990,20 +1101,26 @@ class Population(PopulationIO):
         # calculate the metallicity information. This assumes the metallicity is for the whole file!
         if metallicity is not None and ini_file is not None:
             if "/mass_per_metallicity" in keys:
-                warnings.warn(
-                    f"{filename} already contains a mass_per_metallicity table. Overwriting the table!"
-                )
+                Pwarn(f"{filename} already contains a mass_per_metallicity "
+                      "table. Overwriting the table!", "OverwriteWarning")
 
-            simulated_mass = np.sum(self.oneline[["S1_mass_i", "S2_mass_i"]].to_numpy())
-            underlying_mass = initial_total_underlying_mass(
-                df=simulated_mass, **self.ini_params
-            )[0]
+            # only load in required columns
+            tmp_data = self.oneline[['state_i', 'S1_mass_i', 'S2_mass_i']]
+            mask = tmp_data["state_i"] == "initially_single_star"
+            filtered_data_single = tmp_data[mask]
+            filtered_data_binaries = tmp_data[~mask]
+            
+            simulated_mass_single = np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+            simulated_mass_binaries = np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+            simulated_mass = simulated_mass_single + simulated_mass_binaries
+            del tmp_data, filtered_data_single, filtered_data_binaries
+            
             self.mass_per_metallicity = pd.DataFrame(
-                index=[metallicity],
-                data={
-                    "simulated_mass": simulated_mass,
-                    "underlying_mass": underlying_mass,
-                    "number_of_systems": len(self.oneline),
+                    index=[metallicity],
+                    data={"simulated_mass": simulated_mass,
+                          "simulated_mass_single": simulated_mass_single,
+                          "simulated_mass_binaries": simulated_mass_binaries,
+                          "number_of_systems": len(self.oneline),
                 },
             )
 
@@ -1020,6 +1137,53 @@ class Population(PopulationIO):
         self.history_lengths = self.history.lengths
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
+        
+    def calculate_underlying_mass(self, f_bin=0.7, overwrite=False):
+        """Calculate the underlying mass of the population.
+        
+        Adds the underlying mass of the population to the mass_per_metallicity table.
+        
+        This method calculates the underlying mass of the population based on the simulated mass
+        of the population and the boundaries of the sampled mass distribution.
+        You can specify the fraction of binaries in the population using the `f_bin` parameter.
+        
+        Parameters
+        ----------
+        f_bin : float, optional
+            The fraction of binaries in the population. Default is 0.7.
+        overwrite : bool, optional
+            If `True`, overwrite the underlying mass values if they already exist. Default is `False`.
+            
+        Returns
+        -------
+        np.ndarray
+            The underlying mass of the population.
+        """
+        
+        if 'underlying_mass' in self.mass_per_metallicity.columns:
+            warn_text="underlying_mass already exists in the mass_per_metallicity table."
+            if overwrite:
+                Pwarn(warn_text+" Overwriting the underlying_mass values.", "OverwriteWarning")
+            else:
+                Pwarn(warn_text+" Not overwriting the underlying_mass values, skipping it.", "IncompletenessWarning")
+                return
+    
+        
+        underlying_mass = np.zeros(len(self.mass_per_metallicity))
+        for i in range(len(self.mass_per_metallicity)):
+            underlying_mass[i] = initial_total_underlying_mass(
+                simulated_mass=self.mass_per_metallicity['simulated_mass'].iloc[i],
+                simulated_mass_single=self.mass_per_metallicity['simulated_mass_single'].iloc[i],
+                simulated_mass_binaries=self.mass_per_metallicity['simulated_mass_binaries'].iloc[i],
+                f_bin=f_bin, 
+                **self.ini_params)[0]
+        
+        self.mass_per_metallicity['underlying_mass'] = underlying_mass
+        
+        # save it to the file
+        self._save_mass_per_metallicity(self.filename)
+        
+        return underlying_mass
 
     def export_selection(self, selection, filename, overwrite=False, append=False, history_chunksize=1000000):
         """Export a selection of the population to a new file
@@ -1049,7 +1213,7 @@ class Population(PopulationIO):
 
         Warnings
         --------
-        UserWarning
+        ReplaceValueWarning
             If there is no "metallicity" column in the oneline dataframe and the population file contains multiple metallicities.
 
         Notes
@@ -1144,9 +1308,9 @@ class Population(PopulationIO):
                 }
 
             if "metallicity" not in self.oneline.columns:
-                warnings.warn(
-                    "No metallicity column in oneline dataframe! Using the metallicity of the population file and adding it to the oneline."
-                )
+                Pwarn("No metallicity column in oneline dataframe! Using the "
+                      "metallicity of the population file and adding it to the"
+                      " oneline.", "ReplaceValueWarning")
                 if len(self.metallicities) > 1:
                     raise ValueError(
                         "The population file contains multiple metallicities. Please add a metallicity column to the oneline dataframe!"
@@ -1260,12 +1424,12 @@ class Population(PopulationIO):
                 )
             else:
                 if self.verbose:
-                    warnings.warn("No formation channels in the population file!")
+                    print("No formation channels in the population file!")
                 self._formation_channels = None
 
         return self._formation_channels
 
-    def calculate_formation_channels(self, mt_history=False):
+    def calculate_formation_channels(self, mt_history=True):
         """Calculate the formation channels of the population.
 
         mt_history is a boolean that determines if the detailed mass-transfer history
@@ -1353,7 +1517,7 @@ class Population(PopulationIO):
             )
             events = self.history.select(start=previous, stop=end, columns=["event"])
 
-            mask = ~pd.isna(interp_class_HMS_HMS["interp_class_HMS_HMS"].values)
+            mask = pd.notna(interp_class_HMS_HMS["interp_class_HMS_HMS"].values)
             interp_class_HMS_HMS.loc[mask, "interp_class_HMS_HMS"] = (
                 interp_class_HMS_HMS[mask]
                 .apply(lambda x: HMS_HMS_event_dict[x["interp_class_HMS_HMS"]], axis=1)
@@ -1485,8 +1649,8 @@ class Population(PopulationIO):
 
         Returns
         -------
-        TransientPopulation
-            A TransientPopulation object for interfacing with the transient population
+        TransientPopulation or None
+            A TransientPopulation object for interfacing with the transient population or None if no systems are present in the TransientPopulation.
 
         Raises
         ------
@@ -1579,6 +1743,12 @@ class Population(PopulationIO):
                 )
 
             previous = end
+            
+        # it can happen that no systems are selected, in which case nothing has been appended to the file in the loop
+        with pd.HDFStore(self.filename, mode="r") as store:
+            if '/transients/'+transient_name not in store.keys():
+                Pwarn("No systems selected for the transient population!", "POSYDONWarning")
+                return None
 
         synth_pop = TransientPopulation(
             self.filename, transient_name, verbose=self.verbose
@@ -1726,13 +1896,14 @@ class TransientPopulation(Population):
         """
         Select a subset of the transient population.
 
-        This method allows you to filter and extract a subset of rows from the oneline table stored in an HDF file.
+        This method allows you to filter and extract a subset of rows from the transient table stored in an HDF file.
         You can specify conditions to filter the rows, define the range of rows to select, and choose specific columns to include in the subset.
 
         Parameters
         ----------
         where : str, optional
-            A condition to filter the rows of the oneline table. Default is None.
+            A condition to filter the rows of the transient table. Default is None.
+            It is only possible to search on the index or string columns.
         start : int, optional
             The starting index of the subset. Default is None.
         stop : int, optional
@@ -1743,12 +1914,12 @@ class TransientPopulation(Population):
         Returns
         -------
         pd.DataFrame
-            The selected subset of the oneline table.
+            The selected subset of the transient table.
 
         Examples
         --------
         # Select rows based on a condition
-        >>> df = transpop.select(where="S2_mass_i > 30")
+        >>> df = transpop.select(where="S1_state == 'BH'")
 
         # Select rows from index 10 to 20
         >>> df = transpop.select(start=10, stop=20)
@@ -1786,6 +1957,9 @@ class TransientPopulation(Population):
 
         metallicities = self.mass_per_metallicity.index.to_numpy()
         
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
+        
         met_columns = self.select(columns=["metallicity"]).value_counts()
         
         met_columns.index = [i[0] for i in met_columns.index.to_numpy().flatten()]
@@ -1795,8 +1969,9 @@ class TransientPopulation(Population):
         combined_df.sort_index(inplace=True)
         
         efficiencies = combined_df['count']/combined_df['underlying_mass']
-        for MET, value in efficiencies.sort_index().items():
-            print(f"Efficiency at Z={MET:1.2E}: {value:1.2E} Msun^-1")
+        if self.verbose:
+            for MET, value in efficiencies.sort_index().items():
+                print(f"Efficiency at Z={MET:1.2E}: {value:1.2E} Msun^-1")
             
         self.efficiency = pd.DataFrame(
             efficiencies, columns=["total"]
@@ -1874,6 +2049,9 @@ class TransientPopulation(Population):
         path_in_file = (
             "/transients/" + self.transient_name + "/rates/" + SFH_identifier + "/"
         )
+        
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
 
         with pd.HDFStore(self.filename, mode="a") as store:
             if path_in_file + "MODEL" in store.keys():
@@ -2049,6 +2227,9 @@ class TransientPopulation(Population):
         Otherwise, it is normalized by the mass of the population at the specified metallicity.
 
         """
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
+        
         if ax is None:
             fig, ax = plt.subplots()
 
@@ -2297,7 +2478,7 @@ class Rates(TransientPopulation):
         with pd.HDFStore(self.filename, mode="r") as store:
             return store.select(self.base_path + key, start=start, stop=stop)
 
-    def calculate_intrinsic_rate_density(self, mt_channels=False):
+    def calculate_intrinsic_rate_density(self, channels=False):
         """
         Compute the intrinsic rate density over redshift of the transient population.
 
@@ -2306,7 +2487,7 @@ class Rates(TransientPopulation):
 
         Parameters
         ----------
-        mt_channels : bool, optional
+        channels : bool, optional
             Flag indicating whether to calculate the intrinsic rate density for each channel separately. Default is False.
 
         Returns
@@ -2319,7 +2500,7 @@ class Rates(TransientPopulation):
         z_horizon = self.edges_redshift_bins
         n = len(z_horizon)
 
-        if mt_channels:
+        if channels:
             channels = self.select(columns=["channel"])
             unique_channels = np.unique(channels)
         else:

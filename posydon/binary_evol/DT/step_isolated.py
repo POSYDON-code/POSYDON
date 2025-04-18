@@ -7,28 +7,10 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>"
 ]
 
-
-import os
 import numpy as np
-from scipy.integrate import solve_ivp
-from scipy.interpolate import PchipInterpolator
-from scipy.optimize import minimize
-from scipy.optimize import root
 
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA
-from posydon.binary_evol.binarystar import BINARYPROPERTIES
-from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.interpolation.data_scaling import DataScaler
-from posydon.utils.common_functions import (
-    bondi_hoyle,
-    orbital_period_from_separation,
-    orbital_separation_from_period,
-    roche_lobe_radius,
-    check_state_of_star,
-    PchipInterpolator2
-)
-from posydon.binary_evol.flow_chart import (STAR_STATES_CC)
-import posydon.utils.constants as const
+from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.common_functions import orbital_separation_from_period
 from posydon.binary_evol.DT.step_detached import detached_step
 from posydon.utils.posydonerror import FlowError
 

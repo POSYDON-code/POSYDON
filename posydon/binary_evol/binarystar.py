@@ -27,7 +27,6 @@ __authors__ = [
 
 
 import signal
-import warnings
 import copy
 import numpy as np
 import pandas as pd
@@ -37,6 +36,8 @@ from posydon.utils.common_functions import (
     check_state_of_star, orbital_period_from_separation,
     orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
 from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df)
+from posydon.binary_evol.flow_chart import UNDEFINED_STATES
+from posydon.utils.posydonerror import FlowError 
 
 
 # star property: column names in binary history for star 1 and star 2
@@ -159,6 +160,15 @@ class BinaryStar:
 
         for key, val in binary_kwargs.items():
             setattr(self, key, val)
+
+        if getattr(self.star_1, "mass") is not None and getattr(self.star_2, "mass") is not None:
+            if getattr(self, "separation") is None and getattr(self, "orbital_period") is not None:
+                setattr(self, "separation", 
+                        orbital_separation_from_period(self.orbital_period, self.star_1.mass, self.star_2.mass))
+            elif getattr(self, "orbital_period") is None and getattr(self, "separation") is not None:
+                setattr(self, "orbital_period", 
+                        orbital_period_from_separation(self.separation, self.star_1.mass, self.star_2.mass))
+
         if not hasattr(self, 'inspiral_time'):
             self.inspiral_time = None
         if not hasattr(self, 'mass_transfer_case'):
@@ -170,8 +180,9 @@ class BinaryStar:
             self.true_anomaly_SN2 = None
         if not hasattr(self, 'first_SN_already_occurred'):
             self.first_SN_already_occurred = False
-        # if not hasattr(self, 'V_sys'):
-        #     self.V_sys = [0, 0, 0]
+
+        if not hasattr(self, 'history_verbose'):
+            self.history_verbose = False
 
         # store interpolation_class and mt_history for each step_MESA
         for grid_type in ['HMS_HMS','CO_HMS_RLO','CO_HeMS','CO_HeMS_RLO']:
@@ -187,10 +198,10 @@ class BinaryStar:
             self.properties = properties
         else:
             self.properties = SimulationProperties()
-        
 
     def evolve(self):
         """Evolve a binary from start to finish."""
+
         self.properties.pre_evolve(self)
 
         # Code to make sure start time is less than max_simulation_time
@@ -202,49 +213,52 @@ class BinaryStar:
 
         max_n_steps = self.properties.max_n_steps_per_binary
         n_steps = 0
-        try:
-            while (self.event != 'END' and self.event != 'FAILED'
-                   and self.event not in self.properties.end_events
-                   and self.state not in self.properties.end_states):
-                signal.alarm(MAXIMUM_STEP_TIME)
-                self.run_step()
+    
+        while (self.event != 'END' and self.event != 'FAILED'
+                and self.event not in self.properties.end_events
+                and self.state not in self.properties.end_states):
+            
+            signal.alarm(MAXIMUM_STEP_TIME)
+            self.run_step()
 
-                n_steps += 1
-                if max_n_steps is not None:
-                    if n_steps > max_n_steps:
-                        raise RuntimeError("Exceeded maximum number of steps ({})"
-                                        .format(max_n_steps))
-        finally:
-            signal.alarm(0)     # turning off alarm
-            self.properties.post_evolve(self)
+            n_steps += 1
+            if max_n_steps is not None:
+                if n_steps > max_n_steps:
+                    raise RuntimeError("Exceeded maximum number of steps ({})".format(max_n_steps))
+        
+        signal.alarm(0)     # turning off alarm
+        self.properties.post_evolve(self)
 
     def run_step(self):
         """Evolve the binary through one evolutionary step."""
-        try:
-            total_state = (self.star_1.state, self.star_2.state, self.state,
-                           self.event)
-            next_step_name = self.properties.flow.get(total_state)
+        
+        total_state = (self.star_1.state, self.star_2.state, self.state, self.event)
+        if total_state in UNDEFINED_STATES:
+            raise FlowError(f"Binary failed with a known undefined state in the flow:\n{total_state}")
 
-            if next_step_name is None:
-                warnings.warn("Undefined next step given stars/binary states "
-                              "{}.".format(total_state))
-                self.event = 'END'
-                return
+        next_step_name = self.properties.flow.get(total_state)
+        if next_step_name is None:
+            raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
 
-            next_step = getattr(self.properties, next_step_name, None)
-            if next_step is None:
-                raise ValueError(
-                    "Next step name '{}' does not correspond to a function in "
-                    "SimulationProperties.".format(next_step_name))
+        next_step = getattr(self.properties, next_step_name, None)
+        if next_step is None:
+            raise ValueError("Next step name '{}' does not correspond to a function in "
+                             "SimulationProperties.".format(next_step_name))
 
-            self.properties.pre_step(self, next_step_name)
-            next_step(self)
-        finally:
-            self.append_state()
-            self.properties.post_step(self, next_step_name)
+        self.properties.pre_step(self, next_step_name)
+        next_step(self)
+        
+        self.append_state()
+        self.properties.post_step(self, next_step_name)
 
     def append_state(self):
         """Update the history of the binaries' properties."""
+
+        ## do not append redirect steps to the binary history if history_verbose=False
+        if not self.history_verbose and getattr(self, "event") is not None:
+            if "redirect" in getattr(self, "event"):
+                return
+        
         # Append to the binary history lists
         for item in BINARYPROPERTIES:
             getattr(self, item + '_history').append(getattr(self, item))
@@ -348,7 +362,6 @@ class BinaryStar:
         """
         extra_binary_cols_dict = kwargs.get('extra_columns', {})
         extra_columns = list(extra_binary_cols_dict.keys())
-        extra_columns_dtypes_user = list(extra_binary_cols_dict.values())
 
         all_keys = (["binary_index"]
                     + [key+'_history' for key in BINARYPROPERTIES]
@@ -603,7 +616,7 @@ class BinaryStar:
             oneline_df['FAILED'] = [1]
         else:
             oneline_df['FAILED'] = [0]
-        if hasattr(self, 'warning_message'):
+        if hasattr(self, 'warnings'):
             oneline_df['WARNING'] = [1]
         else:
             oneline_df['WARNING'] = [0]
@@ -916,3 +929,39 @@ class BinaryStar:
             binary.star_2.profile = run.final_profile2
             
         return binary
+    
+    def initial_condition_message(self, ini_params=None):
+        """Generate a message with the initial conditions.
+
+        Parameters
+        ----------
+       
+        ini_params : None or iterable of str
+            If None take the initial conditions from the binary, otherwise add
+            each item of it to the message.
+
+        Returns
+        -------
+        string
+            The message with the binary initial conditions.
+        """
+    
+        if ini_params is None:
+            ini_params = ["\nFailed Binary Initial Conditions:\n",
+                    f"S1 mass: {self.star_1.mass_history[0]} \n",
+                    f"S2 mass: {self.star_2.mass_history[0]} \n",
+                    f"S1 state: {self.star_1.state_history[0]} \n",
+                    f"S2 state: {self.star_2.state_history[0]}\n",
+                    f"orbital period: {self.orbital_period_history[0] } \n",
+                    f"eccentricity: {self.eccentricity_history[0]} \n",
+                    f"binary state: {self.state_history[0] }\n",
+                    f"binary event: {self.state_history[0] }\n",
+                    f"S1 natal kick array: {self.star_1.natal_kick_array }\n",
+                    f"S2 natal kick array: {self.star_2.natal_kick_array}\n"]
+            
+        message = ""
+        for i in ini_params:
+            message += i 
+
+        return message
+

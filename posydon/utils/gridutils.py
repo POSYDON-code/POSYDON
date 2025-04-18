@@ -2,7 +2,6 @@
 
 import os
 import gzip
-import warnings
 
 import numpy as np
 import pandas as pd
@@ -11,6 +10,7 @@ from posydon.utils.constants import clight, Msun, Rsun
 from posydon.utils.constants import standard_cgrav as cgrav
 from posydon.utils.constants import secyer as secyear
 from posydon.utils.limits_thresholds import LG_MTRANSFER_RATE_THRESHOLD
+from posydon.utils.posydonwarning import Pwarn
 
 
 __authors__ = [
@@ -25,7 +25,8 @@ __authors__ = [
 
 
 def join_lists(A, B):
-    """Make a joint list of A and B without repetitions and keeping the order.
+    """Make a joint list of A and B without elements already in A and keeping
+    the order.
 
     Parameters
     ----------
@@ -76,7 +77,7 @@ def read_MESA_data_file(path, columns):
                                                usecols=columns,
                                                invalid_raise=False))
         except:
-            warnings.warn("Problems with reading file "+path)
+            Pwarn("Problems with reading file "+path, "MissingFilesWarning")
             return None
     else:
         return None
@@ -84,11 +85,13 @@ def read_MESA_data_file(path, columns):
 
 def read_EEP_data_file(path, columns):
     """Read an EEP file (can be `.gz`) - similar to `read_MESA_data_file()`."""
+    if path is None:
+        return None
     try:
         return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
                                            usecols=columns, invalid_raise=False))
     except:
-        warnings.warn("Problems with reading file "+path)
+        Pwarn("Problems with reading file "+path, "MissingFilesWarning")
         return None
 
 
@@ -141,7 +144,7 @@ def add_field(a, descr):
 
     """
     if a.dtype.fields is None:
-        raise ValueError("`A' must be a structured numpy array")
+        raise ValueError("'a' must be a structured numpy array")
     b = np.empty(a.shape, dtype=a.dtype.descr + descr)
     for name in a.dtype.names:
         b[name] = a[name]
@@ -366,24 +369,25 @@ def convert_output_to_table(
         binary_history = pd.DataFrame(np.genfromtxt(binary_history_file,
                                                     skip_header=5, names=True))
     else:
-        warnings.warn(
-            "You have not supplied a binary history file to parse. "
-            "This will cause all binary history columns to be dashes.")
+        Pwarn("You have not supplied a binary history file to parse. "
+              "This will cause all binary history columns to be dashes.",
+              "MissingFilesWarning")
 
     if star1_history_file is not None:
         star1_history = pd.DataFrame(np.genfromtxt(star1_history_file,
                                                    skip_header=5, names=True))
     else:
-        warnings.warn(
-            "You have not supplied a star1 history file to parse. "
-            "This will cause all star1 history columns to be dashes.")
+        Pwarn("You have not supplied a star1 history file to parse. "
+              "This will cause all star1 history columns to be dashes.",
+              "MissingFilesWarning")
 
     if star2_history_file is not None:
         star2_history = pd.DataFrame(np.genfromtxt(star2_history_file,
                                                    skip_header=5, names=True))
     else:
-        warnings.warn("You have not supplied a star2 history file to parse. "
-                      "This will cause all star2 history columns to be dashes")
+        Pwarn("You have not supplied a star2 history file to parse. "
+              "This will cause all star2 history columns to be dashes.",
+              "MissingFilesWarning")
 
     # TODO: is this necessary to be done with `popen`?
     # outdata = os.popen('cat ' + output_file).read()
@@ -451,6 +455,8 @@ def convert_output_to_table(
                 values["M_2f(Msun)"] = binary_history["star_2_mass"].iloc[-1]
                 values["Porb_f(d)"] = binary_history["period_days"].iloc[-1]
                 values["tmerge(Gyr)"] = tmerge
+            else:
+                max_lg_mtransfer_rate = -99
 
             if max_lg_mtransfer_rate < LG_MTRANSFER_RATE_THRESHOLD:
                 values["result"] = "no_interaction"

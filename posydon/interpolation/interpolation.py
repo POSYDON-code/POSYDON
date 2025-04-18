@@ -8,11 +8,12 @@ __authors__ = [
 
 import pickle
 import numpy as np
-from scipy import interpolate
+import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 from .data_scaling import DataScaler
 from posydon.grids.psygrid import PSyGrid
 from posydon.grids.MODELS import MODELS
+from posydon.utils.interpolators import interp1d
 
 
 class psyTrackInterp:
@@ -100,9 +101,9 @@ class psyTrackInterp:
         # mask out binaries with any nan value
         # mask = np.logical_and(self.grid.final_values['interpolation_class']
         #                       != 'not_converged',
-        # np.invert([np.isnan(XTn)[x,:].any() for x in range(XTn.shape[0])]))
+        # np.invert([pd.isna(XTn)[x,:].any() for x in range(XTn.shape[0])]))
         mask = (self.grid.final_values['interpolation_class']
-                != 'not_converged') & ~np.isnan(np.sum(XT, axis=1))
+                != 'not_converged') & pd.notna(np.sum(XT, axis=1))
         self.valid_ind = np.arange(XT.shape[0])[mask]
 
         if self.method == 'NearestNeighbor':
@@ -390,7 +391,9 @@ class GRIDInterpolator():
                      'lambda_CE_30cent',
                      'co_core_mass',
                      'co_core_radius',
-                     'lambda_CE_pure_He_star_10cent')
+                     'lambda_CE_pure_He_star_10cent',
+                     'total_mass_h1',
+                     'total_mass_he4')
 
         self.translate = {
             'age': 'star_age',
@@ -450,6 +453,8 @@ class GRIDInterpolator():
             'thickness_conv_reg_fortides': 'thickness_conv_reg_fortides',
             'radius_conv_reg_fortides': 'radius_conv_reg_fortides',
             'surface_he3': 'surface_he3',
+            'total_mass_h1': 'total_mass_h1',
+            'total_mass_he4': 'total_mass_he4',
             }
 
         # processed keys
@@ -602,7 +607,10 @@ class GRIDInterpolator():
                 self.load_grid(mass_low)
                 kvalue_low = self.grid_final_values[mass_low][key]
 
-            while (kvalue_low is None or np.isnan(kvalue_low)):
+            while pd.isna(kvalue_low):
+                # escape if no lower mass is available
+                if np.sum(mass_low > self.grid_mass) == 0:
+                    break
                 mass_low = np.max(self.grid_mass[mass_low > self.grid_mass])
                 try:
                     kvalue_low = self.grid_final_values[mass_low][key]
@@ -616,7 +624,10 @@ class GRIDInterpolator():
                 self.load_grid(mass_high)
                 kvalue_high = self.grid_final_values[mass_high][key]
 
-            while (kvalue_high is None or np.isnan(kvalue_high)):
+            while pd.isna(kvalue_high):
+                # escape if no higher mass is available
+                if np.sum(mass_high < self.grid_mass) == 0:
+                    break
                 mass_high = np.min(self.grid_mass[mass_high < self.grid_mass])
                 try:
                     kvalue_high = self.grid_final_values[mass_high][key]
@@ -701,13 +712,13 @@ class GRIDInterpolator():
                 m_cor = m_cor_high
                 idx = np.argmax(mass_high == self.grid_mass)
                 profile_old = grid[idx].final_profile1
-                f = interpolate.interp1d(m_cor_low, kvalue_low)
+                f = interp1d(m_cor_low, kvalue_low)
                 kvalue_low = f(m_cor)
             else:
                 m_cor = m_cor_low
                 idx = np.argmax(mass_low == self.grid_mass)
                 profile_old = grid[idx].final_profile1
-                f = interpolate.interp1d(m_cor_high, kvalue_high)
+                f = interp1d(m_cor_high, kvalue_high)
                 kvalue_high = f(m_cor)
 
             weight = (M_new - mass_low) / (mass_high - mass_low)

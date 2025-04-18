@@ -23,19 +23,20 @@ __authors__ = [
 
 import os
 import gzip
-import warnings
 import numpy as np
 
 from posydon.utils.common_functions import (
     infer_star_state, cumulative_mass_transfer_flag, infer_mass_transfer_case
 )
 from posydon.utils.limits_thresholds import (
-    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD,
+    MIN_COUNT_INITIAL_RLO_BOUNDARY
 )
 from posydon.visualization.combine_TF import (
     TF1_POOL_STABLE, TF1_POOL_UNSTABLE, TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR,
     TF2_POOL_NO_RLO, TF2_POOL_INITIAL_RLO
 )
+from posydon.utils.posydonwarning import Pwarn
 
 
 # variables needed for inferring star states
@@ -106,6 +107,10 @@ def get_mass_transfer_flag(binary_history, history1, history2,
         The history file of MESA for star1.
     history2 : np.array
         The history file of MESA for star2.
+    start_at_RLO : bool (default: False)
+        Specify, whether the evolution is aimed to start at the first RLO.
+    mesa_flag : str or None (default: None)
+        Termination flag 1 (end condition).
 
     Returns
     -------
@@ -187,9 +192,11 @@ def check_state_from_history(history, mass, model_index=-1):
 
     Parameters
     ----------
-    history: np.array
-        MESA history of the star
-    model_index: int
+    history : np.array
+        MESA history of the star.
+    mass : np.array
+        Mass history of the star.
+    model_index : int (default: -1)
         Index of the model in history for which the state will be computed.
         By default it is the end of the evolution (last model).
 
@@ -204,9 +211,9 @@ def check_state_from_history(history, mass, model_index=-1):
 
     for col in STAR_HISTORY_VARIABLES:
         if col not in history.dtype.names:
-            warnings.warn(
-                "The data column {} is not in the history file. It is needed "
-                "for the determination of the star state.".format(col))
+            raise KeyError("The data column {} is not in the ".format(col)+\
+                           "history file. It is needed for the determination"+\
+                           " of the star state.")
 
     variables_to_pass = {varname: history[varname][model_index]
                          for varname in STAR_HISTORY_VARIABLES}
@@ -220,12 +227,19 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
 
     Parameters
     ----------
-    MESA_log_path: str
-        path to the MESA terminal output
-    binary_history, history1, history2: np.array
-        MESA output histories.
+    MESA_log_path : str
+        Path to the MESA terminal output.
+    binary_history : np.array or None (default: None)
+        Binary history from MESA.
+    history1 : np.array or None (default: None)
+        Stellar history of the primary star.
+    history2 : np.array or None (default: None)
+        Stellar history of the secondary star.
+    start_at_RLO : bool (default: False)
+        Specify, whether the evolution is aimed to start at the first RLO.
     newTF1: str
-        replacement for the termination flag from the MESA output
+        Replacement for the termination flag 1 (end condition) from the MESA
+        output.
 
     Returns
     -------
@@ -234,6 +248,7 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
         flag_mass_transfer: describes the mass transfer (e.g., case A, case B).
         final_state_1, final_state_2: describe the final evolutionary
             state of the two stars. None if history star is not provided.
+
     """
     if newTF1=='':
         flag_out = get_flag_from_MESA_output(MESA_log_path)
@@ -251,7 +266,21 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
 
 
 def infer_interpolation_class(tf1, tf2):
-    """Use the first two termination flags to infer the interpolation class."""
+    """Use the first two termination flags to infer the interpolation class.
+
+    Parameters
+    ----------
+    tf1 : str
+        Termination flag 1 (end condition).
+    tf2 : str
+        Termination flag 2 (mass transfer).
+
+    Returns
+    -------
+    str
+        Interpolation class.
+
+    """
     if ((tf1 in TF1_POOL_INITIAL_RLO) or (tf2 in TF2_POOL_INITIAL_RLO)):
         return "initial_MT"
     if tf1 in TF1_POOL_ERROR:
@@ -325,12 +354,33 @@ def get_detected_initial_RLO(grid):
 
 
 def get_nearest_known_initial_RLO(mass1, mass2, known_initial_RLO):
+    """Find the nearest system of initial RLO in the known ones
+    
+    Parameters
+    ----------
+    mass1 : float
+        star_1_mass of the run to check.
+    mass2 : float
+        star_2_mass of the run to check.
+    known_initial_RLO : list of dict
+        Boundary to apply.
+    
+    Retruns
+    -------
+    dict
+        Containing the key parameters (e.g. initial masses, period) of the
+        nearest initial RLO run.
+    """
     #default values
     d2min = 1.0e+99
     nearest = {"star_1_mass": 0.0,
                "star_2_mass": 0.0,
                "period_days": 0.0,
               }
+    if len(known_initial_RLO)<MIN_COUNT_INITIAL_RLO_BOUNDARY:
+        Pwarn("Don't apply initial RLO boundary because of too few data points"
+              " in there.","InappropriateValueWarning")
+        return nearest
     for sys in known_initial_RLO:
         #search for a known system with closest mass combination
         #use distance^2=(delta mass1)^2+(delta mass2)^2

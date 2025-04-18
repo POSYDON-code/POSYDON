@@ -1,9 +1,8 @@
 name: publish_conda
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
     
 jobs:
   publish:
@@ -11,10 +10,10 @@ jobs:
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: publish-to-conda
-      uses: scottcoughlin2014/publish_conda_package_action@v1.0.0-beta
+      uses: POSYDON-code/publish_to_anaconda@v1.0.1
       with:
         CondaDir: 'conda'
         Platforms: 'noarch'

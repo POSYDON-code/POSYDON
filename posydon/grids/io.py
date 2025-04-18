@@ -41,24 +41,26 @@ __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
 import os
 import glob
 import gzip
-import warnings
 
 from posydon.utils.gridutils import read_MESA_data_file
+from posydon.utils.posydonwarning import Pwarn
 
 
 POSYDON_FORMAT_OPTIONS = {
     # subfolders in the grid parent folder that are unnecessary
     "ignored folders": ["make", "star1", "star2", "binary", "data",
-                        "new_data", "template", ".ipynb_checkpoints"],
+                        "column_lists", "new_data", "template",
+                        ".ipynb_checkpoints"],
     # which files contain useful metadata concerning the grid
-    "grid metadata": ["grid_test.csv",
-                      "grid_test.csv.gz"],
+    "grid metadata": ["grid_test.csv", "grid_test.csv.gz",
+                      "grid.csv", "grid.csv.gz"],
     # which files contain useful metadata concerning individual grids
     "run metadata": ["inlist_grid_points", "summary.txt", "out.txt",
                      "inlist_grid_point.gz", "summary.txt.gz", "out.txt.gz"]
@@ -85,13 +87,13 @@ class RunReader:
         ----------
         path : str
             Path of the file or folder containing the MESA run output.
-        fmt : str
+        fmt : str (default: 'posydon')
             Format specifier. Linked to data-types, filename conventions, etc.
-        binary : bool
+        binary : bool (default: True)
             Whether the run belongs to a binary grid.
-        verbose : bool
+        verbose : bool (default: False)
             If True, it prints reports of performed actions.
-        verbose_maxlines : int
+        verbose_maxlines : int (default: 10)
             In case of `verbose=True`, it sets the maximum number of lines of
             metadata files to be printed. If None, all lines will be printed.
             If 0, nothing will be printed.
@@ -145,11 +147,11 @@ class RunReader:
                 self.final_star1_path = fullpath
             elif file in ["final_star2.mod", "final_star2.mod.gz"]:
                 self.final_star2_path = fullpath
-            elif file in ["out.txt", "out.txt.gz"] and self.binary:
+            elif ((file in [BINARY_OUTPUT_FILE, BINARY_OUTPUT_FILE+".gz"]) and
+                  (self.binary)):
                 self.out_txt_path = fullpath
-            elif ((file in ["out_star1_formation_step0.txt",
-                            "out_star1_formation_step0.txt.gz"])
-                  and not self.binary):
+            elif ((file in [SINGLE_OUTPUT_FILE, SINGLE_OUTPUT_FILE+".gz"]) and
+                  not self.binary):
                 self.out_txt_path = fullpath
             elif file in POSYDON_FORMAT_OPTIONS["run metadata"]:
                 self.metadata_files.append(fullpath)
@@ -172,6 +174,17 @@ class RunReader:
                 self.initial_profile2_path = joined_exists(
                     self.path, 'LOGS2/initial_profile.data', allow_gzip=True)
 
+        if ((self.history1_path is None) and (self.history2_path is None) and
+            (self.binary_history_path is None) and
+            (self.final_profile1_path is None) and
+            (self.final_profile2_path is None) and
+            (self.initial_profile1_path is None) and
+            (self.initial_profile2_path is None) and
+            (self.final_star1_path is None) and (self.final_star2_path is None)
+            and (self.out_txt_path is None) and (len(self.metadata_files)==0)):
+            Pwarn("No relevant files found in {}".format(self.path),
+                  "MissingFilesWarning")
+
         if self.verbose:
             self.report()
 
@@ -183,11 +196,16 @@ class RunReader:
         print("-" * 80)
         print("DATA FOUND")
         print("-" * 80)
+        print("MESA screen output       :", isfound(self.out_txt_path))
         print("History of Star 1        :", isfound(self.history1_path))
         print("History of Star 2        :", isfound(self.history2_path))
         print("Binary history           :", isfound(self.binary_history_path))
         print("Final profile of Star 1  :", isfound(self.final_profile1_path))
         print("Final profile of Star 2  :", isfound(self.final_profile2_path))
+        print("Initial profile of Star 1:",
+              isfound(self.initial_profile1_path))
+        print("Initial profile of Star 2:",
+              isfound(self.initial_profile2_path))
         print("Final model of Star 1    :", isfound(self.final_star1_path))
         print("Final model of Star 2    :", isfound(self.final_star2_path))
         print("-" * 80)
@@ -208,13 +226,13 @@ class GridReader:
         ----------
         path : str
             Path of the file or folder containing the MESA runs.
-        fmt : str
+        fmt : str (default: 'posydon')
             Format specifier. Linked to data-types, filename conventions, etc.
-        binary : bool
+        binary : bool (default: True)
             Whether the grid(s) are binary.
-        verbose : bool
+        verbose : bool (default: False)
             If True, it prints reports of performed actions.
-        verbose_maxlines : int
+        verbose_maxlines : int (default: 10)
             In case of `verbose=True`, it sets the maximum number of lines of
             metadata files to be printed. If None, all lines will be printed.
             If 0, nothing will be printed.
@@ -235,7 +253,14 @@ class GridReader:
             raise ValueError("Format {} not supported.".format(fmt))
 
     def _get_input_folders(self):
-        """Get a list of all the folders with MESA runs."""
+        """Get a list of all the folders with MESA runs.
+        
+        Returns
+        -------
+        dict view
+            Containing all the paths of MESA runs.
+
+        """
         if isinstance(self.path, (str, bytes)):
             folder_paths = [self.path]
         else:
@@ -260,8 +285,8 @@ class GridReader:
                 fullpath = os.path.dirname(os.path.abspath(out_file))
                 params_part = initial_values_from_dirname(fullpath)
                 if params_part in folders:
-                    warnings.warn("Run in {} substitutes run in {}".
-                                  format(fullpath, folders[params_part]))
+                    Pwarn("Run in {} substitutes run in {}".format(fullpath,
+                              folders[params_part]), "ReplaceValueWarning")
                 folders[params_part] = fullpath
 
             # discover metadata files
@@ -291,7 +316,8 @@ class GridReader:
                 new_run = RunReader(fullpath, fmt=self.fmt,
                                     binary=self.binary, verbose=False)
                 if new_run.out_txt_path is None:
-                    warnings.warn("Folder "+fullpath+" has no stdout file.")
+                    Pwarn("Folder "+fullpath+" has no stdout file.",
+                          "MissingFilesWarning")
                 self.runs.append(new_run)
 
     def infer_history_columns(self, BH_cols, H1_cols, H2_cols):
@@ -304,7 +330,7 @@ class GridReader:
         H1_cols : array-like
             Which columns to consider from `history1`.
         H2_cols : array-like
-            Which columns to consider from `history1`.
+            Which columns to consider from `history2`.
 
         Returns
         -------
@@ -346,9 +372,9 @@ def print_meta_contents(path, max_lines=None, max_chars_per_line=80):
     ----------
     path : str
         Path of file containing the metadata.
-    max_lines : int or None
-        Maximum number of lines to print. If None (default), print all of them.
-    max_chars_per_line: int or "warp"
+    max_lines : int or None (default: None)
+        Maximum number of lines to print. If None, print all of them.
+    max_chars_per_line: int or "warp" (default: 80)
         If integer, it is the maximum number of character to be printed
         (e.g., useful when printing MESA output). If "warp", no truncation.
 
@@ -367,7 +393,7 @@ def print_meta_contents(path, max_lines=None, max_chars_per_line=80):
         if max_lines is not None and i >= max_lines:
             break
         line = line.rstrip("\n")
-        if max_chars_per_line != "warp":
+        if max_chars_per_line != "wrap":
             line = line[:max_chars_per_line]
         print(line)
     f.close()
@@ -375,10 +401,25 @@ def print_meta_contents(path, max_lines=None, max_chars_per_line=80):
 
 
 def read_initial_values(mesa_dir):
-    """Read grid point values given the MESA run directory."""
+    """Read grid point values given the MESA run directory.
+
+    Parameters
+    ----------
+    mesa_dir : str
+        Path of MESA directory.
+
+    Returns
+    -------
+    dict
+        Initial values of all the variables in inlist_grid_points.
+
+    """
     path = os.path.join(mesa_dir, "inlist_grid_points")
     if not os.path.exists(path):
-        return None
+        if os.path.exists(path + ".gz"):
+            path += ".gz"
+        else:
+            return None
 
     initial_values = {}
     if path.endswith(".gz"):
@@ -390,7 +431,9 @@ def read_initial_values(mesa_dir):
             continue
         fields = line.strip().split("=")
         if len(fields) != 2:
-            return None
+            Pwarn("Multiple `=`, skipping line in {}.".format(path),
+                  "InappropriateValueWarning")
+            continue
         varname = fields[0].strip()
         valueparts = fields[1].split("d")
         value = float(valueparts[0].strip())
@@ -408,15 +451,32 @@ def read_initial_values(mesa_dir):
 
 
 def initial_values_from_dirname(mesa_dir):
-    """Use the name of the directory for inferring the main initial values."""
+    """Use the name of the directory for inferring the main initial values.
+
+    Parameters
+    ----------
+    mesa_dir : str
+        Path of MESA directory.
+
+    Returns
+    -------
+    tuple
+        v1, single star (1 item): only initial mass
+        v2, single star (2 items): initial mass and metallicity
+        v1, binary (3 items): primary and secondary initial mass and initial
+            orbital period
+        v2, binary (4 items): primary and secondary initial mass, initial
+            orbital period, and metallicity
+
+    """
     dirname = str(os.path.basename(os.path.normpath(mesa_dir)))
     if "initial_mass" in dirname:                           # single-star grid
-        if "v1/" in dirname: # version 1 dirnames don't contain initial_z
+        if "v1/" in str(mesa_dir): # version 1 dirnames don't contain initial_z
             variable_names = ["initial_mass"]
         else:
             variable_names = ["initial_mass", "initial_z"]
     else:                                                   # binary-star grid
-        if "v1/" in dirname: # version 1 dirnames don't contain initial_z
+        if "v1/" in str(mesa_dir): # version 1 dirnames don't contain initial_z
             variable_names = ["m1", "m2", "initial_period_in_days"]
         # KYLE CUSTOM ECC GRID EDIT
         elif "initial_eccentricity" in dirname:

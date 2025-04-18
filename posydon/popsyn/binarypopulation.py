@@ -30,7 +30,6 @@ __credits__ = ["Nam Tran <tranhn03@gmail.com>"]
 
 import pandas as pd
 import numpy as np
-import warnings
 import traceback
 import atexit
 import os
@@ -42,21 +41,22 @@ if 'posydon.binary_evol.binarystar' not in sys.modules.keys():
     from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
 from posydon.binary_evol.simulationproperties import SimulationProperties
+
 from posydon.popsyn.star_formation_history import get_formation_times
 
 from posydon.popsyn.independent_sample import (generate_independent_samples,
                                                binary_fraction_value)
 from posydon.popsyn.sample_from_file import (get_samples_from_file,
                                              get_kick_samples_from_file)
-from posydon.utils.common_functions import (orbital_period_from_separation,
-                                            orbital_separation_from_period)
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
-
 from posydon.popsyn.defaults import default_kwargs
+
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
-from posydon.utils.posydonerror import POSYDONError,initial_condition_message
-from posydon.utils.common_functions import set_binary_to_failed
+from posydon.utils.posydonerror import POSYDONError
+from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
+from posydon.utils.common_functions import (orbital_period_from_separation, orbital_separation_from_period, 
+                                            set_binary_to_failed)
 
 saved_ini_parameters = ['metallicity',
                         "number_of_binaries",
@@ -77,7 +77,6 @@ saved_ini_parameters = ['metallicity',
                    'eccentricity_scheme']
 
 
-# 'event' usually 10 but 'detached (Integration failure)' can occur
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 21,
                         'S1_state': 31, 'S2_state': 31,
                         'mass_transfer_case': 16,
@@ -100,7 +99,8 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
-    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
+    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_HMS_HMS_RLO',
+    'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
 ]
 
 
@@ -134,10 +134,12 @@ class BinaryPopulation:
         for key in STEP_NAMES_LOADING_GRIDS:
             if key in self.population_properties.kwargs:
                 self.population_properties.kwargs[key][1].update({'metallicity': self.metallicity})
-                        
+                          
 
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
+        
+        self.history_verbose = self.kwargs.get("history_verbose", False)
 
         self.entropy = self.kwargs.get('entropy', None)
         seq = np.random.SeedSequence(entropy=self.entropy)
@@ -317,7 +319,11 @@ class BinaryPopulation:
                 binary = self.manager.generate(index=index, **self.kwargs)
             binary.properties = self.population_properties
 
-            with warnings.catch_warnings(record=True) as w:
+            # catch POSYDON warnings: record them to be possibly printed at
+            # then and of the "with" context; use a new registry for this
+            # context instead of the global one
+            with Catch_POSYDON_Warnings(record=True, own_registry=True) as cpw:
+                       
                 try:
                     binary.evolve()
 
@@ -326,20 +332,32 @@ class BinaryPopulation:
                     binary.traceback = traceback.format_exc()
 
                     if self.kwargs.get("error_checking_verbose", False):
-                        posydon_error.add_note(initial_condition_message(binary))
+                        posydon_error.add_note(binary.initial_condition_message())
                         traceback.print_exception(posydon_error)
 
                 except Exception as e:
                     set_binary_to_failed(binary)
                     binary.traceback = traceback.format_exc()
 
-                    e.add_note(initial_condition_message(binary))
+                    e.add_note(binary.initial_condition_message())
                     traceback.print_exception(e)
 
-                if len(w) > 0:
-                    warnings.simplefilter("always")
-                    binary.warning_message = [x.message for x in w]
+                # record if there were warnings caught during the binary
+                # evolution, this is needed to update the WARNINGS column in
+                # the oneline dataframe; this will only be updated if POSYDON
+                # warnings occur, NOT general python warnings      
+                if cpw.got_called():
+                    binary.warnings = True
+                
+                # if the user wants to print all POSYDON warnings to stderr
+                # (warnings_verbose=True), no action is needed, because it will
+                # be printed at the end of the "with" context; to avoid the
+                # printing clear the warnings cache before the end of the
+                # context
+                if not self.kwargs.get("warnings_verbose", False):
+                    cpw.reset_cache()
 
+        
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)
 
@@ -453,8 +471,8 @@ class BinaryPopulation:
             if os.path.isdir(absolute_filepath):
                 file_name = 'backup_save_pop_data.h5'
                 file_path = os.path.join(dir_name, file_name)
-                warnings.warn('The provided path is a directory - saving '
-                              'to {0} instead.'.format(file_path), Warning)
+                Pwarn('The provided path is a directory - saving '
+                              'to {0} instead.'.format(file_path), "ReplaceValueWarning")
 
             self.combine_saved_files(absolute_filepath, tmp_files, **kwargs)
 
@@ -494,8 +512,11 @@ class BinaryPopulation:
         
         
         with pd.HDFStore(absolute_filepath, mode=mode, complevel=complevel, complib=complib) as store:
-            simulated_mass = 0
-            number_of_systems = 0
+            simulated_mass = 0.0
+            simulated_mass_single = 0.0
+            simulated_mass_binaries = 0.0
+            number_of_systems=0
+            
             for f in file_names:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
@@ -504,7 +525,16 @@ class BinaryPopulation:
                                  min_itemsize=history_min_itemsize)
                     
                     oneline = pd.read_hdf(f, key='oneline')
-                    simulated_mass += oneline['S1_mass_i'].sum() + oneline['S2_mass_i'].sum()
+                    
+                    # split weight between single and binary stars
+                    mask = oneline["state_i"] == "initially_single_star"
+                    filtered_data_single = oneline[mask]
+                    filtered_data_binaries = oneline[~mask]
+                    
+                    simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+                    simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                    simulated_mass = simulated_mass_single + simulated_mass_binaries
+                       
                     if 'metallicity' not in oneline.columns:
                         met_df = pd.DataFrame(data={'metallicity': [self.metallicity] * len(oneline)}, index=oneline.index)
                         oneline = pd.concat([oneline, met_df], axis=1)
@@ -526,7 +556,8 @@ class BinaryPopulation:
             tmp_df = pd.DataFrame(
                 index=[self.metallicity],
                 data={'simulated_mass': simulated_mass,
-                      'underlying_mass': initial_total_underlying_mass(df=simulated_mass, **self.kwargs)[0], 
+                      'simulated_mass_single': simulated_mass_single,
+                      'simulated_mass_binaries': simulated_mass_binaries,
                       'number_of_systems': number_of_systems})
             tmp_df.index.name = 'metallicity'
             store.append('mass_per_metallicity', tmp_df)
@@ -972,6 +1003,7 @@ class BinaryGenerator:
                 separation=separation,
                 orbital_period=orbital_period,
                 eccentricity=eccentricity,
+                history_verbose=self.kwargs.get("history_verbose", False)
             )
             star1_params = dict(
                 mass=m1,
@@ -1003,6 +1035,7 @@ class BinaryGenerator:
                 separation=separation,
                 orbital_period=orbital_period,
                 eccentricity=eccentricity,
+                history_verbose=self.kwargs.get("history_verbose", False)
             )
             star1_params = dict(
                 mass=m1,

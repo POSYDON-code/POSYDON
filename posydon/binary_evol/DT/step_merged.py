@@ -10,13 +10,12 @@ __authors__ = [
 
 import numpy as np
 
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massless_remnant
 from posydon.utils.common_functions import check_state_of_star
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
-from posydon.utils.posydonerror import FlowError
-
-import warnings
+from posydon.utils.posydonerror import ModelError
+from posydon.utils.posydonwarning import Pwarn
 
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_H_RICH,
@@ -85,26 +84,49 @@ class MergedStep(IsolatedStep):
 
 
     def __call__(self,binary):
+
         merged_star_properties = self.merged_star_properties
+
         if self.verbose:
-            print("Before Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
-            print("M1 , M2, he_core_mass1, he_core_mass2: ", binary.star_1.mass,binary.star_2.mass, binary.star_1.he_core_mass, binary.star_2.he_core_mass)
-            print("star_1.center_he4, star_2.center_he4, star_1.surface_he4, star_2.surface_he4: ",  binary.star_1.center_he4,binary.star_2.center_he4, binary.star_1.surface_he4,binary.star_2.surface_he4)
+            print("Before Merger", binary.star_1.state, binary.star_2.state,
+                  binary.state, binary.event)
+            print("M1 , M2, he_core_mass1, he_core_mass2: ",
+                  binary.star_1.mass, binary.star_2.mass,
+                  binary.star_1.he_core_mass, binary.star_2.he_core_mass)
+            print("star_1.center_he4, star_2.center_he4, star_1.surface_he4, "
+                  "star_2.surface_he4: ", binary.star_1.center_he4,
+                  binary.star_2.center_he4, binary.star_1.surface_he4,
+                  binary.star_2.surface_he4)
+        
         if binary.state == "merged":
             if binary.event == 'oMerging1':
-                binary.star_1,binary.star_2 = merged_star_properties(binary.star_1,binary.star_2)
+                binary.star_1, binary.star_2 = merged_star_properties(binary.star_1, binary.star_2)
             elif binary.event == 'oMerging2':
-                binary.star_2,binary.star_1 = merged_star_properties(binary.star_2,binary.star_1)
+                binary.star_2, binary.star_1 = merged_star_properties(binary.star_2, binary.star_1)
             else:
-                raise FlowError("binary.state='merged' but binary.event != 'oMerging1/2'")
+                raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
+
+        ## assume that binaries in RLO with two He-rich stars always merge   
+        elif binary.star_1.state in STAR_STATES_HE_RICH and binary.star_2.state in STAR_STATES_HE_RICH:
+            binary.state = "merged"
+            if binary.event == 'oRLO1':
+                binary.star_1, binary.star_2 = merged_star_properties(binary.star_1, binary.star_2)
+            elif binary.event == 'oRLO2':
+                binary.star_2, binary.star_1 = merged_star_properties(binary.star_2, binary.star_1)
+            else:
+                raise ValueError("step_merged initiated for He stars but RLO not initiated")
         else:
-            raise FlowError("step_merging initiated but binary.state != 'merged'")
+            raise ValueError("step_merged initiated but binary is not in valid merging state!")
 
         binary.event = None
+
         if self.verbose:
-            print("After Merger", binary.star_1.state,binary.star_2.state,binary.state, binary.event)
-            print("M_merged , he_core_mass merged: ", binary.star_1.mass, binary.star_1.he_core_mass)
-            print("star_1.center_he4, star_1.surface_he4: ",  binary.star_1.center_he4, binary.star_1.surface_he4)
+            print("After Merger", binary.star_1.state, binary.star_2.state,
+                  binary.state, binary.event)
+            print("M_merged , he_core_mass merged: ", binary.star_1.mass,
+                  binary.star_1.he_core_mass)
+            print("star_1.center_he4, star_1.surface_he4: ",
+                  binary.star_1.center_he4, binary.star_1.surface_he4)
 
         super().__call__(binary)
 
@@ -263,7 +285,7 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
                     merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging")
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 # weigheted mixing on the surface abundances based on the envelopes of the two stars
                 merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight1="H-rich_envelope_mass", mass_weight2="H-rich_envelope_mass")
@@ -303,7 +325,7 @@ class MergedStep(IsolatedStep):
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0): # star_base with CO core and the comp has just a He core (is a HeMS star)
                     pass # the central abundances are kept as the ones of star_base
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging")
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -337,7 +359,7 @@ class MergedStep(IsolatedStep):
                 elif (star_base.co_core_mass == 0 and comp.co_core_mass > 0): # star_base is the HeMS Star and comp has a CO core
                     pass # the central abundances are kept as the ones of star_base
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging")
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -381,7 +403,7 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
                     merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging")
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -425,7 +447,7 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
                     merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging")
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -469,7 +491,7 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
                     merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging")
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 # weigheted mixing on the surface abundances based on the He-rich envelopes of the two stars
                 merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight1="He-rich_envelope_mass", mass_weight2="He-rich_envelope_mass")
@@ -512,7 +534,7 @@ class MergedStep(IsolatedStep):
                     merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14", mass_weight1="co_core_mass")
                     merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16", mass_weight1="co_core_mass")
                 else:
-                    warnings.warn("weird compbination of CO core masses during merging")
+                    Pwarn("weird compbination of CO core masses during merging", "EvolutionWarning")
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -535,7 +557,7 @@ class MergedStep(IsolatedStep):
                 ## in this case, want CO companion object to stay the same, and base star to be assigned massless remnant
                 return massless_remnant, merged_star
         else:
-            print("Combination of merging star states not expected: ", s1, s2)
+            raise ModelError(f"Combination of merging star states not expected: {s1} {s2}")
 
         # ad hoc spin of merged star to be used in the detached step
         merged_star.surf_avg_omega_div_omega_crit = self.merger_critical_rot

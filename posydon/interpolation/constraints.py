@@ -328,6 +328,15 @@ CONSTRAINTS = [
         "log": False
     },
     {
+        "type": 2,
+        "name": "Mass in Hydrogen/Helium (2.12)",
+        "fields": [
+            ["star_{}_mass", "S{}_total_mass_h1"],
+            ["star_{}_mass", "S{}_total_mass_he4"]
+        ],
+        "log": False
+    },
+    {
         "type": 3,
         "name": "Center Sum Equal One",
         "sum_fields": ["S{}_center_h1", "S{}_center_he4", "S{}_center_c12",

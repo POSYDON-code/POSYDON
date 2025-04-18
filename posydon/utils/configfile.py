@@ -133,11 +133,12 @@ class ConfigFile:
         """
         if path is None:
             if self.path is None:
-                raise Exception("No path passed.")
+                raise ValueError("No path passed.")
             path = self.path
 
         if os.path.exists(path) and not overwrite:
-            raise Exception("JSON file not saved: overwrite not permitted.")
+            raise PermissionError("JSON file not saved: overwrite not "
+                                  "permitted.")
 
         with open(path, "wt") as f:
             json.dump(self.entries, f, sort_keys=True, indent=4,
@@ -158,7 +159,7 @@ class ConfigFile:
         """
         if path is None:
             if self.path is None:
-                raise Exception("No path passed.")
+                raise ValueError("No path passed.")
             path = self.path
 
         with open(path, "rt") as f:
@@ -169,8 +170,8 @@ class ConfigFile:
                 new_keys = set(new_entries.keys())
                 common = list(current_keys & new_keys)
                 if len(common) != 0:
-                    raise Exception("Not allowed to update the entries {}".
-                                    format(common))
+                    raise PermissionError("Not allowed to update the entries"
+                                          " {}".format(common))
 
             self.entries.update(new_entries)
 
@@ -256,7 +257,7 @@ def parse_inifile(inifile):
                                              _eval(node.right))
             elif isinstance(node, ast.List):
                 return [_eval(x) for x in node.elts]
-            elif isinstance(node, ast.Name):
+            elif isinstance(node, ast.Name): # pragma: no cover
                 result = VariableKey(item=node)
                 constants_lookup = {
                     'True': True,
@@ -311,7 +312,7 @@ def parse_inifile(inifile):
     return run_parameters, slurm, mesa_inlists, mesa_extras
 
 
-class VariableKey(object):
+class VariableKey(object): # pragma: no cover
     """A dictionary key which is a variable.
 
     @ivar item: The variable AST object.
