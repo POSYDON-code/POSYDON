@@ -454,10 +454,9 @@ class StepCEE(object):
                 format(donor_type))
         if mc1_f > mc1_i:
             mc1_f = mc1_i
-            Pwarn(
-                "The final donor core mass (even after stable, postCEE MT)"
-                " is higher than the postCEE core mass. Now equalizing to "
-                "postCEE mass", "ApproximationWarning")
+            Pwarn("The final donor core mass (even after stable, postCEE MT)"
+                  " is higher than the postCEE core mass. Now equalizing to "
+                  "postCEE mass", "ApproximationWarning")
         if not double_CE:
             mc2_f = mc2_i
             rc2_f = rc2_i
@@ -572,7 +571,6 @@ class StepCEE(object):
         separation_f = separation_postCEE / const.Rsun
 
         return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
-
 
     def CEE_core_not_replaced_noMT(self, donor, mc1_i, rc1_i, 
                                    donor_type, comp_star, mc2_i, rc2_i, 
@@ -766,8 +764,6 @@ class StepCEE(object):
 
         return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
 
-
-
     def CEE_core_not_replaced_windloss(self, donor, mc1_i, rc1_i,
                                        donor_type, comp_star, mc2_i, rc2_i,
                                        comp_type, double_CE,
@@ -869,7 +865,7 @@ class StepCEE(object):
             mc1_f, mc2_f)
 
         # Check once more to see if the system has merged during stable MT
-        merger = cf.check_for_RLO(mc1_f, rc1_f, mc2_f, rc2_f, separation_f, 
+        merger = cf.check_for_RLO(mc1_f, rc1_f, mc2_f, rc2_f, separation_f,
             self.CEE_tolerance_err)
 
         if merger:
@@ -975,7 +971,7 @@ class StepCEE(object):
         state1_i = donor.state
         m2_i = comp_star.mass
         radius2 = 10**comp_star.log_R
-        he_core_radius1 = donor.he_core_radius
+        # he_core_radius1 = donor.he_core_radius
 
         if verbose:
             print("Pre CE")
@@ -1014,7 +1010,7 @@ class StepCEE(object):
                               * mc2_i * const.Msun / eorb_postCEE)
 
         # Check to make sure final orbital separation is positive
-        if not (separation_postCEE > -self.CEE_tolerance_err):
+        if separation_postCEE < -self.CEE_tolerance_err:
             raise ValueError("CEE problem, negative postCEE separation")
 
         if verbose:
@@ -1041,19 +1037,19 @@ class StepCEE(object):
                                                  separation_postCEE, verbose)
         elif common_envelope_option_after_succ_CEE == "CEE_core_not_replaced_stableMT":
             mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
-                    = self.CEE_core_not_replaced_stableMT(donor, mc1_i, rc1_i, 
-                                                     donor_type, comp_star, 
-                                                     mc2_i, rc2_i, comp_type, 
-                                                     double_CE, 
-                                                     separation_postCEE, 
+                    = self.CEE_core_not_replaced_stableMT(donor, mc1_i, rc1_i,
+                                                     donor_type, comp_star,
+                                                     mc2_i, rc2_i, comp_type,
+                                                     double_CE,
+                                                     separation_postCEE,
                                                      verbose)
         elif common_envelope_option_after_succ_CEE == "CEE_core_not_replaced_windloss":
             mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
-                    = self.CEE_core_not_replaced_windloss(donor, mc1_i, rc1_i, 
-                                                     donor_type, comp_star, 
-                                                     mc2_i, rc2_i, comp_type, 
-                                                     double_CE, 
-                                                     separation_postCEE, 
+                    = self.CEE_core_not_replaced_windloss(donor, mc1_i, rc1_i,
+                                                     donor_type, comp_star,
+                                                     mc2_i, rc2_i, comp_type,
+                                                     double_CE,
+                                                     separation_postCEE,
                                                      verbose)
         else:
             raise ValueError(
@@ -1064,32 +1060,99 @@ class StepCEE(object):
         # Adjust stellar and binary parameters depending on whether the system
         # mergers in the CE or not
         if merger:
-
+            # Calculate the amount of mass lost during the merger
             if mass_loss_during_CEE_merged:
+                Pwarn("NOTE:This is legacy code from a previous "
+                      "implementation. It is not currently supported "
+                      "and may lead to unexpected behavior", 
+                      "UnsupportedModelWarning")
                 Mejected_donor, Mejected_comp = \
-                    self.CEE_adjust_mass_loss_during_CEE_merged()
+                    self.CEE_adjust_mass_loss_during_CEE_merged(donor,
+                        comp_star, double_CE, verbose=verbose)
             else:
                 Mejected_donor = 0.0
                 Mejected_comp = 0.0
-                
-            self.CEE_adjust_binary_upon_merger(binary, donor, 
-                    comp_star, m1_i, m2_i, donor_type, Mejected_donor, 
-                    Mejected_comp, verbose)
+
+            # Adjust the binary and single star properties due to merger
+            self.CEE_adjust_binary_upon_merger(binary, donor, comp_star, m1_i,
+                m2_i, donor_type, Mejected_donor, Mejected_comp, verbose)
         else:
-            self.CEE_adjust_binary_upon_ejection()
+            # Adjust the binary and single star properties due to ejection
+            self.CEE_adjust_binary_upon_ejection(binary, donor, mc1_f, rc1_f,
+                donor_type, comp_star, mc2_f, rc2_f, comp_type, double_CE,
+                separation_f, orbital_period_f,
+                common_envelope_option_after_succ_CEE,
+                core_definition_H_fraction,
+                core_definition_He_fraction,
+                verbose)
 
         return
-    
 
 
-    def CEE_adjust_binary_upon_ejection(self, separation_f, orbital_period_f):
 
+    def CEE_adjust_binary_upon_ejection(self, binary, donor, mc1_f, rc1_f,
+                donor_type, comp_star, mc2_f, rc2_f, comp_type, double_CE,
+                separation_f, orbital_period_f, 
+                common_envelope_option_after_succ_CEE, 
+                core_definition_H_fraction, 
+                core_definition_He_fraction,
+                verbose=False):
+        """Update the binary and component stars upon exiting a CEE.
+
+        The binary's parameters (orbital period, separation, state, etc.) are
+        updated along with the donor's (and in the case of a double CE the
+        companion's as well) parameters are also updated. Note that certain 
+        parameters are set to np.nan if they are irrelevant for the CE.
+
+        Parameters
+        ----------
+        binary: BinaryStar object
+            The binary system
+        donor : SingleStar object
+            The donor star
+        mc1_f : float
+            final core mass of the donor (in Msun)
+        rc1_f : float
+            final core radius of the donor (in Rsun)
+        donor_type : string
+            descriptor for the stellar type of the donor
+        comp_star : SingleStar object
+            The companion star
+        mc2_f : float
+            core mass of the companion (in Msun)
+        rc2_f : float
+            core radius of the companion (in Rsun)
+        comp_type : string
+            descriptor for the stellar type of the companion
+        double_CE : bool
+            whether the CEE is a double CE or not
+        separation_f : float
+            binary's separation upon exiting the CEE (in Rsun)
+        orbital_period_f : float
+            binary's orbital period upon exiting the CEE (in days)
+        common_envelope_option_after_succ_CEE : string
+            which type of post-common envelope evolution is used to remove
+            the final layers around the helium core
+        core_definition_H_fraction : float
+            the fractional abundance of H defining the He core (0.3, 0.1, or 
+            0.01)
+        core_definition_He_fraction : float
+            the fractional abundance of He defining the CO core (typically 0.1)
+        verbose : bool
+            In case we want information about the CEE.
+        """
         # Adjust binary properties
         binary.separation = separation_f
         binary.orbital_period = orbital_period_f
         binary.eccentricity = 0.0
         binary.state = 'detached'
         binary.event = None
+
+        if verbose:
+            print("CEE succesfully ejected")
+            print("new orbital period = ", binary.orbital_period)
+            print("binary event : ", binary.event)
+            print("double CEE : ", double_CE)
 
         # TODO: Check this!
         # Adjust the binary event to CC1/CC2 if star will explode
@@ -1102,6 +1165,7 @@ class StepCEE(object):
 
         # Set binary values that are unchanged in CE step to np.nan
         for key in BINARYPROPERTIES:
+
             # the binary attributes that are changed in the CE step
             if key in ["separation", "orbital_period",
                        "eccentricity", "state", "event"]:
@@ -1113,26 +1177,24 @@ class StepCEE(object):
                        "nearest_neighbour_distance"]:
                 continue
 
-            setattr(binary, key, np.nan)  # the rest become np.nan
+            # the rest become np.nan
+            setattr(binary, key, np.nan)
 
+        # Create list of stars that need updated parameters. If normal CE,
+        # then only donor has updated properties
         stars = [donor]
         star_types = [donor_type]
         core_masses = [mc1_f]
         core_radii = [rc1_f]
 
-        if verbose:
-            print("CEE succesfully ejected")
-            print("new orbital period = ", binary.orbital_period)
-            print("binary event : ", binary.event)
-            print("double CEE : ", double_CE)
-
+        # If a double CE, then the companion's properties are updated, too
         if double_CE:
             stars.append(comp_star)
             star_types.append(comp_type)
             core_masses.append(mc2_f)
             core_radii.append(rc2_f)
 
-        # Adjust donor star properties
+        # Adjust stellar properties
         for star, star_type, core_mass, core_radius in zip(
                 stars, star_types, core_masses, core_radii):
             star.mass = core_mass
@@ -1195,6 +1257,8 @@ class StepCEE(object):
             else:
                 raise ValueError("Unrecognized star type:", star_type)
 
+            # Update state of star
+            # TODO shouldn't stellar states be updated after the parameters are updated?
             state_old = star.state
             star.state = check_state_of_star(star)
             if verbose:
@@ -1203,9 +1267,10 @@ class StepCEE(object):
 
             # Set star values that are unchanged in CE step to np.nan
             for key in STARPROPERTIES:
+
+                # the singlestar attributes that are changed
+                # in the CE step
                 if key in attributes_changing:
-                    # the singlestar attributes that are changed
-                    # in the CE step
                     continue
 
                 # the singlestar attributes that keep the same value
@@ -1219,12 +1284,57 @@ class StepCEE(object):
                         "log_Lnuc", "c12_c12", "center_gamma",
                         "avg_c_in_c_core"]:
                     continue
-                
-                setattr(star, key, np.nan)  # the rest become NaN's
+
+                # the rest become NaN's
+                setattr(star, key, np.nan)
         return
 
+    def CEE_adjust_mass_loss_during_CEE_merged(self, donor, comp_star, 
+                                               double_CE, verbose=False):
+        """ Calculate the amount of mass lost during a stellar merger in a CEE
 
-    def CEE_adjust_mass_loss_during_CEE_merged(self, donor, comp_star, double_CE, verbose=False):
+        The binary's parameters (orbital period, separation, state, etc.) are
+        updated along with the donor's (and in the case of a double CE the
+        companion's as well) parameters are also updated. Note that certain 
+        parameters are set to np.nan if they are irrelevant for the CE.
+
+        Parameters
+        ----------
+        binary: BinaryStar object
+            The binary system
+        donor : SingleStar object
+            The donor star
+        mc1_f : float
+            final core mass of the donor (in Msun)
+        rc1_f : float
+            final core radius of the donor (in Rsun)
+        donor_type : string
+            descriptor for the stellar type of the donor
+        comp_star : SingleStar object
+            The companion star
+        mc2_f : float
+            core mass of the companion (in Msun)
+        rc2_f : float
+            core radius of the companion (in Rsun)
+        comp_type : string
+            descriptor for the stellar type of the companion
+        double_CE : bool
+            whether the CEE is a double CE or not
+        separation_f : float
+            binary's separation upon exiting the CEE (in Rsun)
+        orbital_period_f : float
+            binary's orbital period upon exiting the CEE (in days)
+        common_envelope_option_after_succ_CEE : string
+            which type of post-common envelope evolution is used to remove
+            the final layers around the helium core
+        core_definition_H_fraction : float
+            the fractional abundance of H defining the He core (0.3, 0.1, or 
+            0.01)
+        core_definition_He_fraction : float
+            the fractional abundance of He defining the CO core (typically 0.1)
+        verbose : bool
+            In case we want information about the CEE.
+        """
         # we calculate the ejected mass from part of the common envelope, using
         # a_f = separation_postCEE so that one of the cores (or MS star) is 
         # filling its inner Roche lobe, and assuming that 
@@ -1318,11 +1428,35 @@ class StepCEE(object):
 
         return Mejected_donor, Mejected_comp
 
-
     def CEE_adjust_binary_upon_merger(self, binary, donor, comp_star, m1_i,
                                       m2_i, donor_type, Mejected_donor,
                                       Mejected_comp, verbose=False):
+        """Update the binary and component stars upon merging within a CEE.
 
+        The binary's state and event are updated along with the donor and 
+        companion star masses and radii corresponding to a merger event.
+
+        Parameters
+        ----------
+        binary: BinaryStar object
+            The binary system
+        donor : SingleStar object
+            The donor star
+        comp_star : SingleStar object
+            The companion star
+        m1_i : float
+            mass of the donor upon entering a CE (in Msun)
+        m2_i : float
+            mass of the companion upon entering a CE (in Msun)
+        donor_type : string
+            descriptor for the stellar type of the donor
+        Mejected_donor : float
+            how much mass is ejected from the donor upon merger (in Msun)
+        Mejected_comp : float
+            how much mass is ejected from the companion upon merger (in Msun)
+        verbose : bool
+            In case we want information about the CEE.
+        """
         # system merges
         binary.state = 'merged'
         if binary.event in ["oCE1", "oDoubleCE1"]:
