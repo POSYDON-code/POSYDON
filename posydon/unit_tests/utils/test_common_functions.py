@@ -107,9 +107,10 @@ class TestElements:
                     'period_change_stable_MT', 'period_evol_wind_loss',\
                     'profile_recomb_energy', 'quad',\
                     'read_histogram_from_file', 'rejection_sampler',\
-                    'roche_lobe_radius', 'rotate', 'rzams',\
-                    'separation_evol_wind_loss', 'set_binary_to_failed',\
-                    'spin_stable_mass_transfer', 'stefan_boltzmann_law'}
+                    'roche_lobe_radius', 'check_for_RLO', 'rotate',\
+                    'rzams', 'separation_evol_wind_loss',\
+                    'set_binary_to_failed', 'spin_stable_mass_transfer',\
+                    'stefan_boltzmann_law'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
