@@ -435,7 +435,7 @@ def simprop_kwargs_from_ini(path, verbose=False):
                 absolute_import_location = os.path.abspath(import_location)
                 # Format: remove leading / in abs path, replace / with dots, remove '.py'
                 location_as_module_name = absolute_import_location[1:].replace('/', '.').replace('.py', '')
-                
+
                 # create spec and load module
                 spec = importlib.util.spec_from_file_location( location_as_module_name, location=absolute_import_location)
                 module = importlib.util.module_from_spec(spec)
