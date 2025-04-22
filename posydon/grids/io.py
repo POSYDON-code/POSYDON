@@ -478,7 +478,6 @@ def initial_values_from_dirname(mesa_dir):
     else:                                                   # binary-star grid
         if "v1/" in str(mesa_dir): # version 1 dirnames don't contain initial_z
             variable_names = ["m1", "m2", "initial_period_in_days"]
-        # KYLE CUSTOM ECC GRID EDIT
         elif "initial_eccentricity" in dirname:
             variable_names = ["m1", "m2", "initial_period_in_days", "initial_z", "initial_eccentricity"]
         else:
