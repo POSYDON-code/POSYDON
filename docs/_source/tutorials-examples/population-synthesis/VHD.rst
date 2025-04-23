@@ -84,8 +84,7 @@ The `VDdiagramm_m` module allows multiple binary visualizations to be arranged h
     from posydon.visualization.VH_diagram.PresenterMode import PresenterMode
 
     VHD = VHdiagramm_m('./data/population.h5',
-                    index=cnt[:,0],
-                    frequency=parse_df.get_frequencies(),
+                    index=[19627,19628,19629,19630],
                     hierarchy=False,
                     presentMode=PresenterMode.DIAGRAM,
                     displayMode=DisplayMode.INLINE_B)
@@ -104,8 +103,7 @@ This visualization style aggregates identical steps into a tree plot where nodes
     from posydon.visualization.VH_diagram.PresenterMode import PresenterMode
 
     VHD = VHdiagramm_m('./data/population.h5',
-                    index=cnt[:,0],
-                    frequency=parse_df.get_frequencies(),
+                    index=[19627,19628,19629,19630],
                     hierarchy=True,
                     presentMode=PresenterMode.DIAGRAM,
                     displayMode=DisplayMode.INLINE_B)
