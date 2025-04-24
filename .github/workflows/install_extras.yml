@@ -24,7 +24,10 @@ jobs:
 
     - name: Install POSYDON with extras
       run: |
-        # mpi4py needs to be preinstalled for the hpc option on pip
-        conda install mpi4py
+        # Create a new env with Python 3.11 and activate it
+        conda create -n test-env python=3.11 mpi4py -y
+        conda activate test-env
+        # Install the rest of the package
         python -m pip install --upgrade pip
-        pip install ".[doc,vis,ml,hpc]" 
+        pip install ".[doc,vis,ml,hpc]"
+      shell: bash -l  # <- Important! Enables conda activation
