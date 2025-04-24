@@ -7,7 +7,7 @@ Van den Heuvel diagrams with POSYDON
    This is an **experimental feature** of POSYDON. Unexpected behaviors or results may occur.
 
 .. note::
-   To use the visualization functionalities, install the optional visualization modules `pip install .[vis]`
+   To use the visualization functionalities, install the optional visualization modules `pip install vis`
 
 
 `VHdiagram` provides a visual representation of individual POSYDON binaries, offering a more intuitive sense of their properties. This tutorial uses the 'population.h5' dataset as an example. TODO: this need to be tested on a v2.0.0 dataset.
