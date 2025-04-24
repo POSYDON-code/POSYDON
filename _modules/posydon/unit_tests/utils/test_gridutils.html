@@ -1,0 +1,1124 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.unit_tests.utils.test_gridutils &mdash; posydon v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=f4b7fd8b"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.unit_tests.utils.test_gridutils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.unit_tests.utils.test_gridutils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Unit tests of posydon/utils/gridutils.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># import the module which will be tested</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.gridutils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">totest</span>
+<span class="c1"># aliases</span>
+<span class="n">np</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">np</span>
+<span class="n">os</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">os</span>
+<span class="n">pd</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">pd</span>
+
+<span class="c1"># import other needed code for the tests, which is not already imported in the</span>
+<span class="c1"># module you like to test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">fixture</span><span class="p">,</span> <span class="n">raises</span><span class="p">,</span> <span class="n">warns</span><span class="p">,</span> <span class="n">approx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">isclass</span><span class="p">,</span> <span class="n">isroutine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">MissingFilesWarning</span>
+
+<span class="c1"># define test classes collecting several test functions</span>
+<div class="viewcode-block" id="TestElements">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestElements</span><span class="p">:</span>
+    <span class="c1"># check for objects, which should be an element of the tested module</span>
+<div class="viewcode-block" id="TestElements.test_dir">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># ensure that python forgets about previous unclean warnings</span>
+        <span class="c1">## for some unknown reason test_psygrid.TestPSyGrid.test_create_psygrid</span>
+        <span class="c1">## does not clear the warning registy correctly.</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s1">&#39;__warningregistry__&#39;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">totest</span><span class="o">.</span><span class="n">__warningregistry__</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;LG_MTRANSFER_RATE_THRESHOLD&#39;</span><span class="p">,</span> <span class="s1">&#39;Msun&#39;</span><span class="p">,</span> <span class="s1">&#39;Pwarn&#39;</span><span class="p">,</span> <span class="s1">&#39;Rsun&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;T_merger_P&#39;</span><span class="p">,</span> <span class="s1">&#39;T_merger_a&#39;</span><span class="p">,</span> <span class="s1">&#39;__authors__&#39;</span><span class="p">,</span> <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span> <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span> <span class="s1">&#39;add_field&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;beta_gw&#39;</span><span class="p">,</span> <span class="s1">&#39;cgrav&#39;</span><span class="p">,</span> <span class="s1">&#39;clean_inlist_file&#39;</span><span class="p">,</span> <span class="s1">&#39;clight&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;convert_output_to_table&#39;</span><span class="p">,</span> <span class="s1">&#39;find_index_nearest_neighbour&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;find_nearest&#39;</span><span class="p">,</span> <span class="s1">&#39;fix_He_core&#39;</span><span class="p">,</span> <span class="s1">&#39;get_cell_edges&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;get_final_proposed_points&#39;</span><span class="p">,</span> <span class="s1">&#39;get_new_grid_name&#39;</span><span class="p">,</span> <span class="s1">&#39;gzip&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;join_lists&#39;</span><span class="p">,</span> <span class="s1">&#39;kepler3_a&#39;</span><span class="p">,</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="s1">&#39;os&#39;</span><span class="p">,</span> <span class="s1">&#39;pd&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;read_EEP_data_file&#39;</span><span class="p">,</span> <span class="s1">&#39;read_MESA_data_file&#39;</span><span class="p">,</span> <span class="s1">&#39;secyear&#39;</span><span class="p">}</span>
+        <span class="n">totest_elements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">totest</span><span class="p">))</span>
+        <span class="n">missing_in_test</span> <span class="o">=</span> <span class="n">elements</span> <span class="o">-</span> <span class="n">totest_elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are missing objects in &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">missing_in_test</span><span class="si">}</span><span class="s2">. Please &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;check, whether they have been &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;removed on purpose and update &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;this unit test.&quot;</span>
+        <span class="n">new_in_test</span> <span class="o">=</span> <span class="n">totest_elements</span> <span class="o">-</span> <span class="n">elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are new objects in &quot;</span>\
+                                      <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_in_test</span><span class="si">}</span><span class="s2">. &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;Please check, whether they have been &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;added on purpose and update this &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;unit test.&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_join_lists">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_join_lists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_join_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">join_lists</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_read_MESA_data_file">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_read_MESA_data_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_read_MESA_data_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">read_MESA_data_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_read_EEP_data_file">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_read_EEP_data_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_read_EEP_data_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">read_EEP_data_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_fix_He_core">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_fix_He_core">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_fix_He_core</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">fix_He_core</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_add_field">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_add_field">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_add_field</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">add_field</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_get_cell_edges">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_get_cell_edges">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_get_cell_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">get_cell_edges</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_find_nearest">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_find_nearest">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_find_nearest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">find_nearest</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_find_index_nearest_neighbour">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_find_index_nearest_neighbour">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_find_index_nearest_neighbour</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">find_index_nearest_neighbour</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_get_final_proposed_points">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_get_final_proposed_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_get_final_proposed_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">get_final_proposed_points</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_T_merger_P">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_T_merger_P">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_T_merger_P</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">T_merger_P</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_beta_gw">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_beta_gw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_beta_gw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">beta_gw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_kepler3_a">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_kepler3_a">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_kepler3_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">kepler3_a</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_T_merger_a">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_T_merger_a">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_T_merger_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">T_merger_a</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_convert_output_to_table">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_convert_output_to_table">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_convert_output_to_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_clean_inlist_file">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_clean_inlist_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_clean_inlist_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">clean_inlist_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_get_new_grid_name">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestElements.test_instance_get_new_grid_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_get_new_grid_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">get_new_grid_name</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestFunctions">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestFunctions</span><span class="p">:</span>
+<div class="viewcode-block" id="TestFunctions.data_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.data_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary data path for testing</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;history.data&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.no_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.no_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">no_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a path which does not exist for testing</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;does_not_exist.test&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.MESA_data">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.MESA_data">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">MESA_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># mock data: 3 columns and 2 rows; it contains different</span>
+        <span class="c1"># types(int, float) and different signs(positive, negative)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.3</span><span class="p">)],</span>\
+                        <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;COL1&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;COL2&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                               <span class="p">(</span><span class="s1">&#39;COL3&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.MESA_data_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.MESA_data_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">MESA_data_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">MESA_data</span><span class="p">):</span>
+        <span class="c1"># a temporary data file for testing</span>
+        <span class="c1"># it contains 5 header lines, a line with the column headers and the</span>
+        <span class="c1"># table data given in MESA_data</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;5}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">[</span><span class="n">j</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                        <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{:&gt;4}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; </span><span class="si">{:&gt;4}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data_path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.EEP_data_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.EEP_data_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">EEP_data_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">,</span> <span class="n">MESA_data</span><span class="p">):</span>
+        <span class="c1"># a temporary data file for testing</span>
+        <span class="c1"># it contains 11 header lines, a line with the column headers and the</span>
+        <span class="c1"># table data given in MESA_data</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;5}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">[</span><span class="n">j</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                        <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{:&gt;4}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; </span><span class="si">{:&gt;4}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data_path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.MESA_BH_data_tight_orbit">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.MESA_BH_data_tight_orbit">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">MESA_BH_data_tight_orbit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># mock data: 4 columns(physical quanties the code looks for) and 2 rows</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span><span class="p">)],</span>\
+                        <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                               <span class="p">(</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                               <span class="p">(</span><span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.BH_path_tight_orbit">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.BH_path_tight_orbit">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">BH_path_tight_orbit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">MESA_BH_data_tight_orbit</span><span class="p">):</span>
+        <span class="c1"># a temporary path of binary history file for testing</span>
+        <span class="c1"># it contains 5 header lines, a line with the column headers and the</span>
+        <span class="c1"># table data given in MESA_BH_data_tight_orbit</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;binary_history.data&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">MESA_BH_data_tight_orbit</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;18}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MESA_BH_data_tight_orbit</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">MESA_BH_data_tight_orbit</span><span class="p">[</span><span class="n">j</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                        <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{:&gt;17}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; </span><span class="si">{:&gt;17}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.MESA_BH_data_wide_orbit">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.MESA_BH_data_wide_orbit">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">MESA_BH_data_wide_orbit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># mock data: 4 columns(physical quanties the code looks for) and 2 rows</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">),</span>\
+                         <span class="p">(</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span><span class="p">)],</span>\
+                        <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                               <span class="p">(</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                               <span class="p">(</span><span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.BH_path_wide_orbit">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.BH_path_wide_orbit">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">BH_path_wide_orbit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">MESA_BH_data_wide_orbit</span><span class="p">):</span>
+        <span class="c1"># a temporary path of binary history file for testing</span>
+        <span class="c1"># it contains 5 header lines, a line with the column headers and the</span>
+        <span class="c1"># table data given in MESA_BH_data_wide_orbit</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;binary_history2.data&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">MESA_BH_data_wide_orbit</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;18}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MESA_BH_data_wide_orbit</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">MESA_BH_data_wide_orbit</span><span class="p">[</span><span class="n">j</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                        <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{:&gt;17}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; </span><span class="si">{:&gt;17}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.MESA_SH_data">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.MESA_SH_data">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">MESA_SH_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># mock data</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)],</span>\
+                        <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;log_L&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;log_Teff&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                               <span class="p">(</span><span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                               <span class="p">(</span><span class="s1">&#39;c_core_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.H1_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.H1_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">H1_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">MESA_SH_data</span><span class="p">):</span>
+        <span class="c1"># a temporary path of star1 history file for testing</span>
+        <span class="c1"># it contains 5 header lines, a line with the column headers and the</span>
+        <span class="c1"># table data given in MESA_SH_data</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;history1.data&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">MESA_SH_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;13}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MESA_SH_data</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">MESA_SH_data</span><span class="p">[</span><span class="n">j</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                        <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{:&gt;12}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; </span><span class="si">{:&gt;12}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.H2_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.H2_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">H2_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">MESA_SH_data</span><span class="p">):</span>
+        <span class="c1"># a temporary path of star2 history file for testing</span>
+        <span class="c1"># it contains 5 header lines, a line with the column headers and the</span>
+        <span class="c1"># table data given in MESA_SH_data</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;history2.data&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">MESA_SH_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;13}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MESA_SH_data</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">MESA_SH_data</span><span class="p">[</span><span class="n">j</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                        <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{:&gt;12}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; </span><span class="si">{:&gt;12}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.out_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.out_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">out_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path of out file for testing</span>
+        <span class="c1"># it contains 5 header lines</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;out.txt&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.out_gz_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.out_gz_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">out_gz_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path of zipped out file for testing</span>
+        <span class="c1"># it contains 5 header lines and the statement of initial RLO</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;out_gz.txt&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;model is overflowing at ZAMS</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gzip -1 </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Please check that you have `gzip` installed &quot;</span>\
+                               <span class="o">+</span><span class="s2">&quot;and up to date.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.out_path_CE">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.out_path_CE">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">out_path_CE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path of out file for testing</span>
+        <span class="c1"># it contains 5 header lines and the statement of entering CE</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;out2.txt&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;TURNING ON CE</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.out_path_strong_RLO">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.out_path_strong_RLO">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">out_path_strong_RLO</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path of out file for testing</span>
+        <span class="c1"># it contains 5 header lines and the statement of too strong RLO</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;out3.txt&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Terminate because accretor (r-rl)/rl &gt; &quot;</span>\
+                            <span class="o">+</span><span class="s2">&quot;accretor_overflow_terminate</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.out_path_CE_strong_RLO">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.out_path_CE_strong_RLO">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">out_path_CE_strong_RLO</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path of out file for testing</span>
+        <span class="c1"># it contains 5 header lines and the statement of entering CE and too</span>
+        <span class="c1"># strong RLO</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;out4.txt&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;TURNING ON CE</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Terminate because accretor (r-rl)/rl &gt; &quot;</span>\
+                            <span class="o">+</span><span class="s2">&quot;accretor_overflow_terminate</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.out_path_C_depletion">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.out_path_C_depletion">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">out_path_C_depletion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path of out file for testing</span>
+        <span class="c1"># it contains 5 header lines and the statement of carbon depletion</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;out5.txt&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Terminate due to primary depleting carbon</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.out_path_CE_C_depletion">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.out_path_CE_C_depletion">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">out_path_CE_C_depletion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path of out file for testing</span>
+        <span class="c1"># it contains 5 header lines and the statement of entering CE and</span>
+        <span class="c1"># carbon depletion</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;out6.txt&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Test HEADER</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;TURNING ON CE</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Terminate due to primary depleting carbon</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.ini_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.ini_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ini_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path of ini file for testing</span>
+        <span class="c1"># it contains a section tag, 2 varibales (float, str), and a comment</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;test.ini&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;[TEST INI SECTION]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_float = 1.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_string = &#39;unit&#39;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;!test_comment = 0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.ini_path2">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.ini_path2">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ini_path2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path of ini file for testing</span>
+        <span class="c1"># it contains a 2 lines with &amp;, 2 variables (int, empty str)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;test2.ini&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;TEST INI SECTION 1&amp;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_int = 1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;TEST INI SECTION 2&amp;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_empty = &#39;&#39;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+    <span class="c1"># test functions</span>
+<div class="viewcode-block" id="TestFunctions.test_join_lists">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_join_lists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_join_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 2 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;A&#39; and &#39;B&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">join_lists</span><span class="p">()</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;int&#39; object is not iterable&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">join_lists</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;int&#39; object is not iterable&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">join_lists</span><span class="p">([],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># test cases</span>
+        <span class="n">tests</span> <span class="o">=</span> <span class="p">[([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]),</span>\
+                 <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span>\
+                 <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">])]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">join_lists</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">==</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_read_MESA_data_file">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_read_MESA_data_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_read_MESA_data_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">no_path</span><span class="p">,</span> <span class="n">MESA_data_path</span><span class="p">,</span> <span class="n">MESA_data</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 2 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;path&#39; and &#39;columns&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">read_MESA_data_file</span><span class="p">()</span>
+        <span class="c1"># path is None or non-existing</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">read_MESA_data_file</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Test&#39;</span><span class="p">])</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">read_MESA_data_file</span><span class="p">(</span><span class="n">no_path</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Test&#39;</span><span class="p">])</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># read full test file</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">,</span>\
+                              <span class="n">totest</span><span class="o">.</span><span class="n">read_MESA_data_file</span><span class="p">(</span><span class="n">MESA_data_path</span><span class="p">,</span>\
+                                                         <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>\
+                              <span class="p">))</span>
+        <span class="c1"># read columns individually from test file</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">[[</span><span class="n">k</span><span class="p">]],</span>\
+                                  <span class="n">totest</span><span class="o">.</span><span class="n">read_MESA_data_file</span><span class="p">(</span><span class="n">MESA_data_path</span><span class="p">,</span>\
+                                                             <span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+        <span class="c1"># read column pairs from test file</span>
+        <span class="n">k0</span> <span class="o">=</span> <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">k0</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">[[</span><span class="n">k0</span><span class="p">,</span> <span class="n">k</span><span class="p">]],</span>\
+                                      <span class="n">totest</span><span class="o">.</span><span class="n">read_MESA_data_file</span><span class="p">(</span>\
+                                      <span class="n">MESA_data_path</span><span class="p">,</span> <span class="p">[</span><span class="n">k0</span><span class="p">,</span> <span class="n">k</span><span class="p">]))</span>
+        <span class="c1"># warning for non readable data</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">MESA_data_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="s2">&quot;Test</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="n">MissingFilesWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Problems with reading file &quot;</span>\
+                                              <span class="o">+</span><span class="n">MESA_data_path</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">read_MESA_data_file</span><span class="p">(</span><span class="n">MESA_data_path</span><span class="p">,</span>\
+                                              <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_read_EEP_data_file">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_read_EEP_data_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_read_EEP_data_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">no_path</span><span class="p">,</span> <span class="n">EEP_data_path</span><span class="p">,</span> <span class="n">MESA_data</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 2 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;path&#39; and &#39;columns&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">read_EEP_data_file</span><span class="p">()</span>
+        <span class="c1"># path is None or non-existing</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">read_EEP_data_file</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Test&#39;</span><span class="p">])</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="n">MissingFilesWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Problems with reading file &quot;</span>\
+                                              <span class="o">+</span><span class="n">no_path</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">read_EEP_data_file</span><span class="p">(</span><span class="n">no_path</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Test&#39;</span><span class="p">])</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># read full test file</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">,</span>\
+                              <span class="n">totest</span><span class="o">.</span><span class="n">read_EEP_data_file</span><span class="p">(</span><span class="n">EEP_data_path</span><span class="p">,</span>\
+                                                        <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">))</span>
+        <span class="c1"># read columns individually from test file</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">[[</span><span class="n">k</span><span class="p">]],</span>\
+                                  <span class="n">totest</span><span class="o">.</span><span class="n">read_EEP_data_file</span><span class="p">(</span><span class="n">EEP_data_path</span><span class="p">,</span>\
+                                                            <span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+        <span class="c1"># read column pairs from test file</span>
+        <span class="n">k0</span> <span class="o">=</span> <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">k0</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">[[</span><span class="n">k0</span><span class="p">,</span> <span class="n">k</span><span class="p">]],</span>\
+                                      <span class="n">totest</span><span class="o">.</span><span class="n">read_EEP_data_file</span><span class="p">(</span><span class="n">EEP_data_path</span><span class="p">,</span>\
+                                                                <span class="p">[</span><span class="n">k0</span><span class="p">,</span> <span class="n">k</span><span class="p">]))</span>
+        <span class="c1"># warning for non readable data</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">EEP_data_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">15</span><span class="o">*</span><span class="s2">&quot;Test</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="n">match</span><span class="o">=</span><span class="s2">&quot;Problems with reading file &quot;</span><span class="o">+</span><span class="n">EEP_data_path</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">read_EEP_data_file</span><span class="p">(</span><span class="n">EEP_data_path</span><span class="p">,</span>\
+                                             <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_fix_He_core">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_fix_He_core">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_fix_He_core</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MESA_data</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 1 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;argument: &#39;history&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">fix_He_core</span><span class="p">()</span>
+        <span class="c1"># history is None</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">fix_He_core</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># history is ndarray without the required columns</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">fix_He_core</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">))</span>
+        <span class="c1"># history is ndarray with the required columns and corrects them</span>
+        <span class="n">test_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>\
+                                 <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)],</span>\
+                                <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                                       <span class="p">(</span><span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                                       <span class="p">(</span><span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                                       <span class="p">(</span><span class="s1">&#39;co_core_radius&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">)])</span>
+        <span class="n">fixed_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>\
+                                  <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)],</span>\
+                                 <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                                        <span class="p">(</span><span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                                        <span class="p">(</span><span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">),</span>\
+                                        <span class="p">(</span><span class="s1">&#39;co_core_radius&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">)])</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">fixed_history</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">fix_He_core</span><span class="p">(</span><span class="n">test_history</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_add_field">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_add_field">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_add_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MESA_data</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 2 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;a&#39; and &#39;descr&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">add_field</span><span class="p">()</span>
+        <span class="c1"># add to empty ndarray</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;a&#39; must be a structured numpy array&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="p">[(</span><span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">)])</span>
+        <span class="c1"># add to test data</span>
+        <span class="n">extended_ndarray</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">)])</span>
+        <span class="k">assert</span> <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">descr</span><span class="o">+</span><span class="p">[(</span><span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f8&#39;</span><span class="p">)]</span> <span class="o">==</span>\
+               <span class="n">extended_ndarray</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">descr</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">MESA_data</span><span class="p">,</span>\
+                              <span class="n">extended_ndarray</span><span class="p">[[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span>\
+                                                <span class="n">MESA_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">]])</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_get_cell_edges">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_get_cell_edges">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_cell_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 2 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;grid_x&#39; and &#39;grid_y&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">get_cell_edges</span><span class="p">()</span>
+        <span class="c1"># example for x = [0.1, 0.3, 0.5, 0.7, 0.9] and y = [0.1, 0.3, 0.5]</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">get_cell_edges</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>\
+                                                 <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>\
+                           <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>\
+                                       <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">4</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_find_nearest">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_find_nearest">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_find_nearest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 2 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;val&#39; and &#39;array&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">find_nearest</span><span class="p">()</span>
+        <span class="c1"># example for [0.1, 0.3, 0.5, 0.7, 0.9]</span>
+        <span class="n">test_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">find_nearest</span><span class="p">(</span><span class="n">v</span><span class="o">+</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">test_data</span><span class="p">)</span> <span class="o">==</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_find_index_nearest_neighbour">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_find_index_nearest_neighbour">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_find_index_nearest_neighbour</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 2 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;array&#39; and &#39;value&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">find_index_nearest_neighbour</span><span class="p">()</span>
+        <span class="c1"># example for [0.1, 0.3, 0.5, 0.7, 0.9]</span>
+        <span class="n">test_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_data</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">find_index_nearest_neighbour</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">v</span><span class="o">+</span><span class="mf">0.1</span><span class="p">)</span> <span class="o">==</span> <span class="n">i</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_get_final_proposed_points">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_get_final_proposed_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_final_proposed_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 4 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;proposed_x&#39;, &#39;grid_x&#39;, &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;&#39;proposed_y&#39;, and &#39;grid_y&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">get_final_proposed_points</span><span class="p">()</span>
+        <span class="c1"># example for grid_x = [0.1, 0.3, 0.5], grid_y = [0.1, 0.3, 0.5],</span>
+        <span class="c1"># proposed_x = [0.19, 0.29, 0.39, 0.49, 0.59], and</span>
+        <span class="c1"># proposed_y = [0.21, 0.31, 0.41, 0.51, 0.61]</span>
+        <span class="n">mx</span><span class="p">,</span><span class="n">my</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">get_final_proposed_points</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.19</span><span class="p">,</span> <span class="mf">0.59</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>\
+                                                 <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>\
+                                                 <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.21</span><span class="p">,</span> <span class="mf">0.61</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>\
+                                                 <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]))</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">my</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_T_merger_P">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_T_merger_P">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_T_merger_P</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 3 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;P&#39;, &#39;m1&#39;, and &#39;m2&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">T_merger_P</span><span class="p">()</span>
+        <span class="c1"># examples</span>
+        <span class="n">tests</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">0.37210532488</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-12</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">2.36272153666</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-12</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">0.20477745195</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-12</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">0.22058982311</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-12</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">T_merger_P</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span> <span class="o">==</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_beta_gw">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_beta_gw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_beta_gw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 2 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;m1&#39; and &#39;m2&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">beta_gw</span><span class="p">()</span>
+        <span class="c1"># examples</span>
+        <span class="n">tests</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">3.18232660295e-69</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-81</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">8.48620427454e-69</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-81</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">2.54586128236e-68</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-80</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">beta_gw</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span> <span class="o">==</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_kepler3_a">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_kepler3_a">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_kepler3_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 3 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;P&#39;, &#39;m1&#39;, and &#39;m2&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">kepler3_a</span><span class="p">()</span>
+        <span class="c1"># examples</span>
+        <span class="n">tests</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">14.9643417735</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-11</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">23.7544118733</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-11</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">16.4703892879</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-11</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">17.7421890201</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-11</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">kepler3_a</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span> <span class="o">==</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_T_merger_a">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_T_merger_a">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_T_merger_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 3 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;a&#39;, &#39;m1&#39;, and &#39;m2&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">T_merger_a</span><span class="p">()</span>
+        <span class="c1"># examples</span>
+        <span class="n">tests</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">7.42053829341e-06</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-18</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">1.18728612695e-04</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-16</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">2.78270186003e-06</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-18</span><span class="p">)),</span>\
+                 <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">,</span> <span class="n">approx</span><span class="p">(</span><span class="mf">2.22616148802e-06</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-18</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">T_merger_a</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span> <span class="o">==</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_convert_output_to_table">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_convert_output_to_table">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_convert_output_to_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">no_path</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span>\
+                                     <span class="n">MESA_BH_data_tight_orbit</span><span class="p">,</span>\
+                                     <span class="n">MESA_BH_data_wide_orbit</span><span class="p">,</span>\
+                                     <span class="n">BH_path_tight_orbit</span><span class="p">,</span> <span class="n">BH_path_wide_orbit</span><span class="p">,</span>\
+                                     <span class="n">MESA_SH_data</span><span class="p">,</span> <span class="n">H1_path</span><span class="p">,</span> <span class="n">H2_path</span><span class="p">,</span>\
+                                     <span class="n">out_gz_path</span><span class="p">,</span> <span class="n">out_path_CE</span><span class="p">,</span>\
+                                     <span class="n">out_path_strong_RLO</span><span class="p">,</span>\
+                                     <span class="n">out_path_CE_strong_RLO</span><span class="p">,</span>\
+                                     <span class="n">out_path_C_depletion</span><span class="p">,</span>\
+                                     <span class="n">out_path_CE_C_depletion</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 1 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;argument: &#39;output_file&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">()</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;File &quot;</span><span class="o">+</span><span class="n">no_path</span><span class="o">+</span><span class="s2">&quot; does not exist&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">no_path</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;touch &quot;</span><span class="o">+</span><span class="n">out_path</span><span class="o">+</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Please check that you have `touch` installed &quot;</span>\
+                               <span class="o">+</span><span class="s2">&quot;and up to date.&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;The output file does not have any &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;data.&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_path</span><span class="o">+</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="c1"># check warnings for non specified files</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="n">MissingFilesWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;You have not supplied a &quot;</span>\
+                                              <span class="o">+</span><span class="s2">&quot;binary history file to parse.&quot;</span>\
+                                              <span class="o">+</span><span class="s2">&quot; This will cause all binary &quot;</span>\
+                                              <span class="o">+</span><span class="s2">&quot;history columns to be dashes.&quot;</span>\
+             <span class="p">):</span>
+            <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="n">MissingFilesWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;You have not supplied a &quot;</span>\
+                                                  <span class="o">+</span><span class="s2">&quot;star1 history file to &quot;</span>\
+                                                  <span class="o">+</span><span class="s2">&quot;parse. This will cause &quot;</span>\
+                                                  <span class="o">+</span><span class="s2">&quot;all star1 history columns&quot;</span>\
+                                                  <span class="o">+</span><span class="s2">&quot; to be dashes.&quot;</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="n">MissingFilesWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;You have not supplied &quot;</span>\
+                                                      <span class="o">+</span><span class="s2">&quot;a star2 history file &quot;</span>\
+                                                      <span class="o">+</span><span class="s2">&quot;to parse. This will &quot;</span>\
+                                                      <span class="o">+</span><span class="s2">&quot;cause all star2 &quot;</span>\
+                                                      <span class="o">+</span><span class="s2">&quot;history columns to &quot;</span>\
+                                                      <span class="o">+</span><span class="s2">&quot;be dashes.&quot;</span><span class="p">):</span>
+                    <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span>\
+                                                          <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Test&quot;</span><span class="p">]</span>\
+                           <span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;CE_flag&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>\
+                                                  <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">],</span>\
+                                                  <span class="s1">&#39;Test&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">]}))</span>
+        <span class="c1"># check zipped out file + initial RLO</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_gz_path</span><span class="o">+</span><span class="s2">&quot;.gz&quot;</span><span class="p">,</span>\
+                                              <span class="n">binary_history_file</span><span class="o">=</span>\
+                                              <span class="n">BH_path_tight_orbit</span><span class="p">,</span>\
+                                              <span class="n">star1_history_file</span><span class="o">=</span><span class="n">H1_path</span><span class="p">,</span>\
+                                              <span class="n">star2_history_file</span><span class="o">=</span><span class="n">H2_path</span><span class="p">,</span>\
+                                              <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Test&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span>\
+               <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ZAMS_RLOF&quot;</span><span class="p">],</span> <span class="s1">&#39;Test&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">]}))</span>
+        <span class="c1"># check CE + existing column</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_path_CE</span><span class="p">,</span> <span class="n">binary_history_file</span>\
+                                              <span class="o">=</span><span class="n">BH_path_tight_orbit</span><span class="p">,</span>\
+                                              <span class="n">star1_history_file</span><span class="o">=</span><span class="n">H1_path</span><span class="p">,</span>\
+                                              <span class="n">star2_history_file</span><span class="o">=</span><span class="n">H2_path</span><span class="p">,</span>\
+                                              <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Test&quot;</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">]</span>\
+               <span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;CE_flag&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">],</span>\
+                                      <span class="s1">&#39;Test&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">]}))</span>
+        <span class="c1"># check contact</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_path_strong_RLO</span><span class="p">,</span>\
+                                              <span class="n">binary_history_file</span><span class="o">=</span>\
+                                              <span class="n">BH_path_tight_orbit</span><span class="p">,</span>\
+                                              <span class="n">star1_history_file</span><span class="o">=</span><span class="n">H1_path</span><span class="p">,</span>\
+                                              <span class="n">star2_history_file</span><span class="o">=</span><span class="n">H2_path</span><span class="p">,</span>\
+                                              <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Test&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span>\
+               <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;CE_flag&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;contact&quot;</span><span class="p">],</span>\
+                             <span class="s1">&#39;Test&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">]}))</span>
+        <span class="c1"># check CE merger</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_path_CE_strong_RLO</span><span class="p">,</span>\
+                                              <span class="n">binary_history_file</span><span class="o">=</span>\
+                                              <span class="n">BH_path_tight_orbit</span><span class="p">,</span>\
+                                              <span class="n">star1_history_file</span><span class="o">=</span><span class="n">H1_path</span><span class="p">,</span>\
+                                              <span class="n">star2_history_file</span><span class="o">=</span><span class="n">H2_path</span><span class="p">,</span>\
+                                              <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Test&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span>\
+               <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;CE_flag&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CE_merger&quot;</span><span class="p">],</span>\
+                             <span class="s1">&#39;Test&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">]}))</span>
+        <span class="c1"># check carbon depletion: stable_MT_to_merger</span>
+        <span class="n">out_table</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_path_C_depletion</span><span class="p">,</span>\
+                                                   <span class="n">binary_history_file</span><span class="o">=</span>\
+                                                   <span class="n">BH_path_tight_orbit</span><span class="p">,</span>\
+                                                   <span class="n">star1_history_file</span><span class="o">=</span><span class="n">H1_path</span><span class="p">,</span>\
+                                                   <span class="n">star2_history_file</span><span class="o">=</span><span class="n">H2_path</span><span class="p">,</span>\
+                                                   <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Test&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;CE_flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;stable_MT_to_merger&quot;</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Test&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;log_L_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">MESA_SH_data</span><span class="p">[</span><span class="s1">&#39;log_L&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;log_T_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">==</span>\
+                   <span class="n">MESA_SH_data</span><span class="p">[</span><span class="s1">&#39;log_Teff&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;He_core_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">(Msun)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+                   <span class="n">MESA_SH_data</span><span class="p">[</span><span class="s1">&#39;he_core_mass&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;C_core_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">(Msun)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+                   <span class="n">MESA_SH_data</span><span class="p">[</span><span class="s1">&#39;c_core_mass&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;M_1f(Msun)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_tight_orbit</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;M_2f(Msun)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_tight_orbit</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Porb_f(d)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_tight_orbit</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s1">&#39;tmerge(Gyr)&#39;</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+        <span class="c1"># check carbon depletion: no_interaction</span>
+        <span class="n">out_table</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_path_CE_C_depletion</span><span class="p">,</span>\
+                                                   <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Test&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;CE_flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;no_interaction&quot;</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Test&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="sa">f</span><span class="s1">&#39;log_L_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">assert</span> <span class="sa">f</span><span class="s1">&#39;log_T_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">assert</span> <span class="sa">f</span><span class="s1">&#39;He_core_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">(Msun)&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">assert</span> <span class="sa">f</span><span class="s1">&#39;C_core_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">(Msun)&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+        <span class="k">assert</span> <span class="s1">&#39;M_1f(Msun)&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+        <span class="k">assert</span> <span class="s1">&#39;M_2f(Msun)&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+        <span class="k">assert</span> <span class="s1">&#39;Porb_f(d)&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+        <span class="k">assert</span> <span class="s1">&#39;tmerge(Gyr)&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+        <span class="c1"># check carbon depletion: CE_ejection_m</span>
+        <span class="n">out_table</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_path_CE_C_depletion</span><span class="p">,</span>\
+                                                   <span class="n">binary_history_file</span><span class="o">=</span>\
+                                                   <span class="n">BH_path_tight_orbit</span><span class="p">,</span>\
+                                                   <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Test&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;CE_flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;CE_ejection_m&quot;</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Test&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;M_1f(Msun)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_tight_orbit</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;M_2f(Msun)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_tight_orbit</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Porb_f(d)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_tight_orbit</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s1">&#39;tmerge(Gyr)&#39;</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+        <span class="c1"># check carbon depletion: stable_MT_to_wide_binary</span>
+        <span class="n">out_table</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_path_C_depletion</span><span class="p">,</span>\
+                                                   <span class="n">binary_history_file</span><span class="o">=</span>\
+                                                   <span class="n">BH_path_wide_orbit</span><span class="p">,</span>\
+                                                   <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Test&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;CE_flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;stable_MT_to_wide_binary&quot;</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Test&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;M_1f(Msun)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_wide_orbit</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;M_2f(Msun)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_wide_orbit</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Porb_f(d)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_wide_orbit</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s1">&#39;tmerge(Gyr)&#39;</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span>
+        <span class="c1"># check carbon depletion: CE_ejection</span>
+        <span class="n">out_table</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">convert_output_to_table</span><span class="p">(</span><span class="n">out_path_CE_C_depletion</span><span class="p">,</span>\
+                                                   <span class="n">binary_history_file</span><span class="o">=</span>\
+                                                   <span class="n">BH_path_wide_orbit</span><span class="p">,</span>\
+                                                   <span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Test&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;CE_flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;CE_ejection&quot;</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Test&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;M_1f(Msun)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_wide_orbit</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;M_2f(Msun)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_wide_orbit</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">out_table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Porb_f(d)&#39;</span><span class="p">]</span> <span class="o">==</span>\
+               <span class="n">MESA_BH_data_wide_orbit</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s1">&#39;tmerge(Gyr)&#39;</span> <span class="ow">in</span> <span class="n">out_table</span><span class="o">.</span><span class="n">columns</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_clean_inlist_file">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_clean_inlist_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_clean_inlist_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ini_path</span><span class="p">,</span> <span class="n">ini_path2</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 1 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;argument: &#39;inlist&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">clean_inlist_file</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">clean_inlist_file</span><span class="p">(</span><span class="n">ini_path</span><span class="p">)</span> <span class="o">==</span>\
+               <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;test_float&#39;</span><span class="p">:</span> <span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="s1">&#39;test_string&#39;</span><span class="p">:</span> <span class="s2">&quot;&#39;unit&#39;&quot;</span><span class="p">}}</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">clean_inlist_file</span><span class="p">(</span><span class="n">ini_path</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s2">&quot;test_section&quot;</span><span class="p">)</span> <span class="o">==</span>\
+               <span class="p">{</span><span class="s1">&#39;test_section&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;test_float&#39;</span><span class="p">:</span> <span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="s1">&#39;test_string&#39;</span><span class="p">:</span> <span class="s2">&quot;&#39;unit&#39;&quot;</span><span class="p">}}</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">clean_inlist_file</span><span class="p">(</span><span class="n">ini_path2</span><span class="p">)</span> <span class="o">==</span>\
+               <span class="p">{</span><span class="s1">&#39;TEST INI SECTION 1&amp;&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;test_int&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">},</span>\
+                <span class="s1">&#39;TEST INI SECTION 2&amp;&#39;</span><span class="p">:</span> <span class="p">{}}</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_get_new_grid_name">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_gridutils.TestFunctions.test_get_new_grid_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_new_grid_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 2 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;path&#39; and &#39;compression&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">get_new_grid_name</span><span class="p">()</span>
+        <span class="c1"># get name without check for existence of compression directory</span>
+        <span class="n">grid_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;test_grid&quot;</span><span class="p">)</span>
+        <span class="n">compression_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;TEST_COMPRESSION&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">get_new_grid_name</span><span class="p">(</span><span class="n">grid_dir</span><span class="p">,</span> <span class="s2">&quot;TEST_COMPRESSION&quot;</span><span class="p">)</span> <span class="o">==</span>\
+               <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">compression_dir</span><span class="p">,</span> <span class="s2">&quot;test_grid.h5&quot;</span><span class="p">)</span>
+        <span class="c1"># create compression directory</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">get_new_grid_name</span><span class="p">(</span><span class="n">grid_dir</span><span class="p">,</span> <span class="s2">&quot;TEST_COMPRESSION&quot;</span><span class="p">,</span>\
+                                        <span class="n">create_missing_directories</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">==</span>\
+               <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">compression_dir</span><span class="p">,</span> <span class="s2">&quot;test_grid.h5&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">compression_dir</span><span class="p">)</span>
+        <span class="c1"># compression directory already exists, while it would be created</span>
+        <span class="c1"># otherwise</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">get_new_grid_name</span><span class="p">(</span><span class="n">grid_dir</span><span class="p">,</span> <span class="s2">&quot;TEST_COMPRESSION&quot;</span><span class="p">,</span>\
+                                        <span class="n">create_missing_directories</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">==</span>\
+               <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">compression_dir</span><span class="p">,</span> <span class="s2">&quot;test_grid.h5&quot;</span><span class="p">)</span></div>
+</div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

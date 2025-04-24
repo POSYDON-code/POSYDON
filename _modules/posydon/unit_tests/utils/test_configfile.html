@@ -1,0 +1,554 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.unit_tests.utils.test_configfile &mdash; posydon v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=f4b7fd8b"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.unit_tests.utils.test_configfile</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.unit_tests.utils.test_configfile</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Unit tests of posydon/utils/configfile.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># import the module which will be tested</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.configfile</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">totest</span>
+<span class="c1"># aliases</span>
+<span class="n">np</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">np</span>
+<span class="n">os</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">os</span>
+
+<span class="c1"># import other needed code for the tests, which is not already imported in the</span>
+<span class="c1"># module you like to test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">fixture</span><span class="p">,</span> <span class="n">raises</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">isclass</span><span class="p">,</span> <span class="n">isroutine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ast</span><span class="w"> </span><span class="kn">import</span> <span class="n">AST</span><span class="p">,</span> <span class="n">parse</span>
+
+<span class="c1"># define test classes collecting several test functions</span>
+<div class="viewcode-block" id="TestElements">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestElements">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestElements</span><span class="p">:</span>
+    <span class="c1"># check for objects, which should be an element of the tested module</span>
+<div class="viewcode-block" id="TestElements.test_dir">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestElements.test_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ConfigFile&#39;</span><span class="p">,</span> <span class="s1">&#39;VariableKey&#39;</span><span class="p">,</span> <span class="s1">&#39;__authors__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span> <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;ast&#39;</span><span class="p">,</span> <span class="s1">&#39;configparser&#39;</span><span class="p">,</span> <span class="s1">&#39;copy&#39;</span><span class="p">,</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="s1">&#39;operator&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;os&#39;</span><span class="p">,</span> <span class="s1">&#39;parse_inifile&#39;</span><span class="p">}</span>
+        <span class="n">totest_elements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">totest</span><span class="p">))</span>
+        <span class="n">missing_in_test</span> <span class="o">=</span> <span class="n">elements</span> <span class="o">-</span> <span class="n">totest_elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are missing objects in &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">missing_in_test</span><span class="si">}</span><span class="s2">. Please &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;check, whether they have been &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;removed on purpose and update &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;this unit test.&quot;</span>
+        <span class="n">new_in_test</span> <span class="o">=</span> <span class="n">totest_elements</span> <span class="o">-</span> <span class="n">elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are new objects in &quot;</span>\
+                                      <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_in_test</span><span class="si">}</span><span class="s2">. &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;Please check, whether they have been &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;added on purpose and update this &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;unit test.&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_ConfigFile">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestElements.test_instance_ConfigFile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_ConfigFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ConfigFile</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_parse_inifile">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestElements.test_instance_parse_inifile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_parse_inifile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">parse_inifile</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_VariableKey">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestElements.test_instance_VariableKey">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_VariableKey</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">VariableKey</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestFunctions">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestFunctions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestFunctions</span><span class="p">:</span>
+<div class="viewcode-block" id="TestFunctions.ini_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestFunctions.ini_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ini_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path to ini file for testing</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;test.ini&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;[run_parameters]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_bool1 = True</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_bool2 = False</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_None = None</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[mesa_inlists]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_float = 0.1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_int = 10</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_list = [&#39;Unit Test1&#39;, &#39;Unit Test2&#39;]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_str1 = &#39;Unit Test&#39;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_str2 = &#39;Unit,Test&#39;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_BinOp = $</span><span class="si">{test_int}</span><span class="s2">+1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[mesa_extras]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_else = print(&#39;1&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[slurm]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_exception = ast.parse(&#39;X=1&#39;, mode=&#39;eval&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+    <span class="c1"># test functions</span>
+<div class="viewcode-block" id="TestFunctions.test_parse_inifile">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestFunctions.test_parse_inifile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_parse_inifile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ini_path</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_parse</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;&lt;unknown&gt;&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;exec&#39;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>\
+                       <span class="n">type_comments</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">feature_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimize</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">mock_node</span> <span class="o">=</span> <span class="n">AST</span><span class="p">()</span>
+            <span class="n">mock_node</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;eval&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">mock_node</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 1 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;argument: &#39;inifile&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">parse_inifile</span><span class="p">()</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;int&#39; object is not iterable&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">parse_inifile</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># read test ini</span>
+        <span class="n">rp</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">mi</span><span class="p">,</span> <span class="n">me</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">parse_inifile</span><span class="p">(</span><span class="n">ini_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">rp</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;MESA_DIR&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MESA_DIR&#39;</span><span class="p">],</span>\
+                      <span class="s1">&#39;test_bool1&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;test_bool2&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="kc">False</span><span class="p">,</span>\
+                      <span class="s1">&#39;test_None&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;MESA_DIR&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MESA_DIR&#39;</span><span class="p">],</span>\
+                     <span class="s1">&#39;test_exception&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="p">[</span><span class="s2">&quot;ast.parse(&#39;X=1&#39;&quot;</span><span class="p">,</span>\
+                                                <span class="s2">&quot;mode=&#39;eval&#39;)&quot;</span><span class="p">]}</span>
+        <span class="k">assert</span> <span class="n">mi</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;MESA_DIR&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MESA_DIR&#39;</span><span class="p">],</span>\
+                      <span class="s1">&#39;test_float&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;test_int&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="mi">10</span><span class="p">,</span>\
+                      <span class="s1">&#39;test_list&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="p">[</span><span class="s1">&#39;Unit Test1&#39;</span><span class="p">,</span> <span class="s1">&#39;Unit Test2&#39;</span><span class="p">],</span>\
+                      <span class="s1">&#39;test_str1&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="s1">&#39;Unit Test&#39;</span><span class="p">,</span>\
+                      <span class="s1">&#39;test_str2&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="p">[</span><span class="s1">&#39;Unit&#39;</span><span class="p">,</span> <span class="s1">&#39;Test&#39;</span><span class="p">],</span>\
+                      <span class="s1">&#39;test_BinOp&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="mi">11</span><span class="p">}</span>
+        <span class="k">assert</span> <span class="n">me</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;MESA_DIR&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MESA_DIR&#39;</span><span class="p">],</span>\
+                      <span class="s1">&#39;test_else&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="s2">&quot;print(&#39;1&#39;)&quot;</span><span class="p">}</span>
+        <span class="k">with</span> <span class="n">monkeypatch</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">mp</span><span class="p">:</span>
+            <span class="c1"># replace parse to check recursion of _eval</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ast</span><span class="p">,</span> <span class="s2">&quot;parse&quot;</span><span class="p">,</span> <span class="n">mock_parse</span><span class="p">)</span>
+            <span class="c1"># replace content of test.ini to check Error</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ini_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;[Unit Test]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test_value = &#39;Test&#39;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;run_parameters&#39;&quot;</span><span class="p">):</span>
+                <span class="n">totest</span><span class="o">.</span><span class="n">parse_inifile</span><span class="p">(</span><span class="n">ini_path</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestConfigFile">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestConfigFile</span><span class="p">:</span>
+<div class="viewcode-block" id="TestConfigFile.ConfigFile">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.ConfigFile">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ConfigFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">ConfigFile</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.json_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.json_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">json_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path to json file for testing</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;test.json&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;{</span><span class="se">\n</span><span class="s1">    &quot;Unit&quot;: &quot;Test&quot;</span><span class="se">\n</span><span class="s1">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_entries">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_entries">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># entries for testing</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;Unit1&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">,</span> <span class="s1">&#39;Unit2&#39;</span><span class="p">:</span> <span class="s2">&quot;Again&quot;</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.ConfigFile_filled">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.ConfigFile_filled">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ConfigFile_filled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_entries</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="n">ConfigFile</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">ConfigFile</span><span class="p">()</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test_entries</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ConfigFile</span></div>
+
+
+    <span class="c1"># test the ConfigFile class</span>
+<div class="viewcode-block" id="TestConfigFile.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">json_path</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ConfigFile</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">ConfigFile</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span> <span class="o">==</span> <span class="p">{}</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># error on directory</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">IsADirectoryError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Is a directory: &#39;&quot;</span>\
+                                             <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">ConfigFile</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">tmp_path</span><span class="p">)</span>
+        <span class="c1"># non-existing path</span>
+        <span class="n">test_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;does_not_exist.test&quot;</span><span class="p">)</span>
+        <span class="n">test_ConfigFile</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">ConfigFile</span><span class="p">(</span><span class="n">test_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">test_ConfigFile</span><span class="o">.</span><span class="n">path</span> <span class="o">==</span> <span class="n">test_path</span>
+        <span class="n">test_ConfigFile</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">ConfigFile</span><span class="p">(</span><span class="n">json_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">test_ConfigFile</span><span class="o">.</span><span class="n">path</span> <span class="o">==</span> <span class="n">json_path</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_deepcopy">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_deepcopy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">)</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="s1">&#39;Unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Test&quot;</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="s1">&#39;second&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;Test_path&quot;</span>
+        <span class="n">test_ConfigFile</span> <span class="o">=</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">()</span>
+        <span class="c1"># not same object</span>
+        <span class="k">assert</span> <span class="n">test_ConfigFile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">ConfigFile</span>
+        <span class="c1"># but same content</span>
+        <span class="k">assert</span> <span class="n">test_ConfigFile</span><span class="o">.</span><span class="n">entries</span> <span class="o">==</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span>
+        <span class="k">assert</span> <span class="n">test_ConfigFile</span><span class="o">.</span><span class="n">path</span> <span class="o">==</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_serialize">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_serialize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile</span><span class="o">.</span><span class="n">_serialize</span><span class="p">)</span>
+        <span class="c1"># serialize any numpy array</span>
+        <span class="n">np_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">_serialize</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np_array</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">np_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">_serialize</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np_array</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">]</span>
+        <span class="c1"># other data don&#39;t give a return</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">_serialize</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_save">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile</span><span class="o">.</span><span class="n">save</span><span class="p">)</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;No path passed.&quot;</span><span class="p">):</span>
+            <span class="n">ConfigFile</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">PermissionError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;JSON file not saved: overwrite &quot;</span>\
+                                           <span class="o">+</span><span class="s2">&quot;not permitted.&quot;</span><span class="p">):</span>
+            <span class="n">ConfigFile</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">test_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;save.test&quot;</span><span class="p">)</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">test_path</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="s1">&#39;Unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Test&quot;</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">test_path</span><span class="p">)</span>
+        <span class="c1"># overwrite file</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="s1">&#39;second&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">test_path</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">test_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">test_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;{</span><span class="se">\n</span><span class="s1">    &quot;Unit&quot;: &quot;Test&quot;,</span><span class="se">\n</span><span class="s1">&#39;</span>\
+                                       <span class="o">+</span> <span class="s1">&#39;    &quot;second&quot;: &quot;test&quot;</span><span class="se">\n</span><span class="s1">}&#39;</span>
+        <span class="c1"># ignore ConfigFile.path</span>
+        <span class="n">test_path2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;save2.test&quot;</span><span class="p">)</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">test_path2</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">test_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">test_path2</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_load">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_load">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile</span><span class="p">,</span> <span class="n">json_path</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile</span><span class="o">.</span><span class="n">load</span><span class="p">)</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;No path passed.&quot;</span><span class="p">):</span>
+            <span class="n">ConfigFile</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="c1"># load mock file with path as keyword</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">json_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;Unit&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">}</span>
+        <span class="c1"># set path and entries</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">json_path</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="s1">&#39;Unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ToReplace&quot;</span>
+        <span class="c1"># try to load mock file without permission to overwrite</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">PermissionError</span><span class="p">,</span>\
+                    <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Not allowed to update the entries&quot;</span><span class="p">):</span>
+            <span class="n">ConfigFile</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;Unit&#39;</span><span class="p">:</span> <span class="s2">&quot;ToReplace&quot;</span><span class="p">}</span>
+        <span class="c1"># load mock file and overwrite entry</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">can_update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;Unit&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_getattr">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_getattr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">)</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">):</span>
+            <span class="n">ConfigFile</span><span class="o">.</span><span class="n">Test</span>
+        <span class="c1"># add a value to entries and get it</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="s1">&#39;Unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Test&quot;</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">Unit</span> <span class="o">==</span> <span class="s2">&quot;Test&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_getitem">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_getitem">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_getitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">)</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">):</span>
+            <span class="n">ConfigFile</span><span class="p">[</span><span class="s1">&#39;Test&#39;</span><span class="p">]</span>
+        <span class="c1"># add a value to entries and get it</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="s1">&#39;Unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Test&quot;</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="p">[</span><span class="s1">&#39;Unit&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Test&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_setitem">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_setitem">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_setitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">)</span>
+        <span class="c1"># add a value to entries and get it</span>
+        <span class="n">ConfigFile</span><span class="p">[</span><span class="s1">&#39;Unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Test&quot;</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="s1">&#39;Unit&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Test&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_delitem">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_delitem">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile_filled</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;Unit&#39;&quot;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">ConfigFile_filled</span><span class="p">[</span><span class="s1">&#39;Unit&#39;</span><span class="p">]</span>
+        <span class="c1"># delete entries</span>
+        <span class="k">del</span> <span class="n">ConfigFile_filled</span><span class="p">[</span><span class="s1">&#39;Unit1&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">ConfigFile_filled</span><span class="p">[</span><span class="s1">&#39;Unit2&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">ConfigFile_filled</span><span class="o">.</span><span class="n">entries</span> <span class="o">==</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_iter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_iter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile_filled</span><span class="p">,</span> <span class="n">test_entries</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">)</span>
+        <span class="c1"># loop over entries</span>
+        <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ConfigFile_filled</span><span class="p">:</span>
+            <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">ConfigFile_filled</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="n">test_entries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="c1"># check that it was iterated over all keys in test_entries</span>
+        <span class="k">assert</span> <span class="n">iteration</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_entries</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_update">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile</span><span class="p">,</span> <span class="n">test_entries</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile</span><span class="o">.</span><span class="n">update</span><span class="p">)</span>
+        <span class="n">ConfigFile</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test_entries</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ConfigFile</span><span class="o">.</span><span class="n">entries</span> <span class="o">==</span> <span class="n">test_entries</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_keys">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_keys">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile_filled</span><span class="p">,</span> <span class="n">test_entries</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="o">.</span><span class="n">keys</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ConfigFile_filled</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">==</span> <span class="n">test_entries</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_values">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile_filled</span><span class="p">,</span> <span class="n">test_entries</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>\
+                          <span class="nb">type</span><span class="p">(</span><span class="n">test_entries</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ConfigFile_filled</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">test_entries</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="c1"># check that it was iterated over all values in test_entries</span>
+        <span class="k">assert</span> <span class="n">iteration</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_entries</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_items">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_items">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile_filled</span><span class="p">,</span> <span class="n">test_entries</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ConfigFile_filled</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="o">==</span> <span class="n">test_entries</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_repr">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_repr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile_filled</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">repr</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Unit1: Test</span><span class="se">\n</span><span class="s2">Unit2: Again</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_contains">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_contains">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile_filled</span><span class="p">,</span> <span class="n">test_entries</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">test_entries</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ConfigFile_filled</span></div>
+
+
+<div class="viewcode-block" id="TestConfigFile.test_len">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_configfile.TestConfigFile.test_len">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ConfigFile_filled</span><span class="p">,</span> <span class="n">test_entries</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="o">.</span><span class="fm">__len__</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ConfigFile_filled</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_entries</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1">#class TestVariableKey:</span>
+<span class="c1">#    # test the VariableKey class: looks to be not used as long as using python3</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
