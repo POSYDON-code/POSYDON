@@ -268,6 +268,38 @@ def roche_lobe_radius(m1, m2, a_orb=1):
     )
     return RL
 
+def check_for_RLO(m1, r1, m2, r2, separation, tolerance):
+    """Check if either star in a binary is overfilling its Roche lobe.
+    It uses roche_lobe_radius and the binary separation to determine if either
+    star is overfilling their Roche lobe.
+    Parameters
+    ----------
+    m1 : float
+        mass of star 1
+    r1 : float
+        radius of star 1 (in Rsun)
+    m2 : float
+        mass of star 2
+    r2 : float
+        radius of star 2 (in Rsun)
+    separation : float
+        Orbital separation (in Rsun)
+    tolerance : float
+        The tolerance within which a merger occurs (in Rsun).
+    Returns
+    -------
+    RLO: bool
+        Whether either star in the binary is overfilling its Roche Lobe.
+    """
+    # First, calculate the Roche radii for each star
+    RL1 = roche_lobe_radius(m1, m2, separation)
+    RL2 = roche_lobe_radius(m2, m1, separation)
+
+    # Now check for merger
+    if ((r1 - RL1) < tolerance and (r2 - RL2) < tolerance):
+        return False
+
+    return True
 
 def orbital_separation_from_period(period_days, m1_solar, m2_solar):
     """Apply the Third Kepler law.
