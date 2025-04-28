@@ -1416,57 +1416,57 @@ class StepCEE(object):
 
             return Mejected_donor, Mejected_comp
 
-        def CEE_adjust_binary_upon_merger(self, binary, donor, comp_star, m1_i,
-                                      m2_i, donor_type, Mejected_donor,
-                                      Mejected_comp, verbose=False):
-            """Update the binary and component stars upon merging within a CEE.
+    def CEE_adjust_binary_upon_merger(self, binary, donor, comp_star, m1_i,
+                                    m2_i, donor_type, Mejected_donor,
+                                    Mejected_comp, verbose=False):
+        """Update the binary and component stars upon merging within a CEE.
 
-             The binary's state and event are updated along with the donor and 
-            companion star masses and radii corresponding to a merger event.
-            Parameters
-            ----------
-            binary: BinaryStar object
-                The binary system
-            donor : SingleStar object
-                The donor star
-            comp_star : SingleStar object
-                The companion star
-            m1_i : float
-                mass of the donor upon entering a CE (in Msun)
-            m2_i : float
-                mass of the companion upon entering a CE (in Msun)
-            donor_type : string
-                descriptor for the stellar type of the donor
-            Mejected_donor : float
-                how much mass is ejected from the donor upon merger (in Msun)
-            Mejected_comp : float
-                how much mass is ejected from the companion upon merger (in Msun)
-            verbose : bool
-                In case we want information about the CEE.
-            """
-            # system merges
-            binary.state = 'merged'
-            if binary.event in ["oCE1", "oDoubleCE1"]:
-                binary.event = "oMerging1"
-            if binary.event in ["oCE2", "oDoubleCE2"]:
-                binary.event = "oMerging2"
+            The binary's state and event are updated along with the donor and 
+        companion star masses and radii corresponding to a merger event.
+        Parameters
+        ----------
+        binary: BinaryStar object
+            The binary system
+        donor : SingleStar object
+            The donor star
+        comp_star : SingleStar object
+            The companion star
+        m1_i : float
+            mass of the donor upon entering a CE (in Msun)
+        m2_i : float
+            mass of the companion upon entering a CE (in Msun)
+        donor_type : string
+            descriptor for the stellar type of the donor
+        Mejected_donor : float
+            how much mass is ejected from the donor upon merger (in Msun)
+        Mejected_comp : float
+            how much mass is ejected from the companion upon merger (in Msun)
+        verbose : bool
+            In case we want information about the CEE.
+        """
+        # system merges
+        binary.state = 'merged'
+        if binary.event in ["oCE1", "oDoubleCE1"]:
+            binary.event = "oMerging1"
+        if binary.event in ["oCE2", "oDoubleCE2"]:
+            binary.event = "oMerging2"
 
-            if verbose:
-                print("system merges due to one of the two star's core filling"
-                        "its RL")
-                # print("Rdonor core vs RLdonor core = ", core_radius1, RL1)
-                # print("Rcompanion vs RLcompanion= ", rc2_i, RL2)
+        if verbose:
+            print("system merges due to one of the two star's core filling"
+                    "its RL")
+            # print("Rdonor core vs RLdonor core = ", core_radius1, RL1)
+            # print("Rcompanion vs RLcompanion= ", rc2_i, RL2)
 
-            donor.mass = m1_i - Mejected_donor
-            donor.log_R = np.nan
-            comp_star.mass = m2_i - Mejected_comp
-            comp_star.log_R = np.nan
-            if donor_type == 'CO_core':
-                donor.he_core_mass = m1_i - Mejected_donor
-                donor.he_core_radius = np.nan
-                comp_star.he_core_mass = m2_i - Mejected_comp
-                comp_star.he_core_radius = np.nan
+        donor.mass = m1_i - Mejected_donor
+        donor.log_R = np.nan
+        comp_star.mass = m2_i - Mejected_comp
+        comp_star.log_R = np.nan
+        if donor_type == 'CO_core':
+            donor.he_core_mass = m1_i - Mejected_donor
+            donor.he_core_radius = np.nan
+            comp_star.he_core_mass = m2_i - Mejected_comp
+            comp_star.he_core_radius = np.nan
 
-            
+        
 
-            return
+        return
