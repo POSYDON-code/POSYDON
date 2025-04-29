@@ -162,27 +162,34 @@ class TestSFHBase:
         """Test the __call__ method."""
         class ConcreteSFH(SFHBase):
             def CSFRD(self, z):
-                return np.array([1.0, 2.0])
+                return z*2.0
             
+            # just a placeholder. Doesn't contribute
             def mean_metallicity(self, z):
-                return np.array([0.01, 0.02])
+                return z*0.01
                 
             def fSFR(self, z, metallicity_bins):
                 # Return a simple array for testing
-                return np.array([[0.3, 0.7], [0.4, 0.6]])
+                delta = np.diff(metallicity_bins)
+                # normalise
+                delta /= delta.sum()
+                
+                out = np.zeros((len(z), len(delta)))
+                out[:, :] = delta
+                return out
         
         model_dict = {"Z_max": 0.03}
         sfh = ConcreteSFH(model_dict)
         
         z = np.array([0.5, 1.0])
-        met_edges = np.array([0.0, 0.01, 0.03])
+        met_edges = np.array([0.0, 0.02, 0.06])
         
         result = sfh(z, met_edges)
         
         # Expected: CSFRD(z)[:, np.newaxis] * fSFR(z, met_edges)
         expected = np.array([
-            [1.0 * 0.3, 1.0 * 0.7],
-            [2.0 * 0.4, 2.0 * 0.6]
+            [1.0 * 1/3, 1.0 * 2/3],
+            [2.0 * 1/3, 2.0 * 2/3]
         ])
         
         np.testing.assert_allclose(result, expected)
