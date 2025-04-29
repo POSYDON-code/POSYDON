@@ -310,8 +310,8 @@ class MadauBase(SFHBase):
                 return 0.39
             else:
                 raise ValueError("Unknown sigma choice!")
-        elif isinstance(sigma, float):
-            return sigma
+        elif isinstance(sigma, (float, int)):
+            return np.float64(sigma)
         else:
             raise ValueError(f"Invalid sigma value {sigma}!")
 

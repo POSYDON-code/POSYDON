@@ -218,7 +218,7 @@ class TestMadauBase:
     
     def test_init_sets_csfrd_params_to_none(self):
         """Test that CSFRD_params is set to None initially and can be set by subclass"""
-        model_dict = {"sigma": 0.5, "Z_max": 0.03}
+        model_dict = {"sigma": 0.5}
         madau = self.ConcreteMadau(model_dict)
         assert madau.CSFRD_params is not None
         assert madau.CSFRD_params["a"] == 0.01
@@ -229,29 +229,34 @@ class TestMadauBase:
     def test_std_log_metallicity_dist(self):
         """Test the std_log_metallicity_dist method with different sigma values"""
         # Test Bavera+20
-        model_dict = {"sigma": "Bavera+20", "Z_max": 0.03}
+        model_dict = {"sigma": "Bavera+20"}
         madau = self.ConcreteMadau(model_dict)
         assert madau.std_log_metallicity_dist() == 0.5
         
         # Test Neijssel+19
-        model_dict = {"sigma": "Neijssel+19", "Z_max": 0.03}
+        model_dict = {"sigma": "Neijssel+19"}
         madau = self.ConcreteMadau(model_dict)
         assert madau.std_log_metallicity_dist() == 0.39
         
         # Test float value
-        model_dict = {"sigma": 0.45, "Z_max": 0.03}
+        model_dict = {"sigma": 0.45}
         madau = self.ConcreteMadau(model_dict)
         assert madau.std_log_metallicity_dist() == 0.45
         
         # Test unknown string
-        model_dict = {"sigma": "unknown", "Z_max": 0.03}
+        model_dict = {"sigma": "unknown"}
         madau = self.ConcreteMadau(model_dict)
         with pytest.raises(ValueError) as excinfo:
             madau.std_log_metallicity_dist()
         assert "Unknown sigma choice!" in str(excinfo.value)
         
+        # Test integer type
+        model_dict = {"sigma": 1}
+        madau = self.ConcreteMadau(model_dict)
+        assert madau.std_log_metallicity_dist() == 1.0
+        
         # Test invalid type
-        model_dict = {"sigma": 1, "Z_max": 0.03}
+        model_dict = {"sigma": [0.5, 0.6]}
         madau = self.ConcreteMadau(model_dict)
         with pytest.raises(ValueError) as excinfo:
             madau.std_log_metallicity_dist()
