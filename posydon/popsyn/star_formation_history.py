@@ -374,8 +374,13 @@ class MadauDickinson14(MadauBase):
                 - Bavera+20
                 - Neijssel+19
                 - float
+            Additional SFH model parameters:
             - Z_max : float
                 The maximum metallicity in absolute units.
+            - Z_min : float
+                The minimum metallicity in absolute units.
+            - normalise : bool
+                Normalise the metallicity distribution to 1.
         """
         super().__init__(SFH_MODEL)
         # Parameters for Madau+Dickinson14 CSFRD
@@ -443,7 +448,7 @@ class Neijssel19(MadauBase):
                 - Bavera+20
                 - Neijssel+19
                 - float
-            It can also use the following parameters:
+            Additional SFH model parameters:
             - Z_max : float
                 The maximum metallicity in absolute units.
             - Z_min : float

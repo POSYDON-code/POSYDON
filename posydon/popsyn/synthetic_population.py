@@ -52,7 +52,7 @@ from posydon.popsyn.rate_calculation import (
     get_comoving_distance_from_redshift,
     get_cosmic_time_from_redshift,
     redshift_from_cosmic_time_interpolator,
-    DEFAULT_MODEL,
+    DEFAULT_SFH_MODEL,
     get_redshift_bin_edges,
     get_redshift_bin_centers,
 )
@@ -2027,16 +2027,16 @@ class TransientPopulation(Population):
         Examples
         --------
         >>> transient_population = TransientPopulation('filename.h5', 'transient_name')
-        >>> transient_population.calculate_cosmic_weights('IllustrisTNG', MODEL_in=DEFAULT_MODEL)
+        >>> transient_population.calculate_cosmic_weights('IllustrisTNG', MODEL_in=DEFAULT_SFH_MODEL)
         """
 
         # Set model to DEFAULT or provided MODEL parameters
         # Allows for partial model specification
         if MODEL_in is None:
-            MODEL = DEFAULT_MODEL
+            MODEL = DEFAULT_SFH_MODEL
         else:
-            # write the DEFAULT_MODEL with updates parameters to MODEL.
-            MODEL = DEFAULT_MODEL
+            # write the DEFAULT_SFH_MODEL with updated parameters to MODEL.
+            MODEL = DEFAULT_SFH_MODEL
             MODEL.update(MODEL_in)
 
         path_in_file = (
