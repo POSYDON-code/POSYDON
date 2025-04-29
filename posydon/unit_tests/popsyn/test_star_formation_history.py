@@ -389,7 +389,10 @@ class TestMadauBase:
                       "Z_min": 0.02,
                       "normalise": True}
         madau = ConcreteMadau(model_dict)
-        result = madau.fSFR(z, met_bins)
+        warning_str = "Z_min is larger than the lowest metallicity bin."
+        with pytest.warns(UserWarning, match=warning_str):
+            result = madau.fSFR(z, met_bins)
+        #result = madau.fSFR(z, met_bins)
         expected = np.ones(len(z))
         np.testing.assert_allclose(np.sum(result, axis=1), expected)
 
