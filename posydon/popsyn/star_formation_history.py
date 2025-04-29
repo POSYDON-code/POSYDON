@@ -748,8 +748,8 @@ class Chruslinska21(SFHBase):
             valid_options = ["Asplund09", "AndersGrevesse89", 
                              "GrevesseSauval98", "Villante14"]
             raise ValueError(f"Invalid Z_solar_scaling "
-                             "'{self.Z_solar_scaling}'."
-                             "Valid options: {valid_options}")
+                             f"'{self.Z_solar_scaling}'. "
+                             f"Valid options: {valid_options}")
         logZ = np.log10(Zsun) + FOH - FOHsun
         return 10**logZ
         
@@ -936,7 +936,7 @@ class Zavala21(MadauBase):
         tmp_data = pd.read_csv(data_file,
                                names=["redshift", "SFRD_min", "SFRD_max"],
                                skiprows=1,
-                               sep="\s+")
+                               sep=r"\s+")
         self.redshifts = tmp_data["redshift"].values
         # The min / max values originally come from their obscured 
         # and unobscured SFRD model.
