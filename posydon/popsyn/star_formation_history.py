@@ -23,7 +23,6 @@ from posydon.utils.common_functions import (
 )
 from posydon.utils.constants import Zsun
 from posydon.utils.interpolators import interp1d
-from astropy.cosmology import Planck15 as cosmology
 from abc import ABC, abstractmethod
 from posydon.utils.posydonwarning import Pwarn
 
@@ -192,7 +191,6 @@ class SFHBase(ABC):
                 Pwarn('Z_min is larger than the lowest metallicity bin.')
                 # find the index of the first bin that is larger than Z_min
                 first_bin_index = np.searchsorted(metallicity_bins, self.Z_min) -1
-                print(first_bin_index)
                 fSFR[:first_bin_index] = 0.0
                 fSFR[first_bin_index] = cdf_func(metallicity_bins[first_bin_index+1]) - cdf_func(self.Z_min)
         
@@ -739,9 +737,11 @@ class Chruslinska21(SFHBase):
             Zsun = 0.019
             FOHsun = 8.85
         else:
-            raise ValueError("Invalid Z_solar_scaling!"+
-                             "Options are: Asplund09, AndersGrevesse89,"+
-                             "GrevesseSauval98, Villante14")
+            valid_options = ["Asplund09", "AndersGrevesse89", 
+                             "GrevesseSauval98", "Villante14"]
+            raise ValueError(f"Invalid Z_solar_scaling "
+                             "'{self.Z_solar_scaling}'."
+                             "Valid options: {valid_options}")
         logZ = np.log10(Zsun) + FOH - FOHsun
         return 10**logZ
         
@@ -795,8 +795,6 @@ class Chruslinska21(SFHBase):
                 Z_dist_cdf = np.cumsum(Z_dist[i]) / Z_dist[i].sum()
                 Z_dist_cdf = np.append(Z_dist_cdf, 1)
                 Z_x_values = np.append(np.log10(self.Z), 0)
-                print(Z_x_values.shape)
-                print(Z_dist_cdf.shape)
                 Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
                 cdf_fun = lambda x: Z_dist_cdf_interp(np.log10(x))
                 fSFR[i, :] = self._distribute_cdf(cdf_fun, metallicity_bins)
@@ -898,7 +896,6 @@ class Zavala21(MadauBase):
     https://dx.doi.org/10.3847/1538-4357/abdb27
     
     """
-    
     def __init__(self, SFH_MODEL):
         """Initialise the Zavala+21 model
         
@@ -946,8 +943,7 @@ class Zavala21(MadauBase):
     def CSFRD(self, z):
         SFR_interp = interp1d(self.redshifts, self.SFR_data)
         return SFR_interp(z)
-        
-    
+          
 def get_SFH_model(SFH_MODEL):
     """Return the appropriate SFH model based on the given parameters
     
