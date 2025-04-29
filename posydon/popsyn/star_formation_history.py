@@ -40,14 +40,14 @@ SFH_SCENARIOS = [
 
 class SFHBase(ABC):
     """Abstract class for star formation history models"""    
-    def __init__(self, MODEL):
+    def __init__(self, SFH_MODEL):
         """Initialise the SFH model
         
         Adds the model parameters as attributes.
         
         Parameters
         ----------
-        MODEL : dict
+        SFH_MODEL : dict
             SFH model parameters.
             - Z_max : float
                 The maximum metallicity in absolute units.
@@ -60,9 +60,9 @@ class SFHBase(ABC):
         self.Z_min = None
         self.normalise = False
         
-        self.MODEL = MODEL
+        self.SFH_MODEL = SFH_MODEL
         # Automatically attach all model parameters as attributes
-        for key, value in MODEL.items():
+        for key, value in SFH_MODEL.items():
             setattr(self, key, value)
         
         # check if Z_max is not larger than 1
@@ -234,26 +234,31 @@ class MadauBase(SFHBase):
     and fractional SFR based on the chosen Madau parameterisation.
     The specific parameters for CSFRD must be provided by subclasses.
     """
-    def __init__(self, MODEL):
+    def __init__(self, SFH_MODEL):
         """Initialise the MadauBase class
         
         Parameters
         ----------
-        MODEL : dict
-            Model parameters. MadauBase requires the following parameters:
+        SFH_MODEL : dict
+            SFH model parameters. MadauBase requires the following parameters:
             - sigma : float or str
                 The standard deviation of the log-normal metallicity distribution.
                 Options are:
                 - Bavera+20
                 - Neijssel+19
                 - float
+            Additional SFH model parameters:
             - Z_max : float
                 The maximum metallicity in absolute units.
+            - Z_min : float
+                The minimum metallicity in absolute units.
+            - normalise : bool
+                Normalise the metallicity distribution to 1.
         """
-        if "sigma" not in MODEL:
+        if "sigma" not in SFH_MODEL:
             raise ValueError("sigma not given!")
         self.CSFRD_params = None
-        super().__init__(MODEL)
+        super().__init__(SFH_MODEL)
     
     def CSFRD(self, z):
         """The cosmic star formation rate density at a given redshift.
@@ -354,13 +359,13 @@ class MadauDickinson14(MadauBase):
     https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract
     """
 
-    def __init__(self, MODEL):
+    def __init__(self, SFH_MODEL):
         """Initialise the Madau & Dickinson (2014) SFH model with the
         metallicity evolution of Madau & Fragos (2017).
         
         Parameters
         ----------
-        MODEL : dict
+        SFH_MODEL : dict
             Model parameters. Madau+14 requires the following parameters:
             - sigma : float or str
                 The standard deviation of the log-normal metallicity 
@@ -372,7 +377,7 @@ class MadauDickinson14(MadauBase):
             - Z_max : float
                 The maximum metallicity in absolute units.
         """
-        super().__init__(MODEL)
+        super().__init__(SFH_MODEL)
         # Parameters for Madau+Dickinson14 CSFRD
         self.CSFRD_params = {
             "a": 0.015,
@@ -389,12 +394,12 @@ class MadauFragos17(MadauBase):
     http://adsabs.harvard.edu/abs/2017ApJ...840...39M
     """
 
-    def __init__(self, MODEL):
+    def __init__(self, SFH_MODEL):
         """Initialise the Madau+17 model
         
         Parameters
         ----------
-        MODEL : dict
+        SFH_MODEL : dict
             Model parameters. Madau+17 requires the following parameters:
             - sigma : float or str
                 The standard deviation of the log-normal metallicity distribution.
@@ -405,7 +410,7 @@ class MadauFragos17(MadauBase):
             - Z_max : float
                 The maximum metallicity in absolute units.
         """
-        super().__init__(MODEL)
+        super().__init__(SFH_MODEL)
         # Parameters for Madau+Fragos17 CSFRD
         self.CSFRD_params = {
             "a": 0.01,
@@ -425,12 +430,12 @@ class Neijssel19(MadauBase):
     Neijssel et al. (2019), MNRAS, 490, 3740
     http://adsabs.harvard.edu/abs/2019MNRAS.490.3740N
     """
-    def __init__(self, MODEL):
+    def __init__(self, SFH_MODEL):
         """Initialise the Neijssel+19 model
         
         Parameters
         ----------
-        MODEL : dict
+        SFH_MODEL : dict
             Model parameters. Neijssel+19 requires the following parameters:
             - sigma : float or str
                 The standard deviation of the log-normal metallicity distribution.
@@ -446,7 +451,7 @@ class Neijssel19(MadauBase):
             - normalise : bool
                 Normalise the metallicity distribution to 1.
         """
-        super().__init__(MODEL)
+        super().__init__(SFH_MODEL)
         # Parameters for Neijssel+19 CSFRD
         self.CSFRD_params = {
             "a": 0.01,
@@ -510,19 +515,19 @@ class IllustrisTNG(SFHBase):
     https://www.tng-project.org/
     """
     
-    def __init__(self, MODEL):
+    def __init__(self, SFH_MODEL):
         """Initialise the IllustrisTNG model
         
         Parameters
         ----------
-        MODEL : dict
+        SFH_MODEL : dict
             Model parameters. IllustrisTNG requires the following parameters:
             - Z_max : float
                 The maximum metallicity in absolute units.
             - select_one_met : bool
                 If True, the SFR is calculated for a single metallicity bin.
         """        
-        super().__init__(MODEL)
+        super().__init__(SFH_MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
         # the data is stored in reverse order high to low redshift
@@ -627,12 +632,12 @@ class Chruslinska21(SFHBase):
     Data source: 
     https://ftp.science.ru.nl/astro/mchruslinska/Chruslinska_et_al_2021/
     """
-    def __init__(self, MODEL):
+    def __init__(self, SFH_MODEL):
         """Initialise the Chruslinska+21 model
         
         Parameters
         ----------
-        MODEL : dict
+        SFH_MODEL : dict
             Model parameters. Chruslinska+21 requires the following parameters:
             - sub_model : str
                 The sub-model to use. This is the name of the file containing the data.
@@ -647,11 +652,11 @@ class Chruslinska21(SFHBase):
             - select_one_met : bool
                 If True, the SFR is calculated for a single metallicity bin.
         """
-        if "sub_model" not in MODEL:
+        if "sub_model" not in SFH_MODEL:
             raise ValueError("Sub-model not given!")
-        if "Z_solar_scaling" not in MODEL:
+        if "Z_solar_scaling" not in SFH_MODEL:
             raise ValueError("Z_solar_scaling not given!")
-        super().__init__(MODEL)
+        super().__init__(SFH_MODEL)
         self._load_chruslinska_data()
         
     def _load_chruslinska_data(self, verbose=False):
@@ -827,12 +832,12 @@ class Fujimoto24(MadauBase):
     Fujimoto et al. (2024), ApJ SS, 275, 2, 36, 59
     https://ui.adsabs.harvard.edu/abs/2024ApJS..275...36F/abstract
     """
-    def __init__(self, MODEL):
+    def __init__(self, SFH_MODEL):
         """Initialise the Fujimoto+24 model
         
         Parameters
         ----------
-        MODEL : dict
+        SFH_MODEL : dict
             Model parameters. Fujimoto+24 requires the following parameters:
             - sigma : float or str
                 The standard deviation of the log-normal metallicity distribution.
@@ -845,7 +850,7 @@ class Fujimoto24(MadauBase):
             - select_one_met : bool
                 If True, the SFR is calculated for a single metallicity bin.
         """
-        super().__init__(MODEL)
+        super().__init__(SFH_MODEL)
         # Parameters for Fujimoto+24 CSFRD
         self.CSFRD_params = {
             "a": 0.010,
@@ -856,7 +861,7 @@ class Fujimoto24(MadauBase):
     
 class Zavala21(MadauBase):
     
-    def __init__(self, MODEL):
+    def __init__(self, SFH_MODEL):
         """Initialise the Zavala+21 model
         
         Requires the following parameters:
@@ -867,10 +872,10 @@ class Zavala21(MadauBase):
         - select_one_met : bool
             If True, the SFR is calculated for a single metallicity bin.
         """
-        if "sub_model" not in MODEL:
+        if "sub_model" not in SFH_MODEL:
             raise ValueError("Sub-model not given!")
         
-        super().__init__(MODEL)
+        super().__init__(SFH_MODEL)
         self._load_zavala_data()
         
     def _load_zavala_data(self): # pragma: no cover
@@ -899,12 +904,12 @@ class Zavala21(MadauBase):
         return SFR_interp(z)
         
     
-def get_SFH_model(MODEL):
+def get_SFH_model(SFH_MODEL):
     """Return the appropriate SFH model based on the given parameters
     
     Parameters
     ----------
-    MODEL : dict
+    SFH_MODEL : dict
         Model parameters.
     
     Returns
@@ -912,24 +917,24 @@ def get_SFH_model(MODEL):
     a SFHBase instance or subclass
         The SFH model instance.
     """
-    if MODEL["SFR"] == "Madau+Fragos17":
-        return MadauFragos17(MODEL)
-    elif MODEL["SFR"] == "Madau+Dickinson14":
-        return MadauDickinson14(MODEL)
-    elif MODEL["SFR"] == "Fujimoto+24":
-        return Fujimoto24(MODEL)
-    elif MODEL["SFR"] == "Neijssel+19":
-        return Neijssel19(MODEL)
-    elif MODEL["SFR"] == "IllustrisTNG":
-        return IllustrisTNG(MODEL)
-    elif MODEL["SFR"] == "Chruslinska+21":
-        return Chruslinska21(MODEL)
-    elif MODEL["SFR"] == "Zavala+21":
-        return Zavala21(MODEL)
+    if SFH_MODEL["SFR"] == "Madau+Fragos17":
+        return MadauFragos17(SFH_MODEL)
+    elif SFH_MODEL["SFR"] == "Madau+Dickinson14":
+        return MadauDickinson14(SFH_MODEL)
+    elif SFH_MODEL["SFR"] == "Fujimoto+24":
+        return Fujimoto24(SFH_MODEL)
+    elif SFH_MODEL["SFR"] == "Neijssel+19":
+        return Neijssel19(SFH_MODEL)
+    elif SFH_MODEL["SFR"] == "IllustrisTNG":
+        return IllustrisTNG(SFH_MODEL)
+    elif SFH_MODEL["SFR"] == "Chruslinska+21":
+        return Chruslinska21(SFH_MODEL)
+    elif SFH_MODEL["SFR"] == "Zavala+21":
+        return Zavala21(SFH_MODEL)
     else:
         raise ValueError("Invalid SFR!")
 
-def SFR_per_met_at_z(z, met_bins, MODEL):
+def SFR_per_met_at_z(z, met_bins, SFH_MODEL):
     """Calculate the SFR per metallicity bin at a given redshift(s)
     
     Parameters
@@ -938,7 +943,7 @@ def SFR_per_met_at_z(z, met_bins, MODEL):
         Cosmological redshift.
     met_bins : array
         Metallicity bins edges in absolute metallicity.
-    MODEL : dict
+    SFH_MODEL : dict
         Model parameters.
     
     Returns
@@ -947,7 +952,7 @@ def SFR_per_met_at_z(z, met_bins, MODEL):
         Star formation history per metallicity bin at the given redshift(s).
     
     """
-    SFH = get_SFH_model(MODEL)
+    SFH = get_SFH_model(SFH_MODEL)
     return SFH(z, met_bins)
 
 # TODO: No testing coverage for the following function, but should be added
