@@ -112,7 +112,6 @@ jobs:
         target_branch: gh-pages
         build_dir: _build/
         history: true
-        dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
@@ -226,7 +225,6 @@ jobs:
         target_branch: gh-pages
         build_dir: _build/
         history: true
-        dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_WORKSPACE: ${{ github.workspace }}
@@ -293,6 +291,5 @@ jobs:
         target_branch: gh-pages
         build_dir: _build/
         history: true
-        dry_run: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
