@@ -120,19 +120,19 @@ class TestSFHBase:
          None, None),
         # Minimum in lowest bin
         ({"Z_min": 0.25}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
-         np.array([0.05, 0.3, 0.3]), None),
+         np.array([0.05, 0.3, 0.3]), UserWarning),
         # Minimum higher than minimum bin
         ({"Z_min": 0.35}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
-         np.array([0.0, 0.25, 0.3]), None),
+         np.array([0.0, 0.25, 0.3]), UserWarning),
         # Minimum in lowest bin and maximum
         ({"Z_min": 0.25, "Z_max": 0.8}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
-         np.array([0.05, 0.3, 0.2]), None),
+         np.array([0.05, 0.3, 0.2]), UserWarning),
         # Minimum higher than minimum bin, narrow range
         ({"Z_min": 0.35, "Z_max": 0.4}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
-         np.array([0.0, 0.05, 0.0]), None),
+         np.array([0.0, 0.05, 0.0]), UserWarning),
         # Minimum higher than minimum bin, medium range
         ({"Z_min": 0.35, "Z_max": 0.65}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
-         np.array([0.0, 0.25, 0.05]), None),
+         np.array([0.0, 0.25, 0.05]), UserWarning),
     ])
     def test_distribute_cdf(self, ConcreteSFH, model_dict, normalise, met_edges, expected, warning):
         """Test the _distribute_cdf method with various scenarios."""
@@ -356,8 +356,8 @@ class TestMadauBase:
         expected = np.array([expected1, expected2])
         np.testing.assert_allclose(result, expected)
         
-        # Change Z_min to 0 to include the rest of the lowest mets
-        model_dict = {"sigma": 0.5, "Z_max": 0.3, "Z_min": 0}
+        # Change Z_min to a very small number to include the rest of the lowest mets
+        model_dict = {"sigma": 0.5, "Z_max": 0.3, "Z_min": 1e-11}
         madau = ConcreteMadau(model_dict)
         result = madau.fSFR(z, met_bins)
         
@@ -377,7 +377,7 @@ class TestMadauBase:
         np.testing.assert_allclose(result, expected)
         
         # Test with normalise
-        model_dict = {"sigma": 0.5, "Z_max": 0.3, "Z_min": 0, "normalise": True}
+        model_dict = {"sigma": 0.5, "Z_max": 0.3, "Z_min": 1e-11, "normalise": True}
         madau = ConcreteMadau(model_dict)
         result = madau.fSFR(z, met_bins)
         expected = np.ones(len(z))
