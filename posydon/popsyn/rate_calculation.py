@@ -19,6 +19,8 @@ DEFAULT_SFH_MODEL = {
     "SFR": "IllustrisTNG",
     "sigma_SFR": None,
     "Z_max": None, # Zsun
+    "Z_min": None, # Zsun
+    "normalise": True, # normalise the SFR to 1
     "dlogZ": None,  # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
     "Zsun": Zsun,
 }
