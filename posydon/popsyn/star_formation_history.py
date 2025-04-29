@@ -67,10 +67,18 @@ class SFHBase(ABC):
         # check if Z_max is not larger than 1
         if self.Z_max is not None:
             if self.Z_max > 1:
-                raise ValueError("Z_max must be in absolute units!")            
+                raise ValueError("Z_max must be in absolute units! "
+                                 "It cannot be larger than 1!")
+            elif self.Z_max < 0:
+                raise ValueError("Z_max must be in absolute units! "
+                                 "It cannot be negative!")
         if self.Z_min is not None:
             if self.Z_min < 0:
-                raise ValueError("Z_min must be in absolute units!")
+                raise ValueError("Z_min must be in absolute units! "
+                                 "It cannot be negative!")
+            elif self.Z_min > 1:
+                raise ValueError("Z_min must be in absolute units! "
+                                 "It cannot be larger than 1!")
         if self.Z_min is not None and self.Z_max is not None:
             if self.Z_min >= self.Z_max:
                 raise ValueError("Z_min must be smaller than Z_max!")

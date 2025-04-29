@@ -1,3 +1,10 @@
+"""Unit tests for posydon/popsyn/star_formation_history.py
+"""
+
+__authors__ = [
+    "Max Briel <max.briel@gmail.com>",
+]
+
 import numpy as np
 import pytest
 from posydon.popsyn.star_formation_history import SFHBase, MadauBase
@@ -40,29 +47,27 @@ class TestSFHBase:
         sfh = ConcreteSFH(model_dict)
         
         # Check that attributes are set correctly
-        assert sfh.Z_max == 0.03
-        assert sfh.test_param == 42
-        assert sfh.another_param == "test"
-        assert sfh.MODEL == model_dict
+        for key, value in model_dict.items():
+            assert getattr(sfh, key) == value
+            
+        # additional SFH_model set check
+        assert sfh.SFH_MODEL == model_dict
     
-    def test_validation(self, ConcreteSFH):
-        """Test that Z_max > 1 raises a ValueError."""
-        model_dict = {"Z_max": 1.5}
-        with pytest.raises(ValueError) as excinfo:
-            ConcreteSFH(model_dict)
-        assert "Z_max must be in absolute units!" in str(excinfo.value)
-        
-        # Test with Z_min > Z_max
-        model_dict = {"Z_max": 0.1, "Z_min": 0.2}
+    
+    @pytest.mark.parametrize("model_dict, error_msg", [
+        # Z_max
+        ({"Z_max": 1.5}, "Z_max must be in absolute units! It cannot be larger than 1!"),
+        ({"Z_max": -0.1}, "Z_max must be in absolute units! It cannot be negative!"),
+        # Z_min
+        ({"Z_min": -0.1}, "Z_min must be in absolute units! It cannot be negative!"),
+        ({"Z_min": 1.2}, "Z_min must be in absolute units! It cannot be larger than 1!"),
+        # Z_min > Z_max
+        ({"Z_max": 0.1, "Z_min": 0.2}, "Z_min must be smaller than Z_max!"),
+    ])
+    def test_validation(self, ConcreteSFH, model_dict, error_msg):
         with pytest.raises(ValueError) as excinfo:
             sfh = ConcreteSFH(model_dict)
-        assert "Z_min must be smaller than Z_max!" in str(excinfo.value)
-    
-        # Test with Z_min < 0
-        model_dict = {"Z_max": 0.1, "Z_min": -0.1}
-        with pytest.raises(ValueError) as excinfo:
-            sfh = ConcreteSFH(model_dict)
-        assert "Z_min must be in absolute units!" in str(excinfo.value)
+        assert error_msg in str(excinfo.value)
         
     def test_abstract_methods(self):
         """Test that abstract methods must be implemented."""
@@ -78,109 +83,79 @@ class TestSFHBase:
                 return z
         
         model_dict = {"Z_max": 0.03}
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError) as excinfo:
             IncompleteSFH1(model_dict)
+        assert ("Can't instantiate abstract class IncompleteSFH1 "
+                "with abstract methods fSFR, mean_metallicity") in str(excinfo.value)
         
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError) as excinfo:
             IncompleteSFH2(model_dict)
-    
-    def test_distribute_cdf(self, ConcreteSFH):
-        """Test the _distribute_cdf method."""
-        # Create a simple CDF functions
-        cdf_func = lambda x: x
-        met_edges = np.array([0.0, 0.01, 0.02, 0.03])
-        
-        model_dict = {"Z_max": 1, "Z_min": 0.0}
-        sfh = ConcreteSFH(model_dict)
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        expected = np.array([0.01, 0.01, 0.98])
-        np.testing.assert_allclose(result, expected)
-        
-        # Test with normalization
-        sfh.normalise = True
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        np.testing.assert_allclose(np.sum(result), 1.0)
+        assert ("Can't instantiate abstract class IncompleteSFH2 "
+                "with abstract method fSFR") in str(excinfo.value)        
 
-        # test no Z_min/Z_max set
-        model_dict = {}
-        sfh = ConcreteSFH(model_dict)
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        np.testing.assert_allclose(result, 0.01 * np.ones(3))
+    @pytest.mark.parametrize(
+        "model_dict, normalise, met_edges, expected, warning", 
+        [
+        # Simple CDF with Z_max=1, Z_min=0.0
+        ({"Z_max": 1, "Z_min": 0.0}, False, np.array([0.0, 0.01, 0.02, 0.03]), 
+         np.array([0.01, 0.01, 0.98]), None),
+        # No Z_min/Z_max set
+        ({}, False, np.array([0.0, 0.01, 0.02, 0.03]), 
+        0.01 * np.ones(3), None),
+        # Model dict warning
+        ({"Z_max": 0.02, "Z_min": 0.0}, False, np.array([0.0, 0.01, 0.02, 0.03]), 
+         None, UserWarning),
+        # Different model dicts
+        ({"Z_max": 1, "Z_min": 0.015}, False, np.array([0.3, 0.6, 0.9]), 
+         np.array([0.585, 0.4]), None),
+        # With normalization
+        ({"Z_max": 1, "Z_min": 0.015}, True, np.array([0.3, 0.6, 0.9]), 
+         None, None),
+        # Restrict upper bound
+        ({"Z_max": 0.95, "Z_min": 0.2}, False, np.array([0.3, 0.6, 0.9]), 
+         np.array([0.4, 0.35]), None),
+        # With normalization
+        ({"Z_max": 0.95, "Z_min": 0.2}, True, np.array([0.3, 0.6, 0.9]), 
+         None, None),
+        # Minimum in lowest bin
+        ({"Z_min": 0.25}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
+         np.array([0.05, 0.3, 0.3]), None),
+        # Minimum higher than minimum bin
+        ({"Z_min": 0.35}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
+         np.array([0.0, 0.25, 0.3]), None),
+        # Minimum in lowest bin and maximum
+        ({"Z_min": 0.25, "Z_max": 0.8}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
+         np.array([0.05, 0.3, 0.2]), None),
+        # Minimum higher than minimum bin, narrow range
+        ({"Z_min": 0.35, "Z_max": 0.4}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
+         np.array([0.0, 0.05, 0.0]), None),
+        # Minimum higher than minimum bin, medium range
+        ({"Z_min": 0.35, "Z_max": 0.65}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
+         np.array([0.0, 0.25, 0.05]), None),
+    ])
+    def test_distribute_cdf(self, ConcreteSFH, model_dict, normalise, met_edges, expected, warning):
+        """Test the _distribute_cdf method with various scenarios."""
+        # Create a simple CDF function
+        cdf_func = lambda x: x
         
-        # Test model dict warning
-        model_dict = {"Z_max": 0.02, "Z_min": 0.0}
+        # Create the SFH instance
         sfh = ConcreteSFH(model_dict)
-        with pytest.warns(UserWarning):
+        sfh.normalise = normalise
+        
+        # Test execution with or without warning check
+        if warning:
+            with pytest.warns(warning):
+                result = sfh._distribute_cdf(cdf_func, met_edges)
+        else:
             result = sfh._distribute_cdf(cdf_func, met_edges)
         
-        # Test with different model dicts
-        model_dict = {"Z_max": 1, "Z_min": 0.015}
-        sfh = ConcreteSFH(model_dict)
-        met_edges = np.array([0.3, 0.6, 0.9])
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        expected = np.array([0.585, 0.4])
-        np.testing.assert_allclose(result, expected)
-        
-        # Test with normalise
-        sfh.normalise = True
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        np.testing.assert_allclose(np.sum(result), 1.0)
-        
-        # restrict the upper bound
-        model_dict = {"Z_max": 0.95, "Z_min": 0.2}
-        sfh = ConcreteSFH(model_dict)
-        met_edges = np.array([0.3, 0.6, 0.9])
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        expected = np.array([0.4, 0.35])
-        np.testing.assert_allclose(result, expected)
-        
-        # Test with normalise
-        sfh.normalise = True
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        np.testing.assert_allclose(np.sum(result), 1.0)
-        
-        # Test minimum in lowest bin
-        model_dict = {"Z_min": 0.25}
-        sfh = ConcreteSFH(model_dict)
-        met_edges = np.array([0.2, 0.3, 0.6, 0.9])
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        expected = np.array([0.05, 0.3, 0.3])
-        np.testing.assert_allclose(result, expected)
-        
-        # Test minumum is higher than minimum bin
-        model_dict = {"Z_min": 0.35}
-        sfh = ConcreteSFH(model_dict)
-        met_edges = np.array([0.2, 0.3, 0.6, 0.9])
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        expected = np.array([0.0, 0.25, 0.3])
-        np.testing.assert_allclose(result, expected)
-
-        # Test minimum in lowest bin and maximum
-        model_dict = {"Z_min" : 0.25,
-                      'Z_max' : 0.8}
-        sfh = ConcreteSFH(model_dict)
-        met_edges = np.array([0.2, 0.3, 0.6, 0.9])
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        expected = np.array([0.05, 0.3, 0.2])
-        np.testing.assert_allclose(result, expected)
-        
-        # Test minumum is higher than minimum bin
-        model_dict = {"Z_min" : 0.35,
-                      'Z_max' : 0.4}
-        sfh = ConcreteSFH(model_dict)
-        met_edges = np.array([0.2, 0.3, 0.6, 0.9])
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        expected = np.array([0.0, 0.05, 0.0])
-        np.testing.assert_allclose(result, expected)
-        
-                # Test minumum is higher than minimum bin
-        model_dict = {"Z_min" : 0.35,
-                      'Z_max' : 0.65}
-        sfh = ConcreteSFH(model_dict)
-        met_edges = np.array([0.2, 0.3, 0.6, 0.9])
-        result = sfh._distribute_cdf(cdf_func, met_edges)
-        expected = np.array([0.0, 0.25, 0.05])
-        np.testing.assert_allclose(result, expected)
+        # Check results
+        if normalise:
+            # For normalise=True, check sum is 1.0
+            np.testing.assert_allclose(np.sum(result), 1.0)
+        elif expected is not None:
+            # For specific expected values
+            np.testing.assert_allclose(result, expected)
 
 
     def test_call_method(self):
