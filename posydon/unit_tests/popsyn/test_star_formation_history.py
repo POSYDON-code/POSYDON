@@ -6,6 +6,7 @@ __authors__ = [
 ]
 
 import numpy as np
+import pandas as pd
 import pytest
 from posydon.popsyn.star_formation_history import SFHBase, MadauBase
 from posydon.popsyn.star_formation_history import (
@@ -198,97 +199,106 @@ class TestSFHBase:
 class TestMadauBase:
     """Test class for MadauBase"""
     
-    class ConcreteMadau(MadauBase):
-        """Concrete subclass of MadauBase for testing"""
-        def __init__(self, MODEL):
-            super().__init__(MODEL)
-            self.CSFRD_params = {
-                "a": 0.01,
+    @pytest.fixture
+    def e_CSFRD_params(self):
+        return {"a": 0.01,
                 "b": 2.6, 
                 "c": 3.2,
-                "d": 6.2
-            }
+                "d": 6.2,
+                }
     
-    def test_init_requires_sigma(self):
+    @pytest.fixture
+    def ConcreteMadau(self, e_CSFRD_params):
+        class ConcreteMadau(MadauBase):
+            """Concrete subclass of MadauBase for testing"""
+            def __init__(self, MODEL):
+                super().__init__(MODEL)
+                self.CSFRD_params = e_CSFRD_params
+        return ConcreteMadau
+    
+    def test_init_requires_sigma(self, ConcreteMadau):
         """Test that MadauBase requires a sigma parameter"""
         model_dict = {"Z_max": 0.03}
         with pytest.raises(ValueError) as excinfo:
-            self.ConcreteMadau(model_dict)
+            ConcreteMadau(model_dict)
         assert "sigma not given!" in str(excinfo.value)
     
-    def test_init_sets_csfrd_params_to_none(self):
-        """Test that CSFRD_params is set to None initially and can be set by subclass"""
+    def test_init_sets_csfrd_params_to_none(self, ConcreteMadau, e_CSFRD_params):
+        """Test that CSFRD_params is not set to None initially"""
         model_dict = {"sigma": 0.5}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         assert madau.CSFRD_params is not None
-        assert madau.CSFRD_params["a"] == 0.01
-        assert madau.CSFRD_params["b"] == 2.6
-        assert madau.CSFRD_params["c"] == 3.2
-        assert madau.CSFRD_params["d"] == 6.2
+        assert madau.CSFRD_params["a"] == e_CSFRD_params["a"]
+        assert madau.CSFRD_params["b"] == e_CSFRD_params["b"]
+        assert madau.CSFRD_params["c"] == e_CSFRD_params["c"]
+        assert madau.CSFRD_params["d"] == e_CSFRD_params["d"]
     
-    def test_std_log_metallicity_dist(self):
+    def test_std_log_metallicity_dist(self, ConcreteMadau):
         """Test the std_log_metallicity_dist method with different sigma values"""
         # Test Bavera+20
         model_dict = {"sigma": "Bavera+20"}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         assert madau.std_log_metallicity_dist() == 0.5
         
         # Test Neijssel+19
         model_dict = {"sigma": "Neijssel+19"}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         assert madau.std_log_metallicity_dist() == 0.39
         
         # Test float value
         model_dict = {"sigma": 0.45}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         assert madau.std_log_metallicity_dist() == 0.45
         
         # Test unknown string
         model_dict = {"sigma": "unknown"}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         with pytest.raises(ValueError) as excinfo:
             madau.std_log_metallicity_dist()
         assert "Unknown sigma choice!" in str(excinfo.value)
         
         # Test integer type
         model_dict = {"sigma": 1}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         assert madau.std_log_metallicity_dist() == 1.0
         
         # Test invalid type
         model_dict = {"sigma": [0.5, 0.6]}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         with pytest.raises(ValueError) as excinfo:
             madau.std_log_metallicity_dist()
         assert "Invalid sigma value" in str(excinfo.value)
     
-    def test_csfrd(self):
+    def test_csfrd(self, ConcreteMadau, e_CSFRD_params):
         """Test the CSFRD method"""
         model_dict = {"sigma": 0.5}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
+        
+        def tmp_CSFRD(z):
+            return (e_CSFRD_params["a"] * ((1 + z)**e_CSFRD_params["b"])
+                    / (1 + ((1 + z)/e_CSFRD_params["c"])**e_CSFRD_params["d"]))
         
         # Test with single value
         z = 0.0
         result = madau.CSFRD(z)
-        expected = 0.01 * 1**2.6 / (1 + (1/3.2)**6.2)  # a * (1+z)^b / (1 + ((1+z)/c)^d) with z=0
+        # a * (1+z)^b / (1 + ((1+z)/c)^d) with z=0
+        expected = tmp_CSFRD(z)
         np.testing.assert_allclose(result, expected)
         
         # Test with array of values
         z_array = np.array([0.0, 1.0, 2.0])
         result = madau.CSFRD(z_array)
         expected = np.array([
-            0.01 * 1**2.6 / (1 + (1/3.2)**6.2),  # z=0 
-            0.01 * 2**2.6 / (1 + (2/3.2)**6.2),  # z=1
-            0.01 * 3**2.6 / (1 + (3/3.2)**6.2)   # z=2
+            tmp_CSFRD(z) for z in z_array
         ])
         np.testing.assert_allclose(result, expected)
     
-    def test_mean_metallicity(self):
+    def test_mean_metallicity(self, ConcreteMadau):
         """Test the mean_metallicity method"""
         from posydon.utils.constants import Zsun
         
         model_dict = {"sigma": 0.5, "Z_max": 0.03}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         
         # Test with single value
         z = 0.0
@@ -302,10 +312,10 @@ class TestMadauBase:
         expected = 10**(0.153 - 0.074 * z_array**1.34) * Zsun
         np.testing.assert_allclose(result, expected)
     
-    def test_fsfr(self):
+    def test_fsfr(self, ConcreteMadau):
         """Test the fSFR method"""
         model_dict = {"sigma": 0.5, "Z_max": 1}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         
         # Test with redshift array and metallicity bins
         z = np.array([0.0, 1.0])
@@ -320,12 +330,11 @@ class TestMadauBase:
         from scipy.stats import norm
         mean0, mean1 = (np.log10(madau.mean_metallicity(z)) 
                   - model_dict['sigma']**2 * np.log(10) / 2)
-        print(mean0, mean1)
         
         expected1 = np.array(
             # integral from 0.001 to 0.01; Z_min = lowest bin edge
-            [norm.cdf(np.log10(0.01), mean0, model_dict['sigma'])
-             - norm.cdf(np.log10(0.001), mean0, model_dict['sigma']),
+            [(norm.cdf(np.log10(0.01), mean0, model_dict['sigma'])
+             - norm.cdf(np.log10(0.001), mean0, model_dict['sigma'])),
             # integral from 0.01 to 0.02
              (norm.cdf(np.log10(0.02), mean0, model_dict['sigma'])
               - norm.cdf(np.log10(0.01), mean0, model_dict['sigma'])),
@@ -335,8 +344,8 @@ class TestMadauBase:
         
         expected2 = np.array(
             # integral from 0.001 to 0.01;Z_min = lowest bin edge
-            [norm.cdf(np.log10(0.01), mean1, model_dict['sigma'])
-             - norm.cdf(np.log10(0.001), mean1, model_dict['sigma']),
+            [(norm.cdf(np.log10(0.01), mean1, model_dict['sigma'])
+             - norm.cdf(np.log10(0.001), mean1, model_dict['sigma'])),
             # integral from 0.01 to 0.02
              (norm.cdf(np.log10(0.02), mean1, model_dict['sigma'])
               - norm.cdf(np.log10(0.01), mean1, model_dict['sigma'])),
@@ -349,7 +358,7 @@ class TestMadauBase:
         
         # Change Z_min to 0 to include the rest of the lowest mets
         model_dict = {"sigma": 0.5, "Z_max": 0.3, "Z_min": 0}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         result = madau.fSFR(z, met_bins)
         
         expected1 = np.array(
@@ -369,19 +378,19 @@ class TestMadauBase:
         
         # Test with normalise
         model_dict = {"sigma": 0.5, "Z_max": 0.3, "Z_min": 0, "normalise": True}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         result = madau.fSFR(z, met_bins)
-        print(result)
-        np.testing.assert_allclose(np.sum(result, axis=1), np.ones(2))
+        expected = np.ones(len(z))
+        np.testing.assert_allclose(np.sum(result, axis=1), expected)
         
-        # Test with Z_min > 0.03
+        # Test with Z_min > met_bins[1]
         model_dict = {"sigma": 0.5,
                       "Z_max": 0.3,
                       "Z_min": 0.02,
                       "normalise": True}
-        madau = self.ConcreteMadau(model_dict)
+        madau = ConcreteMadau(model_dict)
         result = madau.fSFR(z, met_bins)
-        expected = np.ones(2)
+        expected = np.ones(len(z))
         np.testing.assert_allclose(np.sum(result, axis=1), expected)
 
 class TestIllustrisTNG:
@@ -471,7 +480,7 @@ class TestIllustrisTNG:
         np.testing.assert_allclose(result, Z_interp)
         
         # Test empty mass array
-        flipped_masses[0] = np.zeros_like(flipped_masses[0])
+        illustris_model.M[0] = np.zeros_like(flipped_masses[0])
         with pytest.raises(AssertionError):
             result = illustris_model.mean_metallicity(z_values)
     
@@ -527,7 +536,8 @@ class TestMadauDickinson14:
         
         # Calculate expected values manually
         p = madau.CSFRD_params
-        expected = p["a"] * (1.0 + z_values) ** p["b"] / (1.0 + ((1.0 + z_values) / p["c"]) ** p["d"])
+        expected = (p["a"] * (1.0 + z_values) ** p["b"] 
+                    / (1.0 + ((1.0 + z_values) / p["c"]) ** p["d"]))
         
         np.testing.assert_allclose(result, expected)
     
@@ -547,21 +557,6 @@ class TestMadauFragos17:
         
         # Check that it inherits correctly from MadauBase
         assert isinstance(madau, MadauBase)
-    
-    def test_csfrd_calculation(self):
-        """Test that CSFRD calculations match expected values"""
-        model_dict = {"sigma": 0.5, "Z_max": 0.03}
-        madau = MadauFragos17(model_dict)
-        
-        # Test at specific redshifts
-        z_values = np.array([0.0, 1.0, 2.0, 6.0])
-        result = madau.CSFRD(z_values)
-        
-        # Calculate expected values manually using the formula
-        p = madau.CSFRD_params
-        expected = p["a"] * (1.0 + z_values) ** p["b"] / (1.0 + ((1.0 + z_values) / p["c"]) ** p["d"])
-        
-        np.testing.assert_allclose(result, expected)
 
 class TestNeijssel19:
     """Tests for the Neijssel19 SFH model"""
@@ -579,22 +574,7 @@ class TestNeijssel19:
         
         # Check that it inherits correctly from MadauBase
         assert isinstance(neijssel, MadauBase)
-    
-    def test_csfrd_calculation(self):
-        """Test that CSFRD calculations match expected values"""
-        model_dict = {"sigma": 0.5, "Z_max": 0.03}
-        neijssel = Neijssel19(model_dict)
-        
-        # Test at specific redshifts
-        z_values = np.array([0.0, 1.0, 2.0, 6.0])
-        result = neijssel.CSFRD(z_values)
-        
-        # Calculate expected values manually using the formula
-        p = neijssel.CSFRD_params
-        expected = p["a"] * (1.0 + z_values) ** p["b"] / (1.0 + ((1.0 + z_values) / p["c"]) ** p["d"])
-        
-        np.testing.assert_allclose(result, expected)
-    
+
     def test_mean_metallicity(self):
         """Test the overridden mean_metallicity method"""
         model_dict = {"sigma": 0.5, "Z_max": 0.03}
@@ -627,7 +607,8 @@ class TestNeijssel19:
         model_dict = {"sigma": 0.5, "Z_max": 0.3, "normalise": True}
         neijssel = Neijssel19(model_dict)
         result = neijssel.fSFR(z, met_bins)
-        np.testing.assert_allclose(np.sum(result, axis=1), np.ones(2))
+        expected = np.ones(len(z))
+        np.testing.assert_allclose(np.sum(result, axis=1), expected)
 
 class TestFujimoto24:
     """Tests for the Fujimoto24 SFH model"""
@@ -645,21 +626,6 @@ class TestFujimoto24:
         
         # Check that it inherits correctly from MadauBase
         assert isinstance(fujimoto, MadauBase)
-    
-    def test_csfrd_calculation(self):
-        """Test that CSFRD calculations match expected values"""
-        model_dict = {"sigma": 0.5, "Z_max": 0.03}
-        fujimoto = Fujimoto24(model_dict)
-        
-        # Test at specific redshifts
-        z_values = np.array([0.0, 1.0, 2.0, 6.0])
-        result = fujimoto.CSFRD(z_values)
-        
-        # Calculate expected values manually using the formula
-        p = fujimoto.CSFRD_params
-        expected = p["a"] * (1.0 + z_values) ** p["b"] / (1.0 + ((1.0 + z_values) / p["c"]) ** p["d"])
-        
-        np.testing.assert_allclose(result, expected)
 
 class TestChruslinska21:
     """Tests for the Chruslinska21 SFH model with mocked data loading."""
@@ -702,7 +668,7 @@ class TestChruslinska21:
         }
     
     @pytest.fixture
-    def chruslinska_model(self, mock_chruslinska_data, monkeypatch):
+    def chruslinska_model(self, mock_chruslinska_data):
         """Create a Chruslinska21 model instance with mocked data."""
         model_dict = {
             "sub_model": "test_model",
@@ -731,9 +697,7 @@ class TestChruslinska21:
         result = chruslinska_model._FOH_to_Z(FOH_test)
         
         # Expected: 10^(log10(0.0134) + FOH - 8.69)
-        Zsun = 0.0134
-        FOHsun = 8.69
-        expected = 10**(np.log10(Zsun) + FOH_test - FOHsun)
+        expected = 10**(np.log10(0.0134) + FOH_test - 8.69)
         np.testing.assert_allclose(result, expected)
         
         # Test other scaling options
@@ -766,7 +730,10 @@ class TestChruslinska21:
         model_dict["Z_solar_scaling"] = "InvalidScaling"
         with pytest.raises(ValueError) as excinfo:
             model = Chruslinska21(model_dict)
-        assert "Invalid Z_solar_scaling!" in str(excinfo.value)
+        expected_str = ("Invalid Z_solar_scaling 'InvalidScaling'. "
+                        "Valid options: ['Asplund09', 'AndersGrevesse89', "
+                        "'GrevesseSauval98', 'Villante14']")
+        assert expected_str in str(excinfo.value)
     
     def test_mean_metallicity(self, chruslinska_model, mock_chruslinska_data):
         """Test the mean_metallicity method."""
@@ -795,7 +762,7 @@ class TestChruslinska21:
         # Should be an array of the same length as z_values
         assert len(result) == len(z_values)
         
-        # Should decrease with increasing redshift
+        # Should decrease with increasing redshift in the 
         assert result[0] > result[1] > result[2]
     
     def test_fsfr_calculation(self, chruslinska_model):
@@ -834,24 +801,14 @@ class TestZavala21:
         SFRD_min = 0.1 * np.exp(-redshifts / 3.0)  # Simple declining function
         SFRD_max = 0.2 * np.exp(-redshifts / 3.0)  # Double the min values
         
-        # Create a mock _load_zavala_data method
-        def mock_load_zavala(self):
-            self.redshifts = redshifts
-            if self.sub_model == "min":
-                self.SFR_data = SFRD_min
-            elif self.sub_model == "max":
-                self.SFR_data = SFRD_max
-            else:
-                raise ValueError("Invalid sub-model!")
+        def mock_read_csv(self, **kwargs):
+            return pd.DataFrame(data={
+                "redshift": redshifts,
+                "SFRD_min": SFRD_min,
+                "SFRD_max": SFRD_max
+            })
         
-        # Patch the method
-        monkeypatch.setattr(Zavala21, "_load_zavala_data", mock_load_zavala)
-        
-        return {
-            "redshifts": redshifts,
-            "SFRD_min": SFRD_min,
-            "SFRD_max": SFRD_max
-        }
+        monkeypatch.setattr(pd, "read_csv", mock_read_csv)
     
     def test_init_parameters(self, mock_zavala_data):
         """Test that initialization validates and sets parameters correctly."""
@@ -1044,13 +1001,13 @@ class TestGetSFHModel:
     def test_invalid_model(self):
         """Test that get_SFH_model raises an error for an invalid model."""
         
-        model_dict = {"SFR": "InvalidModel", "sigma": 0.5, "Z_max": 0.03}
+        model_dict = {"SFR": "InvalidModel"}
         with pytest.raises(ValueError) as excinfo:
             model = get_SFH_model(model_dict)
         assert "Invalid SFR!" in str(excinfo.value)
 
-class TestSFHUtilityFunctions:
-    """Tests for utility functions in the star_formation_history module."""
+class TestSFR_per_met_at_z:
+    """Tests for SFR_per_met_at_z function."""
     
     def test_SFR_per_met_at_z(self, monkeypatch):
         """Test that SFR_per_met_at_z correctly calls the model."""
