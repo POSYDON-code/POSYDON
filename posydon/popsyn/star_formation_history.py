@@ -254,6 +254,11 @@ class MadauBase(SFHBase):
                 The minimum metallicity in absolute units.
             - normalise : bool
                 Normalise the metallicity distribution to 1.
+            - CSFRD_params: dict
+                Parameters for the cosmic star formation rate density (CSFRD)
+                - a, b, c, d : float
+                Follows the Madau & Dickinson (2014) CSFRD formula (Eq. 15):
+                https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract
         """
         if "sigma" not in SFH_MODEL:
             raise ValueError("sigma not given!")
@@ -366,7 +371,7 @@ class MadauDickinson14(MadauBase):
         Parameters
         ----------
         SFH_MODEL : dict
-            Model parameters. Madau+14 requires the following parameters:
+            SFH model parameters. Madau+14 requires the following parameters:
             - sigma : float or str
                 The standard deviation of the log-normal metallicity 
                 distribution.
@@ -381,6 +386,11 @@ class MadauDickinson14(MadauBase):
                 The minimum metallicity in absolute units.
             - normalise : bool
                 Normalise the metallicity distribution to 1.
+            - CSFRD_params: dict
+                Parameters for the cosmic star formation rate density (CSFRD)
+                - a, b, c, d : float
+                Follows the Madau & Dickinson (2014) CSFRD formula (Eq. 15):
+                https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract
         """
         super().__init__(SFH_MODEL)
         # Parameters for Madau+Dickinson14 CSFRD
@@ -405,15 +415,20 @@ class MadauFragos17(MadauBase):
         Parameters
         ----------
         SFH_MODEL : dict
-            Model parameters. Madau+17 requires the following parameters:
+            SFH model parameters. Madau+17 requires the following parameters:
             - sigma : float or str
                 The standard deviation of the log-normal metallicity distribution.
                 Options are:
                 - Bavera+20
                 - Neijssel+19
                 - float
+            Additional SFH model parameters:
             - Z_max : float
                 The maximum metallicity in absolute units.
+            - Z_min : float
+                The minimum metallicity in absolute units.
+            - normalise : bool
+                Normalise the metallicity distribution to 1.
         """
         super().__init__(SFH_MODEL)
         # Parameters for Madau+Fragos17 CSFRD
@@ -441,7 +456,7 @@ class Neijssel19(MadauBase):
         Parameters
         ----------
         SFH_MODEL : dict
-            Model parameters. Neijssel+19 requires the following parameters:
+            SFH model parameters. Neijssel+19 requires the following parameters:
             - sigma : float or str
                 The standard deviation of the log-normal metallicity distribution.
                 Options are:
@@ -526,11 +541,13 @@ class IllustrisTNG(SFHBase):
         Parameters
         ----------
         SFH_MODEL : dict
-            Model parameters. IllustrisTNG requires the following parameters:
+            Additional SFH model parameters:
             - Z_max : float
                 The maximum metallicity in absolute units.
-            - select_one_met : bool
-                If True, the SFR is calculated for a single metallicity bin.
+            - Z_min : float
+                The minimum metallicity in absolute units.
+            - normalise : bool
+                Normalise the metallicity distribution to 1.
         """        
         super().__init__(SFH_MODEL)
         # load the TNG data
@@ -643,19 +660,24 @@ class Chruslinska21(SFHBase):
         Parameters
         ----------
         SFH_MODEL : dict
-            Model parameters. Chruslinska+21 requires the following parameters:
+            SFH model parameters. Chruslinska+21 requires the 
+            following parameters:
             - sub_model : str
-                The sub-model to use. This is the name of the file containing the data.
+                The sub-model to use.
+                This is the name of the file containing the data.
             - Z_solar_scaling : str
                 The scaling of the solar metallicity. Options are:
                 - Asplund09
                 - AndersGrevesse89
                 - GrevesseSauval98
                 - Villante14
+            Additional SFH model parameters:
             - Z_max : float
                 The maximum metallicity in absolute units.
-            - select_one_met : bool
-                If True, the SFR is calculated for a single metallicity bin.
+            - Z_min : float
+                The minimum metallicity in absolute units.
+            - normalise : bool
+                Normalise the metallicity distribution to 1.
         """
         if "sub_model" not in SFH_MODEL:
             raise ValueError("Sub-model not given!")
@@ -843,17 +865,20 @@ class Fujimoto24(MadauBase):
         Parameters
         ----------
         SFH_MODEL : dict
-            Model parameters. Fujimoto+24 requires the following parameters:
+            SFH model parameters. Fujimoto+24 requires the following parameters:
             - sigma : float or str
                 The standard deviation of the log-normal metallicity distribution.
                 Options are:
                 - Bavera+20
                 - Neijssel+19
                 - float
+            Additional SFH model parameters:
             - Z_max : float
                 The maximum metallicity in absolute units.
-            - select_one_met : bool
-                If True, the SFR is calculated for a single metallicity bin.
+            - Z_min : float
+                The minimum metallicity in absolute units.
+            - normalise : bool
+                Normalise the metallicity distribution to 1.
         """
         super().__init__(SFH_MODEL)
         # Parameters for Fujimoto+24 CSFRD
@@ -865,17 +890,31 @@ class Fujimoto24(MadauBase):
         }   
     
 class Zavala21(MadauBase):
+    """The Zavala et al. (2021) star formation history model.
+    
+    The "min" and "max" models are based on the obscured and unobscured
+    star formation rate density models, respectively.
+    
+    https://dx.doi.org/10.3847/1538-4357/abdb27
+    
+    """
     
     def __init__(self, SFH_MODEL):
         """Initialise the Zavala+21 model
         
-        Requires the following parameters:
-        - sub_model : str
-            Either min or max
-        - Z_max : float
-            The maximum metallicity in absolute units.
-        - select_one_met : bool
-            If True, the SFR is calculated for a single metallicity bin.
+        Parameters
+        ----------
+        SFH_MODEL : dict
+            SFH model parameters. Zavala+21 requires the following parameters:
+            - sub_model : str
+                The sub-model to use. Either "min" or "max".
+            Additional SFH model parameters:
+            - Z_max : float
+                The maximum metallicity in absolute units.
+            - Z_min : float
+                The minimum metallicity in absolute units.
+            - normalise : bool
+                Normalise the metallicity distribution to 1.
         """
         if "sub_model" not in SFH_MODEL:
             raise ValueError("Sub-model not given!")
@@ -915,7 +954,7 @@ def get_SFH_model(SFH_MODEL):
     Parameters
     ----------
     SFH_MODEL : dict
-        Model parameters.
+        SFH model parameters.
     
     Returns
     -------
@@ -949,7 +988,7 @@ def SFR_per_met_at_z(z, met_bins, SFH_MODEL):
     met_bins : array
         Metallicity bins edges in absolute metallicity.
     SFH_MODEL : dict
-        Model parameters.
+        SFH model parameters.
     
     Returns
     -------
