@@ -48,7 +48,13 @@ class SFHBase(ABC):
         Parameters
         ----------
         MODEL : dict
-            Model parameters.
+            SFH model parameters.
+            - Z_max : float
+                The maximum metallicity in absolute units.
+            - Z_min : float
+                The minimum metallicity in absolute units.
+            - normalise : bool
+                Normalise the metallicity distribution to 1.
         """
         self.Z_max = None
         self.Z_min = None
@@ -246,8 +252,8 @@ class MadauBase(SFHBase):
         """
         if "sigma" not in MODEL:
             raise ValueError("sigma not given!")
-        super().__init__(MODEL)
         self.CSFRD_params = None
+        super().__init__(MODEL)
     
     def CSFRD(self, z):
         """The cosmic star formation rate density at a given redshift.
@@ -365,8 +371,6 @@ class MadauDickinson14(MadauBase):
                 - float
             - Z_max : float
                 The maximum metallicity in absolute units.
-            - select_one_met : bool
-                If True, the SFR is calculated for a single metallicity bin.
         """
         super().__init__(MODEL)
         # Parameters for Madau+Dickinson14 CSFRD
@@ -400,8 +404,6 @@ class MadauFragos17(MadauBase):
                 - float
             - Z_max : float
                 The maximum metallicity in absolute units.
-            - select_one_met : bool
-                If True, the SFR is calculated for a single metallicity bin.    
         """
         super().__init__(MODEL)
         # Parameters for Madau+Fragos17 CSFRD
@@ -436,10 +438,13 @@ class Neijssel19(MadauBase):
                 - Bavera+20
                 - Neijssel+19
                 - float
+            It can also use the following parameters:
             - Z_max : float
                 The maximum metallicity in absolute units.
-            - select_one_met : bool
-                If True, the SFR is calculated for a single metallicity bin.    
+            - Z_min : float
+                The minimum metallicity in absolute units.
+            - normalise : bool
+                Normalise the metallicity distribution to 1.
         """
         super().__init__(MODEL)
         # Parameters for Neijssel+19 CSFRD
