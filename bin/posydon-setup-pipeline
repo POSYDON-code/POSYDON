@@ -105,11 +105,12 @@ PLOTTING_SETS = {
     'PLOT_AFTER_PROFILE_TRAINING' : []
 }
 for SN_MODEL_NAME in SN_MODELS.keys():
-    for prop in ['CO_type', 'SN_type', 'mass', 'spin', 'm_disk_radiated']:
-        PLOTTING_SETS['PLOT_AFTER_EXTRA'].append(f'S1_{SN_MODEL_NAME}_{prop}')
-        if prop not in ['CO_type', 'SN_type']:
+    for quantity in ['CO_type', 'SN_type', 'mass', 'spin', 'm_disk_radiated']:
+        PLOTTING_SETS['PLOT_AFTER_EXTRA'].append(
+         f'S1_{SN_MODEL_NAME}_{quantity}')
+        if quantity not in ['CO_type', 'SN_type']:
             PLOTTING_SETS['PLOT_AFTER_TRAINING'].append(
-             f'INTERP_ERROR_S1_{SN_MODEL_NAME}_{prop}')
+             f'INTERP_ERROR_S1_{SN_MODEL_NAME}_{quantity}')
 
 # predefined checking sets
 CHECKING_SETS = {
