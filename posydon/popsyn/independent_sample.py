@@ -404,7 +404,7 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
     binary fraction: int
 
     """
-    binary_fraction_scheme_options = ['const','Moe_17']
+    binary_fraction_scheme_options = ['const','Moe_17','Gotberg']
 
     # Input parameter checks
     if binary_fraction_scheme not in binary_fraction_scheme_options: 
@@ -442,7 +442,8 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
         binary_fraction[(m1 <= 9) & (m1 > 5)] = 0.76
         binary_fraction[(m1 <= 5) & (m1 > 2)] = 0.59
         binary_fraction[(m1 <= 2)] = 0.4
-
+    elif binary_fraction_scheme == 'Gotberg':
+        binary_fraction = 0.09 + 0.63*np.log10(m1)
     else: 
         pass
     return binary_fraction
