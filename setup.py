@@ -48,13 +48,13 @@ with open("README.md", "rb") as f:
 
 
 # DEPENDENCIES
+setup_requires = [
+    'setuptools >= 76.0.0',
+]
 if 'test' in sys.argv:
-    setup_requires = [
-        'setuptools',
+    setup_requires += [
         'pytest-runner',
     ]
-else:
-    setup_requires = []
 
 
 # These pretty common requirement are commented out. Various syntax types
@@ -92,7 +92,7 @@ extras_require = {
     # to build documentation
     "doc": [
         "ipython",
-        "sphinx >= 6.1.3",
+        "sphinx >= 8.2.2",
         "numpydoc",
         "sphinx_rtd_theme",
         "sphinxcontrib_programoutput",
@@ -123,6 +123,8 @@ LICENSE = "GPLv3+"
 DESCRIPTION = "POSYDON the Next Generation of Population Synthesis"
 GITHUBURL = "https://github.com/POSYDON-code/POSYDON"
 
+# Additional included files via include_package_data are defined in MANIFEST.in
+
 setup(
     name=DISTNAME,
     provides=[PACKAGENAME],
@@ -143,22 +145,21 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,
-    python_requires=">3.10, <3.12",
+    python_requires=">=3.11, <3.12",
     use_2to3=False,
     classifiers=[
         "Development Status :: 4 - Beta",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3.11",
         "Intended Audience :: Science/Research",
         "Intended Audience :: End Users/Desktop",
-        "Intended Audience :: Science/Research",
-        "Natural Language :: English",
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Astronomy",
         "Topic :: Scientific/Engineering :: Physics",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.11",
         "Operating System :: POSIX",
         "Operating System :: Unix",
         "Operating System :: MacOS",
+        "Natural Language :: English",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3+)",
     ],
 )

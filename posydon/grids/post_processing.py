@@ -30,59 +30,99 @@ __credits__ = [
 
 
 CC_quantities = ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                 'm_disk_accreted', 'm_disk_radiated', 'CO_interpolation_class',
-                 'M4', 'mu4',
+                 'm_disk_accreted', 'm_disk_radiated',
+                 'CO_interpolation_class', 'M4', 'mu4',
                  'h1_mass_ej', 'he4_mass_ej']
 
-def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME=None):
-    """"Assign None values to all core collapse properties."""
+def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i,
+                                         MODEL_NAME=None):
+    """Assign None values to all core collapse properties.
+
+        Parameters
+        ----------
+        EXTRA_COLUMNS : dict of lists
+            Each new column should be a list in this dictionary. This
+            dictionary will get modified by this function.
+        star_i : int (1 or 2)
+            Index of the star.
+        MODEL_NAME : str or list of str, or None (default: None)
+            Model key like the ones given in MODELS.py.
+
+    """
+    if (not isinstance(star_i, int) or (star_i<1) or (star_i>2)):
+        raise ValueError("'star_i' should be 1 or 2.")
     if MODEL_NAME is None:
-        for MODEL_NAME, MODEL in MODELS.items():
+        for NAME, MODEL in MODELS.items():
             for quantity in CC_quantities:
-                EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
-    else:
+                EXTRA_COLUMNS[f'S{star_i}_{NAME}_{quantity}'
+                              ].append(None)
+    elif isinstance(MODEL_NAME, str):
         for quantity in CC_quantities:
             EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(None)
+    elif isinstance(MODEL_NAME, list):
+        for NAME in MODEL_NAME:
+            for quantity in CC_quantities:
+                EXTRA_COLUMNS[f'S{star_i}_{NAME}_{quantity}'].append(None)
+    else:
+        raise TypeError("'MODEL_NAME' should be a string, a list of strings, "
+                        "or None.")
 
-def print_CC_quantities(EXTRA_COLUMNS, star, MODEL_NAME=None):
-    format_string = "{:<50} {:<33} {:12} {:10} {:15} {:10} {:25} {:25} {:25} {:25} {:25} {:25}"
-    format_val_preSN = "{:<50} {:<33} {:12} {:10} {:7.2f} {:12.2f} {:25} {:25} {:25} {:25} {:25} {:25}"
-    format_val = "{:<50} {:<33} {:12} {:1.2f} {:13.2f} {:12.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f}"
+def print_CC_quantities(star, MODEL_NAME=None):
+    """Print quantities at core collapse.
+
+        Parameters
+        ----------
+        star : SingleStar object
+            The star whose quantities to print.
+        MODEL_NAME : str or None (default: None)
+            Name of the model. If None, print pre SN values.
+
+    """
+    format_string = "{:<50} {:<33} {:12} {:10} {:15} {:10} {:25} {:25} {:25} "\
+                    + "{:25} {:25} {:25}"
+    format_val_preSN = "{:<50} {:<33} {:12} {:10} {:7.2f} {:12.2f} {:25} "\
+                       + "{:25} {:25} {:25} {:25} {:25}"
+    format_val = "{:<50} {:<33} {:12} {:1.2f} {:13.2f} {:12.2f} {:20.2f} "\
+                 + "{:20.2f} {:20.2f} {:20.2f} {:20.2f} {:20.2f}"
     if MODEL_NAME is None:
         print('')
-        print(format_string.format(
-            "mechanism", "state", "SN type", "f_fb",
-            "mass [Msun]", "spin", "m_disk_accreted [Msun]",
-            "m_disk_radiated [Msun]", "M4 [m/Msun]", "mu4 [(dm/Msun)/(dr/1000km)]",
-            "h1_mass_ej [Msun]", "he4_mass_ej [Msun]"))
+        print(format_string.format("mechanism", "state", "SN type", "f_fb",
+                                   "mass [Msun]", "spin",
+                                   "m_disk_accreted [Msun]",
+                                   "m_disk_radiated [Msun]", "M4 [m/Msun]",
+                                   "mu4 [(dm/Msun)/(dr/1000km)]",
+                                   "h1_mass_ej [Msun]", "he4_mass_ej [Msun]"))
         print('')
         try:
-            print(format_val_preSN.format(
-                'PRE SN STAR', star.state, '',
-                '', star.mass, star.spin, '', '', '', '', '', ''))
+            print(format_val_preSN.format('PRE SN STAR', star.state, '', '',
+                                          star.mass, star.spin, '', '', '', '',
+                                          '', ''))
         except Exception as e:
-            Pwarn("Failed to print star values!\nWarning in preSN: "+\
+            Pwarn("Failed to print star values!\nWarning in preSN: "
                   "{}".format(e), "InappropriateValueWarning")
         print('')
     else:
         try:
             checked_quantities_for_None = {}
             for quantity in ["spin", "M4", "mu4", "h1_mass_ej", "he4_mass_ej"]:
-                if getattr(star, quantity)==None:
-                    checked_quantities_for_None[quantity] =  np.nan
+                if getattr(star, quantity) is None:
+                    checked_quantities_for_None[quantity] = np.nan
                 else:
-                    checked_quantities_for_None[quantity] =  getattr(star, quantity)
-            print(format_val.format(MODEL_NAME,
-                    star.state, star.SN_type, star.f_fb,
-                    star.mass, checked_quantities_for_None["spin"], star.m_disk_accreted,
-                    star.m_disk_radiated, checked_quantities_for_None["M4"], checked_quantities_for_None["mu4"],
-                    checked_quantities_for_None["h1_mass_ej"], checked_quantities_for_None["he4_mass_ej"]))
+                    checked_quantities_for_None[quantity] = getattr(star,
+                                                                    quantity)
+            print(format_val.format(MODEL_NAME, star.state, star.SN_type,
+                                    star.f_fb, star.mass,
+                                    checked_quantities_for_None["spin"],
+                                    star.m_disk_accreted, star.m_disk_radiated,
+                                    checked_quantities_for_None["M4"],
+                                    checked_quantities_for_None["mu4"],
+                                    checked_quantities_for_None["h1_mass_ej"],
+                                    checked_quantities_for_None["he4_mass_ej"])
+                  )
         except Exception as e:
-            Pwarn("Failed to print star values!\nWarning in "+\
+            Pwarn("Failed to print star values!\nWarning in "
                   "{}: {}".format(MODEL_NAME, e), "InappropriateValueWarning")
-        
-    
-                    
+
 def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                       single_star=False, verbose=False):
     """Compute post processed quantity of any grid.
@@ -105,16 +145,16 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
     ----------
     grid : PSyGrid
         MESA grid in PSyGrid format.
-    index : None, touple or int
+    index : None, int, or list with two int (default: None)
         If None, loop over all indicies otherwise provide a range, e.g. [10,20]
-        or a index, e.g. 42.
-    star_2_CO : bool
+        or a single index, e.g. 42.
+    star_2_CO : bool (default: True)
         If 'False' star 2 is not a compact object.
-    MODELS : list of dict
+    MODELS : list of dict (default are the models defined in MODELS.py)
         List of supported core collapse model assumptions.
-    single_star : bool
+    single_star : bool (default: False)
         If `True` the PSyGrid contains single stars.
-    verbose : bool
+    verbose : bool (default: False)
         If `True` print the results of each core collapse on screen.
 
     Returns
@@ -128,8 +168,12 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
     """
     EXTRA_COLUMNS = {}
-
-    for star in [1, 2]:
+    if single_star: # only star 1 columns in case of single star grid
+        stars = [1]
+    else:
+        stars = [1, 2]
+        EXTRA_COLUMNS['mt_history'] = []
+    for star in stars:
         # core masses at He depletion. stellar states and composition
         for quantity in ['avg_c_in_c_core_at_He_depletion',
                          'co_core_mass_at_He_depletion',
@@ -144,12 +188,6 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
             for quantity in CC_quantities:
                 EXTRA_COLUMNS[f'S{star}_{MODEL_NAME}_{quantity}'] = []
 
-    # remove star 2 columns in case of single star grid
-    if single_star:
-        for key in list(EXTRA_COLUMNS.keys()):
-            if 'S2' in key:
-                del EXTRA_COLUMNS[key]
-
     # loop over all gird, index or range
     if index is None:
         indicies = range(len(grid.MESA_dirs))
@@ -162,6 +200,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
             raise ValueError('Index range should have dim=2!')
         indicies = range(index[0], index[1])
         MESA_dirs = grid.MESA_dirs[index[0]:index[1]]
+    else:
+        raise TypeError('The argument `index` should be None, an integer, or '
+                        'a list of two integers.')
 
     for i in tqdm(indicies):
 
@@ -194,9 +235,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                         (star.co_core_mass_at_He_depletion is None)):
                         calculate_Patton20_values_at_He_depl(star)
                 EXTRA_COLUMNS[f'S{j+1}_avg_c_in_c_core_at_He_depletion'].append(
-                                                star.avg_c_in_c_core_at_He_depletion)
+                    star.avg_c_in_c_core_at_He_depletion)
                 EXTRA_COLUMNS[f'S{j+1}_co_core_mass_at_He_depletion'].append(
-                                                    star.co_core_mass_at_He_depletion)
+                    star.co_core_mass_at_He_depletion)
                 # CE quantities
                 with Catch_POSYDON_Warnings(record=True) as cpw:
                     try:
@@ -252,44 +293,54 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                     ('primary' in TF1 or 'Primary' in TF1))):
                     star = binary.star_1
                     star_i = 1
-                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
+                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2,
+                                                         list(MODELS.keys()))
                 elif (TF1 in TF1_POOL_STABLE and
                     ('secondary' in TF1 or 'Secondary' in TF1)):
                     star = binary.star_2
                     star_i = 2
-                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
+                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1,
+                                                         list(MODELS.keys()))
                 elif TF1 == 'gamma_center_limit':
                     if (binary.star_1.center_gamma is not None and
                         binary.star_1.center_gamma >= 10.):
                         star = binary.star_1
                         star_i = 1
-                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
+                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2,
+                                                             list(MODELS.keys()))
                     elif (binary.star_2.center_gamma is not None and
                         binary.star_2.center_gamma >= 10.):
                         star = binary.star_2
                         star_i = 2
-                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
+                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1,
+                                                             list(MODELS.keys()))
                     else:
-                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
-                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
+                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1,
+                                                             list(MODELS.keys()))
+                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2,
+                                                             list(MODELS.keys()))
                         Pwarn(f'{grid.MESA_dirs[i]} ended with '
                               'TF1=gamma_center_limit however the star has '
                               'center_gamma < 10. This star cannot go through '
                               'step_SN appending NONE compact object '
                               'properties!', "InappropriateValueWarning")
-                        continue
+                        star_i = 0
                 else:
-                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
-                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
+                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1,
+                                                         list(MODELS.keys()))
+                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2,
+                                                         list(MODELS.keys()))
                     Pwarn(f'{grid.MESA_dirs[i]} ended with TF={TF1} and '
                           f'IC={interpolation_class}. This star cannot go '
                           'through step_SN appending NONE compact object '
                           'properties!', "InappropriateValueWarning")
-                    continue
+                    star_i = 0
 
-                if star.state in STAR_STATES_CC:
+                if star_i == 0:
+                    pass
+                elif star.state in STAR_STATES_CC:
                     if verbose:
-                        print_CC_quantities(EXTRA_COLUMNS, star)
+                        print_CC_quantities(star)
 
                     for MODEL_NAME, MODEL in MODELS.items():
                         mechanism = MODEL['mechanism']+MODEL['engine']
@@ -323,7 +374,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                 print('run directory:', grid.MESA_dirs[i])
                                 print('')
                         if flush:
-                            assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i, MODEL_NAME)
+                            assign_core_collapse_quantities_none(EXTRA_COLUMNS,
+                                                                 star_i,
+                                                                 MODEL_NAME)
                         else:
                             for quantity in CC_quantities:
                                 if quantity != 'CO_interpolation_class':
@@ -337,20 +390,23 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                                         EXTRA_COLUMNS[f'S{star_i}_{MODEL_NAME}_{quantity}'].append(
                                         getattr(star_copy, 'state'))
                             if verbose:
-                                print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
+                                print_CC_quantities(star_copy, f'{MODEL_NAME}_{mechanism}')
                 else:
                     # star not explodable
-                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i)
+                    assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i,
+                                                         list(MODELS.keys()))
 
             else:
                 # inital_RLOF, unstable_MT not_converged
-                assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
-                assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2)
+                assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1,
+                                                     list(MODELS.keys()))
+                assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2,
+                                                     list(MODELS.keys()))
 
         else:
             if star.state in STAR_STATES_CC:
                 if verbose:
-                    print_CC_quantities(EXTRA_COLUMNS, star)
+                    print_CC_quantities(star)
 
                 for MODEL_NAME, MODEL in MODELS.items():
                     mechanism = MODEL['mechanism']+MODEL['engine']
@@ -380,43 +436,38 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
                             print(f'Error during {MODEL_NAME} {mechanism} core collapse prescrition!')
                             print(e)
                             print('TF1:', TF1)
-                            print('interpolation class:',  interpolation_class)
                             print('run directory:', grid.MESA_dirs[i])
                             print('')
                     if flush:
-                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1, MODEL_NAME)
+                        assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1,
+                                                             MODEL_NAME)
                     else:
                         for quantity in CC_quantities:
                             if quantity != 'CO_interpolation_class':
                                 EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                                getattr(star_copy, quantity))
+                                 getattr(star_copy, quantity))
                             else:
-                                if getattr(star_copy, 'state') == 'BH' and 'case' in TF2 and '1' in TF2 and '2' in TF2:
-                                    EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                                    getattr(star_copy, 'state')+'_reverse_MT')
-                                else:
-                                    EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
-                                    getattr(star_copy, 'state'))
+                                EXTRA_COLUMNS[f'S1_{MODEL_NAME}_{quantity}'].append(
+                                 getattr(star_copy, 'state'))
                         if verbose:
-                            print_CC_quantities(EXTRA_COLUMNS, star_copy, f'{MODEL_NAME}_{mechanism}')
+                            print_CC_quantities(star_copy, f'{MODEL_NAME}_{mechanism}')
             else:
-                assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
+                assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1,
+                                                     list(MODELS.keys()))
+
+        # add MT history column by combining TF1 and TF2
+        if not single_star:
+            combined_TF12 = combine_TF12([IC], [TF2])
+            mt_history = DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12'][combined_TF12[0]][3]
+            EXTRA_COLUMNS['mt_history'].append(mt_history)
 
         # check dataset completeness
         n_control = len(EXTRA_COLUMNS['S1_state'])
         for key in EXTRA_COLUMNS.keys():
-            if n_control != len(EXTRA_COLUMNS[key]):
+            if n_control != len(EXTRA_COLUMNS[key]): # pragma: no cover
                 raise ValueError(
                     '%s has not the correct dimension! Error occoured after '
                     'collapsing binary index=%s' % (key, i))
-
-    # add MT history column by combining TF1 and TF2
-    if not single_star:
-        interp_class = grid.final_values['interpolation_class']
-        TF2 = grid.final_values['termination_flag_2']
-        combined_TF12 = combine_TF12(interp_class, TF2)
-        mt_history = [DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12'][TF12][3] for TF12 in combined_TF12]
-        EXTRA_COLUMNS['mt_history'] = mt_history
 
     # to avoid confusion rename core-collaspe compact object state "MODEL_NAME_state"
     # to "MODEL_NAME_CO_type"
@@ -429,9 +480,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
     return MESA_dirs, EXTRA_COLUMNS
 
-
-def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
-                                  verbose=False):
+def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
+                                  EXTRA_COLUMNS):
     """Append post processed quantity to a grid.
 
     This function appends the quantities computed in post_process_grid to any
@@ -442,14 +492,12 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
     ----------
     grid : PSyGrid
         MESA grid in PSyGrid format.
-    MESA_dirs: list
+    MESA_dirs_EXTRA_COLUMNS: list
         List containing the path to each run corresponding to the post
         processed values. This is used to ensure one to one mapping when
         appending the extra columns back to a grid.
     EXTRA_COLUMNS: dict
         Dictionary containing all post processed quantities.
-    verbose : bool
-        If `True` print the results of each core collapse on screen.
 
     """
     # check correspondance of EXTRA_COLUMNS with grid

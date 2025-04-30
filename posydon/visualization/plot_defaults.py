@@ -946,6 +946,12 @@ DEFAULT_LABELS = {
     'lambda_CE_pure_He_star_10cent':
         [r'$\lambda_\mathrm{CE-He-star,10\%}$',
          r'$\log_{10}(\lambda_\mathrm{CE-He-star,30\%})$'],
+    'total_mass_h1':
+        [r'$M_\mathrm{H1} \, [M_\odot]$',
+         r'$\log_{10}(M_\mathrm{H1} / M_\odot)$'],
+    'total_mass_he4':
+        [r'$M_\mathrm{He4} \, [M_\odot]$',
+         r'$\log_{10}(M_\mathrm{He4} / M_\odot)$'],
 
     # binary_history
     'model_number':

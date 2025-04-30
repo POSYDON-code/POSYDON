@@ -10,19 +10,28 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [macos-13, macos-latest, ubuntu-latest]
         python-version: ['3.11']  # can add more if we want to support
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install conda (via Miniconda)
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-activate-base: true
+
     - name: Install POSYDON with extras
       run: |
+        conda create -n test-env python=3.11 mpi4py -y
+        source $(conda info --base)/etc/profile.d/conda.sh
+        conda activate test-env
         python -m pip install --upgrade pip
-        pip install ".[doc,vis,ml,hpc]" 
+        pip install ".[doc,vis,ml,hpc]"
+      shell: bash

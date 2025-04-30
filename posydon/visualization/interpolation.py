@@ -7,6 +7,7 @@ __authors__ = [
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 class EvaluateIFInterpolator:
     """ Class that is helpful for evaluating interpolation performance
@@ -146,7 +147,7 @@ class EvaluateIFInterpolator:
 
     def __clean_errs(self, errs):
 
-        errs = errs[~np.isnan(errs).any(axis = 1)] # dropping nans
+        errs = errs[pd.notna(errs).any(axis = 1)] # dropping nans
         errs = errs[~np.isinf(errs).any(axis = 1)] # dropping infs
 
         return errs

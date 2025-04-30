@@ -1,3 +1,18 @@
+# add the main README and this file
 include README.md MANIFEST.in
+
+# add the versioneer
 include versioneer.py
 include posydon/_version.py
+
+# add additional README files
+recursive-include posydon README.md
+
+# add default ini files
+recursive-include posydon *.ini
+
+# add matplotlib style file
+include posydon/visualization/posydon.mplstyle
+
+# add images for Van den Heuvel diagrams
+include posydon/visualization/VH_diagram/draws/*.png

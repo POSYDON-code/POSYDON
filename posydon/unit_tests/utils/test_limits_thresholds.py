@@ -16,21 +16,34 @@ import posydon.utils.limits_thresholds as totest
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['LG_MTRANSFER_RATE_THRESHOLD', 'LOG10_BURNING_THRESHOLD',\
+        elements = {'LG_MTRANSFER_RATE_THRESHOLD', 'LOG10_BURNING_THRESHOLD',\
                     'MIN_COUNT_INITIAL_RLO_BOUNDARY',\
                     'NEUTRINO_MASS_LOSS_UPPER_LIMIT',\
                     'REL_LOG10_BURNING_THRESHOLD',\
                     'RL_RELATIVE_OVERFLOW_THRESHOLD',\
+                    'STATE_NS_STARMASS_LOWER_LIMIT',\
                     'STATE_NS_STARMASS_UPPER_LIMIT',\
+                    'STATE_WD_STARMASS_UPPER_LIMIT',\
                     'THRESHOLD_CENTRAL_ABUNDANCE',\
                     'THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C',\
                     'THRESHOLD_HE_NAKED_ABUNDANCE',\
                     'THRESHOLD_NUCLEAR_LUMINOSITY', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
-                    '__loader__', '__name__', '__package__', '__spec__', 'np']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    '__loader__', '__name__', '__package__', '__spec__', 'np'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_RL_RELATIVE_OVERFLOW_THRESHOLD(self):
         assert isinstance(totest.RL_RELATIVE_OVERFLOW_THRESHOLD, (float,\
@@ -78,6 +91,16 @@ class TestElements:
         assert isinstance(totest.LOG10_BURNING_THRESHOLD, (float, int)),\
                "LOG10_BURNING_THRESHOLD is of type: "\
                + str(type(totest.LOG10_BURNING_THRESHOLD))
+
+    def test_instance_STATE_WD_STARMASS_UPPER_LIMIT(self):
+        assert isinstance(totest.STATE_WD_STARMASS_UPPER_LIMIT, (float, int)),\
+               "STATE_WD_STARMASS_UPPER_LIMIT is of type: "\
+               + str(type(totest.STATE_WD_STARMASS_UPPER_LIMIT))
+
+    def test_instance_STATE_NS_STARMASS_LOWER_LIMIT(self):
+        assert isinstance(totest.STATE_NS_STARMASS_LOWER_LIMIT, (float, int)),\
+               "STATE_NS_STARMASS_LOWER_LIMIT is of type: "\
+               + str(type(totest.STATE_NS_STARMASS_LOWER_LIMIT))
 
     def test_instance_STATE_NS_STARMASS_UPPER_LIMIT(self):
         assert isinstance(totest.STATE_NS_STARMASS_UPPER_LIMIT, (float, int)),\
@@ -151,6 +174,16 @@ class TestLimits:
 
 #    def test_limits_LOG10_BURNING_THRESHOLD(self):
         # has no limits
+
+    def test_limits_STATE_WD_STARMASS_UPPER_LIMIT(self):
+        # a mass should be >0
+        assert totest.STATE_WD_STARMASS_UPPER_LIMIT > 0.0,\
+               "a mass has to be positve"
+
+    def test_limits_STATE_NS_STARMASS_LOWER_LIMIT(self):
+        # a mass should be >0
+        assert totest.STATE_NS_STARMASS_LOWER_LIMIT > 0.0,\
+               "a mass has to be positve"
 
     def test_limits_STATE_NS_STARMASS_UPPER_LIMIT(self):
         # a mass should be >0
