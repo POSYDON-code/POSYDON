@@ -1,0 +1,425 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.unit_tests.utils.test_limits_thresholds &mdash; posydon v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=f4b7fd8b"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.unit_tests.utils.test_limits_thresholds</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.unit_tests.utils.test_limits_thresholds</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Unit tests of posydon/utils/limits_thresholds.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># import the module which will be tested</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.limits_thresholds</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">totest</span>
+
+<span class="c1"># import other needed code for the tests, which is not already imported in the</span>
+<span class="c1"># module you like to test</span>
+
+
+<span class="c1"># define test classes collecting several test functions</span>
+<div class="viewcode-block" id="TestElements">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestElements</span><span class="p">:</span>
+    <span class="c1"># check for objects, which should be an element of the tested module</span>
+<div class="viewcode-block" id="TestElements.test_dir">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;LG_MTRANSFER_RATE_THRESHOLD&#39;</span><span class="p">,</span> <span class="s1">&#39;LOG10_BURNING_THRESHOLD&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;MIN_COUNT_INITIAL_RLO_BOUNDARY&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;NEUTRINO_MASS_LOSS_UPPER_LIMIT&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;REL_LOG10_BURNING_THRESHOLD&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;RL_RELATIVE_OVERFLOW_THRESHOLD&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;STATE_NS_STARMASS_LOWER_LIMIT&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;STATE_NS_STARMASS_UPPER_LIMIT&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;STATE_WD_STARMASS_UPPER_LIMIT&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;THRESHOLD_CENTRAL_ABUNDANCE&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;THRESHOLD_HE_NAKED_ABUNDANCE&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;THRESHOLD_NUCLEAR_LUMINOSITY&#39;</span><span class="p">,</span> <span class="s1">&#39;__authors__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span> <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span> <span class="s1">&#39;np&#39;</span><span class="p">}</span>
+        <span class="n">totest_elements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">totest</span><span class="p">))</span>
+        <span class="n">missing_in_test</span> <span class="o">=</span> <span class="n">elements</span> <span class="o">-</span> <span class="n">totest_elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are missing objects in &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">missing_in_test</span><span class="si">}</span><span class="s2">. Please &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;check, whether they have been &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;removed on purpose and update &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;this unit test.&quot;</span>
+        <span class="n">new_in_test</span> <span class="o">=</span> <span class="n">totest_elements</span> <span class="o">-</span> <span class="n">elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are new objects in &quot;</span>\
+                                      <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_in_test</span><span class="si">}</span><span class="s2">. &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;Please check, whether they have been &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;added on purpose and update this &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;unit test.&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_RL_RELATIVE_OVERFLOW_THRESHOLD">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_RL_RELATIVE_OVERFLOW_THRESHOLD">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_RL_RELATIVE_OVERFLOW_THRESHOLD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">RL_RELATIVE_OVERFLOW_THRESHOLD</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span>\
+                                                                  <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;RL_RELATIVE_OVERFLOW_THRESHOLD is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">RL_RELATIVE_OVERFLOW_THRESHOLD</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_LG_MTRANSFER_RATE_THRESHOLD">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_LG_MTRANSFER_RATE_THRESHOLD">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_LG_MTRANSFER_RATE_THRESHOLD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">LG_MTRANSFER_RATE_THRESHOLD</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;LG_MTRANSFER_RATE_THRESHOLD is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">LG_MTRANSFER_RATE_THRESHOLD</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_MIN_COUNT_INITIAL_RLO_BOUNDARY">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_MIN_COUNT_INITIAL_RLO_BOUNDARY">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_MIN_COUNT_INITIAL_RLO_BOUNDARY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">MIN_COUNT_INITIAL_RLO_BOUNDARY</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;MIN_COUNT_INITIAL_RLO_BOUNDARY is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">MIN_COUNT_INITIAL_RLO_BOUNDARY</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_THRESHOLD_CENTRAL_ABUNDANCE">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_THRESHOLD_CENTRAL_ABUNDANCE">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_THRESHOLD_CENTRAL_ABUNDANCE</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;THRESHOLD_CENTRAL_ABUNDANCE is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span>\
+                                                                       <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_THRESHOLD_HE_NAKED_ABUNDANCE">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_THRESHOLD_HE_NAKED_ABUNDANCE">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_THRESHOLD_HE_NAKED_ABUNDANCE</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_HE_NAKED_ABUNDANCE</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;THRESHOLD_HE_NAKED_ABUNDANCE is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_HE_NAKED_ABUNDANCE</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_THRESHOLD_NUCLEAR_LUMINOSITY">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_THRESHOLD_NUCLEAR_LUMINOSITY">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_THRESHOLD_NUCLEAR_LUMINOSITY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_NUCLEAR_LUMINOSITY</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;THRESHOLD_NUCLEAR_LUMINOSITY is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_NUCLEAR_LUMINOSITY</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_REL_LOG10_BURNING_THRESHOLD">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_REL_LOG10_BURNING_THRESHOLD">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_REL_LOG10_BURNING_THRESHOLD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">REL_LOG10_BURNING_THRESHOLD</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;REL_LOG10_BURNING_THRESHOLD is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">REL_LOG10_BURNING_THRESHOLD</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_LOG10_BURNING_THRESHOLD">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_LOG10_BURNING_THRESHOLD">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_LOG10_BURNING_THRESHOLD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">LOG10_BURNING_THRESHOLD</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;LOG10_BURNING_THRESHOLD is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">LOG10_BURNING_THRESHOLD</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_STATE_WD_STARMASS_UPPER_LIMIT">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_STATE_WD_STARMASS_UPPER_LIMIT">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_STATE_WD_STARMASS_UPPER_LIMIT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">STATE_WD_STARMASS_UPPER_LIMIT</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;STATE_WD_STARMASS_UPPER_LIMIT is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">STATE_WD_STARMASS_UPPER_LIMIT</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_STATE_NS_STARMASS_LOWER_LIMIT">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_STATE_NS_STARMASS_LOWER_LIMIT">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_STATE_NS_STARMASS_LOWER_LIMIT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">STATE_NS_STARMASS_LOWER_LIMIT</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;STATE_NS_STARMASS_LOWER_LIMIT is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">STATE_NS_STARMASS_LOWER_LIMIT</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_STATE_NS_STARMASS_UPPER_LIMIT">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_STATE_NS_STARMASS_UPPER_LIMIT">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;STATE_NS_STARMASS_UPPER_LIMIT is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_NEUTRINO_MASS_LOSS_UPPER_LIMIT">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestElements.test_instance_NEUTRINO_MASS_LOSS_UPPER_LIMIT">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span>\
+                                                                  <span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;NEUTRINO_MASS_LOSS_UPPER_LIMIT is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestLimits">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestLimits</span><span class="p">:</span>
+    <span class="c1"># check for validity ranges</span>
+<span class="c1">#    def test_limits_RL_RELATIVE_OVERFLOW_THRESHOLD(self):</span>
+        <span class="c1"># has no limits</span>
+
+<span class="c1">#    def test_limits_LG_MTRANSFER_RATE_THRESHOLD(self):</span>
+        <span class="c1"># has no limits</span>
+
+<div class="viewcode-block" id="TestLimits.test_limits_MIN_COUNT_INITIAL_RLO_BOUNDARY">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits.test_limits_MIN_COUNT_INITIAL_RLO_BOUNDARY">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_limits_MIN_COUNT_INITIAL_RLO_BOUNDARY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># an count shouldn&#39;t be negative</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">MIN_COUNT_INITIAL_RLO_BOUNDARY</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span>\
+               <span class="s2">&quot;MIN_COUNT_INITIAL_RLO_BOUNDARY should be 0 or larger&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestLimits.test_limits_THRESHOLD_CENTRAL_ABUNDANCE">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits.test_limits_THRESHOLD_CENTRAL_ABUNDANCE">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_limits_THRESHOLD_CENTRAL_ABUNDANCE</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># an abundance should be in [0,1]</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span>\
+               <span class="s2">&quot;THRESHOLD_CENTRAL_ABUNDANCE should be in the range [0,1], &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;but it is below&quot;</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span>\
+               <span class="s2">&quot;THRESHOLD_CENTRAL_ABUNDANCE should be in the range [0,1], &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;but it is above&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestLimits.test_limits_THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits.test_limits_THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_limits_THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># an abundance should be in [0,1]</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span>\
+               <span class="s2">&quot;THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C should be in the range &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;[0,1], but it is below&quot;</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span>\
+               <span class="s2">&quot;THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C should be in the range &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;[0,1], but it is above&quot;</span>
+        <span class="c1"># it should be limited by THRESHOLD_CENTRAL_ABUNDANCE</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C</span> <span class="o">&gt;=</span>\
+               <span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE</span><span class="p">,</span>\
+               <span class="s2">&quot;the loose condition should be less strict&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestLimits.test_limits_THRESHOLD_HE_NAKED_ABUNDANCE">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits.test_limits_THRESHOLD_HE_NAKED_ABUNDANCE">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_limits_THRESHOLD_HE_NAKED_ABUNDANCE</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># an abundance should be in [0,1]</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_HE_NAKED_ABUNDANCE</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span>\
+               <span class="s2">&quot;THRESHOLD_HE_NAKED_ABUNDANCE should be in the range [0,1], &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;but it is below&quot;</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_HE_NAKED_ABUNDANCE</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span>\
+               <span class="s2">&quot;THRESHOLD_HE_NAKED_ABUNDANCE should be in the range [0,1], &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;but it is above&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestLimits.test_limits_THRESHOLD_NUCLEAR_LUMINOSITY">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits.test_limits_THRESHOLD_NUCLEAR_LUMINOSITY">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_limits_THRESHOLD_NUCLEAR_LUMINOSITY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># an fraction should be in [0,1]</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_NUCLEAR_LUMINOSITY</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span>\
+               <span class="s2">&quot;THRESHOLD_NUCLEAR_LUMINOSITY should be in the range [0,1], &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;but it is below&quot;</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">THRESHOLD_NUCLEAR_LUMINOSITY</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span>\
+               <span class="s2">&quot;THRESHOLD_NUCLEAR_LUMINOSITY should be in the range [0,1], &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;but it is above&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestLimits.test_limits_REL_LOG10_BURNING_THRESHOLD">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits.test_limits_REL_LOG10_BURNING_THRESHOLD">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_limits_REL_LOG10_BURNING_THRESHOLD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># the log of a fraction should be &lt;=0</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">REL_LOG10_BURNING_THRESHOLD</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;a fraction should &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;be in the range [0,1], hence the log of it can&#39;t be positive&quot;</span></div>
+
+
+<span class="c1">#    def test_limits_LOG10_BURNING_THRESHOLD(self):</span>
+        <span class="c1"># has no limits</span>
+
+<div class="viewcode-block" id="TestLimits.test_limits_STATE_WD_STARMASS_UPPER_LIMIT">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits.test_limits_STATE_WD_STARMASS_UPPER_LIMIT">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_limits_STATE_WD_STARMASS_UPPER_LIMIT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># a mass should be &gt;0</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">STATE_WD_STARMASS_UPPER_LIMIT</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span>\
+               <span class="s2">&quot;a mass has to be positve&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestLimits.test_limits_STATE_NS_STARMASS_LOWER_LIMIT">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits.test_limits_STATE_NS_STARMASS_LOWER_LIMIT">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_limits_STATE_NS_STARMASS_LOWER_LIMIT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># a mass should be &gt;0</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">STATE_NS_STARMASS_LOWER_LIMIT</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span>\
+               <span class="s2">&quot;a mass has to be positve&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestLimits.test_limits_STATE_NS_STARMASS_UPPER_LIMIT">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits.test_limits_STATE_NS_STARMASS_UPPER_LIMIT">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_limits_STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># a mass should be &gt;0</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span>\
+               <span class="s2">&quot;a mass has to be positve&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestLimits.test_limits_NEUTRINO_MASS_LOSS_UPPER_LIMIT">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_limits_thresholds.TestLimits.test_limits_NEUTRINO_MASS_LOSS_UPPER_LIMIT">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_limits_NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># a mass limit should be &gt;=0</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span>\
+               <span class="s2">&quot;there shouldn&#39;t be a mass gain&quot;</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

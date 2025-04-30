@@ -1,0 +1,857 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stellar Transient Populations 🔍 &mdash; posydon v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f4b7fd8b"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌" href="lgrb_pop_syn.html" />
+    <link rel="prev" title="Large-Scale Population Synthesis on HPC Facilities 🚀" href="pop_syn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Stellar Transient Populations 🔍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evolve_single_binaries.html">Evolve individual binaries 🐞</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_step_and_flow.html">Custom POSYDON steps and flow chart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+      <li class="breadcrumb-item active">Stellar Transient Populations 🔍</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/population-synthesis/bbh_analysis.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Stellar-Transient-Populations-🔍">
+<h1>Stellar Transient Populations 🔍<a class="headerlink" href="#Stellar-Transient-Populations-🔍" title="Link to this heading"></a></h1>
+<p>In this notebook, we will cover:</p>
+<ol class="arabic simple">
+<li><p>Selecting binaries and combining metallicities</p></li>
+<li><p>Exploring the <code class="docutils literal notranslate"><span class="pre">TransientPopulation</span></code> class</p></li>
+<li><p>Calculating cosmic rates</p></li>
+</ol>
+<p>We will do this in the context of the merging binary black hole population.</p>
+<hr class="docutils" />
+<section id="Creating-multi-metallicity-Populations">
+<h2>Creating multi-metallicity Populations<a class="headerlink" href="#Creating-multi-metallicity-Populations" title="Link to this heading"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle">Reprocessed POSYDON v1 dataset</p>
+<p>Please note that with the reprocessed POSYDON v1 data, only solar metallicity is available. You will not be able to follow along with the full tutorial! If you would still like to explore a population at solar metallicity, you can follow the <a class="reference internal" href="one_met_pop_syn.html"><span class="doc">One metallicity tutorial</span></a>.</p>
+</div>
+<p>In the previous tutorial, you generated 8 population files with 1000 binaries. Since this is a small population of only 8.000 binaries, you could explore the complete population. But the larger your populations get, the better it is to select specific binaries.</p>
+<p>For each population file, we can export the binaries we’re interested in into a new file. For this, we need to find the indices of the merging binaries. The relevant properties are that both S1_state and S2_state equal ‘BH’, while the binary has the <code class="docutils literal notranslate"><span class="pre">event</span> <span class="pre">==</span> <span class="pre">'CO_contact</span></code>.</p>
+<p>We will load one of the population files to build our merging binaries selection.</p>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle">No indices?</p>
+<p>It might be that the population you generated does not contain any merging BBHs, they’re rare after all.</p>
+<p>As such, we have provided an example population run at <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON_DATA/population-synthesis/example/</span></code>, this simulation contains 10.000 binaries at the 8 metallicity.</p>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
+
+<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;1e+00_Zsun_population.h5&#39;</span><span class="p">)</span>
+<span class="n">tmp_data</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_state&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">])</span>
+<br/></pre></div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">pop.history.select</span></code> is a read operation on the population file and can take quite a lot of time if the population is large.</p>
+<p>If you have sufficient memory, it is more efficient to select several columns at the same time, as done here, instead of selecting a single column each time.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Selection of S1 being a BH</span>
+<span class="n">S1_state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span>
+<span class="c1"># Selection of S2 being a BH</span>
+<span class="n">S2_state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span>
+<span class="c1"># Selection of the binary system being in contact during the double CO phase.</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CO_contact&#39;</span>
+
+<span class="c1"># get the indices of all systems</span>
+<span class="n">indices</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="o">.</span><span class="n">index</span>
+
+<span class="c1"># delete the temporary data</span>
+<span class="k">del</span> <span class="n">tmp_data</span>
+
+<span class="c1"># get a mask for the indices that satisfy all the conditions</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">S1_state</span> <span class="o">&amp;</span> <span class="n">S2_state</span> <span class="o">&amp;</span> <span class="n">state</span>
+
+<span class="c1"># get the indices that satisfy all the conditions</span>
+<span class="n">selected_indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">selected_indices</span></code> has to be a list for the selection to work correctly.</p>
+<p>You can test you selection by doing the following:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">selected_indices</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>If your selected indices are empty, no BBH mergers occurred in your population. They’re quite rare after all!</p>
+<p>Let’s use an example set of populations to make sure there will be BBH in your population.</p>
+<p><strong>This can only be used with the multi-metallicity populations!</strong></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
+
+<span class="n">data_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;PATH/TO/TUTORIAL/DATA/&#39;</span>
+
+<span class="c1"># Let&#39;s load one of the populations</span>
+<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">data_path</span><span class="o">+</span><span class="s1">&#39;1e-01_Zsun_population.h5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<p>We don’t just want to write these binaries for a single metallicity. We want to export them for each metallicity file. As such, we loop over each Population file and export the binaries to the same file. It’s important to have the same columns in the populations, otherwise it’s not possible to add them together.</p>
+<p>The indices of the binaries will be reset, when being exported, such that the new file contains unique indices for each binary.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
+
+<span class="c1"># The names of the populations, if you followed along.</span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1e-01_Zsun_population.h5&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;1e-02_Zsun_population.h5&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;1e-03_Zsun_population.h5&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;1e-04_Zsun_population.h5&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;1e+00_Zsun_population.h5&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;2e-01_Zsun_population.h5&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;2e+00_Zsun_population.h5&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;4.5e-01_Zsun_population.h5&#39;</span><span class="p">]</span>
+
+
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+    <span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">data_path</span><span class="o">+</span><span class="n">file</span><span class="p">)</span>
+    <span class="c1"># read the relevant data in one go</span>
+    <span class="c1"># (faster than reading it in chunks, but requires more memory)</span>
+    <span class="n">tmp_data</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_state&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">])</span>
+    <span class="c1"># Selection of S1 being a BH</span>
+    <span class="n">S1_state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span>
+    <span class="c1"># Selection of S2 being a BH</span>
+    <span class="n">S2_state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span>
+    <span class="c1"># Selection of the binary system being in contact during the double CO phase.</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CO_contact&#39;</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="o">.</span><span class="n">index</span>
+    <span class="k">del</span> <span class="n">tmp_data</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">S1_state</span> <span class="o">&amp;</span> <span class="n">S2_state</span> <span class="o">&amp;</span> <span class="n">state</span>
+    <span class="n">selected_indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;File: </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">, Number of systems: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># set overwrite to False to add to the file</span>
+    <span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">,</span> <span class="n">data_path</span><span class="o">+</span><span class="s1">&#39;BBH_contact.h5&#39;</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>If your population did not contain any BBH mergers, all the “Number of Systems” will be 0, and you won’t be able to open the file in the next cell.</p>
+<p>If you ran the population with the tutorial populations, you should have a total of 636 merging BBHs.</p>
+<p>We can confirm this by adding up the values above or by opening the new file. <code class="docutils literal notranslate"><span class="pre">Population.number_of_systems</span></code> gives us the total number of binaries in the file.</p>
+<p>You now see that the <code class="docutils literal notranslate"><span class="pre">mass_per_metallicity</span></code> property contains information about all the metallicities in the file.</p>
+<p>You can even combine multiple runs at the same metallicity together, if you like. This will combine their simulated mass.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
+<span class="n">BBH_pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">data_path</span><span class="o">+</span><span class="s1">&#39;BBH_contact.h5&#39;</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">BBH_pop</span><span class="o">.</span><span class="n">number_of_systems</span><span class="p">)</span>
+
+<span class="n">BBH_pop</span><span class="o">.</span><span class="n">mass_per_metallicity</span>
+</pre></div>
+</div>
+</div>
+<section id="Underlying-mass">
+<h3>Underlying mass<a class="headerlink" href="#Underlying-mass" title="Link to this heading"></a></h3>
+<p>Before we move on, we have to discuss the occurrence rate of each binary in the population.</p>
+<p>We have sampled several distributions at the start of our simulations. These include:</p>
+<ul class="simple">
+<li><p>Initial mass function</p></li>
+<li><p>Period</p></li>
+<li><p>mass ratio</p></li>
+<li><p>binary fraction</p></li>
+</ul>
+<p>The default parameters do not sample the complete distributions. For example, we sample the binary between 7 and 150 <span class="math notranslate nohighlight">\(M_\odot\)</span>, and a binary fraction of 1. While you can use the population as is, you should consider the weight of the distributions not sampled.</p>
+<p>You can calculate the underlying mass of these distributions, which is the actual weight of the binary in our population. Since we’ve stored essential information about the population run, we’re able to calculate this even after our selection. This will return the <code class="docutils literal notranslate"><span class="pre">underlying_mass</span></code> of the sampled population and add it to the population file.</p>
+<p>We will need these weights to be able to continue with the rest of the calculations.</p>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Caveats</strong></p>
+<p>Currently, only changing the binary fraction (<code class="docutils literal notranslate"><span class="pre">f_bin</span></code>) is supported in the calculation of the underlying mass! The initially sampled population can have any binary fraction.</p>
+<p>Additionally, only parts of the period, IMF, and mass ratio distribution are included. We allow for different parameter limits to be set for sampling, but these are not included in this normalisation!</p>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will calculate the underlying mass for the population</span>
+<span class="c1"># with a binary fraction of 0.7 (default value)</span>
+<span class="n">BBH_pop</span><span class="o">.</span><span class="n">calculate_underlying_mass</span><span class="p">(</span><span class="n">f_bin</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="Transient-population">
+<h2>Transient population<a class="headerlink" href="#Transient-population" title="Link to this heading"></a></h2>
+<p>Although we now have selected all binaries with a BBH merger, we don’t have the exact moment of the merger yet. This will be required to calculate merger rates across cosmic time.</p>
+<p>For this we will create a <code class="docutils literal notranslate"><span class="pre">TransientPopulation</span></code>. This class is used to hold information about a specific event/moment in time. In our case, this is the moment of “CO_contact”, the moment of the BBH merger. However, we might want to store and calculate some additional values, such as the <span class="math notranslate nohighlight">\(M_\mathrm{chirp}\)</span> or <span class="math notranslate nohighlight">\(\chi_\mathrm{eff}\)</span>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Population</span></code> class has a function <code class="docutils literal notranslate"><span class="pre">create_transient_population</span></code> (see here for more details). In short, it takes a <code class="docutils literal notranslate"><span class="pre">selection_function</span></code> and a <code class="docutils literal notranslate"><span class="pre">transient_name</span></code>. The <code class="docutils literal notranslate"><span class="pre">transient_name</span></code> is a string identifying the transient population in the file, while <code class="docutils literal notranslate"><span class="pre">selection_function</span></code> extracts the <code class="docutils literal notranslate"><span class="pre">TransientPopulation</span></code> for us. This can be any custom function you want it to be,
+as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ column.</p>
+<p>Several selection functions are provided in <code class="docutils literal notranslate"><span class="pre">posydon.popsyn.transient_select_funcs</span></code>:</p>
+<ol class="arabic simple">
+<li><p>BBH_selection_function</p></li>
+<li><p>GRB_selection_function</p></li>
+</ol>
+<p>We have copied part of the <code class="docutils literal notranslate"><span class="pre">BBH_selection_function</span></code> below to explain how a <code class="docutils literal notranslate"><span class="pre">selections_function</span></code> works.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">BBH_selection_function</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;A BBH selection function to create a transient population of BBHs mergers.&#39;&#39;&#39;</span>
+
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="n">df_transients</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="n">indices</span><span class="p">)</span>
+
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CO_contact&#39;</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-6</span> <span class="c1">#Myr</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">df_transients</span>
+</pre></div>
+</div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">selection_function</span></code> always has as an input a chunk of the history, oneline, and formation_pathways (optional). For example, you set your <code class="docutils literal notranslate"><span class="pre">chunksize=10000</span></code> when you initialise the <code class="docutils literal notranslate"><span class="pre">Population</span></code>, like we’ve done above for <code class="docutils literal notranslate"><span class="pre">BBH_pop</span></code>, each chunk will contain 10000 binaries. This means that the complete history, oneline and formation_pathways of those 10 binaries are passed to this function.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">BBH_selection_function</span></code> selects the moment the binary reaches CO_contact as the moment of merger, and stores it in the <code class="docutils literal notranslate"><span class="pre">time</span></code> columns in Myr. The <code class="docutils literal notranslate"><span class="pre">metallicity</span></code> is also outputted, since this will be essential when combining it with the star formation history.</p>
+<p>We can test this function by inputting a single binary into it, as done below. If you’ve used the example populations, you might not have calculated the formation_channels yet. We will set that input to None.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BBH_selection_function</span><span class="p">(</span><span class="n">BBH_pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">BBH_pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>This gives us a dataframe containing our 1 binary, its index (0), the moment of merger, and its metallicity.</p>
+<p>Of course, we could like to know a bit more about our merger than just when it occurs. Let’s expand our output with the BH masses, their spin, their tilt, and the orbital period at DCO formation.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">BBH_selection_function</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;A BBH selection function to create a transient population of BBHs mergers.&#39;&#39;&#39;</span>
+
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="n">df_transients</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="n">indices</span><span class="p">)</span>
+
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CO_contact&#39;</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-6</span> <span class="c1">#Myr</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Added properties</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;step_names&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;step_SN&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;detached&#39;</span><span class="p">)</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;t_inspiral&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-6</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">]</span>
+    <span class="c1"># we distinguish the tilt of the spin to the orbit after the first and second SN.</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_spin_orbit_tilt_merger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;S1_spin_orbit_tilt_second_SN&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_spin_orbit_tilt_merger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;S2_spin_orbit_tilt_second_SN&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">df_transients</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BBH_selection_function</span><span class="p">(</span><span class="n">BBH_pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">BBH_pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>With this new function, we have a lot more information available in the TransientPopulation.</p>
+<p>You can further customise this to your liking, if you want to store specific information. It’s also possible to calculate additional information based on any value in the history, oneline or formation_channels.</p>
+<p>We will import some functions to calculate <span class="math notranslate nohighlight">\(\chi_\mathrm{eff}\)</span>, <span class="math notranslate nohighlight">\(q\)</span> and <span class="math notranslate nohighlight">\(\mathcal{M}_\mathrm{chirp}\)</span> and also add them to the dataframe.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.transient_select_funcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">chi_eff</span><span class="p">,</span> <span class="n">mass_ratio</span><span class="p">,</span> <span class="n">m_chirp</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">BBH_selection_function</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;A BBH selection function to create a transient population of BBHs mergers.&#39;&#39;&#39;</span>
+
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="n">df_transients</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="n">indices</span><span class="p">)</span>
+
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CO_contact&#39;</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-6</span> <span class="c1">#Myr</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;step_names&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;step_SN&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;detached&#39;</span><span class="p">)</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;t_inspiral&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-6</span>
+
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">]</span>
+    <span class="c1"># we distinguish the tilt of the spin to the orbit after the first and second SN.</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_spin_orbit_tilt_merger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;S1_spin_orbit_tilt_second_SN&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_spin_orbit_tilt_merger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;S2_spin_orbit_tilt_second_SN&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;eccentricity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;eccentricity&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Added</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;chirp_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_chirp</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">],</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">])</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mass_ratio</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">],</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">])</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;chi_eff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chi_eff</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">],</span>
+                                       <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">],</span>
+                                       <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">],</span>
+                                       <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">],</span>
+                                       <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;S1_spin_orbit_tilt_second_SN&#39;</span><span class="p">],</span>
+                                       <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;S2_spin_orbit_tilt_second_SN&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">df_transients</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BBH_selection_function</span><span class="p">(</span><span class="n">BBH_pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">BBH_pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Before running this selection on the whole population, we would like to include the <code class="docutils literal notranslate"><span class="pre">formation_channels</span></code> too. These are calculated for the systems in the population file and add a good overview of the evolution of binaries.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># mt_history=True adds detailed information about the mass transfer in the HMS-HMS grid</span>
+<span class="n">BBH_pop</span><span class="o">.</span><span class="n">calculate_formation_channels</span><span class="p">(</span><span class="n">mt_history</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now we can include the formation_channels in <code class="docutils literal notranslate"><span class="pre">df_transients</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">BBH_selection_function</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;A BBH selection function to create a transient population of BBHs mergers.&#39;&#39;&#39;</span>
+
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="n">df_transients</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="n">indices</span><span class="p">)</span>
+
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CO_contact&#39;</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-6</span> <span class="c1">#Myr</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;step_names&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;step_SN&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;detached&#39;</span><span class="p">)</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;t_inspiral&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-6</span>
+
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">]</span>
+    <span class="c1"># we distinguish the tilt of the spin to the orbit after the first and second SN.</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S1_spin_orbit_tilt_merger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;S1_spin_orbit_tilt_second_SN&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;S2_spin_orbit_tilt_merger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;S2_spin_orbit_tilt_second_SN&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">]</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;eccentricity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;eccentricity&#39;</span><span class="p">]</span>
+
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;chirp_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_chirp</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">],</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">])</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;mass_ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mass_ratio</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">],</span> <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">])</span>
+    <span class="n">df_transients</span><span class="p">[</span><span class="s1">&#39;chi_eff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chi_eff</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">],</span>
+                                       <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">],</span>
+                                       <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">],</span>
+                                       <span class="n">history_chunk</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="s1">&#39;S2_spin&#39;</span><span class="p">],</span>
+                                       <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;S1_spin_orbit_tilt_second_SN&#39;</span><span class="p">],</span>
+                                       <span class="n">oneline_chunk</span><span class="p">[</span><span class="s1">&#39;S2_spin_orbit_tilt_second_SN&#39;</span><span class="p">])</span>
+
+    <span class="c1"># added</span>
+    <span class="n">df_transients</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_transients</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">[[</span><span class="s1">&#39;channel&#39;</span><span class="p">]]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_transients</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># NOTE: the formation channels have to be given as a dataframe, as such we call it with loc[[0]] for testing</span>
+<span class="c1"># Make sure you use double brackets for loc to return a dataframe</span>
+<span class="n">BBH_selection_function</span><span class="p">(</span><span class="n">BBH_pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                       <span class="n">BBH_pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                       <span class="n">BBH_pop</span><span class="o">.</span><span class="n">formation_channels</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">0</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+<p>The example binary gives us a dataframe with all the information we’re interested in. But if something is missing feel free to customize the selection further!</p>
+<p>We now create the transient population with the <code class="docutils literal notranslate"><span class="pre">BBH_selection_function</span></code>, we’ve created and <code class="docutils literal notranslate"><span class="pre">create_transient_population</span></code>.</p>
+<p>This will create a <code class="docutils literal notranslate"><span class="pre">TransientPopulation</span></code> instance and write the transient population to the current file.</p>
+<p><code class="docutils literal notranslate"><span class="pre">BBH_mergers.population</span></code> will load the complete dataframe we’ve just created. Each of the indices in this population refer back to the original binaries, which are still accessible through <code class="docutils literal notranslate"><span class="pre">BBH_mergers.history</span></code> or <code class="docutils literal notranslate"><span class="pre">BBH_mergers.oneline</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BBH_mergers</span> <span class="o">=</span> <span class="n">BBH_pop</span><span class="o">.</span><span class="n">create_transient_population</span><span class="p">(</span><span class="n">BBH_selection_function</span><span class="p">,</span> <span class="s1">&#39;BBH&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BBH_mergers</span><span class="o">.</span><span class="n">population</span>
+</pre></div>
+</div>
+</div>
+<p>Since the Transient Population is stored in the same file, you can continue your analysis by opening the file using the <code class="docutils literal notranslate"><span class="pre">TransientPopulation</span></code> class. You only need to do your selection once and you can then continue from this stage.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransientPopulation</span>
+
+<span class="n">BBH_mergers</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;BBH_contact.h5&#39;</span><span class="p">,</span> <span class="n">transient_name</span><span class="o">=</span><span class="s1">&#39;BBH&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BBH_mergers</span><span class="o">.</span><span class="n">mass_per_metallicity</span>
+</pre></div>
+</div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">TransientPopulation</span></code> class you can compute the efficiency of the transient population at a given metallicity, i.e. the number of merging DCO per unit star formation and visualize the results.</p>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Underlying mass</strong></p>
+<p>Make sure you’ve calculated the underlying mass for the population, as done earlier in this tutorial.</p>
+</div>
+<p>Applying the underlying mass normalisation assumes that no events occur outside the sampled parameter space.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BBH_mergers</span><span class="o">.</span><span class="n">get_efficiency_over_metallicity</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># if you want to plot the channels, you can set channels=True</span>
+<span class="n">BBH_mergers</span><span class="o">.</span><span class="n">plot_efficiency_over_metallicity</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BBH_mergers</span><span class="o">.</span><span class="n">efficiency</span>
+</pre></div>
+</div>
+</div>
+<p>You can also plot the delay time distribution based on the time columns in the TransientPopulation.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mf">6.5</span><span class="p">,</span><span class="mf">10.5</span><span class="p">)</span>
+<span class="n">BBH_mergers</span><span class="o">.</span><span class="n">plot_delay_time_distribution</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+<span class="c1"># you can also set a specific metallicity. However, this normalises the rate with only the mass of the selected metallicity.</span>
+<span class="n">BBH_mergers</span><span class="o">.</span><span class="n">plot_delay_time_distribution</span><span class="p">(</span><span class="n">metallicity</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>You might also be interested in seeing the evolution of the binary in more detail.</p>
+<p>Therefore, you can plot the TransientPopulation over a grid slice. For example, below we plot binaries over the <span class="math notranslate nohighlight">\(q=0.7\)</span> slice at <span class="math notranslate nohighlight">\(Z=10^{-4} Z_\odot\)</span> on the HMS-HMS grid.</p>
+<p>If no slice is give, all mass ratios are plotted.</p>
+<p>You can also plot a property from the <code class="docutils literal notranslate"><span class="pre">TransientPopulation.population</span></code> DataFrame as a colourmap. And specific formation_channels if they’re in the DataFrame.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BBH_mergers</span><span class="o">.</span><span class="n">plot_popsyn_over_grid_slice</span><span class="p">(</span><span class="s1">&#39;HMS-HMS&#39;</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="n">slices</span><span class="o">=</span><span class="p">[</span><span class="mf">0.7</span><span class="p">],</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BBH_mergers</span><span class="o">.</span><span class="n">plot_popsyn_over_grid_slice</span><span class="p">(</span><span class="s1">&#39;HMS-HMS&#39;</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="n">slices</span><span class="o">=</span><span class="p">[</span><span class="mf">0.7</span><span class="p">],</span> <span class="n">prop</span><span class="o">=</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">,</span> <span class="n">prop_range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.3</span><span class="p">],</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="s1">&#39;ZAMS_oRLO1_CC1_oRLO2_CC2_END&#39;</span><span class="p">)</span> <span class="c1"># SMT channel</span>
+</pre></div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="Cosmic-Rate">
+<h2>Cosmic Rate<a class="headerlink" href="#Cosmic-Rate" title="Link to this heading"></a></h2>
+<p>So far these events do not consider the metallicity or star formation rate evolution of the Universe.</p>
+<p>POSYDON comes with several built-in star formation histories and metallicity evolutions, a few examples are:</p>
+<ul class="simple">
+<li><p>IllustrisTNG</p></li>
+<li><p>Neijssel2019</p></li>
+<li><p>Madau+Fragos2017</p></li>
+</ul>
+<p>We can apply these to our population with the <code class="docutils literal notranslate"><span class="pre">calculate_cosmic_weights</span></code> function. Here, we will the metallicity and SFR evolution of the IllustrisTNG, which is the default model used, if no <code class="docutils literal notranslate"><span class="pre">MODEL_in</span></code> is given.</p>
+<p>The function returns an instance of the <code class="docutils literal notranslate"><span class="pre">Rates</span></code> class, which gives us access to some new variables:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">z_birth</span></code>: the redshift and age of the universe at which we probe the star formation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">z_events</span></code>: the redshift at which an event takes place</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weights</span></code>: the weight of the event based on the SFR, its metallicity, and its weight in the population.</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransientPopulation</span>
+<span class="n">BBH_mergers</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;BBH_contact.h5&#39;</span><span class="p">,</span> <span class="n">transient_name</span><span class="o">=</span><span class="s1">&#39;BBH&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MODEL</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;delta_t&#39;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="c1"># Myr</span>
+    <span class="s1">&#39;SFR&#39;</span> <span class="p">:</span> <span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">,</span> <span class="c1"># Neijssel2019, Madau+Fragos2017</span>
+    <span class="s1">&#39;sigma_SFR&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;Z_max&#39;</span> <span class="p">:</span> <span class="mf">2.</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">rates</span> <span class="o">=</span> <span class="n">BBH_mergers</span><span class="o">.</span><span class="n">calculate_cosmic_weights</span><span class="p">(</span><span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">,</span> <span class="n">MODEL_in</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">z_birth</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">z_events</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Similar to the <code class="docutils literal notranslate"><span class="pre">TransientPopulation</span></code>, the rates can also be accessed using the <code class="docutils literal notranslate"><span class="pre">Rates</span></code> class. You will need to provide your <code class="docutils literal notranslate"><span class="pre">transient_name</span></code> and <code class="docutils literal notranslate"><span class="pre">SFH_identifier</span></code>. These rates are also stored in the file. You can have as many transients and star formation histories in your population file as you want.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rates</span>
+
+<span class="n">rates</span> <span class="o">=</span> <span class="n">Rates</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;BBH_contact.h5&#39;</span><span class="p">,</span> <span class="n">transient_name</span><span class="o">=</span><span class="s1">&#39;BBH&#39;</span><span class="p">,</span> <span class="n">SFH_identifier</span><span class="o">=</span><span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>You can directly work with the weights and the z_events to get events at specific redshifts.</p>
+<p>Or you can calculate the rate density over redshift using the <code class="docutils literal notranslate"><span class="pre">calculate_intrinsic_rate_density</span></code> function. This will calculate the rate over redshift for you.</p>
+<p>You can use the output of the function immediately, or get them from <code class="docutils literal notranslate"><span class="pre">rates.intrinsic_rate_density</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">out</span> <span class="o">=</span> <span class="n">rates</span><span class="o">.</span><span class="n">calculate_intrinsic_rate_density</span><span class="p">(</span><span class="n">mt_channels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">intrinsic_rate_density</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">plot_intrinsic_rate</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">,</span><span class="mf">1e3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<section id="Properties-of-the-systems">
+<h3>Properties of the systems<a class="headerlink" href="#Properties-of-the-systems" title="Link to this heading"></a></h3>
+<p>Sometime syou mgiht want some more details about the actual population, and its properties.</p>
+<p><code class="docutils literal notranslate"><span class="pre">plot_hist_properties()</span></code> allows you to plot these.</p>
+<p>By default, the function will create its own figure and plot it. If you would like more control over the output, you can give it your own pyplot axis and set <code class="docutils literal notranslate"><span class="pre">show=False</span></code>. This allows you to adapt and change the plot to your liking after finishing adding the properties.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S2&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Rate density [Gpc$^-3$ yr$^-1$]&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Mass [Msun]&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Observable-population">
+<h3>Observable population<a class="headerlink" href="#Observable-population" title="Link to this heading"></a></h3>
+<p>Sometimes, however, you’re not just interested in the intrinsic population, and want an observable population. This could be a supernova detection fraction for a telescope survey, or the LVK detection efficiency for GW mergers.</p>
+<p>You can apply these using the <code class="docutils literal notranslate"><span class="pre">calculate_observable_population</span></code>. Similar to the <code class="docutils literal notranslate"><span class="pre">create_transient_population</span></code>, this function takes a <code class="docutils literal notranslate"><span class="pre">observable_func</span></code>, which described the observability of a transient.</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">observable_func</span></code> takes chunks of</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TransientPopulation.population</span></code></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">TransientPopulation.z_events</span></code></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">TransientPopulation.weights</span></code></p></li>
+</ol>
+<p>Using these, new weights are calculated and stored as a separate observable population of your TransientPopulation. The BBH analysis framework comes with a detection function for several detector sensitivities and configurations.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.transient_select_funcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">DCO_detactability</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">DCO_wrapper</span><span class="p">(</span><span class="n">transient_chunk</span><span class="p">,</span> <span class="n">z_events_chunk</span><span class="p">,</span> <span class="n">weights_chunk</span><span class="p">):</span>
+    <span class="n">sensitivity</span> <span class="o">=</span> <span class="s1">&#39;design_H1L1V1&#39;</span>
+    <span class="k">return</span> <span class="n">DCO_detactability</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">transient_chunk</span><span class="p">,</span> <span class="n">z_events_chunk</span><span class="p">,</span> <span class="n">weights_chunk</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We also give it a name, which is used as an identifier in the file</span>
+<span class="n">rates</span><span class="o">.</span><span class="n">calculate_observable_population</span><span class="p">(</span><span class="n">DCO_wrapper</span><span class="p">,</span> <span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We can now access this observable population</span>
+<span class="n">rates</span><span class="o">.</span><span class="n">observable_population</span><span class="p">(</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>You can also plot the intrinsic and observable population together.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Rate density [Gpc$^-3$ yr$^-1$]&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Mass [Msun]&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Cogratulations, you are now ready to analyze any DCO population data you generated with POSYDON. Feel free to further explore the BBH model or to use this tutorial to study other populations. The next tutorials show you how to <a class="reference internal" href="lgrb_pop_syn.html"><span class="doc">select GRBs</span></a>, perform a <a class="reference internal" href="one_met_pop_syn.html"><span class="doc">SFH calculation at a single metallicity</span></a>, and <a class="reference external" href="debug_pop.ipynb">how to run an individual binary</a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pop_syn.html" class="btn btn-neutral float-left" title="Large-Scale Population Synthesis on HPC Facilities 🚀" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="lgrb_pop_syn.html" class="btn btn-neutral float-right" title="Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

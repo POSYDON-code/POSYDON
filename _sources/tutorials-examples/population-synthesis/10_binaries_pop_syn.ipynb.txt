@@ -1,0 +1,747 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Your First Binary Simulations with POSYDON 🌠"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Tutorial goal:**\n",
+    "In this tutorial, we will run a small population of 10 binaries locally, and explore how to manipulate the output data from your population."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If you haven't done so yet, export the path POSYDON environment variables.\n",
+    "Set these parameters in your `.bash_profile` or `.zshrc` if you use POSYDON regularly."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%env PATH_TO_POSYDON=/YOUR/POSYDON/PATH/\n",
+    "%env PATH_TO_POSYDON_DATA=/YOUR/POSYDON_DATA/PATH/"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "----\n",
+    "\n",
+    "## Initialisation File\n",
+    "\n",
+    "To run population synthesis with POSYDON, a `population_params.ini` file is required.\n",
+    "This file described how the stellar population is created and what prescriptions and parameters are implemented in specific steps.\n",
+    "\n",
+    "POSYDON comes with a default `population_params_default.ini` file found at `PATH_TO_POSYDON/posydon/popsyn` or have a look [here](../../../../../posydon/popsyn/population_params_default.ini).\n",
+    "\n",
+    "<div class=\"alert alert-warning\">\n",
+    "    \n",
+    "   **Default values**\n",
+    "   \n",
+    "   The default values in the population_params.ini file included in POSYDON \n",
+    "   have not been calibrated, validated, or are used by the POSYDON team. They are\n",
+    "   often an ad-hoc choice, and the user should carefully consider the values\n",
+    "   of each parameter for their science case.\n",
+    "\n",
+    "</div>\n",
+    "\n",
+    "The parameters in this file can be found [here](../../components-overview/pop_syn/population_params.html), and is split in three parts. You can find more details about their properties by clicking on their links.\n",
+    "\n",
+    "1. **[SimulationProperties](../../components-overview/pop_syn/population_params.rst#simulationproperties):**\n",
+    "   - describe the properties and parameters of different steps in the evolution of a binary system.\n",
+    "2. **[BinaryPopulation](../../components-overview/pop_syn/population_params.rst#binarypopulation):** \n",
+    "   - Parameters of the initial sampling of the binary population, such as initial mass function, period distribution, and metallicity.\n",
+    "   - contains parameters on how the population is run, such as how many binaries are kept in memory.\n",
+    "3. **[SavingOutput](../../components-overview/pop_syn/population_params.rst#saving-output)**\n",
+    "   - Describes what data from the binary and each individual star is written to the output file.\n",
+    "\n",
+    "We will copy the default population run parameter file to the current folder."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "import shutil\n",
+    "from posydon.config import PATH_TO_POSYDON\n",
+    "\n",
+    "path_to_params = os.path.join(PATH_TO_POSYDON, \"posydon/popsyn/population_params_default.ini\")\n",
+    "shutil.copyfile(path_to_params, './population_params.ini')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "----\n",
+    "\n",
+    "## Running a BinaryPopulation in a notebook\n",
+    "\n",
+    "\n",
+    "<div class=\"alert alert-warning\">\n",
+    "\n",
+    "**Reprocessed POSYDON v1 data**\n",
+    "\n",
+    "If you're using the reprocessed POSYDON v1 dataset, you will only have solar ($Z_\\odot$) metallicity available!\n",
+    "This means you will only be able to run populations with `metallicity = [1]`!\n",
+    "You should be able to follow along with this tutorial and can follow along with the [One metallicity notebook](one_met_pop_syn.ipynb), but the multi-metallicity component is not yet available.\n",
+    "\n",
+    "</div>\n",
+    "\n",
+    "\n",
+    "The copied `population_params.ini` contains the parameters to run 10 binaries at the one of the metallicities currently supported by POSYDON.\n",
+    "Open the `population_params.ini` file, and go down to the **BinaryPopulation** section. This is where the properties of the simulation are set.\n",
+    "There you should find:\n",
+    "\n",
+    "```\n",
+    "metallicity = [1.] #[2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]\n",
+    "# In units of solar metallicity\n",
+    "...\n",
+    "number_of_binaries = 10\n",
+    "# int\n",
+    "```\n",
+    "Let's leave the settings for now, but you can always change these if you would like a different metallicity or larger population. For the latter, also see the [HPC tutorial](pop_syn.ipynb).\n",
+    "\n",
+    "If you like to run a small population in a notebook, you can use the `PopulationRunner` ([documentation](../../api_reference/posydon.popsyn.rst#posydon.popsyn.synthetic_population.PopulationRunner)) to do this. If you want to run a specific binary instead, have a look at the [Binary Tutorial](evolve_single_binaries.ipynb) instead. The `PopulationRunner` class takes the `population_params.ini` file and sets-up a multi-metallicity population run for inside a notebook.\n",
+    "\n",
+    "It will create `BinaryPopulation`s ([documentation](../../api_reference/posydon.popsyn.rst#posydon.popsyn.binarypopulation.BinaryPopulation)) for each metallicity defined in the `population_params.ini` file. In our case, we can check and see that a single `BinaryPopulation` is created.\n",
+    "We can check if the metallicity and number of binaries are correctly set before starting our simulation. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import PopulationRunner\n",
+    "poprun = PopulationRunner('./population_params.ini', verbose=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print('Number of binary populations:',len(poprun.binary_populations))\n",
+    "print('Metallicity:', poprun.binary_populations[0].metallicity)\n",
+    "print('Number of binaries:', poprun.binary_populations[0].number_of_binaries)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "If you changed the parameters in the `population_params.ini` file, you should have the following output:\n",
+    "\n",
+    "```\n",
+    "> Number of binary populations: 1\n",
+    "> Metallicity: 1\n",
+    "> Number of binaries: 10\n",
+    "```\n",
+    "\n",
+    "The `BinaryPopulation` class does the actual simulation setup and evolution of the binaries at a specific metallicity, but does not take of file cleanup after a succesfull population run. This is why `PopulationRunner` is used in a local environment. In a HPC facility, a setup script is available `posydon-popsyn setup` that will create the required folders and scripts to run a large population. See the [HPC tutorial](pop_syn.ipynb) for more information.\n",
+    "\n",
+    "For this tutorial, we set `verbose=True`, which shows you the progress of the population run.\n",
+    "This overwrites the population verbose set inside the `population_params.ini` file.\n",
+    "Now we are ready to evolve the binary population. This should take about 30 seconds depending on your machine."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "poprun.evolve()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "-----\n",
+    "\n",
+    "## Inspecting the population: Population class\n",
+    "\n",
+    "When you ran the population, you might have seen that a temporary folder with the name `1e+00_Zsun_batches` was created while the binaries were being evolved. This is a temporary folder in which populations are temporarly saved.\n",
+    "After the binary evolution has finished, the binaries in the folder are moved to a single file named `1e+00_Zsun_popululation.h5`. This is done automatically when you run a population using the `PopulationRunner` class.\n",
+    "When you run multiple metallicity a file will be created for each metallicity.\n",
+    "\n",
+    "The created file contains 3 main components:\n",
+    "\n",
+    "1. **history:** the evolution of an individual binary in a pandas DataFrame\n",
+    "2. **oneline:** a single line to describe the initial and final conditions and some one-of parameters, such as the metallicity.\n",
+    "3. **mass_per_metallicity:** some metadata on the population, such as the total simulated mass, the actual underlying mass of the population, and the number of binaries in the file.\n",
+    "\n",
+    "The `Population` class provides an interface to these components in the file, such that you're able to share the populations runs and can work with large populations that do not fit in memory. We will now explore the population file using the `Population` class. You can find a more extensive description [here](../../components-overview/pop_syn/synthetic_population.rst) or look at the class [documentation](../../api_reference/posydon.popsyn.rst#posydon.popsyn.synthetic_population.Population).\n",
+    "\n",
+    "\n",
+    "<div class=\"alert alert-warning\">\n",
+    "\n",
+    "**Older Population Files**\n",
+    "\n",
+    "If you're using older population files from before the Population class rework, you can make them compatible with the `Population` class by calling `Population(pop_file, metallicity,ini_file)`, where the `metallicity` is in solar units. You will only need to do this once; afterwards you can initialise the class like normal.\n",
+    "\n",
+    "</div>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import Population\n",
+    "pop = Population('1e+00_Zsun_population.h5')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "Let's start with the `pop.mass_per_metallicity`. \n",
+    "It contains some basic information about the population you've just created.\n",
+    "\n",
+    "1. The index (`metallicity`) is the metallicity of your population in solar units.\n",
+    "2. `simulated mass` the total ZAMS mass that has been evolved in the population.\n",
+    "3. `simulated_mass_single` the total ZAMS mass from initially single stars.\n",
+    "4. `simulated_mass_binaries` the total ZAMS mass from initially binaries.\n",
+    "5. `number_of_systems` shows the number of systems in the file.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.mass_per_metallicity"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "There are some additional metadata properties available, such as:\n",
+    "\n",
+    "- `metallicities` the metallicity in absolute metallicity\n",
+    "- `solar_metallicities` the metallicities in the file in solar metallicity\n",
+    "- `number_of_systems` the total number of systems in the Population file\n",
+    "- `indices` the indices of the binaries in the file\n",
+    "- `columns` the columns available in the `history` and `oneline` dataframes\n",
+    "- `ini_params` the parameters from the `ini` file that describe the initial sampling of your population.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# you can also access the total number of systems in the file with\n",
+    "print(pop.number_of_systems)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Population.history\n",
+    "\n",
+    "`pop.history` contains the evolutionary histories of each binary, as it was evolved by POSYDON. You can find more information about this [here](../../components-overview/pop_syn/synthetic_population.rst#history) (or look at the [documentation](../../api_reference/posydon.popsyn.rst#posydon.popsyn.synthetic_population.History) of the class).\n",
+    "\n",
+    "\n",
+    "It allows you to load specific information or binaries into memory without having to load them all at once.\n",
+    "\n",
+    "<div class=\"alert alert-info\">\n",
+    "\n",
+    "**Note**\n",
+    "\n",
+    "Calling `pop.history` will load all binaries and all their columns into memory. This can take a while and can even cause the notebook to crash.\n",
+    "\n",
+    "</div>\n",
+    "\n",
+    "You can access individual or selections of the population using several methods:\n",
+    "\n",
+    "```\n",
+    "1. pop.history[5]\n",
+    "2. pop.history[[0,4]]\n",
+    "3. pop.history['time]\n",
+    "4. pop.history.select()\n",
+    "```\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# select only binary_index 5\n",
+    "pop.history[5]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# select binary 0 and 4\n",
+    "pop.history[[0,4]]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.history['time'].head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "You can also check what columns are available in the history file.\n",
+    "This is possible in two ways:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.history.columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.columns['history']"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The `select` function is the most powerful way to access the binaries, because it allows you to perform selections based on the specific columns available in the history dataframe.\n",
+    "For example, below we can select on `state == 'RLO1'`, which gives us all the rows with RLO1 occuring.\n",
+    "\n",
+    "The available identifiers are limited to string columns (`state`, `event`, `step_names`, `S1_state`, `S2_state`), index, and columns names.\n",
+    "\n",
+    "<div class=\"alert alert-warning\">\n",
+    "\n",
+    "**Not all columns are available**\n",
+    "\n",
+    "It's not currently possible to select on all columns in the population file. **Only string columns, the indices and columns names are available!** \n",
+    "\n",
+    "</div>\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# using the select function\n",
+    "pop.history.select(where='index == 9')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# selecting all RLO1 states and only time and state columns\n",
+    "pop.history.select(where='state == RLO2', columns=['time', 'state'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# selecting rows 10 to 16\n",
+    "pop.history.select(start=10, stop=16)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "You might have notices while using the above functions that not all the binaries will have the same length in the history.\n",
+    "You can access these with `pop.history_lengths` or `pop.history.lengths`. They provide the same information."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.history_lengths"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.history.lengths"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "-----\n",
+    "\n",
+    "## Population.oneline\n",
+    "\n",
+    "`Population.oneline` provides a similar interface to accessing the DataFrame in the population file as `Population.history`, with similar functionality being available.\n",
+    "\n",
+    "The `oneline` DataFrame contains, as the name suggests, a single line per binary. It contains initial and final conditions and some additional varibales, such as the `SN_type`.\n",
+    "You can find more information about this [here](../../components-overview/pop_syn/synthetic_population.rst#oneline) or look at the [api reference](../../api_reference/posydon.popsyn.rst#posydon.popsyn.synthetic_population.Oneline) of the class.\n",
+    "\n",
+    "\n",
+    "The `select` function only has access to:\n",
+    "\n",
+    "- `index`\n",
+    "- column names \n",
+    "- string columns: `state_i`, `state_f`, `event_i`, `event_f`, `step_names_i`, `step_names_f`, `S1_state_i`, `S1_state_f`, `S2_state_i`, `S2_state_f`, `S1_SN_type`, `S2_SN_type`, `interp_class_HMS_HMS`, `interp_class_CO_HeMS`, `interp_class_CO_HMS_RLO`, `interp_class_CO_HeMS_RLO`, `mt_history_HMS_HMS`, `mt_history_CO_HeMS`, `mt_history_CO_HMS_RLO`, `mt_history_CO_HeMS_RLO`"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.oneline[5]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.oneline[[0,4]]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.oneline.select(where='index == 9')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.oneline.select(where='index == [0,9]')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.oneline.columns\n",
+    "# or \n",
+    "# pop.columns['oneline']"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "-----\n",
+    "\n",
+    "## Population.formation_channels\n",
+    "\n",
+    "While you can see the all the main evolutionary steps in the evolution of a binary, it is useful to have a summary overview of a binary's evolutionary pathway, also known as formation channel\n",
+    "\n",
+    "You might be interested in figuring out what sort of formation pathways/channels a binary has followed through its evolution.\n",
+    "\n",
+    "This is not a standard output of the population synthesis, but you can include it into the population file by calculating it. \n",
+    "If you would like more detail on the initial mass transfer, you can set `mt_history=True`.\n",
+    "\n",
+    "This will write the formation channels to the Population file, which can be accessed by `Population.formation_channels`.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.calculate_formation_channels(mt_history=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# the formation channels are loaded in with pop.formation_channels\n",
+    "pop.formation_channels"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Next time you open this population file, the `formation_channels` will be available without having to be recalculated."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop = Population('1e+00_Zsun_population.h5')\n",
+    "pop.formation_channels"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Selecting a sub-population\n",
+    "\n",
+    "You might just want a small sub-selection of the full population, especially if you're working with large population and multi-metallicity runs.\n",
+    "\n",
+    "The `Population.export_selection()` function will export just the indices of the binaries you're interested in into a new file.\n",
+    "The simulated mass will remain the same, since they are dependent on the population run.\n",
+    "\n",
+    "If we select just 2 binaries and export them, we create a new population of just the binaries you're interested in.\n",
+    "In the [BBH analysis](bbh_analysis.ipynb) and [GRB analysis](lgrb_pop_syn.ipynb) tutorials, we show how to perform a selection with multiple criteria and across metallicities.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "indices = [0,9]\n",
+    "pop.export_selection(indices, 'selected.h5')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "selected = Population('selected.h5')\n",
+    "selected.mass_per_metallicity"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If you would like to know the simulated mass of just your population, you can calulate this using the online ZAMS values."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "\n",
+    "print('selected simulated mass: ', np.sum(selected.oneline[['S1_mass_i', 'S2_mass_i']].to_numpy()))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "By default this export-selection will not overwrite nor append if the output file is already present.\n",
+    "You have to explicitly state what you would like to append to or overwrite the population file.\n",
+    "\n",
+    "\n",
+    "With the `append=True` you are able to combine multiple stellar populations into a single file. \n",
+    "This is especially useful when creating multi-metallicity populations."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# this will overwrite the existing file\n",
+    "pop.export_selection(indices, 'selected.h5', overwrite=True)\n",
+    "\n",
+    "selected = Population('selected.h5')\n",
+    "selected.mass_per_metallicity\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# This will add to the file and add the extra simulated mass\n",
+    "pop.export_selection(indices, 'selected.h5', append=True)\n",
+    "selected = Population('selected.h5')\n",
+    "selected.mass_per_metallicity"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "<br/><br/>\n",
+    "\n",
+    "Feel free to explore the small binary population you've just created!\n",
+    "\n",
+    "If you want to learn more about population synthesis and how to perform more complex selection and population, continue with [Large scale population on a HPC setup](pop_syn.ipynb) or with [BBH analysis](bbh_analysis.ipynb)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "----\n",
+    "\n",
+    "### Local MPI runs [Optional]\n",
+    "\n",
+    "To speed up population synthesis runs, you can run on a computing cluster, as described in [HPC Facilities](pop_syn.ipynb), or you can distribute the population synthesis across multiple cores on your local machine using MPI.\n",
+    "\n",
+    "To enable local MPI runs, go into the `population_params.ini`  and change `use_MPI` to `True`.\n",
+    "\n",
+    "It's important to note that you cannot run have this option enabled for cluster runs!\n",
+    "\n",
+    "We create a binary population simulation script to run the population:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%%writefile script.py\n",
+    "from posydon.popsyn.synthetic_population import PopulationRunner\n",
+    "\n",
+    "if __name__ == \"__main__\":\n",
+    "    synth_pop = PopulationRunner(\"./population_params.ini\")\n",
+    "    synth_pop.evolve()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "This script can be initiated using a local where `NR_processors` is the number of processors you would like to us.\n",
+    "`mpi4py` needs to be installed for this. Please see the [Installation guide](../../getting-started/installation-guide.rst) for more info."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "mpiexec -n ${NR_processors} python script.py"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "This will create a folder for each metallicity in the population and store output of the parallel runs in it.\n",
+    "\n",
+    "You will have to concatenate these runs manually into a single population file per metallicity, which can be achieved using the following code:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import PopulationRunner\n",
+    "\n",
+    "synth_pop = PopulationRunner(\"./population_params.ini\")\n",
+    "for pop in synth_pop.binary_populations:\n",
+    "    synth_pop.merge_parallel_runs(pop)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "posydon_env",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.5"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

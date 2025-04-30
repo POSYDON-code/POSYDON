@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.unit_tests.grids.test_MODELS &mdash; posydon v2.0.0-dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=f4b7fd8b"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.unit_tests.grids.test_MODELS</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.unit_tests.grids.test_MODELS</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Unit tests of posydon/grids/MODELS.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># import the module which will be tested</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.grids.MODELS</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">totest</span>
+
+<span class="c1"># import other needed code for the tests, which is not already imported in the</span>
+<span class="c1"># module you like to test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">fixture</span><span class="p">,</span> <span class="n">raises</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">isroutine</span>
+
+
+<span class="c1"># define test classes collecting several test functions</span>
+<div class="viewcode-block" id="TestElements">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.grids.html#posydon.unit_tests.grids.test_MODELS.TestElements">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestElements</span><span class="p">:</span>
+    <span class="c1"># check for objects, which should be an element of the tested module</span>
+<div class="viewcode-block" id="TestElements.test_dir">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.grids.html#posydon.unit_tests.grids.test_MODELS.TestElements.test_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MODELS&#39;</span><span class="p">,</span> <span class="s1">&#39;NEUTRINO_MASS_LOSS_UPPER_LIMIT&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;STATE_NS_STARMASS_UPPER_LIMIT&#39;</span><span class="p">,</span> <span class="s1">&#39;__authors__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span> <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;get_MODEL_NAME&#39;</span><span class="p">}</span>
+        <span class="n">totest_elements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">totest</span><span class="p">))</span>
+        <span class="n">missing_in_test</span> <span class="o">=</span> <span class="n">elements</span> <span class="o">-</span> <span class="n">totest_elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are missing objects in &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">missing_in_test</span><span class="si">}</span><span class="s2">. Please &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;check, whether they have been &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;removed on purpose and update &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;this unit test.&quot;</span>
+        <span class="n">new_in_test</span> <span class="o">=</span> <span class="n">totest_elements</span> <span class="o">-</span> <span class="n">elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are new objects in &quot;</span>\
+                                      <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_in_test</span><span class="si">}</span><span class="s2">. &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;Please check, whether they have been &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;added on purpose and update this &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;unit test.&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_MODELS">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.grids.html#posydon.unit_tests.grids.test_MODELS.TestElements.test_instance_MODELS">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_MODELS</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="s2">&quot;MODELS is of type: &quot;</span>\
+                                                <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_get_MODEL_NAME">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.grids.html#posydon.unit_tests.grids.test_MODELS.TestElements.test_instance_get_MODEL_NAME">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_get_MODEL_NAME</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">get_MODEL_NAME</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestValues">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.grids.html#posydon.unit_tests.grids.test_MODELS.TestValues">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestValues</span><span class="p">:</span>
+    <span class="c1"># check that the values fit</span>
+<div class="viewcode-block" id="TestValues.test_value_MODELS">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.grids.html#posydon.unit_tests.grids.test_MODELS.TestValues.test_value_MODELS">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_MODELS</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="s1">&#39;mechanism&#39;</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="s1">&#39;engine&#39;</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestFunctions">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.grids.html#posydon.unit_tests.grids.test_MODELS.TestFunctions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestFunctions</span><span class="p">:</span>
+<div class="viewcode-block" id="TestFunctions.bad_MODEL">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.grids.html#posydon.unit_tests.grids.test_MODELS.TestFunctions.bad_MODEL">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bad_MODEL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>\
+                <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>\
+                <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>\
+                <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>\
+                <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>\
+                <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span>\
+                 <span class="n">totest</span><span class="o">.</span><span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>\
+                <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">totest</span><span class="o">.</span><span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>\
+                <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>\
+                <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>\
+                <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>\
+                <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span></div>
+
+
+    <span class="c1"># test functions</span>
+<div class="viewcode-block" id="TestFunctions.test_get_MODEL_NAME">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.grids.html#posydon.unit_tests.grids.test_MODELS.TestFunctions.test_get_MODEL_NAME">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_MODEL_NAME</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bad_MODEL</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 1 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;argument: &#39;input_MODEL&#39;&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">get_MODEL_NAME</span><span class="p">()</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;NoneType&#39; object is not subscriptable&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">get_MODEL_NAME</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># examples: failed</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">get_MODEL_NAME</span><span class="p">(</span><span class="n">bad_MODEL</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># examples: pre-defined models</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+                <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">get_MODEL_NAME</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">n</span>
+                <span class="n">captured_output</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="s2">&quot;mismatch:&quot;</span> <span class="ow">in</span> <span class="n">captured_output</span>
+                    <span class="k">assert</span> <span class="sa">f</span><span class="s2">&quot;matched to model: </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">captured_output</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">captured_output</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+        <span class="c1"># examples: first model with allowed differences</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;use_interp_values&quot;</span><span class="p">,</span> <span class="s2">&quot;use_profiles&quot;</span><span class="p">,</span> <span class="s2">&quot;use_core_masses&quot;</span><span class="p">]:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">m</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">m</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">get_MODEL_NAME</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="n">n</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">m</span><span class="p">[</span><span class="s2">&quot;use_test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unit&quot;</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">get_MODEL_NAME</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="n">n</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">MODELS</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">m</span><span class="p">[</span><span class="s2">&quot;ECSN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">get_MODEL_NAME</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="n">n</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
