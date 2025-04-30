@@ -179,7 +179,7 @@ class TestElements:
         elements = {'BinaryStar', 'CC_quantities',\
                     'CEE_parameters_from_core_abundance_thresholds',\
                     'Catch_POSYDON_Warnings',\
-                    'DEFAULT_MARKERS_COLORS_LEGENDS', 'MODELS', 'Pwarn',\
+                    'DEFAULT_MARKERS_COLORS_LEGENDS', 'SN_MODELS', 'Pwarn',\
                     'STAR_STATES_CC', 'SingleStar', 'StepSN',\
                     'TF1_POOL_STABLE', '__authors__', '__builtins__',\
                     '__cached__', '__credits__', '__doc__', '__file__',\
@@ -189,7 +189,7 @@ class TestElements:
                     'calculate_Patton20_values_at_He_depl',\
                     'check_state_of_star', 'combine_TF12', 'copy', 'np',\
                     'post_process_grid', 'print_CC_quantities', 'tqdm',\
-                    'get_MODEL'}
+                    'get_SN_MODEL'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -364,21 +364,21 @@ class TestFunctions:
         with raises(ValueError, match="'star_i' should be 1 or 2."):
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, 0)
         # bad input
-        with raises(TypeError, match="'MODEL_NAME' should be a string, a "\
+        with raises(TypeError, match="'SN_MODEL_NAME' should be a string, a "\
                                      +"list of strings, or None."):
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, 1,\
                                                         1)
         # bad input
-        with raises(KeyError, match="'S1_MODEL01_state'"):
+        with raises(KeyError, match="'S1_SN_MODEL_v2_01_state'"):
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, 1)
-        # examples: all models in MODELS.py
+        # examples: all models in SN_MODELS.py
         for s in [1, 2]:
             test_EXTRA_COLUMNS = {}
-            for m in totest.MODELS.keys():
+            for m in totest.SN_MODELS.keys():
                 for q in totest.CC_quantities:
                     test_EXTRA_COLUMNS[f'S{s}_{m}_{q}'] = []
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, s)
-            for m in totest.MODELS.keys():
+            for m in totest.SN_MODELS.keys():
                 for q in totest.CC_quantities:
                     assert test_EXTRA_COLUMNS[f'S{s}_{m}_{q}'] == [None]
         # examples: given model
@@ -388,7 +388,7 @@ class TestFunctions:
                 for q in totest.CC_quantities:
                     test_EXTRA_COLUMNS[f'S{s}_{m}_{q}'] = []
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, s,\
-                                                        MODEL_NAME=m)
+                                                        SN_MODEL_NAME=m)
             for m in ["TESTMODEL"]:
                 for q in totest.CC_quantities:
                     assert test_EXTRA_COLUMNS[f'S{s}_{m}_{q}'] == [None]
@@ -467,10 +467,10 @@ class TestFunctions:
                     if ((i == 0) and (k != "mt_history")):
                         # check missing run: all None
                         assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
-                    elif (("S2_MODEL" in k) and (i in [1, 2, 4, 6])):
+                    elif (("S2_SN_MODEL" in k) and (i in [1, 2, 4, 6])):
                         # check star2: all None beside state
                         assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
-                    elif (("S1_MODEL" in k) and (i in [2, 4, 6])):
+                    elif (("S1_SN_MODEL" in k) and (i in [2, 4, 6])):
                         # check SN of star1 for None
                         assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
         def check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, n_runs, keys):
@@ -535,7 +535,7 @@ class TestFunctions:
             for q in ['lambda_CE', 'm_core_CE', 'r_core_CE']:
                 for v in [1, 10, 30, 'pure_He_star_10']:
                     keys += [f'S{s}_{q}_{v}cent']
-            for m in totest.MODELS:
+            for m in totest.SN_MODELS:
                 for q in totest.CC_quantities:
                     if q == 'state':
                         q = 'CO_type'
@@ -577,18 +577,18 @@ class TestFunctions:
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
         # examples: less SN MODELS
         TEST_MODELS = {}
-        for m,v in totest.MODELS.items():
-            if m != 'MODEL01':
+        for m,v in totest.SN_MODELS.items():
+            if m != 'SN_MODEL_v2_01':
                 TEST_MODELS[m] = v
         with warns(POSYDONWarning): # warnings from SN
             MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                        MODELS=TEST_MODELS)
+                                        SN_MODELS=TEST_MODELS)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         for k in keys:
-            if 'MODEL01' in k:
+            if 'SN_MODEL_v2_01' in k:
                 assert k not in EXTRA_COLUMNS
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7,\
-                            [k for k in keys if 'MODEL01' not in k])
+                            [k for k in keys if 'SN_MODEL_v2_01' not in k])
         # examples: single
         with warns(POSYDONWarning): # warnings from SN
             MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\

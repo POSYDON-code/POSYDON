@@ -19,6 +19,7 @@ from posydon.popsyn.io import parse_inifile
 from posydon.config import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 from posydon.utils.posydonwarning import Pwarn
+from posydon.grids.SN_MODELS import SN_MODELS
 
 # this data processing pipeline was designed assuming POSYDON v2 data structure
 '''
@@ -71,36 +72,7 @@ PLOTTING_SETS = {
                              'termination_flag_2', 'termination_flag_3',\
                              'termination_flag_4', 'rl_relative_overflow_1',\
                              'rl_relative_overflow_2', 'lg_mtransfer_rate'],
-    'PLOT_AFTER_EXTRA'    : ['S1_MODEL01_CO_type', 'S1_MODEL01_SN_type',\
-                             'S1_MODEL01_mass', 'S1_MODEL01_spin',\
-                             'S1_MODEL01_m_disk_radiated',
-                             'S1_MODEL02_CO_type', 'S1_MODEL02_SN_type',\
-                             'S1_MODEL02_mass', 'S1_MODEL02_spin',\
-                             'S1_MODEL02_m_disk_radiated',
-                             'S1_MODEL03_CO_type', 'S1_MODEL03_SN_type',\
-                             'S1_MODEL03_mass', 'S1_MODEL03_spin',\
-                             'S1_MODEL03_m_disk_radiated',
-                             'S1_MODEL04_CO_type', 'S1_MODEL04_SN_type',\
-                             'S1_MODEL04_mass', 'S1_MODEL04_spin',\
-                             'S1_MODEL04_m_disk_radiated',
-                             'S1_MODEL05_CO_type', 'S1_MODEL05_SN_type',\
-                             'S1_MODEL05_mass', 'S1_MODEL05_spin',\
-                             'S1_MODEL05_m_disk_radiated',
-                             'S1_MODEL06_CO_type', 'S1_MODEL06_SN_type',\
-                             'S1_MODEL06_mass', 'S1_MODEL06_spin',\
-                             'S1_MODEL06_m_disk_radiated',
-                             'S1_MODEL07_CO_type', 'S1_MODEL07_SN_type',\
-                             'S1_MODEL07_mass', 'S1_MODEL07_spin',\
-                             'S1_MODEL07_m_disk_radiated',
-                             'S1_MODEL08_CO_type', 'S1_MODEL08_SN_type',\
-                             'S1_MODEL08_mass', 'S1_MODEL08_spin',\
-                             'S1_MODEL08_m_disk_radiated',
-                             'S1_MODEL09_CO_type', 'S1_MODEL09_SN_type',\
-                             'S1_MODEL09_mass', 'S1_MODEL09_spin',\
-                             'S1_MODEL09_m_disk_radiated',
-                             'S1_MODEL10_CO_type', 'S1_MODEL10_SN_type',\
-                             'S1_MODEL10_mass', 'S1_MODEL10_spin',\
-                             'S1_MODEL10_m_disk_radiated'],
+    'PLOT_AFTER_EXTRA'    : [],
     'PLOT_AFTER_TRAINING' : ['INTERP_ERROR_age', 'INTERP_ERROR_star_1_mass',\
                              'INTERP_ERROR_star_2_mass',\
                              'INTERP_ERROR_period_days',\
@@ -129,21 +101,16 @@ PLOTTING_SETS = {
                              'INTERP_ERROR_S2_log_Teff',\
                              'INTERP_ERROR_S2_log_L', 'INTERP_ERROR_S2_log_R',\
                              'INTERP_ERROR_S2_spin_parameter',\
-                             'INTERP_ERROR_S2_lambda_CE_10cent',\
-                             'INTERP_ERROR_S1_MODEL01_mass',\
-                             'INTERP_ERROR_S1_MODEL01_spin',\
-                             'INTERP_ERROR_S1_MODEL01_m_disk_radiated',\
-                             'INTERP_ERROR_S1_MODEL05_mass',\
-                             'INTERP_ERROR_S1_MODEL05_spin',\
-                             'INTERP_ERROR_S1_MODEL05_m_disk_radiated',\
-                             'INTERP_ERROR_S1_MODEL06_mass',\
-                             'INTERP_ERROR_S1_MODEL06_spin',\
-                             'INTERP_ERROR_S1_MODEL06_m_disk_radiated',\
-                             'INTERP_ERROR_S1_MODEL10_mass',\
-                             'INTERP_ERROR_S1_MODEL10_spin',\
-                             'INTERP_ERROR_S1_MODEL10_m_disk_radiated'],
+                             'INTERP_ERROR_S2_lambda_CE_10cent'],
     'PLOT_AFTER_PROFILE_TRAINING' : []
 }
+for SN_MODEL_NAME in SN_MODELS.keys():
+    for prop in ['CO_type', 'SN_type', 'mass', 'spin', 'm_disk_radiated']:
+        PLOTTING_SETS['PLOT_AFTER_EXTRA'].append(f'S1_{SN_MODEL_NAME}_{prop}')
+        if prop not in ['CO_type', 'SN_type']:
+            PLOTTING_SETS['PLOT_AFTER_TRAINING'].append(
+             f'INTERP_ERROR_S1_{SN_MODEL_NAME}_{prop}')
+
 # predefined checking sets
 CHECKING_SETS = {
     'CHECK_AFTER_CREATE'           : [],
