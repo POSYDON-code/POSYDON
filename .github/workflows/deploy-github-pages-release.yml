@@ -97,8 +97,7 @@ jobs:
           touch _build/html/.nojekyll
           
           # move and copy docs out of the POSYDON folder
-          tag_without_v=${tag//v}
-          mv _build/html/ $output_folder/$tag_without_v
+          mv _build/html/ $output_folder/$tag
 
           # cleanup for the next build
           make clean
