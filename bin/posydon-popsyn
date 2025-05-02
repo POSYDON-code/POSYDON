@@ -507,7 +507,7 @@ def check_batches(run_folder, metallicity, batch_folder_name):
                     idx = int(input("\nEnter the index to the job ID: "))
                     if 0 <= idx < len(jobIDs):
                         selected_job_idx = idx
-                        jobID = [jobIDs[idx]]  # Filter to only the selected job ID
+                        jobID = jobIDs[idx]  # Filter to only the selected job ID
                     else:
                         print("Invalid selection. Please try again.")
                 except ValueError:
