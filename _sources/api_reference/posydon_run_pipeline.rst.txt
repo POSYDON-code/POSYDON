@@ -1,7 +1,0 @@
-posydon\_run\_pipeline
-======================
-
-.. automodule:: posydon_run_pipeline
-   :members:
-   :show-inheritance:
-   :undoc-members:

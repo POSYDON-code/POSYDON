@@ -1,7 +1,0 @@
-posydon\_run\_grid
-==================
-
-.. automodule:: posydon_run_grid
-   :members:
-   :show-inheritance:
-   :undoc-members:
