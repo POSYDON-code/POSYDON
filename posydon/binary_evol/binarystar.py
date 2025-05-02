@@ -393,8 +393,9 @@ class BinaryStar:
             if not all_equal_length_cols:
                 for col in data_to_save:
                     # check if the data column type is array-like
-                    if hasattr(col, '__len__') and hasattr(col, '__getitem__') and not isinstance(col, str):
-                        data_len = len(col)
+                    element = col[0]
+                    if hasattr(element, '__len__') and hasattr(element, '__getitem__') and not isinstance(element, str):
+                        data_len = len(element)
                         col.extend( [[np.nan] * data_len] * abs(max_col_length - len(col)))
                     else:
                         col.extend([np.nan] * abs(max_col_length - len(col)))
