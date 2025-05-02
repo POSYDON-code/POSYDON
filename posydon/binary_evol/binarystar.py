@@ -395,8 +395,8 @@ class BinaryStar:
                     # check if the data column type is array-like
                     element = col[0]
                     if hasattr(element, '__len__') and hasattr(element, '__getitem__') and not isinstance(element, str):
-                        data_len = len(element)
-                        col.extend( [[np.nan] * data_len] * abs(max_col_length - len(col)))
+                        element_len = len(element)
+                        col.extend( [[np.nan] * element_len] * abs(max_col_length - len(col)))
                     else:
                         col.extend([np.nan] * abs(max_col_length - len(col)))
 
