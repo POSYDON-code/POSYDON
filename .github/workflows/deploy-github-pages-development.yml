@@ -54,7 +54,8 @@ jobs:
         MESA_DIR: ./
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        export PATH_TO_POSYDON=$GITHUB_WORKSPACE
+        export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
+        cd $PATH_TO_POSYDON
         
         # build the documentation for the development branch
         git checkout -f development
