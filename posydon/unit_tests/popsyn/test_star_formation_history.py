@@ -8,6 +8,7 @@ __authors__ = [
 import numpy as np
 import pandas as pd
 import pytest
+from posydon.utils.posydonwarning import SFHModelWarning
 from posydon.popsyn.star_formation_history import SFHBase, MadauBase
 from posydon.popsyn.star_formation_history import (
     MadauDickinson14,
@@ -105,7 +106,7 @@ class TestSFHBase:
         0.01 * np.ones(3), None),
         # Model dict warning
         ({"Z_max": 0.02, "Z_min": 0.0}, False, np.array([0.0, 0.01, 0.02, 0.03]), 
-         None, UserWarning),
+         None, SFHModelWarning),
         # Different model dicts
         ({"Z_max": 1, "Z_min": 0.015}, False, np.array([0.3, 0.6, 0.9]), 
          np.array([0.585, 0.4]), None),
@@ -120,19 +121,19 @@ class TestSFHBase:
          None, None),
         # Minimum in lowest bin
         ({"Z_min": 0.25}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
-         np.array([0.05, 0.3, 0.3]), UserWarning),
+         np.array([0.05, 0.3, 0.3]), SFHModelWarning),
         # Minimum higher than minimum bin
         ({"Z_min": 0.35}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
-         np.array([0.0, 0.25, 0.3]), UserWarning),
+         np.array([0.0, 0.25, 0.3]), SFHModelWarning),
         # Minimum in lowest bin and maximum
         ({"Z_min": 0.25, "Z_max": 0.8}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
-         np.array([0.05, 0.3, 0.2]), UserWarning),
+         np.array([0.05, 0.3, 0.2]), SFHModelWarning),
         # Minimum higher than minimum bin, narrow range
         ({"Z_min": 0.35, "Z_max": 0.4}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
-         np.array([0.0, 0.05, 0.0]), UserWarning),
+         np.array([0.0, 0.05, 0.0]), SFHModelWarning),
         # Minimum higher than minimum bin, medium range
         ({"Z_min": 0.35, "Z_max": 0.65}, False, np.array([0.2, 0.3, 0.6, 0.9]), 
-         np.array([0.0, 0.25, 0.05]), UserWarning),
+         np.array([0.0, 0.25, 0.05]), SFHModelWarning),
     ])
     def test_distribute_cdf(self, ConcreteSFH, model_dict, normalise, met_edges, expected, warning):
         """Test the _distribute_cdf method with various scenarios."""
@@ -145,8 +146,9 @@ class TestSFHBase:
         
         # Test execution with or without warning check
         if warning:
-            with pytest.warns(warning):
+            with pytest.warns(warning) as excinfo:
                 result = sfh._distribute_cdf(cdf_func, met_edges)
+            assert excinfo[0].message.args[0] is not None
         else:
             result = sfh._distribute_cdf(cdf_func, met_edges)
         
@@ -390,7 +392,7 @@ class TestMadauBase:
                       "normalise": True}
         madau = ConcreteMadau(model_dict)
         warning_str = "Z_min is larger than the lowest metallicity bin."
-        with pytest.warns(UserWarning, match=warning_str):
+        with pytest.warns(SFHModelWarning, match=warning_str):
             result = madau.fSFR(z, met_bins)
         #result = madau.fSFR(z, met_bins)
         expected = np.ones(len(z))
