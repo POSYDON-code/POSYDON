@@ -270,8 +270,14 @@ class MadauBase(SFHBase):
             - CSFRD_params: dict
                 Parameters for the cosmic star formation rate density (CSFRD)
                 - a, b, c, d : float
-                Follows the Madau & Dickinson (2014) CSFRD formula (Eq. 15):
-                https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract
+                Follows the Madau & Dickinson (2014) CSFRD formula (Eq. 15) in [1]_
+                
+        References
+        ----------
+        .. [1] Madau, P., & Dickinson, M. (2014). Cosmic star formation history.
+           Annual Review of Astronomy and Astrophysics, 52, 415-486.
+           https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract      
+        
         """
         if "sigma" not in SFH_MODEL:
             raise ValueError("sigma not given!")
@@ -370,11 +376,15 @@ class MadauBase(SFHBase):
         return fSFR
 
 class MadauDickinson14(MadauBase):
-    """Madau & Dickinson (2014) star formation history model using the 
-    mean metallicity evolution of Madau & Fragos (2017).
+    """Madau & Dickinson (2014) [1]_ star formation history model using the 
+    mean metallicity evolution of Madau & Fragos (2017) [2]_.
     
-    Madau & Dickinson (2014), ARA&A, 52, 415
-    https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract
+    References
+    ----------
+    .. [1] Madau, P., & Dickinson, M. (2014). ARA&A, 52, 415-486.
+        https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M
+    .. [2] Madau, P., & Fragos, T. (2017). ApJ, 840(1), 39.
+        https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M
     """
 
     def __init__(self, SFH_MODEL):
@@ -402,8 +412,12 @@ class MadauDickinson14(MadauBase):
             - CSFRD_params: dict
                 Parameters for the cosmic star formation rate density (CSFRD)
                 - a, b, c, d : float
-                Follows the Madau & Dickinson (2014) CSFRD formula (Eq. 15):
-                https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract
+                Follows the Madau & Dickinson (2014) CSFRD formula (Eq. 15) in [1]_
+                
+        References
+        ----------
+        .. [1] Madau, P., & Dickinson, M. (2014). ARA&A, 52, 415-486.
+            https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M
         """
         super().__init__(SFH_MODEL)
         # Parameters for Madau+Dickinson14 CSFRD
@@ -416,10 +430,13 @@ class MadauDickinson14(MadauBase):
 
 class MadauFragos17(MadauBase):
     """The Madau & Fragos (2017) star formation history model with the 
-    metallicity evolution of Madau & Fragos (2017).
+    metallicity evolution of Madau & Fragos (2017) [1]_.
     
-    Madau & Fragos (2017), ApJ, 840, 39
-    http://adsabs.harvard.edu/abs/2017ApJ...840...39M
+    
+    References
+    ----------
+    .. [1] Madau, P., & Fragos, T. (2017). ApJ, 840(1), 39.
+        https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M/abstract
     """
 
     def __init__(self, SFH_MODEL):
@@ -453,15 +470,20 @@ class MadauFragos17(MadauBase):
         }
   
 class Neijssel19(MadauBase):
-    """The Neijssel et al. (2019) star formation history model, which fits 
-    the Madau & Dickinson (2014) cosmic star formation rate density formula
+    """The Neijssel et al. (2019) [1]_ star formation history model, which fits 
+    the Madau & Dickinson (2014) [2]_ cosmic star formation rate density formula
     with the BBH merger rate and uses a truncated log-normal distribution for
     the mean metallicity distribution.    
     The mean metallicity evolution follows the Langer and Normal parameterisation
     also fitted to the BBH merger rate.
     
-    Neijssel et al. (2019), MNRAS, 490, 3740
-    http://adsabs.harvard.edu/abs/2019MNRAS.490.3740N
+    
+    References
+    ----------
+    .. [1] Neijssel, C. J., et al. (2019). MNRAS, 490, 3740.
+        https://ui.adsabs.harvard.edu/abs/2019MNRAS.490.3740N
+    .. [2] Madau, P., & Fragos, T. (2017). ApJ, 840(1), 39.
+        https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M/
     """
     def __init__(self, SFH_MODEL):
         """Initialise the Neijssel+19 model
@@ -659,10 +681,13 @@ class IllustrisTNG(SFHBase):
         return fSFR
     
 class Chruslinska21(SFHBase):
-    """The Chruślińska+21 star formation history model.
+    """The Chruślińska+21 star formation history model [1]_.
     
-    Chruślińska et al. (2021), MNRAS, 508, 4994
-    https://ui.adsabs.harvard.edu/abs/2021MNRAS.508.4994C/abstract
+    
+    References
+    ----------
+    .. [1] Chruślińska, M., et al. (2021). MNRAS, 508, 4994.
+        https://ui.adsabs.harvard.edu/abs/2021MNRAS.508.4994C
     
     Data source: 
     https://ftp.science.ru.nl/astro/mchruslinska/Chruslinska_et_al_2021/
@@ -903,13 +928,15 @@ class Fujimoto24(MadauBase):
         }   
     
 class Zavala21(MadauBase):
-    """The Zavala et al. (2021) star formation history model.
+    """The Zavala et al. (2021) star formation history model [1]_.
     
     The "min" and "max" models are based on the obscured and unobscured
     star formation rate density models, respectively.
     
-    https://dx.doi.org/10.3847/1538-4357/abdb27
-    
+    References
+    ----------
+    .. [1] Zavala, J., et al. (2021). ApJ, 909(2), 165.
+        https://ui.adsabs.harvard.edu/abs/2021ApJ...909..165Z/    
     """
     def __init__(self, SFH_MODEL):
         """Initialise the Zavala+21 model
