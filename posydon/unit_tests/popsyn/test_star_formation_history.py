@@ -160,6 +160,20 @@ class TestSFHBase:
             # For specific expected values
             np.testing.assert_allclose(result, expected)
 
+    def test_distribute_cdf_invalid(self, ConcreteSFH):
+        """Test the _distribute_cdf method with invalid inputs."""
+        # Create a simple CDF function
+        cdf_func = lambda x: x
+        
+        # Create the SFH instance
+        model_dict = {}
+        sfh = ConcreteSFH(model_dict)
+        
+        # Test with invalid metallicity edges
+        met_edges = np.array([0.04, 0.01, 0.02])
+        with pytest.raises(ValueError) as excinfo:
+            sfh._distribute_cdf(cdf_func, met_edges)
+        assert "Metallicity bins must be sorted" in str(excinfo.value)
 
     def test_call_method(self):
         """Test the __call__ method."""
