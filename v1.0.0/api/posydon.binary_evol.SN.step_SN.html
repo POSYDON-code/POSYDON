@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.binary_evol.SN.step_SN.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.binary_evol.SN.step_SN"></span><p>Supernova step.</p>
+<p>This step models the end of life of stars by being applied to a binary
+object and verifying its state. It performs the collapse prescription
+used to initialize the step in the respective star. Depending on the
+C and He cores the final state of the star is determined, from the
+formation of white dwarfs to electron-capture supernova, Fe core-collapse
+supernova, pair pulsation supernova and pair instability supernova.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.Couch20_corecollapse">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.SN.step_SN.</span></span><span class="sig-name descname"><span class="pre">Couch20_corecollapse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">turbulence_strength</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_engine_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#Couch20_corecollapse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.Couch20_corecollapse" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Compute SN final remnant mass, fallback fraction and stellar state.</p>
+<p>This considers the nearest neighboor of the He core mass of the star,
+previous to the collapse. Considering a set of data for which the He core
+mass of the compact object progenitors before the collapse, the final
+remnant mass and final stellar state of the compact object is known.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>engine</strong> (<em>string</em>) – Engine for the supernova explosion, from the one where used in
+[1].</p></li>
+<li><p><strong>path_engine_dataset</strong> (<em>string</em>) – Path to the location of the data on initial and final states
+for each engine described in Sukhbold et al. 2016</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>m_rem</strong> (<em>double</em>) – Remnant mass of the compact object in M_sun.</p></li>
+<li><p><strong>f_fb</strong> (<em>double</em>) – Fallback mass of the compact object in M_sun.</p></li>
+<li><p><strong>state</strong> (<em>string</em>) – Finall state of the stellar remnant after the supernova.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets">1</span></dt>
+<dd><p>Sukhbold, T., Ertl, T., Woosley, S. E., Brown, J. M., &amp; Janka,</p>
+</dd>
+</dl>
+<p>H. T. (2016). Core-collapse supernovae from 9 to 120 solar masses based
+on neutrino-powered explosions. The Astrophysical Journal, 821(1), 38.
+.. [2] Couch, S. M., Warren, M. L., &amp; O’Connor, E. P. 2020, ApJ, 890, 127
+Simulating Turbulence-aided Neutrino-driven Core-collapse Supernova
+Explosions in One Dimension</p>
+<p>Initialize a Couch20_corecollapse instance.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.SN.step_SN.</span></span><span class="sig-name descname"><span class="pre">StepSN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mechanism</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Patton&amp;Sukhbold20-engine'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N20'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PISN</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Marchant+19'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ECSN</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Podsiadlowksi+04'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_neutrino_mass_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kick_normalisation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'one_over_mass'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_kick_CCSN_NS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">265.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_kick_CCSN_BH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">265.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_kick_ECSN</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_NS_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_interp_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_profiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_core_masses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_at_he_depletion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The supernova step in POSYDON.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mechanism</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – <p>Mechanism to perform the core-collapse on the star object and
+predict the supernova remnant outcome. Available options are:</p>
+<ul>
+<li><p>’Fryer+12-rapid’ : The rapid supernova-engine described in</p></li>
+</ul>
+<p>[1]</p>
+<ul>
+<li><p>’Fryer+12-delayed’ : The delayed supernova-engine described in</p></li>
+</ul>
+<p>[1]</p>
+<ul>
+<li><p>’direct’ : The pre-supernova mass of the starr is collapsed into the</p></li>
+</ul>
+<p>remnant baryonic mass.</p>
+<ul>
+<li><p>’direct_he_core’ : The pre-supernova He core mass of the starr is</p></li>
+</ul>
+<p>collapsed into the remnant baryonic mass.</p>
+<ul>
+<li><p>’Sukhbold+16-engine’ : Uses the results from [2]</p></li>
+</ul>
+<p>to describe the collapse of the star.</p>
+<ul>
+<li><p>’Patton&amp;Sukhbold20-engine’: Uses the results from [5]</p></li>
+</ul>
+<p>to describe the collapse of the star.</p>
+<ul>
+<li><p>’Couch+20-engine’: Uses the results from [6]</p></li>
+</ul>
+<p>to describe the collapse of the star.</p>
+</p></li>
+<li><p><strong>engine</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – <p>Engine used for supernova remnanrt outcome propierties for the
+Sukhbold+16-engineand and Patton&amp;Sukhbold20-engine mechanisms.
+Available options:</p>
+<ul>
+<li><p>’N20’</p></li>
+</ul>
+</p></li>
+<li><p><strong>PISN</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – <p>Prescrition to take on the pair-instability supernova.
+Avialable options:</p>
+<ul>
+<li><p>’Marchant+19’ : Descripes the pair-instability supernova as</p></li>
+</ul>
+<p>[3].</p>
+</p></li>
+<li><p><strong>mass_central_BH</strong> (<em>double</em>) – Central mass collapsed automatically on black-holes formed by direct
+collapse.</p></li>
+<li><p><strong>max_neutrino_mass_loss</strong> (<em>double</em>) – Neutrino mass loss during the collapse of the proto neutron-star.</p></li>
+<li><p><strong>kick</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, the kick velocities are computed corresponding to the
+supernova event, else no kicks are taking into account
+for any supernova outcome.</p></li>
+<li><p><strong>kick_normalisation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Renormalise the kick by:
+‘one_minus_fallback’ : (1-f_fb)
+‘one_over_mass’ : 1.4/m_BH
+‘zero’ : 0.
+‘one’ : 1.
+‘NS_one_minus_fallback_BH_one’: 1 for BH, (1-f_fb) for NS</p></li>
+<li><p><strong>ECSN</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – <p>Prescription to determine the production of an electron-capture
+supernova.
+Avialable options:</p>
+<ul>
+<li><p>’Tauris+15’: Determines the electron capture supernova in terms</p></li>
+</ul>
+<p>of the CO core mass at pre-supernova, taking the limits from [4].</p>
+</p></li>
+<li><p><strong>sigma_kick_CCSN_NS</strong> (<em>double</em>) – Standard deviation for a Maxwellian distribution to compute the
+kick velocities from NSs formed by Fe core-collapse
+supernova.</p></li>
+<li><p><strong>sigma_kick_CCSN_BH</strong> (<em>double</em>) – Standard deviation for a Maxwellian distribution to compute the
+kick velocities from BHs formed by Fe core-collapse
+supernova.</p></li>
+<li><p><strong>sigma_kick_ECSN</strong> (<em>double</em>) – Standard deviation for a Maxwellian distribution to compute the
+kick velocities from compact-object formed by electron-capture
+supernova.</p></li>
+<li><p><strong>max_NS_mass</strong> (<em>double</em>) – Maximum neutron-star mass.</p></li>
+<li><p><strong>use_interp_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – The outcome of core collpase was interpolated from a post processed
+MESA grid and stored in the star object in the mesa_step or
+detached_step (default). This option supports only default
+assumptions for all core collase mechanism.</p></li>
+<li><p><strong>use_profiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Perfrome the core collpase given a MESA profile. To use this option
+a MESA profile must be stored in the star object which is provided
+by nearest neighbor interpolation in the mesa_step or (TODO)
+interpolated in the detached_step.</p></li>
+<li><p><strong>use_core_masses</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – This option uses the core masses at carbon depletion to determine
+the core collapse outcoume (classical population sythesis
+threatment).</p></li>
+<li><p><strong>approx_at_he_depletion</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – This option is relevant only for the mechanism Patton&amp;Sukhbold20-engine.
+In case the core masses at he-depletion are not present in the
+star object, compute them from the history, else (approximation=True)
+approximate it from the core masses at C depletion.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, the messages will be prited in the console.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets">1</span></dt>
+<dd><p>Fryer, C. L., Belczynski, K., Wiktorowicz, G., Dominik, M.,</p>
+</dd>
+</dl>
+<p>Kalogera, V., &amp; Holz, D. E. (2012). Compact remnant mass function:
+dependence on the explosion mechanism and metallicity.
+The Astrophysical Journal, 749(1), 91.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id3"><span class="brackets">2</span></dt>
+<dd><p>Sukhbold, T., Ertl, T., Woosley, S. E., Brown, J. M., &amp; Janka,</p>
+</dd>
+</dl>
+<p>H. T. (2016). Core-collapse supernovae from 9 to 120 solar masses based
+on neutrino-powered explosions. The Astrophysical Journal, 821(1), 38.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets">3</span></dt>
+<dd><p>Marchant, P., Renzo, M., Farmer, R., Pappas, K. M., Taam, R. E.,</p>
+</dd>
+</dl>
+<p>De Mink, S. E., &amp; Kalogera, V. (2019). Pulsational pair-instability
+supernovae in very close binaries. The Astrophysical Journal, 882(1), 36.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id5"><span class="brackets">4</span></dt>
+<dd><p>Tauris, T. M., Langer, N., &amp; Podsiadlowski, P. (2015).</p>
+</dd>
+</dl>
+<p>Ultra-stripped supernovae: progenitors and fate. Monthly Notices of the
+Royal Astronomical Society, 451(2), 2123-2144.</p>
+<p>..[5] Patton, R. A. &amp; Sukhbold, T. 2020, MNRAS, 499, 2803. Towards a
+realistic explosion landscape for binary population synthesis</p>
+<p>..[6] Couch, S. M., Warren, M. L., &amp; O’Connor, E. P. 2020, ApJ, 890, 127.
+Simulating Turbulence-aided Neutrino-driven Core-collapse Supernova
+Explosions in One Dimension</p>
+<p>Initialize a StepSN instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.C_abundance_for_H_stars">
+<span class="sig-name descname"><span class="pre">C_abundance_for_H_stars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CO_core_mass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.C_abundance_for_H_stars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.C_abundance_for_H_stars" title="Permalink to this definition"></a></dt>
+<dd><p>Get the C abundance for a H-star given it’s CO core mass.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.C_abundance_for_He_stars">
+<span class="sig-name descname"><span class="pre">C_abundance_for_He_stars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CO_core_mass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.C_abundance_for_He_stars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.C_abundance_for_He_stars" title="Permalink to this definition"></a></dt>
+<dd><p>Get the C abundance for a He-star given it’s CO core mass.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.PISN_prescription">
+<span class="sig-name descname"><span class="pre">PISN_prescription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.PISN_prescription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.PISN_prescription" title="Permalink to this definition"></a></dt>
+<dd><p>Compute baryonic remnant mass for the PPISN and PISN prescription.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>star</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – Star object containing the star properties.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>m_PISN</strong> – Maximum stellar mass in M_sun after the PPISN/PISN prescription.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.Patton20_corecollapse">
+<span class="sig-name descname"><span class="pre">Patton20_corecollapse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.Patton20_corecollapse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.Patton20_corecollapse" title="Permalink to this definition"></a></dt>
+<dd><p>Compute supernova final remnant mass and fallback fraction.</p>
+<p>It uses the results from [1]. The prediction for the core-collapse
+outcome is performed using the C core mass and its C abundance.
+The criterion by [2] is used to determine the final outcome.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>star</strong> (<em>obj</em>) – Star object of a collapsing star containing the MESA profile.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>m_rem</strong> (<em>double</em>) – Remnant mass of the compact object in M_sun.</p></li>
+<li><p><strong>f_fb</strong> (<em>double</em>) – Fallback mass of the compact object in M_sun.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id6"><span class="brackets">1</span></dt>
+<dd><p>Patton, R. A., &amp; Sukhbold, T. (2020). MNRAS, 499(2), 2803-2816.</p>
+</dd>
+<dt class="label" id="id7"><span class="brackets">2</span></dt>
+<dd><p>Ertl, T., Janka, H. T., Woosley, S. E., Sukhbold, T.,
+&amp; Ugliano, M. (2016). ApJ, 818(2), 124.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.check" title="Permalink to this definition"></a></dt>
+<dd><p>Check the internal integrity and the values of the parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.check_SN_type">
+<span class="sig-name descname"><span class="pre">check_SN_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_core</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_He_core</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_star</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.check_SN_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.check_SN_type" title="Permalink to this definition"></a></dt>
+<dd><p>Get the remnant mass, fallback frac., state &amp; SN type of the SN.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.collapse_star">
+<span class="sig-name descname"><span class="pre">collapse_star</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.collapse_star"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.collapse_star" title="Permalink to this definition"></a></dt>
+<dd><p>Collapse the star object into a compact object.</p>
+<p>This routine supports three options:
+1. use_interp_values : True</p>
+<blockquote>
+<div><p>The outcome of core collpase was interpolated from a post processed
+MESA grid and stored in the star object in the mesa_step or
+detached_step (default). This option supports only default
+assumptions for all core collase mechanism.</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>use_profiles : False
+Perfrome the core collpase given a MESA profile. To use this option
+a MESA profile must be stored in the star object which is provided
+by nearest neighbor interpolation in the mesa_step or (TODO)
+interpolated in the detached_step.</p></li>
+<li><p>use_core_masses : False
+This option uses the core masses at carbon depletion to determine
+the core collapse outcoume (classical population sythesis
+threatment).</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>star</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – Star object containing the star properties.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>m_rem</strong> (<em>double</em>) – Remnant mass of the compact object in M_sun. This quantity accounts
+for the mass loss thorugh neutrino.</p></li>
+<li><p><strong>state</strong> (<em>string</em>) – New state of the star object.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.compute_m_rembar">
+<span class="sig-name descname"><span class="pre">compute_m_rembar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_PISN</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.compute_m_rembar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.compute_m_rembar" title="Permalink to this definition"></a></dt>
+<dd><p>Compute supernova remnant barionic mass.</p>
+<p>We follow the selected electron-capture and core-collapse mechanisms
+to get the remnant baryonic mass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>star</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – Star object containing the star properties.</p></li>
+<li><p><strong>m_PISN</strong> (<em>double</em>) – Maximum stellar mass in M_sun after the PPISN/PISN prescription.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>m_rembar</strong> (<em>double</em>) – Barioninc mass of the remnant after the supernova in M_sun. This
+quantity does NOT take into account any neutrino lost, this will be
+taken into account in collapse_star().</p></li>
+<li><p><strong>f_fb</strong> (<em>double</em>) – Mass fraction falling back onto the compact object created in the
+supernova. The maximum value is 1 and means that all the barionic
+mass is collapsing to form the compact object.</p></li>
+<li><p><strong>state</strong> (<em>string</em>) – Finall state of the stellar remnant after the supernova.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.generate_kick">
+<span class="sig-name descname"><span class="pre">generate_kick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.generate_kick"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.generate_kick" title="Permalink to this definition"></a></dt>
+<dd><p>Draw a kick from a Maxwellian distribution.</p>
+<p>We follow Hobbs G., Lorimer D. R., Lyne A. G., Kramer M., 2005, MNRAS, 360, 974
+and choose sigma = 265 km/s</p>
+<p>We rescale the kicks by 1 - f_fb as in Eq. 21 of Fryer, C. L., Belczynski, K., Wiktorowicz,
+G., Dominik, M., Kalogera, V., &amp; Holz, D. E. (2012), ApJ, 749(1), 91.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>star</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – Star object containing the star properties.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Vkick</strong> – Natal orbital kick in km/s.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.get_CO_core_params">
+<span class="sig-name descname"><span class="pre">get_CO_core_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approximation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.get_CO_core_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.get_CO_core_params" title="Permalink to this definition"></a></dt>
+<dd><p>Get the CO core mass and C abundance at the pre-supernova phase.</p>
+<p>If the two parameters are available in the star’s profile, perform the
+Patton&amp;Sukhbold,20 core-collapse.</p>
+<p>If the CO core mass is available but not the C abundance then the
+latter is computed from the formulas at Patton&amp;Sukhbold,20.</p>
+<dl>
+<dt>Parameters</dt><dd><dl class="simple">
+<dt>star<span class="classifier">obj</span></dt><dd><p>Star object of a collapsing star containing the MESA profile.</p>
+</dd>
+<dt>approximation<span class="classifier">bool</span></dt><dd><p>In case the core masses at he-depletion are not present in the
+star object, compute them from the history default behaviour,
+else (approximation=True) approximate it from the core masses
+at C depletion.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>CO_core_mass<span class="classifier">float</span></dt><dd><p>Mass of the CO core at He depletion == C core ignition.</p>
+</dd>
+<dt>C_core_abundance<span class="classifier">float</span></dt><dd><p>C abundance of the CO core  He depletion == C core ignition.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.get_M4_mu4_Patton20">
+<span class="sig-name descname"><span class="pre">get_M4_mu4_Patton20</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CO_core_mass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_core_abundance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.get_M4_mu4_Patton20"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.get_M4_mu4_Patton20" title="Permalink to this definition"></a></dt>
+<dd><p>Get the M4 and mu4 using Patton+20.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.StepSN.orbital_kick">
+<span class="sig-name descname"><span class="pre">orbital_kick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#StepSN.orbital_kick"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.StepSN.orbital_kick" title="Permalink to this definition"></a></dt>
+<dd><p>Do the orbital kick.</p>
+<p>This function computes the supernova step of the binary object. It
+checks which binary_state riched the core collapse flag, either CC1 or
+CC2, and run the step accordingly updating the binary object.</p>
+<p>Geometry:
+The collapsing helium star, here M_he_star, lies on the origin of the
+coordinate system moving in direction of positive y axis. The
+companion, here M_companion, lies on the negative X axis and Z-axis
+completes right-handed coordinate system. See Fig 1 in Kalogera 1996
+for a coordinate system drawing.</p>
+<dl class="simple">
+<dt>phi :</dt><dd><p>Angle between z-axis and projection of kick onto x-z plane.</p>
+</dd>
+<dt>theta :</dt><dd><p>Angle between pre- supernova star velocity relative to the
+companion (i.e. along the positive y axis) and the kick velocity.</p>
+</dd>
+<dt>tilt :</dt><dd><p>The angle between pre- and post- supenova orbial
+planes. This is equal to the angle between the relative velocity of
+the helium star to the companion just before the explosion (see Vr)
+and the projection of the relative velocy just after the explosion
+onto the y-z plane.</p>
+</dd>
+<dt>mean_anomaly:</dt><dd><p>is the mean anomaly, i.e the fraction of an elliptical orbit’s
+period that has elapsed since the orbiting body passed periapsis,
+expressed as an angle.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>binary</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – Binary object containing the binary properties and the two star
+objects.</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id8"><span class="brackets">1</span></dt>
+<dd><p>Kalogera, V. 1996, ApJ, 471, 352</p>
+</dd>
+<dt class="label" id="id9"><span class="brackets">2</span></dt>
+<dd><p>Wong, T.-W., Valsecchi, F., Fragos, T., &amp; Kalogera, V. 2012, ApJ, 747, 111</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.SN.step_SN.Sukhbold16_corecollapse">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.SN.step_SN.</span></span><span class="sig-name descname"><span class="pre">Sukhbold16_corecollapse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_engine_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/SN/step_SN.html#Sukhbold16_corecollapse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.SN.step_SN.Sukhbold16_corecollapse" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Compute supernova final remnant mass, fallback fraction and CO type.</p>
+<p>This consider the nearest neighboor of the He core mass of the star,
+previous to the collapse. Considering a set of data for which the He core
+mass of the compact object projenitos previous the collapse, the final
+remnant mass and final stellar state of the compact object is known.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>engine</strong> (<em>string</em>) – Engine for the supernova explosion, from the one where used in
+[1].</p></li>
+<li><p><strong>path_engine_dataset</strong> (<em>string</em>) – Path to the location of the data on initial and final states
+for each engine described in Sukhbold et al. 2016</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>m_rem</strong> (<em>double</em>) – Remnant mass of the compact object in M_sun.</p></li>
+<li><p><strong>f_fb</strong> (<em>double</em>) – Fallback mass of the compact object in M_sun.</p></li>
+<li><p><strong>state</strong> (<em>string</em>) – Finall state of the stellar remnant after the supernova.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id10"><span class="brackets">1</span></dt>
+<dd><p>Sukhbold, T., Ertl, T., Woosley, S. E., Brown, J. M., &amp; Janka,</p>
+</dd>
+</dl>
+<p>H. T. (2016). Core-collapse supernovae from 9 to 120 solar masses based
+on neutrino-powered explosions. The Astrophysical Journal, 821(1), 38.</p>
+<p>Initialize a Sukhbold16_corecollapse instance.</p>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

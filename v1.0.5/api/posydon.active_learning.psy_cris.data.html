@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; posydon 1.0.5 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.5
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/posydon.active_learning.psy_cris.data.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-posydon.active_learning.psy_cris.data"></span><p>Module for handling data for PSY-CRIS.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.TableData">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.active_learning.psy_cris.data.</span></span><span class="sig-name descname"><span class="pre">TableData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">my_DataFrame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omit_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omit_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subset_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">my_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">undefined_p_change_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_csv_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#TableData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.TableData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>For managing data sets used for classification and regression.</p>
+<blockquote>
+<div><p>Reads tables of simulation data where a single row represents one
+simulation. Each column in a row represents different inputs
+(initial conditions) and outputs (result, continuous variables).
+If using multiple files, each file is assumed to have the same columns.
+You may also directly load a pandas DataFrame instead of reading in
+files.</p>
+<p>Example data structure expected in files or pandas DataFrame:</p>
+<p>0  input_1  input_2  outcome  output_1   output_2  output_3 …
+1    1.5      2.6      “A”       100       0.19       -     …
+2    1.5      3.0      “B”        -          -        -     …
+3    2.0      2.6      “C”        -          -        6     …
+…</p>
+<p>The above table has dashes ‘-’ in output columns to indicate NaN
+values. You may have a similar structure if different classes have
+fundamentally different outputs.</p>
+</div></blockquote>
+<p>Initialize the TableData instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_paths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of file paths to read in as data.
+if None, a pandas DataFrame is used instead</p></li>
+<li><p><strong>input_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of names of the columns which will be considered ‘input’.</p></li>
+<li><p><strong>output_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of names of the columns which will be considered ‘output’.
+This should include the class column name.</p></li>
+<li><p><strong>class_col_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of column which contains classification data.</p></li>
+<li><p><strong>my_DataFrame</strong> (<em>pandas DataFrame</em><em>, </em><em>optional</em>) – If given, use this instead of reading files.</p></li>
+<li><p><strong>omit_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – Numerical values that you wish to omit from the entire data set.
+If a row contains the value, the entire row is removed.
+(For example you may want to omit all rows if they contain “-1” or
+“failed”.)</p></li>
+<li><p><strong>omit_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – Column names that you wish to omit from the data set.</p></li>
+<li><p><strong>subset_interval</strong> (<em>array</em><em>, </em><em>optional</em>) – Use some subset of the data files being loaded in.
+An array with integers indicating the rows that will be kept.</p></li>
+<li><p><strong>my_colors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – Colors to use for classification plots.</p></li>
+<li><p><strong>n_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – List of integers that set the number of neighbors to use to
+calculate average distances. (default None)</p></li>
+<li><p><strong>neighbor</strong> (<em>instance of sklearn.neighbors.NearestNeighbors</em><em>, </em><em>optional</em>) – To use for average distances. See function ‘calc_avg_dist()’.</p></li>
+<li><p><strong>undefined_p_change_val</strong> (<em>optional</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Sets the undefined value used when calculating percent change fails
+due to zero values in the output data. Default uses nan.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print statements with extra info.</p></li>
+<li><p><strong>read_csv_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Kwargs passed to the pandas function ‘read_csv()’.</p></li>
+<li><p><strong>**kwargs</strong> – Extra kwargs</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.TableData.find_n_neighbors">
+<span class="sig-name descname"><span class="pre">find_n_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_avg_dists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#TableData.find_n_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.TableData.find_n_neighbors" title="Permalink to this definition"></a></dt>
+<dd><p>Find the N nearest neighbors of a given set of arbitrary points.</p>
+<p>Given a set of arbitrary input points, find the N nearest neighbors
+to each point, not including themselves. Can also return average
+distance from a point to its N nearest neighbors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> (<em>ndarray</em><em>, </em><em>pandas DataFrame</em>) – Data points where their nearest neighbors will be found</p></li>
+<li><p><strong>n_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of integers with number of neighbors to calculate</p></li>
+<li><p><strong>neighbor</strong> (<em>instance of NearestNeightbors class</em>) – For passing your own object.</p></li>
+<li><p><strong>return_avg_dists</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, return the a dictionary with average distances between
+the N nearest neighbors listed in ‘n_neighbors’.</p></li>
+<li><p><strong>**kwargs</strong> – <dl class="simple">
+<dt>class_key<span class="classifier">str</span></dt><dd><p>If a DataFrame is given, specifies class column name.</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>where_nearest_neighbors</strong> (<em>dict</em>) – Dictionary containing the n nearest neighbors for every point
+in the input data.</p></li>
+<li><p><strong>avg_distances</strong> (<em>dict</em>) – Returned if return_avg_dists is True.
+The average distances between the nearest neighbors.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.TableData.get_binary_mapping_per_class">
+<span class="sig-name descname"><span class="pre">get_binary_mapping_per_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#TableData.get_binary_mapping_per_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.TableData.get_binary_mapping_per_class" title="Permalink to this definition"></a></dt>
+<dd><p>Get binary mapping (0 or 1) of the class data.</p>
+<p>Get binary mapping (0 or 1) of the class data for each unique
+classification. For each classification, a value of 1 is given
+if the class data matches that classification. If they do not
+match, then a value of 0 is given.</p>
+<p>Example:
+classifications -&gt; A, B, C
+class data      -&gt; [ A, B, B, A, B, C ]
+binary mapping  -&gt; [[1, 0, 0, 1, 0, 0]   (for class A)</p>
+<blockquote>
+<div><p>[0, 1, 1, 0, 1, 0]   (for class B)
+[0, 0, 0, 0, 0, 1]]  (for class C)</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>binary_class_data</strong> – N by M array where N is the number of classes and M is the
+number of classifications in the data set.
+Order is determined by ‘_unique_class_keys_’.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.TableData.get_class_data">
+<span class="sig-name descname"><span class="pre">get_class_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">what_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#TableData.get_class_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.TableData.get_class_data" title="Permalink to this definition"></a></dt>
+<dd><p>Get data related to classification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>what_data</strong> – <dl class="simple">
+<dt>‘class_col’ (array)</dt><dd><ul>
+<li><p>Original classification data.</p></li>
+</ul>
+</dd>
+<dt>’unique_class_keys’ (array)</dt><dd><ul>
+<li><p>Unique classes found in the classification data.</p></li>
+</ul>
+</dd>
+<dt>’class_col_to_ids’ (array)</dt><dd><ul>
+<li><p>Original classification data replaced with their
+respective class IDs (integers).</p></li>
+</ul>
+</dd>
+<dt>’class_id_mapping’ (dict)</dt><dd><ul>
+<li><p>Mapping between a classification from the original
+data set and its class ID.</p></li>
+</ul>
+</dd>
+<dt>’binary_data’ (ndarray)</dt><dd><ul>
+<li><p>Iterating over the unique classes, classification data
+is turned into 1 or 0 if it matches the given class.
+See method ‘get_binary_mapping_per_class()’.</p></li>
+</ul>
+</dd>
+<dt>’full’ (tuple)</dt><dd><ul>
+<li><p>All options listed above. (Default)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>str</strong> – <dl class="simple">
+<dt>‘class_col’ (array)</dt><dd><ul>
+<li><p>Original classification data.</p></li>
+</ul>
+</dd>
+<dt>’unique_class_keys’ (array)</dt><dd><ul>
+<li><p>Unique classes found in the classification data.</p></li>
+</ul>
+</dd>
+<dt>’class_col_to_ids’ (array)</dt><dd><ul>
+<li><p>Original classification data replaced with their
+respective class IDs (integers).</p></li>
+</ul>
+</dd>
+<dt>’class_id_mapping’ (dict)</dt><dd><ul>
+<li><p>Mapping between a classification from the original
+data set and its class ID.</p></li>
+</ul>
+</dd>
+<dt>’binary_data’ (ndarray)</dt><dd><ul>
+<li><p>Iterating over the unique classes, classification data
+is turned into 1 or 0 if it matches the given class.
+See method ‘get_binary_mapping_per_class()’.</p></li>
+</ul>
+</dd>
+<dt>’full’ (tuple)</dt><dd><ul>
+<li><p>All options listed above. (Default)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>list</strong> – <dl class="simple">
+<dt>‘class_col’ (array)</dt><dd><ul>
+<li><p>Original classification data.</p></li>
+</ul>
+</dd>
+<dt>’unique_class_keys’ (array)</dt><dd><ul>
+<li><p>Unique classes found in the classification data.</p></li>
+</ul>
+</dd>
+<dt>’class_col_to_ids’ (array)</dt><dd><ul>
+<li><p>Original classification data replaced with their
+respective class IDs (integers).</p></li>
+</ul>
+</dd>
+<dt>’class_id_mapping’ (dict)</dt><dd><ul>
+<li><p>Mapping between a classification from the original
+data set and its class ID.</p></li>
+</ul>
+</dd>
+<dt>’binary_data’ (ndarray)</dt><dd><ul>
+<li><p>Iterating over the unique classes, classification data
+is turned into 1 or 0 if it matches the given class.
+See method ‘get_binary_mapping_per_class()’.</p></li>
+</ul>
+</dd>
+<dt>’full’ (tuple)</dt><dd><ul>
+<li><p>All options listed above. (Default)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>optional</strong> – <dl class="simple">
+<dt>‘class_col’ (array)</dt><dd><ul>
+<li><p>Original classification data.</p></li>
+</ul>
+</dd>
+<dt>’unique_class_keys’ (array)</dt><dd><ul>
+<li><p>Unique classes found in the classification data.</p></li>
+</ul>
+</dd>
+<dt>’class_col_to_ids’ (array)</dt><dd><ul>
+<li><p>Original classification data replaced with their
+respective class IDs (integers).</p></li>
+</ul>
+</dd>
+<dt>’class_id_mapping’ (dict)</dt><dd><ul>
+<li><p>Mapping between a classification from the original
+data set and its class ID.</p></li>
+</ul>
+</dd>
+<dt>’binary_data’ (ndarray)</dt><dd><ul>
+<li><p>Iterating over the unique classes, classification data
+is turned into 1 or 0 if it matches the given class.
+See method ‘get_binary_mapping_per_class()’.</p></li>
+</ul>
+</dd>
+<dt>’full’ (tuple)</dt><dd><ul>
+<li><p>All options listed above. (Default)</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>class_data</strong> – An object containing the specified classification data.
+Will return tuple of len(what_data) if a list is passed. Default: 5</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>, ndarray, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.TableData.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">what_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#TableData.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.TableData.get_data" title="Permalink to this definition"></a></dt>
+<dd><p>Get all data contained in TableData object.</p>
+<p>The data is returned after omission of columns and rows containing
+specified values (if given) and taking a subset (if given) of the
+original data set read in as a csv or given directly as a pandas
+DataFrame. (Before data processing for classification and regression.)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>what_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – Default is ‘full’ with other options ‘input’, or ‘output’.
+‘full’ - original data table (after omission and subsets)
+‘input’ - only data identified as inputs from ‘full’ data set
+‘output’ - only data identified as outputs from ‘full’ data set</p></li>
+<li><p><strong>return_df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, return a pandas DataFrame object.
+If False (default), return a numpy array.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data</strong> – Data before classification and regression data sorting is done.
+Will return tuple of len(what_data) if a list is passed.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>, ndarray or DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.TableData.get_info">
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#TableData.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.TableData.get_info" title="Permalink to this definition"></a></dt>
+<dd><p>Return what info is printed in the ‘info()’ method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>files</strong> (<em>list</em>) – File paths where data was loaded from.</p></li>
+<li><p><strong>df_index_keys</strong> (<em>list</em>) – Index keys added to the DataFrame object once
+multiple files are joined together such that one can
+access data by file after they were joined.</p></li>
+<li><p><strong>for_info</strong> (<em>list</em>) – Running list of print statements that include but
+are not limited to what is shown if ‘verbose=True’.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.TableData.get_regr_data">
+<span class="sig-name descname"><span class="pre">get_regr_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">what_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#TableData.get_regr_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.TableData.get_regr_data" title="Permalink to this definition"></a></dt>
+<dd><p>Get data related to regression all sorted by class in dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>what_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – ‘input’ - For each class, the input data with no cleaning.
+‘raw_output’ - For each class, the output data with no cleaning.
+‘output’ - For each class, the cleaned output data.
+‘full’ - All options listed above in that respective order.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data</strong> – An object containing the specified regression data.
+Will return tuple of len(what_data) if a list is passed. Default: 3</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>, ndarray or DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.TableData.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#TableData.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.TableData.info" title="Permalink to this definition"></a></dt>
+<dd><p>Print info for the instance of TableData object.</p>
+<p>For output descriptions see the method ‘get_info()’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.TableData.make_class_data_plot">
+<span class="sig-name descname"><span class="pre">make_class_data_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">my_slice_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">my_class_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_legend_handles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#TableData.make_class_data_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.TableData.make_class_data_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Plot classification data on a given axis and figure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>Matplotlib Figure object</em>) – Figure on which the plot will be made.</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib Axis object</em>) – Axis on which a scatter plot will be drawn.</p></li>
+<li><p><strong>axes_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List containing two names of input data columns to use as
+horizontal and verital axes.</p></li>
+<li><p><strong>my_slice_vals</strong> (<em>optional</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – List giving values on which to slice in the axes not being plotted.
+Default (None) uses the first unique value found in each axis.
+If instead of individual values, a range is desired (e.g. 10 +/- 1)
+then a dict can be given with integer keys mapping to a tuple with
+the lower and upper range. ( e.g. {0:(9,11)} )</p></li>
+<li><p><strong>my_class_colors</strong> (<em>optional</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of colors used to represent different classes. Default (None)
+uses the default class colors.</p></li>
+<li><p><strong>return_legend_handles</strong> (<em>optional</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Returns a list of handles that connect classes to colors.</p></li>
+<li><p><strong>verbose</strong> (<em>optional</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Print useful information during runtime.</p></li>
+<li><p><strong>**kwargs</strong> (<em>optional</em>) – Kwargs for matplotlib.pyplot.scatter() .</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>Matplotlib Figure object</em>) – Figure object.</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib Axis object</em>) – Updated axis after plotting.</p></li>
+<li><p><strong>handles</strong> (<em>optional, list</em>) – List of legend handles connecting classes and their colors.
+Returned if ‘return_legend_handles’ is True. Default is False.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.TableData.plot_3D_class_data">
+<span class="sig-name descname"><span class="pre">plot_3D_class_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(4,</span> <span class="pre">5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mark_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plt_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#TableData.plot_3D_class_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.TableData.plot_3D_class_data" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the 3D classification data in a 2D plot.</p>
+<p>3 input axis with classification output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – <p>By default it will order the axes as [x,y,z] in the original order
+the input axis were read in. To change the ordering, pass a list
+with the column names.
+Example:
+The default orderd is col_1, col_2, col_3.
+To change the horizontal axis from col_1 to col_2 you would use:</p>
+<blockquote>
+<div><p>’axes = [“col_2”, “col_1”, “col_3”]’</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>fig_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>, </em><em>optional</em><em>, </em><em>default =</em><em> (</em><em>4</em><em>,</em><em>5</em><em>)</em>) – Size of the figure. (Matplotlib figure kwarg ‘fig_size’)</p></li>
+<li><p><strong>mark_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em><em>, </em><em>default = 12</em>) – Size of the scatter plot markers. (Matplotlib scatter kwarg ‘s’)</p></li>
+<li><p><strong>which_val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>default = 0</em>) – Integer choosing what unique value to ‘slice’ on in the
+3D data such that it can be plotted on 2D.
+(If you had x,y,z data you need to choose a z value)</p></li>
+<li><p><strong>save_fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default = False</em>) – Save the figure in the local directory.</p></li>
+<li><p><strong>plt_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>default = '0'</em>) – If you are saving multiple figures you can pass a string
+which will be added to the end of the default:
+“data_plot_{plt_str}.pdf”</p></li>
+<li><p><strong>color_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>default = None</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.calc_avg_dist">
+<span class="sig-prename descclassname"><span class="pre">posydon.active_learning.psy_cris.data.</span></span><span class="sig-name descname"><span class="pre">calc_avg_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#calc_avg_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.calc_avg_dist" title="Permalink to this definition"></a></dt>
+<dd><p>Get the average distance to the nearest neighbors in the data set.</p>
+<p>(NearestNeighbors from sklearn.neighbors)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ndarray</em>) – Data to train the NearestNeighbors class on.</p></li>
+<li><p><strong>n_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of neighbors to use when finding average distance.</p></li>
+<li><p><strong>neighbor</strong> (<em>instance of NearestNeightbors class</em>) – For passing your own object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>avg_dist</strong> (<em>array</em>) – The average distance between nearest neighbors.</p></li>
+<li><p><strong>g_indi</strong> (<em>array</em>) – Indicies that correspond to the nearest neighbors.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.active_learning.psy_cris.data.calc_avg_p_change">
+<span class="sig-prename descclassname"><span class="pre">posydon.active_learning.psy_cris.data.</span></span><span class="sig-name descname"><span class="pre">calc_avg_p_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where_nearest_neighbors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">undefined_p_change_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/data.html#calc_avg_p_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.data.calc_avg_p_change" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the average fractional change in a given data set.</p>
+<p>The method uses the N nearest neighbors (calculated beforehand).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ndarray</em>) – Data set to calculate percent change.</p></li>
+<li><p><strong>where_nearest_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Indicies in data for the n nearest neighbors in input space.</p></li>
+<li><p><strong>undefined_p_change_val</strong> (<em>optional</em>) – For output with an undefined percent change (zero value), this kwarg
+defines what is put in its place. Defaults to nan.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>avg_p_change_holder</strong> – Each element conatins the average percent change for a given number of
+neighbors. If any output values are 0, then a nan is put in place of a
+percent change.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.5
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.grids.post_processing &mdash; posydon 1.0.5 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.5
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.grids.post_processing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.grids.post_processing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for post-processing POSYDON grids.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.binarystar</span> <span class="kn">import</span> <span class="n">BinaryStar</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.singlestar</span> <span class="kn">import</span> <span class="n">SingleStar</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.SN.step_SN</span> <span class="kn">import</span> <span class="n">StepSN</span>
+<span class="kn">from</span> <span class="nn">posydon.binary_evol.flow_chart</span> <span class="kn">import</span> <span class="n">STAR_STATES_CC</span>
+<span class="kn">from</span> <span class="nn">posydon.utils.common_functions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">calculate_Patton20_values_at_He_depl</span><span class="p">,</span>
+    <span class="n">CEE_parameters_from_core_abundance_thresholds</span><span class="p">,</span>
+    <span class="n">check_state_of_star</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Konstantinos Kovlakas &lt;kkovlakas@physics.uoc.gr&gt;&#39;</span>
+<span class="p">]</span>
+
+
+<span class="n">MODEL</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowksi+04&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s2">&quot;kick&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;sigma_kick_CCSN_NS&quot;</span><span class="p">:</span> <span class="mf">265.0</span><span class="p">,</span>
+    <span class="s2">&quot;sigma_kick_CCSN_BH&quot;</span><span class="p">:</span> <span class="mf">265.0</span><span class="p">,</span>
+    <span class="s2">&quot;sigma_kick_ECSN&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span>
+    <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
+    <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="post_process_grid"><a class="viewcode-back" href="../../../api/posydon.grids.post_processing.html#posydon.grids.post_processing.post_process_grid">[docs]</a><span class="k">def</span> <span class="nf">post_process_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">star_2_CO</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">MODEL</span><span class="o">=</span><span class="n">MODEL</span><span class="p">,</span>
+                      <span class="n">single_star</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute post processed quantitiy of any grid.</span>
+
+<span class="sd">    This function post processes any supported grid and computes:</span>
+<span class="sd">    - Core collapse quantities for 5 prescriptions given the fiducial POSYDON</span>
+<span class="sd">    assumption given in MODEL plus:</span>
+<span class="sd">      A: direct collapse</span>
+<span class="sd">      B: Fryer+12-rapid</span>
+<span class="sd">      C: Fryer+12-delayed</span>
+<span class="sd">      D: Sukhbold+16-engine, N20</span>
+<span class="sd">      E: Patton&amp;Sukhbold20-engine, N20</span>
+<span class="sd">      for each prescrition we store the compact object state (WD/NS/BH),</span>
+<span class="sd">      SN type (WD, ECSN, CCSN, PISN, PPISN), fallback mass fraction f_gb,</span>
+<span class="sd">      compact object mass and spin.</span>
+<span class="sd">    - Core masses at he-depletion (used in Patton core collapse)</span>
+<span class="sd">    - Mass envelopes for common envelope step.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid : PSyGrid</span>
+<span class="sd">        MESA grid in PSyGrid format.</span>
+<span class="sd">    index : None, touple or int</span>
+<span class="sd">        If None, loop over all indicies otherwise provide a range, e.g. [10,20]</span>
+<span class="sd">        or a index, e.g. 42.</span>
+<span class="sd">    star_2_CO : bool</span>
+<span class="sd">        If &#39;False&#39; star 2 is not a compact object.</span>
+<span class="sd">    MODEL : dict</span>
+<span class="sd">        Core collapse model assumptions.</span>
+<span class="sd">    single_star : bool</span>
+<span class="sd">        If `True` the PSyGrid contains single stars.</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        If `True` print the results of each core collapse on screen.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    MESA_dirs: list</span>
+<span class="sd">        List containing the path to each run corresponding to the post</span>
+<span class="sd">        processed values. This is used to ensure one to one mapping when</span>
+<span class="sd">        appending the extra columns back to a grid.</span>
+<span class="sd">    EXTRA_COLUMNS: dict</span>
+<span class="sd">        Dictionary containing all post processed quantities.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">CORE_COLLAPSES</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;direct&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Fryer+12-rapid&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">],</span>
+                      <span class="p">[</span><span class="s1">&#39;Fryer+12-delayed&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Sukhbold+16-engine&#39;</span><span class="p">,</span> <span class="s1">&#39;N20&#39;</span><span class="p">],</span>
+                      <span class="p">[</span><span class="s1">&#39;Patton&amp;Sukhbold20-engine&#39;</span><span class="p">,</span> <span class="s1">&#39;N20&#39;</span><span class="p">]]</span>
+
+    <span class="n">EXTRA_COLUMNS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># Core collapse qunatities: [state, SN_type, f_fb, mass, spin]</span>
+        <span class="s1">&#39;S1_direct&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_Fryer+12-rapid&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_Fryer+12-delayed&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_Sukhbold+16-engineN20&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_Patton&amp;Sukhbold20-engineN20&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_direct&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_Fryer+12-rapid&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_Fryer+12-delayed&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_Sukhbold+16-engineN20&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_Patton&amp;Sukhbold20-engineN20&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="c1"># core masses at He depletion</span>
+        <span class="s1">&#39;S1_avg_c_in_c_core_at_He_depletion&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_avg_c_in_c_core_at_He_depletion&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_co_core_mass_at_He_depletion&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_co_core_mass_at_He_depletion&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="c1"># common envelope quantities</span>
+        <span class="s1">&#39;S1_lambda_CE_1cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_lambda_CE_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_lambda_CE_30cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_lambda_CE_pure_He_star_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_m_core_CE_1cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_m_core_CE_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_m_core_CE_30cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_m_core_CE_pure_He_star_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_r_core_CE_1cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_r_core_CE_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_r_core_CE_30cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_r_core_CE_pure_He_star_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_lambda_CE_1cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_lambda_CE_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_lambda_CE_30cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_lambda_CE_pure_He_star_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_m_core_CE_1cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_m_core_CE_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_m_core_CE_30cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_m_core_CE_pure_He_star_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_r_core_CE_1cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_r_core_CE_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_r_core_CE_30cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_r_core_CE_pure_He_star_10cent&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="c1"># stellar states</span>
+        <span class="s1">&#39;S1_state&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_state&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="c1"># composition</span>
+        <span class="s1">&#39;S1_surface_other&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S1_center_other&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_surface_other&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s1">&#39;S2_center_other&#39;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">}</span>
+
+    <span class="c1"># remove star 2 columns in case of single star grid</span>
+    <span class="k">if</span> <span class="n">single_star</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">EXTRA_COLUMNS</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="s1">&#39;S2&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="c1"># loop over all gird, index or range</span>
+    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">indicies</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">MESA_dirs</span><span class="p">))</span>
+        <span class="n">MESA_dirs</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">MESA_dirs</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">indicies</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">MESA_dirs</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">MESA_dirs</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Index range should have dim=2!&#39;</span><span class="p">)</span>
+        <span class="n">indicies</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">MESA_dirs</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">MESA_dirs</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">indicies</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">single_star</span><span class="p">:</span>
+            <span class="c1"># initilise binary</span>
+            <span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="o">.</span><span class="n">from_run</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">history</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">profiles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">stars</span> <span class="o">=</span> <span class="p">[</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">]</span>
+            <span class="n">stars_CO</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="n">star_2_CO</span><span class="p">]</span>
+            <span class="n">interpolation_class</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">&#39;interpolation_class&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">IC</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">&#39;interpolation_class&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">star</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="o">.</span><span class="n">from_run</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">history</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">stars</span> <span class="o">=</span> <span class="p">[</span><span class="n">star</span><span class="p">]</span>
+            <span class="n">stars_CO</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span>
+            <span class="n">IC</span> <span class="o">=</span> <span class="s1">&#39;no_MT&#39;</span>
+        <span class="n">TF1</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">&#39;termination_flag_1&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># He depeltion and CE quantities</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">star</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stars</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">stars_CO</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="ow">and</span> <span class="n">IC</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;no_MT&#39;</span><span class="p">,</span> <span class="s1">&#39;stable_MT&#39;</span><span class="p">,</span> <span class="s1">&#39;unstable_MT&#39;</span><span class="p">]:</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_state&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">check_state_of_star</span><span class="p">(</span>
+                    <span class="n">star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+                <span class="n">calculate_Patton20_values_at_He_depl</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_avg_c_in_c_core_at_He_depletion&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">avg_c_in_c_core_at_He_depletion</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_co_core_mass_at_He_depletion&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">co_core_mass_at_He_depletion</span><span class="p">)</span>
+                <span class="n">CEE_parameters_from_core_abundance_thresholds</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_m_core_CE_1cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">m_core_CE_1cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_m_core_CE_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">m_core_CE_10cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_m_core_CE_30cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">m_core_CE_30cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_m_core_CE_pure_He_star_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">m_core_CE_pure_He_star_10cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_r_core_CE_1cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">r_core_CE_1cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_r_core_CE_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">r_core_CE_10cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_r_core_CE_30cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">r_core_CE_30cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_r_core_CE_pure_He_star_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">r_core_CE_pure_He_star_10cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_lambda_CE_1cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">lambda_CE_1cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_lambda_CE_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">lambda_CE_10cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_lambda_CE_30cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">lambda_CE_30cent</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_lambda_CE_pure_He_star_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">lambda_CE_pure_He_star_10cent</span><span class="p">)</span>
+                <span class="n">s_o</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">surface_c12</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">surface_n14</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">surface_o16</span>
+                <span class="n">c_o</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">center_o16</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_surface_other&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s_o</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_center_other&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_o</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">IC</span> <span class="o">==</span> <span class="s1">&#39;initial_MT&#39;</span><span class="p">:</span>
+                    <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_state&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># CO states are classified and used in mesa step</span>
+                    <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_state&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">check_state_of_star</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_avg_c_in_c_core_at_He_depletion&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_co_core_mass_at_He_depletion&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_m_core_CE_1cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_m_core_CE_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_m_core_CE_30cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_m_core_CE_pure_He_star_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_r_core_CE_1cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_r_core_CE_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_r_core_CE_30cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_r_core_CE_pure_He_star_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_lambda_CE_1cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_lambda_CE_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_lambda_CE_30cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_lambda_CE_pure_He_star_10cent&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_surface_other&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S</span><span class="si">%s</span><span class="s1">_center_other&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">single_star</span><span class="p">:</span>
+            <span class="c1"># core collapse quantities</span>
+            <span class="k">if</span> <span class="n">interpolation_class</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;no_MT&#39;</span><span class="p">,</span> <span class="s1">&#39;stable_MT&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">star_2_CO</span> <span class="ow">or</span> <span class="n">TF1</span> <span class="o">==</span> <span class="s1">&#39;Primary has depleted central carbon&#39;</span><span class="p">:</span>
+                    <span class="n">star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span>
+                    <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;S1_&#39;</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">CORE_COLLAPSES</span><span class="p">:</span>
+                        <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S2_&#39;</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">TF1</span> <span class="o">==</span> <span class="s1">&#39;Secondary has depleted central carbon&#39;</span><span class="p">:</span>
+                    <span class="n">star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span>
+                    <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;S2_&#39;</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">CORE_COLLAPSES</span><span class="p">:</span>
+                        <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S1_&#39;</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">TF1</span> <span class="o">==</span> <span class="s1">&#39;gamma_center_limit&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">center_gamma</span> <span class="o">&gt;=</span> <span class="mf">10.</span><span class="p">:</span>
+                        <span class="n">star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span>
+                        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;S1_&#39;</span>
+                        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">CORE_COLLAPSES</span><span class="p">:</span>
+                            <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S2_&#39;</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">center_gamma</span> <span class="o">&gt;=</span> <span class="mf">10.</span><span class="p">:</span>
+                        <span class="n">star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span>
+                        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;S2_&#39;</span>
+                        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">CORE_COLLAPSES</span><span class="p">:</span>
+                            <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S1_&#39;</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No star has center_gamma &lt; 10&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;TF1 = </span><span class="si">%s</span><span class="s1"> not supported&#39;</span> <span class="o">%</span> <span class="n">TF1</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;30}</span><span class="s2"> </span><span class="si">{:&lt;33}</span><span class="s2"> </span><span class="si">{:12}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:15}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="s2">&quot;mechanism&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;SN type&quot;</span><span class="p">,</span> <span class="s2">&quot;f_fb&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;mass [Msun]&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;30}</span><span class="s2"> </span><span class="si">{:&lt;33}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:7.2f}</span><span class="s2"> </span><span class="si">{:14.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="s1">&#39;PRE SN STAR&#39;</span><span class="p">,</span> <span class="n">star</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">star</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">star</span><span class="o">.</span><span class="n">spin</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">CORE_COLLAPSES</span><span class="p">:</span>
+                    <span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;mechanism&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;engine&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">SN</span> <span class="o">=</span> <span class="n">StepSN</span><span class="p">(</span><span class="o">**</span><span class="n">MODEL</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">star_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
+                        <span class="n">SN</span><span class="o">.</span><span class="n">collapse_star</span><span class="p">(</span><span class="n">star_copy</span><span class="p">)</span>
+                        <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="n">s</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="p">[</span><span class="n">star_copy</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">SN_type</span><span class="p">,</span>
+                             <span class="n">star_copy</span><span class="o">.</span><span class="n">f_fb</span><span class="p">,</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">spin</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span>
+                                <span class="s2">&quot;</span><span class="si">{:&lt;30}</span><span class="s2"> </span><span class="si">{:&lt;33}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:6.2f}</span><span class="s2"> </span><span class="si">{:11.2f}</span><span class="s2"> </span><span class="si">{:14.2f}</span><span class="s2">&quot;</span>
+                                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;mechanism&quot;</span><span class="p">],</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                                        <span class="n">star_copy</span><span class="o">.</span><span class="n">SN_type</span><span class="p">,</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">f_fb</span><span class="p">,</span>
+                                        <span class="n">star_copy</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">spin</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="n">s</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error during </span><span class="si">%s</span><span class="s1"> core collapse prescrition!&#39;</span>
+                                  <span class="o">%</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;TF1&#39;</span><span class="p">,</span> <span class="n">TF1</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;interpolation class&#39;</span><span class="p">,</span>  <span class="n">interpolation_class</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>    <span class="c1"># inital_RLOF, unstable_MT not_convergedd</span>
+                <span class="k">if</span> <span class="n">TF1</span> <span class="o">==</span> <span class="s1">&#39;Primary has depleted central carbon&#39;</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;Primary reached carbon depletion but was not &#39;</span>
+                        <span class="s1">&#39;collapsed! This should not happen!&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">TF1</span> <span class="o">==</span> <span class="s1">&#39;Secondary has depleted central carbon&#39;</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;Secondary reached carbon depletion but was not &#39;</span>
+                        <span class="s1">&#39;collapsed! This should not happen!&#39;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">CORE_COLLAPSES</span><span class="p">:</span>
+                    <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S1_&#39;</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+                    <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S2_&#39;</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">star</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">STAR_STATES_CC</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;30}</span><span class="s2"> </span><span class="si">{:&lt;33}</span><span class="s2"> </span><span class="si">{:12}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:15}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="s2">&quot;mechanism&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;SN type&quot;</span><span class="p">,</span> <span class="s2">&quot;f_fb&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;mass [Msun]&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;30}</span><span class="s2"> </span><span class="si">{:&lt;33}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:7.2f}</span><span class="s2"> </span><span class="si">{:14.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="s1">&#39;PRE SN STAR&#39;</span><span class="p">,</span> <span class="n">star</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                        <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">star</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">star</span><span class="o">.</span><span class="n">spin</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">CORE_COLLAPSES</span><span class="p">:</span>
+                    <span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;mechanism&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;engine&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">SN</span> <span class="o">=</span> <span class="n">StepSN</span><span class="p">(</span><span class="o">**</span><span class="n">MODEL</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">star_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
+                        <span class="n">SN</span><span class="o">.</span><span class="n">collapse_star</span><span class="p">(</span><span class="n">star_copy</span><span class="p">)</span>
+                        <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S1_&#39;</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+                            <span class="n">star_copy</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">SN_type</span><span class="p">,</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">f_fb</span><span class="p">,</span>
+                            <span class="n">star_copy</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">spin</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span>
+                                <span class="s2">&quot;</span><span class="si">{:&lt;30}</span><span class="s2"> </span><span class="si">{:&lt;33}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:6.2f}</span><span class="s2"> </span><span class="si">{:11.2f}</span><span class="s2"> </span><span class="si">{:14.2f}</span><span class="s2">&quot;</span>
+                                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;mechanism&quot;</span><span class="p">],</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                                        <span class="n">star_copy</span><span class="o">.</span><span class="n">SN_type</span><span class="p">,</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">f_fb</span><span class="p">,</span>
+                                        <span class="n">star_copy</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">star_copy</span><span class="o">.</span><span class="n">spin</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="n">s</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error during </span><span class="si">%s</span><span class="s1"> core collapse prescrition!&#39;</span>
+                                  <span class="o">%</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;TF1&#39;</span><span class="p">,</span> <span class="n">TF1</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;interpolation class&#39;</span><span class="p">,</span>  <span class="n">interpolation_class</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">CORE_COLLAPSES</span><span class="p">:</span>
+                    <span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S1_&#39;</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># check dataset completeness</span>
+        <span class="n">n_control</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="s1">&#39;S1_direct&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">EXTRA_COLUMNS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">n_control</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> has not the correct dimension! Error occoured after &#39;</span>
+                    <span class="s1">&#39;collapsing binary index=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">MESA_dirs</span><span class="p">,</span> <span class="n">EXTRA_COLUMNS</span></div>
+
+
+<div class="viewcode-block" id="add_post_processed_quantities"><a class="viewcode-back" href="../../../api/posydon.grids.post_processing.html#posydon.grids.post_processing.add_post_processed_quantities">[docs]</a><span class="k">def</span> <span class="nf">add_post_processed_quantities</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">MESA_dirs_EXTRA_COLUMNS</span><span class="p">,</span> <span class="n">EXTRA_COLUMNS</span><span class="p">,</span>
+                                  <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append post processed quantity to a grid.</span>
+
+<span class="sd">    This function appends the quantities computed in post_process_grid to any</span>
+<span class="sd">    grid. Note that this function ensures you can append the quantities only if</span>
+<span class="sd">    the grid follows the order of MESA_dirs_EXTRA_COLUMNS.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid : PSyGrid</span>
+<span class="sd">        MESA grid in PSyGrid format.</span>
+<span class="sd">    MESA_dirs: list</span>
+<span class="sd">        List containing the path to each run corresponding to the post</span>
+<span class="sd">        processed values. This is used to ensure one to one mapping when</span>
+<span class="sd">        appending the extra columns back to a grid.</span>
+<span class="sd">    EXTRA_COLUMNS: dict</span>
+<span class="sd">        Dictionary containing all post processed quantities.</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        If `True` print the results of each core collapse on screen.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check correspondance of EXTRA_COLUMNS with grid</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">MESA_dirs</span><span class="p">)</span>
+                  <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">MESA_dirs_EXTRA_COLUMNS</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;EXTRA_COLUMNS do not follow the correct order of grid!&#39;</span><span class="p">)</span>
+
+    <span class="n">CC_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;SN_type&#39;</span><span class="p">,</span> <span class="s1">&#39;f_fb&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;spin&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">EXTRA_COLUMNS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;direct&#39;</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">or</span> <span class="s1">&#39;Fryer+12-rapid&#39;</span> <span class="ow">in</span> <span class="n">key</span>
+                <span class="ow">or</span> <span class="s1">&#39;Fryer+12-delayed&#39;</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">or</span> <span class="s1">&#39;Sukhbold+16-engineN20&#39;</span> <span class="ow">in</span> <span class="n">key</span>
+                <span class="ow">or</span> <span class="s1">&#39;Patton&amp;Sukhbold20-engineN20&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">key_CC</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">CC_keys</span><span class="p">):</span>
+                <span class="n">column</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">key_CC</span><span class="p">)</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="n">key</span><span class="p">])):</span>
+                    <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>
+                <span class="k">if</span> <span class="s2">&quot;state&quot;</span> <span class="ow">in</span> <span class="n">column</span> <span class="ow">or</span> <span class="s2">&quot;SN_type&quot;</span> <span class="ow">in</span> <span class="n">column</span><span class="p">:</span>
+                    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="n">key</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="n">key</span><span class="p">])):</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EXTRA_COLUMNS</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s2">&quot;state&quot;</span> <span class="ow">in</span> <span class="n">column</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.5
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

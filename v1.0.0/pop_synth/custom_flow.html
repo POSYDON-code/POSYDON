@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom population synthesis &mdash; posydon 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The SingleStar object" href="../SingleStar/SingleStar.html" />
+    <link rel="prev" title="Running a POSYDON population synthesis" href="pop_synth.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSyGrid/PSyGrid.html">The PSyGrid Object</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Custom population synthesis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#custom-step">Custom step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#custom-flow-charts">Custom flow charts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Custom population synthesis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/pop_synth/custom_flow.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="custom-population-synthesis">
+<span id="custom-pop-synth"></span><h1>Custom population synthesis<a class="headerlink" href="#custom-population-synthesis" title="Permalink to this headline"></a></h1>
+<p>The modularity of the POSYDON code allows the user to easily change
+the default evolutionary tree dictated by the flow chart tree. The flow
+chart tree is a list of 4D points composed of <code class="docutils literal notranslate"><span class="pre">binary.star_1.state,</span>
+<span class="pre">binary.star_2.state,</span> <span class="pre">binary.state,</span> <span class="pre">binary.event</span></code> which map to a corresponding
+evolutionary step. Here we show how the user can replace part or the entire
+POSYDON flow chart tree and customize the evolution with user specified
+steps.</p>
+<section id="custom-step">
+<h2>Custom step<a class="headerlink" href="#custom-step" title="Permalink to this headline"></a></h2>
+<p>The user can develop a <code class="docutils literal notranslate"><span class="pre">POSYDON</span></code> step which is a python class with a
+<code class="docutils literal notranslate"><span class="pre">__call__</span></code> method which updates the current properties of the binary objects
+(see reference binary object). As an example, let’s create our own treatment
+for a common envelope. For simplicity sake we will halve the orbital separation
+and set the post-CE donor star mass to the star’s helium core mass.</p>
+<div class="highlight-python notranslate" id="custom-ce-step-py"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">posydon.utils</span> <span class="kn">import</span> <span class="n">common_functions</span> <span class="k">as</span> <span class="n">cf</span>
+
+<span class="k">class</span> <span class="nc">my_CE_step</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Compute a fake CE event.&quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+  <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The orbital separation post CE is half the pre CE orbital separation!&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Determine which star is the donor and which is the companion</span>
+    <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;oCE1&quot;</span><span class="p">,</span> <span class="s2">&quot;oDoubleCE1&quot;</span><span class="p">]:</span>
+        <span class="n">donor_star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span>
+        <span class="n">comp_star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span>
+    <span class="k">elif</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;oCE2&quot;</span><span class="p">,</span> <span class="s2">&quot;oDoubleCE2&quot;</span><span class="p">]:</span>
+        <span class="n">donor_star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span>
+        <span class="n">comp_star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;CEE does not apply if `event` is not &quot;</span>
+                         <span class="s2">&quot;`oCE1`, &#39;oDoubleCE1&#39; or `oCE2`, &#39;oDoubleCE1&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">binary</span><span class="o">.</span><span class="n">separation</span> <span class="o">/=</span> <span class="mf">2.</span>
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">donor_star</span><span class="o">.</span><span class="n">he_core_mass</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">mass</span>
+    <span class="n">binary</span><span class="o">.</span><span class="n">separation</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">orbital_period_from_separation</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">separation</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The new custom step can be used by importing the new function into the
+simulation properties as follows (see ref. the POSYDON API)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">custom_CE_step</span> <span class="kn">import</span> <span class="n">my_CE_step</span>
+
+<span class="n">CE_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># pass the simulation properties to each step</span>
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="n">DETACHED_STEP</span><span class="p">),</span>
+    <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">my_CE_step</span><span class="p">,</span> <span class="n">CE_STEP</span><span class="p">),</span> <span class="c1"># &lt;--- WE ONLY EDITED THIS LINE HERE</span>
+    <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepSN</span><span class="p">,</span> <span class="n">SN_STEP</span><span class="p">),</span>
+    <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="n">DCO_STEP</span><span class="p">),</span>
+    <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="n">END_STEP</span><span class="p">),</span>
+    <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">StepNamesHooks</span><span class="p">,</span> <span class="p">{})]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-flow-charts">
+<h2>Custom flow charts<a class="headerlink" href="#custom-flow-charts" title="Permalink to this headline"></a></h2>
+<p>Let us now see how one can alter the default flow chart links. Let us assume
+that you have a custom step that maps the evolution of Roche lobe overflowing
+HMS-HeMS binaries called <code class="docutils literal notranslate"><span class="pre">HMS_HeMS_RLO_step</span></code>. With the <code class="docutils literal notranslate"><span class="pre">CHANGE_FLOW_CHART</span></code>
+option of the <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> method we can replace the the tree links which
+are currently mapped to the <code class="docutils literal notranslate"><span class="pre">step_end</span></code>
+as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">posydon.binary_evol.flow_chart</span> <span class="kn">import</span> <span class="n">flow_chart</span><span class="p">,</span> <span class="n">POSYDON_FLOW_CHART</span><span class="p">,</span> <span class="n">STAR_STATES_H_RICH</span><span class="p">,</span> <span class="n">STAR_STATES_HE_RICH</span>
+
+  <span class="n">NEW_FLOW_CHART_LINKS</span> <span class="o">=</span> <span class="p">{}</span>
+
+  <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_H_RICH</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH</span><span class="p">:</span>
+          <span class="n">NEW_FLOW_CHART_LINKS</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;RLO1&#39;</span><span class="p">,</span> <span class="s1">&#39;oRLO1&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_HMS_HeMS_RLO&#39;</span>
+          <span class="n">NEW_FLOW_CHART_LINKS</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span> <span class="s1">&#39;oRLO2&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_HMS_HeMS_RLO&#39;</span>
+
+  <span class="n">new_flow_chart</span> <span class="o">=</span> <span class="n">flow_chart</span><span class="p">(</span><span class="n">FLOW_CHART</span><span class="o">=</span><span class="n">POSYDON_FLOW_CHART</span><span class="p">,</span> <span class="n">CHANGE_FLOW_CHART</span><span class="o">=</span><span class="n">NEW_FLOW_CHART_LINKS</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can load the new flow chart into the simulation properties as.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">custom_HMS_HeMS_step</span> <span class="kn">import</span> <span class="n">HMS_HeMS_RLO_step</span>
+
+<span class="n">HMS_HeMS_RLO_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_flow_chart</span><span class="p">,</span> <span class="p">{}),</span> <span class="c1"># &lt;--- WE ONLY EDITED THIS LINE HERE</span>
+    <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_HMS_HeMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">HMS_HeMS_RLO_step</span><span class="p">,</span> <span class="n">HMS_HeMS_RLO_STEP</span><span class="p">),</span> <span class="c1"># ADD NEW STEP HERE</span>
+    <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="n">DETACHED_STEP</span><span class="p">),</span>
+    <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepCEE</span><span class="p">,</span> <span class="n">CE_STEP</span><span class="p">),</span>
+    <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepSN</span><span class="p">,</span> <span class="n">SN_STEP</span><span class="p">),</span>
+    <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="n">DCO_STEP</span><span class="p">),</span>
+    <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="n">END_STEP</span><span class="p">),</span>
+    <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">StepNamesHooks</span><span class="p">,</span> <span class="p">{})]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pop_synth.html" class="btn btn-neutral float-left" title="Running a POSYDON population synthesis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../SingleStar/SingleStar.html" class="btn btn-neutral float-right" title="The SingleStar object" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

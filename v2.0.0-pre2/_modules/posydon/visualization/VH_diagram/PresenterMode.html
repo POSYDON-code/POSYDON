@@ -1,0 +1,206 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.visualization.VH_diagram.PresenterMode &mdash; posydon 2.0.0-pre2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=7f6b3d60"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.visualization.VH_diagram.PresenterMode</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.visualization.VH_diagram.PresenterMode</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The definition of the PresenterMode class in VH diagram.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Maxime Rambosson &lt;Maxime.Rambosson@etu.unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+
+
+<div class="viewcode-block" id="PresenterMode">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.PresenterMode.PresenterMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PresenterMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The different view for the Presenter.&quot;&quot;&quot;</span>
+
+    <span class="n">DIAGRAM</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">REDUCED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">SIMPLIFIED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">DETAILED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.0-pre2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

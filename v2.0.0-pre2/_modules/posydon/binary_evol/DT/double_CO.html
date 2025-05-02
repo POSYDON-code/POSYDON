@@ -1,0 +1,453 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.DT.double_CO &mdash; posydon 2.0.0-pre2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=7f6b3d60"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.DT.double_CO</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.DT.double_CO</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Detached evolution for double compact-object binaries.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Zepei Xing &lt;Zepei.Xing@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">constants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.binarystar</span><span class="w"> </span><span class="kn">import</span> <span class="n">BINARYPROPERTIES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.singlestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">STARPROPERTIES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbital_period_from_separation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">CO_radius</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_binary_to_failed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonerror</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalError</span>
+
+<div class="viewcode-block" id="DoubleCO">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.DoubleCO">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DoubleCO</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The double compact-object step class.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_o_steps_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a DoubleCO instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_o_steps_interval</span> <span class="o">=</span> <span class="n">n_o_steps_interval</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the double CO step on a BinaryStar object.&quot;&quot;&quot;</span>
+        <span class="n">solt</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">t_final</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">a_final</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">e_final</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">m1</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m2</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">separation</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">separation</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">Rsun</span> <span class="o">/</span> <span class="mi">100000</span>   <span class="c1"># in km</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">state1</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state2</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span>
+
+        <span class="n">t_inspiral</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span>
+        <span class="n">max_time</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">max_simulation_time</span>
+        <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">max_time</span> <span class="o">-</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+        <span class="p">),</span> <span class="s2">&quot;max_time is loXer than the current time.&quot;</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">CO_radius</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state1</span><span class="p">)</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">Rsun</span> <span class="o">/</span> <span class="mi">100000</span>  <span class="c1"># in km</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">CO_radius</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state2</span><span class="p">)</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">Rsun</span> <span class="o">/</span> <span class="mi">100000</span>  <span class="c1"># in km</span>
+
+        <span class="nd">@event</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">ev_contact</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+            <span class="c1"># stop when binary separation = r1+r2 km</span>
+            <span class="k">return</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">r1</span> <span class="o">+</span> <span class="n">r2</span><span class="p">)</span>
+
+        <span class="n">status</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">separation</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eccentricity</span>
+        <span class="c1"># solve the equations at most 6 times</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">status</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span> 
+                <span class="n">s</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">gr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2</span><span class="p">,),</span>
+                <span class="n">t_span</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_time</span> <span class="o">-</span> <span class="n">t_inspiral</span><span class="p">],</span>
+                <span class="n">y0</span><span class="o">=</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">],</span>
+                <span class="n">method</span><span class="o">=</span><span class="s1">&#39;BDF&#39;</span><span class="p">,</span>
+                <span class="n">events</span><span class="o">=</span><span class="n">ev_contact</span><span class="p">,</span>
+                <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
+                <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
+                <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">NumericalError</span><span class="p">(</span><span class="s2">&quot;SciPy encountered termination edge case while solving GR equations&quot;</span><span class="p">)</span>
+            <span class="n">t_inspiral</span> <span class="o">+=</span> <span class="n">s</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">status</span>
+            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">solt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+            <span class="n">sol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_o_steps_interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">solt</span><span class="p">)):</span>
+                <span class="c1"># solt[-1] = [0]</span>
+                <span class="n">t_step</span> <span class="o">=</span> <span class="p">(</span><span class="n">solt</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">solt</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_o_steps_interval</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+                    <span class="n">solt</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">solt</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">t_step</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">t_step</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">solt</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">solt</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">solt</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)):</span>
+                    <span class="n">a_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                    <span class="n">e_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                    <span class="n">t_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a_final</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">e_final</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">t_final</span> <span class="o">=</span> <span class="p">[</span><span class="n">t_inspiral</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">failed_state</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span>
+            <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NumericalError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Integration failed for </span><span class="si">{</span><span class="n">failed_state</span><span class="si">}</span><span class="s2"> DCO (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state1</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state2</span><span class="si">}</span><span class="s2">): &quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">s</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_o_steps_interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">p_history</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">a_history</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_final</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">a_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_final</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100000</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">Rsun</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_history</span><span class="p">)):</span>
+                    <span class="n">p_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orbital_period_from_separation</span><span class="p">(</span>
+                        <span class="n">a_history</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass</span>
+                    <span class="p">))</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_history</span><span class="p">)):</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">time_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t_final</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">separation_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_history</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_final</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_history</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;eccentricity&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;orbital_period&quot;</span><span class="p">,</span> <span class="s2">&quot;separation&quot;</span><span class="p">]:</span>
+                        <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                        <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="n">current</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_history</span><span class="p">)</span>
+                        <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="n">current1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="n">history1</span> <span class="o">=</span> <span class="p">[</span><span class="n">current1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_history</span><span class="p">)</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">history1</span><span class="p">)</span>
+                    <span class="n">current2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="n">history2</span> <span class="o">=</span> <span class="p">[</span><span class="n">current2</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_history</span><span class="p">)</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">history2</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;contact&quot;</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">separation</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100000</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">Rsun</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">t_inspiral</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span> <span class="o">=</span> <span class="n">orbital_period_from_separation</span><span class="p">(</span>
+                <span class="n">binary</span><span class="o">.</span><span class="n">separation</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">V_sys</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">V_sys_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;CO_contact&quot;</span>
+
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;eccentricity&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                               <span class="s2">&quot;orbital_period&quot;</span><span class="p">,</span> <span class="s2">&quot;separation&quot;</span><span class="p">]:</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">current</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                <span class="n">current1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                <span class="n">current2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">current1</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">current2</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_o_steps_interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">p_history</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">a_history</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_final</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">a_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_final</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100000</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">Rsun</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_history</span><span class="p">)):</span>
+                    <span class="n">p_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orbital_period_from_separation</span><span class="p">(</span>
+                        <span class="n">a_history</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass</span>
+                    <span class="p">))</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_history</span><span class="p">)):</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">time_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t_final</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">separation_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a_history</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_final</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_history</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+                        <span class="s2">&quot;eccentricity&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;orbital_period&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;separation&quot;</span>
+                    <span class="p">]:</span>
+                        <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                        <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="n">current</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_history</span><span class="p">)</span>
+                        <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="n">current1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="n">history1</span> <span class="o">=</span> <span class="p">[</span><span class="n">current1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_history</span><span class="p">)</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">history1</span><span class="p">)</span>
+                    <span class="n">current2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="n">history2</span> <span class="o">=</span> <span class="p">[</span><span class="n">current2</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_history</span><span class="p">)</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">history2</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;detached&quot;</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">max_time</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">separation</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100000</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">Rsun</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span> <span class="o">=</span> <span class="n">orbital_period_from_separation</span><span class="p">(</span>
+                <span class="n">binary</span><span class="o">.</span><span class="n">separation</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass</span>
+            <span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">V_sys</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">V_sys_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;maxtime&quot;</span>
+
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="s2">&quot;eccentricity&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;orbital_period&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;separation&quot;</span>
+                <span class="p">]:</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">current</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                <span class="n">current1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                <span class="n">current2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">current1</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">current2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="gr">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.gr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">M_acc</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TODO: add description and reference for the equations.&quot;&quot;&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">standard_cgrav</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">clight</span>
+
+    <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">da</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">de</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">M_acc</span> <span class="o">=</span> <span class="n">M_acc</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">msol</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">M</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">msol</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">100000</span>
+    <span class="n">da_gr</span> <span class="o">=</span> <span class="p">((</span><span class="o">-</span><span class="mi">64</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+             <span class="o">*</span> <span class="p">(</span><span class="n">g</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">M_acc</span> <span class="o">+</span> <span class="n">M</span><span class="p">)</span> <span class="o">*</span> <span class="n">M_acc</span> <span class="o">*</span> <span class="n">M</span><span class="p">)</span>
+             <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">7</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">a</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">/</span> <span class="n">c</span> <span class="o">**</span> <span class="mi">5</span>
+             <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">73</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">37</span> <span class="o">/</span> <span class="mi">96</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span>
+             <span class="o">*</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">secyer</span> <span class="o">/</span> <span class="mi">100000</span><span class="p">))</span>
+    <span class="n">de_gr</span> <span class="o">=</span> <span class="p">((</span><span class="o">-</span><span class="mi">304</span> <span class="o">/</span> <span class="mi">15</span><span class="p">)</span>
+             <span class="o">*</span> <span class="n">e</span> <span class="o">*</span> <span class="p">(</span><span class="n">g</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">M_acc</span> <span class="o">+</span> <span class="n">M</span><span class="p">)</span> <span class="o">*</span> <span class="n">M_acc</span> <span class="o">*</span> <span class="n">M</span><span class="p">)</span>
+             <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">a</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">/</span> <span class="n">c</span> <span class="o">**</span> <span class="mi">5</span>
+             <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">121</span> <span class="o">/</span> <span class="mi">304</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+             <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">secyer</span><span class="p">)</span>
+
+    <span class="n">da</span> <span class="o">=</span> <span class="n">da_gr</span>
+    <span class="n">de</span> <span class="o">=</span> <span class="n">de_gr</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">da</span><span class="p">,</span> <span class="n">de</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="event">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.event">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">event</span><span class="p">(</span><span class="n">terminal</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a helper function to set attributes for `solve_ivp` events.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dec</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="n">terminal</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span>
+        <span class="k">return</span> <span class="n">f</span>
+
+    <span class="k">return</span> <span class="n">dec</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.0-pre2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+posydon.user\_modules
+=====================
+
+.. automodule:: posydon.user_modules
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
+posydon.user\_modules.my\_flow\_chart\_example
+----------------------------------------------
+
+.. automodule:: posydon.user_modules.my_flow_chart_example
+   :members:
+   :undoc-members:
+   :show-inheritance:

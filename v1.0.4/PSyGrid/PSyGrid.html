@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The PSyGrid Object &mdash; posydon 1.0.4 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Running populations using POSYDON" href="../pop_synth/POSYDON_populations.html" />
+    <link rel="prev" title="Run a fixed MESA grid" href="../run_mesa_grids/fixed/fixed.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            posydon
+          </a>
+              <div class="version">
+                1.0.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Application Programming Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Binary Star Grids</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/inifile.html">.ini file documentation for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_mesa_grids/fixed/fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The PSyGrid Object</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-psygrid-object">Creating a PSyGrid object</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-example">Basic example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#output-options">Output options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-the-properties-of-the-grid">Setting the properties of the grid</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-an-existing-psygrid-object">Loading an existing PSyGrid object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#closing-deleting-a-psygrid-object">Closing/deleting a PSyGrid object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grid-engineering-advanced-use-case-scenario">Grid engineering (advanced use case scenario)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-grid-slices">Creating grid slices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rerun-subsample-of-grid-slices">Rerun subsample of grid slices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#combine-grid-slices">Combine grid slices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-post-process-quantities">Add post process quantities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#splitting-the-grid-into-chunks">Splitting the grid into chunks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Generating Populations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/POSYDON_populations.html">Running populations using POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/pop_synth.html">Running a POSYDON population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pop_synth/custom_flow.html">Custom population synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SingleStar/SingleStar.html">The SingleStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BinaryStar/BinaryStar.html">The BinaryStar object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_pop_options/debugging_binaries.html">Debugging Failed Binaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/IF-Interpolator/IFInterpolator.html">Initial-Final Interpolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot1D/plot1D.html">1D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/plot2D/plot2D.html">2D plotting functionalities for POSYDON GRIDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../visualization/VHD/VHD.html">Van den Heuvel diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpolation/violinplot.html">Making the Violin Plot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/attribution.html">Attribution</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">The PSyGrid Object</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/PSyGrid/PSyGrid.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="the-psygrid-object">
+<span id="psygrid"></span><h1>The PSyGrid Object<a class="headerlink" href="#the-psygrid-object" title="Permalink to this headline"></a></h1>
+<p>The PSyGrid class is the “bridge” connecting MESA and POSYDON. It:</p>
+<ul class="simple">
+<li><p>encapsulates the data from a MESA grid in a compact form</p></li>
+<li><p>saves the data in an HDF5 file</p></li>
+<li><p>allows the user to access the data in a memory-efficient way</p></li>
+</ul>
+<p>To use PSyGrid import it using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">posydon.grids.psygrid</span> <span class="kn">import</span> <span class="n">PSyGrid</span>
+</pre></div>
+</div>
+<section id="creating-a-psygrid-object">
+<h2>Creating a PSyGrid object<a class="headerlink" href="#creating-a-psygrid-object" title="Permalink to this headline"></a></h2>
+<p>A PSyGrid HDF5 file can be created by using the <code class="docutils literal notranslate"><span class="pre">create()</span></code> method on a newly
+constructed PSyGrid object.</p>
+<section id="basic-example">
+<h3>Basic example<a class="headerlink" href="#basic-example" title="Permalink to this headline"></a></h3>
+<p>The simplest method is to provide the paths of the folder of the MESA runs
+output, and the HDF5 file to be created.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">()</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">MESA_runs_directory</span><span class="p">,</span> <span class="n">psygrid_hdf5_path</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, the PSyGrid object is ready to be used for accessing and plotting data.</p>
+</section>
+<section id="output-options">
+<h3>Output options<a class="headerlink" href="#output-options" title="Permalink to this headline"></a></h3>
+<p>Use the option <code class="docutils literal notranslate"><span class="pre">verbose</span></code> to see more details while the PSyGrid object is
+being built.</p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">overwrite</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> if the HDF5 file already exists.</p>
+<p>By default, any warnings produced are collected and shown at the end
+(<code class="docutils literal notranslate"><span class="pre">warn=&quot;end&quot;</span></code>) of the process. Use <code class="docutils literal notranslate"><span class="pre">warn=&quot;normal&quot;</span></code> to see the warning
+when they occur, or <code class="docutils literal notranslate"><span class="pre">warn=&quot;suppress&quot;</span></code> to hide them completely.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">()</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">MESA_runs_directory</span><span class="p">,</span> <span class="n">psygrid_hdf5_path</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="s2">&quot;suppress&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="setting-the-properties-of-the-grid">
+<h3>Setting the properties of the grid<a class="headerlink" href="#setting-the-properties-of-the-grid" title="Permalink to this headline"></a></h3>
+<p>PSyGrid provides a compact form of the initial MESA grid. To define how many runs should be included (e.g. for testing purposes),
+and which data columns are needed, use the following code block as a guide.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DEFAULT_BINARY_HISTORY_COLS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;star_2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="s1">&#39;binary_separation&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;rl_relative_overflow_1&#39;</span><span class="p">,</span> <span class="s1">&#39;rl_relative_overflow_2&#39;</span><span class="p">,</span> <span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">]</span>
+<span class="n">DEFAULT_STAR_HISTORY_COLS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;star_age&#39;</span><span class="p">,</span> <span class="s1">&#39;star_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;c_core_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;center_h1&#39;</span><span class="p">,</span> <span class="s1">&#39;center_he4&#39;</span><span class="p">,</span> <span class="s1">&#39;c12_c12&#39;</span><span class="p">,</span> <span class="s1">&#39;center_c12&#39;</span><span class="p">,</span> <span class="s1">&#39;log_LH&#39;</span><span class="p">,</span> <span class="s1">&#39;log_LHe&#39;</span><span class="p">,</span> <span class="s1">&#39;log_LZ&#39;</span><span class="p">,</span> <span class="s1">&#39;log_Lnuc&#39;</span><span class="p">,</span> <span class="s1">&#39;surface_h1&#39;</span><span class="p">,</span> <span class="s1">&#39;log_Teff&#39;</span><span class="p">,</span> <span class="s1">&#39;log_L&#39;</span><span class="p">]</span>
+<span class="n">DEFAULT_PROFILE_COLS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;logRho&#39;</span><span class="p">,</span> <span class="s1">&#39;omega&#39;</span><span class="p">]</span>
+
+<span class="n">GRIDPROPERTIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># file loading parameters</span>
+    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>                      <span class="c1"># description text</span>
+    <span class="s2">&quot;max_number_of_runs&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;hdf5&quot;</span><span class="p">,</span>
+    <span class="c1"># resampling parameters</span>
+    <span class="s2">&quot;n_downsample_history&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>           <span class="c1"># False/None = no hist. resampling</span>
+    <span class="s2">&quot;n_downsample_profile&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>           <span class="c1"># False/None = no prof. resampling</span>
+    <span class="s2">&quot;history_resample_columns&quot;</span><span class="p">:</span> <span class="n">DEFAULT_HISTORY_DOWNSAMPLE_COLS</span><span class="p">,</span>
+    <span class="s2">&quot;profile_resample_columns&quot;</span><span class="p">:</span> <span class="n">DEFAULT_PROFILE_DOWNSAMPLE_COLS</span><span class="p">,</span>
+    <span class="c1"># columns to pass to the grid</span>
+    <span class="s2">&quot;star1_history_saved_columns&quot;</span><span class="p">:</span> <span class="n">DEFAULT_STAR_HISTORY_COLS</span><span class="p">,</span>
+    <span class="s2">&quot;star2_history_saved_columns&quot;</span><span class="p">:</span> <span class="n">DEFAULT_STAR_HISTORY_COLS</span><span class="p">,</span>
+    <span class="s2">&quot;binary_history_saved_columns&quot;</span><span class="p">:</span> <span class="n">DEFAULT_BINARY_HISTORY_COLS</span><span class="p">,</span>
+    <span class="s2">&quot;star1_profile_saved_columns&quot;</span><span class="p">:</span> <span class="n">DEFAULT_PROFILE_COLS</span><span class="p">,</span>
+    <span class="s2">&quot;star2_profile_saved_columns&quot;</span><span class="p">:</span> <span class="n">DEFAULT_PROFILE_COLS</span><span class="p">,</span>
+    <span class="c1"># Initial/Final value arrays</span>
+    <span class="s2">&quot;initial_value_columns&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s2">&quot;final_value_columns&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">()</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">MESA_runs_directory</span><span class="p">,</span> <span class="n">psygrid_path</span><span class="p">,</span> <span class="o">**</span><span class="n">GRIDPROPERTIES</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="loading-an-existing-psygrid-object">
+<h2>Loading an existing PSyGrid object<a class="headerlink" href="#loading-an-existing-psygrid-object" title="Permalink to this headline"></a></h2>
+<p>To load a PSyGrid object from an HDF5 file you only need its path:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s1">&#39;/home/mydata/my_MESA_grid&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="closing-deleting-a-psygrid-object">
+<h2>Closing/deleting a PSyGrid object<a class="headerlink" href="#closing-deleting-a-psygrid-object" title="Permalink to this headline"></a></h2>
+<p>As with files in Python, it is preferable to “close” PSyGrid objects after
+handling them.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">.close()</span></code> method closes the HDF5 file associated to the PSyGrid object.
+However, the object continues to exist and hold all the metadata.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In the case that a PSyGrid object is not needed anymore,
+use the <code class="docutils literal notranslate"><span class="pre">del</span></code> keyword. Note that this also closes the HDF5 file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">del</span> <span class="n">grid</span>
+</pre></div>
+</div>
+</section>
+<section id="grid-engineering-advanced-use-case-scenario">
+<h2>Grid engineering (advanced use case scenario)<a class="headerlink" href="#grid-engineering-advanced-use-case-scenario" title="Permalink to this headline"></a></h2>
+<p>When confronted with a large parameter space to cover, we advise that the
+parameter space be split into multiple directories for separate grid slices,
+composed of a few thousand runs each. These separate grids can be combined
+together afterwards.</p>
+<p>Here we preset an advanced use of the <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> object meant to be used on a
+HPC facility with Slurm. Our experience is that grid manipulation is most
+easily performed with a Jupyter notebook using Slurm magic commands which can
+be installed with</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>!pip install git+https://github.com/NERSC/slurm-magic.git
+</pre></div>
+</div>
+<p>directly from the Jupyter notebook.</p>
+<p>Here we illustrate how to post process an example HMS-HMS grid composed of
+three slices at fixed mass ratios of 0.50, 0.70, and 0.90.</p>
+<section id="creating-grid-slices">
+<h3>Creating grid slices<a class="headerlink" href="#creating-grid-slices" title="Permalink to this headline"></a></h3>
+<p>The following script allows to post process the raw MESA data into a <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code>
+object either in its <code class="docutils literal notranslate"><span class="pre">ORIGINAL</span></code> form (without any downsampling) or to use
+the <code class="docutils literal notranslate"><span class="pre">LITE</span></code> downsampling presented in Fragos et al. (2022).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">writefile</span> <span class="n">create_individual_psygrid_files</span><span class="o">.</span><span class="n">py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">posydon.grids.psygrid</span> <span class="kn">import</span> <span class="p">(</span><span class="n">PSyGrid</span><span class="p">,</span> <span class="n">DEFAULT_HISTORY_DS_EXCLUDE</span><span class="p">,</span>
+                                   <span class="n">DEFAULT_PROFILE_DS_EXCLUDE</span><span class="p">,</span>
+                                   <span class="n">EXTRA_COLS_DS_EXCLUDE</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="c1"># directory with MESA data</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/working_dir/&#39;</span>
+
+    <span class="c1"># MESA grid slices to post process</span>
+    <span class="n">grid_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;grid_q_0.50&#39;</span><span class="p">,</span><span class="s1">&#39;grid_q_0.70&#39;</span><span class="p">,</span><span class="s1">&#39;grid_q_0.90&#39;</span><span class="p">]</span>
+
+    <span class="c1"># choose grid slice</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Job array index:&#39;</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">grid_name</span> <span class="o">=</span> <span class="n">grid_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="c1"># choose the compression</span>
+    <span class="n">grid_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">grid_type</span> <span class="o">==</span> <span class="s1">&#39;ORIGINAL&#39;</span><span class="p">:</span>
+        <span class="n">history_DS_error</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">profile_DS_error</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">history_DS_exclude</span> <span class="o">=</span> <span class="n">DEFAULT_HISTORY_DS_EXCLUDE</span>
+        <span class="n">profile_DS_exclude</span> <span class="o">=</span> <span class="n">DEFAULT_PROFILE_DS_EXCLUDE</span>
+    <span class="k">elif</span> <span class="n">grid_type</span> <span class="o">==</span> <span class="s1">&#39;LITE&#39;</span><span class="p">:</span>
+        <span class="n">history_DS_error</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">profile_DS_error</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">history_DS_exclude</span> <span class="o">=</span> <span class="n">EXTRA_COLS_DS_EXCLUDE</span>
+        <span class="n">profile_DS_exclude</span> <span class="o">=</span> <span class="n">EXTRA_COLS_DS_EXCLUDE</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;grid_type = </span><span class="si">%s</span><span class="s1"> not supported!&#39;</span><span class="o">%</span><span class="n">grid_type</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating psygrid for&#39;</span><span class="p">,</span><span class="n">grid_name</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span><span class="p">)</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">grid_name</span><span class="p">,</span>
+                <span class="s2">&quot;./&quot;</span><span class="o">+</span><span class="n">grid_type</span><span class="o">+</span><span class="s2">&quot;/</span><span class="si">%s</span><span class="s2">.h5&quot;</span><span class="o">%</span><span class="n">grid_name</span><span class="p">,</span>
+                <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">history_DS_error</span><span class="o">=</span><span class="n">history_DS_error</span><span class="p">,</span>
+                <span class="n">profile_DS_error</span><span class="o">=</span><span class="n">profile_DS_error</span><span class="p">,</span>
+                <span class="n">history_DS_exclude</span><span class="o">=</span><span class="n">history_DS_exclude</span><span class="p">,</span>
+                <span class="n">profile_DS_exclude</span><span class="o">=</span><span class="n">profile_DS_exclude</span><span class="p">,</span>
+                <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip9&quot;</span><span class="p">,</span> <span class="n">start_at_RLO</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+               <span class="p">)</span>
+</pre></div>
+</div>
+<p>The script above creates a script with the name
+<code class="docutils literal notranslate"><span class="pre">create_individual_psygrid_files.py</span></code> which we can run with the following
+Slurm magic command.
+IMPORTANT: we will run the script with both options compressions options
+LITE and ORIGINAL. The uncompressed version of the grid will be used in a later
+step
+Before running the script we need to create a <code class="docutils literal notranslate"><span class="pre">logs</span></code> directory where we will
+store Slurm output messages, and two directories where we will store the two
+different <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> object outputs, i.e. <code class="docutils literal notranslate"><span class="pre">ORIGINAL</span></code> and <code class="docutils literal notranslate"><span class="pre">LITE</span></code>.
+Once the post processing of the data is complete, we will be notified by email
+from Slurm.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>%%sbatch
+#!/bin/bash
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=my_email
+#SBATCH --account=b1119
+#SBATCH --partition=posydon-priority
+#SBATCH --array=0-2
+#SBATCH --ntasks-per-node 1
+#SBATCH --mem-per-cpu=8G
+#SBATCH --time=24:00:00
+#SBATCH --job-name=&quot;psygrid&quot;
+#SBATCH --output=/working_dir/grid_%a.out
+
+srun python /working_dir/create_individual_psygrid_files.py $SLURM_ARRAY_TASK_ID LITE
+</pre></div>
+</div>
+<p>The above code cell will return the Slurm job id which we can use to verify that
+our script is working correctly. In this specific example each grid slice is
+composed by 2800 MESA HMS-HMS simulations. The post processing
+will take roughly one hour per grid slice.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">squeue</span> <span class="o">-</span><span class="n">j</span> <span class="mi">3761056</span>
+</pre></div>
+</div>
+<img alt="../_images/slurm_job.png" src="../_images/slurm_job.png" />
+</section>
+<section id="rerun-subsample-of-grid-slices">
+<h3>Rerun subsample of grid slices<a class="headerlink" href="#rerun-subsample-of-grid-slices" title="Permalink to this headline"></a></h3>
+<p>Because of convergence issues, a non-negligible fraction of the MESA
+simulations did not converge. The grid architect would now like to rerun the
+subsample of the grid with convergence problem changing one or more MESA inlist
+flags. This can be easily done with the <code class="docutils literal notranslate"><span class="pre">.rerun()</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s1">&#39;/working_dir/LITE/grid_0.70.h5&#39;</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">rerun</span><span class="p">(</span><span class="s1">&#39;/working_dir/grid_0.70_rerun/&#39;</span><span class="p">,</span>
+           <span class="n">termination_flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;min_timestep_limit&#39;</span><span class="p">,</span><span class="s1">&#39;reach cluster timelimit&#39;</span><span class="p">],</span>
+           <span class="n">new_mesa_flag</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;opacity_max&#39;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">})</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The above script loads the LITE version of the <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> object
+<code class="docutils literal notranslate"><span class="pre">grid_q_0.70.h5</span></code>, generates a new <code class="docutils literal notranslate"><span class="pre">grid.csv</span></code> file containing the initial
+points runs with given <code class="docutils literal notranslate"><span class="pre">termination_flags</span></code> (see TF1 of plot2D documentation)
+and additional columns corresponding to the new MESA flags specified in the
+dictionary <code class="docutils literal notranslate"><span class="pre">new_mesa_flag</span></code>, e.g. limiting the opacity maximal value of a star.</p>
+<p>Alternatively, the grid architect might care to select a subsample of the MESA
+runs with some user defined logic, e.g. to generate a patch of the grid which
+addresses a change that affect a portion of the parameter space to rerun with a
+new MESA inlist commit (see running MESA documentation). This can be specified
+with the <code class="docutils literal notranslate"><span class="pre">runs_to_rerun</span></code> option of the <code class="docutils literal notranslate"><span class="pre">.rerun</span></code> method which expects a list
+of indices of tracks to rerun.</p>
+</section>
+<section id="combine-grid-slices">
+<h3>Combine grid slices<a class="headerlink" href="#combine-grid-slices" title="Permalink to this headline"></a></h3>
+<p>Let assume that we now have the three original grid slices
+(<code class="docutils literal notranslate"><span class="pre">grid_q_0.50.h5,grid_q_0.70.h5,grid_q_0.90.h5</span></code>),
+three additional reruns of them addressing convergence issues
+(<code class="docutils literal notranslate"><span class="pre">grid_q_0.50_rerun.h5,grid_q_0.70_rerun.h5,grid_q_0.90_rerun.h5</span></code>),
+and a grid slice extension which cover wider larger orbital periods not covered
+in the main grids (<code class="docutils literal notranslate"><span class="pre">grid_p_extension.h5</span></code>) which we want to combine in a
+single file.</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">join_grids</span></code> does exactly this for us taking care of replacing
+older runs with newer one. The grid layering follows the list order,
+namely the last grid will be layered last.
+Here is how we can combine the grid slices</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">writefile</span> <span class="n">combine_grid_slices</span><span class="o">.</span><span class="n">py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">posydon.grids.psygrid</span> <span class="kn">import</span> <span class="n">PSyGrid</span><span class="p">,</span> <span class="n">join_grids</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="c1"># choose the compression</span>
+    <span class="n">grid_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/working_dir/&#39;</span><span class="o">+</span><span class="n">grid_type</span><span class="o">+</span><span class="s1">&#39;/&#39;</span>
+
+    <span class="c1"># grid slices to combine</span>
+    <span class="n">grid_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;grid_q_0.50.h5&#39;</span><span class="p">,</span><span class="s1">&#39;grid_q_0.70.h5&#39;</span><span class="p">,</span><span class="s1">&#39;grid_q_0.90.h5&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;grid_q_0.50_rerun.h5&#39;</span><span class="p">,</span><span class="s1">&#39;grid_q_0.70_rerun.h5&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;grid_q_0.90_rerun.h5&#39;</span><span class="p">,</span><span class="s1">&#39;grid_p_extension.h5&#39;</span>
+                 <span class="p">]</span>
+    <span class="n">grid_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="o">+</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">grid_names</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Combining the grids:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">grid_paths</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">join_grids</span><span class="p">(</span><span class="n">grid_paths</span><span class="p">,</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;grid_combined.h5&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DONE!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above script is run for both grid compressions <code class="docutils literal notranslate"><span class="pre">LITE</span></code> and <code class="docutils literal notranslate"><span class="pre">ORIGINAL</span></code>
+with the following cell.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">sbatch</span>
+<span class="c1">#!/bin/bash</span>
+<span class="c1">#SBATCH --mail-type=ALL</span>
+<span class="c1">#SBATCH --mail-user=my_email</span>
+<span class="c1">#SBATCH --account=b1119</span>
+<span class="c1">#SBATCH --partition=posydon-priority</span>
+<span class="c1">#SBATCH --ntasks-per-node 1</span>
+<span class="c1">#SBATCH --mem-per-cpu=8G</span>
+<span class="c1">#SBATCH --time=24:00:00</span>
+<span class="c1">#SBATCH --job-name=&quot;psygrid&quot;</span>
+<span class="c1">#SBATCH --output=/working_dir/logs/combine_grid_slices.out</span>
+
+<span class="n">srun</span> <span class="n">python</span> <span class="o">/</span><span class="n">working_dir</span><span class="o">/</span><span class="n">combine_grid_slices</span><span class="o">.</span><span class="n">py</span> <span class="n">LITE</span>
+</pre></div>
+</div>
+</section>
+<section id="add-post-process-quantities">
+<h3>Add post process quantities<a class="headerlink" href="#add-post-process-quantities" title="Permalink to this headline"></a></h3>
+<p>There is a list of quantities that <code class="docutils literal notranslate"><span class="pre">POSYDON</span></code> requires to be precomputed
+on the original grids. These quantities include, e.g., core-collapse
+and common envelope properties.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">writefile</span> <span class="n">post_process_grid</span><span class="o">.</span><span class="n">py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">copyfile</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">posydon.grids.psygrid</span> <span class="kn">import</span> <span class="n">PSyGrid</span>
+<span class="kn">from</span> <span class="nn">posydon.grids.post_processing</span> <span class="kn">import</span> <span class="n">post_process_grid</span><span class="p">,</span> <span class="n">add_post_processed_quantities</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/working_dir/&#39;</span>
+
+    <span class="c1"># chose the grid given the job_array index</span>
+    <span class="n">grid_name</span> <span class="o">=</span> <span class="s1">&#39;grid_combined.h5&#39;</span>
+    <span class="n">grid_name_processed</span> <span class="o">=</span> <span class="s1">&#39;grid_combined_processed.h5&#39;</span>
+    <span class="n">columns_name</span> <span class="o">=</span> <span class="s1">&#39;post_processed_EXTRA_COLUMNS.pkl&#39;</span>
+    <span class="n">dirs_name</span> <span class="o">=</span> <span class="s1">&#39;post_processed_MESA_dirs.txt&#39;</span>
+
+    <span class="c1"># copy file, it will be overwritten when we add columns</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Post processed grid file alredy exist, removing it...&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
+    <span class="n">copyfile</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">grid_name</span><span class="p">,</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
+
+    <span class="n">grid_ORIGINAL</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
+    <span class="n">MESA_dirs_EXTRA_COLUMNS</span><span class="p">,</span> <span class="n">EXTRA_COLUMNS</span> <span class="o">=</span> <span class="n">post_process_grid</span><span class="p">(</span><span class="n">grid_ORIGINAL</span><span class="p">,</span>
+                                  <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">star_2_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># save processed quantities</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">columns_name</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EXTRA COLUMNS file alredy exist, removing it...&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">columns_name</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">columns_name</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">EXTRA_COLUMNS</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">dirs_name</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MESA dirs file alredy exist, removing it...&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">dirs_name</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;ORIGINAL/&#39;</span><span class="o">+</span><span class="n">dirs_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">filehandle</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">listitem</span> <span class="ow">in</span> <span class="n">MESA_dirs_EXTRA_COLUMNS</span><span class="p">:</span>
+            <span class="n">filehandle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">listitem</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Add post porcessed columns to ORIGIN grid...&#39;</span><span class="p">)</span>
+    <span class="n">add_post_processed_quantities</span><span class="p">(</span><span class="n">grid_ORIGINAL</span><span class="p">,</span> <span class="n">MESA_dirs_EXTRA_COLUMNS</span><span class="p">,</span>
+                                  <span class="n">EXTRA_COLUMNS</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">grid_ORIGINAL</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># copy file, it will be overwritten when we add columns</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;LITE/&#39;</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Post processed grid file alredy exist, removing it...&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;LITE/&#39;</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
+    <span class="n">copyfile</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;LITE/&#39;</span><span class="o">+</span><span class="n">grid_name</span><span class="p">,</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;LITE/&#39;</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
+
+    <span class="n">grid_LITE</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;LITE/&#39;</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Add post porcessed columns to LITE grid...&#39;</span><span class="p">)</span>
+    <span class="n">add_post_processed_quantities</span><span class="p">(</span><span class="n">grid_LITE</span><span class="p">,</span> <span class="n">MESA_dirs_EXTRA_COLUMNS</span><span class="p">,</span>
+                                  <span class="n">EXTRA_COLUMNS</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">grid_LITE</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The script can be run with the following Slurm magic commad.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">sbatch</span>
+<span class="c1">#!/bin/bash</span>
+<span class="c1">#SBATCH --mail-type=ALL</span>
+<span class="c1">#SBATCH --mail-user=my_email</span>
+<span class="c1">#SBATCH --account=b1119</span>
+<span class="c1">#SBATCH --partition=posydon-priority</span>
+<span class="c1">#SBATCH --ntasks-per-node 1</span>
+<span class="c1">#SBATCH --mem-per-cpu=8G</span>
+<span class="c1">#SBATCH --time=24:00:00</span>
+<span class="c1">#SBATCH --job-name=&quot;psygrid&quot;</span>
+<span class="c1">#SBATCH --output=/working_dir/logs/post_process_grid.out</span>
+
+<span class="n">export</span> <span class="n">PATH_TO_POSYDON</span><span class="o">=/</span><span class="n">add_your_path</span><span class="o">/</span>
+<span class="n">srun</span> <span class="n">python</span> <span class="o">/</span><span class="n">working_dir</span><span class="o">/</span><span class="n">post_process_grid</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</section>
+<section id="splitting-the-grid-into-chunks">
+<h3>Splitting the grid into chunks<a class="headerlink" href="#splitting-the-grid-into-chunks" title="Permalink to this headline"></a></h3>
+<p>Some data sharing services limit the file size. E.g. <code class="docutils literal notranslate"><span class="pre">git-lfs</span></code> limits
+the maximum file size to be around 2 GB. The following script splits the
+post processed grid into chunks of files of 2 GB size.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">writefile</span> <span class="n">split_grid</span><span class="o">.</span><span class="n">py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">posydon.grids.psygrid</span> <span class="kn">import</span> <span class="n">PSyGrid</span><span class="p">,</span> <span class="n">join_grids</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+      <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/working_dir/&#39;</span>
+
+      <span class="n">git_lfs_dir</span> <span class="o">=</span> <span class="s1">&#39;git-lfs_data_format&#39;</span>
+
+      <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">git_lfs_dir</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+          <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Remove old grid in git_lfs_dir ...&#39;</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+              <span class="k">if</span> <span class="s1">&#39;.h5&#39;</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+                  <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">git_lfs_dir</span><span class="o">+</span><span class="n">file</span><span class="p">)</span>
+
+      <span class="n">grid_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;LITE/grid_combined_processed.h5&#39;</span><span class="p">]</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">join_grids</span><span class="p">(</span><span class="n">grid_names</span><span class="p">,</span><span class="n">path</span><span class="o">+</span><span class="n">git_lfs_dir</span><span class="o">+</span><span class="s1">&#39;/grid_</span><span class="si">%d</span><span class="s1">.h5&#39;</span><span class="p">)</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DONE!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above script can be run with the following Slurm magic command.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">sbatch</span>
+<span class="c1">#!/bin/bash</span>
+<span class="c1">#SBATCH --mail-type=ALL</span>
+<span class="c1">#SBATCH --mail-user=my_email</span>
+<span class="c1">#SBATCH --account=b1119</span>
+<span class="c1">#SBATCH --partition=posydon-priority</span>
+<span class="c1">#SBATCH --ntasks-per-node 1</span>
+<span class="c1">#SBATCH --mem-per-cpu=8G</span>
+<span class="c1">#SBATCH --time=24:00:00</span>
+<span class="c1">#SBATCH --job-name=&quot;psygrid&quot;</span>
+<span class="c1">#SBATCH --output=/working_dir/logs/split_grid.out</span>
+
+<span class="n">srun</span> <span class="n">python</span> <span class="o">/</span><span class="n">working_dir</span><span class="o">/</span><span class="n">split_grid</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>The split grid can be loaded into a <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> object with the follow line.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s1">&#39;/working_dir/git-lfs_data_format/grid_</span><span class="si">%d</span><span class="s1">.h5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../run_mesa_grids/fixed/fixed.html" class="btn btn-neutral float-left" title="Run a fixed MESA grid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../pop_synth/POSYDON_populations.html" class="btn btn-neutral float-right" title="Running populations using POSYDON" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 1.0.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

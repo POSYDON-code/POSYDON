@@ -1,0 +1,24 @@
+posydon.popsyn package
+======================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   posydon.popsyn.analysis
+   posydon.popsyn.binarypopulation
+   posydon.popsyn.defaults
+   posydon.popsyn.independent_sample
+   posydon.popsyn.io
+   posydon.popsyn.normalized_pop_mass
+   posydon.popsyn.star_formation_history
+
+Module contents
+---------------
+
+.. automodule:: posydon.popsyn
+   :members:
+   :undoc-members:
+   :show-inheritance:

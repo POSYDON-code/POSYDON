@@ -1,0 +1,547 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.visualization.plot_pop &mdash; posydon 2.0.0-pre2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7f6b3d60"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.visualization.plot_pop</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.visualization.plot_pop</h1><div class="highlight"><pre>
+<span></span><span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Max Briel &lt;max.briel@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.plot_defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_LABELS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zsun</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_metallicity_to_string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zsun</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.plot_defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_LABELS</span>
+
+<span class="n">PATH_TO_POSYDON_DATA</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PATH_TO_POSYDON_DATA&quot;</span><span class="p">,</span><span class="s1">&#39;./&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/visualization/posydon.mplstyle&quot;</span><span class="p">))</span>
+
+<span class="n">cm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colormaps</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;tab20&#39;</span><span class="p">)</span>
+<span class="n">COLORS</span> <span class="o">=</span> <span class="p">[</span><span class="n">cm</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cm</span><span class="o">.</span><span class="n">colors</span><span class="p">))</span> <span class="k">if</span> <span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">cm</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cm</span><span class="o">.</span><span class="n">colors</span><span class="p">))</span> <span class="k">if</span> <span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span>
+
+<div class="viewcode-block" id="plot_merger_rate_density">
+<a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot_pop.plot_merger_rate_density">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_merger_rate_density</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">rate_density</span><span class="p">,</span> <span class="n">zmax</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                             <span class="n">GWTC3</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;DCO&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">rate_density</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">][</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1"> total&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">channels</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">rate_density</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;total&#39;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">ch</span> <span class="o">!=</span> <span class="s1">&#39;total&#39;</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">rate_density</span><span class="p">[</span><span class="n">ch</span><span class="p">][</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">ch</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">GWTC3</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">17.9</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">],[</span><span class="mf">26.1</span><span class="p">]],</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$\mathcal</span><span class="si">{R}</span><span class="s1">_\mathrm</span><span class="si">{BBH}</span><span class="s1">$ GWTC-3&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_grb_rate_density">
+<a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot_pop.plot_grb_rate_density">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_grb_rate_density</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">rate_density</span><span class="p">,</span> <span class="n">zmax</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">grb_components</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">Perley16</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">rate_density</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">][</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;GRB total&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">grb_components</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">rate_density</span><span class="p">[</span><span class="s1">&#39;total_GRB1&#39;</span><span class="p">][</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;total_GRB1&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">rate_density</span><span class="p">[</span><span class="s1">&#39;total_GRB2&#39;</span><span class="p">][</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;total_GRB2&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">channels</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">rate_density</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="p">(</span><span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;total&#39;</span> <span class="ow">and</span> <span class="s1">&#39;GRB&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)]):</span>
+            <span class="k">if</span> <span class="s1">&#39;total&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ch</span> <span class="ow">and</span> <span class="s1">&#39;GRB&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ch</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">rate_density</span><span class="p">[</span><span class="n">ch</span><span class="p">][</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">])</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="s1">&#39;label_channels&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;label_channels&#39;</span><span class="p">]:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">ch</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">rate_density</span><span class="p">[</span><span class="n">ch</span><span class="p">][</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">grb_components</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s1">&#39;label_channels&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;label_channels&#39;</span><span class="p">]:</span>
+                        <span class="n">label1</span> <span class="o">=</span> <span class="n">ch</span><span class="o">+</span><span class="s1">&#39;_GRB1&#39;</span>
+                        <span class="n">label2</span> <span class="o">=</span> <span class="n">ch</span><span class="o">+</span><span class="s1">&#39;_GRB2&#39;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">label1</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="n">label2</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">rate_density</span><span class="p">[</span><span class="n">ch</span><span class="o">+</span><span class="s1">&#39;_GRB1&#39;</span><span class="p">][</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">label1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">rate_density</span><span class="p">[</span><span class="n">ch</span><span class="o">+</span><span class="s1">&#39;_GRB2&#39;</span><span class="p">][</span><span class="n">z</span><span class="o">&lt;</span><span class="n">zmax</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">label2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Perley et al. (2016)</span>
+    <span class="k">if</span> <span class="n">Perley16</span><span class="p">:</span>
+        <span class="n">z_P16</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.75</span><span class="p">,</span><span class="mf">1.35</span><span class="p">,</span><span class="mf">1.75</span><span class="p">,</span><span class="mf">2.3</span><span class="p">,</span><span class="mf">3.1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mf">5.2</span><span class="p">,</span><span class="mf">7.</span><span class="p">])</span>
+        <span class="n">rate_P16</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.07e-10</span><span class="p">,</span><span class="mf">1.46e-9</span><span class="p">,</span><span class="mf">1.816e-9</span><span class="p">,</span><span class="mf">3.93e-9</span><span class="p">,</span><span class="mf">8.27e-9</span><span class="p">,</span><span class="mf">6.90e-9</span><span class="p">,</span><span class="mf">4.20e-9</span><span class="p">,</span><span class="mf">3.74e-9</span><span class="p">,</span><span class="mf">1.11e-9</span><span class="p">])</span><span class="o">*</span><span class="mf">1e9</span>
+        <span class="n">rate_P16_lower</span> <span class="o">=</span> <span class="n">rate_P16</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.12e-10</span><span class="p">,</span><span class="mf">1.08e-9</span><span class="p">,</span><span class="mf">1.30e-9</span><span class="p">,</span><span class="mf">3.02e-9</span><span class="p">,</span><span class="mf">6.78e-9</span><span class="p">,</span><span class="mf">5.29e-9</span><span class="p">,</span><span class="mf">2.82e-9</span><span class="p">,</span><span class="mf">2.397e-9</span><span class="p">,</span><span class="mf">5.96e-10</span><span class="p">])</span><span class="o">*</span><span class="mf">1e9</span>
+        <span class="n">rate_P16_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.40e-10</span><span class="p">,</span><span class="mf">2.03e-9</span><span class="p">,</span><span class="mf">2.60e-9</span><span class="p">,</span><span class="mf">5.29e-9</span><span class="p">,</span><span class="mf">1.03e-8</span><span class="p">,</span><span class="mf">9.13e-9</span><span class="p">,</span><span class="mf">6.78e-9</span><span class="p">,</span><span class="mf">6.78e-9</span><span class="p">,</span><span class="mf">4.27e-9</span><span class="p">])</span><span class="o">*</span><span class="mf">1e9</span><span class="o">-</span><span class="n">rate_P16</span>
+        <span class="n">rate_P16_error_y</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rate_P16_lower</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span><span class="n">rate_P16_upper</span><span class="o">.</span><span class="n">tolist</span><span class="p">()])</span>
+        <span class="n">rate_P16_left</span> <span class="o">=</span> <span class="n">z_P16</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">2.</span><span class="p">,</span><span class="mf">2.6</span><span class="p">,</span><span class="mf">3.5</span><span class="p">,</span><span class="mf">4.5</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+        <span class="n">rate_P16_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">2.</span><span class="p">,</span><span class="mf">2.6</span><span class="p">,</span><span class="mf">3.5</span><span class="p">,</span><span class="mf">4.5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">])</span><span class="o">-</span><span class="n">z_P16</span>
+        <span class="n">rate_P16_error_x</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rate_P16_left</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span><span class="n">rate_P16_right</span><span class="o">.</span><span class="n">tolist</span><span class="p">()])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">z_P16</span><span class="p">,</span><span class="n">rate_P16</span><span class="p">,</span><span class="n">xerr</span><span class="o">=</span><span class="n">rate_P16_error_x</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">rate_P16_error_y</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\mathcal</span><span class="si">{R}</span><span class="s1">_\mathrm</span><span class="si">{LGRB}</span><span class="s1">(E_\mathrm</span><span class="si">{iso}</span><span class="s1">^{45-450\,\mathrm</span><span class="si">{keV}</span><span class="s1">} &gt; 10^</span><span class="si">{51}</span><span class="s1"> \, \mathrm</span><span class="si">{erg}</span><span class="s1">)$ SHOALS survey&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_rate_density">
+<a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot_pop.plot_rate_density">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rate_density</span><span class="p">(</span><span class="n">intrinsic_rates</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">intrinsic_rates</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">intrinsic_rates</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">channels</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">intrinsic_rates</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;total&#39;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">ch</span> <span class="o">!=</span> <span class="s1">&#39;total&#39;</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">intrinsic_rates</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">intrinsic_rates</span><span class="p">[</span><span class="n">ch</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">ch</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\mathcal</span><span class="si">{R}</span><span class="s1"> \,[\mathrm</span><span class="si">{Gpc}</span><span class="s1">^{-3}\,\mathrm</span><span class="si">{yr}</span><span class="s1">^{-1}]$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$z$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s1">&#39;ylim&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;ylim&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="s1">&#39;xlim&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;xlim&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="s1">&#39;path&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">],</span><span class="nb">str</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="s1">&#39;show&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;show&#39;</span><span class="p">]:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="plot_merger_efficiency">
+<a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot_pop.plot_merger_efficiency">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_merger_efficiency</span><span class="p">(</span><span class="n">met</span><span class="p">,</span> <span class="n">merger_efficiency</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Merger efficiency&#39;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">met</span><span class="o">/</span><span class="n">Zsun</span><span class="p">,</span> <span class="n">merger_efficiency</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">channels</span><span class="p">:</span>
+        <span class="n">unique_channels</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">merger_efficiency</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;total&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_channels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">cm</span><span class="o">.</span><span class="n">colors</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Too many channels to plot!&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">unique_channels</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ch</span> <span class="o">!=</span> <span class="s1">&#39;total&#39;</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">met</span><span class="o">/</span><span class="n">Zsun</span><span class="p">,</span> <span class="n">merger_efficiency</span><span class="p">[</span><span class="n">ch</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">ch</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$Z/Z_\odot$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;\#events [$M_\odot^{-1}$]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="plot_hist_properties">
+<a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot_pop.plot_hist_properties">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_hist_properties</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">df_intrinsic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">df_observable</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">channel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                        <span class="nb">range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">COLORS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+
+    <span class="n">df_columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+    <span class="k">if</span> <span class="s1">&#39;intrinsic&#39;</span> <span class="ow">in</span> <span class="n">df_columns</span> <span class="ow">and</span> <span class="s1">&#39;observable&#39;</span> <span class="ow">in</span> <span class="n">df_columns</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Intrinsic vs. observable (dashed) population&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;intrinsic&#39;</span> <span class="ow">in</span> <span class="n">df_columns</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Intrinsic population&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;observable&#39;</span> <span class="ow">in</span> <span class="n">df_columns</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Observable population&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You should provide either an intrinsic or a &#39;</span>
+                         <span class="s1">&#39;detectable population.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;intrinsic&#39;</span> <span class="ow">in</span> <span class="n">df_columns</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span>  <span class="n">df</span><span class="p">[</span><span class="s1">&#39;intrinsic&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">normalise</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">/=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;property&#39;</span><span class="p">],</span>
+                 <span class="n">weights</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                 <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                 <span class="nb">range</span><span class="o">=</span><span class="nb">range</span><span class="p">,</span>
+                 <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="o">+</span><span class="s1">&#39; intrinsic&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;observable&#39;</span> <span class="ow">in</span> <span class="n">df_columns</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;observable&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">normalise</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">/=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;property&#39;</span><span class="p">],</span>
+                 <span class="n">weights</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                 <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                 <span class="nb">range</span><span class="o">=</span><span class="nb">range</span><span class="p">,</span>
+                 <span class="n">histtype</span><span class="o">=</span><span class="sa">u</span><span class="s1">&#39;step&#39;</span><span class="p">,</span>
+                 <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
+                 <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="o">+</span><span class="s1">&#39; observable&#39;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;xlabel&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;xlabel&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">normalise</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;PDF&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\#events in bin&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;yscale&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;yscale&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="s1">&#39;xscale&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;xscale&#39;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="plot_popsyn_over_grid_slice">
+<a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot_pop.plot_popsyn_over_grid_slice">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_popsyn_over_grid_slice</span><span class="p">(</span><span class="n">pop</span><span class="p">,</span> <span class="n">grid_type</span><span class="p">,</span> <span class="n">met_Zsun</span><span class="p">,</span> <span class="n">slices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">plot_dir</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prop_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">log_prop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">5.</span><span class="p">,</span>
+                                <span class="n">show_fig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">close_fig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                <span class="n">plot_extension</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="c1"># Check if step_names in pop.history data</span>
+    <span class="k">if</span> <span class="s1">&#39;step_names&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Formation channel information not available in popsynth data.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># load grid</span>
+    <span class="n">met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met_Zsun</span><span class="p">)</span>
+    <span class="n">grid_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;POSYDON_data/</span><span class="si">{</span><span class="n">grid_type</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">met</span><span class="si">}</span><span class="s1">_Zsun.h5&#39;</span><span class="p">)</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">grid_path</span><span class="p">)</span>
+
+    <span class="c1"># check if formation channel information is avaialbe</span>
+    <span class="k">if</span> <span class="n">channel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;channel&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pop</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Formation channel information not available in popsynth data.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;CO&#39;</span> <span class="ow">in</span> <span class="n">grid_path</span><span class="p">:</span>
+        <span class="c1"># compact object mass slices</span>
+        <span class="c1"># TODO: THIS SELECTION DOES NOT WORK!</span>
+        <span class="n">m_COs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">],</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">m_COs_edges</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">m_COs</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">m_COs</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">]</span><span class="o">+</span><span class="n">m_COs_edges</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">+</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">m_COs_edges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="n">m_COs</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;grid_m_</span><span class="si">%1.2f</span><span class="s1">.&#39;</span> <span class="o">+</span> <span class="n">plot_extension</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;$m_\mathrm</span><span class="si">{CO}</span><span class="s1">=</span><span class="si">%1.2f</span><span class="s1">\,M_\odot$&#39;</span>
+        <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;star_2_mass&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;HMS-HMS&#39;</span> <span class="ow">in</span> <span class="n">grid_path</span><span class="p">:</span>
+        <span class="c1"># mass ratio slices</span>
+        <span class="n">qs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">],</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">dq</span> <span class="o">=</span> <span class="p">(</span><span class="n">qs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">qs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.5</span>
+        <span class="n">dq_edges</span> <span class="o">=</span> <span class="p">(</span><span class="n">qs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">dq</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">dq_edges</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">]</span><span class="o">+</span><span class="n">dq_edges</span><span class="o">+</span><span class="p">[</span><span class="mf">1.</span><span class="p">]</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="n">qs</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;grid_q_</span><span class="si">%1.2f</span><span class="s1">.&#39;</span> <span class="o">+</span> <span class="n">plot_extension</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;$q=</span><span class="si">%1.2f</span><span class="s1">$&#39;</span>
+        <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="s1">&#39;mass_ratio&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Grid type not supported!&#39;</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">channel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">channel_sel</span> <span class="o">=</span> <span class="s1">&#39;channel == &quot;&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;&quot;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">channel_sel</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">vars</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">slices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">round</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">slices</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Skipping </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">met_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="n">channel_sel</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="n">met_Zsun</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;HMS-HMS&#39;</span> <span class="ow">in</span> <span class="n">grid_path</span><span class="p">:</span>
+            <span class="n">slice_3D_var_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">dq_edges</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">dq_edges</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">met_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sel</span> <span class="o">=</span> <span class="s1">&#39;index in &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">met_indices</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39; &amp; event == &quot;ZAMS&quot;&#39;</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="n">sel</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">])</span>
+
+            <span class="n">q</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">/</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">q</span><span class="p">[</span><span class="n">q</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">q</span><span class="p">[</span><span class="n">q</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">q</span><span class="o">&gt;=</span><span class="n">slice_3D_var_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span><span class="o">&lt;=</span><span class="n">slice_3D_var_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="s1">&#39;CO&#39;</span> <span class="ow">in</span> <span class="n">grid_path</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">m2</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">slice_3D_var_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">m2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">m2</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1"># select popsynth binaries in the given compact object mass</span>
+            <span class="c1"># TODO: implement the case of reversal mass ratio</span>
+            <span class="k">if</span> <span class="s1">&#39;CO-HMS_RLO&#39;</span> <span class="ow">in</span> <span class="n">grid_path</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">met_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sel</span> <span class="o">=</span> <span class="s1">&#39;index in &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">met_indices</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39; &amp; event == &quot;oRLO2&quot;&#39;</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="n">sel</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">])</span>
+                
+                <span class="n">m_CO</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">m_CO</span><span class="o">&gt;=</span><span class="n">slice_3D_var_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">m_CO</span><span class="o">&lt;=</span><span class="n">slice_3D_var_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">elif</span> <span class="s1">&#39;CO-HeMS&#39;</span> <span class="ow">in</span> <span class="n">grid_path</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">met_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sel</span> <span class="o">=</span> <span class="s1">&#39;index in &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">met_indices</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39; &amp; step_names == &quot;step_CE&quot;&#39;</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="n">sel</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">])</span>
+                    
+                <span class="n">m_CO</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">m_CO</span><span class="o">&gt;=</span><span class="n">slice_3D_var_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">m_CO</span><span class="o">&lt;=</span><span class="n">slice_3D_var_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Grid type not supported!&#39;</span><span class="p">)</span>
+        <span class="c1"># TODO: skip plotting slice if there are no data</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">PLOT_PROPERTIES</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;figsize&#39;</span> <span class="p">:</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mf">3.5</span><span class="p">)</span> <span class="k">if</span> <span class="n">prop</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mf">5.5</span><span class="p">),</span>
+                <span class="s1">&#39;path_to_file&#39;</span> <span class="p">:</span> <span class="n">plot_dir</span><span class="p">,</span>
+                <span class="s1">&#39;show_fig&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">&#39;close_fig&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="c1">#&#39;fname&#39; : fname%var,</span>
+                <span class="s1">&#39;title&#39;</span> <span class="p">:</span> <span class="n">title</span><span class="o">%</span><span class="n">var</span> <span class="k">if</span> <span class="n">channel</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">title</span><span class="o">%</span><span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">channel</span><span class="p">,</span>
+                <span class="s1">&#39;log10_x&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;log10_y&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;legend2D&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;bbox_to_anchor&#39;</span> <span class="p">:</span> <span class="p">(</span><span class="mf">1.03</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)},</span>
+            <span class="p">}</span>
+            <span class="c1"># grid</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;combined_TF12&#39;</span><span class="p">,</span>
+                            <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="n">slice_3D_var_str</span><span class="p">,</span>
+                            <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="n">slice_3D_var_range</span><span class="p">,</span>
+                            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES</span><span class="p">)</span>
+
+            <span class="n">log10_m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">log10_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="c1"># plot color map of a given DCO variable</span>
+            <span class="k">if</span> <span class="n">prop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">prop</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pop</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Property </span><span class="si">{</span><span class="n">prop</span><span class="si">}</span><span class="s1"> not available in popsynth data.&#39;</span><span class="p">)</span>
+
+                <span class="c1"># basically only for DCO systems</span>
+                <span class="n">met_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">met_indices</span><span class="p">)[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">prop_sel</span> <span class="o">=</span> <span class="s1">&#39;index in &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">met_indices</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &amp; event == &quot;CO_contact&quot;&#39;</span>
+                <span class="n">prop_data</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="n">prop_sel</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">prop</span><span class="p">])</span>
+                <span class="n">prop_values</span> <span class="o">=</span> <span class="n">prop_data</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">vmin</span> <span class="o">=</span> <span class="n">prop_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">vmax</span> <span class="o">=</span> <span class="n">prop_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">log_prop</span><span class="p">:</span>
+                    <span class="n">prop_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">prop_values</span><span class="p">)</span>
+                    <span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">vmin</span><span class="p">)</span>
+                    <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">log10_m1</span><span class="p">,</span> <span class="n">log10_p</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">prop_values</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">DEFAULT_LABELS</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">log_prop</span><span class="p">:</span>
+                        <span class="n">label</span> <span class="o">=</span> <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="n">prop</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">label</span> <span class="o">=</span> <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="n">prop</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">prop</span>
+                    <span class="k">if</span> <span class="n">log_prop</span><span class="p">:</span>
+                        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;log10_&#39;</span><span class="o">+</span><span class="n">label</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">log10_m1</span><span class="p">,</span> <span class="n">log10_p</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">save_fig</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="n">fname</span><span class="o">%</span><span class="n">var</span><span class="p">),</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">show_fig</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">close_fig</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to plot slice %1.2f&#39;</span><span class="o">%</span><span class="n">var</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<!-- Followed from
+ https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.0-pre2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
