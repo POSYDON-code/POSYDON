@@ -22,7 +22,7 @@ DEFAULT_SN_MODEL = {
     "mechanism": "Fryer+12-delayed",
     "engine": "",
     "PISN": "Hendriks+23",
-    "PISN_CO_shift": 1.0, #TODO: adopt shift to match Farag @Max (same in models 01-06)
+    "PISN_CO_shift": 1.0, #TODO: adopt shift to match Farag @Max (same in models 01-06 and in population_params_default.ini)
     "PPI_extra_mass_loss": 0.0,
     "ECSN": "Tauris+15",
     "conserve_hydrogen_envelope" : False,
