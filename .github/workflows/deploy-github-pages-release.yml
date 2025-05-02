@@ -1,0 +1,295 @@
+name: Website Deploy on Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_v1:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-tags: true
+        path: 'POSYDON'
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.7'
+  
+    - name: Get pip cache dir
+      id: pip-cache
+      run: |
+        python -m pip install --upgrade pip
+        echo "::set-output name=dir::$(pip cache dir)"
+
+    - name: Load pip cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py', '**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        # install pandoc for the documentation
+        sudo apt-get update -y
+        sudo apt-get install gfortran swig libhdf5-serial-dev libmpich-dev -y
+        sudo apt-get install pandoc -y
+
+        # install the dependencies in python
+        python -m pip install pandoc
+        python -m pip install coverage cpp-coveralls flake8 pytest
+        # required for python 3.7
+        python -m pip install wheel
+
+    - name: Make Documentation
+      env:
+        PATH_TO_POSYDON: ./
+        PATH_TO_POSYDON_DATA: ./
+        MESA_DIR: ./
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # make the output folder
+        output_folder=$GITHUB_WORKSPACE/_build/
+        echo "Output folder: $output_folder"
+        mkdir $output_folder
+        
+        # move to the repository folder
+        export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
+        cd $PATH_TO_POSYDON
+
+        # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF 
+        # THe _templatse folder and versioning code.
+        # get the _templates folder and move it out of the POSYDON folder
+        cp -r $PATH_TO_POSYDON/docs/_source/_templates $GITHUB_WORKSPACE
+
+        # get the injection code from the release
+        injection_code=$(awk '/# INJECTION GRAB START/,/# INJECTION GRAB END/' "${PATH_TO_POSYDON}/docs/_source/conf.py")
+
+        # get the available tags
+        TAGS=$(git tag -l | sort -V | grep "v1")
+        echo "v1 filtered tags:"
+        echo $TAGS
+
+        # build the documentation for each tag
+        for tag in $TAGS
+        do
+          echo "Checking out tag: $tag"
+          git checkout -f $tag
+          git clean -fdx
+          python -m pip install .[doc,vis]
+
+          # copy the _templates folder to the docs folder
+          cp -r $GITHUB_WORKSPACE/_templates $PATH_TO_POSYDON/docs
+          # remove the injection code from the conf.py file
+          echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/conf.py"
+
+          # build the documentation
+          cd docs
+          make html
+          touch _build/html/.nojekyll
+          
+          # move and copy docs out of the POSYDON folder
+          tag_without_v=${tag//v}
+          mv _build/html/ $output_folder/$tag_without_v
+
+          # cleanup for the next build
+          make clean
+          cd ../
+        done
+
+    - name: Deploy to GitHub Pages
+      if: success()
+      uses: crazy-max/ghaction-github-pages@v2
+      with:
+        target_branch: gh-pages
+        build_dir: _build/
+        history: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  build_v2:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-tags: true
+        path: 'POSYDON'
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+  
+    - name: Get pip cache dir
+      id: pip-cache
+      run: |
+        python -m pip install --upgrade pip
+        echo "::set-output name=dir::$(pip cache dir)"
+
+    - name: Load pip cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py', '**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        # install pandoc for the documentation
+        sudo apt-get update -y
+        sudo apt-get install gfortran swig libhdf5-serial-dev libmpich-dev -y
+        sudo apt-get install pandoc -y
+
+        # install the dependencies in python
+        python -m pip install pandoc
+        python -m pip install coverage cpp-coveralls flake8 pytest
+
+    - name: Make Documentation
+      env:
+        PATH_TO_POSYDON: ./
+        PATH_TO_POSYDON_DATA: ./
+        MESA_DIR: ./
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # make the output folder
+        output_folder=$GITHUB_WORKSPACE/_build/
+        echo "Output folder: $output_folder"
+        mkdir $output_folder
+
+        # move to the repository folder
+        export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
+        cd $PATH_TO_POSYDON
+
+        # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF 
+        # THe _templates folder and versioning code.
+        # get the _templates folder and move it out of the POSYDON folder
+        cp -r $PATH_TO_POSYDON/docs/_source/_templates $GITHUB_WORKSPACE
+
+        # get the injection code from the release
+        injection_code=$(awk '/# INJECTION GRAB START/,/# INJECTION GRAB END/' "${PATH_TO_POSYDON}/docs/_source/conf.py")
+
+        # get the available tags
+        TAGS=$(git tag -l | sort -V | grep "v2" | grep -v "dev")
+
+        echo "v2 filtered tags:"
+        echo $TAGS
+
+        # build the documentation for each tag
+        for tag in $TAGS
+        do
+          echo "Checking out tag: $tag"
+          git checkout -f $tag
+          git clean -fdx
+          python -m pip install .[doc,vis]
+
+          
+            # copy the _templates folder and inject code only for specific tags
+            if [[ "$tag" == "v2.0.0-pre1" || "$tag" == "v2.0.0-pre2" ]]; then
+              # copy the _templates folder to the docs folder
+              cp -r $GITHUB_WORKSPACE/_templates $PATH_TO_POSYDON/docs
+              # remove the injection code from the conf.py file
+              echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/conf.py"
+            fi
+
+          # build the documentation
+          cd docs
+          make html
+          touch _build/html/.nojekyll
+          
+          # move and copy docs out of the POSYDON folder
+          tag_without_v=${tag//v}
+          mv _build/html/ $output_folder/$tag_without_v
+
+          # cleanup for the next build
+          make clean
+          cd ../
+        done
+        
+    - name: Deploy to GitHub Pages
+      if: success()
+      uses: crazy-max/ghaction-github-pages@v4
+      with:
+        target_branch: gh-pages
+        build_dir: _build/
+        history: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_WORKSPACE: ${{ github.workspace }}
+
+  link_latest:
+    needs: [build_v1, build_v2]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download gh-pages
+      uses: actions/checkout@v4
+      with:
+        ref: gh-pages
+        path: '_build'
+        
+    - name: Find latest version and create symlink
+      run: |
+        cd _build
+        
+        # List all version directories
+        echo "All directories:"
+        ls -la
+        
+        # Find all version directories that match our version pattern
+        VERSIONS=$(ls -d v[0-9]* 2>/dev/null || echo "")
+        
+        if [ -z "$VERSIONS" ]; then
+          echo "No version directories found!"
+          exit 1
+        fi
+        
+        echo "Found versions: $VERSIONS"
+        
+        # First try to find the overall latest
+        LATEST=$(echo "$VERSIONS" | sort -V | tail -n 1)
+        
+        # Second try to find the latest non-pre-release version
+        LATESTNOPRE=$(echo "$VERSIONS" | grep -v "pre" | sort -V | tail -n 1)
+        
+        # Third get the main version part of $LATEST
+        LATESTWITHOUTPRE=$(echo "$LATEST" | awk -F "-pre" '{print $1}')
+        
+        # If there is a version release after the last pre-release version, use the non pre-release
+        if [[ "$LATESTNOPRE" == "$LATESTWITHOUTPRE" ]]; then
+          LATEST=$LATESTNOPRE
+        fi
+        
+        echo "Latest version: $LATEST"
+        
+        # Remove existing latest symlink or directory if it exists
+        if [ -e "latest" ]; then
+          rm -rf latest
+        fi
+        
+        # Create symlink to the latest version
+        ln -s "$LATEST" latest
+        
+        # Verify the symlink
+        ls -la latest
+
+    - name: Deploy to GitHub Pages
+      if: success()
+      uses: crazy-max/ghaction-github-pages@v4
+      with:
+        target_branch: gh-pages
+        build_dir: _build/
+        history: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
