@@ -345,7 +345,7 @@ class TestMadauBase:
         # THIS IS A VALIDATION TEST
         from scipy.stats import norm
         mean0, mean1 = (np.log10(madau.mean_metallicity(z)) 
-                  - model_dict['sigma']**2 * np.log(10) / 2)
+                        - model_dict['sigma']**2 * np.log(10) / 2)
         
         expected1 = np.array(
             # integral from 0.001 to 0.01; Z_min = lowest bin edge
@@ -781,7 +781,7 @@ class TestChruslinska21:
         # Should be an array of the same length as z_values
         assert len(result) == len(z_values)
         
-        # Should decrease with increasing redshift in the 
+        # Should decrease with increasing redshift in the test case
         assert result[0] > result[1] > result[2]
     
     def test_fsfr_calculation(self, chruslinska_model):
