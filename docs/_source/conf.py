@@ -82,7 +82,7 @@ else:
 base_url = 'https://posydon.org/POSYDON'
 
 # get the list of versions
-url_list = [f'{base_url}/{tag}' for tag in github_tags]
+url_list = [f'{base_url}/v{tag}' for tag in github_tags]
 v1_versions = [[tag, url] for tag, url in zip(github_tags, url_list) if tag.startswith('1.')]
 v2_versions = [[tag, url] for tag, url in zip(github_tags, url_list) if tag.startswith('2.')]
  
