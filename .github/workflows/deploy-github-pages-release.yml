@@ -6,7 +6,7 @@ on:
 
 jobs:
   build_v1:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     
@@ -14,10 +14,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
         fetch-tags: true
         path: 'POSYDON'
-        ref: ${{ github.ref }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -61,7 +59,7 @@ jobs:
         # make the output folder
         output_folder=$GITHUB_WORKSPACE/_build/
         echo "Output folder: $output_folder"
-        mkdir -p $output_folder
+        mkdir $output_folder
         
         # move to the repository folder
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
@@ -99,7 +97,8 @@ jobs:
           touch _build/html/.nojekyll
           
           # move and copy docs out of the POSYDON folder
-          mv _build/html/ $output_folder/$tag
+          tag_without_v=${tag//v}
+          mv _build/html/ $output_folder/$tag_without_v
 
           # cleanup for the next build
           make clean
@@ -112,7 +111,7 @@ jobs:
       with:
         target_branch: gh-pages
         build_dir: _build/
-        keep_history: true
+        history: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
@@ -125,10 +124,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
         fetch-tags: true
         path: 'POSYDON'
-        #ref: ${{ github.ref }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -170,7 +167,7 @@ jobs:
         # make the output folder
         output_folder=$GITHUB_WORKSPACE/_build/
         echo "Output folder: $output_folder"
-        mkdir -p $output_folder
+        mkdir $output_folder
 
         # move to the repository folder
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
@@ -185,7 +182,7 @@ jobs:
         injection_code=$(awk '/# INJECTION GRAB START/,/# INJECTION GRAB END/' "${PATH_TO_POSYDON}/docs/_source/conf.py")
 
         # get the available tags
-        TAGS=$(git tag -l | sort -V | grep "v2" | grep -v "dev" )
+        TAGS=$(git tag -l | sort -V | grep "v2" | grep -v "dev")
 
         echo "v2 filtered tags:"
         echo $TAGS
@@ -198,19 +195,13 @@ jobs:
           git clean -fdx
           python -m pip install .[doc,vis]
 
+          
             # copy the _templates folder and inject code only for specific tags
             if [[ "$tag" == "v2.0.0-pre1" || "$tag" == "v2.0.0-pre2" ]]; then
               # copy the _templates folder to the docs folder
-              cp -r $GITHUB_WORKSPACE/_templates $PATH_TO_POSYDON/docs/_source
-              # add the injection code from the conf.py file
-              echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/_source/conf.py"
-            elif [[ "$tag" == "v2.0.0" ]]; then
-              # copy the _templates folder to the docs folder
-              cp -r $GITHUB_WORKSPACE/_templates $PATH_TO_POSYDON/docs/_source
-              # remove the old injection code from the conf.py file
-              sed -i '/# INJECTION GRAB START/,/# INJECTION GRAB END/d' "${PATH_TO_POSYDON}/docs/_source/conf.py"
-              # add the new injection code to the conf.py file
-              echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/_source/conf.py"
+              cp -r $GITHUB_WORKSPACE/_templates $PATH_TO_POSYDON/docs
+              # remove the injection code from the conf.py file
+              echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/conf.py"
             fi
 
           # build the documentation
@@ -219,7 +210,8 @@ jobs:
           touch _build/html/.nojekyll
           
           # move and copy docs out of the POSYDON folder
-          mv _build/html/ $output_folder/$tag
+          tag_without_v=${tag//v}
+          mv _build/html/ $output_folder/$tag_without_v
 
           # cleanup for the next build
           make clean
@@ -232,7 +224,7 @@ jobs:
       with:
         target_branch: gh-pages
         build_dir: _build/
-        keep_history: true
+        history: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_WORKSPACE: ${{ github.workspace }}
@@ -298,6 +290,6 @@ jobs:
       with:
         target_branch: gh-pages
         build_dir: _build/
-        keep_history: true
+        history: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
