@@ -23,7 +23,7 @@ import numpy as np
 from scipy.integrate import newton_cotes, quad
 
 
-class Moe2017PsandQs():
+class Moe+17-PsandQs():
     """Generate initial parameters following Moe & Di Stefano (2017) [1]_.
     
     References
@@ -383,7 +383,7 @@ class Moe2017PsandQs():
         M_max : float (default: 150.0)
             Maximum mass of a star in Msun.
         all_binaries : bool (default: True)
-            If true set binary fration to 1.
+            If true, set binary fraction to 1.
 
         Returns
         -------

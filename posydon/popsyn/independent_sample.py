@@ -16,9 +16,9 @@ __authors__ = [
 import numpy as np
 from scipy.stats import truncnorm
 from posydon.utils.common_functions import rejection_sampler
-from posydon.popsyn.Moes_distributions import Moe2017PsandQs
+from posydon.popsyn.Moes_distributions import Moe+17-PsandQs
 
-_gen_Moe2017 = None
+_gen_Moe+17-PsandQs = None
 
 
 def generate_independent_samples(orbital_scheme='period', **kwargs):
@@ -43,21 +43,22 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
         Randomly drawn secondary masses
 
     """
-    global _gen_Moe2017
+    global _gen_Moe+17-PsandQs
 
     # Generate primary masses
     m1_set = generate_primary_masses(**kwargs)
 
-    if use_Moe2017(orbital_scheme=orbital_scheme, **kwargs):
-        # initialize generator for Moe2017
-        if _gen_Moe2017 is None:
-            _gen_Moe2017 = Moe2017PsandQs()
+    if use_Moe+17-PsandQs(orbital_scheme=orbital_scheme, **kwargs):
+        # initialize generator for Moe+17-PsandQs
+        if _gen_Moe+17-PsandQs is None:
+            _gen_Moe+17-PsandQs = Moe+17-PsandQs()
         # use same defaults as generate_primary_masses
         M1_min = kwargs.get("primary_mass_min", 7)
         M1_max = kwargs.get("primary_mass_max", 120)
         # generate samples
         m2_set, orbital_scheme_set, eccentricity_set, metallicity_set\
-         = _gen_Moe2017(m1_set, M_min=M1_min, M_max=M1_max, all_binaries=True)
+         = _gen_Moe+17-PsandQs(m1_set, M_min=M1_min, M_max=M1_max,
+                               all_binaries=True)
     else:
         # Generate secondary masses
         m2_set = generate_secondary_masses(m1_set, **kwargs)
@@ -69,7 +70,8 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
             # Generate orbital periods
             orbital_scheme_set = generate_orbital_periods(m1_set, **kwargs)
         else:
-            raise ValueError("Allowed orbital schemes are separation or period.")
+            raise ValueError("Allowed orbital schemes are separation or"
+                             " period.")
 
         # Generate eccentricities
         eccentricity_set = generate_eccentricities(**kwargs)
@@ -77,8 +79,9 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
     return orbital_scheme_set, eccentricity_set, m1_set, m2_set
 
 
-def use_Moe2017(secondary_mass_scheme='', orbital_scheme='',
-                orbital_period_scheme='', eccentricity_scheme='', **kwargs):
+def use_Moe+17-PsandQs(secondary_mass_scheme='', orbital_scheme='',
+                       orbital_period_scheme='', eccentricity_scheme='',
+                       **kwargs):
     """Check whether Moe & Di Stefano (2017) [1]_ should be used for the
     initial sampling.
     
@@ -89,10 +92,10 @@ def use_Moe2017(secondary_mass_scheme='', orbital_scheme='',
         <i>The Astrophysical Journal Supplement Series</i>, vol. 230, no. 2,
         Art. no. 15, IOP, 2017. doi:10.3847/1538-4365/aa6fb6.
     """
-    return ((secondary_mass_scheme=='Moe2017')
+    return ((secondary_mass_scheme=='Moe+17-PsandQs')
             or ((orbital_scheme=='period')
-                and (orbital_period_scheme=='Moe2017'))
-            or (eccentricity_scheme=='Moe2017'))
+                and (orbital_period_scheme=='Moe+17-PsandQs'))
+            or (eccentricity_scheme=='Moe+17-PsandQs'))
 
 
 def generate_orbital_periods(primary_masses,
@@ -395,38 +398,43 @@ def generate_secondary_masses(primary_masses,
 
     return secondary_masses
 
-def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'const',m1 = None,**kwargs):
+def binary_fraction_value(binary_fraction_const=1,
+                          binary_fraction_scheme='const', m1=None, **kwargs):
     """
-    Getting the binary fraction depending on the scheme. The two possible option are a constant binary fraction 
-    and a binary fraction based on the values given in Moe and Di Stefano (2017). 
+    Getting the binary fraction depending on the scheme. The two possible
+    option are a constant binary fraction and a binary fraction based on the
+    values given in Moe and Di Stefano (2017). 
 
     Parameters:
     --------------------
     binary scheme: string
-        Determines if the value of the binary fraction will be constant or not  
+        Determines if the value of the binary fraction will be constant or not
     binary fraction const: int 
-        Gives the value the constant value of the binary if the constant scheme is choosen. 
+        Gives the value the constant value of the binary if the constant scheme
+        is choosen. 
 
     Returns 
     ------------------
     binary fraction: int
 
     """
-    binary_fraction_scheme_options = ['const','Moe_17']
+    binary_fraction_scheme_options = ['const','Moe+17-massdependent']
 
     # Input parameter checks
-    if binary_fraction_scheme not in binary_fraction_scheme_options: 
+    if binary_fraction_scheme not in binary_fraction_scheme_options:
         raise ValueError("You must provide an allowed binary fraction scheme.")
     
 
     if binary_fraction_scheme == 'const': 
         binary_fraction = binary_fraction_const
     
-    elif binary_fraction_scheme == 'Moe_17':
+    elif binary_fraction_scheme == 'Moe+17-massdependent':
         if m1 is None: 
-            raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
+            raise ValueError("There was not a primary mass provided in the "
+                             "inputs. Unable to return a binary fraction")
         elif m1 < 0.8:
-            raise ValueError("The scheme doesn't support values of m1 less than 0.8")
+            raise ValueError("The scheme doesn't support values of m1 less "
+                             "than 0.8")
         elif m1 <= 2  and m1 >= 0.8:
             binary_fraction = 0.4
         elif m1 <= 5 and m1 > 2:
@@ -438,9 +446,9 @@ def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'cons
         elif m1 > 16:
             binary_fraction = 0.94
         else: 
-            raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')
+            raise ValueError(f"There primary mass provided {m1} is not "
+                             "supported by the Moe+17-massdependent scheme.")
     else: 
         pass
     return binary_fraction
 
-    
