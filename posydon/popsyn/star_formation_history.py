@@ -388,8 +388,8 @@ class MadauDickinson14(MadauBase):
     """
 
     def __init__(self, SFH_MODEL):
-        """Initialise the Madau & Dickinson (2014) SFH model with the
-        metallicity evolution of Madau & Fragos (2017).
+        """Initialise the Madau & Dickinson (2014) [1]_ SFH model with the
+        metallicity evolution of Madau & Fragos (2017) [2]_.
         
         Parameters
         ----------
@@ -418,6 +418,8 @@ class MadauDickinson14(MadauBase):
         ----------
         .. [1] Madau, P., & Dickinson, M. (2014). ARA&A, 52, 415-486.
             https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M
+        .. [2] Madau, P., & Fragos, T. (2017). ApJ, 840(1), 39.
+            https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M
         """
         super().__init__(SFH_MODEL)
         # Parameters for Madau+Dickinson14 CSFRD
