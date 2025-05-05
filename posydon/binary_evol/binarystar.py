@@ -148,7 +148,7 @@ class BinaryStar:
         # Set the initial binary properties
         for item in BINARYPROPERTIES:
             if item == 'V_sys':
-                setattr(self, item, binary_kwargs.pop(item, [0,0,0]))
+                setattr(self, item, binary_kwargs.pop(item, np.array([0,0,0])))
             elif item == 'mass_transfer_case':
                 setattr(self, item, binary_kwargs.pop(item, 'None'))
             elif item == 'nearest_neighbour_distance':
@@ -390,6 +390,7 @@ class BinaryStar:
             # If a binary fails, usually history cols have diff lengths.
             # This should append NAN to create even columns.
             all_equal_length_cols = len(set(col_lengths)) == 1
+
             if not all_equal_length_cols:
                 for col in data_to_save:
                     # check if the data column type is array-like
