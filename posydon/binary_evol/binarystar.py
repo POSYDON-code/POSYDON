@@ -36,7 +36,8 @@ from posydon.binary_evol.singlestar import SingleStar, STARPROPERTIES
 from posydon.utils.common_functions import (
     check_state_of_star, orbital_period_from_separation,
     orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
-from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df)
+from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df, 
+                               BINARYPROPERTIES_DTYPES)
 from posydon.binary_evol.flow_chart import UNDEFINED_STATES
 from posydon.utils.posydonerror import FlowError 
 
@@ -148,7 +149,9 @@ class BinaryStar:
         # Set the initial binary properties
         for item in BINARYPROPERTIES:
             if item == 'V_sys':
-                setattr(self, item, binary_kwargs.pop(item, np.array([0,0,0])))
+                setattr(self, item, binary_kwargs.pop(item, np.array([0.0,
+                                                                      0.0,
+                                                                      0.0])))
             elif item == 'mass_transfer_case':
                 setattr(self, item, binary_kwargs.pop(item, 'None'))
             elif item == 'nearest_neighbour_distance':
@@ -364,6 +367,9 @@ class BinaryStar:
         extra_binary_cols_dict = kwargs.get('extra_columns', {})
         extra_columns = list(extra_binary_cols_dict.keys())
 
+        # dictionary mapping binary properties (plus extras) to their dtypes
+        properties_dtypes = {**BINARYPROPERTIES_DTYPES, **extra_binary_cols_dict}
+
         all_keys = (["binary_index"]
                     + [key+'_history' for key in BINARYPROPERTIES]
                     + extra_columns)
@@ -391,15 +397,37 @@ class BinaryStar:
             # This should append NAN to create even columns.
             all_equal_length_cols = len(set(col_lengths)) == 1
 
+            for i, col in enumerate(data_to_save):
+                print(all_keys[i])
+                print(col)
+
             if not all_equal_length_cols:
-                for col in data_to_save:
-                    # check if the data column type is array-like
-                    element = col[0]
-                    if hasattr(element, '__len__') and hasattr(element, '__getitem__') and not isinstance(element, str):
-                        element_len = len(element)
-                        col.extend( [[np.nan] * element_len] * abs(max_col_length - len(col)))
-                    else:
-                        col.extend([np.nan] * abs(max_col_length - len(col)))
+                for i, col in enumerate(data_to_save):
+
+                    dkey = all_keys[i]
+                    dtype = properties_dtypes[dkey]
+
+                    max_ele_length = 0
+
+                    # check type of data and determine what to fill data column with
+                    if dtype == 'string':
+                        filler_value = 'None'
+                    elif dtype == 'float64':
+                        filler_value = np.nan
+                    # array-like data
+                    elif 'object' in dtype:
+                        # get the max length that data elements have
+                        ele_lengths = [len(x) for x in col]
+                        max_ele_length = np.max(ele_lengths)
+                        # array of strings
+                        if 'string' in dtype:
+                            filler_value = np.array([''] * max_ele_length)
+                        # array of float64's
+                        elif 'float64' in dtype:
+                            filler_value = np.array([np.nan] * max_ele_length)
+
+                    # extend data column with determined filler values
+                    col.extend([filler_value] * abs(max_col_length - len(col)))
 
             where_none = np.array([[True if var is None else False
                                     for var in column]
