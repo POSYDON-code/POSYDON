@@ -397,15 +397,17 @@ class BinaryStar:
             # This should append NAN to create even columns.
             all_equal_length_cols = len(set(col_lengths)) == 1
 
-            for i, col in enumerate(data_to_save):
-                print(all_keys[i])
-                print(col)
-
             if not all_equal_length_cols:
                 for i, col in enumerate(data_to_save):
 
                     dkey = all_keys[i]
-                    dtype = properties_dtypes[dkey]
+                    try:
+                        dtype = properties_dtypes[dkey]
+                    except KeyError:
+                        # default back to float64 -> np.nan fillers if can not 
+                        # determine what the data type should be. This should
+                        # never happen.
+                        dtype = 'float64'
 
                     max_ele_length = 0
 
