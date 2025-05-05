@@ -409,8 +409,6 @@ class BinaryStar:
                         # never happen.
                         dtype = 'float64'
 
-                    max_ele_length = 0
-
                     # check type of data and determine what to fill data column with
                     if dtype == 'string':
                         filler_value = 'None'
