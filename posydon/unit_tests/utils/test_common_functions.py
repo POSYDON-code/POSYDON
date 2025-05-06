@@ -574,8 +574,8 @@ class TestFunctions:
                  (1.0, 1.0, 1.0, 1.0, 4.0, 1e-3, False)]
 
         for (m1, r1, m2, r2, separation, tolerance, RLO) in tests:
-            assert totest.check_for_RLO(m1, r1, m2, r2, separation, \
-                            tolerance) == RLO
+            assert totest.check_for_RLO(m1, r1, m2, r2, separation,\
+                                        tolerance) == RLO
 
     def test_orbital_separation_from_period(self):
         # missing argument
