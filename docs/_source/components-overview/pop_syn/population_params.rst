@@ -374,11 +374,10 @@ If the energy budget is less than the binding energy, the system is merged.
   * - ``common_envelope_option_after_succ_CEE``
     - | The option for handling the system after a successful common envelope ejection.
      
-      * ``'core_not_replaced_noMT'`` : core not replaced, no mass transfer
       * ``'core_replaced_noMT'`` : core replaced, no mass transfer
       * ``'core_not_replaced_stableMT'`` : core not replaced, stable mass transfer
       * ``'core_not_replaced_windloss'`` : core not replaced, wind loss
-    - ``'core_not_replaced_noMT'``
+    - ``'core_not_replaced_stableMT'``
 
   * - ``verbose``
     - | Enables verbose mode.

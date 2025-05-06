@@ -56,7 +56,7 @@ MODEL = {"prescription": 'alpha-lambda',
          "core_definition_He_fraction": 0.1,
          "CEE_tolerance_err": 0.001,
          "verbose": False,
-         "common_envelope_option_after_succ_CEE": 'core_not_replaced_noMT',
+         "common_envelope_option_after_succ_CEE": 'core_not_replaced_stableMT',
          "mass_loss_during_CEE_merged": False # If False, then no mass loss from this step for a merged star
                                               # If True, then we remove mass according to the alpha-lambda prescription
                                               # assuming a final separation where the inner core RLOF starts.
@@ -861,11 +861,7 @@ class StepCEE(object):
                 used for CEE (based on core_definition_H/He_fraction) but no
                 other change in period after succesful ejection at
                 alpha-lambda prescription.
-            2) "core_not_replaced_noMT"
-                he_core_mass/radius (or co_core_mass/radius for CEE of
-                stripped_He*) staying as preCEE and no other change in period
-                after succesful ejection at alpha-lambda prescription.
-            3) "core_not_replaced_stableMT"
+            2) "core_not_replaced_stableMT"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) staying as preCEE and after succesful ejection at
                 alpha-lambda prescription, we assume an instantaneous stableMT
@@ -874,7 +870,7 @@ class StepCEE(object):
                 double_CE), taking away the extra "core" mass as defined by the
                 core boundary used for CEE (based on
                 core_definition_H/He_fraction).
-            4) "core_not_replaced_windloss"
+            3) "core_not_replaced_windloss"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) staying as preCEE and after succesful ejection
                 at alpha-lambda prescription, we assume a instantaneous
@@ -958,12 +954,6 @@ class StepCEE(object):
                     = self.CEE_core_replaced_noMT(donor, mc1_i, rc1_i, comp_star,
                                              mc2_i, rc2_i, separation_postCEE,
                                              verbose)
-        elif common_envelope_option_after_succ_CEE == "CEE_core_not_replaced_noMT":
-            mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
-                    = self.CEE_core_not_replaced_noMT(donor, mc1_i, rc1_i,
-                                                 donor_type, comp_star, mc2_i,
-                                                 rc2_i, comp_type, double_CE,
-                                                 separation_postCEE, verbose)
         elif common_envelope_option_after_succ_CEE == "CEE_core_not_replaced_stableMT":
             mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
                     = self.CEE_core_not_replaced_stableMT(donor, mc1_i, rc1_i,
