@@ -404,6 +404,7 @@ class BinaryStar:
                     try:
                         dtype = properties_dtypes[dkey]
                     except KeyError:
+                        dtype = ''
                         pass
 
                     # check type of data and determine what to fill data column with
@@ -420,6 +421,7 @@ class BinaryStar:
                         try:
                             sub_dtype = OBJECT_FIXED_SUB_DTYPES[dkey]
                         except KeyError:
+                            sub_type = ''
                             pass
 
                         # array of strings
