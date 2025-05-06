@@ -569,6 +569,8 @@ class TestFunctions:
 
         # examples
         tests = [(1.0, 1.0, 1.0, 1.0, 1.0, 1e-3, True),
+                 (2.0, 1.0, 1.0, 1.0, 2.5, 1e-3, True),
+                 (1.0, 1.0, 2.0, 1.0, 2.5, 1e-3, True),
                  (1.0, 1.0, 1.0, 1.0, 4.0, 1e-3, False)]
 
         for (m1, r1, m2, r2, separation, tolerance, RLO) in tests:
