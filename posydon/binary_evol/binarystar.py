@@ -37,7 +37,7 @@ from posydon.utils.common_functions import (
     check_state_of_star, orbital_period_from_separation,
     orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
 from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df, 
-                               BINARYPROPERTIES_DTYPES)
+                               BINARYPROPERTIES_DTYPES, OBJECT_FIXED_SUB_DTYPES)
 from posydon.binary_evol.flow_chart import UNDEFINED_STATES
 from posydon.utils.posydonerror import FlowError 
 
@@ -155,9 +155,9 @@ class BinaryStar:
             elif item == 'mass_transfer_case':
                 setattr(self, item, binary_kwargs.pop(item, 'None'))
             elif item == 'nearest_neighbour_distance':
-                setattr(self, item, binary_kwargs.pop(item, ['None',
-                                                             'None',
-                                                             'None']))
+                setattr(self, item, binary_kwargs.pop(item, [0.0,
+                                                             0.0,
+                                                             0.0]))
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
@@ -404,27 +404,37 @@ class BinaryStar:
                     try:
                         dtype = properties_dtypes[dkey]
                     except KeyError:
-                        # default back to float64 -> np.nan fillers if can not 
-                        # determine what the data type should be. This should
-                        # never happen.
-                        dtype = 'float64'
+                        pass
 
                     # check type of data and determine what to fill data column with
                     if dtype == 'string':
-                        filler_value = 'None'
+                        filler_value = ''
                     elif dtype == 'float64':
                         filler_value = np.nan
                     # array-like data
-                    elif 'object' in dtype:
+                    elif dtype == 'object':
                         # get the max length that data elements have
                         ele_lengths = [len(x) for x in col]
                         max_ele_length = np.max(ele_lengths)
+
+                        try:
+                            sub_dtype = OBJECT_FIXED_SUB_DTYPES[dkey]
+                        except KeyError:
+                            pass
+
                         # array of strings
-                        if 'string' in dtype:
+                        if sub_dtype == 'string':
                             filler_value = np.array([''] * max_ele_length)
                         # array of float64's
-                        elif 'float64' in dtype:
+                        elif sub_dtype == 'float64':
                             filler_value = np.array([np.nan] * max_ele_length)
+                        # default to array of NoneTypes
+                        else:
+                            filler_value = np.array([None] * max_ele_length)
+                            
+                    # defaulting to NoneType value (gets converted to np.nan below)
+                    else:
+                        filler_value = None
 
                     # extend data column with determined filler values
                     col.extend([filler_value] * abs(max_col_length - len(col)))
