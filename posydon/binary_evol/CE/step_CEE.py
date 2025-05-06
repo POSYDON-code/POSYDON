@@ -470,6 +470,11 @@ class StepCEE(object):
             elif comp_type == "not_giant_companion":
                 mc2_f = comp_star.mass
                 rc2_f = 10.**(comp_star.log_R)
+            else:
+                raise ValueError(
+                    "comp_type in common envelope is not recognized. "
+                    "comp_type = {}, don't know how to proceed".
+                    format(comp_type))
             if mc2_f > mc2_i:
                 mc2_f = mc2_i
                 Pwarn("The accretor's final core mass (even after "
@@ -554,96 +559,20 @@ class StepCEE(object):
         merger = cf.check_for_RLO(mc1_i, rc1_f, mc2_i, rc2_f,
                         separation_postCEE/const.Rsun, self.CEE_tolerance_err)
 
-        if merger:
-            if verbose:
+        if verbose:
+            if merger:
                 print("system merges within the CEE")
-        else:
-            if verbose:
+            else:
                 print("system survives CEE, the whole CE is ejected and the "
                       "new orbital separation for the cores is returned")
-
-        # possible change of orbital period after CEE
-        orbital_period_f = cf.orbital_period_from_separation(
-            separation_postCEE / const.Rsun, mc1_i, mc2_i)
 
         # since the binary components' masses do not change, the output
         # separation is just the input separation in different units
         separation_f = separation_postCEE / const.Rsun
 
-        return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
-
-    def CEE_core_not_replaced_noMT(self, donor, mc1_i, rc1_i, 
-                                   donor_type, comp_star, mc2_i, rc2_i, 
-                                   comp_type, double_CE, separation_postCEE,
-                                   verbose=False):
-        """Calculate the post-common-envelope parameters upon exiting a CEE.
-
-        This prescription assumes the he_core_mass/radius (or 
-        co_core_mass/radius for CEE of stripped_He*) staying as preCEE and no 
-        other change in period after succesful ejection at alpha-lambda 
-        prescription.
-
-        Parameters
-        ----------
-        donor : SingleStar object
-            The donor star
-        mc1_i : float
-            core mass of the donor (in Msun)
-        rc1_i : float
-            core radius of the donor (in Rsun)
-        comp_star : SingleStar object
-            The companion star
-        mc2_i : float
-            core mass of the companion (in Msun)
-        rc2_i : float
-            core radius of the companion (in Rsun)
-        separation_postCEE : float
-            binary's separation upon exiting the CEE (in cm)
-        verbose : bool
-            In case we want information about the CEE.
-
-        Returns
-        -------
-        m1c_f: float
-            donor mass after the CE (in Msun)
-        r1c_f: float
-            donor radius after the CE (in Rsun)
-        m2c_f: float
-            companion mass after the CE (in Msun)
-        r2c_f: float
-            companion radius after the CE (in Rsun)
-        separation_f : float
-            binary's final separation upon exiting the CE (in Rsun)
-        orbital_period_f : float
-            binary's final orbital period upon exiting the CE (in days)
-        merger : bool
-            whether the binary merged in the CE
-        """
-
-        # First find the post-CE parameters for each star
-        mc1_f, rc1_f, mc2_f, rc2_f = self.CEE_adjust_post_CE_core_masses(
-            donor, mc1_i, rc1_i, donor_type, comp_star, mc2_i, rc2_i, 
-            comp_type, double_CE, verbose=verbose)
-
-        # Adopt the final orbital period to be the same as the initial period
+        # Calculate the orbital period accordingly
         orbital_period_f = cf.orbital_period_from_separation(
-            separation_postCEE / const.Rsun, mc1_i, mc2_i)
-
-        # Calculate the orbital separation accordingly
-        separation_f = cf.orbital_separation_from_period(orbital_period_f,
-            mc1_f, mc2_f)
-
-        # Check to see if the system has merged
-        merger = cf.check_for_RLO(mc1_f, rc1_f, mc2_f, rc2_f,
-            separation_f, self.CEE_tolerance_err)
-
-        if merger:
-            if verbose:
-                print("system merges within the CEE")
-        else:
-            if verbose:
-                print("system survives CEE, the whole CE is ejected and the "
-                      "new orbital separation for the cores is returned")
+            separation_f, mc1_i, mc2_i)
 
         return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
 
