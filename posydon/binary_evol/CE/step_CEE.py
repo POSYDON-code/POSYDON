@@ -626,6 +626,16 @@ class StepCEE(object):
         merger : bool
             whether the binary merged in the CE
         """
+        if double_CE:
+            Pwarn("A double CE cannot have a stable mass transfer afterwards "
+                  "as both cores are donors, switch to losing the mass as "
+                  "wind.", "ReplaceValueWarning")
+            return self.CEE_core_not_replaced_windloss(donor, mc1_i, rc1_i,
+                                                       donor_type, comp_star,
+                                                       mc2_i, rc2_i, comp_type,
+                                                       double_CE,
+                                                       separation_postCEE,
+                                                       verbose)
         # First find the post-CE parameters for each star
         mc1_f, rc1_f, mc2_f, rc2_f = self.CEE_adjust_post_CE_core_masses(
             donor, mc1_i, rc1_i, donor_type, comp_star, mc2_i, rc2_i,
@@ -636,8 +646,11 @@ class StepCEE(object):
             separation_postCEE / const.Rsun, mc1_i, mc2_i)
 
         # First, check if merger happens before stable MT phase. Note this uses
-        # the 1% core values to calculate the He-core radii, but it uses the 
-        # post-CEE masses
+        # the final core radii as we are beyond the point of radius contraction
+        # (the final radii are a better estimate for the radius after
+        #  contraction) then the post-CEE value. But the masses are taken
+        # post-CEE. Hence, this might not detect all mergers, while not
+        # classifying any surviving binary as merger.
         merger = cf.check_for_RLO(mc1_i, rc1_f, mc2_i, rc2_f,
             separation_postCEE / const.Rsun, self.CEE_tolerance_err)
 
@@ -660,14 +673,6 @@ class StepCEE(object):
             orbital_period_postCEE, Mdon_i=mc1_i, Mdon_f=mc1_f,
             Macc_i=mc2_i, alpha=0.0, beta=1.0)
 
-        # TODO: This seems wrong!
-        if double_CE:
-            # a reverse stable MT assumed to be happening
-            # at the same time
-            orbital_period_f = cf.period_change_stable_MT(
-                orbital_period_f, Mdon_i=mc2_i, Mdon_f=mc2_f,
-                Macc_i=mc1_i, alpha=0.0, beta=1.0)
-
         if verbose:
             print("during the assumed stable MT phase after postCE")
             print("with 'common_envelope_option_after_succ_CEE' :",
@@ -683,11 +688,10 @@ class StepCEE(object):
         merger = cf.check_for_RLO(mc1_f, rc1_f, mc2_f, rc2_f, separation_f, 
             self.CEE_tolerance_err)
 
-        if merger:
-            if verbose:
+        if verbose:
+            if merger:
                 print("system merges within the CEE")
-        else:
-            if verbose:
+            else:
                 print("system survives CEE, the whole CE is ejected and the "
                       "new orbital separation for the cores is returned")
 
@@ -752,9 +756,12 @@ class StepCEE(object):
         orbital_period_postCEE = cf.orbital_period_from_separation(
             separation_postCEE / const.Rsun, mc1_i, mc2_i)
 
-        # First, check if merger happens before stable MT phase. Note this uses
-        # the 1% core values to calculate the He-core radii, but it uses the 
-        # post-CEE masses
+        # First, check if merger happens before wind loss phase. Note this uses
+        # the final core radii as we are beyond the point of radius contraction
+        # (the final radii are a better estimate for the radius after
+        #  contraction) then the post-CEE value. But the masses are taken
+        # post-CEE. Hence, this might not detect all mergers, while not
+        # classifying any surviving binary as merger.
         merger = cf.check_for_RLO(mc1_i, rc1_f, mc2_i, rc2_f,
             separation_postCEE / const.Rsun, self.CEE_tolerance_err)
 
@@ -781,7 +788,7 @@ class StepCEE(object):
             # happening at the same time
             orbital_period_f = cf.period_change_stable_MT(
                 orbital_period_f, Mdon_i=mc2_i, Mdon_f=mc2_f,
-                Macc_i=mc1_i, alpha=1.0, beta=0.0)
+                Macc_i=mc1_f, alpha=1.0, beta=0.0)
         if verbose:
             print("during the assumed windloss phase after postCE")
             print("with 'common_envelope_option_after_succ_CEE' :",
@@ -797,11 +804,10 @@ class StepCEE(object):
         merger = cf.check_for_RLO(mc1_f, rc1_f, mc2_f, rc2_f, separation_f,
             self.CEE_tolerance_err)
 
-        if merger:
-            if verbose:
+        if verbose:
+            if merger:
                 print("system merges within the CEE")
-        else:
-            if verbose:
+            else:
                 print("system survives CEE, the whole CE is ejected and the "
                       "new orbital separation for the cores is returned")
 
@@ -896,7 +902,6 @@ class StepCEE(object):
         state1_i = donor.state
         m2_i = comp_star.mass
         radius2 = 10**comp_star.log_R
-        # he_core_radius1 = donor.he_core_radius
 
         if verbose:
             print("Pre CE")
