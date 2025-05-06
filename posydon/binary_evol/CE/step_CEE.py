@@ -986,13 +986,11 @@ class StepCEE(object):
         if merger:
             # Calculate the amount of mass lost during the merger
             if mass_loss_during_CEE_merged:
-                Pwarn("NOTE:This is legacy code from a previous "
-                      "implementation. It is not currently supported "
-                      "and may lead to unexpected behavior", 
-                      "UnsupportedModelWarning")
                 Mejected_donor, Mejected_comp = \
-                    self.CEE_adjust_mass_loss_during_CEE_merged(donor,
-                        comp_star, double_CE, verbose=verbose)
+                    self.CEE_adjust_mass_loss_during_CEE_merged(donor, m1_i,
+                        mc1_i, rc1_i, comp_star, m2_i, mc2_i, rc2_i,
+                        separation_i, alpha_CE, radius1, radius2, double_CE,
+                        verbose=verbose)
             else:
                 Mejected_donor = 0.0
                 Mejected_comp = 0.0
@@ -1078,14 +1076,15 @@ class StepCEE(object):
             print("binary event : ", binary.event)
             print("double CEE : ", double_CE)
 
-        # TODO: Check this!
-        # Adjust the binary event to CC1/CC2 if star will explode
-        # if state1_i == 'stripped_He_Central_He_depleted':
-        #     if donor == binary.star_1:
-        #         binary.event = 'CC1'
-        #     elif donor == binary.star_2:
-        #         binary.event = 'CC2'
-
+        # If the binary is sufficiently evolved (core helium exhaustion), then
+        # don't sent it to the detached step after successful ejection, but
+        # send the binary directly to the core collapse step to calculate the
+        # explosion
+        if donor.state == 'stripped_He_Central_He_depleted':
+            if donor == binary.star_1:
+                binary.event = 'CC1'
+            elif donor == binary.star_2:
+                binary.event = 'CC2'
 
         # Set binary values that are unchanged in CE step to np.nan
         for key in BINARYPROPERTIES:
@@ -1150,7 +1149,6 @@ class StepCEE(object):
                                         'he_core_mass',
                                         'he_core_radius'
                     ])
-                #TODO: update 'total_mass_h1' and 'total_mass_he4'
             elif star_type == 'CO_core':
                 star.he_core_mass = core_mass
                 star.he_core_radius = core_radius
@@ -1175,14 +1173,12 @@ class StepCEE(object):
                                         'co_core_radius'
 
                     ])
-                #TODO: update 'total_mass_h1' and 'total_mass_he4'
             elif star_type == "not_giant_companion":
                 continue
             else:
                 raise ValueError("Unrecognized star type:", star_type)
 
             # Update state of star
-            # TODO shouldn't stellar states be updated after the parameters are updated?
             state_old = star.state
             star.state = check_state_of_star(star)
             if verbose:
@@ -1213,49 +1209,48 @@ class StepCEE(object):
                 setattr(star, key, np.nan)
         return
 
-    def CEE_adjust_mass_loss_during_CEE_merged(self, donor, comp_star, 
+    def CEE_adjust_mass_loss_during_CEE_merged(self, donor, m1_i, mc1_i, rc1_i,
+                                               comp_star, m2_i, mc2_i, rc2_i,
+                                               separation_i, alpha_CE, radius1,
+                                               radius2,
                                                double_CE, verbose=False):
         """ Calculate the amount of mass lost during a stellar merger in a CEE
 
         The binary's parameters (orbital period, separation, state, etc.) are
         updated along with the donor's (and in the case of a double CE the
         companion's as well) parameters are also updated. Note that certain 
-        parameters are set to np.nan if they are irrelevant for the CE.
+        parameters are set to np.nan if they are irrelevant for the CE. Note
+        that this function only returns non-zero mass-loss values if a profile
+        is available.
 
         Parameters
         ----------
-        binary: BinaryStar object
-            The binary system
         donor : SingleStar object
             The donor star
-        mc1_f : float
-            final core mass of the donor (in Msun)
-        rc1_f : float
-            final core radius of the donor (in Rsun)
-        donor_type : string
-            descriptor for the stellar type of the donor
+        m1_i : float
+            initial mass of the donor (in Msun)
+        mc1_i : float
+            initial core mass of the donor (in Msun)
+        rc1_i : float
+            initial core radius of the donor (in Rsun)
         comp_star : SingleStar object
             The companion star
-        mc2_f : float
-            core mass of the companion (in Msun)
-        rc2_f : float
-            core radius of the companion (in Rsun)
-        comp_type : string
-            descriptor for the stellar type of the companion
+        m2_i : float
+            initial mass of the companion (in Msun)
+        mc2_i : float
+            initial core mass of the companion (in Msun)
+        rc2_i : float
+            initial core radius of the companion (in Rsun)
+        separation_i : float
+            initial separation of the binary (in cm)
+        alpha_CE : float
+            common envelope efficiency parameter (unitless)
+        radius1 : float
+            initial radius of the donor (in Rsun)
+        radius2 : float
+            initial radius of the companion (in Rsun)
         double_CE : bool
             whether the CEE is a double CE or not
-        separation_f : float
-            binary's separation upon exiting the CEE (in Rsun)
-        orbital_period_f : float
-            binary's orbital period upon exiting the CEE (in days)
-        common_envelope_option_after_succ_CEE : string
-            which type of post-common envelope evolution is used to remove
-            the final layers around the helium core
-        core_definition_H_fraction : float
-            the fractional abundance of H defining the He core (0.3, 0.1, or 
-            0.01)
-        core_definition_He_fraction : float
-            the fractional abundance of He defining the CO core (typically 0.1)
         verbose : bool
             In case we want information about the CEE.
         """
@@ -1270,7 +1265,8 @@ class StepCEE(object):
             Mejected_donor = 0.0
             Mejected_comp = 0.0
             Pwarn("mass_loss_during_CEE_merged == True, but no profile found "
-                            "for the donor star. Proceeding with no partial mass ejection.", "ApproximationWarning")
+                  "for the donor star. Proceeding with no partial mass "
+                  "ejection.", "ApproximationWarning")
             if verbose:
                 print("Mejecta_donor = 0 in Msun compared to its initial "
                       "envelope =",  m1_i  - mc1_i)
@@ -1280,9 +1276,9 @@ class StepCEE(object):
         elif double_CE and (donor.profile is None or comp_star.profile is None):
             Mejected_donor = 0.0
             Mejected_comp = 0.0
-            Pwarn("mass_loss_during_CEE_merged == True, but not profile found "
-                            "for the donor or companion star in double_CE. Proceeding with no partial mass ejection.", 
-                            "ApproximationWarning")
+            Pwarn("mass_loss_during_CEE_merged == True, but no profile found "
+                  "for the donor or companion star in double_CE. Proceeding "
+                  "with no partial mass ejection.", "ApproximationWarning")
             if verbose:
                 print("Mejecta_donor = 0 in Msun compared to its initial "
                       "envelope =",  m1_i  - mc1_i)
@@ -1295,60 +1291,78 @@ class StepCEE(object):
         separation_for_inner_RLO1 = rc1_i / cf.roche_lobe_radius(mc1_i, mc2_i, a_orb=1)
         separation_for_inner_RLO2 = rc2_i / cf.roche_lobe_radius(mc2_i, mc1_i, a_orb=1)
 
-        separation_before_merger = max( separation_for_inner_RLO1, separation_for_inner_RLO2 ) * const.Rsun
+        separation_before_merger = max(separation_for_inner_RLO1,
+                                       separation_for_inner_RLO2) * const.Rsun
 
         if verbose:
             print("separation_before_merger (for the calculation of Mejected "
-                  "for the merger): ", separation_before_merger/ const.Rsun, 
+                  "for the merger): ", separation_before_merger/ const.Rsun,
                   "in Rsun")
-            print("which is the max of RLO1 or RLO2 of the inner cores: ", 
-                  separation_for_inner_RLO1 ,  separation_for_inner_RLO2, 
+            print("which is the max of RLO1 or RLO2 of the inner cores: ",
+                  separation_for_inner_RLO1 ,  separation_for_inner_RLO2,
                   "in Rsun")
 
-        E_orb_used_up_to_inner_RLOF = alpha_CE * ( - const.standard_cgrav * m1_i * const.Msun * m2_i * const.Msun/(2. * separation_i) + \
-                    const.standard_cgrav * mc1_i  * const.Msun * mc2_i  * const.Msun/(2. * separation_before_merger) )
+        # Calculate the initial and final orbital energies
+        E_orb_initial = - const.standard_cgrav * m1_i * const.Msun * m2_i * \
+                        const.Msun/(2. * separation_i)
+        E_orb_final = - const.standard_cgrav * mc1_i  * const.Msun * mc2_i * \
+                      const.Msun/(2. * separation_before_merger)
+        E_orb_released_to_inner_RLOF = alpha_CE * (E_orb_initial - E_orb_final)
 
         # We assume "lambda_from_profile_gravitational_plus_internal_minus_recombination"
         if not double_CE:
             Mejected_donor = \
                 calculate_Mejected_for_integrated_binding_energy(donor.profile,
-                    E_orb_used_up_to_inner_RLOF, mc1_i, rc1_i, m1_i, radius1)
+                    E_orb_released_to_inner_RLOF, mc1_i, rc1_i, m1_i, radius1)
 
         else: # in double_CE
 
-            # Assuming that the ratio of orbital energy used for the partial 
-            # ejection of each (common) envelope is the same as the ratio of 
+            # Assuming that the ratio of orbital energy used for the partial
+            # ejection of each (common) envelope is the same as the ratio of
             # the initial envelope masses:
 
-            WF = (m1_i  - mc1_i)/ (m2_i - mc2_i  +  m1_i  - mc1_i) # weight factor for 1:
-                                                # = Mdonor,envelope / Mcomp,envelope
-            Eorb_for_partial_ej_1 = E_orb_used_up_to_inner_RLOF * WF
-            Mejected_donor = calculate_Mejected_for_integrated_binding_energy(donor.profile, Eorb_for_partial_ej_1, mc1_i, rc1_i, m1_i, radius1)
+            M_envelope_donor = m1_i  - mc1_i
+            M_envelope_companion = m2_i - mc2_i
+            weight = M_envelope_donor / (M_envelope_donor + M_envelope_companion)
 
-            Eorb_for_partial_ej_2 = E_orb_used_up_to_inner_RLOF * (1. - WF)
-            Mejected_comp = calculate_Mejected_for_integrated_binding_energy(comp_star.profile, Eorb_for_partial_ej_2, mc2_i, rc2_i, m2_i, radius2)
+            Eorb_for_partial_ej_donor = E_orb_released_to_inner_RLOF * weight
+            Mejected_donor = calculate_Mejected_for_integrated_binding_energy(
+                             donor.profile, Eorb_for_partial_ej_donor, mc1_i,
+                             rc1_i, m1_i, radius1)
 
-        if verbose:
-            print("Mejecta_donor = ", Mejected_donor, "in Msun compared to its initial envelope =",  m1_i  - mc1_i)
-            print("Mejecta_comp = ", Mejected_comp, "in Msun compared to its initial envelope =",  m2_i  - mc2_i)
-        '''
-        if not ( (Mejected_donor <= m1_i  - mc1_i) and (Mejected_comp <= m2_i  - mc2_i) ):
-            raise Exception("Mejected_donor in double CEE with mass_loss_during_CEE_merged is found more than Menvelope")
-        if not (Mejected_donor >= 0.):
-            raise Exception("The root of the equation in double CEE with mass_loss_during_CEE_merged is found negative")
-        '''
-
-        if (Mejected_donor > m1_i  - mc1_i) or (Mejected_comp > m2_i  - mc2_i):
-            Mejected_donor = (m1_i  - mc1_i) -0.01 # at least this value of envelope is left.
-            Mejected_comp = (m2_i  - mc2_i) -0.01
-            Pwarn("M_ejected of at least one star in double CEE is found to be more than the initial envelope. "
-                            "Reducing both to their initial_envelope - 0.01 Msun", "ApproximationWarning")
+            Eorb_for_partial_ej_companion = E_orb_released_to_inner_RLOF * \
+                                    (1.0 - weight)
+            Mejected_comp = calculate_Mejected_for_integrated_binding_energy(
+                            comp_star.profile, Eorb_for_partial_ej_companion,
+                            mc2_i, rc2_i, m2_i, radius2)
 
         if verbose:
-            print("The mass loss during merging_CEE is: ", mass_loss_during_CEE_merged)
-            print("so m1_i , m1_f = ", m1_i, donor.mass)
-            print("so m2_i , m2_f = ", m2_i, comp_star.mass)
+            print("Mejecta_donor = ", Mejected_donor,
+                  "in Msun compared to its initial envelope =",
+                  M_envelope_donor)
+            print("Mejecta_comp = ", Mejected_comp,
+                  "in Msun compared to its initial envelope =",
+                  M_envelope_companion)
 
+        # Make sure that we are not removing more mass than the envelope has available
+        if Mejected_donor > M_envelope_donor:
+            Mejected_donor = M_envelope_donor - 0.01 # at least this value of envelope is left.
+            Pwarn("M_ejected of the donor is found to be more than its initial "
+                  "envelope. Reducing its mass loss to have a remaining "
+                  "envelope of 0.01 Msun", "ApproximationWarning")
+
+        if Mejected_comp > M_envelope_companion:
+            Mejected_comp = M_envelope_companion - 0.01
+            Pwarn("M_ejected of the companion is found to be more than its "
+                  "initial envelope. Reducing its mass loss to have a "
+                  "remaining envelope of 0.01 Msun", "ApproximationWarning")
+
+        if verbose:
+            print("In calculation for mass loss during merging_CEE")
+            print("Initial donor mass = ", m1_i,
+                  "Mass lost by donor = ", Mejected_donor)
+            print("Initial companion mass = ", m2_i,
+                  "Mass lost by companion = ", Mejected_comp)
 
         return Mejected_donor, Mejected_comp
 
@@ -1391,8 +1405,6 @@ class StepCEE(object):
         if verbose:
             print("system merges due to one of the two star's core filling"
                     "its RL")
-            # print("Rdonor core vs RLdonor core = ", core_radius1, RL1)
-            # print("Rcompanion vs RLcompanion= ", rc2_i, RL2)
 
         donor.mass = m1_i - Mejected_donor
         donor.log_R = np.nan
