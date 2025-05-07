@@ -401,11 +401,7 @@ class BinaryStar:
                 for i, col in enumerate(data_to_save):
 
                     dkey = all_keys[i]
-                    try:
-                        dtype = properties_dtypes[dkey]
-                    except KeyError:
-                        dtype = ''
-                        pass
+                    dtype = properties_dtypes.get(dkey, '')
 
                     # check type of data and determine what to fill data column with
                     if dtype == 'string':
