@@ -413,12 +413,7 @@ class BinaryStar:
                         # get the max length that data elements have
                         ele_lengths = [len(x) for x in col]
                         max_ele_length = np.max(ele_lengths)
-
-                        try:
-                            sub_dtype = OBJECT_FIXED_SUB_DTYPES[dkey]
-                        except KeyError:
-                            sub_type = ''
-                            pass
+                        sub_dtype = OBJECT_FIXED_SUB_DTYPES.get(dkey, '')
 
                         # array of strings
                         if sub_dtype == 'string':
