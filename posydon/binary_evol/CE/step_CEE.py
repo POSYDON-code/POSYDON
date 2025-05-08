@@ -1254,9 +1254,7 @@ class StepCEE(object):
         """
         # we calculate the ejected mass from part of the common envelope, using
         # a_f = separation_postCEE so that one of the cores (or MS star) is 
-        # filling its inner Roche lobe, and assuming that 
-        # lambda(Menvelope) ~ lamda(Mejected) 
-        # although Mejected < Menvelope (e.g. see Fig1 of Dewi+Tauris2000)
+        # filling its inner Roche lobe
 
         # First, make sure we have information to calculate ejected mass
         if not double_CE and donor.profile is None:
