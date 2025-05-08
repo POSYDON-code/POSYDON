@@ -108,7 +108,9 @@ class TestFunctions:
             totest.generate_orbital_separations(orbital_separation_scheme='test')
         # examples
         tests_normal = [(0.,1.0,42,approx(39.83711402835139,abs=6e-12)),
-                        (1.0,10.,42,approx(9799.179319004135,abs=6e-12))]
+                        (1.0,10.,42,approx(9799.179319004,abs=6e-9))]
+        # larger allowance for second test because of slightly different results between 
+        # running pytest locally vs github actions workflow
         for (m,s,r,sep) in tests_normal:
             assert totest.generate_orbital_separations(orbital_separation_scheme='log_normal',
                                                 log_orbital_separation_mean=m,
