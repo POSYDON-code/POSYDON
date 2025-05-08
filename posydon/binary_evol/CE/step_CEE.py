@@ -569,10 +569,11 @@ class StepCEE(object):
         separation_f = separation_postCEE / const.Rsun
 
         # Calculate the orbital period accordingly
-        orbital_period_f = cf.orbital_period_from_separation(
-            separation_f, mc1_i, mc2_i)
+        orbital_period_f = cf.orbital_period_from_separation(separation_f,
+                                                             mc1_i, mc2_i)
 
-        return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
+        return (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
+                merger)
 
     def CEE_core_not_replaced_stableMT(self, donor, mc1_i, rc1_i, 
                                        donor_type, comp_star, mc2_i, rc2_i, 
@@ -580,49 +581,49 @@ class StepCEE(object):
                                        separation_postCEE, verbose=False):
         """Calculate the post-common-envelope parameters upon exiting a CEE.
 
-        This prescription assumes the he_core_mass/radius (or 
-        co_core_mass/radius for CEE of stripped_He*) stays as preCEE and after 
-        a succesful ejection using the alpha-lambda prescription, we assume an 
-        instantaneous stableMT phase (non-conservative, with mass lost from 
-        accretor) from the donor (or from donor and simultaneously the accretor
-        at double_CE), taking away the extra "core" mass as defined by the core
-        boundary used for CEE (based on core_definition_H/He_fraction).
+        This prescription assumes the he_core_mass/radius (or
+        co_core_mass/radius for CEE of stripped_He*) becomes the value
+        determined by MESA pre CEE. It stripes the envelope between the core
+        defined by the core_definition_H/He_fraction and the MESA core by
+        assuming an instantaneous stable MT phase (non-conservative, with mass
+        lost from the accretor) after the successful ejection of the outer
+        envelope part lost during the fast CE phase.
 
         Parameters
         ----------
         donor : SingleStar object
             The donor star
         mc1_i : float
-            core mass of the donor (in Msun)
+            Core mass of the donor after the fast CE phase (in Msun)
         rc1_i : float
-            core radius of the donor (in Rsun)
+            Core radius of the donor after the fast CE phase (in Rsun)
         comp_star : SingleStar object
             The companion star
         mc2_i : float
-            core mass of the companion (in Msun)
+            Core mass of the companion after the fast CE phase (in Msun)
         rc2_i : float
-            core radius of the companion (in Rsun)
+            Core radius of the companion after the fast CE phase (in Rsun)
         separation_postCEE : float
-            binary's separation upon exiting the CEE (in cm)
+            Binary's separation after the fast CE phase (in cm)
         verbose : bool
             In case we want information about the CEE.
 
         Returns
         -------
         m1c_f: float
-            donor mass after the CE (in Msun)
+            Donor mass after the complete CE (in Msun)
         r1c_f: float
-            donor radius after the CE (in Rsun)
+            Donor radius after the complete CE (in Rsun)
         m2c_f: float
-            companion mass after the CE (in Msun)
+            Companion mass after the complete CE (in Msun)
         r2c_f: float
-            companion radius after the CE (in Rsun)
+            Companion radius after the complete CE (in Rsun)
         separation_f : float
-            binary's final separation upon exiting the CE (in Rsun)
+            Binary's final separation upon exiting the CE (in Rsun)
         orbital_period_f : float
-            binary's final orbital period upon exiting the CE (in days)
+            Binary's final orbital period upon exiting the CE (in days)
         merger : bool
-            whether the binary merged in the CE
+            Whether the binary merged in the CE
         """
         if double_CE:
             Pwarn("A double CE cannot have a stable mass transfer afterwards "
@@ -673,8 +674,6 @@ class StepCEE(object):
 
         if verbose:
             print("during the assumed stable MT phase after postCE")
-            print("with 'common_envelope_option_after_succ_CEE' :",
-                "core_not_replaced_stableMT")
             print("the orbit changed from postCEE : ", orbital_period_postCEE)
             print("to : ", orbital_period_f)
 
@@ -691,9 +690,10 @@ class StepCEE(object):
                 print("system merges within the CEE")
             else:
                 print("system survives CEE, the whole CE is ejected and the "
-                      "new orbital separation for the cores is returned")
+                      "orbit is adopted according to the stable MT")
 
-        return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
+        return (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
+                merger)
 
     def CEE_core_not_replaced_windloss(self, donor, mc1_i, rc1_i,
                                        donor_type, comp_star, mc2_i, rc2_i,
@@ -701,49 +701,49 @@ class StepCEE(object):
                                        separation_postCEE, verbose=False):
         """Calculate the post-common-envelope parameters upon exiting a CEE.
 
-        This prescription assumes the he_core_mass/radius (or 
-        co_core_mass/radius for CEE of stripped_He*) staying as preCEE and 
-        after succesful ejection at alpha-lambda prescription, we assume a 
-        instantaneous windloss phase from the donor (or from donor and 
-        simultaneously the accretor at double_CE), taking away the extra 
-        "core" mass as defined by the core boundary used for CEE (based on
-        core_definition_H/He_fraction).
+        This prescription assumes the he_core_mass/radius (or
+        co_core_mass/radius for CEE of stripped_He*) becomes the value
+        determined by MESA pre CEE. It stripes the envelope between the core
+        defined by the core_definition_H/He_fraction and the MESA core by
+        assuming an instantaneous wind loss phase from the donor (or both
+        components in case of a double CE) after the successful ejection of the
+        outer envelope part lost during the fast CE phase.
 
         Parameters
         ----------
         donor : SingleStar object
             The donor star
         mc1_i : float
-            core mass of the donor (in Msun)
+            Core mass of the donor after the fast CE phase (in Msun)
         rc1_i : float
-            core radius of the donor (in Rsun)
+            Core radius of the donor after the fast CE phase (in Rsun)
         comp_star : SingleStar object
             The companion star
         mc2_i : float
-            core mass of the companion (in Msun)
+            Core mass of the companion after the fast CE phase (in Msun)
         rc2_i : float
-            core radius of the companion (in Rsun)
+            Core radius of the companion after the fast CE phase (in Rsun)
         separation_postCEE : float
-            binary's separation upon exiting the CEE (in cm)
+            Binary's separation after the fast CE phase (in cm)
         verbose : bool
             In case we want information about the CEE.
 
         Returns
         -------
         m1c_f: float
-            donor mass after the CE (in Msun)
+            Donor mass after the complete CE (in Msun)
         r1c_f: float
-            donor radius after the CE (in Rsun)
+            Donor radius after the complete CE (in Rsun)
         m2c_f: float
-            companion mass after the CE (in Msun)
+            Companion mass after the complete CE (in Msun)
         r2c_f: float
-            companion radius after the CE (in Rsun)
+            Companion radius after the complete CE (in Rsun)
         separation_f : float
-            binary's final separation upon exiting the CE (in Rsun)
+            Binary's final separation upon exiting the CE (in Rsun)
         orbital_period_f : float
-            binary's final orbital period upon exiting the CE (in days)
+            Binary's final orbital period upon exiting the CE (in days)
         merger : bool
-            whether the binary merged in the CE
+            Whether the binary merged in the CE
         """
         # First find the post-CE parameters for each star
         mc1_f, rc1_f, mc2_f, rc2_f = self.CEE_adjust_post_CE_core_masses(
@@ -765,7 +765,7 @@ class StepCEE(object):
 
         if merger:
             if verbose:
-                print("system merges within the CEE, prior to stable MT")
+                print("system merges within the CEE, prior to wind loss")
             return mc1_i, rc1_f, mc2_i, rc2_f, \
                 separation_postCEE / const.Rsun, orbital_period_postCEE, merger
         else:
@@ -789,8 +789,6 @@ class StepCEE(object):
                 Macc_i=mc1_f, alpha=1.0, beta=0.0)
         if verbose:
             print("during the assumed windloss phase after postCE")
-            print("with 'common_envelope_option_after_succ_CEE' :",
-                "core_not_replaced_windloss")
             print("the orbit changed from postCEE : ", orbital_period_postCEE)
             print("to : ", orbital_period_f)
 
