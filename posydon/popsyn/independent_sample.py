@@ -164,10 +164,6 @@ def generate_orbital_separations(number_of_binaries=1,
             high=np.log10(orbital_separation_max),
             size=number_of_binaries)
 
-    if orbital_separation_max < orbital_separation_min:
-        raise ValueError("`orbital_separation_max` must be "
-                         "larger than the orbital_separation_min.")
-
     elif orbital_separation_scheme == 'log_normal':
         if (log_orbital_separation_mean is None
                 or log_orbital_separation_sigma is None):
