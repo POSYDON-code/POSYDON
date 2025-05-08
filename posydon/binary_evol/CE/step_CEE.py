@@ -1088,7 +1088,7 @@ class StepCEE(object):
             elif donor == binary.star_2:
                 binary.event = 'CC2'
 
-        # Set binary values that are unchanged in CE step to np.nan
+        # Set binary values that are not set in CE step to np.nan
         for key in BINARYPROPERTIES:
 
             # the binary attributes that are changed in the CE step
@@ -1218,43 +1218,47 @@ class StepCEE(object):
                                                double_CE, verbose=False):
         """ Calculate the amount of mass lost during a stellar merger in a CEE
 
-        The binary's parameters (orbital period, separation, state, etc.) are
-        updated along with the donor's (and in the case of a double CE the
-        companion's as well) parameters are also updated. Note that certain 
-        parameters are set to np.nan if they are irrelevant for the CE. Note
-        that this function only returns non-zero mass-loss values if a profile
-        is available.
+        From the stellar profiles the mass ejected until merger is calculated.
+        Note that this function only returns non-zero mass-loss values if a
+        profile is available.
 
         Parameters
         ----------
         donor : SingleStar object
             The donor star
         m1_i : float
-            initial mass of the donor (in Msun)
+            Initial mass of the donor (in Msun)
         mc1_i : float
-            initial core mass of the donor (in Msun)
+            Initial core mass of the donor (in Msun)
         rc1_i : float
-            initial core radius of the donor (in Rsun)
+            Initial core radius of the donor (in Rsun)
         comp_star : SingleStar object
             The companion star
         m2_i : float
-            initial mass of the companion (in Msun)
+            Initial mass of the companion (in Msun)
         mc2_i : float
-            initial core mass of the companion (in Msun)
+            Initial core mass of the companion (in Msun)
         rc2_i : float
-            initial core radius of the companion (in Rsun)
+            Initial core radius of the companion (in Rsun)
         separation_i : float
-            initial separation of the binary (in cm)
+            Initial separation of the binary (in cm)
         alpha_CE : float
-            common envelope efficiency parameter (unitless)
+            Common envelope efficiency parameter (unitless)
         radius1 : float
-            initial radius of the donor (in Rsun)
+            Initial radius of the donor (in Rsun)
         radius2 : float
-            initial radius of the companion (in Rsun)
+            Initial radius of the companion (in Rsun)
         double_CE : bool
-            whether the CEE is a double CE or not
+            Whether the CEE is a double CE or not
         verbose : bool
             In case we want information about the CEE.
+
+        Returns
+        -------
+        Mejected_donor : float
+            Mass ejected from the donor (in Msun)
+        Mejected_comp : float
+            Mass ejected from the companion (in Msun)
         """
         # we calculate the ejected mass from part of the common envelope, using
         # a_f = separation_postCEE so that one of the cores (or MS star) is 
@@ -1345,8 +1349,9 @@ class StepCEE(object):
                   M_envelope_companion)
 
         # Make sure that we are not removing more mass than the envelope has available
+        # If there is more removed keep 0.01 Msun
         if Mejected_donor > M_envelope_donor:
-            Mejected_donor = M_envelope_donor - 0.01 # at least this value of envelope is left.
+            Mejected_donor = M_envelope_donor - 0.01
             Pwarn("M_ejected of the donor is found to be more than its initial "
                   "envelope. Reducing its mass loss to have a remaining "
                   "envelope of 0.01 Msun", "ApproximationWarning")
