@@ -393,7 +393,7 @@ class TableData:
                     converted_val = float(
                         val
                     )  # if fails -> straight to except (skips next line)
-                    if math.isnan(converted_val):
+                    if pd.isna(converted_val):
                         bad_cols.append(col_num)
                     else:
                         cols_with_float.append(col_num)

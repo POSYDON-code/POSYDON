@@ -289,7 +289,7 @@ def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
     detectable_weights = z_weights_chunk.to_numpy()
     for i in tqdm(range(z_events_chunk.shape[1]), total=z_events_chunk.shape[1], disable= not verbose):
         data_slice['z'] = z_events_chunk.iloc[:,i]
-        mask = ~np.isnan(data_slice['z']).to_numpy()
+        mask = pd.notna(data_slice['z']).to_numpy()
         if np.sum(mask) == 0:
             detectable_weights[mask, i] = 0.0
         else:
