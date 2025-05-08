@@ -23,7 +23,8 @@ class TestElements:
     def test_dir(self):
         elements = ['get_GRB_properties','__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
-                    '__loader__', '__name__', '__package__', '__spec__']
+                    '__loader__', '__name__', '__package__', '__spec__',
+                    'Pwarn','Msun','clight','np']
         assert dir(totest) == elements, "There might be added or removed "\
                                         + "objects without an update on the "\
                                         + "unit test."
