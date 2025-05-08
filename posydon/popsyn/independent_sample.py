@@ -401,7 +401,7 @@ def binary_fraction_value(binary_fraction_const=1,
         elif m1 > 16:
             binary_fraction = 0.94
         else: 
-            raise ValueError(f'There primary mass provided {m1} is not supported by the Moe_17 scheme.')
+            raise ValueError(f'The primary mass provided {m1} is not supported by the Moe_17 scheme.')
     else: 
         pass
     return binary_fraction
