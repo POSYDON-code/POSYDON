@@ -63,7 +63,7 @@ class TestFunctions:
         tests = [("separation",42,approx(4993.10633835,abs=6e-12)),
                  ("period",12,approx(200.82071794,abs=6e-12))]
         for (s,r,o) in tests:
-            orb,ecc,m1,m2 = totest.generate_independent_samples(orbital_scheme="separation",
+            orb,ecc,m1,m2 = totest.generate_independent_samples(orbital_scheme=s,
                                                                 RNG = np.random.default_rng(seed=42))
             assert orb[0] == o
             assert ecc[0] == 0.87974772
