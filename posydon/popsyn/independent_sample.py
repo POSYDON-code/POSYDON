@@ -262,6 +262,9 @@ def generate_primary_masses(number_of_binaries=1,
 
     """
     RNG = kwargs.get('RNG', np.random.default_rng())
+    
+    if primary_mass_max < primary_mass_min:
+        raise ValueError("primary_mass_max must be larger than primary_mass_min.")
 
     primary_mass_scheme_options = ['Salpeter', 'Kroupa1993', 'Kroupa2001']
 
@@ -330,6 +333,9 @@ def generate_secondary_masses(primary_masses,
 
     """
     RNG = kwargs.get('RNG', np.random.default_rng())
+    
+    if secondary_mass_max < secondary_mass_min:
+        raise ValueError("secondary_mass_max must be larger than secondary_mass_min.")
 
     secondary_mass_scheme_options = ['flat_mass_ratio', 'q=1']
 

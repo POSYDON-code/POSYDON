@@ -140,6 +140,8 @@ class TestFunctions:
         # bad input
         with raises(TypeError, match="expected a sequence of integers or a single integer"):
             totest.generate_primary_masses(number_of_binaries=1.)
+        with raises(ValueError, match="primary_mass_max must be larger than primary_mass_min."):
+            totest.generate_primary_masses(primary_mass_min=100.,primary_mass_max=10.)
         with raises(ValueError, match="You must provide an allowed primary mass scheme."):
             totest.generate_primary_masses(primary_mass_scheme='test')
         # examples
@@ -160,6 +162,10 @@ class TestFunctions:
         with raises(TypeError, match="expected a sequence of integers or a single integer"):
             totest.generate_secondary_masses(primary_masses=np.array([10.]),
                                              number_of_binaries=1.)
+        with raises(ValueError, match="secondary_mass_max must be larger than secondary_mass_min"):
+            totest.generate_secondary_masses(primary_masses=np.array([100.]),
+                                              secondary_mass_min=10.,
+                                              secondary_mass_max=1.)
         with raises(ValueError, match="`secondary_mass_min` is larger than some primary masses"):
             totest.generate_secondary_masses(primary_masses=np.array([1.]),
                                               secondary_mass_min=10.,
