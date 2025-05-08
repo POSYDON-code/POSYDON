@@ -805,9 +805,10 @@ class StepCEE(object):
                 print("system merges within the CEE")
             else:
                 print("system survives CEE, the whole CE is ejected and the "
-                      "new orbital separation for the cores is returned")
+                      "orbit is adopted according to the wind mass loss")
 
-        return mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger
+        return (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
+                merger)
 
     def CEE_simple_alpha_prescription(
             self, binary, donor, comp_star, lambda1_CE, mc1_i, rc1_i,
@@ -951,31 +952,36 @@ class StepCEE(object):
 
         # Calculate the post-CE binary properties
         if common_envelope_option_after_succ_CEE == "CEE_core_replaced_noMT":
-            mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
-                    = self.CEE_core_replaced_noMT(donor, mc1_i, rc1_i, comp_star,
-                                             mc2_i, rc2_i, separation_postCEE,
-                                             verbose)
-        elif common_envelope_option_after_succ_CEE == "CEE_core_not_replaced_stableMT":
-            mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
-                    = self.CEE_core_not_replaced_stableMT(donor, mc1_i, rc1_i,
-                                                     donor_type, comp_star,
-                                                     mc2_i, rc2_i, comp_type,
-                                                     double_CE,
-                                                     separation_postCEE,
-                                                     verbose)
-        elif common_envelope_option_after_succ_CEE == "CEE_core_not_replaced_windloss":
-            mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f, merger \
-                    = self.CEE_core_not_replaced_windloss(donor, mc1_i, rc1_i,
-                                                     donor_type, comp_star,
-                                                     mc2_i, rc2_i, comp_type,
-                                                     double_CE,
-                                                     separation_postCEE,
-                                                     verbose)
+            (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
+             merger) = self.CEE_core_replaced_noMT(donor, mc1_i, rc1_i,
+                                                   comp_star, mc2_i, rc2_i,
+                                                   separation_postCEE,
+                                                   verbose=verbose)
+        elif (common_envelope_option_after_succ_CEE
+              == "CEE_core_not_replaced_stableMT"):
+            (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
+             merger) = self.CEE_core_not_replaced_stableMT(donor, mc1_i, rc1_i,
+                                                           donor_type,
+                                                           comp_star, mc2_i,
+                                                           rc2_i, comp_type,
+                                                           double_CE,
+                                                           separation_postCEE,
+                                                           verbose=verbose)
+        elif (common_envelope_option_after_succ_CEE
+              == "CEE_core_not_replaced_windloss"):
+            (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
+             merger) = self.CEE_core_not_replaced_windloss(donor, mc1_i, rc1_i,
+                                                           donor_type,
+                                                           comp_star, mc2_i,
+                                                           rc2_i, comp_type,
+                                                           double_CE,
+                                                           separation_postCEE,
+                                                           verbose=verbose)
         else:
-            raise ValueError(
-                "Not accepted option in common_envelope_option_after_succ_"
-                "CEE = {}, dont know how to proceed".
-                format(common_envelope_option_after_succ_CEE))
+            raise ValueError("Not accepted option in "
+                             "common_envelope_option_after_succ_CEE = "
+                             f"{common_envelope_option_after_succ_CEE}, do "
+                             "not know how to proceed")
 
         # Adjust stellar and binary parameters depending on whether the system
         # mergers in the CE or not
@@ -1019,8 +1025,8 @@ class StepCEE(object):
 
         The binary's parameters (orbital period, separation, state, etc.) are
         updated along with the donor's (and in the case of a double CE the
-        companion's as well) parameters are also updated. Note that certain 
-        parameters are set to np.nan if they are irrelevant for the CE.
+        companion's) parameters as well. Note that certain parameters are set
+        to np.nan if they are undetermined after the CE.
 
         Parameters
         ----------
@@ -1029,33 +1035,33 @@ class StepCEE(object):
         donor : SingleStar object
             The donor star
         mc1_f : float
-            final core mass of the donor (in Msun)
+            Final core mass of the donor (in Msun)
         rc1_f : float
-            final core radius of the donor (in Rsun)
+            Final core radius of the donor (in Rsun)
         donor_type : string
-            descriptor for the stellar type of the donor
+            Descriptor for the stellar type of the donor's core
         comp_star : SingleStar object
             The companion star
         mc2_f : float
-            core mass of the companion (in Msun)
+            Final core mass of the companion (in Msun)
         rc2_f : float
-            core radius of the companion (in Rsun)
+            Final core radius of the companion (in Rsun)
         comp_type : string
-            descriptor for the stellar type of the companion
+            Descriptor for the stellar type of the companion or it's core
         double_CE : bool
-            whether the CEE is a double CE or not
+            Whether the CEE is a double CE or not
         separation_f : float
-            binary's separation upon exiting the CEE (in Rsun)
+            Final binary separation upon exiting the CEE (in Rsun)
         orbital_period_f : float
-            binary's orbital period upon exiting the CEE (in days)
+            Final orbital period upon exiting the CEE (in days)
         common_envelope_option_after_succ_CEE : string
-            which type of post-common envelope evolution is used to remove
-            the final layers around the helium core
+            Which type of post-common envelope evolution is used to remove
+            the final layers around the core
         core_definition_H_fraction : float
-            the fractional abundance of H defining the He core (0.3, 0.1, or 
+            The fractional abundance of H defining the He core (0.3, 0.1, or 
             0.01)
         core_definition_He_fraction : float
-            the fractional abundance of He defining the CO core (typically 0.1)
+            The fractional abundance of He defining the CO core (typically 0.1)
         verbose : bool
             In case we want information about the CEE.
         """
