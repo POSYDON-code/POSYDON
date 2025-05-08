@@ -361,7 +361,7 @@ If the energy budget is less than the binding energy, the system is merged.
       * ``0.01``
       * ``0.1``
       * ``0.3``
-    - ``0.1``
+    - ``0.3``
 
   * - ``core_definition_He_fraction``
     - | The helium fraction for defining the core.
@@ -374,10 +374,10 @@ If the energy budget is less than the binding energy, the system is merged.
   * - ``common_envelope_option_after_succ_CEE``
     - | The option for handling the system after a successful common envelope ejection.
      
-      * ``'core_replaced_noMT'`` : core replaced, no mass transfer
-      * ``'core_not_replaced_stableMT'`` : core not replaced, stable mass transfer
-      * ``'core_not_replaced_windloss'`` : core not replaced, wind loss
-    - ``'core_not_replaced_stableMT'``
+      * ``'one_phase_variable_core_definition'`` : core replaced, no mass transfer
+      * ``'two_phases_stableMT'`` : core not replaced, stable mass transfer
+      * ``'two_phases_windloss'`` : core not replaced, wind loss
+    - ``'two_phases_stableMT'``
 
   * - ``verbose``
     - | Enables verbose mode.

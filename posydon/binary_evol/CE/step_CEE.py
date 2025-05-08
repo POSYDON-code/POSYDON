@@ -1072,12 +1072,6 @@ class StepCEE(object):
         binary.state = 'detached'
         binary.event = None
 
-        if verbose:
-            print("CEE succesfully ejected")
-            print("new orbital period = ", binary.orbital_period)
-            print("binary event : ", binary.event)
-            print("double CEE : ", double_CE)
-
         # If the binary is sufficiently evolved (core helium exhaustion), then
         # don't sent it to the detached step after successful ejection, but
         # send the binary directly to the core collapse step to calculate the
@@ -1087,6 +1081,13 @@ class StepCEE(object):
                 binary.event = 'CC1'
             elif donor == binary.star_2:
                 binary.event = 'CC2'
+
+        if verbose:
+            print("CEE succesfully ejected")
+            print("new orbital period = ", binary.orbital_period)
+            print("new orbital separation = ", binary.separation)
+            print("binary event : ", binary.event)
+            print("double CEE : ", double_CE)
 
         # Set binary values that are not set in CE step to np.nan
         for key in BINARYPROPERTIES:

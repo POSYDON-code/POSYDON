@@ -562,20 +562,25 @@ class TestFunctions:
 
     def test_check_for_RLO(self):
         # missing argument
-        with raises(TypeError, match="missing 6 required positional "\
+        with raises(TypeError, match="missing 5 required positional "\
                                      +"arguments: 'm1', 'r1', 'm2', 'r2', "\
-                                     +"'separation', and 'tolerance'"):
+                                     +"and 'separation'"):
             totest.check_for_RLO()
 
         # examples
         tests = [(1.0, 1.0, 1.0, 1.0, 1.0, 1e-3, True),
                  (2.0, 1.0, 1.0, 1.0, 2.5, 1e-3, True),
                  (1.0, 1.0, 2.0, 1.0, 2.5, 1e-3, True),
-                 (1.0, 1.0, 1.0, 1.0, 4.0, 1e-3, False)]
+                 (1.0, 1.0, 1.0, 1.0, 4.0, 1e-3, False),
+                 (1.0, 1.0, 2.0, 1.0, 2.5, 1e-8, True)]
 
         for (m1, r1, m2, r2, separation, tolerance, RLO) in tests:
-            assert totest.check_for_RLO(m1, r1, m2, r2, separation,\
-                                        tolerance) == RLO
+            if tolerance == 1e-8:
+                assert totest.check_for_RLO(m1, r1, m2, r2, separation) == RLO
+            else:
+                assert totest.check_for_RLO(m1, r1, m2, r2, separation,\
+                                            tolerance) == RLO
+                
 
     def test_orbital_separation_from_period(self):
         # missing argument
