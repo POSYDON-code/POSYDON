@@ -267,7 +267,7 @@ def roche_lobe_radius(m1, m2, a_orb=1):
     )
     return RL
 
-def check_for_RLO(m1, r1, m2, r2, separation, tolerance):
+def check_for_RLO(m1, r1, m2, r2, separation, tolerance=1e-8):
     """Check if either star in a binary is overfilling its Roche lobe.
 
     It uses roche_lobe_radius and the binary separation to determine if either
