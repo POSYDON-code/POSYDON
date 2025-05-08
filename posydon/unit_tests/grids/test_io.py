@@ -221,7 +221,7 @@ class TestFunctions:
         assert totest.initial_values_from_dirname("./v2/"\
                +"initial_z_1.0_m1_2.1_m2_2.2_initial_period_in_days_2.0") ==\
                ('2.1', '2.2', '2.0', '1.0')
-        # examples: 
+        # examples: binary v2 with eccentricity
         assert totest.initial_values_from_dirname(\
                "initial_z_1.0_m1_2.1_m2_2.2_initial_period_in_days_2.0_initial_eccentricity_0.5") ==\
                 ('2.1', '2.2', '2.0', '1.0', '0.5')
