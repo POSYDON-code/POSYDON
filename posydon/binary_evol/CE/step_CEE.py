@@ -444,7 +444,7 @@ class StepCEE(object):
         if donor_type == 'He_core':
             mc1_f = donor.he_core_mass
             rc1_f = donor.he_core_radius
-        elif donor_type == "CO_core":
+        elif donor_type == 'CO_core':
             mc1_f = donor.co_core_mass
             rc1_f = donor.co_core_radius
         else:
@@ -464,10 +464,10 @@ class StepCEE(object):
             if comp_type == 'He_core':
                 mc2_f = comp_star.he_core_mass
                 rc2_f = donor.he_core_radius
-            elif comp_type == "CO_core":
+            elif comp_type == 'CO_core':
                 mc2_f = comp_star.co_core_mass
                 rc2_f = donor.co_core_radius
-            elif comp_type == "not_giant_companion":
+            elif comp_type == 'not_giant_companion':
                 mc2_f = comp_star.mass
                 rc2_f = 10.**(comp_star.log_R)
             else:
