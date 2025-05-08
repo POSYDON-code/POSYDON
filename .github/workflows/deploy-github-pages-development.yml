@@ -55,6 +55,11 @@ jobs:
         MESA_DIR: ./
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        # make the output folder
+        output_folder=$GITHUB_WORKSPACE/_build/
+        echo "Output folder: $output_folder"
+        mkdir -p $output_folder
+
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
         cd $PATH_TO_POSYDON
         
@@ -72,7 +77,7 @@ jobs:
         touch _build/html/.nojekyll
         cd ../
         mkdir -p _build
-        mv docs/_build/html/ _build/development
+        mv docs/_build/html/ $output_folder/development
 
     - name: Deploy to GitHub Pages
       if: success()
@@ -80,7 +85,7 @@ jobs:
       with:
         target_branch: gh-pages
         build_dir: _build/
-        history: true
+        keep_history: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_WORKSPACE: ${{ github.workspace }}
