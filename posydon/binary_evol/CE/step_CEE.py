@@ -52,15 +52,15 @@ MODEL = {"prescription": 'alpha-lambda',
          "common_envelope_option_for_lambda": 'lambda_from_grid_final_values',
          "common_envelope_option_for_HG_star": "optimistic",
          "common_envelope_alpha_thermal": 1.0,
-         "core_definition_H_fraction": 0.1,     # with 0.01 no CE BBHs
+         "core_definition_H_fraction": 0.3,     # with 0.01 no CE BBHs
          "core_definition_He_fraction": 0.1,
          "CEE_tolerance_err": 0.001,
          "verbose": False,
-         "common_envelope_option_after_succ_CEE": 'core_not_replaced_stableMT',
+         "common_envelope_option_after_succ_CEE": 'two_phases_stableMT',
          "mass_loss_during_CEE_merged": False # If False, then no mass loss from this step for a merged star
                                               # If True, then we remove mass according to the alpha-lambda prescription
                                               # assuming a final separation where the inner core RLOF starts.
-         # "core_replaced_noMT" for core_definition_H_fraction=0.01
+         # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
 
          }
 
@@ -493,8 +493,10 @@ class StepCEE(object):
 
         return mc1_f, rc1_f, mc2_f, rc2_f
 
-    def CEE_core_replaced_noMT(self, donor, mc1_i, rc1_i, comp_star, mc2_i, 
-                               rc2_i, separation_postCEE, verbose=False):
+    def CEE_one_phase_variable_core_definition(self, donor, mc1_i, rc1_i,
+                                               comp_star, mc2_i, rc2_i,
+                                               separation_postCEE,
+                                               verbose=False):
         """Calculate the post-common-envelope parameters upon exiting a CEE.
 
         This prescription assumes the he_core_mass/radius (or
@@ -575,10 +577,9 @@ class StepCEE(object):
         return (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
                 merger)
 
-    def CEE_core_not_replaced_stableMT(self, donor, mc1_i, rc1_i, 
-                                       donor_type, comp_star, mc2_i, rc2_i, 
-                                       comp_type, double_CE, 
-                                       separation_postCEE, verbose=False):
+    def CEE_two_phases_stableMT(self, donor, mc1_i, rc1_i, donor_type,
+                                comp_star, mc2_i, rc2_i, comp_type, double_CE,
+                                separation_postCEE, verbose=False):
         """Calculate the post-common-envelope parameters upon exiting a CEE.
 
         This prescription assumes the he_core_mass/radius (or
@@ -629,12 +630,10 @@ class StepCEE(object):
             Pwarn("A double CE cannot have a stable mass transfer afterwards "
                   "as both cores are donors, switch to losing the mass as "
                   "wind.", "ReplaceValueWarning")
-            return self.CEE_core_not_replaced_windloss(donor, mc1_i, rc1_i,
-                                                       donor_type, comp_star,
-                                                       mc2_i, rc2_i, comp_type,
-                                                       double_CE,
-                                                       separation_postCEE,
-                                                       verbose)
+            return self.CEE_two_phases_windloss(donor, mc1_i, rc1_i, 
+                                                donor_type, comp_star, mc2_i, 
+                                                rc2_i, comp_type, double_CE,
+                                                separation_postCEE, verbose)
         # First find the post-CE parameters for each star
         mc1_f, rc1_f, mc2_f, rc2_f = self.CEE_adjust_post_CE_core_masses(
             donor, mc1_i, rc1_i, donor_type, comp_star, mc2_i, rc2_i,
@@ -695,10 +694,9 @@ class StepCEE(object):
         return (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
                 merger)
 
-    def CEE_core_not_replaced_windloss(self, donor, mc1_i, rc1_i,
-                                       donor_type, comp_star, mc2_i, rc2_i,
-                                       comp_type, double_CE,
-                                       separation_postCEE, verbose=False):
+    def CEE_two_phases_windloss(self, donor, mc1_i, rc1_i, donor_type,
+                                comp_star, mc2_i, rc2_i, comp_type,
+                                double_CE, separation_postCEE, verbose=False):
         """Calculate the post-common-envelope parameters upon exiting a CEE.
 
         This prescription assumes the he_core_mass/radius (or
@@ -858,13 +856,13 @@ class StepCEE(object):
         common_envelope_option_after_succ_CEE: str
             Options are:
 
-            1) "core_replaced_noMT"
+            1) "one_phase_variable_core_definition"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) are replaced according to the new core boundary
                 used for CEE (based on core_definition_H/He_fraction) but no
                 other change in period after succesful ejection at
                 alpha-lambda prescription.
-            2) "core_not_replaced_stableMT"
+            2) "two_phases_stableMT"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) staying as preCEE and after succesful ejection at
                 alpha-lambda prescription, we assume an instantaneous stableMT
@@ -873,7 +871,7 @@ class StepCEE(object):
                 double_CE), taking away the extra "core" mass as defined by the
                 core boundary used for CEE (based on
                 core_definition_H/He_fraction).
-            3) "core_not_replaced_windloss"
+            3) "two_phases_windloss"
                 he_core_mass/radius (or co_core_mass/radius for CEE of
                 stripped_He*) staying as preCEE and after succesful ejection
                 at alpha-lambda prescription, we assume a instantaneous
@@ -951,32 +949,30 @@ class StepCEE(object):
 
 
         # Calculate the post-CE binary properties
-        if common_envelope_option_after_succ_CEE == "CEE_core_replaced_noMT":
+        if common_envelope_option_after_succ_CEE == \
+                "CEE_one_phase_variable_core_definition":
             (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
-             merger) = self.CEE_core_replaced_noMT(donor, mc1_i, rc1_i,
-                                                   comp_star, mc2_i, rc2_i,
-                                                   separation_postCEE,
-                                                   verbose=verbose)
+             merger) = self.CEE_one_phase_variable_core_definition(donor, 
+                        mc1_i, rc1_i, comp_star, mc2_i, rc2_i, 
+                        separation_postCEE, verbose=verbose)
         elif (common_envelope_option_after_succ_CEE
-              == "CEE_core_not_replaced_stableMT"):
+              == "CEE_two_phases_stableMT"):
             (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
-             merger) = self.CEE_core_not_replaced_stableMT(donor, mc1_i, rc1_i,
-                                                           donor_type,
-                                                           comp_star, mc2_i,
-                                                           rc2_i, comp_type,
-                                                           double_CE,
-                                                           separation_postCEE,
-                                                           verbose=verbose)
+             merger) = self.CEE_two_phases_stableMT(donor, mc1_i, rc1_i,
+                                                    donor_type, comp_star,
+                                                    mc2_i, rc2_i, comp_type,
+                                                    double_CE,
+                                                    separation_postCEE,
+                                                    verbose=verbose)
         elif (common_envelope_option_after_succ_CEE
-              == "CEE_core_not_replaced_windloss"):
+              == "CEE_two_phases_windloss"):
             (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
-             merger) = self.CEE_core_not_replaced_windloss(donor, mc1_i, rc1_i,
-                                                           donor_type,
-                                                           comp_star, mc2_i,
-                                                           rc2_i, comp_type,
-                                                           double_CE,
-                                                           separation_postCEE,
-                                                           verbose=verbose)
+             merger) = self.CEE_two_phases_windloss(donor, mc1_i, rc1_i,
+                                                    donor_type, comp_star,
+                                                    mc2_i, rc2_i, comp_type,
+                                                    double_CE,
+                                                    separation_postCEE,
+                                                    verbose=verbose)
         else:
             raise ValueError("Not accepted option in "
                              "common_envelope_option_after_succ_CEE = "
@@ -1016,9 +1012,9 @@ class StepCEE(object):
 
     def CEE_adjust_binary_upon_ejection(self, binary, donor, mc1_f, rc1_f,
                 donor_type, comp_star, mc2_f, rc2_f, comp_type, double_CE,
-                separation_f, orbital_period_f, 
-                common_envelope_option_after_succ_CEE, 
-                core_definition_H_fraction, 
+                separation_f, orbital_period_f,
+                common_envelope_option_after_succ_CEE,
+                core_definition_H_fraction,
                 core_definition_He_fraction,
                 verbose=False):
         """Update the binary and component stars upon exiting a CEE.
@@ -1133,7 +1129,7 @@ class StepCEE(object):
 
             if star_type == 'He_core':
                 if common_envelope_option_after_succ_CEE in [
-                        "core_replaced_noMT"]:
+                        "one_phase_variable_core_definition"]:
                     star.surface_h1 = core_definition_H_fraction
                 else:
                     star.surface_h1 = 0.01
@@ -1159,7 +1155,7 @@ class StepCEE(object):
                 star.co_core_radius = core_radius
                 star.surface_h1 = 0.0
                 if common_envelope_option_after_succ_CEE in [
-                        "core_replaced_noMT"]:
+                        "one_phase_variable_core_definition"]:
                     star.surface_he4 = core_definition_He_fraction
                 else:
                     star.surface_he4 = 0.1
