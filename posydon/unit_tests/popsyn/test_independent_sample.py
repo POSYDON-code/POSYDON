@@ -12,6 +12,7 @@ np = totest.np
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
+import re
 from pytest import raises, approx
 from inspect import isroutine, isclass
 
@@ -65,10 +66,10 @@ class TestFunctions:
         for (s,r,o) in tests:
             orb,ecc,m1,m2 = totest.generate_independent_samples(orbital_scheme=s,
                                                                 RNG = np.random.default_rng(seed=42))
-            assert orb[0] == o
-            assert ecc[0] == 0.87974772
-            assert m1[0] == 10.60713283
-            assert m2[0] == 9.18225572
+            assert orb[0] == approx(o,abs=6e-12)
+            assert ecc[0] == approx(0.8797477186989253,abs=6e-12)
+            assert m1[0] == approx(10.607132832170066,abs=6e-12)
+            assert m2[0] == approx(9.182255718237206,abs=6e-12)
             
     def test_generate_orbital_periods(self):
         # missing argument
@@ -107,14 +108,14 @@ class TestFunctions:
             totest.generate_orbital_separations(orbital_separation_scheme='test')
         # examples
         tests_normal = [(0.,1.0,42,approx(39.83711402835139,abs=6e-12)),
-                        (1.0,10.,42,approx(9799.179319,abs=6e-12))]
+                        (1.0,10.,42,approx(9799.179319004135,abs=6e-12))]
         for (m,s,r,sep) in tests_normal:
             assert totest.generate_orbital_separations(orbital_separation_scheme='log_normal',
                                                 log_orbital_separation_mean=m,
                                                 log_orbital_separation_sigma=s,
                                                 RNG = np.random.default_rng(seed=r))[0] == sep
-        tests_uniform = [(1.,3.,42,approx(2.34029649,abs=6e-12)),
-                         (2.,10.,42,approx(6.95027612,abs=6e-12))]
+        tests_uniform = [(1.,3.,42,approx(2.3402964885050066,abs=6e-12)),
+                         (2.,10.,42,approx(6.950276115688688,abs=6e-12))]
         for (mi,ma,r,sep) in tests_uniform:
             assert totest.generate_orbital_separations(orbital_separation_min=mi,
                                                 orbital_separation_max=ma,
@@ -140,9 +141,9 @@ class TestFunctions:
         with raises(ValueError, match="You must provide an allowed primary mass scheme."):
             totest.generate_primary_masses(primary_mass_scheme='test')
         # examples
-        tests = [('Salpeter',42,approx(19.977645120556,abs=6e-12)),
-                 ('Kroupa1993',42,approx(16.52331794,abs=6e-12)),
-                 ('Kroupa2001',42,approx(20.63341278,abs=6e-12))]
+        tests = [('Salpeter',42,approx(19.97764511120556,abs=6e-12)),
+                 ('Kroupa1993',42,approx(16.52331793661949,abs=6e-12)),
+                 ('Kroupa2001',42,approx(20.633412780370865,abs=6e-12))]
         for (s,r,m1) in tests:
             assert totest.generate_primary_masses(primary_mass_scheme=s,
                                                    RNG = np.random.default_rng(seed=r))[0] == m1
@@ -152,7 +153,7 @@ class TestFunctions:
         with raises(TypeError,match="missing 1 required positional argument: 'primary_masses'"):
             totest.generate_secondary_masses()
         # bad input
-        with raises(TypeError, match="unsupported operand type(s)"):
+        with raises(TypeError, match=re.escape("unsupported operand type(s) for /: 'float' and 'list'")):
             totest.generate_secondary_masses(primary_masses=[10.])
         with raises(TypeError, match="expected a sequence of integers or a single integer"):
             totest.generate_secondary_masses(primary_masses=np.array([10.]),
@@ -184,7 +185,7 @@ class TestFunctions:
             totest.binary_fraction_value(binary_fraction_scheme='Moe_17',m1=np.nan)
         # examples
         tests_const = [1.0,1,0.5]
-        for (c) in tests_normal:
+        for (c) in tests_const:
             assert totest.binary_fraction_value(binary_fraction_const=c,
                                                 binary_fraction_scheme='const') == c
         tests_moe = [(3,0.59),
