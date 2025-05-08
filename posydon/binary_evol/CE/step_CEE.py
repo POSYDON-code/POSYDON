@@ -1388,15 +1388,15 @@ class StepCEE(object):
         comp_star : SingleStar object
             The companion star
         m1_i : float
-            mass of the donor upon entering a CE (in Msun)
+            Mass of the donor upon entering a CE (in Msun)
         m2_i : float
-            mass of the companion upon entering a CE (in Msun)
+            Mass of the companion upon entering a CE (in Msun)
         donor_type : string
-            descriptor for the stellar type of the donor
+            Descriptor for the stellar type of the donor's core
         Mejected_donor : float
-            how much mass is ejected from the donor upon merger (in Msun)
+            How much mass is ejected from the donor upon merger (in Msun)
         Mejected_comp : float
-            how much mass is ejected from the companion upon merger (in Msun)
+            How much mass is ejected from the companion upon merger (in Msun)
         verbose : bool
             In case we want information about the CEE.
         """
@@ -1418,6 +1418,7 @@ class StepCEE(object):
         if donor_type == 'CO_core':
             donor.he_core_mass = m1_i - Mejected_donor
             donor.he_core_radius = np.nan
+        if comp_type == 'CO_core':
             comp_star.he_core_mass = m2_i - Mejected_comp
             comp_star.he_core_radius = np.nan
 
