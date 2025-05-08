@@ -128,7 +128,7 @@ class TestFunctions:
         # examples
         tests = [('thermal',42,approx(0.87974772,abs=6e-12)),
                  ('uniform',42,approx(0.77395605,abs=6e-12)),
-                 ('zero',42,,approx(0.,abs=6e-12))]
+                 ('zero',42,approx(0.,abs=6e-12))]
         for (s,r,e) in tests:
             assert totest.generate_eccentricities(eccentricity_scheme=s,
                                                    RNG = np.random.default_rng(seed=r))[0] == e
@@ -142,7 +142,7 @@ class TestFunctions:
         # examples
         tests = [('Salpeter',42,approx(19.97764511,abs=6e-12)),
                  ('Kroupa1993',42,approx(16.52331794,abs=6e-12)),
-                 ('Kroupa2001',42,,approx(20.63341278.,abs=6e-12))]
+                 ('Kroupa2001',42,approx(20.63341278.,abs=6e-12))]
         for (s,r,m1) in tests:
             assert totest.generate_primary_masses(primary_mass_scheme=s,
                                                    RNG = np.random.default_rng(seed=r))[0] == m1
