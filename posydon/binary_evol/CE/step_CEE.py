@@ -399,32 +399,32 @@ class StepCEE(object):
 
     def CEE_adjust_post_CE_core_masses(self, donor, mc1_i, rc1_i, donor_type,
             comp_star, mc2_i, rc2_i, comp_type, double_CE, verbose=False):
-        """Calculate the post-common-envelope parameters.
+        """Calculate the post-common-envelope core masses and radii.
 
         It determines the post-CE parameters based on the core properties.
         Note that these parameters may be updated in a subsequent step 
-        depending on assumptions about whether and how the outermost layers
-        of the CE core are removed.
+        depending on assumptions about whether and how the final layers
+        of the CE are removed from the cores.
 
         Parameters
         ----------
         donor : SingleStar object
             The donor star
         mc1_i : float
-            core mass of the donor (in Msun)
+            Core mass of the donor after the fast CE phase (in Msun)
         rc1_i : float
-            core radius of the donor (in Rsun)
+            Core radius of the donor after the fast CE phase (in Rsun)
         donor_type : string
-            String dictating whether the donor has a H-envelope or He-envelope
+            String dictating whether the donor has a 'He_core' or 'CO_core'
         comp_star : SingleStar object
             The companion star
         mc2_i : float
-            core mass of the companion (in Msun)
+            Core mass of the companion after the fast CE phase (in Msun)
         rc2_i : float
-            core radius of the companion (in Rsun)
+            Core radius of the companion after the fast CE phase (in Rsun)
         comp_type : string
-            String dictating whether the companion has a H-envelope or 
-            He-envelope.
+            String dictating whether the companion has a 'He_core', 'CO_core',
+            or 'not_giant_companion' (e.g. a compact object or MS star).
         double_CE : bool
             In case we have a double CE situation.
         verbose : bool
@@ -433,13 +433,13 @@ class StepCEE(object):
         Returns
         -------
         m1c_f: float
-            donor mass after the CE (in Msun)
+            Donor mass after the complete CE (in Msun)
         r1c_f: float
-            donor radius after the CE (in Rsun)
+            Donor radius after the complete CE (in Rsun)
         m2c_f: float
-            companion mass after the CE (in Msun)
+            Companion mass after the complete CE (in Msun)
         r2c_f: float
-            companion radius after the CE (in Rsun)
+            Companion radius after the complete CE (in Rsun)
         """
         if donor_type == 'He_core':
             mc1_f = donor.he_core_mass
@@ -482,14 +482,14 @@ class StepCEE(object):
                       "higher that postCEE core mass. "
                       "Now equalizing to postCEE mass", "ApproximationWarning")
         if verbose:
-            print("difference between m1 core mass defined by CEE step"
-                    " / to the final one as pre CEE : ", mc1_f, mc1_i)
-            print("difference between r1 core mass defined by CEE step"
-                    " / to the final one as pre CEE : ", rc1_f, rc1_i)
-            print("difference between m2 core mass defined by CEE step"
-                    " / to the final one as pre CEE : ", mc2_f, mc2_i)
-            print("difference between r2 core mass defined by CEE step"
-                    " / to the final one as pre CEE : ", rc2_f, rc2_i)
+            print("m1 core mass (in Msun) change after fast CE phase from: ",
+                  mc1_i, " to: ", mc1_f)
+            print("r1 core radius (in Rsun) change after fast CE phase "
+                  "from: ", rc1_i, " to: ", rc1_f)
+            print("m2 core mass (in Msun) change after fast CE phase from: ",
+                  mc2_i, " to: ", mc2_f)
+            print("r2 core radius (in Rsun) change after fast CE phase "
+                  "from: ", rc2_i, " to: ", rc2_f)
 
         return mc1_f, rc1_f, mc2_f, rc2_f
 
@@ -497,47 +497,48 @@ class StepCEE(object):
                                rc2_i, separation_postCEE, verbose=False):
         """Calculate the post-common-envelope parameters upon exiting a CEE.
 
-        This prescription assumes the he_core_mass/radius (or 
-        co_core_mass/radius for CEE of stripped_He*) are replaced according 
-        to the new core boundary used for CEE (based on 
-        core_definition_H/He_fraction) but no other change in period after 
-        succesful ejection at alpha-lambda prescription.
+        This prescription assumes the he_core_mass/radius (or
+        co_core_mass/radius for CEE of stripped_He*) are not further stripped
+        beyond the core defined given by the core_definition_H/He_fraction.
+        Hence, there are no changes on the orbit after successful ejection.
+        Instead it is assumed that the defined core will become the remaining
+        stripped object with core abundances at its surface.
 
         Parameters
         ----------
         donor : SingleStar object
             The donor star
         mc1_i : float
-            core mass of the donor (in Msun)
+            Core mass of the donor after the fast CE phase (in Msun)
         rc1_i : float
-            core radius of the donor (in Rsun)
+            Core radius of the donor after the fast CE phase (in Rsun)
         comp_star : SingleStar object
             The companion star
         mc2_i : float
-            core mass of the companion (in Msun)
+            Core mass of the companion after the fast CE phase (in Msun)
         rc2_i : float
-            core radius of the companion (in Rsun)
+            Core radius of the companion after the fast CE phase (in Rsun)
         separation_postCEE : float
-            binary's separation upon exiting the CEE (in cm)
+            Binary's separation after the fast CE phase (in cm)
         verbose : bool
             In case we want information about the CEE.
 
         Returns
         -------
         m1c_f: float
-            donor mass after the CE (in Msun)
+            Donor mass after the complete CE (in Msun)
         r1c_f: float
-            donor radius after the CE (in Rsun)
+            Donor radius after the complete CE (in Rsun)
         m2c_f: float
-            companion mass after the CE (in Msun)
+            Companion mass after the complete CE (in Msun)
         r2c_f: float
-            companion radius after the CE (in Rsun)
+            Companion radius after the complete CE (in Rsun)
         separation_f : float
-            binary's final separation upon exiting the CE (in Rsun)
+            Binary's final separation upon exiting the CE (in Rsun)
         orbital_period_f : float
-            binary's final orbital period upon exiting the CE (in days)
+            Binary's final orbital period upon exiting the CE (in days)
         merger : bool
-            whether the binary merged in the CE
+            Whether the binary merged in the CE
         """
         mc1_f = mc1_i
         rc1_f = rc1_i
@@ -545,15 +546,13 @@ class StepCEE(object):
         rc2_f = rc2_i
         if verbose:
             print("m1 core mass pre CEE (He,CO) / to after CEE : ",
-                    donor.he_core_mass, donor.co_core_mass, mc1_f)
+                  donor.he_core_mass, donor.co_core_mass, mc1_f)
             print("m1 core radius pre CEE (He,CO) / to after CEE : ",
-                    donor.he_core_radius, donor.co_core_radius, rc1_f)
+                  donor.he_core_radius, donor.co_core_radius, rc1_f)
             print("m2 core mass pre CEE (He,CO) / to after CEE : ",
-                    comp_star.he_core_mass, comp_star.co_core_mass, mc2_f
-                    )
+                  comp_star.he_core_mass, comp_star.co_core_mass, mc2_f)
             print("m2 core radius pre CEE (He,CO) / to after CEE : ",
-                    comp_star.he_core_radius,
-                    comp_star.co_core_radius, rc2_f)
+                  comp_star.he_core_radius, comp_star.co_core_radius, rc2_f)
 
         # Check to see if the system has merged
         merger = cf.check_for_RLO(mc1_i, rc1_f, mc2_i, rc2_f,
@@ -563,8 +562,7 @@ class StepCEE(object):
             if merger:
                 print("system merges within the CEE")
             else:
-                print("system survives CEE, the whole CE is ejected and the "
-                      "new orbital separation for the cores is returned")
+                print("system survives CEE, the whole CE is ejected")
 
         # since the binary components' masses do not change, the output
         # separation is just the input separation in different units
