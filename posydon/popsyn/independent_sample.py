@@ -356,7 +356,9 @@ def generate_secondary_masses(primary_masses,
 
     return secondary_masses
 
-def binary_fraction_value(binary_fraction_const=1,binary_fraction_scheme = 'const',m1 = None,**kwargs):
+def binary_fraction_value(binary_fraction_const=1,
+                          binary_fraction_scheme = 'const',
+                          m1 = None,**kwargs):
     """
     Getting the binary fraction depending on the scheme. The two possible option are a constant binary fraction 
     and a binary fraction based on the values given in Moe and Di Stefano (2017). 
