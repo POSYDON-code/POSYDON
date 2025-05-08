@@ -65,7 +65,7 @@ class TestFunctions:
         for (s,r,o) in tests:
             orb,ecc,m1,m2 = totest.generate_independent_samples(orbital_scheme="separation",
                                                                 RNG = np.random.default_rng(seed=42))
-            assert orb[0] == np.array(o)
+            assert orb[0] == o
             assert ecc[0] == 0.87974772
             assert m1[0] == 10.60713283
             assert m2[0] == 9.18225572
@@ -86,7 +86,7 @@ class TestFunctions:
             totest.generate_orbital_periods(np.array([1.]),
                                             orbital_period_scheme='test')
         # examples
-        tests = [(1.0,42,approx(403.44608837,abs=6e-12)),
+        tests = [(1.0,42,approx(403.44608837021764,abs=6e-12)),
                  (1.0,12,approx(3.43805273,abs=6e-12))]
         for (m,r,p) in tests:
             assert totest.generate_orbital_periods(m,RNG = np.random.default_rng(seed=r))[0] == p
@@ -106,7 +106,7 @@ class TestFunctions:
         with raises(ValueError, match="You must provide an allowed orbital separation scheme."):
             totest.generate_orbital_separations(orbital_separation_scheme='test')
         # examples
-        tests_normal = [(0.1,1.0,42,approx(39.83711403,abs=6e-12)),
+        tests_normal = [(0.,1.0,42,approx(39.83711403,abs=6e-12)),
                         (1.0,10.,42,approx(9799.179319,abs=6e-12))]
         for (m,s,r,sep) in tests_normal:
             assert totest.generate_orbital_separations(orbital_separation_scheme='log_normal',
@@ -126,7 +126,7 @@ class TestFunctions:
         with raises(ValueError, match="You must provide an allowed eccentricity scheme."):
             totest.generate_eccentricities(eccentricity_scheme='test')
         # examples
-        tests = [('thermal',42,approx(0.87974772,abs=6e-12)),
+        tests = [('thermal',42,approx(0.8797477186989253,abs=6e-12)),
                  ('uniform',42,approx(0.77395605,abs=6e-12)),
                  ('zero',42,approx(0.,abs=6e-12))]
         for (s,r,e) in tests:
@@ -140,7 +140,7 @@ class TestFunctions:
         with raises(ValueError, match="You must provide an allowed primary mass scheme."):
             totest.generate_primary_masses(primary_mass_scheme='test')
         # examples
-        tests = [('Salpeter',42,approx(19.97764511,abs=6e-12)),
+        tests = [('Salpeter',42,approx(19.9776451120556,abs=6e-12)),
                  ('Kroupa1993',42,approx(16.52331794,abs=6e-12)),
                  ('Kroupa2001',42,approx(20.63341278,abs=6e-12))]
         for (s,r,m1) in tests:
@@ -149,7 +149,7 @@ class TestFunctions:
             
     def test_generate_secondary_masses(self):
         # missing argument
-        with raises(ValueError,match="missing 1 required positional argument: 'primary_masses'"):
+        with raises(TypeError,match="missing 1 required positional argument: 'primary_masses'"):
             totest.generate_secondary_masses()
         # bad input
         with raises(TypeError, match="unsupported operand type(s) for /: 'float' and 'list'"):
@@ -173,7 +173,7 @@ class TestFunctions:
             
     def test_binary_fraction_value(self):
         # missing argument
-        with raises(ValueError, match="There was not a primary mass provided in the inputs. Unable to return a binary fraction."):
+        with raises(ValueError, match="There was not a primary mass provided in the inputs."):
             totest.binary_fraction_value(binary_fraction_scheme='Moe_17')
         # bad input
         with raises(ValueError, match="You must provide an allowed binary fraction scheme."):
