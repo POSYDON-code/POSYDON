@@ -99,7 +99,7 @@ def generate_orbital_periods(primary_masses,
                 elif 0.15 <= logp_j and logp_j < np.log10(orbital_period_max):
                     pdf[j] = C*logp_j**(-pi)
 
-                else:
+                else: # pragma: no cover
                     pdf[j] = 0.
 
             return pdf
@@ -187,7 +187,7 @@ def generate_orbital_separations(number_of_binaries=1,
             random_state=RNG)
         orbital_separations = 10**log_orbital_separations
 
-    else:
+    else: # pragma: no cover
         pass
 
     return orbital_separations
@@ -228,7 +228,7 @@ def generate_eccentricities(number_of_binaries=1,
         eccentricities = RNG.uniform(size=number_of_binaries)
     elif eccentricity_scheme == 'zero':
         eccentricities = np.zeros(number_of_binaries)
-    else:
+    else: # pragma: no cover
         # This should never be reached
         pass
 
@@ -294,7 +294,7 @@ def generate_primary_masses(number_of_binaries=1,
         random_variable = RNG.uniform(size=number_of_binaries)
         primary_masses = (random_variable*(1.0-alpha)/normalization_constant
                           + primary_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
-    else:
+    else: # pragma: no cover
         pass
 
     return primary_masses
@@ -402,7 +402,7 @@ def binary_fraction_value(binary_fraction_const=1,
             binary_fraction = 0.94
         else: 
             raise ValueError(f'The primary mass provided {m1} is not supported by the Moe_17 scheme.')
-    else: 
+    else: # pragma: no cover
         pass
     return binary_fraction
 

@@ -62,7 +62,7 @@ class TestFunctions:
             totest.generate_independent_samples('test')
         # examples
         tests = [("separation",42,approx(4993.106338349307,abs=6e-12)),
-                 ("period",12,approx(200.82071794,abs=6e-12))]
+                 ("period",12,approx(200.82071793763188,abs=6e-12))]
         for (s,r,o) in tests:
             orb,ecc,m1,m2 = totest.generate_independent_samples(orbital_scheme=s,
                                                                 RNG = np.random.default_rng(seed=42))
@@ -158,14 +158,15 @@ class TestFunctions:
         with raises(TypeError, match="expected a sequence of integers or a single integer"):
             totest.generate_secondary_masses(primary_masses=np.array([10.]),
                                              number_of_binaries=1.)
-        with raises(TypeError, match="`secondary_mass_min` is larger than some primary masses"):
+        with raises(ValueError, match="`secondary_mass_min` is larger than some primary masses"):
             totest.generate_secondary_masses(primary_masses=np.array([1.]),
                                               secondary_mass_min=10.,
                                               secondary_mass_max=100.)
-        with raises(ValueError, match="You must provide an allowed primary mass scheme."):
-            totest.generate_secondary_masses(primary_mass_scheme='test')
+        with raises(ValueError, match="You must provide an allowed secondary mass scheme."):
+            totest.generate_secondary_masses(primary_masses=np.array([1.]),
+                                             secondary_mass_scheme='test')
         # examples
-        tests = [('flat_mass_ratio',42,approx(7.85258246,abs=6e-12)),
+        tests = [('flat_mass_ratio',42,approx(7.852582461281652,abs=6e-12)),
                  ('q=1',42,approx(10.,abs=6e-12))]
         for (s,r,m2) in tests:
             assert totest.generate_secondary_masses(primary_masses=np.array([10.]),
@@ -188,7 +189,9 @@ class TestFunctions:
         for (c) in tests_const:
             assert totest.binary_fraction_value(binary_fraction_const=c,
                                                 binary_fraction_scheme='const') == c
-        tests_moe = [(3,0.59),
+        tests_moe = [(1,0.4),
+                     (3,0.59),
+                     (8,0.76),
                      (10,0.84),
                      (18,0.94)]
         for (m1,f) in tests_moe:
