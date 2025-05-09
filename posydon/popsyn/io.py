@@ -82,8 +82,8 @@ STARPROPERTIES_DTYPES = {
     'center_c12': 'float64',
     'center_n14': 'float64',
     'center_o16': 'float64',
-    'surface_h1': 'float64',
     # Mass fractions at the surface
+    'surface_h1': 'float64',
     'surface_he4': 'float64',
     'surface_c12': 'float64',
     'surface_n14': 'float64',
@@ -124,6 +124,8 @@ STARPROPERTIES_DTYPES = {
     'profile': 'object',    # the profile of the star, including extended information of
                             # its internal structure, for a specific timestep, usually for
                             # the end of the previous step including MESA psygrid.
+    'total_mass_h1': 'float64',   # total mass of Hydrogen throughout the star
+    'total_mass_he4': 'float64',  # total mass of Helium throughout the star
 }
 
 EXTRA_BINARY_COLUMNS_DTYPES = {
