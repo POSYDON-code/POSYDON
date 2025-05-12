@@ -487,6 +487,10 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
     - | Use core masses for the supernova.
     - ``True``
 
+  * - ``allow_spin_None``
+    - | Allow compact objects to have undetermined spin values in the lack of profile data.
+    - ``False``
+
   * - ``approx_at_he_depletion``
     - | Approximate at helium depletion.
     - ``False``
