@@ -313,7 +313,7 @@ SN_MODELS = {
     },
     "SN_MODEL_v2_17": {
         "mechanism": "Sukhbold+16-engine",
-        "engine": "S19.8",
+        "engine": "W20",
 #        "PISN": "Hendriks+23",
 #        "PISN_CO_shift": 0.0,
 #        "PPI_extra_mass_loss": -20.0,
@@ -330,7 +330,7 @@ SN_MODELS = {
     },
     "SN_MODEL_v2_18": {
         "mechanism": "Sukhbold+16-engine",
-        "engine": "S19.8",
+        "engine": "W20",
 #        "PISN": "Hendriks+23",
 #        "PISN_CO_shift": 0.0,
 #        "PPI_extra_mass_loss": -20.0,
@@ -347,7 +347,7 @@ SN_MODELS = {
     },
     "SN_MODEL_v2_19": {
         "mechanism": "Sukhbold+16-engine",
-        "engine": "S19.8",
+        "engine": "W20",
 #        "PISN": "Hendriks+23",
 #        "PISN_CO_shift": 0.0,
         "PPI_extra_mass_loss": 0.0,
@@ -364,7 +364,7 @@ SN_MODELS = {
     },
     "SN_MODEL_v2_20": {
         "mechanism": "Sukhbold+16-engine",
-        "engine": "S19.8",
+        "engine": "W20",
 #        "PISN": "Hendriks+23",
 #        "PISN_CO_shift": 0.0,
         "PPI_extra_mass_loss": 0.0,
@@ -381,7 +381,7 @@ SN_MODELS = {
     },
     "SN_MODEL_v2_21": {
         "mechanism": "Patton&Sukhbold20-engine",
-        "engine": "S19.8",
+        "engine": "W20",
 #        "PISN": "Hendriks+23",
 #        "PISN_CO_shift": 0.0,
 #        "PPI_extra_mass_loss": -20.0,
@@ -398,7 +398,7 @@ SN_MODELS = {
     },
     "SN_MODEL_v2_22": {
         "mechanism": "Patton&Sukhbold20-engine",
-        "engine": "S19.8",
+        "engine": "W20",
 #        "PISN": "Hendriks+23",
 #        "PISN_CO_shift": 0.0,
 #        "PPI_extra_mass_loss": -20.0,
@@ -415,7 +415,7 @@ SN_MODELS = {
     },
     "SN_MODEL_v2_23": {
         "mechanism": "Patton&Sukhbold20-engine",
-        "engine": "S19.8",
+        "engine": "W20",
 #        "PISN": "Hendriks+23",
 #        "PISN_CO_shift": 0.0,
         "PPI_extra_mass_loss": 0.0,
@@ -432,7 +432,7 @@ SN_MODELS = {
     },
     "SN_MODEL_v2_24": {
         "mechanism": "Patton&Sukhbold20-engine",
-        "engine": "S19.8",
+        "engine": "W20",
 #        "PISN": "Hendriks+23",
 #        "PISN_CO_shift": 0.0,
         "PPI_extra_mass_loss": 0.0,
