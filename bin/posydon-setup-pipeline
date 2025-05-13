@@ -19,6 +19,7 @@ from posydon.popsyn.io import parse_inifile
 from posydon.config import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 from posydon.utils.posydonwarning import Pwarn
+from posydon.grids.SN_MODELS import SN_MODELS
 
 # this data processing pipeline was designed assuming POSYDON v2 data structure
 '''
@@ -56,7 +57,7 @@ ACTION_TO_STEP_NUM = {
     'CALCULATE_EXTRA_VALUES'     : 'step_3',
     'TRAIN_INTERPOLATORS'        : 'step_4',
     'TRAIN_PROFILE_INTERPOLATORS': 'step_5',
-    'EXPORT_DATASET'             : 'step_9',
+    'EXPORT_DATASET'             : 'step_F',
     'RERUN'                      : 'rerun'
 }
 # pipeline substeps
@@ -71,36 +72,7 @@ PLOTTING_SETS = {
                              'termination_flag_2', 'termination_flag_3',\
                              'termination_flag_4', 'rl_relative_overflow_1',\
                              'rl_relative_overflow_2', 'lg_mtransfer_rate'],
-    'PLOT_AFTER_EXTRA'    : ['S1_MODEL01_CO_type', 'S1_MODEL01_SN_type',\
-                             'S1_MODEL01_mass', 'S1_MODEL01_spin',\
-                             'S1_MODEL01_m_disk_radiated',
-                             'S1_MODEL02_CO_type', 'S1_MODEL02_SN_type',\
-                             'S1_MODEL02_mass', 'S1_MODEL02_spin',\
-                             'S1_MODEL02_m_disk_radiated',
-                             'S1_MODEL03_CO_type', 'S1_MODEL03_SN_type',\
-                             'S1_MODEL03_mass', 'S1_MODEL03_spin',\
-                             'S1_MODEL03_m_disk_radiated',
-                             'S1_MODEL04_CO_type', 'S1_MODEL04_SN_type',\
-                             'S1_MODEL04_mass', 'S1_MODEL04_spin',\
-                             'S1_MODEL04_m_disk_radiated',
-                             'S1_MODEL05_CO_type', 'S1_MODEL05_SN_type',\
-                             'S1_MODEL05_mass', 'S1_MODEL05_spin',\
-                             'S1_MODEL05_m_disk_radiated',
-                             'S1_MODEL06_CO_type', 'S1_MODEL06_SN_type',\
-                             'S1_MODEL06_mass', 'S1_MODEL06_spin',\
-                             'S1_MODEL06_m_disk_radiated',
-                             'S1_MODEL07_CO_type', 'S1_MODEL07_SN_type',\
-                             'S1_MODEL07_mass', 'S1_MODEL07_spin',\
-                             'S1_MODEL07_m_disk_radiated',
-                             'S1_MODEL08_CO_type', 'S1_MODEL08_SN_type',\
-                             'S1_MODEL08_mass', 'S1_MODEL08_spin',\
-                             'S1_MODEL08_m_disk_radiated',
-                             'S1_MODEL09_CO_type', 'S1_MODEL09_SN_type',\
-                             'S1_MODEL09_mass', 'S1_MODEL09_spin',\
-                             'S1_MODEL09_m_disk_radiated',
-                             'S1_MODEL10_CO_type', 'S1_MODEL10_SN_type',\
-                             'S1_MODEL10_mass', 'S1_MODEL10_spin',\
-                             'S1_MODEL10_m_disk_radiated'],
+    'PLOT_AFTER_EXTRA'    : [],
     'PLOT_AFTER_TRAINING' : ['INTERP_ERROR_age', 'INTERP_ERROR_star_1_mass',\
                              'INTERP_ERROR_star_2_mass',\
                              'INTERP_ERROR_period_days',\
@@ -129,21 +101,17 @@ PLOTTING_SETS = {
                              'INTERP_ERROR_S2_log_Teff',\
                              'INTERP_ERROR_S2_log_L', 'INTERP_ERROR_S2_log_R',\
                              'INTERP_ERROR_S2_spin_parameter',\
-                             'INTERP_ERROR_S2_lambda_CE_10cent',\
-                             'INTERP_ERROR_S1_MODEL01_mass',\
-                             'INTERP_ERROR_S1_MODEL01_spin',\
-                             'INTERP_ERROR_S1_MODEL01_m_disk_radiated',\
-                             'INTERP_ERROR_S1_MODEL05_mass',\
-                             'INTERP_ERROR_S1_MODEL05_spin',\
-                             'INTERP_ERROR_S1_MODEL05_m_disk_radiated',\
-                             'INTERP_ERROR_S1_MODEL06_mass',\
-                             'INTERP_ERROR_S1_MODEL06_spin',\
-                             'INTERP_ERROR_S1_MODEL06_m_disk_radiated',\
-                             'INTERP_ERROR_S1_MODEL10_mass',\
-                             'INTERP_ERROR_S1_MODEL10_spin',\
-                             'INTERP_ERROR_S1_MODEL10_m_disk_radiated'],
+                             'INTERP_ERROR_S2_lambda_CE_10cent'],
     'PLOT_AFTER_PROFILE_TRAINING' : []
 }
+for SN_MODEL_NAME in SN_MODELS.keys():
+    for quantity in ['CO_type', 'SN_type', 'mass', 'spin', 'm_disk_radiated']:
+        PLOTTING_SETS['PLOT_AFTER_EXTRA'].append(
+         f'S1_{SN_MODEL_NAME}_{quantity}')
+        if quantity not in ['CO_type', 'SN_type']:
+            PLOTTING_SETS['PLOT_AFTER_TRAINING'].append(
+             f'INTERP_ERROR_S1_{SN_MODEL_NAME}_{quantity}')
+
 # predefined checking sets
 CHECKING_SETS = {
     'CHECK_AFTER_CREATE'           : [],
@@ -633,7 +601,7 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
             f.write(f"#SBATCH --mail-user={EMAIL}\n")
         # extract array size
-        if ((job_name in ['step_1', 'step_3', 'step_4', 'step_5', 'step_9',\
+        if ((job_name in ['step_1', 'step_3', 'step_4', 'step_5', 'step_F',\
             'rerun']) or ('plot' in job_name) or ('check' in job_name)):
             df = pd.read_csv(path_to_csv_file)
             N = df.shape[0]-1
@@ -968,7 +936,7 @@ def create_csv(GRID_TYPES=[],
                                 if not os.path.isdir(interpolator_dir):
                                     newly_created_files.append(
                                         interpolator_dir)
-                    elif step_name == 'step_9': # EXPORT_DATASET
+                    elif step_name == 'step_F': # EXPORT_DATASET
                         if "RLO" in grid_type:
                             export_dir = grid_type
                         else:
@@ -1136,7 +1104,7 @@ def create_csv(GRID_TYPES=[],
             df['profile_names'] = profile_quantities
             df['path_to_IF_interpolator'] = interpolators
             df['path_to_profile_interpolator'] = profile_interpolators
-        elif step_name == 'step_9':
+        elif step_name == 'step_F':
             df['export_path'] = export_path
         elif step_name == 'rerun':
             df['rerun_path'] = rerun_path
@@ -1212,7 +1180,7 @@ def create_csv(GRID_TYPES=[],
         elif step_name == 'step_5':
             newly_created_files.extend(
                 df['path_to_profile_interpolator'].to_list())
-        elif step_name == 'step_9':
+        elif step_name == 'step_F':
             newly_created_files.extend(df['export_path'].to_list())
         elif step_name == 'rerun':
             newly_created_files.extend(df['rerun_path'].to_list())
@@ -1312,7 +1280,7 @@ def create_cleanup_slurm_job(job_name,
     kwargs : dict
         Other parameters (all being ignored).
     """
-    if ((job_name == 'step_2') or (job_name == 'step_9') or
+    if ((job_name == 'step_2') or (job_name == 'step_F') or
         (job_name == 'rerun') or ('plot' in job_name) or
         ('check' in job_name) or
         ((job_name == 'pipeline') and (GROUP is not None))):
@@ -1347,7 +1315,7 @@ def create_cleanup_slurm_job(job_name,
                 path_to_log_files = os.path.join(PATH, 'logs', step_name)
             else:
                 path_to_log_files = os.path.join(PATH, 'logs', job_name)
-            if ((job_name == 'step_2') or (job_name == 'step_9') or
+            if ((job_name == 'step_2') or (job_name == 'step_F') or
                 (job_name == 'rerun') or ('plot' in job_name) or
                 ('check' in job_name)):
                 # combine logs
@@ -1407,7 +1375,7 @@ def get_log_file_name(job_name, step_name):
         return "train_interpolator_%4a.out"
     if job_name == 'step_5': # TRAIN_PROFILE_INTERPOLATORS
         return "train_profile_interpolator_%4a.out"
-    if job_name == 'step_9': # EXPORT_DATASET
+    if job_name == 'step_F': # EXPORT_DATASET
         return "export_dataset_%4a.out"
     if job_name == 'rerun': # RERUN
         return "rerun_%4a.out"
