@@ -428,12 +428,19 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``'Fryer+12-delayed'``
       * ``'Sukhbold+16-engine'``
       * ``'Patton&Sukhbold20-engine'``
-    - ``'Patton&Sukhbold20-engine'``
+    - ``'Fryer+12-delayed'``
 
   * - ``engine``
     - | The engine used for the supernova.
       | Relevant for ``'Sukhbold+16-engine'`` and ``'Patton&Sukhbold20-engine'`` mechanisms.
-    - ``'N20'``
+     
+      * ``''``
+      * ``'N20'``
+      * ``'S19.8'``
+      * ``'W15'``
+      * ``'W20'``
+      * ``'W18'``
+    - ``''``
 
   * - ``PISN``
     - | The prescription used for pair-instability supernova.
@@ -441,7 +448,7 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``None``
       * ``'Marchant+19'``
       * ``'Hendriks+23'``
-    - ``'Marchant+19'``
+    - ``'Hendriks+23'``
 
   * - ``PISN_CO_shift``
     - | The shift in CO core mass for the start of the Hendriks+23 PPI prescription
@@ -449,18 +456,18 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
 
   * - ``PPI_extra_mass_loss``
     - | Additional PPI mass loss for the Hendriks+23 prescription
-    - ``0.0``
+    - ``-20.0``
 
   * - ``ECSN``
     - | The prescription used for electron-capture supernova.
      
       * ``'Tauris+15'``
       * ``'Podsiadlowksi+04'``
-    - ``'Podsiadlowksi+04'``
+    - ``'Tauris+15'``
 
   * - ``conserve_hydrogen_envelope``
     - | Conserve the hydrogen envelope during the supernova.
-    - ``True``
+    - ``False``
 
   *  - ``conserve_hydrogen_PPI``
      - | Include the hydrogen envelope during the calculation of the 
