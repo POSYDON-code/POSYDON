@@ -129,12 +129,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
 
     This function post processes any supported grid and computes:
     - Core collapse quantities for 5 prescriptions given the fiducial POSYDON
-    assumption given in SN_MODEL plus:
-      A: direct collapse
-      B: Fryer+12-rapid
-      C: Fryer+12-delayed
-      D: Sukhbold+16-engine, N20
-      E: Patton&Sukhbold20-engine, N20
+    assumption given in SN_MODEL:
       for each prescrition we store the compact object state (WD/NS/BH),
       SN type (WD, ECSN, CCSN, PISN, PPISN), fallback mass fraction f_gb,
       compact object mass and spin.
