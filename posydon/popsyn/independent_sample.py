@@ -113,7 +113,7 @@ def generate_orbital_periods(primary_masses,
                                    orbital_periods_M_lt_15,
                                    orbital_periods_M_gt_15)
         #TODO orbital for primary mass< current limit set orbital period = 1e8
-        orbital_periods = np.where(primary_masses <= 5.55,
+        orbital_periods = np.where(primary_masses <= 4.00,
                                    1e8,
                                    orbital_periods)
         
