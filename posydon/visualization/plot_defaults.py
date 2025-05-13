@@ -119,6 +119,27 @@ TF1_label_initial = 'Initial RLOF'
 TF1_label_unstable = 'Unstable RLOF'
 color_unstable = 'black'
 
+TF1_label_unstable_2 = 'overflow from L2 surface for q<1'
+color_unstable_2 = 'blue'
+
+TF1_label_unstable_3 = 'overflow from L2 (D_L2) distance for q(=Macc/Mdon)>1'
+color_unstable_3 = 'royalblue'
+
+TF1_label_unstable_4 = 'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1'
+color_unstable_4 = 'teal'
+
+TF1_label_unstable_5 = 'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1'
+color_unstable_5 = 'forestgreen'
+
+TF1_label_unstable_6 = 'overflow from L2 (D_L2) distance for q(=Macc/Mdon)<1'
+color_unstable_6 = 'limegreen'
+
+TF1_label_unstable_7 = 'Reached maximum mass transfer rate: 1d-1'
+color_unstable_7 = 'dodgerblue'
+
+TF1_label_unstable_8 = 'Reached maximum mass transfer rate: Exceeded photon trapping radius'
+color_unstable_8 = 'orange'
+
 DEFAULT_MARKERS_COLORS_LEGENDS = {
     'termination_flag_1': {
         'terminate due to primary depleting carbon (inverse sn?)':
@@ -156,19 +177,19 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'overflow from L2 surface for q>1 at ZAMS':
             ['.', 1, color_unstable, TF1_label_initial],
         'overflow from L2 surface for q<1':
-            ['D', 1, color_unstable, TF1_label_unstable],
+            ['D', 1, color_unstable_2, TF1_label_unstable_2],
         r'overflow from L2 (D_L2) distance for q(=Macc/Mdon)>1, '
         'donor is star 1':
-            ['D', 1, color_unstable, TF1_label_unstable],
+            ['D', 1, color_unstable_3, TF1_label_unstable_3],
         r'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, '
         'donor is star 1':
-            ['D', 1, color_unstable, TF1_label_unstable],
+            ['D', 1, color_unstable_4, TF1_label_unstable_4],
         r'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, '
         'donor is star 1':
-            ['D', 1, color_unstable, TF1_label_unstable],
+            ['D', 1, color_unstable_5, TF1_label_unstable_5],
         r'overflow from L2 (D_L2) distance for q(=Macc/Mdon)<1, '
         'donor is star 1':
-            ['D', 1, color_unstable, TF1_label_unstable],
+            ['D', 1, color_unstable_6, TF1_label_unstable_6],
         'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1, donor is star 2':
             ['D', 1, color_unstable, TF1_label_unstable],
         'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1, donor is star 2':
@@ -176,7 +197,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'reached maximum mass transfer rate: 10.0d0':
             ['D', 1, color_unstable, TF1_label_unstable],
         'Reached maximum mass transfer rate: 1d-1':
-            ['D', 1, color_unstable, TF1_label_unstable],
+            ['D', 1, color_unstable_7, TF1_label_unstable_7],
         'Reached the critical mt rate':
             ['D', 1, color_unstable, TF1_label_unstable],
         'Reached TPAGB':
@@ -192,7 +213,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'Terminate due to L2 overflow during case A':
             ['D', 1, color_unstable, TF1_label_unstable],
         'Reached maximum mass transfer rate: Exceeded photon trapping radius':
-            ['D', 1, color_unstable, TF1_label_unstable],
+            ['D', 1, color_unstable_8, TF1_label_unstable_8],
         'Terminate because accretor (r-rl)/rl > accretor_overflow_terminate':
             ['D', 1, color_unstable, TF1_label_unstable],
         'logQ_limit':
