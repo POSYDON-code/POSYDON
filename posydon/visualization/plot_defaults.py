@@ -115,6 +115,7 @@ list_of_colors = ['#a6611a',
                   [(255/255, 127/255, 14/255)]]
 
 TF1_label_stable = 'Reached end life'
+color_stable = 'indigo'
 TF1_label_initial = 'Initial RLOF'
 TF1_label_unstable = 'Unstable RLOF'
 color_unstable = 'black'
@@ -143,27 +144,27 @@ color_unstable_8 = 'orange'
 DEFAULT_MARKERS_COLORS_LEGENDS = {
     'termination_flag_1': {
         'terminate due to primary depleting carbon (inverse sn?)':
-            ['s', 2, None, TF1_label_stable],
+            ['s', 2, color_stable, TF1_label_stable],
         'Primary has depleted central carbon':
-            ['s', 2, None, TF1_label_stable],
+            ['s', 2, color_stable, TF1_label_stable],
         'Secondary has depleted central carbon':
-            ['o', 2, None, TF1_label_stable],
+            ['o', 2, color_stable, TF1_label_stable],
         'Primary got stopped before central carbon depletion':
-            ['s', 2, None, TF1_label_stable],
+            ['s', 2, color_stable, TF1_label_stable],
         'Secondary got stopped before central carbon depletion':
-            ['o', 2, None, TF1_label_stable],
+            ['o', 2, color_stable, TF1_label_stable],
         'Primary enters pair-instability regime':
-            ['s', 2, None, TF1_label_stable],
+            ['s', 2, color_stable, TF1_label_stable],
         'Secondary enters pair-instability regime':
-            ['o', 2, None, TF1_label_stable],
+            ['o', 2, color_stable, TF1_label_stable],
         'Primary enters pulsational pair-instability regime':
-            ['s', 2, None, TF1_label_stable],
+            ['s', 2, color_stable, TF1_label_stable],
         'Secondary enters pulsational pair-instability regime':
-            ['o', 2, None, TF1_label_stable],
+            ['o', 2, color_stable, TF1_label_stable],
         'offcenter neon ignition for primary':
-            ['s', 2, None, TF1_label_stable],
+            ['s', 2, color_stable, TF1_label_stable],
         'offcenter neon ignition for secondary':
-            ['o', 2, None, TF1_label_stable],
+            ['o', 2, color_stable, TF1_label_stable],
         'forced_initial_RLO':
             ['.', 1, color_unstable, TF1_label_initial],
         'overflow from L1 at ZAMS':
@@ -227,11 +228,11 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'no termination code':
             ['x', 1, 'red', 'no termination code'],
         'envelope_mass_limit':
-            ['s', 2, None, TF1_label_stable],
+            ['s', 2, color_stable, TF1_label_stable],
         'gamma_center_limit':
-            ['s', 2, None, TF1_label_stable],
+            ['s', 2, color_stable, TF1_label_stable],
         'max_age':
-            ['s', 2, None, TF1_label_stable],
+            ['s', 2, color_stable, TF1_label_stable],
         'Initial RLOF':
             ['.', 1, 'black', TF1_label_initial],
         'Not converged':
