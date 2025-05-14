@@ -122,22 +122,22 @@ color_unstable = 'black'
 TF1_label_unstable_2 = 'overflow from L2 surface for q<1'
 color_unstable_2 = 'blue'
 
-TF1_label_unstable_3 = 'overflow from L2 (D_L2) distance for q(=Macc/Mdon)>1'
+TF1_label_unstable_3 = 'overflow from L2 (D_L2) distance for\nq(=Macc/Mdon)>1'
 color_unstable_3 = 'royalblue'
 
-TF1_label_unstable_4 = 'overflow from L2 (R_L2) surface for q(=Macc/Mdon)<1'
+TF1_label_unstable_4 = 'overflow from L2 (R_L2) surface for\nq(=Macc/Mdon)<1'
 color_unstable_4 = 'teal'
 
-TF1_label_unstable_5 = 'overflow from L2 (R_L2) surface for q(=Macc/Mdon)>1'
+TF1_label_unstable_5 = 'overflow from L2 (R_L2) surface for\nq(=Macc/Mdon)>1'
 color_unstable_5 = 'forestgreen'
 
-TF1_label_unstable_6 = 'overflow from L2 (D_L2) distance for q(=Macc/Mdon)<1'
+TF1_label_unstable_6 = 'overflow from L2 (D_L2) distance for\nq(=Macc/Mdon)<1'
 color_unstable_6 = 'limegreen'
 
 TF1_label_unstable_7 = 'Reached maximum mass transfer rate: 1d-1'
 color_unstable_7 = 'dodgerblue'
 
-TF1_label_unstable_8 = 'Reached maximum mass transfer rate: Exceeded photon trapping radius'
+TF1_label_unstable_8 = 'Reached maximum mass transfer rate:\nExceeded photon trapping radius'
 color_unstable_8 = 'orange'
 
 DEFAULT_MARKERS_COLORS_LEGENDS = {
@@ -1071,7 +1071,7 @@ DEFAULT_LABELS = {
     'S2_eta' : [r'$\eta$', r'$\log_{10}(\eta)$'],
 
     # Termination flags (one entry for each key in DEFAULT_MARKERS_COLORS_LEGENDS)
-    'termination_flag_1' : [r'MESA termination\_code', r'MESA termination\_code'],
+    'termination_flag_1' : [r'MESA termination code', r'MESA termination code'],
     'termination_flag_2' : [r'Mass transfer history', r'Mass transfer history'],
     'termination_flag_3' : [r'Final stellar state of star 1', r'Final stellar state of star 1'],
     'termination_flag_4' : [r'Final stellar state of star 2', r'Final stellar state of star 2'],
