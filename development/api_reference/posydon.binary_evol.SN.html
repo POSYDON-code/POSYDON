@@ -337,13 +337,16 @@ central BH.</p></li>
 <li><p><strong>mass_initial_BH</strong> (<em>float</em>) – Mass of the initial BH in units of g.</p></li>
 <li><p><strong>a_initial_BH</strong> (<em>float</em>) – Dimensionless spin of the initial BH.</p></li>
 <li><p><strong>J_initial_BH</strong> (<em>float</em>) – Angular momentum of the initial BH in g*cm^2/s.</p></li>
-<li><p><strong>angular_frequency_i</strong> (<em>array floats</em>) – Shell’s angular frequencies in s^-1 collapsing onto the
+<li><p><strong>angular_frequency_i</strong> (<em>ndarray of floats</em>) – Shell’s angular frequencies in s^-1 collapsing onto the
 initially-formed BH.</p></li>
-<li><p><strong>enclosed_mass_i</strong> (<em>array floats</em>) – Shell’s enclosed masses in g collapsing onto the initially formed BH.</p></li>
-<li><p><strong>radius_i</strong> (<em>array floats</em>) – Shell’s radii in cm collapsing onto the initially formed BH.</p></li>
-<li><p><strong>density_i</strong> (<em>array floats</em>) – Shell’s densities in g/cm^3 collapsing onto the initially formed BH.</p></li>
-<li><p><strong>dm_i</strong> (<em>array floats</em>) – Shell’s masses in g collapsing onto the initially formed BH.</p></li>
-<li><p><strong>dm_i</strong> (<em>array floats</em>) – Shell’s width in cm collapsing onto the initially formed BH.</p></li>
+<li><p><strong>enclosed_mass_i</strong> (<em>ndarray of floats</em>) – Shell’s enclosed masses in g collapsing onto the initially formed BH.</p></li>
+<li><p><strong>radius_i</strong> (<em>ndarray of floats</em>) – Shell’s radii in cm collapsing onto the initially formed BH.</p></li>
+<li><p><strong>density_i</strong> (<em>ndarray of floats</em>) – Shell’s densities in g/cm^3 collapsing onto the initially formed BH.</p></li>
+<li><p><strong>dm_i</strong> (<em>ndarray of floats</em>) – Shell’s masses in g collapsing onto the initially formed BH.</p></li>
+<li><p><strong>dr_i</strong> (<em>ndarray of floats</em>) – Shell’s width in cm collapsing onto the initially formed BH.</p></li>
+<li><p><strong>he3_i</strong> (<em>ndarray of floats</em>) – Shell’s Helium 3 fraction.</p></li>
+<li><p><strong>he4_i</strong> (<em>ndarray of floats</em>) – Shell’s Helium 4 fraction.</p></li>
+<li><p><strong>max_he_mass_ejected_SN</strong> (<em>float</em>) – Maxium Helium in SN ejecta.</p></li>
 </ul>
 </p>
 </dd>
@@ -918,10 +921,7 @@ neutrino-powered explosions. The Astrophysical Journal, 821(1), 38.</p>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

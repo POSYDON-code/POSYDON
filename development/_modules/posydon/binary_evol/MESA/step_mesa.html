@@ -153,7 +153,7 @@
                                             <span class="n">set_binary_to_failed</span><span class="p">,)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.data_download</span><span class="w"> </span><span class="kn">import</span> <span class="n">data_download</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODELS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.SN_MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">SN_MODELS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonerror</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlowError</span><span class="p">,</span> <span class="n">GridError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
 
@@ -359,6 +359,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_var_name</span> <span class="o">=</span> <span class="n">stop_var_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_value</span> <span class="o">=</span> <span class="n">stop_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_interpolate</span> <span class="o">=</span> <span class="n">stop_interpolate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_find_boundaries</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer the grid boundaries (min/max of masses and orbital period).&quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">initial_values_min_max</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">):</span>
+            <span class="c1"># get the request column from the initial values</span>
+            <span class="n">initial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
+            <span class="c1"># get the final values - NaN for ignored/failed runs</span>
+            <span class="n">final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
+
+            <span class="c1"># only use runs for which both initial and final value is defined</span>
+            <span class="n">initial_values_to_use</span> <span class="o">=</span> <span class="n">initial</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">initial</span> <span class="o">+</span> <span class="n">final</span><span class="p">)]</span>
+
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">initial_values_to_use</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">initial_values_to_use</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="o">=</span> <span class="n">initial_values_min_max</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="o">=</span> <span class="n">initial_values_min_max</span><span class="p">(</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="o">=</span> <span class="n">initial_values_min_max</span><span class="p">(</span><span class="s1">&#39;period_days&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MesaGridStep.load_psyTrackInterp">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.MESA.html#posydon.binary_evol.MESA.step_mesa.MesaGridStep.load_psyTrackInterp">[docs]</a>
@@ -942,24 +960,27 @@
 
         <span class="c1"># update nearest neighbor core collapse quantites</span>
         <span class="k">if</span> <span class="n">interpolation_class</span> <span class="o">!=</span> <span class="s1">&#39;unstable_MT&#39;</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">MODEL_NAME</span> <span class="ow">in</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">SN_MODEL_NAME</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">star</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stars</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">stars_CO</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span>
-                        <span class="n">cb</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;None&#39;</span><span class="p">):</span>
+                    <span class="n">col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_type&#39;</span>
+                    <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="n">stars_CO</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        <span class="ow">and</span> <span class="p">(</span><span class="n">cb</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;None&#39;</span><span class="p">)):</span>
                         <span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
                         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;SN_type&#39;</span><span class="p">,</span> <span class="s1">&#39;f_fb&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;spin&#39;</span><span class="p">,</span>
-                                    <span class="s1">&#39;m_disk_accreted&#39;</span><span class="p">,</span> <span class="s1">&#39;m_disk_radiated&#39;</span><span class="p">,</span> <span class="s1">&#39;M4&#39;</span><span class="p">,</span> <span class="s1">&#39;mu4&#39;</span><span class="p">,</span>
-                                    <span class="s1">&#39;h1_mass_ej&#39;</span><span class="p">,</span> <span class="s1">&#39;he4_mass_ej&#39;</span><span class="p">]:</span>
+                                    <span class="s1">&#39;m_disk_accreted&#39;</span><span class="p">,</span> <span class="s1">&#39;m_disk_radiated&#39;</span><span class="p">,</span> <span class="s1">&#39;M4&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;mu4&#39;</span><span class="p">,</span> <span class="s1">&#39;h1_mass_ej&#39;</span><span class="p">,</span> <span class="s1">&#39;he4_mass_ej&#39;</span><span class="p">]:</span>
                             <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;state&quot;</span><span class="p">:</span>
-                                <span class="n">state</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_type&#39;</span><span class="p">]</span>
+                                <span class="n">state</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span>
                                 <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span>
                             <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;SN_type&quot;</span><span class="p">:</span>
-                                <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+                                <span class="n">col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span>
+                                <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span>
                             <span class="k">else</span><span class="p">:</span>
-                                <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
-                        <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">MODEL_NAME</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+                                <span class="n">col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span>
+                                <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">SN_MODEL_NAME</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">MODEL_NAME</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">SN_MODEL_NAME</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MesaGridStep.initial_final_interpolation">
@@ -1111,29 +1132,31 @@
 
         <span class="c1"># update interpolated core collapse quantites</span>
         <span class="k">if</span> <span class="n">interpolation_class</span> <span class="o">!=</span> <span class="s1">&#39;unstable_MT&#39;</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">MODEL_NAME</span> <span class="ow">in</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">SN_MODEL_NAME</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">star</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stars</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">stars_CO</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;None&#39;</span><span class="p">):</span>
+                    <span class="n">col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_type&#39;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">stars_CO</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;None&#39;</span><span class="p">):</span>
                         <span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
                         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;SN_type&#39;</span><span class="p">,</span> <span class="s1">&#39;f_fb&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;spin&#39;</span><span class="p">,</span>
                                     <span class="s1">&#39;m_disk_accreted&#39;</span><span class="p">,</span> <span class="s1">&#39;m_disk_radiated&#39;</span><span class="p">,</span> <span class="s1">&#39;M4&#39;</span><span class="p">,</span>
                                     <span class="s1">&#39;mu4&#39;</span><span class="p">,</span> <span class="s1">&#39;h1_mass_ej&#39;</span><span class="p">,</span> <span class="s1">&#39;he4_mass_ej&#39;</span><span class="p">]:</span>
                             <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;state&quot;</span><span class="p">:</span>
-                                <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_type&#39;</span><span class="p">]</span>
+                                <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span>
                                 <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span>
                             <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;SN_type&quot;</span><span class="p">:</span>
-                                <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
-                            <span class="k">elif</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">fv</span><span class="p">:</span>
-                                <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">fv</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+                                <span class="n">col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span>
+                                <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span>
+                            <span class="k">elif</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">fv</span><span class="p">:</span>
+                                <span class="n">col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span>
+                                <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">fv</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span>
                             <span class="k">else</span><span class="p">:</span>
-                                <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> not found in fv&quot;</span><span class="p">,</span>
-                                      <span class="s2">&quot;UnsupportedModelWarning&quot;</span><span class="p">)</span>
+                                <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> not &quot;</span>
+                                      <span class="s2">&quot;found in fv&quot;</span><span class="p">,</span> <span class="s2">&quot;UnsupportedModelWarning&quot;</span><span class="p">)</span>
                                 <span class="n">values</span> <span class="o">=</span> <span class="kc">None</span>
                                 <span class="k">break</span>
-                        <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">MODEL_NAME</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">SN_MODEL_NAME</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">MODEL_NAME</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">SN_MODEL_NAME</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
 
     <span class="c1"># STOPPING METHODS</span>
@@ -1352,7 +1375,6 @@
 <span class="sd">            Description of returned object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Error handling</span>
         <span class="k">if</span> <span class="n">v_before</span> <span class="o">==</span> <span class="s2">&quot;None&quot;</span> <span class="ow">or</span> <span class="n">v_after</span> <span class="o">==</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;None&quot;</span>
@@ -1381,17 +1403,10 @@
                          <span class="n">grid_name</span><span class="o">=</span><span class="n">grid_name</span><span class="p">,</span>
                          <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># special stuff for my step goes here</span>
-        <span class="c1"># If nothing to do, no init necessary</span>
 
-        <span class="c1"># load grid boundaries</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">])</span>
+        <span class="c1"># set mass ratio</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_min</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># can be computed m2_min/m1_min</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_max</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># note that for MESA stability we actually run q_max = 0.99</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">])</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the MS-MS step on a BinaryStar.&quot;&quot;&quot;</span>
@@ -1409,11 +1424,11 @@
         <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span>
         <span class="c1"># check if the binary is in the grid</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">state_1</span> <span class="o">==</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span> <span class="ow">and</span>
-            <span class="n">state_2</span> <span class="o">==</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span> <span class="ow">and</span>
-            <span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;ZAMS&#39;</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">q_min</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">/</span><span class="n">m1</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">mass_ratio</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="p">):</span>
+                <span class="n">state_2</span> <span class="o">==</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span> <span class="ow">and</span>
+                <span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;ZAMS&#39;</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">q_min</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">/</span><span class="n">m1</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">mass_ratio</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_max</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
         <span class="c1"># binary in grid but masses flipped</span>
@@ -1492,16 +1507,6 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">metallicity</span><span class="o">=</span><span class="n">metallicity</span><span class="p">,</span>
                          <span class="n">grid_name</span><span class="o">=</span><span class="n">grid_name</span><span class="p">,</span>
                          <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="c1"># special stuff for my step goes here</span>
-        <span class="c1"># If nothing to do, no init necessary</span>
-
-        <span class="c1"># load grid boundaries</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">])</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evolve a binary using the MESA step.&quot;&quot;&quot;</span>
@@ -1555,14 +1560,15 @@
                 <span class="o">%</span> <span class="p">(</span><span class="n">state_1</span><span class="p">,</span> <span class="n">state_2</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">event</span><span class="p">))</span>
         <span class="c1"># redirect if outside grids</span>
         <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
-            <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
-            <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)):</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
+             <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
+                <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)):</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
 
 
@@ -1597,11 +1603,11 @@
             <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">GridError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The mass of m2 (</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s1">) is outside the grid,&#39;</span>
                             <span class="s1">&#39; while the period is inside the grid.&#39;</span><span class="p">)</span>
-
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;detached&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;redirect_from_CO_HMS_RLO&quot;</span>
             <span class="k">return</span></div>
+
 
 
 <div class="viewcode-block" id="CO_HeMS_RLO_step">
@@ -1619,16 +1625,6 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">metallicity</span><span class="o">=</span><span class="n">metallicity</span><span class="p">,</span>
                          <span class="n">grid_name</span><span class="o">=</span><span class="n">grid_name</span><span class="p">,</span>
                          <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="c1"># special stuff for my step goes here</span>
-        <span class="c1"># If nothing to do, no init necessary</span>
-
-        <span class="c1"># load grid boundaries</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">])</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evolve a binary using the MESA step.&quot;&quot;&quot;</span>
@@ -1686,14 +1682,14 @@
 
         <span class="c1"># redirect if outside grids</span>
         <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
-            <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
-            <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)):</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span> <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
+                <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)):</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
 
         <span class="c1"># period inside the grid, but m1 outside the grid</span>
@@ -1703,7 +1699,6 @@
             <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">GridError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The mass of m1 (</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s1">) is outside the grid,&#39;</span>
                                 <span class="s1">&#39; while the period is inside the grid.&#39;</span><span class="p">)</span>
-
         <span class="c1"># period inside the grid, but m2 outside the grid</span>
         <span class="k">elif</span> <span class="p">((</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
                <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
@@ -1711,7 +1706,6 @@
             <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">GridError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The mass of m2 (</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s1">) is outside the grid,&#39;</span>
                                 <span class="s1">&#39; while the period is inside the grid.&#39;</span><span class="p">)</span>
-
         <span class="c1"># period inside the grid, but m1 outside the grid with flipped stars</span>
         <span class="k">elif</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
                <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
@@ -1719,7 +1713,6 @@
             <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">GridError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The mass of m2 (</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s1">) is outside the grid,&#39;</span>
                                 <span class="s1">&#39; while the period is inside the grid.&#39;</span><span class="p">)</span>
-
         <span class="c1"># period inside the grid, but m2 outside the grid with flipped stars</span>
         <span class="k">elif</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
@@ -1732,6 +1725,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;detached&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;redirect_from_CO_HeMS_RLO&quot;</span>
             <span class="k">return</span></div>
+
 
 
 <div class="viewcode-block" id="CO_HeMS_step">
@@ -1749,16 +1743,6 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">metallicity</span><span class="o">=</span><span class="n">metallicity</span><span class="p">,</span>
                          <span class="n">grid_name</span><span class="o">=</span><span class="n">grid_name</span><span class="p">,</span>
                          <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="c1"># special stuff for my step goes here</span>
-        <span class="c1"># If nothing to do, no init necessary</span>
-
-        <span class="c1"># load grid boundaries</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psyTrackInterp</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">])</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the CO_HeMS step to a BinaryStar object.&quot;&quot;&quot;</span>
@@ -1813,14 +1797,15 @@
         <span class="c1"># redirect if outside grids</span>
         <span class="c1"># remember that in MESA the CO object is star_2</span>
         <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
-            <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
-            <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)):</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
+             <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">m2_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m2_max</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
+                <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)):</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
 
         <span class="c1"># period inside the grid, but m1 outside the grid</span>
@@ -1906,7 +1891,7 @@
 
         <span class="c1"># check the star states</span>
         <span class="c1"># TODO: import states from flow_chart.py</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">state_2</span> <span class="ow">in</span> <span class="n">FOR_RLO_STATES</span> <span class="ow">and</span> <span class="p">(</span><span class="n">state_1</span> <span class="ow">in</span> <span class="n">FOR_RLO_STATES</span><span class="p">)</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="n">state_2</span> <span class="ow">in</span> <span class="n">FOR_RLO_STATES</span> <span class="ow">and</span> <span class="p">(</span><span class="n">state_1</span> <span class="ow">in</span> <span class="n">FOR_RLO_STATES</span><span class="p">)</span>
                 <span class="ow">and</span> <span class="n">event</span> <span class="o">==</span> <span class="s2">&quot;oRLO1&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="c1"># catch and redirect double core collapse, this happens if q=1:</span>
@@ -1930,7 +1915,7 @@
         <span class="c1"># redirect if outside grids</span>
         <span class="c1"># HMS-HMS grid is sampled in q so check explicity vs m1 and m2</span>
         <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>            
+            <span class="bp">self</span><span class="o">.</span><span class="n">m1_min</span> <span class="o">&lt;=</span> <span class="n">m1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m1_max</span> <span class="ow">and</span>
             <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">q_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum_star_mass</span><span class="o">/</span><span class="n">m1</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">mass_ratio</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_max</span> <span class="ow">and</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
             <span class="n">ecc</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
@@ -1972,7 +1957,7 @@
             <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">GridError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The mass of m1 (</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s1">) is outside the grid,&#39;</span>
                                 <span class="s1">&#39; while the period is inside the grid.&#39;</span><span class="p">)</span>
-        
+
         <span class="c1"># period inside the grid, but m2 outside the grid (flipped stars)</span>
         <span class="k">elif</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
@@ -1980,7 +1965,7 @@
             <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">GridError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The mass of m2 (</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="s1">) is outside the grid,&#39;</span>
                             <span class="s1">&#39; while the period is inside the grid.&#39;</span><span class="p">)</span>
-        
+
         <span class="c1"># period inside the grid, but q outside the grid (flipped stars)</span>
         <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flip_stars_before_step</span> <span class="ow">and</span>
                <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="ow">and</span>
@@ -2012,10 +1997,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

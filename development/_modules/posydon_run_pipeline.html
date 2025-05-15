@@ -151,7 +151,7 @@
 
 <span class="sd">STEP 3: calculate extra values</span>
 <span class="sd">[&#39;grid_low_res_combined&#39;,&#39;grid_random_1&#39;,&#39;grid_low_res_combined_rerun1&#39;]</span>
-<span class="sd">--&gt; do post processing on the ORIGINAL grid and append back on the LITE gird</span>
+<span class="sd">--&gt; do post processing on the ORIGINAL grid and append back on the LITE grid</span>
 <span class="sd">the post processed quantities</span>
 
 <span class="sd">STEP 3.1: plot extra values</span>
@@ -165,19 +165,19 @@
 <span class="sd">STEP 4: train interpolators</span>
 <span class="sd">[&#39;grid_low_res_combined_rerun1&#39;] --&gt; train the interpolators</span>
 
-<span class="sd">STEP 4.1: plot interpolator accuracy and confusion matricies</span>
+<span class="sd">STEP 4.1: plot interpolator accuracy and confusion matrices</span>
 <span class="sd">[&#39;grid_random_1&#39;]</span>
 <span class="sd">--&gt; loop over all plot types</span>
 
 <span class="sd">STEP 5: train profile interpolators</span>
-<span class="sd">uses gird and initial-final interpolators to train the profile interpolators</span>
+<span class="sd">uses grid and initial-final interpolators to train the profile interpolators</span>
 
 <span class="sd">STEP F: export dataset</span>
 
 <span class="sd">STEP RERUN: rerun grid with a fix</span>
 <span class="sd">grid_low_res_combined.rerun(index=logic) --&gt; grid_low_res_rerun_1/grid.csv</span>
 <span class="sd">                                         --&gt; grid_random_1_rerun_1/grid.csv</span>
-<span class="sd">-- run gird fix and do next post processing</span>
+<span class="sd">-- run grid fix and do next post processing</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
@@ -203,7 +203,7 @@
                                    <span class="n">EXTRA_COLS_DS_EXCLUDE</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.post_processing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">post_process_grid</span><span class="p">,</span>
                                            <span class="n">add_post_processed_quantities</span><span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODELS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.SN_MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">SN_MODELS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.gridutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_new_grid_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Pwarn</span><span class="p">,</span><span class="n">print_stats</span><span class="p">)</span>
@@ -295,7 +295,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;pure_compression = </span><span class="si">{</span><span class="n">pure_compression</span><span class="si">}</span><span class="s1"> not &#39;</span>
                          <span class="sa">f</span><span class="s1">&#39;supported! (compression=</span><span class="si">{</span><span class="n">compression</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
     
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;CO&#39;</span> <span class="ow">in</span> <span class="n">grid_type</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;RLO&#39;</span> <span class="ow">in</span> <span class="n">compression</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;RLO&#39;</span> <span class="ow">in</span> <span class="n">compression</span><span class="p">:</span>
         <span class="n">start_at_RLO</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">start_at_RLO</span> <span class="o">=</span> <span class="kc">False</span>
@@ -353,11 +353,11 @@
                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&gt;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
     <span class="c1"># get values from csv file</span>
     <span class="n">grid_combined_key</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">gird_names</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">grid_combined_key</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+    <span class="n">grid_names</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">grid_combined_key</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Combinining: </span><span class="si">{</span><span class="n">gird_names</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Combinining: </span><span class="si">{</span><span class="n">grid_names</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;into: </span><span class="si">{</span><span class="n">grid_combined_key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">join_grids</span><span class="p">(</span><span class="n">gird_names</span><span class="p">,</span> <span class="n">grid_combined_key</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+    <span class="n">join_grids</span><span class="p">(</span><span class="n">grid_names</span><span class="p">,</span> <span class="n">grid_combined_key</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
 
 
 
@@ -508,21 +508,21 @@
                                    <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;model_number&quot;</span> <span class="ow">and</span>
                                    <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span>
                                    <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
-                                   <span class="ow">and</span> <span class="s2">&quot;MODEL&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)]</span>
+                                   <span class="ow">and</span> <span class="s2">&quot;SN_MODEL&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)]</span>
     
 
     <span class="n">out_nan_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span> <span class="k">if</span> <span class="p">(</span>
                              <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;model_number&quot;</span> <span class="ow">and</span>
                             <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span>
                             <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
-                            <span class="ow">and</span> <span class="s2">&quot;MODEL&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)]</span>
+                            <span class="ow">and</span> <span class="s2">&quot;SN_MODEL&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)]</span>
     
     <span class="c1"># define all string keys in final values</span>
     <span class="n">c_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;interpolation_class&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_state&#39;</span><span class="p">,</span> <span class="s1">&#39;mt_history&#39;</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">MODEL_NAME</span> <span class="ow">in</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">SN_MODEL_NAME</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
-            <span class="n">c_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_SN_type&#39;</span><span class="p">)</span>
-            <span class="n">c_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_type&#39;</span><span class="p">)</span>
+            <span class="n">c_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_SN_type&#39;</span><span class="p">)</span>
+            <span class="n">c_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_type&#39;</span><span class="p">)</span>
     
     <span class="c1"># specify the interpolation methods</span>
     <span class="n">interpolators</span> <span class="o">=</span> <span class="p">[</span>
@@ -542,25 +542,25 @@
     <span class="c1"># TODO: we need to train core collapse for secondary star as well</span>
     <span class="c1"># to catch reverse mass transfer cases where the secondary undergoes</span>
     <span class="c1"># core collapse first</span>
-    <span class="k">for</span> <span class="n">MODEL_NAME</span> <span class="ow">in</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">SN_MODEL_NAME</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span> <span class="c1">#TODO: range(1,3):</span>
             <span class="n">out_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span> <span class="k">if</span> <span class="p">(</span>
                                    <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;model_number&quot;</span> <span class="ow">and</span>
                                    <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span>
                                    <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
-                                   <span class="ow">and</span> <span class="sa">f</span><span class="s2">&quot;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)]</span>
+                                   <span class="ow">and</span> <span class="sa">f</span><span class="s2">&quot;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)]</span>
             
             <span class="n">out_nan_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span> <span class="k">if</span> <span class="p">(</span>
                                 <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;model_number&quot;</span> 
                                 <span class="ow">and</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span>
                                 <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
-                                <span class="ow">and</span> <span class="sa">f</span><span class="s2">&quot;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)]</span>
+                                <span class="ow">and</span> <span class="sa">f</span><span class="s2">&quot;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)]</span>
             
             <span class="c1"># get interpolations classes dynamically</span>
             <span class="n">interp_method</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">interp_classes</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">CO_interpolation_class</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;BH&quot;</span><span class="p">,</span> <span class="s2">&quot;NS&quot;</span><span class="p">,</span> <span class="s2">&quot;WD&quot;</span><span class="p">,</span> <span class="s2">&quot;BH_reverse_MT&quot;</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="n">CO_interpolation_class</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_interpolation_class&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">CO_interpolation_class</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_interpolation_class&#39;</span><span class="p">]:</span>
                     <span class="n">interp_method</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
                     <span class="n">interp_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CO_interpolation_class</span><span class="p">)</span>
 
@@ -571,10 +571,10 @@
                     <span class="s2">&quot;out_keys&quot;</span><span class="p">:</span> <span class="n">out_keys</span><span class="p">,</span>
                     <span class="s2">&quot;out_nan_keys&quot;</span><span class="p">:</span> <span class="n">out_nan_keys</span><span class="p">,</span>
                     <span class="s2">&quot;class_method&quot;</span><span class="p">:</span> <span class="s2">&quot;kNN&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;c_keys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_interpolation_class&#39;</span><span class="p">,</span> 
-                               <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_type&#39;</span><span class="p">,</span>
-                               <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_SN_type&#39;</span><span class="p">],</span>
-                    <span class="s2">&quot;c_key&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_interpolation_class&#39;</span>
+                    <span class="s2">&quot;c_keys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_interpolation_class&#39;</span><span class="p">,</span> 
+                               <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_type&#39;</span><span class="p">,</span>
+                               <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_SN_type&#39;</span><span class="p">],</span>
+                    <span class="s2">&quot;c_key&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;S</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_CO_interpolation_class&#39;</span>
                 <span class="p">},</span>   
             <span class="p">)</span>
     
@@ -1326,12 +1326,20 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">set_name</span><span class="si">}</span><span class="s1"> not in PRE_SET_PLOTS&#39;</span><span class="p">,</span>
                           <span class="s2">&quot;UnsupportedModelWarning&quot;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="s1">&#39;_MODEL&#39;</span> <span class="ow">in</span> <span class="n">quantity_to_plot</span><span class="p">:</span>
-                <span class="n">short_quantity</span> <span class="o">=</span> <span class="n">quantity_to_plot</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_MODEL&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">short_quantity</span> <span class="o">=</span> <span class="n">short_quantity</span><span class="p">[</span><span class="n">short_quantity</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">elif</span> <span class="s1">&#39;_SN_MODEL&#39;</span> <span class="ow">in</span> <span class="n">quantity_to_plot</span><span class="p">:</span>
+                <span class="n">short_quantity</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">SN_MODEL_NAME</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">SN_MODEL_NAME</span><span class="o">+</span><span class="s1">&#39;_&#39;</span> <span class="ow">in</span> <span class="n">quantity_to_plot</span><span class="p">:</span>
+                        <span class="n">short_quantity</span> <span class="o">=</span> <span class="n">quantity_to_plot</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+                                          <span class="n">SN_MODEL_NAME</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">short_quantity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">quantity_to_plot</span><span class="si">}</span><span class="s1"> not recognized use &#39;</span>
+                          <span class="s1">&#39;SN_MODEL_DEFAULT_mass instead&#39;</span><span class="p">,</span>
+                          <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+                    <span class="n">short_quantity</span> <span class="o">=</span> <span class="s2">&quot;mass&quot;</span>
                 <span class="n">model_name</span> <span class="o">=</span> <span class="n">quantity_to_plot</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">short_quantity</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">set_name</span> <span class="o">=</span> <span class="n">quantity_to_plot</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_MODEL&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>\
-                           <span class="s1">&#39;_MODEL_DEFAULT_&#39;</span> <span class="o">+</span> <span class="n">short_quantity</span>
+                <span class="n">set_name</span> <span class="o">=</span> <span class="n">quantity_to_plot</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_SN_MODEL&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>\
+                           <span class="s1">&#39;_SN_MODEL_DEFAULT_&#39;</span> <span class="o">+</span> <span class="n">short_quantity</span>
                 <span class="k">if</span> <span class="n">set_name</span> <span class="ow">in</span> <span class="n">PRE_SET_PLOTS</span><span class="p">:</span>
                     <span class="n">plot_attributes</span><span class="p">[</span><span class="s1">&#39;plot_dir_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span>
                                                                 <span class="n">short_quantity</span><span class="p">)</span>
@@ -1553,12 +1561,12 @@
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failure rate: </span><span class="si">{</span><span class="n">failure_rate_in_percent</span><span class="si">}</span><span class="s1">% in </span><span class="si">{</span><span class="n">grid_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">check_to_do</span><span class="o">==</span><span class="s1">&#39;CO_type&#39;</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-                <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;S1_MODEL&#39;</span> <span class="ow">in</span> <span class="n">quantity</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;CO_type&#39;</span> <span class="ow">in</span> <span class="n">quantity</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;S1_SN_MODEL&#39;</span> <span class="ow">in</span> <span class="n">quantity</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;CO_type&#39;</span> <span class="ow">in</span> <span class="n">quantity</span><span class="p">)):</span>
                     <span class="n">count</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">quantity</span><span class="p">])</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s1"> in </span><span class="si">{</span><span class="n">grid_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">check_to_do</span><span class="o">==</span><span class="s1">&#39;SN_type&#39;</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-                <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;S1_MODEL&#39;</span> <span class="ow">in</span> <span class="n">quantity</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;SN_type&#39;</span> <span class="ow">in</span> <span class="n">quantity</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;S1_SN_MODEL&#39;</span> <span class="ow">in</span> <span class="n">quantity</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;SN_type&#39;</span> <span class="ow">in</span> <span class="n">quantity</span><span class="p">)):</span>
                     <span class="n">count</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">quantity</span><span class="p">])</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s1"> in </span><span class="si">{</span><span class="n">grid_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="c1">#TODO: add more checks</span>
@@ -1570,12 +1578,12 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
 
-    <span class="c1"># read commond line arguments</span>
+    <span class="c1"># read command line arguments</span>
     <span class="n">n_args</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
     
-    <span class="k">if</span> <span class="n">n_args</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># path to girds</span>
+    <span class="k">if</span> <span class="n">n_args</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># path to grids</span>
         <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">==</span><span class="s1">&#39;--help&#39;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Programm to run a pipeline step&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Program to run a pipeline step&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;syntax: posydon-run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE&#39;</span>
                   <span class="s1">&#39; [SLURM_I] [VERBOSE]&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PATH_TO_GRIDS: path to the root directory with the grids&#39;</span><span class="p">)</span>
@@ -1617,7 +1625,7 @@
         <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;No verbose flag given, use True&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
         <span class="n">VERBOSE</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="c1"># chose grid slice given the slurm jobarray index</span>
+    <span class="c1"># choose grid slice given the slurm jobarray index</span>
 
     <span class="c1"># offset the start of each job</span>
     <span class="c1"># NOTE: this prevents job arrays starting at the same time to read</span>
@@ -1673,10 +1681,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

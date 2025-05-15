@@ -628,6 +628,8 @@
     <span class="k">else</span><span class="p">:</span>                                                   <span class="c1"># binary-star grid</span>
         <span class="k">if</span> <span class="s2">&quot;v1/&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">mesa_dir</span><span class="p">):</span> <span class="c1"># version 1 dirnames don&#39;t contain initial_z</span>
             <span class="n">variable_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;m1&quot;</span><span class="p">,</span> <span class="s2">&quot;m2&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_period_in_days&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s2">&quot;initial_eccentricity&quot;</span> <span class="ow">in</span> <span class="n">dirname</span><span class="p">:</span>
+            <span class="n">variable_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;m1&quot;</span><span class="p">,</span> <span class="s2">&quot;m2&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_period_in_days&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_z&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_eccentricity&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">variable_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;m1&quot;</span><span class="p">,</span> <span class="s2">&quot;m2&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_period_in_days&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_z&quot;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">variable_name</span> <span class="ow">in</span> <span class="n">variable_names</span><span class="p">:</span>
@@ -656,10 +658,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

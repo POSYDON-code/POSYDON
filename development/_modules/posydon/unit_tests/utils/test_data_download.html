@@ -1,0 +1,643 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.unit_tests.utils.test_data_download &mdash; posydon development documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=249f3023"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.unit_tests.utils.test_data_download</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.unit_tests.utils.test_data_download</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Unit tests of posydon/utils/data_download.py</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># import the module which will be tested</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.data_download</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">totest</span>
+<span class="c1"># aliases</span>
+<span class="n">os</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">os</span>
+
+<span class="c1"># import other needed code for the tests, which is not already imported in the</span>
+<span class="c1"># module you like to test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">fixture</span><span class="p">,</span> <span class="n">raises</span><span class="p">,</span> <span class="n">warns</span><span class="p">,</span> <span class="n">approx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">isclass</span><span class="p">,</span> <span class="n">isroutine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">rmtree</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">chdir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">patch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReplaceValueWarning</span>
+
+<span class="c1"># define test classes collecting several test functions</span>
+<div class="viewcode-block" id="TestElements">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestElements">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestElements</span><span class="p">:</span>
+    <span class="c1"># check for objects, which should be an element of the tested module</span>
+<div class="viewcode-block" id="TestElements.test_dir">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestElements.test_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;COMPLETE_SETS&#39;</span><span class="p">,</span> <span class="s1">&#39;PATH_TO_POSYDON_DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;ProgressBar&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;Pwarn&#39;</span><span class="p">,</span> <span class="s1">&#39;ZENODO_COLLECTION&#39;</span><span class="p">,</span> <span class="s1">&#39;__authors__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span> <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;_get_posydon_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_parse_commandline&#39;</span><span class="p">,</span> <span class="s1">&#39;argparse&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;data_download&#39;</span><span class="p">,</span> <span class="s1">&#39;download_one_dataset&#39;</span><span class="p">,</span> <span class="s1">&#39;hashlib&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;list_datasets&#39;</span><span class="p">,</span> <span class="s1">&#39;os&#39;</span><span class="p">,</span> <span class="s1">&#39;progressbar&#39;</span><span class="p">,</span> <span class="s1">&#39;tarfile&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;textwrap&#39;</span><span class="p">,</span> <span class="s1">&#39;tqdm&#39;</span><span class="p">,</span> <span class="s1">&#39;urllib&#39;</span><span class="p">}</span>
+        <span class="n">totest_elements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">totest</span><span class="p">))</span>
+        <span class="n">missing_in_test</span> <span class="o">=</span> <span class="n">elements</span> <span class="o">-</span> <span class="n">totest_elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are missing objects in &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">missing_in_test</span><span class="si">}</span><span class="s2">. Please &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;check, whether they have been &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;removed on purpose and update &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;this unit test.&quot;</span>
+        <span class="n">new_in_test</span> <span class="o">=</span> <span class="n">totest_elements</span> <span class="o">-</span> <span class="n">elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are new objects in &quot;</span>\
+                                      <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_in_test</span><span class="si">}</span><span class="s2">. &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;Please check, whether they have been &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;added on purpose and update this &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;unit test.&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_parse_commandline">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestElements.test_instance_parse_commandline">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_parse_commandline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">_parse_commandline</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_ProgressBar">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestElements.test_instance_ProgressBar">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_ProgressBar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_list_datasets">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestElements.test_instance_list_datasets">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_list_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_download_one_dataset">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestElements.test_instance_download_one_dataset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_download_one_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_data_download">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestElements.test_instance_data_download">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_data_download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">data_download</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_get_posydon_data">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestElements.test_instance_get_posydon_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_get_posydon_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">_get_posydon_data</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestFunctions">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestFunctions</span><span class="p">:</span>
+<div class="viewcode-block" id="TestFunctions.test_path">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions.test_path">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+        <span class="c1"># a temporary path to POSYDON_data for testing</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">&quot;POSYDON_data&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.download_statement">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions.download_statement">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">download_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># statement that the download started</span>
+        <span class="k">return</span> <span class="s2">&quot;Downloading POSYDON data &#39;</span><span class="si">{}</span><span class="s2">&#39; from Zenodo to &quot;</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.failed_MD5_statement">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions.failed_MD5_statement">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">failed_MD5_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># statement that MD5 verfication failed</span>
+        <span class="k">return</span> <span class="s2">&quot;Failed to read the tar.gz file for MD5 verification&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.extraction_statement">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions.extraction_statement">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extraction_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># statement that the tar extraction started</span>
+        <span class="k">return</span> <span class="s2">&quot;Extracting POSYDON data &#39;</span><span class="si">{}</span><span class="s2">&#39; from tar file...&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.removal_statement">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions.removal_statement">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">removal_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># statement that the tar file gets removed</span>
+        <span class="k">return</span> <span class="s2">&quot;Removed downloaded tar file.&quot;</span></div>
+
+
+    <span class="c1"># test functions</span>
+<div class="viewcode-block" id="TestFunctions.test_parse_commandline">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions.test_parse_commandline">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_parse_commandline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_parse_args</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">commandline_args</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_error</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">totest</span><span class="o">.</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">monkeypatch</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">mp</span><span class="p">:</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">,</span> <span class="s2">&quot;parse_args&quot;</span><span class="p">,</span>
+                       <span class="n">mock_parse_args</span><span class="p">)</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="n">mock_error</span><span class="p">)</span>
+            <span class="c1"># bad input</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commandline_args</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span>\
+             <span class="n">listedsets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nomd5check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">,</span>\
+                        <span class="n">match</span><span class="o">=</span><span class="s2">&quot;unknown dataset, use -l to show defined sets&quot;</span><span class="p">):</span>
+                <span class="n">totest</span><span class="o">.</span><span class="n">_parse_commandline</span><span class="p">()</span>
+            <span class="c1"># example</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commandline_args</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span>\
+             <span class="n">listedsets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nomd5check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_parse_commandline</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">commandline_args</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_list_datasets">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions.test_list_datasets">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_list_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+            <span class="c1"># individual sets</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">(</span><span class="n">individual_sets</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">captured_output</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="s2">&quot;Defined individual sets are:&quot;</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="s2">&quot;more information at&quot;</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="c1"># complete sets</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">(</span><span class="n">individual_sets</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">captured_output</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="s2">&quot;Defined complete sets are:&quot;</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="s2">&quot;more information at&quot;</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_download_one_dataset">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions.test_download_one_dataset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_download_one_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">test_path</span><span class="p">,</span>\
+                                  <span class="n">download_statement</span><span class="p">,</span> <span class="n">failed_MD5_statement</span><span class="p">,</span>\
+                                  <span class="n">extraction_statement</span><span class="p">,</span> <span class="n">removal_statement</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_urlretrieve</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reporthook</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">mock_TarFile</span><span class="p">:</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">getmembers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">set_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>\
+                        <span class="n">numeric_owner</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                <span class="k">return</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">mock_open</span><span class="p">:</span>
+            <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">fileobj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+                         <span class="n">bufsize</span><span class="o">=</span><span class="mi">10240</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">mock_TarFile</span><span class="p">()</span>
+            <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_urlretrieve2</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reporthook</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">test_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">8</span><span class="p">)):</span>
+                <span class="n">test_ID</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">test_ID</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test_path</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="o">+</span><span class="n">test_ID</span><span class="o">+</span><span class="s2">&quot;.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>\
+                 <span class="k">as</span> <span class="n">test_file</span><span class="p">:</span>
+                <span class="n">test_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Unit Test</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test_path</span><span class="p">,</span><span class="s2">&quot;..&quot;</span><span class="p">)):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;tar -czf POSYDON_data&quot;</span><span class="o">+</span><span class="n">test_ID</span>\
+                              <span class="o">+</span><span class="s2">&quot;.tar.gz POSYDON_data&quot;</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Please check that you have `tar` &quot;</span>\
+                                       <span class="o">+</span><span class="s2">&quot;installed and up to date.&quot;</span><span class="p">)</span>
+            <span class="n">rmtree</span><span class="p">(</span><span class="n">test_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;dataset&#39; should be a string.&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;The dataset &#39;Test&#39; is not defined.&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">monkeypatch</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">mp</span><span class="p">:</span>
+            <span class="n">mock_ZENODO_COLLECTION</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Test&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;md5&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}}</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;ZENODO_COLLECTION&quot;</span><span class="p">,</span> <span class="n">mock_ZENODO_COLLECTION</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;The dataset &#39;Test&#39; has no &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;publication yet.&quot;</span><span class="p">):</span>
+                <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">monkeypatch</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">mp</span><span class="p">:</span>
+            <span class="n">mock_PATH_TO_POSYDON_DATA</span> <span class="o">=</span> <span class="s2">&quot;./DOES_NOT_EXIST/POSYDON_data&quot;</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;PATH_TO_POSYDON_DATA&quot;</span><span class="p">,</span>\
+                       <span class="n">mock_PATH_TO_POSYDON_DATA</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">NotADirectoryError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;PATH_TO_POSYDON_DATA does &quot;</span>\
+                                                  <span class="o">+</span><span class="s2">&quot;not refer to a valid &quot;</span>\
+                                                  <span class="o">+</span><span class="s2">&quot;directory.&quot;</span><span class="p">):</span>
+                <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;v1_for_v2.0.0-pre1&#39;</span><span class="p">)</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">monkeypatch</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">mp</span><span class="p">:</span>
+            <span class="n">mock_ZENODO_COLLECTION</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Test&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span> <span class="p">:</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="s1">&#39;md5&#39;</span><span class="p">:</span> <span class="s2">&quot;Unit&quot;</span><span class="p">}}</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;ZENODO_COLLECTION&quot;</span><span class="p">,</span> <span class="n">mock_ZENODO_COLLECTION</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">FileExistsError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;POSYDON data already exists &quot;</span>\
+                                               <span class="o">+</span><span class="s2">&quot;at&quot;</span><span class="p">):</span>
+                <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span>
+        <span class="c1"># skip real download: do nothing instead</span>
+        <span class="k">with</span> <span class="n">monkeypatch</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">mp</span><span class="p">:</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;PATH_TO_POSYDON_DATA&quot;</span><span class="p">,</span> <span class="n">test_path</span><span class="p">)</span>
+            <span class="n">mock_ZENODO_COLLECTION</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Test&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="s2">&quot;POSYDON_data.tar.gz&quot;</span><span class="p">,</span>
+                                               <span class="s1">&#39;md5&#39;</span><span class="p">:</span> <span class="s2">&quot;Unit&quot;</span><span class="p">}}</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;ZENODO_COLLECTION&quot;</span><span class="p">,</span> <span class="n">mock_ZENODO_COLLECTION</span><span class="p">)</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;urlretrieve&quot;</span><span class="p">,</span> <span class="n">mock_urlretrieve</span><span class="p">)</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">tarfile</span><span class="p">,</span> <span class="s2">&quot;open&quot;</span><span class="p">,</span> <span class="n">mock_open</span><span class="p">)</span>
+            <span class="c1"># mocked download: fails MD5check, no tar file to remove</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">captured_output</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">download_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">failed_MD5_statement</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">extraction_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">removal_statement</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="c1"># without MD5 check</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">MD5_check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">captured_output</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">download_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">failed_MD5_statement</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">extraction_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">removal_statement</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="c1"># without MD5 check</span>
+            <span class="n">mock_ZENODO_COLLECTION</span><span class="p">[</span><span class="s1">&#39;Test&#39;</span><span class="p">][</span><span class="s1">&#39;md5&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="n">ReplaceValueWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;MD5 undefined, skip MD5 &quot;</span>\
+                                                  <span class="o">+</span><span class="s2">&quot;check.&quot;</span><span class="p">):</span>
+                <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span>
+            <span class="n">captured_output</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">download_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">failed_MD5_statement</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">extraction_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">removal_statement</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+        <span class="c1"># skip real download: create mock file instead</span>
+        <span class="k">with</span> <span class="n">monkeypatch</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">mp</span><span class="p">:</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;PATH_TO_POSYDON_DATA&quot;</span><span class="p">,</span> <span class="n">test_path</span><span class="p">)</span>
+            <span class="n">mock_ZENODO_COLLECTION</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Test0&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="s2">&quot;POSYDON_data0.tar.gz&quot;</span><span class="p">,</span>
+                                                <span class="s1">&#39;md5&#39;</span><span class="p">:</span> <span class="s2">&quot;Unit&quot;</span><span class="p">},</span>
+                                      <span class="s1">&#39;Test1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="s2">&quot;POSYDON_data1.tar.gz&quot;</span><span class="p">,</span>
+                                                <span class="s1">&#39;md5&#39;</span><span class="p">:</span> <span class="s2">&quot;Unit&quot;</span><span class="p">},</span>
+                                      <span class="s1">&#39;Test2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="s2">&quot;POSYDON_data2.tar.gz&quot;</span><span class="p">,</span>
+                                                <span class="s1">&#39;md5&#39;</span><span class="p">:</span> <span class="s2">&quot;Unit&quot;</span><span class="p">}}</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;ZENODO_COLLECTION&quot;</span><span class="p">,</span> <span class="n">mock_ZENODO_COLLECTION</span><span class="p">)</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;urlretrieve&quot;</span><span class="p">,</span> <span class="n">mock_urlretrieve2</span><span class="p">)</span>
+            <span class="c1"># mocked download: fails MD5check, which removes tar file and</span>
+            <span class="c1">#                  causes a FileNotFoundError</span>
+            <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;No such file or directory:&quot;</span><span class="p">):</span>
+                <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;Test0&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">captured_output</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">download_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test0&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">failed_MD5_statement</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">extraction_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test0&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">removal_statement</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+            <span class="c1"># return expected hash for testfile</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;hashlib.md5&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">p_md5</span><span class="p">:</span>
+                <span class="n">p_md5</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">hexdigest</span><span class="o">.</span><span class="n">return_value</span>\
+                 <span class="o">=</span> <span class="n">mock_ZENODO_COLLECTION</span><span class="p">[</span><span class="s1">&#39;Test1&#39;</span><span class="p">][</span><span class="s1">&#39;md5&#39;</span><span class="p">]</span>
+                <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;Test1&#39;</span><span class="p">)</span>
+                <span class="n">captured_output</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="n">download_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test1&#39;</span><span class="p">)</span>\
+                       <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="n">failed_MD5_statement</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="n">extraction_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test1&#39;</span><span class="p">)</span>\
+                       <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="n">removal_statement</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">test_path</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test_path</span><span class="p">,</span> <span class="s2">&quot;test1.txt&quot;</span><span class="p">))</span>
+                <span class="n">rmtree</span><span class="p">(</span><span class="n">test_path</span><span class="p">)</span> <span class="c1"># removed extracted data for next test</span>
+                <span class="c1"># with verification output</span>
+                <span class="n">totest</span><span class="o">.</span><span class="n">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;Test2&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">captured_output</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="n">download_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test2&#39;</span><span class="p">)</span>\
+                       <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="s2">&quot;MD5 verified&quot;</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="n">extraction_statement</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Test2&#39;</span><span class="p">)</span>\
+                       <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="n">removal_statement</span> <span class="ow">in</span> <span class="n">captured_output</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">test_path</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test_path</span><span class="p">,</span> <span class="s2">&quot;test2.txt&quot;</span><span class="p">))</span></div>
+
+<span class="c1">#                rmtree(test_path) # removed extracted data for next test</span>
+
+<div class="viewcode-block" id="TestFunctions.test_data_download">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions.test_data_download">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_data_download</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_download_one_dataset</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+            <span class="k">return</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;set_name&#39; should be a string.&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">data_download</span><span class="p">(</span><span class="n">set_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;The dataset &#39;Test&#39; is not defined.&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">data_download</span><span class="p">(</span><span class="n">set_name</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span>
+        <span class="c1"># skip real download: do nothing instead</span>
+        <span class="k">with</span> <span class="n">monkeypatch</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">mp</span><span class="p">:</span>
+            <span class="c1"># test single dataset</span>
+            <span class="n">mock_ZENODO_COLLECTION</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Test&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;Test2&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;ZENODO_COLLECTION&quot;</span><span class="p">,</span> <span class="n">mock_ZENODO_COLLECTION</span><span class="p">)</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;download_one_dataset&quot;</span><span class="p">,</span> <span class="n">mock_download_one_dataset</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">totest</span><span class="o">.</span><span class="n">data_download</span><span class="p">(</span><span class="n">set_name</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Test&#39;</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;MD5_check&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span>
+                <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="s2">&quot;You are downloading a single data set, which &quot;</span>\
+                           <span class="o">+</span> <span class="s2">&quot;might not contain all the data needed.</span><span class="se">\n</span><span class="s2">&quot;</span>\
+                           <span class="o">==</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span><span class="o">.</span><span class="n">out</span>
+            <span class="c1"># test complete set</span>
+            <span class="n">mock_COMPLETE_SETS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Unit&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="s1">&#39;Test2&#39;</span><span class="p">]}</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;COMPLETE_SETS&quot;</span><span class="p">,</span> <span class="n">mock_COMPLETE_SETS</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">data_download</span><span class="p">(</span><span class="n">set_name</span><span class="o">=</span><span class="s1">&#39;Unit&#39;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Test2&#39;</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;MD5_check&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_get_posydon_data">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestFunctions.test_get_posydon_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_posydon_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_parse_commandline</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">commandline_args</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_list_datasets</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">list_printed</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_data_download</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">downloaded</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="k">with</span> <span class="n">monkeypatch</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">mp</span><span class="p">:</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;_parse_commandline&quot;</span><span class="p">,</span> <span class="n">mock_parse_commandline</span><span class="p">)</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;list_datasets&quot;</span><span class="p">,</span> <span class="n">mock_list_datasets</span><span class="p">)</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;data_download&quot;</span><span class="p">,</span> <span class="n">mock_data_download</span><span class="p">)</span>
+            <span class="c1"># examples</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;complete&#39;</span><span class="p">,</span> <span class="s1">&#39;individual&#39;</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">list_printed</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">commandline_args</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">(</span>\
+                     <span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="n">listedsets</span><span class="o">=</span><span class="n">l</span><span class="p">,</span> <span class="n">nomd5check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+                    <span class="n">totest</span><span class="o">.</span><span class="n">_get_posydon_data</span><span class="p">()</span>
+                    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_printed</span><span class="p">[</span><span class="s1">&#39;individual_sets&#39;</span><span class="p">]</span>\
+                           <span class="o">==</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="s1">&#39;individual&#39;</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_printed</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span>
+            <span class="c1"># examples</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+                    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">downloaded</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">commandline_args</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">(</span>\
+                         <span class="n">dataset</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">listedsets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nomd5check</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+                        <span class="n">totest</span><span class="o">.</span><span class="n">_get_posydon_data</span><span class="p">()</span>
+                        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">downloaded</span><span class="p">[</span><span class="s1">&#39;set_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">d</span>
+                        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">downloaded</span><span class="p">[</span><span class="s1">&#39;MD5_check&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="ow">not</span> <span class="n">n</span><span class="p">)</span>
+                        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">downloaded</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestProgressBar">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestProgressBar">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestProgressBar</span><span class="p">:</span>
+<div class="viewcode-block" id="TestProgressBar.ProgressBar">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestProgressBar.ProgressBar">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ProgressBar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the ProgressBar class</span>
+<div class="viewcode-block" id="TestProgressBar.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestProgressBar.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ProgressBar</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ProgressBar</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ProgressBar</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ProgressBar</span><span class="o">.</span><span class="n">pbar</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ProgressBar</span><span class="o">.</span><span class="n">widgets</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestProgressBar.test_call">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_data_download.TestProgressBar.test_call">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ProgressBar</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ProgressBar</span><span class="o">.</span><span class="fm">__call__</span><span class="p">)</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 3 required positional &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;arguments: &#39;block_num&#39;, &#39;block_size&#39;, &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;and &#39;total_size&#39;&quot;</span><span class="p">):</span>
+            <span class="n">ProgressBar</span><span class="p">()</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;&lt;&#39; not supported between instances of &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;&#39;str&#39; and &#39;int&#39;&quot;</span><span class="p">):</span>
+            <span class="n">ProgressBar</span><span class="p">(</span><span class="s2">&quot;Test&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># the progressbar starts before the error</span>
+        <span class="c1"># hence, tearDown for pbar needed</span>
+        <span class="n">ProgressBar</span><span class="o">.</span><span class="n">pbar</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;&lt;&#39; not supported between instances of &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;&#39;str&#39; and &#39;int&#39;&quot;</span><span class="p">):</span>
+            <span class="n">ProgressBar</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Test&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># the progressbar starts before the error</span>
+        <span class="c1"># hence, tearDown for pbar needed</span>
+        <span class="n">ProgressBar</span><span class="o">.</span><span class="n">pbar</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;&#39;&gt;&#39; not supported between instances of &quot;</span>\
+                                     <span class="o">+</span><span class="s2">&quot;&#39;int&#39; and &#39;str&#39;&quot;</span><span class="p">):</span>
+            <span class="n">ProgressBar</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+            <span class="c1"># the progressbar starts before the error</span>
+        <span class="c1"># hence, tearDown for pbar needed</span>
+        <span class="n">ProgressBar</span><span class="o">.</span><span class="n">pbar</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+            <span class="n">ProgressBar</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">ProgressBar</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">percentage</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="mf">12.5</span><span class="p">)</span>
+        <span class="n">ProgressBar</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ProgressBar</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">percentage</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: dev
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -196,7 +196,7 @@ The simplest method is to provide `kwargs` of the initial stellar parameters.
 
 .. code-block:: python
 
-  kwargs = {'state' : 'MS',
+  kwargs = {'state' : 'H-rich-Core_H_burning',
             'mass' : 10.0,
             'metallicity' : 0.014}
   SingleStar(**kwargs)

@@ -145,7 +145,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_state_of_star</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODELS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.SN_MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">SN_MODELS</span>
 
 
 
@@ -312,9 +312,9 @@
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># core collapse quantities</span>
-        <span class="k">for</span> <span class="n">MODEL_NAME</span> <span class="ow">in</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MODEL_NAME</span><span class="p">):</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MODEL_NAME</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">SN_MODEL_NAME</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SN_MODEL_NAME</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SN_MODEL_NAME</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SingleStar.append_state">
 <a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar.append_state">[docs]</a>
@@ -595,10 +595,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

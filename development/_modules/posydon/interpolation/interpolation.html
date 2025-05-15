@@ -136,7 +136,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neighbors</span><span class="w"> </span><span class="kn">import</span> <span class="n">NearestNeighbors</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.data_scaling</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataScaler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODELS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.SN_MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">SN_MODELS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.interpolators</span><span class="w"> </span><span class="kn">import</span> <span class="n">interp1d</span>
 
 
@@ -626,11 +626,11 @@
 
         <span class="c1"># core collapse keys</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">MODEL_NAME</span> <span class="ow">in</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">SN_MODEL_NAME</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;SN_type&#39;</span><span class="p">,</span> <span class="s1">&#39;f_fb&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;spin&#39;</span><span class="p">,</span>
                         <span class="s1">&#39;m_disk_accreted&#39;</span><span class="p">,</span> <span class="s1">&#39;m_disk_radiated&#39;</span><span class="p">,</span><span class="s1">&#39;M4&#39;</span><span class="p">,</span> <span class="s1">&#39;mu4&#39;</span><span class="p">,</span>
                         <span class="s1">&#39;h1_mass_ej&#39;</span><span class="p">,</span> <span class="s1">&#39;he4_mass_ej&#39;</span><span class="p">]:</span>
-                <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;S1_&#39;</span> <span class="o">+</span> <span class="n">MODEL_NAME</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="p">)</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;S1_&#39;</span> <span class="o">+</span> <span class="n">SN_MODEL_NAME</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">final_keys</span> <span class="o">+=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">profile_keys</span> <span class="o">=</span> <span class="p">(</span>
@@ -928,10 +928,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

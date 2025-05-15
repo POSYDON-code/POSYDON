@@ -84,18 +84,18 @@
 <li class="toctree-l2"><a class="reference internal" href="posydon.popsyn.html">posydon.popsyn</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="posydon.unit_tests.html">posydon.unit_tests</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">posydon.unit_tests.grids</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#posydon-unit-tests-grids-test-models">posydon.unit_tests.grids.test_MODELS</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#posydon-unit-tests-grids-test-downsampling">posydon.unit_tests.grids.test_downsampling</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#posydon-unit-tests-grids-test-io">posydon.unit_tests.grids.test_io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-posydon.unit_tests.grids.test_MODELS">posydon.unit_tests.grids.test_MODELS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-posydon.unit_tests.grids.test_downsampling">posydon.unit_tests.grids.test_downsampling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-posydon.unit_tests.grids.test_io">posydon.unit_tests.grids.test_io</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#posydon-unit-tests-grids-test-post-processing">posydon.unit_tests.grids.test_post_processing</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#posydon-unit-tests-grids-test-psygrid">posydon.unit_tests.grids.test_psygrid</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#posydon-unit-tests-grids-test-scrubbing">posydon.unit_tests.grids.test_scrubbing</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#posydon-unit-tests-grids-test-termination-flags">posydon.unit_tests.grids.test_termination_flags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-posydon.unit_tests.grids.test_scrubbing">posydon.unit_tests.grids.test_scrubbing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-posydon.unit_tests.grids.test_termination_flags">posydon.unit_tests.grids.test_termination_flags</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="posydon.unit_tests.popsyn.html">posydon.unit_tests.popsyn</a></li>
 <li class="toctree-l3"><a class="reference internal" href="posydon.unit_tests.utils.html">posydon.unit_tests.utils</a></li>
-<li class="toctree-l3"><a class="reference internal" href="posydon.unit_tests.html#posydon-unit-tests-test-config">posydon.unit_tests.test_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.unit_tests.html#module-posydon.unit_tests.test_config">posydon.unit_tests.test_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="posydon.unit_tests.html#module-posydon.unit_tests.test_template">posydon.unit_tests.test_template</a></li>
 </ul>
 </li>
@@ -155,14 +155,358 @@
              
   <section id="module-posydon.unit_tests.grids">
 <span id="posydon-unit-tests-grids"></span><h1>posydon.unit_tests.grids<a class="headerlink" href="#module-posydon.unit_tests.grids" title="Link to this heading"></a></h1>
-<section id="posydon-unit-tests-grids-test-models">
-<h2>posydon.unit_tests.grids.test_MODELS<a class="headerlink" href="#posydon-unit-tests-grids-test-models" title="Link to this heading"></a></h2>
+<section id="module-posydon.unit_tests.grids.test_MODELS">
+<span id="posydon-unit-tests-grids-test-models"></span><h2>posydon.unit_tests.grids.test_MODELS<a class="headerlink" href="#module-posydon.unit_tests.grids.test_MODELS" title="Link to this heading"></a></h2>
+<p>Unit tests of posydon/grids/SN_MODELS.py</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestElements">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_MODELS.</span></span><span class="sig-name descname"><span class="pre">TestElements</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestElements" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestElements.test_dir">
+<span class="sig-name descname"><span class="pre">test_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestElements.test_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestElements.test_dir" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestElements.test_instance_DEFAULT_SN_MODEL">
+<span class="sig-name descname"><span class="pre">test_instance_DEFAULT_SN_MODEL</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestElements.test_instance_DEFAULT_SN_MODEL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestElements.test_instance_DEFAULT_SN_MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestElements.test_instance_SN_MODELS">
+<span class="sig-name descname"><span class="pre">test_instance_SN_MODELS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestElements.test_instance_SN_MODELS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestElements.test_instance_SN_MODELS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestElements.test_instance_get_SN_MODEL">
+<span class="sig-name descname"><span class="pre">test_instance_get_SN_MODEL</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestElements.test_instance_get_SN_MODEL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestElements.test_instance_get_SN_MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestElements.test_instance_get_SN_MODEL_NAME">
+<span class="sig-name descname"><span class="pre">test_instance_get_SN_MODEL_NAME</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestElements.test_instance_get_SN_MODEL_NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestElements.test_instance_get_SN_MODEL_NAME" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestFunctions">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_MODELS.</span></span><span class="sig-name descname"><span class="pre">TestFunctions</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestFunctions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestFunctions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestFunctions.test_get_SN_MODEL">
+<span class="sig-name descname"><span class="pre">test_get_SN_MODEL</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestFunctions.test_get_SN_MODEL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestFunctions.test_get_SN_MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestFunctions.test_get_SN_MODEL_NAME">
+<span class="sig-name descname"><span class="pre">test_get_SN_MODEL_NAME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestFunctions.test_get_SN_MODEL_NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestFunctions.test_get_SN_MODEL_NAME" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestValues">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_MODELS.</span></span><span class="sig-name descname"><span class="pre">TestValues</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestValues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestValues" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestValues.test_value_DEFAULT_SN_MODEL">
+<span class="sig-name descname"><span class="pre">test_value_DEFAULT_SN_MODEL</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestValues.test_value_DEFAULT_SN_MODEL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestValues.test_value_DEFAULT_SN_MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_MODELS.TestValues.test_value_SN_MODELS">
+<span class="sig-name descname"><span class="pre">test_value_SN_MODELS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_MODELS.html#TestValues.test_value_SN_MODELS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_MODELS.TestValues.test_value_SN_MODELS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="posydon-unit-tests-grids-test-downsampling">
-<h2>posydon.unit_tests.grids.test_downsampling<a class="headerlink" href="#posydon-unit-tests-grids-test-downsampling" title="Link to this heading"></a></h2>
+<section id="module-posydon.unit_tests.grids.test_downsampling">
+<span id="posydon-unit-tests-grids-test-downsampling"></span><h2>posydon.unit_tests.grids.test_downsampling<a class="headerlink" href="#module-posydon.unit_tests.grids.test_downsampling" title="Link to this heading"></a></h2>
+<p>Unit tests of posydon/grids/downsampling.py</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestElements">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_downsampling.</span></span><span class="sig-name descname"><span class="pre">TestElements</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestElements" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestElements.test_dir">
+<span class="sig-name descname"><span class="pre">test_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestElements.test_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestElements.test_dir" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestElements.test_instance_TrackDownsampler">
+<span class="sig-name descname"><span class="pre">test_instance_TrackDownsampler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestElements.test_instance_TrackDownsampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestElements.test_instance_TrackDownsampler" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestElements.test_instance_rescale_from_0_to_1">
+<span class="sig-name descname"><span class="pre">test_instance_rescale_from_0_to_1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestElements.test_instance_rescale_from_0_to_1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestElements.test_instance_rescale_from_0_to_1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestFunctions">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_downsampling.</span></span><span class="sig-name descname"><span class="pre">TestFunctions</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestFunctions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestFunctions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestFunctions.test_rescale_from_0_to_1">
+<span class="sig-name descname"><span class="pre">test_rescale_from_0_to_1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestFunctions.test_rescale_from_0_to_1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestFunctions.test_rescale_from_0_to_1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_downsampling.</span></span><span class="sig-name descname"><span class="pre">TestTrackDownsampler</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.TrackDownsampler">
+<span class="sig-name descname"><span class="pre">TrackDownsampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">independent_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependent_sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler.TrackDownsampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.TrackDownsampler" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.dependent_sample">
+<span class="sig-name descname"><span class="pre">dependent_sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler.dependent_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.dependent_sample" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.independent_sample">
+<span class="sig-name descname"><span class="pre">independent_sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler.independent_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.independent_sample" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.norm_dependent_sample">
+<span class="sig-name descname"><span class="pre">norm_dependent_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dependent_sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler.norm_dependent_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.norm_dependent_sample" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_downsample">
+<span class="sig-name descname"><span class="pre">test_downsample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">independent_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependent_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TrackDownsampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler.test_downsample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_downsample" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_extract_downsample">
+<span class="sig-name descname"><span class="pre">test_extract_downsample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">independent_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependent_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_dependent_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TrackDownsampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler.test_extract_downsample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_extract_downsample" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_find_downsample">
+<span class="sig-name descname"><span class="pre">test_find_downsample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TrackDownsampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler.test_find_downsample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_find_downsample" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_init">
+<span class="sig-name descname"><span class="pre">test_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">independent_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependent_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_dependent_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TrackDownsampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler.test_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_init" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_rescale">
+<span class="sig-name descname"><span class="pre">test_rescale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dependent_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TrackDownsampler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler.test_rescale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_rescale" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_say">
+<span class="sig-name descname"><span class="pre">test_say</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TrackDownsampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_downsampling.html#TestTrackDownsampler.test_say"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_downsampling.TestTrackDownsampler.test_say" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="posydon-unit-tests-grids-test-io">
-<h2>posydon.unit_tests.grids.test_io<a class="headerlink" href="#posydon-unit-tests-grids-test-io" title="Link to this heading"></a></h2>
+<section id="module-posydon.unit_tests.grids.test_io">
+<span id="posydon-unit-tests-grids-test-io"></span><h2>posydon.unit_tests.grids.test_io<a class="headerlink" href="#module-posydon.unit_tests.grids.test_io" title="Link to this heading"></a></h2>
+<p>Unit tests of posydon/grids/io.py</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_io.</span></span><span class="sig-name descname"><span class="pre">TestElements</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements.test_dir">
+<span class="sig-name descname"><span class="pre">test_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements.test_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements.test_dir" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements.test_instance_BINARY_OUTPUT_FILE">
+<span class="sig-name descname"><span class="pre">test_instance_BINARY_OUTPUT_FILE</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements.test_instance_BINARY_OUTPUT_FILE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements.test_instance_BINARY_OUTPUT_FILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements.test_instance_EEP_FILE_EXTENSIONS">
+<span class="sig-name descname"><span class="pre">test_instance_EEP_FILE_EXTENSIONS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements.test_instance_EEP_FILE_EXTENSIONS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements.test_instance_EEP_FILE_EXTENSIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements.test_instance_GridReader">
+<span class="sig-name descname"><span class="pre">test_instance_GridReader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements.test_instance_GridReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements.test_instance_GridReader" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements.test_instance_POSYDON_FORMAT_OPTIONS">
+<span class="sig-name descname"><span class="pre">test_instance_POSYDON_FORMAT_OPTIONS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements.test_instance_POSYDON_FORMAT_OPTIONS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements.test_instance_POSYDON_FORMAT_OPTIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements.test_instance_RunReader">
+<span class="sig-name descname"><span class="pre">test_instance_RunReader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements.test_instance_RunReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements.test_instance_RunReader" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements.test_instance_SINGLE_OUTPUT_FILE">
+<span class="sig-name descname"><span class="pre">test_instance_SINGLE_OUTPUT_FILE</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements.test_instance_SINGLE_OUTPUT_FILE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements.test_instance_SINGLE_OUTPUT_FILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements.test_instance_initial_values_from_dirname">
+<span class="sig-name descname"><span class="pre">test_instance_initial_values_from_dirname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements.test_instance_initial_values_from_dirname"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements.test_instance_initial_values_from_dirname" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements.test_instance_print_meta_contents">
+<span class="sig-name descname"><span class="pre">test_instance_print_meta_contents</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements.test_instance_print_meta_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements.test_instance_print_meta_contents" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestElements.test_instance_read_initial_values">
+<span class="sig-name descname"><span class="pre">test_instance_read_initial_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestElements.test_instance_read_initial_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestElements.test_instance_read_initial_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestFunctions">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_io.</span></span><span class="sig-name descname"><span class="pre">TestFunctions</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestFunctions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestFunctions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestFunctions.grid_csv_files">
+<span class="sig-name descname"><span class="pre">grid_csv_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestFunctions.grid_csv_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestFunctions.grid_csv_files" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestFunctions.inlist_grid_points_files">
+<span class="sig-name descname"><span class="pre">inlist_grid_points_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestFunctions.inlist_grid_points_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestFunctions.inlist_grid_points_files" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestFunctions.test_initial_values_from_dirname">
+<span class="sig-name descname"><span class="pre">test_initial_values_from_dirname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestFunctions.test_initial_values_from_dirname"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestFunctions.test_initial_values_from_dirname" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestFunctions.test_print_meta_contents">
+<span class="sig-name descname"><span class="pre">test_print_meta_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_csv_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestFunctions.test_print_meta_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestFunctions.test_print_meta_contents" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestFunctions.test_read_initial_values">
+<span class="sig-name descname"><span class="pre">test_read_initial_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inlist_grid_points_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestFunctions.test_read_initial_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestFunctions.test_read_initial_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestGridReader">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_io.</span></span><span class="sig-name descname"><span class="pre">TestGridReader</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestGridReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestGridReader" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestGridReader.Empty_dir">
+<span class="sig-name descname"><span class="pre">Empty_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestGridReader.Empty_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestGridReader.Empty_dir" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestGridReader.GridReader">
+<span class="sig-name descname"><span class="pre">GridReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Grid_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestGridReader.GridReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestGridReader.GridReader" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestGridReader.Grid_files">
+<span class="sig-name descname"><span class="pre">Grid_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Run_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestGridReader.Grid_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestGridReader.Grid_files" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestGridReader.Run_path">
+<span class="sig-name descname"><span class="pre">Run_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestGridReader.Run_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestGridReader.Run_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestGridReader.test_get_input_folders">
+<span class="sig-name descname"><span class="pre">test_get_input_folders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Empty_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GridReader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestGridReader.test_get_input_folders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestGridReader.test_get_input_folders" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestGridReader.test_infer_history_columns">
+<span class="sig-name descname"><span class="pre">test_infer_history_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">GridReader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestGridReader.test_infer_history_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestGridReader.test_infer_history_columns" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestGridReader.test_init">
+<span class="sig-name descname"><span class="pre">test_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Run_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GridReader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestGridReader.test_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestGridReader.test_init" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestGridReader.test_read_posydon_format">
+<span class="sig-name descname"><span class="pre">test_read_posydon_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">GridReader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Empty_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestGridReader.test_read_posydon_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestGridReader.test_read_posydon_format" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestRunReader">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_io.</span></span><span class="sig-name descname"><span class="pre">TestRunReader</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestRunReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestRunReader" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestRunReader.RunReader">
+<span class="sig-name descname"><span class="pre">RunReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestRunReader.RunReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestRunReader.RunReader" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestRunReader.Run_files">
+<span class="sig-name descname"><span class="pre">Run_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestRunReader.Run_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestRunReader.Run_files" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestRunReader.test_init">
+<span class="sig-name descname"><span class="pre">test_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RunReader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestRunReader.test_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestRunReader.test_init" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestRunReader.test_read_posydon_format">
+<span class="sig-name descname"><span class="pre">test_read_posydon_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">RunReader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Run_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestRunReader.test_read_posydon_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestRunReader.test_read_posydon_format" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestRunReader.test_report">
+<span class="sig-name descname"><span class="pre">test_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">RunReader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestRunReader.test_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestRunReader.test_report" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestValues">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_io.</span></span><span class="sig-name descname"><span class="pre">TestValues</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestValues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestValues" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestValues.test_value_BINARY_OUTPUT_FILE">
+<span class="sig-name descname"><span class="pre">test_value_BINARY_OUTPUT_FILE</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestValues.test_value_BINARY_OUTPUT_FILE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestValues.test_value_BINARY_OUTPUT_FILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestValues.test_value_EEP_FILE_EXTENSIONS">
+<span class="sig-name descname"><span class="pre">test_value_EEP_FILE_EXTENSIONS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestValues.test_value_EEP_FILE_EXTENSIONS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestValues.test_value_EEP_FILE_EXTENSIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestValues.test_value_POSYDON_FORMAT_OPTIONS">
+<span class="sig-name descname"><span class="pre">test_value_POSYDON_FORMAT_OPTIONS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestValues.test_value_POSYDON_FORMAT_OPTIONS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestValues.test_value_POSYDON_FORMAT_OPTIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_io.TestValues.test_value_SINGLE_OUTPUT_FILE">
+<span class="sig-name descname"><span class="pre">test_value_SINGLE_OUTPUT_FILE</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_io.html#TestValues.test_value_SINGLE_OUTPUT_FILE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_io.TestValues.test_value_SINGLE_OUTPUT_FILE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="posydon-unit-tests-grids-test-post-processing">
 <h2>posydon.unit_tests.grids.test_post_processing<a class="headerlink" href="#posydon-unit-tests-grids-test-post-processing" title="Link to this heading"></a></h2>
@@ -170,11 +514,243 @@
 <section id="posydon-unit-tests-grids-test-psygrid">
 <h2>posydon.unit_tests.grids.test_psygrid<a class="headerlink" href="#posydon-unit-tests-grids-test-psygrid" title="Link to this heading"></a></h2>
 </section>
-<section id="posydon-unit-tests-grids-test-scrubbing">
-<h2>posydon.unit_tests.grids.test_scrubbing<a class="headerlink" href="#posydon-unit-tests-grids-test-scrubbing" title="Link to this heading"></a></h2>
+<section id="module-posydon.unit_tests.grids.test_scrubbing">
+<span id="posydon-unit-tests-grids-test-scrubbing"></span><h2>posydon.unit_tests.grids.test_scrubbing<a class="headerlink" href="#module-posydon.unit_tests.grids.test_scrubbing" title="Link to this heading"></a></h2>
+<p>Unit tests of posydon/grids/scrubbing.py</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestElements">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_scrubbing.</span></span><span class="sig-name descname"><span class="pre">TestElements</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestElements" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestElements.test_dir">
+<span class="sig-name descname"><span class="pre">test_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestElements.test_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestElements.test_dir" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestElements.test_instance_keep_after_RLO">
+<span class="sig-name descname"><span class="pre">test_instance_keep_after_RLO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestElements.test_instance_keep_after_RLO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestElements.test_instance_keep_after_RLO" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestElements.test_instance_keep_till_central_abundance_He_C">
+<span class="sig-name descname"><span class="pre">test_instance_keep_till_central_abundance_He_C</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestElements.test_instance_keep_till_central_abundance_He_C"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestElements.test_instance_keep_till_central_abundance_He_C" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestElements.test_instance_scrub">
+<span class="sig-name descname"><span class="pre">test_instance_scrub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestElements.test_instance_scrub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestElements.test_instance_scrub" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestFunctions">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_scrubbing.</span></span><span class="sig-name descname"><span class="pre">TestFunctions</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestFunctions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestFunctions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestFunctions.ages">
+<span class="sig-name descname"><span class="pre">ages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestFunctions.ages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestFunctions.ages" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestFunctions.binary_history">
+<span class="sig-name descname"><span class="pre">binary_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestFunctions.binary_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestFunctions.binary_history" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestFunctions.models">
+<span class="sig-name descname"><span class="pre">models</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestFunctions.models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestFunctions.models" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestFunctions.star_history">
+<span class="sig-name descname"><span class="pre">star_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestFunctions.star_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestFunctions.star_history" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestFunctions.star_history2">
+<span class="sig-name descname"><span class="pre">star_history2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestFunctions.star_history2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestFunctions.star_history2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestFunctions.tables">
+<span class="sig-name descname"><span class="pre">tables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestFunctions.tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestFunctions.tables" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestFunctions.test_keep_after_RLO">
+<span class="sig-name descname"><span class="pre">test_keep_after_RLO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_history</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestFunctions.test_keep_after_RLO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestFunctions.test_keep_after_RLO" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestFunctions.test_keep_till_central_abundance_He_C">
+<span class="sig-name descname"><span class="pre">test_keep_till_central_abundance_He_C</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_history2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_history</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestFunctions.test_keep_till_central_abundance_He_C"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestFunctions.test_keep_till_central_abundance_He_C" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_scrubbing.TestFunctions.test_scrub">
+<span class="sig-name descname"><span class="pre">test_scrub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ages</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_scrubbing.html#TestFunctions.test_scrub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_scrubbing.TestFunctions.test_scrub" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="posydon-unit-tests-grids-test-termination-flags">
-<h2>posydon.unit_tests.grids.test_termination_flags<a class="headerlink" href="#posydon-unit-tests-grids-test-termination-flags" title="Link to this heading"></a></h2>
+<section id="module-posydon.unit_tests.grids.test_termination_flags">
+<span id="posydon-unit-tests-grids-test-termination-flags"></span><h2>posydon.unit_tests.grids.test_termination_flags<a class="headerlink" href="#module-posydon.unit_tests.grids.test_termination_flags" title="Link to this heading"></a></h2>
+<p>Unit tests of posydon/grids/termination_flags.py</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestElements">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_termination_flags.</span></span><span class="sig-name descname"><span class="pre">TestElements</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestElements" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestElements.test_dir">
+<span class="sig-name descname"><span class="pre">test_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestElements.test_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestElements.test_dir" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_STAR_HISTORY_VARIABLES">
+<span class="sig-name descname"><span class="pre">test_instance_STAR_HISTORY_VARIABLES</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestElements.test_instance_STAR_HISTORY_VARIABLES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_STAR_HISTORY_VARIABLES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_check_state_from_history">
+<span class="sig-name descname"><span class="pre">test_instance_check_state_from_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestElements.test_instance_check_state_from_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_check_state_from_history" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_get_detected_initial_RLO">
+<span class="sig-name descname"><span class="pre">test_instance_get_detected_initial_RLO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestElements.test_instance_get_detected_initial_RLO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_get_detected_initial_RLO" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_get_flag_from_MESA_output">
+<span class="sig-name descname"><span class="pre">test_instance_get_flag_from_MESA_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestElements.test_instance_get_flag_from_MESA_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_get_flag_from_MESA_output" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_get_flags_from_MESA_run">
+<span class="sig-name descname"><span class="pre">test_instance_get_flags_from_MESA_run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestElements.test_instance_get_flags_from_MESA_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_get_flags_from_MESA_run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_get_mass_transfer_flag">
+<span class="sig-name descname"><span class="pre">test_instance_get_mass_transfer_flag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestElements.test_instance_get_mass_transfer_flag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_get_mass_transfer_flag" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_get_nearest_known_initial_RLO">
+<span class="sig-name descname"><span class="pre">test_instance_get_nearest_known_initial_RLO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestElements.test_instance_get_nearest_known_initial_RLO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_get_nearest_known_initial_RLO" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_infer_interpolation_class">
+<span class="sig-name descname"><span class="pre">test_instance_infer_interpolation_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestElements.test_instance_infer_interpolation_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestElements.test_instance_infer_interpolation_class" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_termination_flags.</span></span><span class="sig-name descname"><span class="pre">TestFunctions</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.binary_history">
+<span class="sig-name descname"><span class="pre">binary_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.binary_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.binary_history" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.grid">
+<span class="sig-name descname"><span class="pre">grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.grid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.iniRLO_boundary">
+<span class="sig-name descname"><span class="pre">iniRLO_boundary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.iniRLO_boundary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.iniRLO_boundary" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path">
+<span class="sig-name descname"><span class="pre">out_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.out_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path2">
+<span class="sig-name descname"><span class="pre">out_path2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.out_path2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path3">
+<span class="sig-name descname"><span class="pre">out_path3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.out_path3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path4">
+<span class="sig-name descname"><span class="pre">out_path4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.out_path4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path5">
+<span class="sig-name descname"><span class="pre">out_path5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.out_path5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path6">
+<span class="sig-name descname"><span class="pre">out_path6</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.out_path6"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.out_path6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.star_history">
+<span class="sig-name descname"><span class="pre">star_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.star_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.star_history" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_check_state_from_history">
+<span class="sig-name descname"><span class="pre">test_check_state_from_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_history</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.test_check_state_from_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_check_state_from_history" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_get_detected_initial_RLO">
+<span class="sig-name descname"><span class="pre">test_get_detected_initial_RLO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iniRLO_boundary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.test_get_detected_initial_RLO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_get_detected_initial_RLO" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_get_flag_from_MESA_output">
+<span class="sig-name descname"><span class="pre">test_get_flag_from_MESA_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.test_get_flag_from_MESA_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_get_flag_from_MESA_output" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_get_flags_from_MESA_run">
+<span class="sig-name descname"><span class="pre">test_get_flags_from_MESA_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_history</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.test_get_flags_from_MESA_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_get_flags_from_MESA_run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_get_mass_transfer_flag">
+<span class="sig-name descname"><span class="pre">test_get_mass_transfer_flag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_history</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.test_get_mass_transfer_flag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_get_mass_transfer_flag" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_get_nearest_known_initial_RLO">
+<span class="sig-name descname"><span class="pre">test_get_nearest_known_initial_RLO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iniRLO_boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.test_get_nearest_known_initial_RLO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_get_nearest_known_initial_RLO" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_infer_interpolation_class">
+<span class="sig-name descname"><span class="pre">test_infer_interpolation_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestFunctions.test_infer_interpolation_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestFunctions.test_infer_interpolation_class" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestValues">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.grids.test_termination_flags.</span></span><span class="sig-name descname"><span class="pre">TestValues</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestValues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestValues" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.grids.test_termination_flags.TestValues.test_value_STAR_HISTORY_VARIABLES">
+<span class="sig-name descname"><span class="pre">test_value_STAR_HISTORY_VARIABLES</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/grids/test_termination_flags.html#TestValues.test_value_STAR_HISTORY_VARIABLES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.grids.test_termination_flags.TestValues.test_value_STAR_HISTORY_VARIABLES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -199,10 +775,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

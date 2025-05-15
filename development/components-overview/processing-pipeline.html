@@ -73,7 +73,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Processing Pipeline</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="post_processing/psygrid.html"><cite>PSyGrid</cite> object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="post_processing/pipeline.html">Post-processing pipeline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="post_processing/pipeline_ini.html">Documentation of the ini file for the post-processing pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="post_processing/pipeline_ini.html">Documentation of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file for the post-processing pipeline</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="machine-learning-components.html">Machine Learning Components</a></li>
@@ -133,10 +133,12 @@
 <span id="id1"></span><h1>Processing Pipeline<a class="headerlink" href="#processing-pipeline" title="Link to this heading"></a></h1>
 <section id="post-process-grids">
 <h2>Post-process Grids<a class="headerlink" href="#post-process-grids" title="Link to this heading"></a></h2>
-<p>After the MESA girds have finished, the important data needs to be extracted from them.</p>
+<p>After the MESA grids have finished, the important data needs to be extracted
+from them.</p>
 <section id="psygrid-object">
 <h3><cite>PSyGrid</cite> object<a class="headerlink" href="#psygrid-object" title="Link to this heading"></a></h3>
-<p>We have a dedicated object to deal with the MESA data outcome. Learn what you can do with it.</p>
+<p>We have a dedicated object to deal with the MESA data outcome. Learn what you
+can do with it.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="post_processing/psygrid.html"><cite>PSyGrid</cite> object</a><ul>
@@ -150,7 +152,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="post_processing/psygrid.html#work-on-with-a-psygrid-object">Work on/with a <cite>PSyGrid</cite> object</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="post_processing/psygrid.html#loop-on-a-psygrid-object">Loop on a <cite>PSyGrid</cite> object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="post_processing/psygrid.html#loop-over-a-psygrid-object">Loop over a <cite>PSyGrid</cite> object</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post_processing/psygrid.html#expand-a-psygrid-object">Expand a <cite>PSyGrid</cite> object</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post_processing/psygrid.html#join-two-or-more-psygrid-objects">Join two or more <cite>PSyGrid</cite> objects</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post_processing/psygrid.html#get-reruns-from-a-psygrid-object">Get reruns from a <cite>PSyGrid</cite> object</a></li>
@@ -164,17 +166,18 @@
 </section>
 <section id="our-post-processing-pipeline">
 <h3>Our post-processing pipeline<a class="headerlink" href="#our-post-processing-pipeline" title="Link to this heading"></a></h3>
-<p>We use a pipeline to post-process the data in a more automatized way. Learn to what you can do with this tool.</p>
+<p>We use a pipeline to post-process the data in a more automated way. Learn
+what you can do with this tool.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="post_processing/pipeline.html">Post-processing pipeline</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html">Pipeline steps</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#step1-creating-a-psygrid-object">Step1: creating a <cite>PSyGrid</cite> object</a></li>
-<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#step2-combining-psygrid-objects">Step2: combining <cite>PSyGrid</cite> objects</a></li>
-<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#step3-calculating-extra-values-from-detailed-data">Step3: calculating extra values from detailed data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#step4-training-of-the-interpolators">Step4: training of the interpolators</a></li>
-<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#stepf-exporting-the-data-set">StepF: exporting the data set</a></li>
-<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#stepr-exporting-a-rerun">StepR: exporting a rerun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#step-1-creating-a-psygrid-object">Step 1: Creating a <cite>PSyGrid</cite> object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#step-2-combining-psygrid-objects">Step 2: Combining <cite>PSyGrid</cite> objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#step-3-calculating-extra-values-from-stellar-model-time-series-and-structure-profile-data">Step 3: Calculating extra values from stellar model time series and structure profile data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#step-4-training-the-interpolators">Step 4: Training the interpolators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#step-f-exporting-the-data-set">Step F: Exporting the data set</a></li>
+<li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline/pipeline_steps.html#step-r-exporting-a-rerun">Step R: Exporting a rerun</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="post_processing/pipeline/pipeline_additions.html">Pipeline additions</a><ul>
@@ -188,13 +191,13 @@
 </div>
 </section>
 <section id="ini-file-documentation">
-<h3>Ini file documentation<a class="headerlink" href="#ini-file-documentation" title="Link to this heading"></a></h3>
-<p>Learn how to use an ini file to setup the post-processing pipeline.</p>
+<h3><code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file documentation<a class="headerlink" href="#ini-file-documentation" title="Link to this heading"></a></h3>
+<p>Learn how to use an <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file to setup the post-processing pipeline.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="post_processing/pipeline_ini.html">Documentation of the ini file for the post-processing pipeline</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="post_processing/pipeline_ini.html#aim-of-the-ini-file">Aim of the ini file</a></li>
-<li class="toctree-l2"><a class="reference internal" href="post_processing/pipeline_ini.html#sections-in-the-ini-file">Sections in the ini file</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="post_processing/pipeline_ini.html">Documentation of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file for the post-processing pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="post_processing/pipeline_ini.html#aim-of-the-ini-file">Aim of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="post_processing/pipeline_ini.html#sections-in-the-ini-file">Sections in the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline_ini.html#account-and-slurm-settings">Account and slurm settings</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline_ini.html#general-pipeline-settings">General pipeline settings</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post_processing/pipeline_ini.html#step-sections">Step sections</a></li>
@@ -229,10 +232,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

@@ -73,7 +73,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="psygrid.html"><cite>PSyGrid</cite> object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pipeline.html">Post-processing pipeline</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Documentation of the ini file for the post-processing pipeline</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Documentation of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file for the post-processing pipeline</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
@@ -120,7 +120,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../processing-pipeline.html">Processing Pipeline</a></li>
-      <li class="breadcrumb-item active">Documentation of the ini file for the post-processing pipeline</li>
+      <li class="breadcrumb-item active">Documentation of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file for the post-processing pipeline</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/components-overview/post_processing/pipeline_ini.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -131,22 +131,22 @@
            <div itemprop="articleBody">
              
   <section id="documentation-of-the-ini-file-for-the-post-processing-pipeline">
-<span id="pipeline-ini"></span><h1>Documentation of the ini file for the post-processing pipeline<a class="headerlink" href="#documentation-of-the-ini-file-for-the-post-processing-pipeline" title="Link to this heading"></a></h1>
+<span id="pipeline-ini"></span><h1>Documentation of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file for the post-processing pipeline<a class="headerlink" href="#documentation-of-the-ini-file-for-the-post-processing-pipeline" title="Link to this heading"></a></h1>
 <section id="aim-of-the-ini-file">
-<h2>Aim of the ini file<a class="headerlink" href="#aim-of-the-ini-file" title="Link to this heading"></a></h2>
-<p>Using an ini file should help to keep an overview on large grid repositories
-and ensures that all will be setup the same way.</p>
+<h2>Aim of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file<a class="headerlink" href="#aim-of-the-ini-file" title="Link to this heading"></a></h2>
+<p>Using an <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file should help to keep an overview on large grid
+repositories and ensures that all workflows will be setup the same way.</p>
 <p>There is a script to setup the pipeline, it takes one argument:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>posydon-setup-pipeline<span class="w"> </span>PATH_TO_INI
 </pre></div>
 </div>
-<p>The content of the ini file is described <a class="reference internal" href="#pipeline-ini-sections"><span class="std std-ref">below</span></a>.
-It will create for each step, plot or check two files:</p>
+<p>The content of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file is described <a class="reference internal" href="#pipeline-ini-sections"><span class="std std-ref">below</span></a>. It will create two files for each step, plot or
+check:</p>
 <ol class="arabic simple">
 <li><p>*.csv</p></li>
 <li><p>*.slurm</p></li>
 </ol>
-<p>Additionally, it will prepare a <code class="samp docutils literal notranslate"><span class="pre">logs</span></code> directory (it may creates a save
+<p>Additionally, it will prepare a <code class="samp docutils literal notranslate"><span class="pre">logs</span></code> directory (it may create a save
 of some old logs) and create a shell script <code class="samp docutils literal notranslate"><span class="pre">run_pipeline.sh</span></code> to submit
 all <a class="reference internal" href="pipeline.html#pipeline"><span class="std std-ref">tasks</span></a>. Hence, you can run all
 <a class="reference internal" href="pipeline/pipeline_steps.html#pipeline-steps"><span class="std std-ref">steps</span></a> with simply running this script.</p>
@@ -156,12 +156,12 @@ all <a class="reference internal" href="pipeline.html#pipeline"><span class="std
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Currently, the user needs to take care of having a POSYDON_data directory
-which includes the tables for the core-collapse prescriptions him-/herself
+which includes the tables for the core-collapse prescriptions themselves
 in the working directory.</p>
 </div>
 </section>
 <section id="sections-in-the-ini-file">
-<span id="pipeline-ini-sections"></span><h2>Sections in the ini file<a class="headerlink" href="#sections-in-the-ini-file" title="Link to this heading"></a></h2>
+<span id="pipeline-ini-sections"></span><h2>Sections in the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file<a class="headerlink" href="#sections-in-the-ini-file" title="Link to this heading"></a></h2>
 <section id="account-and-slurm-settings">
 <h3>Account and slurm settings<a class="headerlink" href="#account-and-slurm-settings" title="Link to this heading"></a></h3>
 <p>First we specify some details for the slurm jobs. This is similar to the
@@ -176,23 +176,22 @@ example to show the supported key words:</p>
 <span class="w">    </span><span class="na">GROUP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;GL_S_Astro_POSYDON&#39;</span>
 </pre></div>
 </div>
-<p>The last one <code class="samp docutils literal notranslate"><span class="pre">GROUP</span></code> is a bit special. If it is set, all the files
-created by the pipeline will get this owning group on the file system with read
-and write access for this group. This is especially helpful if more than one
+<p>The last one <code class="samp docutils literal notranslate"><span class="pre">GROUP</span></code> is a bit special. If it is set, ownership
+of all the files created by the pipeline will be assigned to <code class="samp docutils literal notranslate"><span class="pre">GROUP</span></code>.
+This is especially helpful if more than one
 user is making changes to the data set.</p>
 </section>
 <section id="general-pipeline-settings">
 <h3>General pipeline settings<a class="headerlink" href="#general-pipeline-settings" title="Link to this heading"></a></h3>
-<p>The next sections deals with the general information about the pipeline. First
-it needs to know where the grids are located. The <code class="samp docutils literal notranslate"><span class="pre">PATH</span></code> specifies, where
-you would like to get the pipeline files being created. The <code class="samp docutils literal notranslate"><span class="pre">VERBOSE</span></code>
-option will be used for the creation of the pipeline files and during the run
-of the pipeline.</p>
+<p>The next section outlines general information about the pipeline. The
+<code class="samp docutils literal notranslate"><span class="pre">PATH</span></code> specifies where you would like to have the pipeline files created.
+The <code class="samp docutils literal notranslate"><span class="pre">VERBOSE</span></code> option will be used for the creation of the pipeline files
+and during the run of the pipeline.</p>
 <p>Finally, we have switches to turn on (<code class="samp docutils literal notranslate"><span class="pre">True</span></code>) and off (<code class="samp docutils literal notranslate"><span class="pre">False</span></code>)
 individual <a class="reference internal" href="pipeline/pipeline_steps.html#pipeline-steps"><span class="std std-ref">steps</span></a> and
 <a class="reference internal" href="pipeline/pipeline_additions.html#pipeline-additions"><span class="std std-ref">additions</span></a>. Additionally, the file extension of the
 plots can be set according to the restrictions of
-<a class="reference external" href="https://matplotlib.org/">mathplotlib</a>. There is one additional extension
+<a class="reference external" href="https://matplotlib.org/">matplotlib</a>. There is one additional extension
 <code class="samp docutils literal notranslate"><span class="pre">multipage-pdf</span></code>, which will create a PDF, where several plots are stored
 as pages in a single PDF.</p>
 <div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[pipeline setup]</span>
@@ -218,9 +217,9 @@ as pages in a single PDF.</p>
 </section>
 <section id="step-sections">
 <h3>Step sections<a class="headerlink" href="#step-sections" title="Link to this heading"></a></h3>
-<p>The path of each grid will be joint as
+<p>The path of each grid will be joined as
 <code class="samp docutils literal notranslate"><span class="pre">PATH_TO_GRIDS/GRID_TYPE/VERSION/METALLICITY/GRID_SLICE</span></code>. The
-corresponding h5 files will have names according to
+corresponding <code class="samp docutils literal notranslate"><span class="pre">h5</span></code> files will have names according to
 <code class="samp docutils literal notranslate"><span class="pre">PATH_TO_GRIDS/GRID_TYPE/VERSION/METALLICITY/COMPRESSION/GRID_SLICE.h5</span></code>.
 All sections have common keywords:</p>
 <table class="docutils align-default" id="id1">
@@ -250,7 +249,7 @@ All sections have common keywords:</p>
 <td><p>a list of plots to make; this will be done independently whether the step is active or not; to make no plots put there an empty list or comment out such a line</p></td>
 </tr>
 <tr class="row-even"><td><p>DO_CHECKS</p></td>
-<td><p>a list of checks to perform; this will be done independently whether the step is active or not; to make no checks put there an empty list or comment out such a line</p></td>
+<td><p>a list of checks to perform; this will be done independently whether the step is active or not; to omit checks, specify an empty list or comment out the line</p></td>
 </tr>
 </tbody>
 </table>
@@ -267,7 +266,7 @@ that step:</p>
 <tbody>
 <tr class="row-even"><td><p>1</p></td>
 <td><p>STOP_BEFORE_CARBON_DEPLETION</p></td>
-<td><p>indicating, whether high mass HMS stars should get their history croped short before carbon depletion (1) or not (0)</p></td>
+<td><p>indicating, whether high mass HMS stars should get their history cropped before carbon depletion (set to 1 if so) or not (set to 0 if not)</p></td>
 </tr>
 <tr class="row-odd"><td><p>2</p></td>
 <td><p>GRID_SLICES</p></td>
@@ -287,7 +286,7 @@ that step:</p>
 </tr>
 <tr class="row-odd"><td><p>4</p></td>
 <td><p>CONTROL_GRIDS</p></td>
-<td><p>a list of lists of control grids for the <code class="samp docutils literal notranslate"><span class="pre">GRID_SLICES</span></code>; it need to have the same number of entries as the <code class="samp docutils literal notranslate"><span class="pre">GRID_SLICES</span></code>, to specify no control grid use an empty string</p></td>
+<td><p>a list of lists of control grids for the <code class="samp docutils literal notranslate"><span class="pre">GRID_SLICES</span></code>; it needs to have the same number of entries as the <code class="samp docutils literal notranslate"><span class="pre">GRID_SLICES</span></code>; use an empty string to specify no control grid</p></td>
 </tr>
 <tr class="row-even"><td><p>R</p></td>
 <td><p>RERUN_TYPE</p></td>
@@ -295,7 +294,7 @@ that step:</p>
 </tr>
 <tr class="row-odd"><td><p>R</p></td>
 <td><p>CLUSTER</p></td>
-<td><p>cluster name to get the appropriate ini file</p></td>
+<td><p>cluster name to get the appropriate <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file</p></td>
 </tr>
 </tbody>
 </table>
@@ -595,10 +594,7 @@ and <a class="reference internal" href="pipeline/pipeline_additions.html#pipelin
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

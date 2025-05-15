@@ -144,6 +144,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">rcParams</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.SN_MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">SN_MODELS</span>
 
 <span class="n">PLOT_PROPERTIES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;show_fig&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
@@ -1189,22 +1190,22 @@
     <span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;Remnant state&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;Remnant state&#39;</span><span class="p">],</span>
 <span class="p">}</span>
 
-<span class="c1"># add core collapse MODEL variables</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">):</span>
-    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;MODEL</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_\mathrm</span><span class="si">{CO}</span><span class="s1"> \, [M_\odot]$&#39;</span><span class="p">,</span>
+<span class="c1"># add core collapse model variables</span>
+<span class="k">for</span> <span class="n">SN_MODEL_NAME</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_\mathrm</span><span class="si">{CO}</span><span class="s1"> \, [M_\odot]$&#39;</span><span class="p">,</span>
                                               <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(M_\mathrm</span><span class="si">{CO}</span><span class="s1"> / M_\odot)$&#39;</span><span class="p">]</span>
-    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;MODEL</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">_spin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\chi_\mathrm</span><span class="si">{CO}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(\chi_\mathrm</span><span class="si">{CO}</span><span class="s1">)$&#39;</span><span class="p">]</span>
-    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;MODEL</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">_m_disk_accreted&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_\mathrm{disk, acc} \, [M_\odot]$&#39;</span><span class="p">,</span>
+    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_spin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\chi_\mathrm</span><span class="si">{CO}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(\chi_\mathrm</span><span class="si">{CO}</span><span class="s1">)$&#39;</span><span class="p">]</span>
+    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_m_disk_accreted&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_\mathrm{disk, acc} \, [M_\odot]$&#39;</span><span class="p">,</span>
                                               <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(M_\mathrm{disk, acc} / M_\odot)$&#39;</span><span class="p">]</span>
-    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;MODEL</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">_m_disk_radiated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_\mathrm{disk, rad} \, [M_\odot]$&#39;</span><span class="p">,</span>
+    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_m_disk_radiated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_\mathrm{disk, rad} \, [M_\odot]$&#39;</span><span class="p">,</span>
                                               <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(M_\mathrm{disk, rad} / M_\odot)$&#39;</span><span class="p">]</span>
-    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;MODEL</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">_M4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_4 [= m/M_\odot]_{s=4}$&#39;</span><span class="p">,</span>
+    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_M4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_4 [= m/M_\odot]_{s=4}$&#39;</span><span class="p">,</span>
                                               <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(M_4)$&#39;</span><span class="p">]</span>
-    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;MODEL</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">_mu4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\mu_4 \, [(dm/M_\odot)/(dr/1000\mathrm{km/s})]_{s=4}$&#39;</span><span class="p">,</span>
+    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_mu4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\mu_4 \, [(dm/M_\odot)/(dr/1000\mathrm{km/s})]_{s=4}$&#39;</span><span class="p">,</span>
                                               <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(\mu_4)$&#39;</span><span class="p">]</span>
-    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;MODEL</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">_h1_mass_ej&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_\mathrm{H,ej} \, [M_\odot]$&#39;</span><span class="p">,</span>
+    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_h1_mass_ej&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_\mathrm{H,ej} \, [M_\odot]$&#39;</span><span class="p">,</span>
                                               <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(M_\mathrm{H,ej} / M_\odot)$&#39;</span><span class="p">]</span>
-    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;MODEL</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">_he4_mass_ej&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_\mathrm{He,ej} \, [M_\odot]$&#39;</span><span class="p">,</span>
+    <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_he4_mass_ej&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$M_\mathrm{He,ej} \, [M_\odot]$&#39;</span><span class="p">,</span>
                                               <span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(M_\mathrm{He,ej} / M_\odot)$&#39;</span><span class="p">]</span>
 
 
@@ -1255,40 +1256,40 @@
         <span class="s1">&#39;zmax&#39;</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span>
     <span class="p">},</span>
     <span class="c1"># SN stuff</span>
-    <span class="s1">&#39;S1_MODEL_DEFAULT_CO_type&#39;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;S1_SN_MODEL_DEFAULT_CO_type&#39;</span> <span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;zvar&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;term_flag&#39;</span> <span class="p">:</span> <span class="s1">&#39;S1_MODEL01_CO_type&#39;</span>
+        <span class="s1">&#39;term_flag&#39;</span> <span class="p">:</span> <span class="s1">&#39;S1_&#39;</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_CO_type&#39;</span>
     <span class="p">},</span>
-    <span class="s1">&#39;S1_MODEL_DEFAULT_SN_type&#39;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;S1_SN_MODEL_DEFAULT_SN_type&#39;</span> <span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;zvar&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;term_flag&#39;</span> <span class="p">:</span> <span class="s1">&#39;S1_MODEL01_SN_type&#39;</span>
+        <span class="s1">&#39;term_flag&#39;</span> <span class="p">:</span> <span class="s1">&#39;S1_&#39;</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_SN_type&#39;</span>
     <span class="p">},</span>
-    <span class="s1">&#39;S1_MODEL_DEFAULT_mass&#39;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;S1_SN_MODEL_DEFAULT_mass&#39;</span> <span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;zlog&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="s1">&#39;zmin&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
         <span class="s1">&#39;zmax&#39;</span> <span class="p">:</span> <span class="mf">2.</span>
     <span class="p">},</span>
-    <span class="s1">&#39;S1_MODEL_DEFAULT_spin&#39;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;S1_SN_MODEL_DEFAULT_spin&#39;</span> <span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;zmin&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
         <span class="s1">&#39;zmax&#39;</span> <span class="p">:</span> <span class="mf">1.</span>
     <span class="p">},</span>
-    <span class="s1">&#39;S1_MODEL_DEFAULT_m_disk_radiated&#39;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;S1_SN_MODEL_DEFAULT_m_disk_radiated&#39;</span> <span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;zmin&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
         <span class="s1">&#39;zmax&#39;</span> <span class="p">:</span> <span class="mf">3.</span>
     <span class="p">},</span>
-    <span class="s1">&#39;S1_MODEL_DEFAULT_M4&#39;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;S1_SN_MODEL_DEFAULT_M4&#39;</span> <span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;zmin&#39;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
         <span class="s1">&#39;zmax&#39;</span> <span class="p">:</span> <span class="mf">4.</span>
     <span class="p">},</span>
-    <span class="s1">&#39;S1_MODEL_DEFAULT_mu4&#39;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;S1_SN_MODEL_DEFAULT_mu4&#39;</span> <span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;zmin&#39;</span> <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="s1">&#39;zmax&#39;</span> <span class="p">:</span> <span class="mf">.5</span>
     <span class="p">},</span>
-    <span class="s1">&#39;S1_MODEL_DEFAULT_h1_mass_ej&#39;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;S1_SN_MODEL_DEFAULT_h1_mass_ej&#39;</span> <span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;zmin&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
         <span class="s1">&#39;zmax&#39;</span> <span class="p">:</span> <span class="mi">20</span>
     <span class="p">},</span>
-    <span class="s1">&#39;S1_MODEL_DEFAULT_he4_mass_ej&#39;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;S1_SN_MODEL_DEFAULT_he4_mass_ej&#39;</span> <span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;zmin&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
         <span class="s1">&#39;zmax&#39;</span> <span class="p">:</span> <span class="mi">20</span>
     <span class="p">},</span>
@@ -1318,10 +1319,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

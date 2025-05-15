@@ -16,6 +16,14 @@ posydon.utils.common\_functions
    :show-inheritance:
    :undoc-members:
 
+posydon.utils.compress\_mesa\_files
+-----------------------------------
+
+.. automodule:: posydon.utils.compress_mesa_files
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 posydon.utils.configfile
 ------------------------
 

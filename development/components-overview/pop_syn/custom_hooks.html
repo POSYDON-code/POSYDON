@@ -146,12 +146,12 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">evolve</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">pre_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
         <span class="k">while</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">!=</span> <span class="s1">&#39;END&#39;</span><span class="p">:</span>
-        <span class="n">pre_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
-        <span class="o">...</span>
-        <span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
-        <span class="o">...</span>
-        <span class="n">post_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
-        <span class="o">...</span>
+            <span class="n">pre_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+            <span class="o">...</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+            <span class="o">...</span>
+            <span class="n">post_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+            <span class="o">...</span>
     <span class="n">post_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -324,10 +324,7 @@ after:      BinaryStar(merged, END, p=nan, S1=(H-rich_Core_H_burning,M=87.20), S
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

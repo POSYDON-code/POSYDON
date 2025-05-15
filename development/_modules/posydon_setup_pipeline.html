@@ -143,6 +143,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.gridutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_new_grid_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.SN_MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">SN_MODELS</span>
 
 <span class="c1"># this data processing pipeline was designed assuming POSYDON v2 data structure</span>
 <span class="sd">&#39;&#39;&#39;</span>
@@ -195,36 +196,7 @@
                              <span class="s1">&#39;termination_flag_2&#39;</span><span class="p">,</span> <span class="s1">&#39;termination_flag_3&#39;</span><span class="p">,</span>\
                              <span class="s1">&#39;termination_flag_4&#39;</span><span class="p">,</span> <span class="s1">&#39;rl_relative_overflow_1&#39;</span><span class="p">,</span>\
                              <span class="s1">&#39;rl_relative_overflow_2&#39;</span><span class="p">,</span> <span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;PLOT_AFTER_EXTRA&#39;</span>    <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;S1_MODEL01_CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL01_SN_type&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL01_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL01_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL01_m_disk_radiated&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;S1_MODEL02_CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL02_SN_type&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL02_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL02_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL02_m_disk_radiated&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;S1_MODEL03_CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL03_SN_type&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL03_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL03_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL03_m_disk_radiated&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;S1_MODEL04_CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL04_SN_type&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL04_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL04_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL04_m_disk_radiated&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;S1_MODEL05_CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL05_SN_type&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL05_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL05_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL05_m_disk_radiated&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;S1_MODEL06_CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL06_SN_type&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL06_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL06_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL06_m_disk_radiated&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;S1_MODEL07_CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL07_SN_type&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL07_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL07_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL07_m_disk_radiated&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;S1_MODEL08_CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL08_SN_type&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL08_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL08_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL08_m_disk_radiated&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;S1_MODEL09_CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL09_SN_type&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL09_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL09_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL09_m_disk_radiated&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;S1_MODEL10_CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL10_SN_type&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL10_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_MODEL10_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;S1_MODEL10_m_disk_radiated&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;PLOT_AFTER_EXTRA&#39;</span>    <span class="p">:</span> <span class="p">[],</span>
     <span class="s1">&#39;PLOT_AFTER_TRAINING&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;INTERP_ERROR_age&#39;</span><span class="p">,</span> <span class="s1">&#39;INTERP_ERROR_star_1_mass&#39;</span><span class="p">,</span>\
                              <span class="s1">&#39;INTERP_ERROR_star_2_mass&#39;</span><span class="p">,</span>\
                              <span class="s1">&#39;INTERP_ERROR_period_days&#39;</span><span class="p">,</span>\
@@ -253,21 +225,17 @@
                              <span class="s1">&#39;INTERP_ERROR_S2_log_Teff&#39;</span><span class="p">,</span>\
                              <span class="s1">&#39;INTERP_ERROR_S2_log_L&#39;</span><span class="p">,</span> <span class="s1">&#39;INTERP_ERROR_S2_log_R&#39;</span><span class="p">,</span>\
                              <span class="s1">&#39;INTERP_ERROR_S2_spin_parameter&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S2_lambda_CE_10cent&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL01_mass&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL01_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL01_m_disk_radiated&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL05_mass&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL05_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL05_m_disk_radiated&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL06_mass&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL06_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL06_m_disk_radiated&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL10_mass&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL10_spin&#39;</span><span class="p">,</span>\
-                             <span class="s1">&#39;INTERP_ERROR_S1_MODEL10_m_disk_radiated&#39;</span><span class="p">],</span>
+                             <span class="s1">&#39;INTERP_ERROR_S2_lambda_CE_10cent&#39;</span><span class="p">],</span>
     <span class="s1">&#39;PLOT_AFTER_PROFILE_TRAINING&#39;</span> <span class="p">:</span> <span class="p">[]</span>
 <span class="p">}</span>
+<span class="k">for</span> <span class="n">SN_MODEL_NAME</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;SN_type&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;spin&#39;</span><span class="p">,</span> <span class="s1">&#39;m_disk_radiated&#39;</span><span class="p">]:</span>
+        <span class="n">PLOTTING_SETS</span><span class="p">[</span><span class="s1">&#39;PLOT_AFTER_EXTRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+         <span class="sa">f</span><span class="s1">&#39;S1_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">quantity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CO_type&#39;</span><span class="p">,</span> <span class="s1">&#39;SN_type&#39;</span><span class="p">]:</span>
+            <span class="n">PLOTTING_SETS</span><span class="p">[</span><span class="s1">&#39;PLOT_AFTER_TRAINING&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+             <span class="sa">f</span><span class="s1">&#39;INTERP_ERROR_S1_</span><span class="si">{</span><span class="n">SN_MODEL_NAME</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
 <span class="c1"># predefined checking sets</span>
 <span class="n">CHECKING_SETS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;CHECK_AFTER_CREATE&#39;</span>           <span class="p">:</span> <span class="p">[],</span>
@@ -1606,10 +1574,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

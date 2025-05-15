@@ -134,6 +134,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.gridutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_index_nearest_neighbour</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.limits_thresholds</span><span class="w"> </span><span class="kn">import</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
@@ -171,18 +172,24 @@
 <span class="sd">        Helium mass in the ejecta. (in Msun)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="s1">&#39;profile&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;mass&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;x_mass_fraction_H&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;y_mass_fraction_He&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)):</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;The stellar profile does not contain enough information to get &quot;</span>
+              <span class="s2">&quot;the ejected hydrogen and helium mass.&quot;</span><span class="p">,</span>
+              <span class="s1">&#39;InappropriateValueWarning&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
     <span class="c1"># read star quantities</span>
-    <span class="n">profile_mass_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># cell outer total mass in Msun</span>
+    <span class="c1"># cell outer total mass in Msun</span>
+    <span class="n">profile_mass_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="c1"># shell&#39;s mass</span>
     <span class="n">dm_all</span> <span class="o">=</span> <span class="n">profile_mass_all</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">profile_mass_all</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># h1 mass fraction</span>
+    <span class="n">XH_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;x_mass_fraction_H&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># he4 mass fraction</span>
+    <span class="n">YHe_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;y_mass_fraction_He&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="s1">&#39;x_mass_fraction_H&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-        <span class="n">XH_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;x_mass_fraction_H&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># h1 mass fraction</span>
-    <span class="k">if</span> <span class="s1">&#39;y_mass_fraction_He&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-        <span class="n">YHe_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;y_mass_fraction_He&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># he4 mass fraction</span>
-
-    <span class="c1">#print(&quot;profile_mass_all[-1], compact_object_mass&quot;, profile_mass_all[-1], compact_object_mass)</span>
     <span class="k">if</span> <span class="n">profile_mass_all</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">compact_object_mass</span><span class="p">:</span>
         <span class="c1"># This catches the case that all the star&#39;s profile is collapsed.</span>
         <span class="n">h1_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -190,14 +197,16 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Find the index where the profile mass exceeds the compact object mass</span>
         <span class="n">i_rem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">profile_mass_all</span> <span class="o">&gt;</span> <span class="n">compact_object_mass</span><span class="p">)</span>
-        <span class="c1">#print(&quot;i_rem, len(dm_all)&quot;, i_rem, len(dm_all))</span>
-        <span class="c1">#print(&quot;mass coordinate above which it is ejected&quot;, profile_mass_all[i_rem])</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mass coordinate above which it is ejected:&quot;</span><span class="p">,</span>
+                  <span class="n">profile_mass_all</span><span class="p">[</span><span class="n">i_rem</span><span class="p">])</span>
 
         <span class="c1"># Ensure the index is within bounds</span>
         <span class="k">if</span> <span class="n">i_rem</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dm_all</span><span class="p">):</span>
             <span class="c1"># Calculate the ejected mass of H1 and He4</span>
             <span class="n">dm_ejected</span> <span class="o">=</span> <span class="n">dm_all</span><span class="p">[</span><span class="n">i_rem</span><span class="p">:]</span>
-            <span class="n">XH_ejected</span> <span class="o">=</span> <span class="n">XH_all</span><span class="p">[</span><span class="n">i_rem</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>  <span class="c1"># +1 because dm_all has one less element than profile_mass_all</span>
+            <span class="n">XH_ejected</span> <span class="o">=</span> <span class="n">XH_all</span><span class="p">[</span><span class="n">i_rem</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>   <span class="c1"># +1 because dm_all has one less</span>
+                                              <span class="c1"># element than profile_mass_all</span>
             <span class="n">YHe_ejected</span> <span class="o">=</span> <span class="n">YHe_all</span><span class="p">[</span><span class="n">i_rem</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
 
             <span class="c1"># Calculate the ejected masses only if the lengths match</span>
@@ -205,14 +214,23 @@
                 <span class="n">h1_mass_ej</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dm_ejected</span> <span class="o">*</span> <span class="n">XH_ejected</span><span class="p">)</span>
                 <span class="n">he4_mass_ej</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dm_ejected</span> <span class="o">*</span> <span class="n">YHe_ejected</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
+                <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Mismatch in array lengths(len(dm_ejected) = &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dm_ejected</span><span class="p">)</span><span class="si">}</span><span class="s2">, len(XH_ejected) = &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">XH_ejected</span><span class="p">)</span><span class="si">}</span><span class="s2">, len(YHe_ejected) = &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">YHe_ejected</span><span class="p">)</span><span class="si">}</span><span class="s2">), cannot calculate ejected masses &quot;</span>
+                      <span class="s2">&quot;accurately.&quot;</span><span class="p">,</span> <span class="s1">&#39;InappropriateValueWarning&#39;</span><span class="p">)</span>
                 <span class="n">h1_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
                 <span class="n">he4_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Mismatch in array lengths, cannot calculate ejected masses accurately.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index out of bounds (i_rem = </span><span class="si">{</span><span class="n">i_rem</span><span class="si">}</span><span class="s2"> &gt;= </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dm_all</span><span class="p">)</span><span class="si">}</span><span class="s2"> = &quot;</span>
+                  <span class="s2">&quot;len(dm_all)), cannot calculate ejected masses.&quot;</span><span class="p">,</span>
+                  <span class="s1">&#39;InappropriateValueWarning&#39;</span><span class="p">)</span>
             <span class="n">h1_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">he4_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Index out of bounds, cannot calculate ejected masses.&quot;</span><span class="p">)</span>
-        <span class="c1">#print(h1_mass_ej, he4_mass_ej, np.sum(dm_ejected))</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ejected mass (total, hydrogen, helium) in Msun: &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dm_ejected</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">h1_mass_ej</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">he4_mass_ej</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">h1_mass_ej</span><span class="p">,</span> <span class="n">he4_mass_ej</span></div>
 
 
@@ -251,19 +269,25 @@
 <span class="sd">        Dimensionless spin of the initial BH.</span>
 <span class="sd">    J_initial_BH : float</span>
 <span class="sd">        Angular momentum of the initial BH in g*cm^2/s.</span>
-<span class="sd">    angular_frequency_i : array floats</span>
+<span class="sd">    angular_frequency_i : ndarray of floats</span>
 <span class="sd">        Shell&#39;s angular frequencies in s^-1 collapsing onto the</span>
 <span class="sd">        initially-formed BH.</span>
-<span class="sd">    enclosed_mass_i : array floats</span>
+<span class="sd">    enclosed_mass_i : ndarray of floats</span>
 <span class="sd">        Shell&#39;s enclosed masses in g collapsing onto the initially formed BH.</span>
-<span class="sd">    radius_i : array floats</span>
+<span class="sd">    radius_i : ndarray of floats</span>
 <span class="sd">        Shell&#39;s radii in cm collapsing onto the initially formed BH.</span>
-<span class="sd">    density_i : array floats</span>
+<span class="sd">    density_i : ndarray of floats</span>
 <span class="sd">        Shell&#39;s densities in g/cm^3 collapsing onto the initially formed BH.</span>
-<span class="sd">    dm_i : array floats</span>
+<span class="sd">    dm_i : ndarray of floats</span>
 <span class="sd">        Shell&#39;s masses in g collapsing onto the initially formed BH.</span>
-<span class="sd">    dm_i : array floats</span>
+<span class="sd">    dr_i : ndarray of floats</span>
 <span class="sd">        Shell&#39;s width in cm collapsing onto the initially formed BH.</span>
+<span class="sd">    he3_i : ndarray of floats</span>
+<span class="sd">        Shell&#39;s Helium 3 fraction.</span>
+<span class="sd">    he4_i : ndarray of floats</span>
+<span class="sd">        Shell&#39;s Helium 4 fraction.</span>
+<span class="sd">    max_he_mass_ejected_SN : float</span>
+<span class="sd">        Maxium Helium in SN ejecta.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">neutrino_mass_loss</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">:</span>
@@ -278,6 +302,20 @@
             <span class="s1">&#39;while neutrino_mass_loss = </span><span class="si">{:2.2f}</span><span class="s1"> Msun&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">neutrino_mass_loss</span><span class="p">),</span> <span class="s1">&#39;was passed!&#39;</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="s1">&#39;profile&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;mass&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;radius&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;logRho&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;omega&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)):</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;The stellar profile does not contain enough information to &quot;</span>
+              <span class="s2">&quot;collapse the star and determine the remnant properties.&quot;</span><span class="p">,</span>
+              <span class="s1">&#39;InappropriateValueWarning&#39;</span><span class="p">)</span>
+        <span class="c1"># estimate still initial BH mass</span>
+        <span class="n">mass_initial_BH</span> <span class="o">=</span> <span class="n">mass_central_BH</span> <span class="o">-</span> <span class="n">neutrino_mass_loss</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">mass_initial_BH</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span>
+
     <span class="c1"># load units and convert to CGS units</span>
     <span class="n">G</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">clight</span>
@@ -287,16 +325,17 @@
     <span class="n">neutrino_mass_loss</span> <span class="o">*=</span> <span class="n">Mo</span>
 
     <span class="c1"># read star quantities</span>
-    <span class="n">enclosed_mass_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">Mo</span>  <span class="c1"># cell outer total mass</span>
-    <span class="n">radius_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ro</span>  <span class="c1"># cell outer radius</span>
-    <span class="n">density_all</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;logRho&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># cell density</span>
-    <span class="n">angular_frequency_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;omega&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># cell angular freq.</span>
+    <span class="n">enclosed_mass_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Mo</span> <span class="c1"># cell outer total mass</span>
+    <span class="n">radius_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ro</span>      <span class="c1"># cell outer radius</span>
+    <span class="n">density_all</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;logRho&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>    <span class="c1"># cell density</span>
+    <span class="n">angular_frequency_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;omega&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># cell angular freq.</span>
     <span class="k">if</span> <span class="s1">&#39;he4&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-        <span class="c1"># he3_all = star.profile[&#39;he3&#39;][::-1]  # he4 mass fraction</span>
-        <span class="n">he4_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;he4&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># he4 mass fraction</span>
-        <span class="n">he3_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enclosed_mass_all</span><span class="p">))</span>  <span class="c1"># ENHANCEMENT support he3</span>
+        <span class="n">he4_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;he4&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>             <span class="c1"># he4 mass fraction</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">he4_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enclosed_mass_all</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s1">&#39;he3&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="n">he3_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;he3&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>             <span class="c1"># he3 mass fraction</span>
+    <span class="k">else</span><span class="p">:</span>
         <span class="n">he3_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enclosed_mass_all</span><span class="p">))</span>
 
     <span class="c1"># cut the ejected layers of the profile due to the SN event:</span>
@@ -871,10 +910,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

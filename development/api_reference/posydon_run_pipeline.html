@@ -80,6 +80,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="bin.html">executables</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="compress_mesa.html">compress_mesa</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_posydon_data.html">get_posydon_data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon_popsyn.html">posydon_popsyn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="posydon_run_grid.html">posydon_run_grid</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">posydon_run_pipeline</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.calculate_extra_values"><code class="docutils literal notranslate"><span class="pre">calculate_extra_values()</span></code></a></li>
@@ -98,7 +99,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="posydon_setup_grid.html">posydon_setup_grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="posydon_setup_pipeline.html">posydon_setup_pipeline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="posydon_setup_popsyn.html">posydon_setup_popsyn</a></li>
 </ul>
 </li>
 </ul>
@@ -171,7 +171,7 @@ grid_low_res_combined.h5, grid_low_res_combined_rerun1.h5</p>
 –&gt; check failure rate</p>
 <p>STEP 3: calculate extra values
 [‘grid_low_res_combined’,’grid_random_1’,’grid_low_res_combined_rerun1’]
-–&gt; do post processing on the ORIGINAL grid and append back on the LITE gird
+–&gt; do post processing on the ORIGINAL grid and append back on the LITE grid
 the post processed quantities</p>
 <p>STEP 3.1: plot extra values
 [‘grid_low_res_combined’,’grid_random_1’,’grid_low_res_combined_rerun1’]
@@ -181,18 +181,18 @@ the post processed quantities</p>
 –&gt; check rates of compact object types</p>
 <p>STEP 4: train interpolators
 [‘grid_low_res_combined_rerun1’] –&gt; train the interpolators</p>
-<p>STEP 4.1: plot interpolator accuracy and confusion matricies
+<p>STEP 4.1: plot interpolator accuracy and confusion matrices
 [‘grid_random_1’]
 –&gt; loop over all plot types</p>
 <p>STEP 5: train profile interpolators
-uses gird and initial-final interpolators to train the profile interpolators</p>
+uses grid and initial-final interpolators to train the profile interpolators</p>
 <p>STEP F: export dataset</p>
 <p>STEP RERUN: rerun grid with a fix
 grid_low_res_combined.rerun(index=logic) –&gt; grid_low_res_rerun_1/grid.csv</p>
 <blockquote>
 <div><p>–&gt; grid_random_1_rerun_1/grid.csv</p>
 </div></blockquote>
-<p>– run gird fix and do next post processing</p>
+<p>– run grid fix and do next post processing</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="posydon_run_pipeline.calculate_extra_values">
 <span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">calculate_extra_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#calculate_extra_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.calculate_extra_values" title="Link to this definition"></a></dt>
@@ -409,10 +409,7 @@ population synthesis with POSYDON.</p>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

@@ -16,6 +16,14 @@ posydon.unit\_tests.utils.test\_common\_functions
    :show-inheritance:
    :undoc-members:
 
+posydon.unit\_tests.utils.test\_compress\_mesa\_files
+-----------------------------------------------------
+
+.. automodule:: posydon.unit_tests.utils.test_compress_mesa_files
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 posydon.unit\_tests.utils.test\_configfile
 ------------------------------------------
 

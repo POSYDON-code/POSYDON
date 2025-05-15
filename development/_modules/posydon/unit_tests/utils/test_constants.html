@@ -1,0 +1,1079 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.unit_tests.utils.test_constants &mdash; posydon development documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=249f3023"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.unit_tests.utils.test_constants</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.unit_tests.utils.test_constants</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Unit tests of posydon/utils/constants.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># import the module which will be tested</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">totest</span>
+
+<span class="c1"># import other needed code for the tests, which is not already imported in the</span>
+<span class="c1"># module you like to test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">approx</span>
+
+<span class="c1"># define test classes collecting several test functions</span>
+<div class="viewcode-block" id="TestElements">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestElements</span><span class="p">:</span>
+    <span class="c1"># check for objects, which should be an element of the tested module</span>
+<div class="viewcode-block" id="TestElements.test_dir">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;H_weight&#39;</span><span class="p">,</span> <span class="s1">&#39;He_weight&#39;</span><span class="p">,</span> <span class="s1">&#39;Lsun&#39;</span><span class="p">,</span> <span class="s1">&#39;Lsun33&#39;</span><span class="p">,</span> <span class="s1">&#39;Msun&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;Msun33&#39;</span><span class="p">,</span> <span class="s1">&#39;Qconv&#39;</span><span class="p">,</span> <span class="s1">&#39;Rsun&#39;</span><span class="p">,</span> <span class="s1">&#39;Rsun11&#39;</span><span class="p">,</span> <span class="s1">&#39;SNcheck_ERR&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;Teffsol&#39;</span><span class="p">,</span> <span class="s1">&#39;Zsun&#39;</span><span class="p">,</span> <span class="s1">&#39;__authors__&#39;</span><span class="p">,</span> <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span> <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span> <span class="s1">&#39;a2rad&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;age_of_universe&#39;</span><span class="p">,</span> <span class="s1">&#39;agesol&#39;</span><span class="p">,</span> <span class="s1">&#39;amu&#39;</span><span class="p">,</span> <span class="s1">&#39;asol&#39;</span><span class="p">,</span> <span class="s1">&#39;au&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;aursun&#39;</span><span class="p">,</span> <span class="s1">&#39;avo&#39;</span><span class="p">,</span> <span class="s1">&#39;boltz_sigma&#39;</span><span class="p">,</span> <span class="s1">&#39;boltzm&#39;</span><span class="p">,</span> <span class="s1">&#39;cgas&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;clight&#39;</span><span class="p">,</span> <span class="s1">&#39;crad&#39;</span><span class="p">,</span> <span class="s1">&#39;day2sec&#39;</span><span class="p">,</span> <span class="s1">&#39;dayyer&#39;</span><span class="p">,</span> <span class="s1">&#39;ev2erg&#39;</span><span class="p">,</span> <span class="s1">&#39;fine&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;hbar&#39;</span><span class="p">,</span> <span class="s1">&#39;hion&#39;</span><span class="p">,</span> <span class="s1">&#39;inversecm2erg&#39;</span><span class="p">,</span> <span class="s1">&#39;kerg&#39;</span><span class="p">,</span> <span class="s1">&#39;kev&#39;</span><span class="p">,</span> <span class="s1">&#39;km2cm&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;loggsol&#39;</span><span class="p">,</span> <span class="s1">&#39;lsol&#39;</span><span class="p">,</span> <span class="s1">&#39;ly&#39;</span><span class="p">,</span> <span class="s1">&#39;m_earth&#39;</span><span class="p">,</span> <span class="s1">&#39;m_jupiter&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;mbolsol&#39;</span><span class="p">,</span> <span class="s1">&#39;mbolsun&#39;</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">,</span> <span class="s1">&#39;mev_amu&#39;</span><span class="p">,</span> <span class="s1">&#39;mev_to_ergs&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;mn&#39;</span><span class="p">,</span> <span class="s1">&#39;mp&#39;</span><span class="p">,</span> <span class="s1">&#39;msol&#39;</span><span class="p">,</span> <span class="s1">&#39;pc&#39;</span><span class="p">,</span> <span class="s1">&#39;pi&#39;</span><span class="p">,</span> <span class="s1">&#39;planck_h&#39;</span><span class="p">,</span> <span class="s1">&#39;qe&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;r_earth&#39;</span><span class="p">,</span> <span class="s1">&#39;r_jupiter&#39;</span><span class="p">,</span> <span class="s1">&#39;rad2a&#39;</span><span class="p">,</span> <span class="s1">&#39;rbohr&#39;</span><span class="p">,</span> <span class="s1">&#39;rhonuc&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;rsol&#39;</span><span class="p">,</span> <span class="s1">&#39;secyer&#39;</span><span class="p">,</span> <span class="s1">&#39;semimajor_axis_jupiter&#39;</span><span class="p">,</span> <span class="s1">&#39;ssol&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;standard_cgrav&#39;</span><span class="p">,</span> <span class="s1">&#39;weinfre&#39;</span><span class="p">,</span> <span class="s1">&#39;weinlam&#39;</span><span class="p">}</span>
+        <span class="n">totest_elements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">totest</span><span class="p">))</span>
+        <span class="n">missing_in_test</span> <span class="o">=</span> <span class="n">elements</span> <span class="o">-</span> <span class="n">totest_elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are missing objects in &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">missing_in_test</span><span class="si">}</span><span class="s2">. Please &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;check, whether they have been &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;removed on purpose and update &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;this unit test.&quot;</span>
+        <span class="n">new_in_test</span> <span class="o">=</span> <span class="n">totest_elements</span> <span class="o">-</span> <span class="n">elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are new objects in &quot;</span>\
+                                      <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_in_test</span><span class="si">}</span><span class="s2">. &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;Please check, whether they have been &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;added on purpose and update this &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;unit test.&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_pi">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_pi">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_pi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;pi is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_a2rad">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_a2rad">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_a2rad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">a2rad</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;a2rad is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">a2rad</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_rad2a">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_rad2a">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_rad2a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rad2a</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;rad2a is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rad2a</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_standard_cgrav">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_standard_cgrav">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_standard_cgrav</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">standard_cgrav</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;standard_cgrav is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">standard_cgrav</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_planck_h">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_planck_h">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_planck_h</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">planck_h</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;planck_h is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">planck_h</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_hbar">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_hbar">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_hbar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">hbar</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;hbar is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">hbar</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_qe">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_qe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_qe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">qe</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;qe is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">qe</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_avo">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_avo">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_avo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">avo</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;avo is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">avo</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_clight">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_clight">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_clight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">clight</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;clight is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">clight</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_kerg">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_kerg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_kerg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">kerg</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;kerg is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">kerg</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_boltzm">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_boltzm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_boltzm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">boltzm</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;boltzm is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">boltzm</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_cgas">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_cgas">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_cgas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">cgas</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;cgas is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">cgas</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_kev">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_kev">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_kev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">kev</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;kev is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">kev</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_amu">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_amu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_amu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">amu</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;amu is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">amu</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_mn">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_mn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_mn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mn</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;mn is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mn</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_mp">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_mp">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_mp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mp</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;mp is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mp</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_me">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_me">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_me</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">me</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;me is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">me</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_rbohr">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_rbohr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_rbohr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rbohr</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;rbohr is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rbohr</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_fine">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_fine">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_fine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">fine</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;fine is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">fine</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_hion">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_hion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_hion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">hion</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;hion is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">hion</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_ev2erg">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_ev2erg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_ev2erg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ev2erg</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;ev2erg is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ev2erg</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_inversecm2erg">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_inversecm2erg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_inversecm2erg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">inversecm2erg</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;inversecm2erg is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">inversecm2erg</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_mev_to_ergs">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_mev_to_ergs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_mev_to_ergs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mev_to_ergs</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;mev_to_ergs is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mev_to_ergs</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_mev_amu">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_mev_amu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_mev_amu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mev_amu</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;mev_amu is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mev_amu</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Qconv">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_Qconv">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Qconv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Qconv</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;Qconv is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Qconv</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_boltz_sigma">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_boltz_sigma">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_boltz_sigma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">boltz_sigma</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;boltz_sigma is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">boltz_sigma</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_crad">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_crad">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_crad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">crad</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;crad is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">crad</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_ssol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_ssol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_ssol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ssol</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;ssol is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ssol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_asol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_asol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_asol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">asol</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;asol is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">asol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_weinlam">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_weinlam">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_weinlam</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">weinlam</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;weinlam is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">weinlam</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_weinfre">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_weinfre">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_weinfre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">weinfre</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;weinfre is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">weinfre</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_rhonuc">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_rhonuc">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_rhonuc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rhonuc</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;rhonuc is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rhonuc</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Zsun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_Zsun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Zsun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Zsun</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;Zsun is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Zsun</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_msol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_msol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_msol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">msol</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;msol is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">msol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_rsol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_rsol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_rsol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rsol</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;rsol is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rsol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_lsol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_lsol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_lsol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">lsol</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;lsol is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">lsol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_agesol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_agesol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_agesol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">agesol</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;agesol is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">agesol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Msun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_Msun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Msun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;Msun is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Msun</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Rsun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_Rsun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Rsun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;Rsun is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Rsun</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Lsun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_Lsun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Lsun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Lsun</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;Lsun is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Lsun</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Msun33">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_Msun33">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Msun33</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Msun33</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;Msun33 is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Msun33</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Rsun11">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_Rsun11">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Rsun11</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Rsun11</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;Rsun11 is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Rsun11</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Lsun33">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_Lsun33">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Lsun33</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Lsun33</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;Lsun33 is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Lsun33</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_ly">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_ly">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_ly</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ly</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;ly is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ly</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_pc">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_pc">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_pc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;pc is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">pc</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_secyer">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_secyer">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_secyer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">secyer</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;secyer is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">secyer</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_dayyer">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_dayyer">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_dayyer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">dayyer</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;dayyer is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">dayyer</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_age_of_universe">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_age_of_universe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_age_of_universe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">age_of_universe</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;age_of_universe is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">age_of_universe</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Teffsol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_Teffsol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Teffsol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Teffsol</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;Teffsol is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Teffsol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_loggsol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_loggsol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_loggsol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">loggsol</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;loggsol is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">loggsol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_mbolsun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_mbolsun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_mbolsun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mbolsun</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;mbolsun is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mbolsun</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_mbolsol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_mbolsol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_mbolsol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mbolsol</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;mbolsol is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mbolsol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_m_earth">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_m_earth">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_m_earth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">m_earth</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;m_earth is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">m_earth</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_r_earth">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_r_earth">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_r_earth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">r_earth</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;r_earth is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">r_earth</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_au">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_au">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_au</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">au</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;au is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">au</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_aursun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_aursun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_aursun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">aursun</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;aursun is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">aursun</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_m_jupiter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_m_jupiter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_m_jupiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">m_jupiter</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;m_jupiter is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">m_jupiter</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_r_jupiter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_r_jupiter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_r_jupiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">r_jupiter</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;r_jupiter is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">r_jupiter</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_semimajor_axis_jupiter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_semimajor_axis_jupiter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_semimajor_axis_jupiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">semimajor_axis_jupiter</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;semimajor_axis_jupiter is of type: &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">semimajor_axis_jupiter</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_km2cm">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_km2cm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_km2cm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">km2cm</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;km2cm is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">km2cm</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_day2sec">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_day2sec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_day2sec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">day2sec</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;day2sec is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">day2sec</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_H_weight">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_H_weight">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_H_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">H_weight</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;H_weight is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">H_weight</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_He_weight">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_He_weight">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_He_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">He_weight</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;He_weight is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">He_weight</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_SNcheck_ERR">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestElements.test_instance_SNcheck_ERR">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_SNcheck_ERR</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">SNcheck_ERR</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)),</span>\
+               <span class="s2">&quot;SNcheck_ERR is of type: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">SNcheck_ERR</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestValues">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestValues</span><span class="p">:</span>
+    <span class="c1"># check that the values fit</span>
+    <span class="c1"># use delta of last digit times 0.6</span>
+<div class="viewcode-block" id="TestValues.test_value_pi">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_pi">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_pi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">3.1415926535897932384626433832795028841971693993751</span> <span class="o">==</span>\
+               <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-50</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_a2rad">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_a2rad">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_a2rad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.7453292519943295e-2</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">a2rad</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-19</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_rad2a">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_rad2a">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_rad2a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">5.729577951308232e+1</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rad2a</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-15</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_standard_cgrav">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_standard_cgrav">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_standard_cgrav</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">6.67428e-8</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">standard_cgrav</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-14</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_planck_h">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_planck_h">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_planck_h</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">6.62606896e-27</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">planck_h</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-36</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_hbar">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_hbar">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_hbar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.05457163e-27</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">hbar</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-36</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_qe">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_qe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_qe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">4.80320440e-10</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">qe</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-19</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_avo">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_avo">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_avo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">6.02214129e+23</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">avo</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+14</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_clight">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_clight">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_clight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">2.99792458e+10</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">clight</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_kerg">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_kerg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_kerg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.3806504e-16</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">kerg</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-24</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_boltzm">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_boltzm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_boltzm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.3806504e-16</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">kerg</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-24</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_cgas">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_cgas">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_cgas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">8.314471780895016e+7</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">cgas</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_kev">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_kev">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_kev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">8.617385e-5</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">kev</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-12</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_amu">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_amu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_amu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.6605389210321898e-24</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">amu</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-33</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_mn">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_mn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_mn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.6749286e-24</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mn</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-32</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_mp">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_mp">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_mp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.6726231e-24</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mp</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-32</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_me">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_me">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_me</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">9.1093826e-28</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">me</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-36</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_rbohr">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_rbohr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_rbohr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">5.291771539809704e-9</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rbohr</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-18</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_fine">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_fine">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_fine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">7.297352926107705e-3</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">fine</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-11</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_hion">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_hion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_hion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.3605698140e+1</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">hion</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-10</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_ev2erg">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_ev2erg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_ev2erg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.602176565e-12</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ev2erg</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-22</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_inversecm2erg">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_inversecm2erg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_inversecm2erg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.9864455003959037e-16</span> <span class="o">==</span>\
+               <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">inversecm2erg</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-25</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_mev_to_ergs">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_mev_to_ergs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_mev_to_ergs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.6021765649999999e-6</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mev_to_ergs</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-16</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_mev_amu">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_mev_amu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_mev_amu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">9.648533645956869e+17</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mev_amu</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+8</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_Qconv">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_Qconv">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_Qconv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">9.648533645956868e+17</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Qconv</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+8</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_boltz_sigma">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_boltz_sigma">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_boltz_sigma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">5.670373e-5</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">boltz_sigma</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-12</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_crad">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_crad">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_crad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">7.565731356724124e-15</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">crad</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-22</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_ssol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_ssol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_ssol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">5.670373e-5</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ssol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-12</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_asol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_asol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_asol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">7.565731356724124e-15</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">asol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-22</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_weinlam">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_weinlam">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_weinlam</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">2.897768496231288e-1</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">weinlam</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-9</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_weinfre">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_weinfre">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_weinfre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">5.878932774535368e+10</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">weinfre</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_rhonuc">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_rhonuc">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_rhonuc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">2.342e+14</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rhonuc</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+10</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_Zsun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_Zsun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_Zsun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.42e-2</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Zsun</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_msol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_msol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_msol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.9892e+33</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">msol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+28</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_rsol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_rsol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_rsol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">6.9598e+10</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">rsol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_lsol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_lsol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_lsol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">3.8418e+33</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">lsol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+28</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_agesol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_agesol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_agesol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">4.57e+9</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">agesol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+6</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_Msun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_Msun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_Msun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.9892e+33</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+28</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_Rsun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_Rsun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_Rsun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">6.9598e+10</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_Lsun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_Lsun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_Lsun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">3.8418e+33</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Lsun</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+28</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_Msun33">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_Msun33">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_Msun33</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.9892</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Msun33</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_Rsun11">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_Rsun11">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_Rsun11</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">6.9598e-1</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Rsun11</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-6</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_Lsun33">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_Lsun33">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_Lsun33</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">3.8418</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Lsun33</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_ly">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_ly">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_ly</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">9.460528e+17</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ly</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+10</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_pc">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_pc">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_pc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">3.0856770322224e+18</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+11</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_secyer">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_secyer">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_secyer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">3.1558149984e+7</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">secyer</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-4</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_dayyer">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_dayyer">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_dayyer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">3.6525e+2</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">dayyer</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_age_of_universe">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_age_of_universe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_age_of_universe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.38e+10</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">age_of_universe</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+7</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_Teffsol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_Teffsol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_Teffsol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">5.7770e+3</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Teffsol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_loggsol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_loggsol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_loggsol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">4.4378893534131256</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">loggsol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-17</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_mbolsun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_mbolsun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_mbolsun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">4.746</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mbolsun</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-4</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_mbolsol">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_mbolsol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_mbolsol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">4.746</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">mbolsol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-4</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_m_earth">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_m_earth">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_m_earth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">5.9764e+27</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">m_earth</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+22</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_r_earth">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_r_earth">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_r_earth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">6.37e+8</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">r_earth</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_au">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_au">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_au</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.495978921e+13</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">au</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_aursun">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_aursun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_aursun</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">2.1495e+2</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">aursun</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_m_jupiter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_m_jupiter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_m_jupiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.8986e+30</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">m_jupiter</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+25</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_r_jupiter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_r_jupiter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_r_jupiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">6.9911e+9</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">r_jupiter</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+4</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_semimajor_axis_jupiter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_semimajor_axis_jupiter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_semimajor_axis_jupiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">7.7857e+13</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">semimajor_axis_jupiter</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e+8</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_km2cm">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_km2cm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_km2cm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.0e5</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">km2cm</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-16</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_day2sec">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_day2sec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_day2sec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">8.64000e+4</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">day2sec</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_H_weight">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_H_weight">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_H_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1.00782503207</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">H_weight</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-12</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_He_weight">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_He_weight">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_He_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">4.002603254131</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">He_weight</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-13</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_SNcheck_ERR">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_constants.TestValues.test_value_SNcheck_ERR">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_SNcheck_ERR</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="mf">1e-10</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">SNcheck_ERR</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">6e-31</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: dev
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

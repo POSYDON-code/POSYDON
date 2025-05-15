@@ -1,0 +1,1246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.unit_tests.utils.test_posydonwarning &mdash; posydon development documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=249f3023"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/verification.html">Verification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/reporting-issues.html">Reporting issues</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.unit_tests.utils.test_posydonwarning</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.unit_tests.utils.test_posydonwarning</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Unit tests of posydon/utils/posydonwarning.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># ensure that python forgets about previous imports of posydonwarning, e.g. in</span>
+<span class="c1"># other tests, before importing it here</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sys</span><span class="w"> </span><span class="kn">import</span> <span class="n">modules</span> <span class="k">as</span> <span class="n">sys_modules</span>
+<span class="n">sys_modules</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;posydon.utils.posydonwarning&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="c1"># import the module which will be tested</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">totest</span>
+
+<span class="c1"># import other needed code for the tests, which is not already imported in the</span>
+<span class="c1"># module you like to test</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">fixture</span><span class="p">,</span> <span class="n">raises</span><span class="p">,</span> <span class="n">warns</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">isclass</span><span class="p">,</span> <span class="n">isroutine</span>
+
+<span class="c1"># define test classes collecting several test functions</span>
+<div class="viewcode-block" id="TestElements">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestElements</span><span class="p">:</span>
+    <span class="c1"># check for objects, which should be an element of the tested module</span>
+<div class="viewcode-block" id="TestElements.test_dir">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;AllPOSYDONWarnings&#39;</span><span class="p">,</span> <span class="s1">&#39;ApproximationWarning&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;BinaryParsingWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;Catch_POSYDON_Warnings&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;ClassificationWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;EvolutionWarning&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;InappropriateValueWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;IncompletenessWarning&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;InterpolationWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;MissingFilesWarning&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;NoPOSYDONWarnings&#39;</span><span class="p">,</span> <span class="s1">&#39;OverwriteWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;POSYDONWarning&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;Pwarn&#39;</span><span class="p">,</span> <span class="s1">&#39;ReplaceValueWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;SetPOSYDONWarnings&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;UnsupportedModelWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;_CAUGHT_POSYDON_WARNINGS&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;_Caught_POSYDON_Warnings&#39;</span><span class="p">,</span> <span class="s1">&#39;_POSYDONWarning_subclasses&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;_POSYDON_WARNINGS_REGISTRY&#39;</span><span class="p">,</span> <span class="s1">&#39;__authors__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span> <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;_apply_POSYDON_filter&#39;</span><span class="p">,</span> <span class="s1">&#39;_get_POSYDONWarning_class&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;_issue_warn&#39;</span><span class="p">,</span> <span class="s1">&#39;copy&#39;</span><span class="p">,</span> <span class="s1">&#39;get_stats&#39;</span><span class="p">,</span> <span class="s1">&#39;print_stats&#39;</span><span class="p">,</span> <span class="s1">&#39;sys&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;warnings&#39;</span><span class="p">}</span>
+        <span class="n">totest_elements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">totest</span><span class="p">))</span>
+        <span class="n">missing_in_test</span> <span class="o">=</span> <span class="n">elements</span> <span class="o">-</span> <span class="n">totest_elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are missing objects in &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: &quot;</span>\
+                                          <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">missing_in_test</span><span class="si">}</span><span class="s2">. Please &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;check, whether they have been &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;removed on purpose and update &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;this unit test.&quot;</span>
+        <span class="n">new_in_test</span> <span class="o">=</span> <span class="n">totest_elements</span> <span class="o">-</span> <span class="n">elements</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_in_test</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;There are new objects in &quot;</span>\
+                                      <span class="o">+</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">totest</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_in_test</span><span class="si">}</span><span class="s2">. &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;Please check, whether they have been &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;added on purpose and update this &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;unit test.&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_POSYDONWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_POSYDONWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_POSYDONWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">,</span> <span class="ne">Warning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_ApproximationWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_ApproximationWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_ApproximationWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ApproximationWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ApproximationWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_BinaryParsingWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_BinaryParsingWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_BinaryParsingWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">BinaryParsingWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">BinaryParsingWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_ClassificationWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_ClassificationWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_ClassificationWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ClassificationWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ClassificationWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_EvolutionWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_EvolutionWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_EvolutionWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">EvolutionWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">EvolutionWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_InappropriateValueWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_InappropriateValueWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_InappropriateValueWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">InappropriateValueWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">InappropriateValueWarning</span><span class="p">,</span>\
+                          <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_IncompletenessWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_IncompletenessWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_IncompletenessWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">IncompletenessWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">IncompletenessWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_InterpolationWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_InterpolationWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_InterpolationWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">InterpolationWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">InterpolationWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_MissingFilesWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_MissingFilesWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_MissingFilesWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">MissingFilesWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">MissingFilesWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_OverwriteWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_OverwriteWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_OverwriteWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">OverwriteWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">OverwriteWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_ReplaceValueWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_ReplaceValueWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_ReplaceValueWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ReplaceValueWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">ReplaceValueWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_UnsupportedModelWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_UnsupportedModelWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_UnsupportedModelWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">UnsupportedModelWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">UnsupportedModelWarning</span><span class="p">,</span>\
+                          <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_POSYDONWarning_subclasses">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_POSYDONWarning_subclasses">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_POSYDONWarning_subclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">_POSYDONWarning_subclasses</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_get_POSYDONWarning_class">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_get_POSYDONWarning_class">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_get_POSYDONWarning_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">_get_POSYDONWarning_class</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_POSYDON_WARNINGS_REGISTRY">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_POSYDON_WARNINGS_REGISTRY">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_POSYDON_WARNINGS_REGISTRY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_get_stats">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_get_stats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">get_stats</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_print_stats">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_print_stats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_print_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">print_stats</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_apply_POSYDON_filter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_apply_POSYDON_filter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_apply_POSYDON_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">_apply_POSYDON_filter</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_issue_warn">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_issue_warn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_issue_warn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">_issue_warn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Caught_POSYDON_Warnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_Caught_POSYDON_Warnings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_CAUGHT_POSYDON_WARNINGS">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_CAUGHT_POSYDON_WARNINGS">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_CAUGHT_POSYDON_WARNINGS</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="p">,</span>\
+                          <span class="n">totest</span><span class="o">.</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Catch_POSYDON_Warnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_Catch_POSYDON_Warnings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Catch_POSYDON_Warnings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Catch_POSYDON_Warnings</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_Pwarn">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_Pwarn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_Pwarn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">Pwarn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_SetPOSYDONWarnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_SetPOSYDONWarnings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_SetPOSYDONWarnings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">SetPOSYDONWarnings</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_NoPOSYDONWarnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_NoPOSYDONWarnings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_NoPOSYDONWarnings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">NoPOSYDONWarnings</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestElements.test_instance_AllPOSYDONWarnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_AllPOSYDONWarnings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_AllPOSYDONWarnings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">AllPOSYDONWarnings</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestValues">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestValues">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestValues</span><span class="p">:</span>
+    <span class="c1"># check that the values fit</span>
+<div class="viewcode-block" id="TestValues.test_value_POSYDONWarning_subclasses">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestValues.test_value_POSYDONWarning_subclasses">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_POSYDONWarning_subclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="s1">&#39;ApproximationWarning&#39;</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDONWarning_subclasses</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_POSYDON_WARNINGS_REGISTRY">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestValues.test_value_POSYDON_WARNINGS_REGISTRY">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_POSYDON_WARNINGS_REGISTRY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span> <span class="o">==</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="TestValues.test_value_CAUGHT_POSYDON_WARNINGS">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestValues.test_value_CAUGHT_POSYDON_WARNINGS">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_value_CAUGHT_POSYDON_WARNINGS</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="o">.</span><span class="n">catch_warnings</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="o">.</span><span class="n">record</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="o">.</span><span class="n">filter_first</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="o">.</span><span class="n">registry</span> <span class="ow">is</span>\
+               <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestFunctions">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestFunctions</span><span class="p">:</span>
+<div class="viewcode-block" id="TestFunctions.clear_registry">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.clear_registry">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_registry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield</span>
+        <span class="c1"># empty the global POSYDON warnings registry after each test</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">:</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.reset_filter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.reset_filter">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield</span>
+        <span class="c1"># set POSYDON warnings back to default</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span>\
+                                       <span class="n">category</span><span class="o">=</span><span class="ne">ResourceWarning</span><span class="p">)</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span>\
+                                       <span class="n">category</span><span class="o">=</span><span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+
+    <span class="c1"># test functions</span>
+<div class="viewcode-block" id="TestFunctions.test_get_POSYDONWarning_class">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.test_get_POSYDONWarning_class">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_POSYDONWarning_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 1 required positional argument&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_get_POSYDONWarning_class</span><span class="p">()</span>
+        <span class="c1"># default to POSYDONWarning</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_get_POSYDONWarning_class</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_get_POSYDONWarning_class</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span> <span class="o">==</span>\
+               <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span>
+        <span class="c1"># check subclasses of POSYDONWarning</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDONWarning_subclasses</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_get_POSYDONWarning_class</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="n">v</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_get_POSYDONWarning_class</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">v</span>
+        <span class="c1"># bad input</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_get_POSYDONWarning_class</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_get_stats">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.test_get_stats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span> <span class="o">==</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_print_stats">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.test_print_stats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_print_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">,</span> <span class="n">clear_registry</span><span class="p">):</span>
+        <span class="c1"># empty the global POSYDON warnings registry before this test</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">:</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="c1"># no warnings to print</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">print_stats</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;No POSYDON warnings occured.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">==</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span><span class="o">.</span><span class="n">out</span>
+        <span class="c1"># add an artifical entry in the warnings registry and get the printout</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Unit&#39;</span><span class="p">:</span> <span class="s1">&#39;Test&#39;</span><span class="p">}</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">print_stats</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;There have been POSYDON warnings in the global registry:</span><span class="se">\n</span><span class="s2"> &quot;</span>\
+               <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">==</span>\
+               <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span><span class="o">.</span><span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_apply_POSYDON_filter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.test_apply_POSYDON_filter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_apply_POSYDON_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">,</span> <span class="n">clear_registry</span><span class="p">,</span> <span class="n">reset_filter</span><span class="p">):</span>
+        <span class="c1"># wrong arguments</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;warning must be a dictionary&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_apply_POSYDON_filter</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;message must be a string&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_apply_POSYDON_filter</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;stacklevel must be an integer&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_apply_POSYDON_filter</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;stacklevel&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">})</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;registry must be a dictionary or None&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_apply_POSYDON_filter</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+        <span class="c1"># check default warning</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_apply_POSYDON_filter</span><span class="p">()</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;No warning&quot;</span><span class="p">)</span>
+        <span class="c1"># check that further default warnings are filtered out but added to the</span>
+        <span class="c1"># registry</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">v</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_apply_POSYDON_filter</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># check usage of python filter with a python warning</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span>\
+                                       <span class="n">category</span><span class="o">=</span><span class="ne">ResourceWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_apply_POSYDON_filter</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">,</span>\
+                                                     <span class="s1">&#39;category&#39;</span><span class="p">:</span>\
+                                                     <span class="ne">ResourceWarning</span><span class="p">})</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># check the route of an always filter</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;always&#39;</span><span class="p">,</span>\
+                                       <span class="n">category</span><span class="o">=</span><span class="ne">ResourceWarning</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_apply_POSYDON_filter</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span>\
+                                                                    <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>\
+                                                         <span class="s1">&#39;category&#39;</span><span class="p">:</span>\
+                                                         <span class="ne">ResourceWarning</span><span class="p">})</span> <span class="o">==</span>\
+                   <span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="ne">ResourceWarning</span><span class="p">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s2">&quot;ResourceWarning&quot;</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">v</span> <span class="o">==</span> <span class="n">i</span>
+        <span class="c1"># check the route of an error filter</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span>\
+                                       <span class="n">category</span><span class="o">=</span><span class="ne">ResourceWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">totest</span><span class="o">.</span><span class="n">_apply_POSYDON_filter</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>\
+                                                     <span class="s1">&#39;category&#39;</span><span class="p">:</span>\
+                                                     <span class="ne">ResourceWarning</span><span class="p">})</span> <span class="o">==</span>\
+               <span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="ne">ResourceWarning</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_issue_warn">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.test_issue_warn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_issue_warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">,</span> <span class="n">recwarn</span><span class="p">,</span> <span class="n">clear_registry</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_apply_POSYDON_filter</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;No warning&quot;</span><span class="p">),</span>\
+                                      <span class="n">registry</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># wrong arguments</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;warning must be a dictionary&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_issue_warn</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;message must be a string&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_issue_warn</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;stacklevel must be an integer&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_issue_warn</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;stacklevel&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">})</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;registry must be a dictionary or None&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_issue_warn</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+        <span class="c1"># check default warning</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;No warning&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">warn1</span><span class="p">:</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_issue_warn</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">warn1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="c1"># check filtered warning</span>
+        <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">totest</span><span class="p">,</span> <span class="s2">&quot;_apply_POSYDON_filter&quot;</span><span class="p">,</span> <span class="n">mock_apply_POSYDON_filter</span><span class="p">)</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">_issue_warn</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">recwarn</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_Pwarn">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.test_Pwarn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_Pwarn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># missing argument</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;missing 1 required positional argument&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">Pwarn</span><span class="p">()</span>
+        <span class="c1"># wrong arguments</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;message must be a string&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">Pwarn</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;stacklevel must be an integer&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Unit&quot;</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+        <span class="c1"># check output of POSYDONwarning</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Unit test&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">warn1</span><span class="p">:</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Unit test&quot;</span><span class="p">,</span> <span class="s2">&quot;POSYDONWarning&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">warn1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="c1"># check output of FutureWarning</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="ne">FutureWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Unit test&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">warn2</span><span class="p">:</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Unit test&quot;</span><span class="p">,</span> <span class="ne">FutureWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">warn2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="c1"># check output of UserWarning (default if unspecified)</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Unit test&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">warn3</span><span class="p">:</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Unit test&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">warn3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_SetPOSYDONWarnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.test_SetPOSYDONWarnings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_SetPOSYDONWarnings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">SetPOSYDONWarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;once&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;(&#39;once&#39;, None, &lt;class &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;&#39;posydon.utils.posydonwarning.POSYDONWarning&#39;&gt;, None, 0)&quot;</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">SetPOSYDONWarnings</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;(&#39;default&#39;, None, &lt;class &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;&#39;posydon.utils.posydonwarning.POSYDONWarning&#39;&gt;, None, 0)&quot;</span>
+        <span class="c1"># non POSYDON warnings have no effect</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">SetPOSYDONWarnings</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;(&#39;default&#39;, None, &lt;class &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;&#39;posydon.utils.posydonwarning.POSYDONWarning&#39;&gt;, None, 0)&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_NoPOSYDONWarnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.test_NoPOSYDONWarnings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_NoPOSYDONWarnings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reset_filter</span><span class="p">):</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">NoPOSYDONWarnings</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;(&#39;ignore&#39;, None, &lt;class &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;&#39;posydon.utils.posydonwarning.POSYDONWarning&#39;&gt;, None, 0)&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestFunctions.test_AllPOSYDONWarnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestFunctions.test_AllPOSYDONWarnings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_AllPOSYDONWarnings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reset_filter</span><span class="p">):</span>
+        <span class="n">totest</span><span class="o">.</span><span class="n">AllPOSYDONWarnings</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;(&#39;always&#39;, None, &lt;class &quot;</span>\
+               <span class="o">+</span> <span class="s2">&quot;&#39;posydon.utils.posydonwarning.POSYDONWarning&#39;&gt;, None, 0)&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestPOSYDONWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestPOSYDONWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestPOSYDONWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestPOSYDONWarning.POSYDONWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestPOSYDONWarning.POSYDONWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">POSYDONWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the POSYDONWarning class</span>
+<div class="viewcode-block" id="TestPOSYDONWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestPOSYDONWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">POSYDONWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">POSYDONWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="TestPOSYDONWarning.test_str">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestPOSYDONWarning.test_str">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">POSYDONWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="o">.</span><span class="fm">__str__</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&#39;&#39;&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestApproximationWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestApproximationWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestApproximationWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestApproximationWarning.ApproximationWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestApproximationWarning.ApproximationWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ApproximationWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">ApproximationWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the ApproximationWarning class</span>
+<div class="viewcode-block" id="TestApproximationWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestApproximationWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ApproximationWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ApproximationWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ApproximationWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">ApproximationWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ApproximationWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestBinaryParsingWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestBinaryParsingWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestBinaryParsingWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestBinaryParsingWarning.BinaryParsingWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestBinaryParsingWarning.BinaryParsingWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">BinaryParsingWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">BinaryParsingWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the BinaryParsingWarning class</span>
+<div class="viewcode-block" id="TestBinaryParsingWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestBinaryParsingWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BinaryParsingWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">BinaryParsingWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">BinaryParsingWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">BinaryParsingWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">BinaryParsingWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestClassificationWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestClassificationWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestClassificationWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestClassificationWarning.ClassificationWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestClassificationWarning.ClassificationWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ClassificationWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">ClassificationWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the ClassificationWarning class</span>
+<div class="viewcode-block" id="TestClassificationWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestClassificationWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ClassificationWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ClassificationWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ClassificationWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">ClassificationWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ClassificationWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEvolutionWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestEvolutionWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEvolutionWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestEvolutionWarning.EvolutionWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestEvolutionWarning.EvolutionWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">EvolutionWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">EvolutionWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the EvolutionWarning class</span>
+<div class="viewcode-block" id="TestEvolutionWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestEvolutionWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">EvolutionWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">EvolutionWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">EvolutionWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">EvolutionWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">EvolutionWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestInappropriateValueWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestInappropriateValueWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestInappropriateValueWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestInappropriateValueWarning.InappropriateValueWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestInappropriateValueWarning.InappropriateValueWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">InappropriateValueWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">InappropriateValueWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the InappropriateValueWarning class</span>
+<div class="viewcode-block" id="TestInappropriateValueWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestInappropriateValueWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">InappropriateValueWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">InappropriateValueWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">InappropriateValueWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">InappropriateValueWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">InappropriateValueWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestIncompletenessWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestIncompletenessWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestIncompletenessWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestIncompletenessWarning.IncompletenessWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestIncompletenessWarning.IncompletenessWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">IncompletenessWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">IncompletenessWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the IncompletenessWarning class</span>
+<div class="viewcode-block" id="TestIncompletenessWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestIncompletenessWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">IncompletenessWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">IncompletenessWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">IncompletenessWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">IncompletenessWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">IncompletenessWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestInterpolationWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestInterpolationWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestInterpolationWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestInterpolationWarning.InterpolationWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestInterpolationWarning.InterpolationWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">InterpolationWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">InterpolationWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the InterpolationWarning class</span>
+<div class="viewcode-block" id="TestInterpolationWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestInterpolationWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">InterpolationWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">InterpolationWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">InterpolationWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">InterpolationWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">InterpolationWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestMissingFilesWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestMissingFilesWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMissingFilesWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestMissingFilesWarning.MissingFilesWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestMissingFilesWarning.MissingFilesWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">MissingFilesWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">MissingFilesWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the MissingFilesWarning class</span>
+<div class="viewcode-block" id="TestMissingFilesWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestMissingFilesWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MissingFilesWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">MissingFilesWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">MissingFilesWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">MissingFilesWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">MissingFilesWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestOverwriteWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestOverwriteWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestOverwriteWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestOverwriteWarning.OverwriteWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestOverwriteWarning.OverwriteWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">OverwriteWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">OverwriteWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the OverwriteWarning class</span>
+<div class="viewcode-block" id="TestOverwriteWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestOverwriteWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">OverwriteWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">OverwriteWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">OverwriteWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">OverwriteWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">OverwriteWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestReplaceValueWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestReplaceValueWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestReplaceValueWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestReplaceValueWarning.ReplaceValueWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestReplaceValueWarning.ReplaceValueWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ReplaceValueWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">ReplaceValueWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the ReplaceValueWarning class</span>
+<div class="viewcode-block" id="TestReplaceValueWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestReplaceValueWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ReplaceValueWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">ReplaceValueWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ReplaceValueWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">ReplaceValueWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ReplaceValueWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestUnsupportedModelWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestUnsupportedModelWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUnsupportedModelWarning</span><span class="p">:</span>
+<div class="viewcode-block" id="TestUnsupportedModelWarning.UnsupportedModelWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestUnsupportedModelWarning.UnsupportedModelWarning">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">UnsupportedModelWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">UnsupportedModelWarning</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the UnsupportedModelWarning class</span>
+<div class="viewcode-block" id="TestUnsupportedModelWarning.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestUnsupportedModelWarning.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">UnsupportedModelWarning</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">UnsupportedModelWarning</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">UnsupportedModelWarning</span><span class="p">,</span>\
+                          <span class="n">totest</span><span class="o">.</span><span class="n">UnsupportedModelWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">UnsupportedModelWarning</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Test_Caught_POSYDON_Warnings</span><span class="p">:</span>
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings.clear_registry">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings.clear_registry">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_registry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield</span>
+        <span class="c1"># empty the global POSYDON warnings registry after each test</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">:</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
+
+
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clear_registry</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="n">_Caught_POSYDON_Warnings</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">()</span>
+        <span class="k">yield</span> <span class="n">_Caught_POSYDON_Warnings</span>
+        <span class="c1"># empty the cache to not print remaining records</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings.test_dict">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings.test_dict">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># a dictionary as a registry for testing</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;Unit&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">}</span></div>
+
+
+    <span class="c1"># test the _Caught_POSYDON_Warnings class</span>
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">,</span>\
+                          <span class="n">totest</span><span class="o">.</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">catch_warnings</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">record</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">filter_first</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">_got_called</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">registry</span> <span class="ow">is</span>\
+               <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;catch_warnings must be a boolean&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">catch_warnings</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;record must be a boolean&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;filter_first must be a boolean&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">filter_first</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;registry must be a dictionary&quot;</span><span class="p">):</span>
+            <span class="n">totest</span><span class="o">.</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">registry</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings.test_str">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings.test_str">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="p">,</span> <span class="n">test_dict</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="fm">__str__</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;POSYDON warnings are shown.&quot;</span>
+        <span class="c1"># check with different setups</span>
+        <span class="n">test_cases</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;record&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>\
+                       <span class="s1">&#39;filter_first&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;registry&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>\
+                       <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s2">&quot;POSYDON warnings will be caught and recorded. &quot;</span>\
+                              <span class="o">+</span><span class="s2">&quot;Filters are applied before recording.&quot;</span><span class="p">},</span>\
+                      <span class="p">{</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;record&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>\
+                       <span class="s1">&#39;filter_first&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;registry&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>\
+                       <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s2">&quot;POSYDON warnings will be caught and recorded.&quot;</span>\
+                      <span class="p">},</span>\
+                      <span class="p">{</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;record&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>\
+                       <span class="s1">&#39;filter_first&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;registry&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>\
+                       <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s2">&quot;POSYDON warnings will be caught and discarded.&quot;</span>\
+                      <span class="p">},</span>\
+                      <span class="p">{</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;record&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>\
+                       <span class="s1">&#39;filter_first&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;registry&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>\
+                       <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s2">&quot;POSYDON warnings will be caught and discarded.&quot;</span>\
+                      <span class="p">},</span>
+                      <span class="p">{</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;record&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>\
+                       <span class="s1">&#39;filter_first&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;registry&#39;</span><span class="p">:</span> <span class="n">test_dict</span><span class="p">,</span>\
+                       <span class="s1">&#39;str&#39;</span><span class="p">:</span> <span class="s2">&quot;Currently a private registry is used, it &quot;</span>\
+                              <span class="o">+</span><span class="s2">&quot;contains:</span><span class="se">\n</span><span class="s2">{&#39;Unit&#39;: &#39;Test&#39;}&quot;</span><span class="p">}]</span>
+        <span class="k">for</span> <span class="n">tc</span> <span class="ow">in</span> <span class="n">test_cases</span><span class="p">:</span>
+            <span class="n">caught</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">catch_warnings</span><span class="o">=</span>\
+                                                     <span class="n">tc</span><span class="p">[</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">],</span>\
+                                                     <span class="n">record</span><span class="o">=</span><span class="n">tc</span><span class="p">[</span><span class="s1">&#39;record&#39;</span><span class="p">],</span>\
+                                                     <span class="n">filter_first</span><span class="o">=</span>\
+                                                     <span class="n">tc</span><span class="p">[</span><span class="s1">&#39;filter_first&#39;</span><span class="p">],</span>\
+                                                     <span class="n">registry</span><span class="o">=</span><span class="n">tc</span><span class="p">[</span><span class="s1">&#39;registry&#39;</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="n">tc</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">caught</span><span class="p">)</span>
+        <span class="c1"># check artifical caught_warnings</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="p">[</span><span class="n">test_dict</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="s2">&quot;There is 1 warning recorded.&quot;</span> <span class="ow">in</span>\
+                       <span class="nb">str</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">i</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="s2">&quot;There are &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot; warnings recorded.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="ow">in</span>\
+                       <span class="nb">str</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="s2">&quot;recorded&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings.test_call">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings.test_call">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="p">,</span> <span class="n">test_dict</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="fm">__call__</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">_got_called</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="c1"># bad input</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Nothing to do: either empty_cache has &quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;to be True or new_warning/&quot;</span>\
+                                      <span class="o">+</span><span class="s2">&quot;change_settings needs to be set.&quot;</span><span class="p">):</span>
+            <span class="n">_Caught_POSYDON_Warnings</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">_got_called</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dict</span><span class="p">]</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">empty_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="c1"># change_settings</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;change_settings has to be a dict&quot;</span><span class="p">):</span>
+            <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="s1">&#39;caught_warnings&#39;</span><span class="p">:</span>
+                <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">})</span>
+            <span class="k">elif</span> <span class="n">s</span> <span class="o">==</span> <span class="s1">&#39;registry&#39;</span><span class="p">:</span>
+                <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">})</span>
+                <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;has to be a&quot;</span><span class="p">):</span>
+                    <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">})</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;unknown to &quot;</span>\
+                                          <span class="o">+</span><span class="s2">&quot;_Caught_POSYDON_Warnings&quot;</span><span class="p">):</span>
+            <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="n">test_dict</span><span class="p">)</span>
+        <span class="c1"># change setting to catch warnings and add a new one to the record list</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>\
+                                 <span class="n">new_warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">})</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">catch_warnings</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">==</span>\
+               <span class="p">[{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">}]</span>
+        <span class="c1"># unset catching: recorded warnings are issued and list is emptied</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">):</span>
+            <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="c1"># change setting to catch warnings and add a new one to the record list</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>\
+                                                  <span class="s1">&#39;filter_first&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>\
+                                 <span class="n">new_warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">,</span>\
+                                              <span class="s1">&#39;stacklevel&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">catch_warnings</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">filter_first</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">==</span>\
+               <span class="p">[{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">,</span> <span class="s1">&#39;stacklevel&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}]</span>
+        <span class="c1"># change setting to record warnings and try to add a new one</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;record&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>\
+                                 <span class="n">new_warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;no record&quot;</span><span class="p">})</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">record</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">==</span>\
+               <span class="p">[{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">,</span> <span class="s1">&#39;stacklevel&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}]</span> <span class="c1"># still has old record</span>
+        <span class="c1"># unset catching: recorded warnings are issued and list is emptied</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">winfo</span><span class="p">:</span>
+            <span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+        <span class="k">assert</span> <span class="s2">&quot;posydonwarning.py&quot;</span> <span class="ow">in</span> <span class="n">winfo</span><span class="o">.</span><span class="n">_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">==</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings.test_del">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings.test_del">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_del</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">,</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="fm">__del__</span><span class="p">)</span>
+        <span class="c1"># create an object with a catched warning, call the destructor and</span>
+        <span class="c1"># empty it while recording the stdout and stderr</span>
+        <span class="n">cpw</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">_Caught_POSYDON_Warnings</span><span class="p">(</span><span class="n">catch_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">cpw</span><span class="p">(</span><span class="n">new_warning</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s2">&quot;Unit Test&quot;</span><span class="p">})</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Unit Test&quot;</span><span class="p">):</span>
+            <span class="n">cpw</span><span class="o">.</span><span class="fm">__del__</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span><span class="o">.</span><span class="n">err</span> <span class="o">==</span>\
+               <span class="s2">&quot;There are still recorded warnings:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="n">cpw</span><span class="o">.</span><span class="n">catch_warnings</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="n">cpw</span><span class="o">.</span><span class="n">caught_warnings</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot;Test&quot;</span>
+        <span class="n">cpw</span><span class="o">.</span><span class="n">filter_first</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">with</span> <span class="n">warns</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Unit TestTest&quot;</span><span class="p">):</span>
+            <span class="n">cpw</span><span class="o">.</span><span class="fm">__del__</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span><span class="o">.</span><span class="n">err</span> <span class="o">==</span>\
+               <span class="s2">&quot;There are still recorded warnings:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">cpw</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings.test_got_called">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings.test_got_called">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_got_called</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">got_called</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">got_called</span><span class="p">()</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">_got_called</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">got_called</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings.test_has_records">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings.test_has_records">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_has_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="p">,</span> <span class="n">test_dict</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">has_records</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">has_records</span><span class="p">()</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dict</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">has_records</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings.test_get_cache">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings.test_get_cache">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="p">,</span> <span class="n">test_dict</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">get_cache</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">get_cache</span><span class="p">()</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dict</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">get_cache</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="n">test_dict</span><span class="p">]</span>
+        <span class="c1"># clear the cache</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">get_cache</span><span class="p">(</span><span class="n">empty_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">==</span>\
+               <span class="p">[</span><span class="n">test_dict</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">get_cache</span><span class="p">()</span> <span class="o">==</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="Test_Caught_POSYDON_Warnings.test_reset_cache">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.Test_Caught_POSYDON_Warnings.test_reset_cache">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_reset_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="p">,</span> <span class="n">test_dict</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">reset_cache</span><span class="p">)</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dict</span><span class="p">]</span>
+        <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">reset_cache</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">_Caught_POSYDON_Warnings</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">==</span> <span class="p">[]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestCatch_POSYDON_Warnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestCatch_POSYDON_Warnings">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestCatch_POSYDON_Warnings</span><span class="p">:</span>
+<div class="viewcode-block" id="TestCatch_POSYDON_Warnings.clear_registry">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestCatch_POSYDON_Warnings.clear_registry">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_registry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield</span>
+        <span class="c1"># empty the global POSYDON warnings registry after each test</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">:</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestCatch_POSYDON_Warnings.Catch_POSYDON_Warnings">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestCatch_POSYDON_Warnings.Catch_POSYDON_Warnings">[docs]</a>
+    <span class="nd">@fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Catch_POSYDON_Warnings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clear_registry</span><span class="p">):</span>
+        <span class="c1"># initialize an instance of the class with defaults</span>
+        <span class="k">return</span> <span class="n">totest</span><span class="o">.</span><span class="n">Catch_POSYDON_Warnings</span><span class="p">()</span></div>
+
+
+    <span class="c1"># test the Catch_POSYDON_Warnings class</span>
+<div class="viewcode-block" id="TestCatch_POSYDON_Warnings.test_init">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestCatch_POSYDON_Warnings.test_init">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Catch_POSYDON_Warnings</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">Catch_POSYDON_Warnings</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="c1"># check that the instance is of correct type and all code in the</span>
+        <span class="c1"># __init__ got executed: the elements are created and initialized</span>
+        <span class="k">assert</span> <span class="n">Catch_POSYDON_Warnings</span><span class="o">.</span><span class="n">catch_warnings</span>
+        <span class="k">assert</span> <span class="n">Catch_POSYDON_Warnings</span><span class="o">.</span><span class="n">record</span>
+        <span class="k">assert</span> <span class="n">Catch_POSYDON_Warnings</span><span class="o">.</span><span class="n">filter_first</span>
+        <span class="k">assert</span> <span class="n">Catch_POSYDON_Warnings</span><span class="o">.</span><span class="n">context_registry</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">Catch_POSYDON_Warnings</span><span class="o">.</span><span class="n">python_catch</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="c1"># check other inputs</span>
+        <span class="n">cpw</span> <span class="o">=</span> <span class="n">totest</span><span class="o">.</span><span class="n">Catch_POSYDON_Warnings</span><span class="p">(</span><span class="n">own_registry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>\
+                                            <span class="n">use_python_catch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">cpw</span><span class="o">.</span><span class="n">context_registry</span> <span class="o">==</span> <span class="p">{}</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cpw</span><span class="o">.</span><span class="n">python_catch</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestCatch_POSYDON_Warnings.test_enter_exit">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestCatch_POSYDON_Warnings.test_enter_exit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_enter_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Catch_POSYDON_Warnings</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">Catch_POSYDON_Warnings</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestCatch_POSYDON_Warnings.test_exit">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestCatch_POSYDON_Warnings.test_exit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Catch_POSYDON_Warnings</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isroutine</span><span class="p">(</span><span class="n">Catch_POSYDON_Warnings</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestCatch_POSYDON_Warnings.test_context">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestCatch_POSYDON_Warnings.test_context">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">totest</span><span class="o">.</span><span class="n">Catch_POSYDON_Warnings</span><span class="p">()</span> <span class="k">as</span> <span class="n">cpw</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">cpw</span> <span class="ow">is</span> <span class="n">totest</span><span class="o">.</span><span class="n">_CAUGHT_POSYDON_WARNINGS</span>
+            <span class="k">assert</span> <span class="n">cpw</span><span class="o">.</span><span class="n">catch_warnings</span>
+            <span class="k">assert</span> <span class="n">cpw</span><span class="o">.</span><span class="n">record</span>
+            <span class="k">assert</span> <span class="n">cpw</span><span class="o">.</span><span class="n">filter_first</span>
+            <span class="k">assert</span> <span class="n">cpw</span><span class="o">.</span><span class="n">registry</span> <span class="ow">is</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span>
+        <span class="k">with</span> <span class="n">totest</span><span class="o">.</span><span class="n">Catch_POSYDON_Warnings</span><span class="p">(</span><span class="n">use_python_catch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">cpw</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">cpw</span> <span class="ow">is</span> <span class="n">totest</span><span class="o">.</span><span class="n">_CAUGHT_POSYDON_WARNINGS</span>
+            <span class="k">assert</span> <span class="n">cpw</span><span class="o">.</span><span class="n">catch_warnings</span>
+            <span class="k">assert</span> <span class="n">cpw</span><span class="o">.</span><span class="n">record</span>
+            <span class="k">assert</span> <span class="n">cpw</span><span class="o">.</span><span class="n">filter_first</span>
+            <span class="k">assert</span> <span class="n">cpw</span><span class="o">.</span><span class="n">registry</span> <span class="ow">is</span> <span class="n">totest</span><span class="o">.</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: dev
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

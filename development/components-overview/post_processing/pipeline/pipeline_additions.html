@@ -77,7 +77,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Pipeline additions</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../pipeline_ini.html">Documentation of the ini file for the post-processing pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline_ini.html">Documentation of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file for the post-processing pipeline</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../machine-learning-components.html">Machine Learning Components</a></li>
@@ -142,10 +142,10 @@ the next step. They are run the same way as the <a class="reference internal" hr
 <section id="creating-plots">
 <span id="pipeline-plots"></span><h2>Creating plots<a class="headerlink" href="#creating-plots" title="Link to this heading"></a></h2>
 <p>Plots can be created after each step with the data available from the previous
-step. Hence, each corresponding csv file is called <code class="samp docutils literal notranslate"><span class="pre">step_?_plots.csv</span></code>,
-where the question mark will be the number of the step the plots take the final
-<code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object from. All the csv files for plotting have the same
-structure:</p>
+step. Hence, each corresponding <code class="samp docutils literal notranslate"><span class="pre">csv</span></code> file is called
+<code class="samp docutils literal notranslate"><span class="pre">step_?_plots.csv</span></code>, where the question mark will be the number of the step
+the plots take the final <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object from. All the <code class="samp docutils literal notranslate"><span class="pre">csv</span></code> files
+for plotting have the same structure:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">path_to_grid</span><span class="p">,</span><span class="n">grid_type</span><span class="p">,</span><span class="n">quantities_to_plot</span><span class="p">,</span><span class="n">path_to_plot</span><span class="p">,</span><span class="n">plot_extension</span>
 </pre></div>
 </div>
@@ -228,8 +228,7 @@ are stored as pages in a single PDF.</p>
 </tr>
 </tbody>
 </table>
-<p>After <a class="reference internal" href="pipeline_steps.html#pipeline-step3"><span class="std std-ref">Step3: calculating extra values from detailed data</span></a>,
-the supernova model quantities get available, too.</p>
+<p>After <a class="reference internal" href="pipeline_steps.html#pipeline-step3"><span class="std std-ref">Step3: calculating extra values from detailed data</span></a>, the supernova model quantities get available, too.</p>
 <table class="docutils align-default" id="id3">
 <caption><span class="caption-text">Supernova predefined plots</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
 <thead>
@@ -381,10 +380,7 @@ interpolators can be used.</p>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

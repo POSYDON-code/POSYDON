@@ -137,6 +137,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#posydon.utils.common_functions.stefan_boltzmann_law"><code class="docutils literal notranslate"><span class="pre">stefan_boltzmann_law()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.utils.compress_mesa_files">posydon.utils.compress_mesa_files</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.utils.compress_mesa_files.compress_dir"><code class="docutils literal notranslate"><span class="pre">compress_dir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.utils.compress_mesa_files.get_size"><code class="docutils literal notranslate"><span class="pre">get_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.utils.compress_mesa_files.set_up_test"><code class="docutils literal notranslate"><span class="pre">set_up_test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.utils.compress_mesa_files.textsize"><code class="docutils literal notranslate"><span class="pre">textsize()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-posydon.utils.configfile">posydon.utils.configfile</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#posydon.utils.configfile.ConfigFile"><code class="docutils literal notranslate"><span class="pre">ConfigFile</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#posydon.utils.configfile.VariableKey"><code class="docutils literal notranslate"><span class="pre">VariableKey</span></code></a></li>
@@ -1443,6 +1450,70 @@ sources, 1, 623.</p>
 </dd></dl>
 
 </section>
+<section id="module-posydon.utils.compress_mesa_files">
+<span id="posydon-utils-compress-mesa-files"></span><h2>posydon.utils.compress_mesa_files<a class="headerlink" href="#module-posydon.utils.compress_mesa_files" title="Link to this heading"></a></h2>
+<p>Functions for bin/compress-mesa to handle the compression of files created
+with MESA</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.compress_mesa_files.compress_dir">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.compress_mesa_files.</span></span><span class="sig-name descname"><span class="pre">compress_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/compress_mesa_files.html#compress_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.compress_mesa_files.compress_dir" title="Link to this definition"></a></dt>
+<dd><p>Compresses a directory containing tracks evolved with MESA.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.compress_mesa_files.get_size">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.compress_mesa_files.</span></span><span class="sig-name descname"><span class="pre">get_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/compress_mesa_files.html#get_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.compress_mesa_files.get_size" title="Link to this definition"></a></dt>
+<dd><p>Gets the size of a directory and selects MESA files for compression and
+removal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>start_path</strong> (<em>string</em>) – The directory root to start the file system walk.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>total_size</strong> (<em>int</em>) – The size in bytes.</p></li>
+<li><p><strong>remove_files</strong> (<em>list</em>) – List of files to remove.</p></li>
+<li><p><strong>compress_files</strong> (<em>list</em>) – List of files to compress.</p></li>
+<li><p><strong>n_runs</strong> (<em>int</em>) – Number of MESA run directories.</p></li>
+<li><p><strong>n_remove_files</strong> (<em>int</em>) – Number of files to remove.</p></li>
+<li><p><strong>n_compress_files</strong> (<em>int</em>) – Number of files to compress.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.compress_mesa_files.set_up_test">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.compress_mesa_files.</span></span><span class="sig-name descname"><span class="pre">set_up_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/compress_mesa_files.html#set_up_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.compress_mesa_files.set_up_test" title="Link to this definition"></a></dt>
+<dd><p>Set up a testing directory in the requested directory. It copies data
+from the mesa_dir into the testing directory.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.utils.compress_mesa_files.textsize">
+<span class="sig-prename descclassname"><span class="pre">posydon.utils.compress_mesa_files.</span></span><span class="sig-name descname"><span class="pre">textsize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filesize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floatfmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.3g'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/compress_mesa_files.html#textsize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.compress_mesa_files.textsize" title="Link to this definition"></a></dt>
+<dd><p>Get a human-readable file size in string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filesize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The size of the file, or directory, … (in bytes)</p></li>
+<li><p><strong>floatfmt</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The format for the float before the size descriptor (e.g., 2.34K).</p></li>
+<li><p><strong>base</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The base of the units. Typically 1024 but 1000 can be used as well.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The threshold for using the next unit. For example, if base is 1024
+and threshold is 1000, then 1000 bytes will be returned as 0.98K.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The filesize in string format using b, K, M, …</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-posydon.utils.configfile">
 <span id="posydon-utils-configfile"></span><h2>posydon.utils.configfile<a class="headerlink" href="#module-posydon.utils.configfile" title="Link to this heading"></a></h2>
 <p>Module for providing support for configuration files.</p>
@@ -2419,10 +2490,7 @@ warnings.filterwarnings.</p></li>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

@@ -141,10 +141,14 @@
              
   <section id="the-binarystar-object">
 <span id="binary-star"></span><h1>The BinaryStar object<a class="headerlink" href="#the-binarystar-object" title="Link to this heading"></a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> object is composed of two <code class="docutils literal notranslate"><span class="pre">SingleStar</span></code> objects (see <a class="reference internal" href="single_star.html#single-star"><span class="std std-ref">The SingleStar object</span></a>) and contains the current and past states of the binary.
-Only parameters in the <code class="docutils literal notranslate"><span class="pre">BINARYPROPERTIES</span></code> list are stored in the history.
-The current parameter value of the star object is accessed with, e.g. <code class="docutils literal notranslate"><span class="pre">binary.orbital_period</span></code> and the past history via <code class="docutils literal notranslate"><span class="pre">binary.orbital_period_history</span></code>.
-The two stars are accessed with, e.g. (for star 1), <code class="docutils literal notranslate"><span class="pre">binary.star_1.mass</span></code> and the past history via <code class="docutils literal notranslate"><span class="pre">binary.star_1.mass_history</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> object is composed of two <code class="docutils literal notranslate"><span class="pre">SingleStar</span></code> objects
+(see <a class="reference internal" href="single_star.html#single-star"><span class="std std-ref">The SingleStar object</span></a>) and contains the current and past states of
+the binary. Only parameters in the <code class="docutils literal notranslate"><span class="pre">BINARYPROPERTIES</span></code> list are stored in the
+history. The current parameter value of the star object is accessed with, e.g.
+<code class="docutils literal notranslate"><span class="pre">binary.orbital_period</span></code> and the past history via
+<code class="docutils literal notranslate"><span class="pre">binary.orbital_period_history</span></code>. The two stars are accessed with, e.g.
+(for star 1), <code class="docutils literal notranslate"><span class="pre">binary.star_1.mass</span></code> and the past history via
+<code class="docutils literal notranslate"><span class="pre">binary.star_1.mass_history</span></code>.</p>
 <p>To use BinaryStar object import it using:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.singlestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">SingleStar</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.binarystar</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryStar</span>
@@ -231,7 +235,9 @@ The two stars are accessed with, e.g. (for star 1), <code class="docutils litera
 </table>
 <p>Additional scalar properties can be added during the evolution.</p>
 <p>Since they do not change over time, they are not stored in the history.
-These can be requested and will be stored in the output oneline (See the <a class="reference internal" href="synthetic_population.html#synthetic-population"><span class="std std-ref">Synthetic Population</span></a> and <a class="reference internal" href="population_params.html#pop-params-guide"><span class="std std-ref">Population Parameter Guide</span></a> for more information).</p>
+These can be requested and will be stored in the output oneline (See the
+<a class="reference internal" href="synthetic_population.html#synthetic-population"><span class="std std-ref">Synthetic Population</span></a> and
+<a class="reference internal" href="population_params.html#pop-params-guide"><span class="std std-ref">Population Parameter Guide</span></a> for more information).</p>
 </section>
 <section id="additional-columns">
 <h3>Additional columns<a class="headerlink" href="#additional-columns" title="Link to this heading"></a></h3>
@@ -329,7 +335,8 @@ These can be requested and will be stored in the output oneline (See the <a clas
 </section>
 <section id="mass-transfer-case">
 <h3>Mass Transfer case<a class="headerlink" href="#mass-transfer-case" title="Link to this heading"></a></h3>
-<p>The mass transfer cases are stored in <cite>mt_history_GRIDTYPE</cite> and are defined according to the following table: TODO: add the table below</p>
+<p>The mass transfer cases are stored in <cite>mt_history_GRIDTYPE</cite> and are defined
+according to the following table: TODO: add the table below</p>
 <table class="docutils align-default" id="id4">
 <caption><span class="caption-text">Mass transfer cases</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
 <colgroup>
@@ -351,16 +358,19 @@ These can be requested and will be stored in the output oneline (See the <a clas
 </section>
 <section id="basic-example">
 <h3>Basic example<a class="headerlink" href="#basic-example" title="Link to this heading"></a></h3>
-<p>The simplest method is to provide the two star objects and <cite>kwargs</cite> of the initial binary parameters.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;MS&#39;</span><span class="p">,</span>
+<p>The simplest method is to provide the two star objects and <cite>kwargs</cite> of the
+initial binary parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zsun</span>
+
+<span class="n">kwargs1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
            <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span>
-           <span class="s1">&#39;metallicity&#39;</span> <span class="p">:</span> <span class="mf">0.014</span><span class="p">}</span>
+           <span class="s1">&#39;metallicity&#39;</span> <span class="p">:</span> <span class="n">Zsun</span><span class="p">}</span>
 
 <span class="n">star_1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs1</span><span class="p">)</span>
 
-<span class="n">kwargs2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;MS&#39;</span><span class="p">,</span>
+<span class="n">kwargs2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
            <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
-           <span class="s1">&#39;metallicity&#39;</span> <span class="p">:</span> <span class="mf">0.014</span><span class="p">}</span>
+           <span class="s1">&#39;metallicity&#39;</span> <span class="p">:</span> <span class="n">Zsun</span><span class="p">}</span>
 
 <span class="n">star_2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs2</span><span class="p">)</span>
 
@@ -369,7 +379,6 @@ These can be requested and will be stored in the output oneline (See the <a clas
            <span class="s1">&#39;time&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
            <span class="s1">&#39;orbital_period&#39;</span> <span class="p">:</span> <span class="mf">3.</span><span class="p">,</span>
            <span class="s1">&#39;eccentricity&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">}</span>
-
 
 <span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">star_1</span><span class="p">,</span> <span class="n">star_2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs3</span><span class="p">)</span>
 </pre></div>
@@ -399,10 +408,7 @@ These can be requested and will be stored in the output oneline (See the <a clas
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

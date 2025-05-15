@@ -78,18 +78,13 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="posydon.html">posydon</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="bin.html">executables</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">compress_mesa</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#compress_mesa.compress_dir"><code class="docutils literal notranslate"><span class="pre">compress_dir()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#compress_mesa.set_up_test"><code class="docutils literal notranslate"><span class="pre">set_up_test()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#compress_mesa.textsize"><code class="docutils literal notranslate"><span class="pre">textsize()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">compress_mesa</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_posydon_data.html">get_posydon_data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon_popsyn.html">posydon_popsyn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="posydon_run_grid.html">posydon_run_grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="posydon_run_pipeline.html">posydon_run_pipeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="posydon_setup_grid.html">posydon_setup_grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="posydon_setup_pipeline.html">posydon_setup_pipeline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="posydon_setup_popsyn.html">posydon_setup_popsyn</a></li>
 </ul>
 </li>
 </ul>
@@ -141,41 +136,6 @@
              
   <section id="module-compress_mesa">
 <span id="compress-mesa"></span><h1>compress_mesa<a class="headerlink" href="#module-compress_mesa" title="Link to this heading"></a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="compress_mesa.compress_dir">
-<span class="sig-prename descclassname"><span class="pre">compress_mesa.</span></span><span class="sig-name descname"><span class="pre">compress_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compress_mesa.html#compress_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compress_mesa.compress_dir" title="Link to this definition"></a></dt>
-<dd><p>Compresses a directory containing tracks evolved with MESA.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="compress_mesa.set_up_test">
-<span class="sig-prename descclassname"><span class="pre">compress_mesa.</span></span><span class="sig-name descname"><span class="pre">set_up_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compress_mesa.html#set_up_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compress_mesa.set_up_test" title="Link to this definition"></a></dt>
-<dd><p>Set up a testing directory in the requested directory.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="compress_mesa.textsize">
-<span class="sig-prename descclassname"><span class="pre">compress_mesa.</span></span><span class="sig-name descname"><span class="pre">textsize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filesize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floatfmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.3g'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/compress_mesa.html#textsize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#compress_mesa.textsize" title="Link to this definition"></a></dt>
-<dd><p>Get a human-readable file size in string.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filesize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The size of the file, or directory, … (in bytes)</p></li>
-<li><p><strong>floatfmt</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The format for the float before the size descriptor (e.g., 2.34K).</p></li>
-<li><p><strong>base</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The base of the units. Typically 1024 but 1000 can be used as well.</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The threshold for using the next unit. For example, if base is 1024
-and threshold is 1000, then 1000 bytes will be returned as 0.98K.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The filesize in string format using b, K, M, …</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 
 
@@ -199,10 +159,7 @@ and threshold is 1000, then 1000 bytes will be returned as 0.98K.</p></li>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

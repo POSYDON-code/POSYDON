@@ -77,7 +77,7 @@
 <li class="toctree-l3"><a class="reference internal" href="pipeline_additions.html">Pipeline additions</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../pipeline_ini.html">Documentation of the ini file for the post-processing pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline_ini.html">Documentation of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file for the post-processing pipeline</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../machine-learning-components.html">Machine Learning Components</a></li>
@@ -137,37 +137,37 @@
              
   <section id="pipeline-steps">
 <span id="id1"></span><h1>Pipeline steps<a class="headerlink" href="#pipeline-steps" title="Link to this heading"></a></h1>
-<p>The pipeline is divided into several steps, which build up on each other. Each
-step will take a csv file as input. The name of this file is used to tell the
-pipeline, which step should be performed.</p>
+<p>The post-processing pipeline is divided into several steps which build on each
+other. Each step will take a <code class="samp docutils literal notranslate"><span class="pre">csv</span></code> file as input. The name of this
+file determines which pipeline step should be performed.</p>
 <p>The script to run the pipeline takes four arguments:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>posydon-run-pipeline<span class="w"> </span>PATH_TO_GRIDS<span class="w"> </span>PATH_TO_CSV_FILE<span class="w"> </span>DATA_ID<span class="w"> </span>VERBOSE
 </pre></div>
 </div>
 <ol class="arabic simple">
-<li><p>[path] The path to the girds main directory (currently not used)</p></li>
-<li><p>[path] The path to the csv file</p></li>
-<li><p>[int] An index indicating the data entry to read from the csv file</p></li>
+<li><p>[path] The path to the grids main directory (currently not used)</p></li>
+<li><p>[path] The path to the <code class="samp docutils literal notranslate"><span class="pre">csv</span></code> file</p></li>
+<li><p>[int] An index indicating the data entry to read from the <code class="samp docutils literal notranslate"><span class="pre">csv</span></code> file</p></li>
 <li><p>[int] Whether one wants verbose output (1) or not (0)</p></li>
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The current directory will be used as working directory, hence navigate to
-your work directory first.</p>
+<p>The current directory will be used as working directory, so navigate to
+the correct location first.</p>
 </div>
-<section id="step1-creating-a-psygrid-object">
-<span id="pipeline-step1"></span><h2>Step1: creating a <cite>PSyGrid</cite> object<a class="headerlink" href="#step1-creating-a-psygrid-object" title="Link to this heading"></a></h2>
-<p>First, we need to create the <code class="samp docutils literal notranslate"><span class="pre">PSyGird</span></code> object. To do so, the pipeline
-needs to now the directory which contains the MESA runs, the compression, the
+<section id="step-1-creating-a-psygrid-object">
+<span id="pipeline-step1"></span><h2>Step 1: Creating a <cite>PSyGrid</cite> object<a class="headerlink" href="#step-1-creating-a-psygrid-object" title="Link to this heading"></a></h2>
+<p>First, we need to create the <code class="samp docutils literal notranslate"><span class="pre">PSygrid</span></code> object. To do so, the pipeline
+needs to know the directory which contains the MESA runs, the compression, the
 grid type, and whether to crop the history for some certain runs. Hence, the
-<code class="samp docutils literal notranslate"><span class="pre">step_1.csv</span></code> file should have those columns:</p>
+<code class="samp docutils literal notranslate"><span class="pre">step_1.csv</span></code> file should have the following columns:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">path_to_grid</span><span class="p">,</span><span class="n">compression</span><span class="p">,</span><span class="n">grid_type</span><span class="p">,</span><span class="n">stop_before_carbon_depletion</span>
 </pre></div>
 </div>
 <p>And the lines below contain the data for each unique combination of the three
 parameters to be processed. Here the <code class="samp docutils literal notranslate"><span class="pre">DATA_ID</span></code> simply refers to the line
-below the header starting by 0. Thus, the second line in the file has the index
-0, the third one has index 1 and so on.</p>
+below the header starting by 0. Thus, the second line in the file has the
+index 0, the third one has index 1, and so on.</p>
 <p>The currently supported compression types are:</p>
 <table class="docutils align-default" id="id2">
 <caption><span class="caption-text">Compression types</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
@@ -178,10 +178,10 @@ below the header starting by 0. Thus, the second line in the file has the index
 </thead>
 <tbody>
 <tr class="row-even"><td><p>ORIGINAL</p></td>
-<td><p>It keeps all columns and history entries given by MESA</p></td>
+<td><p>Keeps all columns and history entries given by MESA</p></td>
 </tr>
 <tr class="row-odd"><td><p>LITE</p></td>
-<td><p>It discards some columns and reduces the history and final profiles to an maximum error of 0.1 and limit profiles to contain in maximum 200 data points</p></td>
+<td><p>Discards some columns and reduces the history and final profiles to an maximum error of 0.1, and limits profiles to contain a maximum of 200 data points</p></td>
 </tr>
 <tr class="row-even"><td><p>*_RLO</p></td>
 <td><p>The <code class="samp docutils literal notranslate"><span class="pre">_RLO</span></code> can be put on any of the previous types to crop the history before the onset of Roche-lobe overflow for grids containing a compact object</p></td>
@@ -189,14 +189,15 @@ below the header starting by 0. Thus, the second line in the file has the index
 </tbody>
 </table>
 </section>
-<section id="step2-combining-psygrid-objects">
-<span id="pipeline-step2"></span><h2>Step2: combining <cite>PSyGrid</cite> objects<a class="headerlink" href="#step2-combining-psygrid-objects" title="Link to this heading"></a></h2>
-<p>Usually, the girds are split into batches or reruns are done. In those cases,
-there will be several <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> objects created for one gird. This step
-will join them into one. The <code class="samp docutils literal notranslate"><span class="pre">step_2.csv</span></code> file should have a matrix
-structure. The columns contain the girds which should be combined to the one
-specified in the header (first) row. The <code class="samp docutils literal notranslate"><span class="pre">DATA_ID</span></code> corresponds here to
-the column number (starting with 0). Here an example:</p>
+<section id="step-2-combining-psygrid-objects">
+<span id="pipeline-step2"></span><h2>Step 2: Combining <cite>PSyGrid</cite> objects<a class="headerlink" href="#step-2-combining-psygrid-objects" title="Link to this heading"></a></h2>
+<p>Often, grids are split into batches, or reruns are done. In those cases,
+there will be individual <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> objects created for each batch or
+rerun. This step will join them into a single combined <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object
+representing the complete grid. The <code class="samp docutils literal notranslate"><span class="pre">step_2.csv</span></code> file should have a
+matrix structure. The columns contain the grids which should be combined to
+the one specified in the header (first) row. The <code class="samp docutils literal notranslate"><span class="pre">DATA_ID</span></code> corresponds
+here to the column number (starting with 0). Here is an example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NEW_H5_FILE1</span><span class="p">,</span><span class="n">NEW_H5_FILE2</span>
 <span class="n">OLD_H5_FILE11</span><span class="p">,</span><span class="n">OLD_H5_FILE21</span>
 <span class="n">OLD_H5_FILE12</span><span class="p">,</span><span class="n">OLD_H5_FILE22</span>
@@ -205,21 +206,21 @@ the column number (starting with 0). Here an example:</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The data will be put on top of each other. E.g. if there is the same
+<p>The data will be layered on top of each other. E.g., if there is the same
 initial system in <code class="samp docutils literal notranslate"><span class="pre">OLD_H5_FILE11</span></code> and <code class="samp docutils literal notranslate"><span class="pre">OLD_H5_FILE12</span></code>, the one
 in <code class="samp docutils literal notranslate"><span class="pre">OLD_H5_FILE11</span></code> will be discarded and only the one in
 <code class="samp docutils literal notranslate"><span class="pre">OLD_H5_FILE12</span></code> will end up in <code class="samp docutils literal notranslate"><span class="pre">NEW_H5_FILE1</span></code>.</p>
 </div>
 </section>
-<section id="step3-calculating-extra-values-from-detailed-data">
-<span id="pipeline-step3"></span><h2>Step3: calculating extra values from detailed data<a class="headerlink" href="#step3-calculating-extra-values-from-detailed-data" title="Link to this heading"></a></h2>
+<section id="step-3-calculating-extra-values-from-stellar-model-time-series-and-structure-profile-data">
+<span id="pipeline-step3"></span><h2>Step 3: Calculating extra values from stellar model time series and structure profile data<a class="headerlink" href="#step-3-calculating-extra-values-from-stellar-model-time-series-and-structure-profile-data" title="Link to this heading"></a></h2>
 <p>In this step we calculate extra quantities from the histories and profiles.
 Those extra values are key parameters at He depletion, at onset of common
 envelope evolution, and at core collapse.</p>
 <p>Because some of the values may require a high precision in the data, we
 recommend to use the data from the ORIGINAL compression to calculate them. But
 the new values can be added to any <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object. Hence this step
-requests three paths to be specified in <code class="samp docutils literal notranslate"><span class="pre">step_3.csv</span></code> beside the gird
+requests three paths to be specified in <code class="samp docutils literal notranslate"><span class="pre">step_3.csv</span></code> besides the grid
 type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">path_to_grid</span><span class="p">,</span><span class="n">grid_type</span><span class="p">,</span><span class="n">path_to_grid_ORIGINAL</span><span class="p">,</span><span class="n">path_to_processed_grid</span>
 </pre></div>
@@ -233,7 +234,7 @@ type:</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>path_to_grid</p></td>
-<td><p>path of the gird, which get the values appended to it</p></td>
+<td><p>path of the grid, which gets the values appended to it</p></td>
 </tr>
 <tr class="row-odd"><td><p>grid_type</p></td>
 <td><p>type of the grid</p></td>
@@ -257,13 +258,13 @@ recommend to setup and run the pipeline with an
 <a class="reference internal" href="../pipeline_ini.html#pipeline-ini"><span class="std std-ref">ini file</span></a>.</p>
 </div>
 </section>
-<section id="step4-training-of-the-interpolators">
-<span id="pipeline-step4"></span><h2>Step4: training of the interpolators<a class="headerlink" href="#step4-training-of-the-interpolators" title="Link to this heading"></a></h2>
-<p>To get interpolated data from our grids, we train in this step an interpolator
-on your <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object. The file <code class="samp docutils literal notranslate"><span class="pre">step_4.csv</span></code> therefore has to
-contain three information bits: First, the grid containing the data, second,
-the grid type, third, the interpolation method (inlcuding whether the grid
-starts at RLO), and finally, the name of the interpolator object.</p>
+<section id="step-4-training-the-interpolators">
+<span id="pipeline-step4"></span><h2>Step 4: Training the interpolators<a class="headerlink" href="#step-4-training-the-interpolators" title="Link to this heading"></a></h2>
+<p>To get interpolated data from our grids, in this step we train an interpolator
+on the <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object. The file <code class="samp docutils literal notranslate"><span class="pre">step_4.csv</span></code> therefore has to
+contain the following pieces of information: First, the grid containing the
+data, second, the grid type, third, the interpolation method (inlcuding whether
+the grid starts at RLO), and finally, the name of the interpolator object.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">path_to_grid</span><span class="p">,</span><span class="n">interpolation_method</span><span class="p">,</span><span class="n">path_to_interpolator</span>
 </pre></div>
 </div>
@@ -272,7 +273,7 @@ starts at RLO), and finally, the name of the interpolator object.</p>
 <p>The type of interpolator will be recognized from the name of the
 interpolator object. The syntax is <code class="code docutils literal notranslate"><span class="pre">IF_METHOD{_RLO}.pkl</span></code>. The
 <code class="samp docutils literal notranslate"><span class="pre">IF</span></code> stands for initial-final interpolator, the <code class="samp docutils literal notranslate"><span class="pre">METHOD</span></code> refers
-to the interpolator type. The girds starting at Roche-lobe overflow may be
+to the interpolator type. The grids starting at Roche-lobe overflow may be
 indicated in the name as well, but is not required.</p>
 </div>
 <table class="docutils align-default" id="id4">
@@ -292,11 +293,10 @@ indicated in the name as well, but is not required.</p>
 </tbody>
 </table>
 </section>
-<section id="stepf-exporting-the-data-set">
-<span id="pipeline-stepf"></span><h2>StepF: exporting the data set<a class="headerlink" href="#stepf-exporting-the-data-set" title="Link to this heading"></a></h2>
+<section id="step-f-exporting-the-data-set">
+<span id="pipeline-stepf"></span><h2>Step F: Exporting the data set<a class="headerlink" href="#step-f-exporting-the-data-set" title="Link to this heading"></a></h2>
 <p>After we have a complete data set, we would like to export it to be used for
-the population synthesis. We jump here to step F, because this will always be
-the final step even more steps may get introduced in the future. In
+the population synthesis. We now go to the final step, step F. In
 <code class="samp docutils literal notranslate"><span class="pre">step_F.csv</span></code>, there are again two paths required, a source and an export
 path. The step will simply copy the source to the export location. Hence, here
 the final <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> objects and all the interpolator files are usually
@@ -305,22 +305,23 @@ addressed by this step.</p>
 </pre></div>
 </div>
 </section>
-<section id="stepr-exporting-a-rerun">
-<span id="pipeline-stepr"></span><h2>StepR: exporting a rerun<a class="headerlink" href="#stepr-exporting-a-rerun" title="Link to this heading"></a></h2>
-<p>Usually, a grid will not run well everywhere on the first go. So, there is a
-need to export reruns which changes for the next run to fix non converged
-models. This step is therefore only needed during the build of a new grid.
-Usually, one would run the steps to the point, where the need of a fix arises.
-Additionally, before exporting a rerun, the logic how to select a system to be
-included in the rerun and what should be changed needs to get implemented
-first.</p>
-<p>For this step the csv file is called <code class="samp docutils literal notranslate"><span class="pre">rerun.csv</span></code> to avoid too much
-confusion with other steps. It clearly has to run after a step, but it is no
-usual step itself. It requires a path to a <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object to get the
-models from, a path, where the rerun should be stored (it creates in there the
-<code class="samp docutils literal notranslate"><span class="pre">grid.csv</span></code> and the ini file needed to
-<a class="reference internal" href="../../mesa-grids.html#mesa-grids-api"><span class="std std-ref">setup a new run</span></a>), the grid type, the metallicity, the
-type of the rerun specifying the logic and changes, and the cluster name.</p>
+<section id="step-r-exporting-a-rerun">
+<span id="pipeline-stepr"></span><h2>Step R: Exporting a rerun<a class="headerlink" href="#step-r-exporting-a-rerun" title="Link to this heading"></a></h2>
+<p>Often, a grid will not successfully converge every binary on the first go. So
+we may need to export reruns which use modified conditions to fix
+non-converged models. This step is therefore only needed to build
+a new grid. Usually, one would run the steps to the point where the need of a
+fix arises. Additionally, before exporting a rerun, the logic for how to select
+a system to be included in the rerun and what should be changed needs to be
+implemented first.</p>
+<p>For this step the <code class="samp docutils literal notranslate"><span class="pre">csv</span></code> file is called <code class="samp docutils literal notranslate"><span class="pre">rerun.csv</span></code> to avoid too
+much confusion with other steps. It clearly has to run after another step in
+the post-processing pipeline, but it is not a usual step itself. It requires
+the path to a <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object to get the models to rerun from, the
+path to which the rerun should be stored (it creates the <code class="samp docutils literal notranslate"><span class="pre">grid.csv</span></code>
+and the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file needed to <a class="reference internal" href="../../mesa-grids.html#mesa-grids-api"><span class="std std-ref">setup a new run</span></a>),
+the grid type, the metallicity, the type of the rerun specifying the logic
+and changes, and the cluster name.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">path_to_grid</span><span class="p">,</span><span class="n">rerun_path</span><span class="p">,</span><span class="n">grid_type</span><span class="p">,</span><span class="n">rerun_metallicity</span><span class="p">,</span><span class="n">rerun_type</span><span class="p">,</span><span class="n">cluster</span>
 </pre></div>
 </div>
@@ -335,59 +336,59 @@ type of the rerun specifying the logic and changes, and the cluster name.</p>
 <tbody>
 <tr class="row-even"><td><p>PISN</p></td>
 <td><p>default in v3+</p></td>
-<td><p>it enables the MESA inlist commit, which stops MESA before getting dynamical to save a final profile there</p></td>
+<td><p>Enables the MESA inlist commit, which stops MESA before getting dynamical to save a final profile there</p></td>
 </tr>
 <tr class="row-odd"><td><p>reverse_MT</p></td>
 <td><p>default in v3+</p></td>
-<td><p>it uses a MESA version with a bug fix, that the role of donor and accretor can switch during the simulation</p></td>
+<td><p>Uses a MESA version with a bug fix, that the role of donor and accretor can switch during the simulation</p></td>
 </tr>
 <tr class="row-even"><td><p>opacity_max</p></td>
 <td><p>caution</p></td>
-<td><p>it uses a fixed maximum opacity of 0.5 (this is only a last option change to get more stability)</p></td>
+<td><p>Uses a fixed maximum opacity of 0.5 (this is only a last option change to get more stability)</p></td>
 </tr>
 <tr class="row-odd"><td><p>TPAGBwind</p></td>
 <td><p>default in v3+</p></td>
-<td><p>it enables the MESA inlist commit, which changes the wind during the TPAGB phase</p></td>
+<td><p>Enables the MESA inlist commit, which changes the wind during the TPAGB phase</p></td>
 </tr>
 <tr class="row-even"><td><p>thermohaline_mixing</p></td>
 <td><p>default in v3+</p></td>
-<td><p>it uses thermohaline mixing in the inlist</p></td>
+<td><p>Uses thermohaline mixing in the inlist</p></td>
 </tr>
 <tr class="row-odd"><td><p>HeMB_MLTp_mesh</p></td>
 <td><p>caution</p></td>
-<td><p>it turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++ (this can cause significant changes in the radius evolution of stars); it changes some more input values to change the resulation close to the surface</p></td>
+<td><p>Turns off magnetic braking for He stars; it uses less extreme parameters of the MLT++ (this can cause significant changes in the radius evolution of stars); it changes some more input values to change the resulation close to the surface</p></td>
 </tr>
 <tr class="row-even"><td><p>more_mesh</p></td>
 <td><p>workaround</p></td>
-<td><p>it modifies the remeshing and allows for more cells in MESA</p></td>
+<td><p>Modifies the remeshing and allows for more cells in MESA</p></td>
 </tr>
 <tr class="row-odd"><td><p>conv_bdy_weight</p></td>
 <td><p>caution</p></td>
-<td><p>it disabled the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)</p></td>
+<td><p>Disables the convective_bdy_weight where this caused segmentation faults (this avoids a bug in the old MESA version r11701)</p></td>
 </tr>
 <tr class="row-even"><td><p>dedt_energy_eqn</p></td>
 <td><p>caution</p></td>
-<td><p>it enables MESA’s dedt-form of the energy equation for numerical stability during rapid (superthermal) mass transfer</p></td>
+<td><p>Enables MESA’s dedt-form of the energy equation for numerical stability during rapid (superthermal) mass transfer</p></td>
 </tr>
 <tr class="row-odd"><td><p>dedt_hepulse</p></td>
 <td><p>caution</p></td>
-<td><p>it enables MESA’s dedt-form of the energy equation for rapid mass transfer; at stripped HeZAMS, several MLT++ changes, v_flag and lnPgas_flag set to .true., and convective_bdy_weight disabled to help with stripped He star superadiabatic envelopes, pulsations, and WD cooling</p></td>
+<td><p>Enables MESA’s dedt-form of the energy equation for rapid mass transfer; at stripped HeZAMS, several MLT++ changes, v_flag and lnPgas_flag set to .true., and convective_bdy_weight disabled to help with stripped He star superadiabatic envelopes, pulsations, and WD cooling</p></td>
 </tr>
 <tr class="row-even"><td><p>LBV_wind</p></td>
 <td><p>default in v3+</p></td>
-<td><p>it turns on LBV winds when crossing the Humphreys-Davidson limit as intended (due to a bug this was only applied after a retry); additionally, there are reruns <cite>LBV_wind+thermohaline_mixing</cite>, <cite>LBV_wind+dedt_energy_eqn</cite>, which combine the two rerun types. Any additional changes to these reruns are described here as LBV_wind+rerun_type</p></td>
+<td><p>Turns on LBV winds when crossing the Humphreys-Davidson limit as intended (due to a bug this was only applied after a retry); additionally, there are reruns <cite>LBV_wind+thermohaline_mixing</cite>, <cite>LBV_wind+dedt_energy_eqn</cite>, which combine the two rerun types. Any additional changes to these reruns are described here as LBV_wind+rerun_type</p></td>
 </tr>
 <tr class="row-odd"><td><p>no_age_limit</p></td>
 <td><p>default in v3+</p></td>
-<td><p>it allows low mass stars to evolve beyond the age of the universe, which is needed for grids where we jump on past ZAMS; additionally, there are reruns <cite>no_age_limit+thermohaline_mixing</cite> and <cite>no_age_limit+dedt_energy_eqn</cite>, which combine the two rerun types</p></td>
+<td><p>Allows low mass stars to evolve beyond the age of the universe, which is needed for grids where we jump on past ZAMS; additionally, there are reruns <cite>no_age_limit+thermohaline_mixing</cite> and <cite>no_age_limit+dedt_energy_eqn</cite>, which combine the two rerun types</p></td>
 </tr>
 <tr class="row-even"><td><p>LBV_wind+dedt</p></td>
 <td><p>caution</p></td>
-<td><p>it enables MESA’s dedt-form of the energy equation for numerical stability during rapid (superthermal) mass transfer and sets lnPgas_flag to .true. for numerical stability. Also disabled convective_bdy_weight as a degenerate core is forming (as probed by the central Coulomb coupling parameter) to avoid segmentation faults.</p></td>
+<td><p>Enables MESA’s dedt-form of the energy equation for numerical stability during rapid (superthermal) mass transfer and sets lnPgas_flag to .true. for numerical stability. Also disabled convective_bdy_weight as a degenerate core is forming (as probed by the central Coulomb coupling parameter) to avoid segmentation faults.</p></td>
 </tr>
 <tr class="row-odd"><td><p>LBV_wind+hepulse</p></td>
 <td><p>caution</p></td>
-<td><p>it contains the LBV_wind+dedt_energy_rerun; additionally, at stripped HeZAMS, the thresholds to trigger MLT++ are relaxed, and several timestep controls limiting the allowed variation of lgTeff and (cell-wise) T, as well as controls limiting the allowed variation of donor envelope mass are relaxed during mass transfer to improve convergence during envelope stripping. Also removes stopping conditions for Hubble time and TAMS that would be enforced for models less massive than roughly G-type stars, relevant to single_* and CO_* grids.</p></td>
+<td><p>Contains the LBV_wind+dedt_energy_rerun; additionally, at stripped HeZAMS, the thresholds to trigger MLT++ are relaxed, and several timestep controls limiting the allowed variation of lgTeff and (cell-wise) T, as well as controls limiting the allowed variation of donor envelope mass are relaxed during mass transfer to improve convergence during envelope stripping. Also removes stopping conditions for Hubble time and TAMS that would be enforced for models less massive than roughly G-type stars, relevant to single_* and CO_* grids.</p></td>
 </tr>
 </tbody>
 </table>
@@ -415,10 +416,7 @@ type of the rerun specifying the logic and changes, and the cluster name.</p>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

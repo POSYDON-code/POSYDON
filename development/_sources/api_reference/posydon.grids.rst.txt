@@ -8,10 +8,10 @@ posydon.grids
 
 
 
-posydon.grids.MODELS
---------------------
+posydon.grids.SN\_MODELS
+------------------------
 
-.. automodule:: posydon.grids.MODELS
+.. automodule:: posydon.grids.SN_MODELS
    :members:
    :show-inheritance:
    :undoc-members:

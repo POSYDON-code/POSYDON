@@ -80,8 +80,9 @@
 <li class="toctree-l2"><a class="reference internal" href="posydon.active_learning.html">posydon.active_learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.html">posydon.binary_evol</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">posydon.grids</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-posydon.grids.MODELS">posydon.grids.MODELS</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#posydon.grids.MODELS.get_MODEL_NAME"><code class="docutils literal notranslate"><span class="pre">get_MODEL_NAME()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.grids.SN_MODELS">posydon.grids.SN_MODELS</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.grids.SN_MODELS.get_SN_MODEL"><code class="docutils literal notranslate"><span class="pre">get_SN_MODEL()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.grids.SN_MODELS.get_SN_MODEL_NAME"><code class="docutils literal notranslate"><span class="pre">get_SN_MODEL_NAME()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-posydon.grids.downsampling">posydon.grids.downsampling</a><ul>
@@ -193,27 +194,48 @@
              
   <section id="module-posydon.grids">
 <span id="posydon-grids"></span><h1>posydon.grids<a class="headerlink" href="#module-posydon.grids" title="Link to this heading"></a></h1>
-<section id="module-posydon.grids.MODELS">
-<span id="posydon-grids-models"></span><h2>posydon.grids.MODELS<a class="headerlink" href="#module-posydon.grids.MODELS" title="Link to this heading"></a></h2>
-<p>This file contains all core-collapse models
-we use in our post processing and, as a
-consequence, what the user will be able to
-select in the initial/final interpolation.
-Each model is a dictionary containing the
-properties of the model used by step_SN.</p>
+<section id="module-posydon.grids.SN_MODELS">
+<span id="posydon-grids-sn-models"></span><h2>posydon.grids.SN_MODELS<a class="headerlink" href="#module-posydon.grids.SN_MODELS" title="Link to this heading"></a></h2>
+<p>This file contains all supernova models we use in our post processing and, as a
+consequence, what the user will be able to select in the initial/final
+interpolation. There is a default supernova model, which is used to fill not
+specified parameters in the set of models. Each model is a dictionary
+containing the properties of the model used by step_SN. The functions
+<cite>get_SN_MODEL</cite> provides the supernova model with all parameters and
+<cite>get_SN_MODEL_NAME</cite> findes the matching model to a given set of supernova
+parameters of the step_SN.</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="posydon.grids.MODELS.get_MODEL_NAME">
-<span class="sig-prename descclassname"><span class="pre">posydon.grids.MODELS.</span></span><span class="sig-name descname"><span class="pre">get_MODEL_NAME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_MODEL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/MODELS.html#get_MODEL_NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.MODELS.get_MODEL_NAME" title="Link to this definition"></a></dt>
-<dd><p>Find MODEL_NAME that matches input_MODEL.</p>
+<dt class="sig sig-object py" id="posydon.grids.SN_MODELS.get_SN_MODEL">
+<span class="sig-prename descclassname"><span class="pre">posydon.grids.SN_MODELS.</span></span><span class="sig-name descname"><span class="pre">get_SN_MODEL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/SN_MODELS.html#get_SN_MODEL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.SN_MODELS.get_SN_MODEL" title="Link to this definition"></a></dt>
+<dd><p>Get predefined supernova model with all properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of a pre-defined supernova model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>SN_MODEL</strong> – Dictionary with the properties of the supernova model. If the given
+name does not exist in the pre-defined models, the default supernova
+model is returned.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.grids.SN_MODELS.get_SN_MODEL_NAME">
+<span class="sig-prename descclassname"><span class="pre">posydon.grids.SN_MODELS.</span></span><span class="sig-name descname"><span class="pre">get_SN_MODEL_NAME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_SN_MODEL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/SN_MODELS.html#get_SN_MODEL_NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.SN_MODELS.get_SN_MODEL_NAME" title="Link to this definition"></a></dt>
+<dd><p>Find SN_MODEL_NAME that matches input_SN_MODEL.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary with the properties of the model.</p></li>
+<li><p><strong>input_SN_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary with the properties of the supernova model.</p></li>
 <li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>default: False</em><em>)</em>) – Enables additional output.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>MODEL_NAME_SEL</strong> – Name of the model in MODELS.py that matches input_MODEL.</p>
+<dd class="field-even"><p><strong>SN_MODEL_NAME_SEL</strong> – Name of the model in SN_MODELS that matches input_SN_MODEL.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
@@ -571,7 +593,7 @@ appending the extra columns back to a grid.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="posydon.grids.post_processing.assign_core_collapse_quantities_none">
-<span class="sig-prename descclassname"><span class="pre">posydon.grids.post_processing.</span></span><span class="sig-name descname"><span class="pre">assign_core_collapse_quantities_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">EXTRA_COLUMNS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MODEL_NAME</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/post_processing.html#assign_core_collapse_quantities_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.post_processing.assign_core_collapse_quantities_none" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">posydon.grids.post_processing.</span></span><span class="sig-name descname"><span class="pre">assign_core_collapse_quantities_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">EXTRA_COLUMNS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SN_MODEL_NAME</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/post_processing.html#assign_core_collapse_quantities_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.post_processing.assign_core_collapse_quantities_none" title="Link to this definition"></a></dt>
 <dd><p>Assign None values to all core collapse properties.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -579,7 +601,7 @@ appending the extra columns back to a grid.</p></li>
 <li><p><strong>EXTRA_COLUMNS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em> of </em><em>lists</em>) – Each new column should be a list in this dictionary. This
 dictionary will get modified by this function.</p></li>
 <li><p><strong>star_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> (</em><em>1</em><em> or </em><em>2</em><em>)</em>) – Index of the star.</p></li>
-<li><p><strong>MODEL_NAME</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, or </em><em>None</em><em> (</em><em>default: None</em><em>)</em>) – Model key like the ones given in MODELS.py.</p></li>
+<li><p><strong>SN_MODEL_NAME</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, or </em><em>None</em><em> (</em><em>default: None</em><em>)</em>) – SN_MODEL key like the ones given in SN_MODELS.py.</p></li>
 </ul>
 </dd>
 </dl>
@@ -587,18 +609,13 @@ dictionary will get modified by this function.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="posydon.grids.post_processing.post_process_grid">
-<span class="sig-prename descclassname"><span class="pre">posydon.grids.post_processing.</span></span><span class="sig-name descname"><span class="pre">post_process_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_2_CO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MODELS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODELS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/post_processing.html#post_process_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.post_processing.post_process_grid" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">posydon.grids.post_processing.</span></span><span class="sig-name descname"><span class="pre">post_process_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_2_CO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SN_MODELS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">SN_MODELS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/post_processing.html#post_process_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.post_processing.post_process_grid" title="Link to this definition"></a></dt>
 <dd><p>Compute post processed quantity of any grid.</p>
 <p>This function post processes any supported grid and computes:
 - Core collapse quantities for 5 prescriptions given the fiducial POSYDON
-assumption given in MODEL plus:</p>
+assumption given in SN_MODEL:</p>
 <blockquote>
-<div><p>A: direct collapse
-B: Fryer+12-rapid
-C: Fryer+12-delayed
-D: Sukhbold+16-engine, N20
-E: Patton&amp;Sukhbold20-engine, N20
-for each prescrition we store the compact object state (WD/NS/BH),
+<div><p>for each prescrition we store the compact object state (WD/NS/BH),
 SN type (WD, ECSN, CCSN, PISN, PPISN), fallback mass fraction f_gb,
 compact object mass and spin.</p>
 </div></blockquote>
@@ -613,7 +630,7 @@ compact object mass and spin.</p>
 <li><p><strong>index</strong> (<em>None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, or </em><em>list with two int</em><em> (</em><em>default: None</em><em>)</em>) – If None, loop over all indicies otherwise provide a range, e.g. [10,20]
 or a single index, e.g. 42.</p></li>
 <li><p><strong>star_2_CO</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>default: True</em><em>)</em>) – If ‘False’ star 2 is not a compact object.</p></li>
-<li><p><strong>MODELS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em> (</em><em>default are the models defined in MODELS.py</em><em>)</em>) – List of supported core collapse model assumptions.</p></li>
+<li><p><strong>SN_MODELS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em> (</em><em>default are the models defined in SN_MODELS.py</em><em>)</em>) – List of supported core collapse model assumptions.</p></li>
 <li><p><strong>single_star</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>default: False</em><em>)</em>) – If <cite>True</cite> the PSyGrid contains single stars.</p></li>
 <li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>default: False</em><em>)</em>) – If <cite>True</cite> print the results of each core collapse on screen.</p></li>
 </ul>
@@ -632,13 +649,13 @@ appending the extra columns back to a grid.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="posydon.grids.post_processing.print_CC_quantities">
-<span class="sig-prename descclassname"><span class="pre">posydon.grids.post_processing.</span></span><span class="sig-name descname"><span class="pre">print_CC_quantities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MODEL_NAME</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/post_processing.html#print_CC_quantities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.post_processing.print_CC_quantities" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">posydon.grids.post_processing.</span></span><span class="sig-name descname"><span class="pre">print_CC_quantities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SN_MODEL_NAME</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/post_processing.html#print_CC_quantities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.post_processing.print_CC_quantities" title="Link to this definition"></a></dt>
 <dd><p>Print quantities at core collapse.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>star</strong> (<em>SingleStar object</em>) – The star whose quantities to print.</p></li>
-<li><p><strong>MODEL_NAME</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><em>None</em><em> (</em><em>default: None</em><em>)</em>) – Name of the model. If None, print pre SN values.</p></li>
+<li><p><strong>SN_MODEL_NAME</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><em>None</em><em> (</em><em>default: None</em><em>)</em>) – Name of the supernova model. If None, print pre SN values.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1420,10 +1437,7 @@ nearest initial RLO run.</p></li>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

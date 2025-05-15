@@ -237,7 +237,7 @@ number_of_binaries = 10
 &gt; Number of binaries: 10
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> class does the actual simulation setup and evolution of the binaries at a specific metallicity, but does not take of file cleanup after a succesfull population run. This is why <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> is used in a local environment. In a HPC facility, a setup script is available <code class="docutils literal notranslate"><span class="pre">posydon-setup-popsyn</span></code> that will create the required folders and scripts to run a large population. See the <a class="reference internal" href="pop_syn.html"><span class="doc">HPC tutorial</span></a> for more information.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> class does the actual simulation setup and evolution of the binaries at a specific metallicity, but does not take of file cleanup after a succesfull population run. This is why <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> is used in a local environment. In a HPC facility, a setup script is available <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">setup</span></code> that will create the required folders and scripts to run a large population. See the <a class="reference internal" href="pop_syn.html"><span class="doc">HPC tutorial</span></a> for more information.</p>
 <p>For this tutorial, we set <code class="docutils literal notranslate"><span class="pre">verbose=True</span></code>, which shows you the progress of the population run. This overwrites the population verbose set inside the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file. Now we are ready to evolve the binary population. This should take about 30 seconds depending on your machine.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -569,8 +569,8 @@ be created for each metallicity.</p>
 <p>Feel free to explore the small binary population you’ve just created!</p>
 <p>If you want to learn more about population synthesis and how to perform more complex selection and population, continue with <a class="reference internal" href="pop_syn.html"><span class="doc">Large scale population on a HPC setup</span></a> or with <a class="reference internal" href="bbh_analysis.html"><span class="doc">BBH analysis</span></a>.</p>
 <hr class="docutils" />
-<section id="Local-MPI-runs">
-<h3>Local MPI runs<a class="headerlink" href="#Local-MPI-runs" title="Link to this heading"></a></h3>
+<section id="Local-MPI-runs-[Optional]">
+<h3>Local MPI runs [Optional]<a class="headerlink" href="#Local-MPI-runs-[Optional]" title="Link to this heading"></a></h3>
 <p>To speed up population synthesis runs, you can run on a computing cluster, as described in <a class="reference internal" href="pop_syn.html"><span class="doc">HPC Facilities</span></a>, or you can distribute the population synthesis across multiple cores on your local machine using MPI.</p>
 <p>To enable local MPI runs, go into the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> and change <code class="docutils literal notranslate"><span class="pre">use_MPI</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 <p>It’s important to note that you cannot run have this option enabled for cluster runs!</p>
@@ -636,10 +636,7 @@ be created for each metallicity.</p>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

@@ -177,7 +177,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">STAR_STATES_CO</span><span class="p">,</span> <span class="n">STAR_STATES_CC</span><span class="p">,</span>
                                             <span class="n">STAR_STATES_C_DEPLETION</span><span class="p">)</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_MODEL_NAME</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.SN_MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_SN_MODEL_NAME</span><span class="p">,</span> <span class="n">DEFAULT_SN_MODEL</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonerror</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_binary_to_failed</span>
@@ -197,23 +197,7 @@
 <span class="n">path_to_Couch_datasets</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span>
                                       <span class="s2">&quot;Couch+2020/&quot;</span><span class="p">)</span>
 
-<span class="n">MODEL</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="c1"># core collapse physics</span>
-    <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s1">&#39;Patton&amp;Sukhbold20-engine&#39;</span><span class="p">,</span>
-    <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s1">&#39;N20&#39;</span><span class="p">,</span>
-    <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PISN_CO_shift&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-    <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-    <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Podsiadlowski+04&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;conserve_hydrogen_PPI&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
-    <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
-    <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;allow_spin_None&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="n">SN_MODEL</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c1"># kick physics</span>
     <span class="s2">&quot;kick&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s2">&quot;kick_normalisation&quot;</span><span class="p">:</span> <span class="s1">&#39;one_over_mass&#39;</span><span class="p">,</span>
@@ -223,6 +207,8 @@
     <span class="c1"># other</span>
     <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">}</span>
+<span class="c1"># add core collapse physics</span>
+<span class="n">SN_MODEL</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">DEFAULT_SN_MODEL</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="StepSN">
@@ -384,14 +370,14 @@
         <span class="c1"># read kwargs to initialize the class</span>
         <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">MODEL</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SN_MODEL</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot; is not a valid parameter name!&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">MODEL</span><span class="p">:</span>
-                <span class="n">default_value</span> <span class="o">=</span> <span class="n">MODEL</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">SN_MODEL</span><span class="p">:</span>
+                <span class="n">default_value</span> <span class="o">=</span> <span class="n">SN_MODEL</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="n">default_value</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">MODEL</span><span class="p">:</span>
-                <span class="n">default_value</span> <span class="o">=</span> <span class="n">MODEL</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">SN_MODEL</span><span class="p">:</span>
+                <span class="n">default_value</span> <span class="o">=</span> <span class="n">SN_MODEL</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">default_value</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_neutrino_mass_loss</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -649,25 +635,26 @@
             <span class="c1"># if no profile is avaiable but interpolation quantities are,</span>
             <span class="c1"># use those, else continue with or without profile.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_interp_values</span><span class="p">:</span>
-                <span class="c1"># find MODEL_NAME corresponding to class variable</span>
-                <span class="n">MODEL_NAME_SEL</span> <span class="o">=</span> <span class="n">get_MODEL_NAME</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+                <span class="c1"># find SN_MODEL_NAME corresponding to class variable</span>
+                <span class="n">SN_MODEL_NAME_SEL</span> <span class="o">=</span> <span class="n">get_SN_MODEL_NAME</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                                                      <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
 
-                <span class="c1"># check if selected MODEL is supported</span>
-                <span class="k">if</span> <span class="n">MODEL_NAME_SEL</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># check if selected model is supported</span>
+                <span class="k">if</span> <span class="n">SN_MODEL_NAME_SEL</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Your model assumptions are not&#39;</span>
                                      <span class="s1">&#39;supported!&#39;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">MODEL_NAME_SEL</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">SN_MODEL_NAME_SEL</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># NOTE: this option is needed to do the collapse</span>
                     <span class="c1"># for stars evolved with the step_detached or</span>
                     <span class="c1"># step_disrupted.</span>
                     <span class="c1"># allow to continue with the collapse with profile</span>
                     <span class="c1"># or core masses</span>
-                    <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">MODEL_NAME_SEL</span><span class="si">}</span><span class="s1">: The collapsed star was not &#39;</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SN_MODEL_NAME_SEL</span><span class="si">}</span><span class="s1">: The collapsed star was not &#39;</span>
                           <span class="s1">&#39;interpolated! If use_profiles or use_core_masses &#39;</span>
                           <span class="s1">&#39;is set to True, continue with the collapse.&#39;</span><span class="p">,</span>
                           <span class="s2">&quot;InterpolationWarning&quot;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">MODEL_properties</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">MODEL_NAME_SEL</span><span class="p">)</span>
+                    <span class="n">SN_MODEL_properties</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">SN_MODEL_NAME_SEL</span><span class="p">)</span>
 
                     <span class="n">SN_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_SN_type</span><span class="p">(</span><span class="n">m_core</span><span class="o">=</span><span class="n">star</span><span class="o">.</span><span class="n">co_core_mass</span><span class="p">,</span>
                                                  <span class="n">m_He_core</span><span class="o">=</span><span class="n">star</span><span class="o">.</span><span class="n">he_core_mass</span><span class="p">,</span>
@@ -681,9 +668,9 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">alternative</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-                    <span class="k">if</span> <span class="n">MODEL_properties</span><span class="p">[</span><span class="s1">&#39;SN_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">SN_MODEL_properties</span><span class="p">[</span><span class="s1">&#39;SN_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span>
                         <span class="c1"># overwrite ECSN in SN MODEL</span>
-                        <span class="n">MODEL_properties</span><span class="p">[</span><span class="s1">&#39;SN_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SN_type</span>
+                        <span class="n">SN_MODEL_properties</span><span class="p">[</span><span class="s1">&#39;SN_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SN_type</span>
                         <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ECSN in SN_MODEL replaced by </span><span class="si">{</span><span class="n">SN_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                               <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
 
@@ -691,24 +678,24 @@
                         <span class="c1"># do not use interpolated values for ECSN range instead</span>
                         <span class="c1"># behave like use_core_masses=True</span>
                         <span class="k">pass</span>
-                    <span class="c1">## star&#39;s SN_type mismatches one from the MODEL</span>
-                    <span class="k">elif</span> <span class="n">SN_type</span> <span class="o">!=</span> <span class="n">MODEL_properties</span><span class="p">[</span><span class="s1">&#39;SN_type&#39;</span><span class="p">]:</span>
+                    <span class="c1">## star&#39;s SN_type mismatches one from the model</span>
+                    <span class="k">elif</span> <span class="n">SN_type</span> <span class="o">!=</span> <span class="n">SN_MODEL_properties</span><span class="p">[</span><span class="s1">&#39;SN_type&#39;</span><span class="p">]:</span>
                         <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The SN_type does not match the star: </span><span class="si">{</span><span class="n">SN_type</span><span class="si">}</span><span class="s2">&quot;</span>
-                              <span class="sa">f</span><span class="s2">&quot;!=</span><span class="si">{</span><span class="n">MODEL_properties</span><span class="p">[</span><span class="s1">&#39;SN_type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="o">+</span><span class="n">alternative</span><span class="p">,</span>
-                              <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
-                    <span class="c1">## Check if SN_type mismatches the CO_type in MODEL</span>
-                    <span class="k">elif</span> <span class="ow">not</span> <span class="n">check_SN_CO_match</span><span class="p">(</span><span class="n">MODEL_properties</span><span class="p">[</span><span class="s1">&#39;SN_type&#39;</span><span class="p">],</span>
-                                               <span class="n">MODEL_properties</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]):</span>
-                        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MODEL_NAME_SEL</span><span class="si">}</span><span class="s2">: The SN_type does not match &quot;</span>
-                              <span class="s2">&quot;the predicted CO.&quot;</span><span class="o">+</span><span class="n">alternative</span><span class="p">,</span>
+                              <span class="sa">f</span><span class="s2">&quot;!=</span><span class="si">{</span><span class="n">SN_MODEL_properties</span><span class="p">[</span><span class="s1">&#39;SN_type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+                              <span class="o">+</span><span class="n">alternative</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
+                    <span class="c1">## Check if SN_type mismatches the CO_type in the model</span>
+                    <span class="k">elif</span> <span class="ow">not</span> <span class="n">check_SN_CO_match</span><span class="p">(</span><span class="n">SN_MODEL_properties</span><span class="p">[</span><span class="s1">&#39;SN_type&#39;</span><span class="p">],</span>
+                                               <span class="n">SN_MODEL_properties</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]):</span>
+                        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">SN_MODEL_NAME_SEL</span><span class="si">}</span><span class="s2">: The SN_type does not &quot;</span>
+                              <span class="s2">&quot;match the predicted CO.&quot;</span><span class="o">+</span><span class="n">alternative</span><span class="p">,</span>
                               <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
                     <span class="c1">## Check if there is no interpolated remnant mass</span>
-                    <span class="k">elif</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">MODEL_properties</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]):</span>
+                    <span class="k">elif</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">SN_MODEL_properties</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]):</span>
                         <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There is no interpolated remnant mass.&quot;</span>
                               <span class="o">+</span><span class="n">alternative</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
                     <span class="c1">## Otherwise interpolated values can be used for this SN</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">MODEL_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">SN_MODEL_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                             <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
                         <span class="k">if</span> <span class="n">star</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;WD&#39;</span><span class="p">:</span>
@@ -2771,10 +2758,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

@@ -727,15 +727,23 @@ the core masses or stellar profiles are used to determine the supernova properti
 <li><p><code class="docutils literal notranslate"><span class="pre">'Patton&amp;Sukhbold20-engine'</span></code></p></li>
 </ul>
 </td>
-<td><p><code class="docutils literal notranslate"><span class="pre">'Patton&amp;Sukhbold20-engine'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'Fryer+12-delayed'</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">engine</span></code></p></td>
 <td><div class="line-block">
 <div class="line">The engine used for the supernova.</div>
 <div class="line">Relevant for <code class="docutils literal notranslate"><span class="pre">'Sukhbold+16-engine'</span></code> and <code class="docutils literal notranslate"><span class="pre">'Patton&amp;Sukhbold20-engine'</span></code> mechanisms.</div>
 </div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'N20'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'S19.8'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'W15'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'W20'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'W18'</span></code></p></li>
+</ul>
 </td>
-<td><p><code class="docutils literal notranslate"><span class="pre">'N20'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">''</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PISN</span></code></p></td>
 <td><div class="line-block">
@@ -747,7 +755,7 @@ the core masses or stellar profiles are used to determine the supernova properti
 <li><p><code class="docutils literal notranslate"><span class="pre">'Hendriks+23'</span></code></p></li>
 </ul>
 </td>
-<td><p><code class="docutils literal notranslate"><span class="pre">'Marchant+19'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'Hendriks+23'</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PISN_CO_shift</span></code></p></td>
 <td><div class="line-block">
@@ -761,7 +769,7 @@ the core masses or stellar profiles are used to determine the supernova properti
 <div class="line">Additional PPI mass loss for the Hendriks+23 prescription</div>
 </div>
 </td>
-<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-20.0</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ECSN</span></code></p></td>
 <td><div class="line-block">
@@ -772,14 +780,14 @@ the core masses or stellar profiles are used to determine the supernova properti
 <li><p><code class="docutils literal notranslate"><span class="pre">'Podsiadlowksi+04'</span></code></p></li>
 </ul>
 </td>
-<td><p><code class="docutils literal notranslate"><span class="pre">'Podsiadlowksi+04'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'Tauris+15'</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">conserve_hydrogen_envelope</span></code></p></td>
 <td><div class="line-block">
 <div class="line">Conserve the hydrogen envelope during the supernova.</div>
 </div>
 </td>
-<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">conserve_hydrogen_PPI</span></code></p></td>
 <td><div class="line-block">
@@ -824,21 +832,28 @@ the core masses or stellar profiles are used to determine the supernova properti
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">approx_at_he_depletion</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">allow_spin_None</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Allow compact objects to have undetermined spin values in the lack of profile data.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">approx_at_he_depletion</span></code></p></td>
 <td><div class="line-block">
 <div class="line">Approximate at helium depletion.</div>
 </div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kick</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kick</span></code></p></td>
 <td><div class="line-block">
 <div class="line">Apply a kick to the remnant.</div>
 </div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kick_normalisation</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kick_normalisation</span></code></p></td>
 <td><div class="line-block">
 <div class="line">The normalisation method for the kick.</div>
 </div>
@@ -852,28 +867,28 @@ the core masses or stellar profiles are used to determine the supernova properti
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'one_over_mass'</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_kick_CCSN_NS</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_kick_CCSN_NS</span></code></p></td>
 <td><div class="line-block">
 <div class="line">The standard deviation of the kick velocity for core-collapse supernova neutron stars.</div>
 </div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">265.0</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_kick_CCSN_BH</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_kick_CCSN_BH</span></code></p></td>
 <td><div class="line-block">
 <div class="line">The standard deviation of the kick velocity for core-collapse supernova black holes.</div>
 </div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">265.0</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_kick_ECSN</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_kick_ECSN</span></code></p></td>
 <td><div class="line-block">
 <div class="line">The standard deviation of the kick velocity for electron-capture supernova.</div>
 </div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">20.0</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
 <td><div class="line-block">
 <div class="line">Enables verbose mode.</div>
 </div>
@@ -1315,10 +1330,7 @@ the parameters here determine what output of that class will be outputted into t
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>

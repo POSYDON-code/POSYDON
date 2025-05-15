@@ -21,7 +21,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Intial Final Classification &amp; Interpolation" href="machine_learning/initial_final_interp.html" />
+    <link rel="next" title="Initial-Final Classification &amp; Interpolation" href="machine_learning/initial_final_interp.html" />
     <link rel="prev" title="Documentation of the ini file for the post-processing pipeline" href="post_processing/pipeline_ini.html" /> 
 </head>
 
@@ -72,7 +72,7 @@
 <li class="toctree-l1"><a class="reference internal" href="mesa-grids.html">MESA Grids API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing-pipeline.html">Processing Pipeline</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Machine Learning Components</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="machine_learning/initial_final_interp.html">Intial Final Classification &amp; Interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="machine_learning/initial_final_interp.html">Initial-Final Classification &amp; Interpolation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning/ProfileInterpolator.html">Profile Interpolation</a></li>
 </ul>
 </li>
@@ -130,11 +130,11 @@
              
   <section id="machine-learning-components">
 <span id="machine-learning"></span><h1>Machine Learning Components<a class="headerlink" href="#machine-learning-components" title="Link to this heading"></a></h1>
-<section id="intial-final-classification-interpolation">
-<h2>Intial Final Classification &amp; Interpolation<a class="headerlink" href="#intial-final-classification-interpolation" title="Link to this heading"></a></h2>
+<section id="initial-final-classification-interpolation">
+<h2>Initial-Final Classification &amp; Interpolation<a class="headerlink" href="#initial-final-classification-interpolation" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="machine_learning/initial_final_interp.html">Intial Final Classification &amp; Interpolation</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="machine_learning/initial_final_interp.html">Initial-Final Classification &amp; Interpolation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning/initial_final_interp.html#loading-a-pretrained-interpolator">Loading a Pretrained Interpolator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning/initial_final_interp.html#training-the-interpolator">Training the Interpolator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning/initial_final_interp.html#using-the-interpolator">Using the Interpolator</a></li>
@@ -147,13 +147,16 @@
 <h2>Profile Interpolation<a class="headerlink" href="#profile-interpolation" title="Link to this heading"></a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>This feature is experimental and may not be suited for scientific use. If you want to us this feature, please install the relevant dependencies with <cite>pip install -e .[ml]</cite>.</p>
+<p>This feature is experimental and may not be suited for scientific use. If
+you want to use this feature, please install the relevant dependencies
+with <cite>pip install -e .[ml]</cite>.</p>
 </div>
-<p>POSYDON support an experimental feature that allows the user to interpolate the final MESA profile of a supported binary MESA grid.</p>
+<p>POSYDON supports an experimental feature that allows the user to interpolate
+the final MESA profile of a supported binary MESA grid.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="machine_learning/ProfileInterpolator.html">Profile Interpolation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="machine_learning/ProfileInterpolator.html#extracting-profile-data-from-h5-files-for-training-interpolators">Extracting Profile Data from .h5 Files for Training Interpolators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="machine_learning/ProfileInterpolator.html#extracting-profile-data-from-h5-files-for-training-interpolators">Extracting Profile Data from <code class="samp docutils literal notranslate"><span class="pre">h5</span></code> Files for Training Interpolators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning/ProfileInterpolator.html#loading-a-pretrained-interpolator">Loading a Pretrained Interpolator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning/ProfileInterpolator.html#training-the-interpolator">Training the Interpolator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_learning/ProfileInterpolator.html#using-the-interpolator">Using the Interpolator</a></li>
@@ -170,7 +173,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="post_processing/pipeline_ini.html" class="btn btn-neutral float-left" title="Documentation of the ini file for the post-processing pipeline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="machine_learning/initial_final_interp.html" class="btn btn-neutral float-right" title="Intial Final Classification &amp; Interpolation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="machine_learning/initial_final_interp.html" class="btn btn-neutral float-right" title="Initial-Final Classification &amp; Interpolation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -186,10 +189,7 @@
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       Version: dev
       <span class="fa fa-caret-down"></span>
