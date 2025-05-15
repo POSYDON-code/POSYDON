@@ -6,10 +6,9 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Large-Scale Population Synthesis on HPC Facilities 🚀 &mdash; posydon development documentation</title>
+  <title>&lt;no title&gt; &mdash; posydon development documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
 
   
@@ -63,18 +62,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
-<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
-<li class="toctree-l2"><a class="reference internal" href="evolve_single_binaries.html">Evolve individual binaries 🐞</a></li>
-<li class="toctree-l2"><a class="reference internal" href="custom_step_and_flow.html">Custom POSYDON steps and flow chart</a></li>
-<li class="toctree-l2"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a></li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
 </ul>
@@ -126,7 +115,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
-      <li class="breadcrumb-item active">Large-Scale Population Synthesis on HPC Facilities 🚀</li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/tutorials-examples/population-synthesis/pop_syn.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -136,124 +125,340 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="Large-Scale-Population-Synthesis-on-HPC-Facilities-🚀">
-<h1>Large-Scale Population Synthesis on HPC Facilities 🚀<a class="headerlink" href="#Large-Scale-Population-Synthesis-on-HPC-Facilities-🚀" title="Link to this heading"></a></h1>
-<p>This tutorial will cover how to setup and run a large, multi-metallicity population run on a HPC with slurm. We will dive deeper into the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file and how the <code class="docutils literal notranslate"><span class="pre">Population</span></code> class works for multi-metallicity populations.</p>
-<section id="Initialization-File-for-multi-metallicity-runs">
-<h2>Initialization File for multi-metallicity runs<a class="headerlink" href="#Initialization-File-for-multi-metallicity-runs" title="Link to this heading"></a></h2>
-<p>Let’s copy the default population synthesis <code class="docutils literal notranslate"><span class="pre">ini</span></code> file to your working directory. Make sure you’re on a cluster to be able to run and submit the jobs!</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
-
-<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>Open the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file and you should see all 8 currently supported metallicities present.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>metallicity = [2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]
-</pre></div>
-</div>
-<p>For our test run, we do not require a large population, so set the number of binaries to 1000. You might also want to make sure the <code class="docutils literal notranslate"><span class="pre">dump_rate</span></code> is set to 100 binaries for this example.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dump_rate = 100
-...
-number_of_binaries = 1000
-</pre></div>
-</div>
-</section>
-<section id="Setup-the-Population-Synthesis-Run">
-<h2>Setup the Population Synthesis Run<a class="headerlink" href="#Setup-the-Population-Synthesis-Run" title="Link to this heading"></a></h2>
-<p>POSYDON provides <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">setup</span></code> as a command line script that you can use to setup a (multi-metallicity) population run on a HPC facility. This will split each metallicity into a separate slurm job-array and a dependent job which will automatically merge the output of the separate jobs. This removes the need to manually setup each slurm job. Below are two examples, but you might require to adjust the inputs for your email, cluster and available partitions.</p>
-<div class="admonition warning">
-<p class="admonition-title fa fa-exclamation-circle"><strong>Older POSYDON installations</strong></p>
-<p>If the <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">setup</span></code> command is not available, you might have to install POSYDON.</p>
-<ol class="arabic simple">
-<li><p>Go to the directory: <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">$PATH_TO_POSYDON</span></code></p></li>
-<li><p>Uninstall using pip <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">uninstall</span> <span class="pre">posydon</span></code></p></li>
-<li><p>Reinstall: if you’re using the development version: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code></p></li>
-</ol>
-<p>See the <a class="reference internal" href="../../getting-started/installation-guide.html"><span class="doc">Installation instructions</span></a> if any issues occur.</p>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># example for yggdrasil</span>
-<span class="n">posydon</span><span class="o">-</span><span class="n">popsyn</span> <span class="n">setup</span> <span class="n">population_params</span><span class="o">.</span><span class="n">ini</span> <span class="o">--</span><span class="n">job_array</span><span class="o">=</span><span class="mi">10</span> \
-                                            <span class="o">--</span><span class="n">walltime</span><span class="o">=</span><span class="mi">00</span><span class="p">:</span><span class="mi">14</span><span class="p">:</span><span class="mi">00</span> \
-                                            <span class="o">--</span><span class="n">mem_per_cpu</span><span class="o">=</span><span class="mi">5</span><span class="n">G</span>  \
-                                            <span class="o">--</span><span class="n">partition</span><span class="o">=</span><span class="n">debug</span><span class="o">-</span><span class="n">cpu</span> \
-                                            <span class="o">--</span><span class="n">email</span><span class="o">=</span><span class="nb">max</span><span class="o">.</span><span class="n">briel</span><span class="nd">@unige</span><span class="o">.</span><span class="n">ch</span> \
-                                            <span class="o">--</span><span class="n">account</span><span class="o">=</span><span class="n">fragkos</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># example for quest cluster</span>
-<span class="n">posydon</span><span class="o">-</span><span class="n">popsyn</span> <span class="n">setup</span> <span class="n">population_params</span><span class="o">.</span><span class="n">ini</span> <span class="o">--</span><span class="n">job</span><span class="o">-</span><span class="n">array</span><span class="o">=</span><span class="mi">10</span> \
-                                           <span class="o">--</span><span class="n">walltime</span><span class="o">=</span><span class="mi">00</span><span class="p">:</span><span class="mi">14</span><span class="p">:</span><span class="mi">00</span> \
-                                           <span class="o">--</span><span class="n">partition</span><span class="o">=</span><span class="n">posydon</span><span class="o">-</span><span class="n">std</span> \
-                                           <span class="o">--</span><span class="n">email</span><span class="o">=</span><span class="nb">max</span><span class="o">.</span><span class="n">briel</span><span class="nd">@unige</span><span class="o">.</span><span class="n">ch</span> \
-                                           <span class="o">--</span><span class="n">mem_per_cpu</span><span class="o">=</span><span class="mi">5</span><span class="n">G</span>
-<br/></pre></div>
-</div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">setup</span> <span class="pre">--help</span></code> should provide a complete list of possible input parameters.</p>
-<section id="Walltime-and-job_array-number-fine-tuning">
-<h3>Walltime and job_array number fine-tuning<a class="headerlink" href="#Walltime-and-job_array-number-fine-tuning" title="Link to this heading"></a></h3>
-<p>The above examples will setup the population run with an array of 10 jobs for each metallicity. As such, each job will run 100 binaries of the 1000 binaries per metallicity.</p>
-<p>Fine-tuning the <code class="docutils literal notranslate"><span class="pre">dump_rate</span></code>, <code class="docutils literal notranslate"><span class="pre">mem_per_cpu</span></code>, number of <code class="docutils literal notranslate"><span class="pre">job-array</span></code>’s, and <code class="docutils literal notranslate"><span class="pre">walltime</span></code> compared to the total number of binaries can be helpful in optimizing your cluster usage. See <a class="reference internal" href="../../troubleshooting-faqs/code-questions.html"><span class="doc">the FAQ</span></a> on more detailed guidance on the memory footprint of a population synthesis run in POSYDON. By default, 5GB of RAM is requested per job, which fits well with the default <code class="docutils literal notranslate"><span class="pre">dump_rate</span></code> of 2000.</p>
-<p>As a rule of thumb for the <code class="docutils literal notranslate"><span class="pre">walltime</span></code>, a single binary takes about 1-2 seconds to run. In the example run, each job of 100 binaries should take around 2 to 3 minutes. However, some additional setup time for loading the grids is required! See <a class="reference internal" href="../../troubleshooting-faqs/code-questions.html"><span class="doc">the FAQ</span></a> for another example of <code class="docutils literal notranslate"><span class="pre">walltime</span></code> estimation.</p>
-<p>After you’ve ran the above setup, you should now have several files in your work directory.</p>
-<p>You can submit all job arrays and merged jobs using <code class="docutils literal notranslate"><span class="pre">slurm_submit.sh</span></code></p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sh</span> <span class="n">slurm_submit</span><span class="o">.</span><span class="n">sh</span>
-</pre></div>
-</div>
-</div>
-<p>After your job has finished, you can use the following command to verify that your run was successful. Please replace <code class="docutils literal notranslate"><span class="pre">{run_folder}</span></code> with the folder, where you ran the population.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>posydon-popsyn check {run_folder}
-</pre></div>
-</div>
-<p>Additionally, the <code class="docutils literal notranslate"><span class="pre">*_logs</span></code> folder will contain the logs of each job in the job_array.</p>
-<p>If one of your runs failed, you can use the <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">rescue</span> <span class="pre">{run_folder}</span></code> command to try to rescue it. This allows failed job in a job array to be resubmitted. You can provide the same commands as <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">setup</span></code>, if you want to change slurm parameters, such as walltime and mem-per-cpu.</p>
-</section>
-</section>
-<section id="Populations-inspection">
-<h2>Populations inspection<a class="headerlink" href="#Populations-inspection" title="Link to this heading"></a></h2>
-<p>Once the runs and the mergers have finished. You should have 8 files named <code class="docutils literal notranslate"><span class="pre">MET_Zsun_population.h5</span></code>, where <code class="docutils literal notranslate"><span class="pre">MET</span></code> are the metallicities.</p>
-<p>We will inspect two to check the number of binaries in the population.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
-
-<span class="n">file1</span> <span class="o">=</span> <span class="s1">&#39;1e-01_Zsun_population.h5&#39;</span>
-<span class="n">file2</span> <span class="o">=</span> <span class="s1">&#39;1e-02_Zsun_population.h5&#39;</span>
-
-<span class="n">pop1</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">file1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">pop1</span><span class="o">.</span><span class="n">mass_per_metallicity</span><span class="p">)</span>
-
-<span class="n">pop2</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">file2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">pop2</span><span class="o">.</span><span class="n">mass_per_metallicity</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>In the next tutorial, we will look into selecting specific events and combining the different metallicity runs into a single population and selecting the binary black hole mergers in them! <a class="reference internal" href="bbh_analysis.html"><span class="doc">BBH analysis</span></a></p>
-</section>
-</section>
+  <dl>
+<dt>{</dt><dd><dl>
+<dt>“cells”: [</dt><dd><dl>
+<dt>{</dt><dd><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“# Large-Scale Population Synthesis on HPC Facilities 🚀n”,
+“n”,
+“n”,
+“This tutorial will cover how to setup and run a large, multi-metallicity population run on a HPC with slurm.n”,
+“We will dive deeper into the <cite>population_params.ini</cite> file and how the <cite>Population</cite> class works for multi-metallicity populations.”</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“## Initialization File for multi-metallicity runs”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“Let’s copy the default population synthesis <cite>ini</cite> file to your working directory.n”,
+“Make sure you’re on a cluster to be able to run and submit the jobs!n”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“import osn”,
+“import shutiln”,
+“from posydon.config import PATH_TO_POSYDONn”,
+“n”,
+“path_to_params = os.path.join(PATH_TO_POSYDON, &quot;posydon/popsyn/population_params_default.ini&quot;)n”,
+“shutil.copyfile(path_to_params, ‘./population_params.ini’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“Open the <cite>population_params.ini</cite> file and you should see all 8 currently supported metallicities present. n”,
+“n”,
+“<code class="docutils literal notranslate"><span class="pre">`\n&quot;,</span>
+<span class="pre">&quot;metallicity</span> <span class="pre">=</span> <span class="pre">[2.,</span> <span class="pre">1.,</span> <span class="pre">0.45,</span> <span class="pre">0.2,</span> <span class="pre">0.1,</span> <span class="pre">0.01,</span> <span class="pre">0.001,</span> <span class="pre">0.0001]\n&quot;,</span>
+<span class="pre">&quot;`</span></code>n”,
+“n”,
+“For our test run, we do not require a large population, so set the number of binaries to 1000.n”,
+“You might also want to make sure the <cite>dump_rate</cite> is set to 100 binaries for this example.n”,
+“n”,
+“n”,
+“<code class="docutils literal notranslate"><span class="pre">`\n&quot;,</span>
+<span class="pre">&quot;dump_rate</span> <span class="pre">=</span> <span class="pre">100\n&quot;,</span>
+<span class="pre">&quot;...\n&quot;,</span>
+<span class="pre">&quot;number_of_binaries</span> <span class="pre">=</span> <span class="pre">1000\n&quot;,</span>
+<span class="pre">&quot;`</span></code>”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“## Setup the Population Synthesis Run”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“POSYDON provides <cite>posydon-popsyn setup</cite> as a command line script that you can use to setup a (multi-metallicity) population run on a HPC facility.n”,
+“This will split each metallicity into a separate slurm job-array and a dependent job which will automatically merge the output of the separate jobs.n”,
+“This removes the need to manually setup each slurm job.n”,
+“Below are two examples, but you might need to adjust the inputs for your email, cluster and available partitions.n”,
+“n”,
+“&lt;div class=&quot;alert alert-warning&quot;&gt;n”,
+“n”,
+“<strong>Older POSYDON installations</strong>n”,
+“n”,
+“If the <cite>posydon-popsyn setup</cite> command is not available, you might have to install POSYDON.n”,
+“1. Go to the directory: <cite>cd $PATH_TO_POSYDON</cite>n”,
+“2. Uninstall using pip <cite>pip uninstall posydon</cite>n”,
+“3. Reinstall: if you’re using the development version: <cite>pip install .</cite>n”,
+“   n”,
+“See the [Installation instructions](../../getting-started/installation-guide.rst) if any issues occur.n”,
+“&lt;/div&gt;n”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“metadata”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“vscode”: {</dt><dd><p>“languageId”: “shellscript”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“# example for yggdrasiln”,
+“posydon-popsyn setup population_params.ini –job_array=10 \n”,
+“                                            –walltime=00:14:00 \n”,
+“                                            –mem_per_cpu=5G  \n”,
+“                                            –partition=debug-cpu \n”,
+“                                            <a class="reference external" href="mailto:--email=max&#46;briel&#37;&#52;&#48;unige&#46;ch">–email=max<span>&#46;</span>briel<span>&#64;</span>unige<span>&#46;</span>ch</a> \n”,
+“                                            –account=fragkos”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“metadata”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“vscode”: {</dt><dd><p>“languageId”: “shellscript”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“# example for quest clustern”,
+“posydon-popsyn setup population_params.ini –job-array=10 \n”,
+“                                           –walltime=00:14:00 \n”,
+“                                           –partition=posydon-std \n”,</p>
+<blockquote>
+<div><p>–account=b1119 \n”,</p>
+</div></blockquote>
+<p>“                                           <a class="reference external" href="mailto:--email=max&#46;briel&#37;&#52;&#48;unige&#46;ch">–email=max<span>&#46;</span>briel<span>&#64;</span>unige<span>&#46;</span>ch</a> \n”,
+“                                           –mem_per_cpu=5Gn”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“<cite>posydon-popsyn setup –help</cite> should provide a complete list of possible input parameters.n”,
+“n”,
+“n”,
+“### Walltime and job_array number fine-tuningn”,
+“n”,
+“The above examples will setup the population run with an array of 10 jobs for each metallicity. As such, each job will run 100 binaries of the 1000 binaries per metallicity.n”,
+“n”,
+“Fine-tuning the <cite>dump_rate</cite>, <cite>mem_per_cpu</cite>, number of <cite>job-array</cite>’s, and <cite>walltime</cite> compared to the total number of binaries can be helpful in optimizing your cluster usage. See [the FAQ](../../troubleshooting-faqs/code-questions.rst) for more detailed guidance on the memory footprint of a population synthesis run in POSYDON.n”,
+“By default, 5GB of RAM is requested per job, which fits well with the default <cite>dump_rate</cite> of 2000.n”,
+“n”,
+“As a rule of thumb for the <cite>walltime</cite>, a single binary takes about 1-2 seconds to run. In the example run, each job of 100 binaries should take around 2 to 3 minutes. However, some additional setup time for loading the grids is required! See [the FAQ](../../troubleshooting-faqs/code-questions.rst) for another example of <code class="docutils literal notranslate"><span class="pre">`walltime`</span></code> estimation.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“After you’ve run the above setup, you should now have several files in your work directory.n”,
+“n”,
+“You can submit all job arrays and merged jobs using <cite>slurm_submit.sh</cite>n”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“metadata”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“vscode”: {</dt><dd><p>“languageId”: “shellscript”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“sh slurm_submit.sh”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“After your job has finished, you can use the following command to verify that your run was successful.n”,
+“Please replace <cite>{run_folder}</cite> with the folder, where you ran the population.n”,
+“n”,
+“<code class="docutils literal notranslate"><span class="pre">`\n&quot;,</span>
+<span class="pre">&quot;posydon-popsyn</span> <span class="pre">check</span> <span class="pre">{run_folder}\n&quot;,</span>
+<span class="pre">&quot;`</span></code>n”,
+“n”,
+“Additionally, the <cite>*_logs</cite> folder will contain the logs of each job in the job_array.n”,
+“n”,
+“If one of your runs failed, you can use the <cite>posydon-popsyn rescue {run_folder}</cite> command to try to rescue it.n”,
+“This allows failed job in a job array to be resubmitted. You can provide the same commands as <cite>posydon-popsyn setup</cite>, if you want to change slurm parameters, such as walltime and mem-per-cpu.n”,
+“n”,
+“n”,
+“## Populations inspectionn”,
+“n”,
+“Once the runs and the concatenation have finished. You should have 8 files named <cite>MET_Zsun_population.h5</cite>, where <cite>MET</cite> are the metallicities.n”,
+“n”,
+“We will inspect two to check the number of binaries in the population.”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“from posydon.popsyn.synthetic_population import Populationn”,
+“n”,
+“file1 = ‘1e-01_Zsun_population.h5’n”,
+“file2 = ‘1e-02_Zsun_population.h5’n”,
+“n”,
+“pop1 = Population(file1)n”,
+“print(pop1.mass_per_metallicity)n”,
+“n”,
+“pop2 = Population(file2)n”,
+“print(pop2.mass_per_metallicity)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: [</p>
+<blockquote>
+<div><p>“In the next tutorial ([BBH analysis](bbh_analysis.ipynb)), we will look into selecting specific events and combining the different metallicity runs into a single population and selecting the binary black hole mergers in them!”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “markdown”,
+“metadata”: {},
+“source”: []</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>],
+“metadata”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“kernelspec”: {</dt><dd><p>“display_name”: “posydon_env”,
+“language”: “python”,
+“name”: “python3”</p>
+</dd>
+</dl>
+<p>},
+“language_info”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“codemirror_mode”: {</dt><dd><p>“name”: “ipython”,
+“version”: 3</p>
+</dd>
+</dl>
+<p>},
+“file_extension”: “.py”,
+“mimetype”: “text/x-python”,
+“name”: “python”,
+“nbconvert_exporter”: “python”,
+“pygments_lexer”: “ipython3”,
+“version”: “3.11.5”</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>},
+“nbformat”: 4,
+“nbformat_minor”: 4</p>
+</dd>
+</dl>
+<p>}</p>
 
 
            </div>

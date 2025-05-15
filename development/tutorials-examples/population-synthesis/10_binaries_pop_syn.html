@@ -24,7 +24,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Large-Scale Population Synthesis on HPC Facilities 🚀" href="pop_syn.html" />
+    <link rel="next" title="&lt;no title&gt;" href="pop_syn.html" />
     <link rel="prev" title="Binary-Star Population Synthesis with POSYDON" href="binary-pop-syn.html" /> 
 </head>
 
@@ -68,7 +68,6 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Your First Binary Simulations with POSYDON 🌠</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
 <li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
@@ -231,7 +230,7 @@ number_of_binaries = 10
 </pre></div>
 </div>
 </div>
-<p>If you changed the parameters in the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file, you should have the following output:</p>
+<p>If you did not change the parameters in the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file, you should have the following output:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt; Number of binary populations: 1
 &gt; Metallicity: 1
 &gt; Number of binaries: 10
@@ -251,8 +250,8 @@ number_of_binaries = 10
 <hr class="docutils" />
 <section id="Inspecting-the-population:-Population-class">
 <h2>Inspecting the population: Population class<a class="headerlink" href="#Inspecting-the-population:-Population-class" title="Link to this heading"></a></h2>
-<p>When you ran the population, you might have seen that a temporary folder with the name <code class="docutils literal notranslate"><span class="pre">1e+00_Zsun_batches</span></code> was created while the binaries were being evolved. This is a temporary folder in which populations are temporarly saved. After the binary evolution has finished, the binaries in the folder are moved to a single file named <code class="docutils literal notranslate"><span class="pre">1e+00_Zsun_popululation.h5</span></code>. This is done automatically when you run a population using the <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> class. When you run multiple metallicity a file will
-be created for each metallicity.</p>
+<p>When you ran the population, you might have seen that a temporary folder with the name <code class="docutils literal notranslate"><span class="pre">1e+00_Zsun_batches</span></code> was created while the binaries were being evolved. This is a temporary folder in which populations are temporarly saved. After the binary evolution has finished, the binaries in the folder are moved to a single file named <code class="docutils literal notranslate"><span class="pre">1e+00_Zsun_popululation.h5</span></code>. This is done automatically when you run a population using the <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> class. When you run multiple metallicity, a file
+will be created for each metallicity.</p>
 <p>The created file contains 3 main components:</p>
 <ol class="arabic simple">
 <li><p><strong>history:</strong> the evolution of an individual binary in a pandas DataFrame</p></li>
@@ -320,7 +319,7 @@ be created for each metallicity.</p>
 <p>You can access individual or selections of the population using several methods:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1. pop.history[5]
 2. pop.history[[0,4]]
-3. pop.history[&#39;time]
+3. pop.history[&#39;time&#39;]
 4. pop.history.select()
 </pre></div>
 </div>
@@ -620,7 +619,7 @@ be created for each metallicity.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="binary-pop-syn.html" class="btn btn-neutral float-left" title="Binary-Star Population Synthesis with POSYDON" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pop_syn.html" class="btn btn-neutral float-right" title="Large-Scale Population Synthesis on HPC Facilities 🚀" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pop_syn.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

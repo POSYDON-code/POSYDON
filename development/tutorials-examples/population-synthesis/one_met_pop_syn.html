@@ -68,7 +68,6 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
@@ -152,8 +151,8 @@
 </div>
 <section id="Creating-the-Synthetic-Poupulation-DataFrame">
 <h2>Creating the Synthetic Poupulation DataFrame<a class="headerlink" href="#Creating-the-Synthetic-Poupulation-DataFrame" title="Link to this heading"></a></h2>
-<p>We will use the same BBH population as in the <code class="docutils literal notranslate"><span class="pre">Analyzing</span> <span class="pre">Merging</span> <span class="pre">BBH</span> <span class="pre">Populations:</span> <span class="pre">Rates</span> <span class="pre">&amp;</span> <span class="pre">Observations</span></code> tutorial. Instead of computing the distributions and rates at all metallicities, we will just focus on one metallicity, <span class="math notranslate nohighlight">\(Z_\odot\)</span>, and integrate the star formation history around solar metallicity, say <span class="math notranslate nohighlight">\([0.5Z_\odot,2Z_\odot]\)</span>. Let’s extract the merging BBH population from the <span class="math notranslate nohighlight">\(Z_\odot\)</span> population synthesis model. In this sample there are only a few systems, to increase the
-statistics we suggest you run a population containing x50 more binaries, if you want to do a more thorough analysis.</p>
+<p>We will use the same BBH population as in the <code class="docutils literal notranslate"><span class="pre">Stellar</span> <span class="pre">Transient</span> <span class="pre">Populations</span></code> tutorial. Instead of computing the distributions and rates at all metallicities, we will just focus on one metallicity, <span class="math notranslate nohighlight">\(Z_\odot\)</span>, and integrate the star formation history around solar metallicity, say <span class="math notranslate nohighlight">\([0.5Z_\odot,2Z_\odot]\)</span>. Let’s extract the merging BBH population from the <span class="math notranslate nohighlight">\(Z_\odot\)</span> population synthesis model. In this sample there are only a few systems, to increase the statistics we suggest you
+run a population containing x50 more binaries, if you want to do a more thorough analysis.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -170,14 +169,14 @@ statistics we suggest you run a population containing x50 more binaries, if you 
 </pre></div>
 </div>
 </div>
-<p>POSYDON supports different assumptions for the star formation history, e.g. instead of using the IllustrisTNG SFH, we can use the star formation rate from Madau &amp; Fragos (2018) (see Andrews et al. in prep.) and assume a log-normal metallicity distribution around the empirically measured mean metallicity at each redshift from Madau &amp; Fragos (2018), taking a dispersion of 0.5 dex (see Bavera et al. 2020). The IllustrisTNG star formation rate and metallicity evolution (solid line) is compared to
-the Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. X of (see Andrews et al. in prep.), which figure is reproduced below. The dotted line corresponds to the metallicity distribution of Neijssel et al. (2019).</p>
+<p>POSYDON supports different assumptions for the star formation history, e.g. instead of using the IllustrisTNG SFH, we can use the star formation rate from Madau &amp; Fragos (2018) (see Andrews et al. 2024) and assume a log-normal metallicity distribution around the empirically measured mean metallicity at each redshift from Madau &amp; Fragos (2018), taking a dispersion of 0.5 dex (see Bavera et al. 2020). The IllustrisTNG star formation rate and metallicity evolution (solid line) is compared to the
+Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see Andrews et al. 2024), which figure is reproduced below. The dotted line corresponds to the metallicity distribution of Neijssel et al. (2019).</p>
 <img alt="Star Fromation Rate" src="../../_images/SFR.png" />
 <img alt="Metallicity Distribution" src="../../_images/met_dist.png" />
 </section>
 <section id="Single-metallicity-population">
 <h2>Single metallicity population<a class="headerlink" href="#Single-metallicity-population" title="Link to this heading"></a></h2>
-<p>Similar to in the multi-metallicity tutorial, we will setup a BBH selection from our <span class="math notranslate nohighlight">\(Z_\odot\)</span> population and then calculate the transient population.</p>
+<p>Similar to the multi-metallicity tutorial, we will setup a BBH selection from our <span class="math notranslate nohighlight">\(Z_\odot\)</span> population and then calculate the transient population.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -267,7 +266,7 @@ the Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. X of (
 </section>
 <section id="Compute-the-BBH-Merger-Rates-for-Z\in-[0.5Z_\odot,2Z_\odot]">
 <h2>Compute the BBH Merger Rates for <span class="math notranslate nohighlight">\(Z\in [0.5Z_\odot,2Z_\odot]\)</span><a class="headerlink" href="#Compute-the-BBH-Merger-Rates-for-Z\in-[0.5Z_\odot,2Z_\odot]" title="Link to this heading"></a></h2>
-<p>Similar to the <code class="docutils literal notranslate"><span class="pre">Analyzing</span> <span class="pre">Merging</span> <span class="pre">BBH</span> <span class="pre">Populations:</span> <span class="pre">Rates</span> <span class="pre">&amp;</span> <span class="pre">Observations</span></code> we compute the BBH merger rate density to obtain the BBH intrinsic population.</p>
+<p>Similar to the <code class="docutils literal notranslate"><span class="pre">Stellar</span> <span class="pre">Transient</span> <span class="pre">Populations</span></code> we compute the BBH merger rate density to obtain the BBH intrinsic population.</p>
 <p>However, because we are only working with a single metallicity, we have to set the metallicity limits we would like to work with!</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">MODEL_in</span></code> parameter gives us the option to select only one metallicity and select only the star formation within a specific range. This dictionary does not require a full model to be defined, and will use the default values if required.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">dlogZ</span></code> has to be given in log-space in units of solar metallicity.</p>
@@ -289,7 +288,7 @@ the Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. X of (
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">calculate_intrinsic_rate_density</span><span class="p">(</span><span class="n">mt_channels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">calculate_intrinsic_rate_density</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -309,14 +308,14 @@ the Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. X of (
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.transient_select_funcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">DCO_detactability</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.transient_select_funcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">DCO_detectability</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rates</span>
 
 <span class="n">rates</span> <span class="o">=</span> <span class="n">Rates</span><span class="p">(</span><span class="s1">&#39;Zsun_BBH_contact.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;BBH&#39;</span><span class="p">,</span> <span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">,)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">DCO_wrapper</span><span class="p">(</span><span class="n">transient_chunk</span><span class="p">,</span> <span class="n">z_events_chunk</span><span class="p">,</span> <span class="n">weights_chunk</span><span class="p">):</span>
     <span class="n">sensitivity</span> <span class="o">=</span> <span class="s1">&#39;design_H1L1V1&#39;</span>
-    <span class="k">return</span> <span class="n">DCO_detactability</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">transient_chunk</span><span class="p">,</span> <span class="n">z_events_chunk</span><span class="p">,</span> <span class="n">weights_chunk</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DCO_detectability</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">transient_chunk</span><span class="p">,</span> <span class="n">z_events_chunk</span><span class="p">,</span> <span class="n">weights_chunk</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

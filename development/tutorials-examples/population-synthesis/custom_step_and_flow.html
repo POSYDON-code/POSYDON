@@ -66,7 +66,6 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
 <li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
@@ -138,7 +137,7 @@
              
   <section id="Custom-POSYDON-steps-and-flow-chart">
 <h1>Custom POSYDON steps and flow chart<a class="headerlink" href="#Custom-POSYDON-steps-and-flow-chart" title="Link to this heading"></a></h1>
-<p>The evolution of binaries in POSYDON is determined by the flow chart. It uses the stellar states, <code class="docutils literal notranslate"><span class="pre">S1_state</span></code> and <code class="docutils literal notranslate"><span class="pre">S2_state</span></code>, the binary <code class="docutils literal notranslate"><span class="pre">state</span></code> and <code class="docutils literal notranslate"><span class="pre">event</span></code> to determine to which step the binary goes next.</p>
+<p>The evolution of binaries in POSYDON is determined by the flow chart. It uses the stellar states, <code class="docutils literal notranslate"><span class="pre">S1_state</span></code> and <code class="docutils literal notranslate"><span class="pre">S2_state</span></code>, the binary <code class="docutils literal notranslate"><span class="pre">state</span></code> and <code class="docutils literal notranslate"><span class="pre">event</span></code> to determine to which step the binary goes to next.</p>
 <p>For example, in the default flow chart, the state <code class="docutils literal notranslate"><span class="pre">('H-rich_Core_C_depleted','H-rich_Core_H_burning',</span> <span class="pre">'detached',</span> <span class="pre">'CC1')</span></code> will be sent to <code class="docutils literal notranslate"><span class="pre">step_SN</span></code>.</p>
 <p>If your specific need requires, it is possible to change the flow and introduce your own steps. This is possible through</p>
 <ol class="arabic simple">
@@ -158,8 +157,8 @@
     # If given, use an absolute filepath to user defined flow: [&#39;&lt;PATH_TO_PY_FILE&gt;&#39;, &#39;&lt;NAME&gt;&#39;]
 </pre></div>
 </div>
-<p>We can change this to import our custom flow. In this example, the binary is immediately send to <code class="docutils literal notranslate"><span class="pre">step_end</span></code> without any evolution. Make sure to change the path to your absolute path of the example file, if you want to run a population with it.</p>
-<p>Additionally, you can put the python file into the <code class="docutils literal notranslate"><span class="pre">user_modules</span></code> folder to make it part of the POSYDON namespace.</p>
+<p>We can change this to import our custom flow. In this tutorial we will use the example flow named <code class="docutils literal notranslate"><span class="pre">end_flow_chart</span></code> in <a class="reference external" href="custom_step_and_flow.py">custom_step_and_flow.py</a>. This flow immediately sends the binary to <code class="docutils literal notranslate"><span class="pre">step_end</span></code> without any evolution. To use it we need to change the path to the absolute path of the example file.</p>
+<p>Alternatively, you can put the python file into the <code class="docutils literal notranslate"><span class="pre">user_modules</span></code> folder to make it part of the POSYDON namespace.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[flow]
   import = None
     # builtin posydon flow
@@ -167,7 +166,7 @@
     # If given, use an absolute filepath to user defined flow: [&#39;&lt;PATH_TO_PY_FILE&gt;&#39;, &#39;&lt;NAME&gt;&#39;]
 </pre></div>
 </div>
-<p>We can check this change by loading the Simulation Property arguments. Below you can see the example, where we send all the states straight to <code class="docutils literal notranslate"><span class="pre">step_end</span></code>.</p>
+<p>We can check this change by loading the Simulation Property arguments. You can follow the <code class="docutils literal notranslate"><span class="pre">Evolve</span> <span class="pre">individual</span> <span class="pre">binaries</span></code> tutorial to evolve a binary with each of these flows.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -195,7 +194,7 @@
 </section>
 <section id="Changing-an-existing-step-to-a-custom-step">
 <h2>Changing an existing step to a custom step<a class="headerlink" href="#Changing-an-existing-step-to-a-custom-step" title="Link to this heading"></a></h2>
-<p>Similarly, you can change one of standard POSYDON steps to a custom one. We will replace the common envelope step by one that halves the orbital period.</p>
+<p>Similarly, you can change one of the standard POSYDON steps to a custom one. We will replace the common envelope step with one that halves the orbital period.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[step_CE]
   import = [&#39;posydon.binary_evol.CE.step_CEE&#39;, &#39;StepCEE&#39;]
     # builtin posydon step
@@ -223,8 +222,8 @@
 </section>
 <section id="Adapting-the-flow-and-steps-inside-your-notebook">
 <h2>Adapting the flow and steps inside your notebook<a class="headerlink" href="#Adapting-the-flow-and-steps-inside-your-notebook" title="Link to this heading"></a></h2>
-<p>Although you can always load in the population parameters file into your notebook, maybe you want to create a unique flow inside a notebook. For this you need to set up all the steps manually inside the notebook.</p>
-<p>This is definitely not the easiest way to change option within POSYDON.</p>
+<p>Although you can always load the population parameters file into your notebook, you may want to create a unique flow inside the notebook. To do this, you need to set up all the steps manually inside the notebook.</p>
+<p>This is definitely not the easiest way to change parameters within POSYDON.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -580,7 +579,7 @@
 </div>
 <section id="Adapted-flow-chart">
 <h3>Adapted flow chart<a class="headerlink" href="#Adapted-flow-chart" title="Link to this heading"></a></h3>
-<p>You might want to use the <code class="docutils literal notranslate"><span class="pre">detached_step</span></code> instead of a MESA step. Here is how you do it. As an example we replace the HMS-HMS MESA step with the detached step. Notice that the <code class="docutils literal notranslate"><span class="pre">detached_step</span></code> does not evolve the binary system post onset of RLO1. Hence, unless the <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> support such binary event, binary state and stellar states, else these systems will not be further evolved.</p>
+<p>You might want to use the <code class="docutils literal notranslate"><span class="pre">detached_step</span></code> instead of a MESA step. Here is how you can do it. As an example, we replace the HMS-HMS MESA step with the detached step. Note that the <code class="docutils literal notranslate"><span class="pre">detached_step</span></code> does not evolve the binary system post onset of RLO1. Hence, unless the <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> supports such binary events, binary states and stellar states, these systems will not be further evolved.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -616,7 +615,7 @@
 </section>
 <section id="Adapted-step">
 <h3>Adapted step<a class="headerlink" href="#Adapted-step" title="Link to this heading"></a></h3>
-<p>We implement a custom common envelope step, which is the same as the on in the <code class="docutils literal notranslate"><span class="pre">custom_step_and_flow.py</span></code> custom step.</p>
+<p>We implement a custom common envelope step, which is the same as the one in the <code class="docutils literal notranslate"><span class="pre">custom_step_and_flow.py</span></code> custom step.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>

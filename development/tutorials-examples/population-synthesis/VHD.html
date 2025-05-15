@@ -65,7 +65,6 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
 <li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
@@ -145,7 +144,7 @@
 <p class="admonition-title">Note</p>
 <p>To use the visualization functionalities, install the optional visualization modules <cite>pip install .[vis]</cite></p>
 </div>
-<p><cite>VHdiagram</cite> provides a visual representation of individual POSYDON binaries, offering a more intuitive sense of their properties. This tutorial uses the ‘population.h5’ dataset as an example. TODO: this need to be tested on a v2.0.0 dataset.</p>
+<p><cite>VHdiagram</cite> provides a visual representation of individual POSYDON binaries, offering a more intuitive sense of their properties. This tutorial uses the ‘population.h5’ dataset as an example. You can use the population in the <cite>Stellar Transient Populations</cite> tutorial.</p>
 <section id="visualizing-a-specific-binary">
 <h2>Visualizing a Specific Binary<a class="headerlink" href="#visualizing-a-specific-binary" title="Link to this heading"></a></h2>
 <section id="simple-usage">
@@ -202,8 +201,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.PresenterMode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
 
 <span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">&#39;./data/population.h5&#39;</span><span class="p">,</span>
-                <span class="n">index</span><span class="o">=</span><span class="n">cnt</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
-                <span class="n">frequency</span><span class="o">=</span><span class="n">parse_df</span><span class="o">.</span><span class="n">get_frequencies</span><span class="p">(),</span>
+                <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">19627</span><span class="p">,</span><span class="mi">19628</span><span class="p">,</span><span class="mi">19629</span><span class="p">,</span><span class="mi">19630</span><span class="p">],</span>
                 <span class="n">hierarchy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">,</span>
                 <span class="n">displayMode</span><span class="o">=</span><span class="n">DisplayMode</span><span class="o">.</span><span class="n">INLINE_B</span><span class="p">)</span>
@@ -219,8 +217,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.PresenterMode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
 
 <span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">&#39;./data/population.h5&#39;</span><span class="p">,</span>
-                <span class="n">index</span><span class="o">=</span><span class="n">cnt</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
-                <span class="n">frequency</span><span class="o">=</span><span class="n">parse_df</span><span class="o">.</span><span class="n">get_frequencies</span><span class="p">(),</span>
+                <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">19627</span><span class="p">,</span><span class="mi">19628</span><span class="p">,</span><span class="mi">19629</span><span class="p">,</span><span class="mi">19630</span><span class="p">],</span>
                 <span class="n">hierarchy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">,</span>
                 <span class="n">displayMode</span><span class="o">=</span><span class="n">DisplayMode</span><span class="o">.</span><span class="n">INLINE_B</span><span class="p">)</span>
