@@ -84,7 +84,10 @@
 <li class="toctree-l2"><a class="reference internal" href="posydon.popsyn.html">posydon.popsyn</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="posydon.unit_tests.html">posydon.unit_tests</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="posydon.unit_tests.grids.html">posydon.unit_tests.grids</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">posydon.unit_tests.popsyn</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">posydon.unit_tests.popsyn</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-posydon.unit_tests.popsyn.test_star_formation_history">posydon.unit_tests.popsyn.test_star_formation_history</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="posydon.unit_tests.utils.html">posydon.unit_tests.utils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="posydon.unit_tests.html#module-posydon.unit_tests.test_config">posydon.unit_tests.test_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="posydon.unit_tests.html#module-posydon.unit_tests.test_template">posydon.unit_tests.test_template</a></li>
@@ -146,6 +149,359 @@
              
   <section id="module-posydon.unit_tests.popsyn">
 <span id="posydon-unit-tests-popsyn"></span><h1>posydon.unit_tests.popsyn<a class="headerlink" href="#module-posydon.unit_tests.popsyn" title="Link to this heading"></a></h1>
+<section id="module-posydon.unit_tests.popsyn.test_star_formation_history">
+<span id="posydon-unit-tests-popsyn-test-star-formation-history"></span><h2>posydon.unit_tests.popsyn.test_star_formation_history<a class="headerlink" href="#module-posydon.unit_tests.popsyn.test_star_formation_history" title="Link to this heading"></a></h2>
+<p>Unit tests for posydon/popsyn/star_formation_history.py</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestChruslinska21</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestChruslinska21"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Tests for the Chruslinska21 SFH model with mocked data loading.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.chruslinska_model">
+<span class="sig-name descname"><span class="pre">chruslinska_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_chruslinska_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestChruslinska21.chruslinska_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.chruslinska_model" title="Link to this definition"></a></dt>
+<dd><p>Create a Chruslinska21 model instance with mocked data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.mock_chruslinska_data">
+<span class="sig-name descname"><span class="pre">mock_chruslinska_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestChruslinska21.mock_chruslinska_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.mock_chruslinska_data" title="Link to this definition"></a></dt>
+<dd><p>Create mock data for the Chruslinska21 class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.test_csfrd_calculation">
+<span class="sig-name descname"><span class="pre">test_csfrd_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chruslinska_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_chruslinska_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestChruslinska21.test_csfrd_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.test_csfrd_calculation" title="Link to this definition"></a></dt>
+<dd><p>Test the CSFRD method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.test_foh_to_z_conversion">
+<span class="sig-name descname"><span class="pre">test_foh_to_z_conversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chruslinska_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestChruslinska21.test_foh_to_z_conversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.test_foh_to_z_conversion" title="Link to this definition"></a></dt>
+<dd><p>Test the _FOH_to_Z method for all scaling options.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.test_fsfr_calculation">
+<span class="sig-name descname"><span class="pre">test_fsfr_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chruslinska_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestChruslinska21.test_fsfr_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.test_fsfr_calculation" title="Link to this definition"></a></dt>
+<dd><p>Test the fSFR method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.test_init_parameters">
+<span class="sig-name descname"><span class="pre">test_init_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestChruslinska21.test_init_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.test_init_parameters" title="Link to this definition"></a></dt>
+<dd><p>Test that initialization validates required parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.test_mean_metallicity">
+<span class="sig-name descname"><span class="pre">test_mean_metallicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chruslinska_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_chruslinska_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestChruslinska21.test_mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestChruslinska21.test_mean_metallicity" title="Link to this definition"></a></dt>
+<dd><p>Test the mean_metallicity method.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestFujimoto24">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestFujimoto24</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestFujimoto24"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestFujimoto24" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Tests for the Fujimoto24 SFH model</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestFujimoto24.test_init_parameters">
+<span class="sig-name descname"><span class="pre">test_init_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestFujimoto24.test_init_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestFujimoto24.test_init_parameters" title="Link to this definition"></a></dt>
+<dd><p>Test that initialization sets the correct CSFRD parameters</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestGetSFHModel</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestGetSFHModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Tests for the get_SFH_model function.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel.test_chruslinska_model">
+<span class="sig-name descname"><span class="pre">test_chruslinska_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestGetSFHModel.test_chruslinska_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel.test_chruslinska_model" title="Link to this definition"></a></dt>
+<dd><p>Test that get_SFH_model returns Chruslinska21 instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel.test_illustris_tng_model">
+<span class="sig-name descname"><span class="pre">test_illustris_tng_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestGetSFHModel.test_illustris_tng_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel.test_illustris_tng_model" title="Link to this definition"></a></dt>
+<dd><p>Test that get_SFH_model returns IllustrisTNG instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel.test_invalid_model">
+<span class="sig-name descname"><span class="pre">test_invalid_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestGetSFHModel.test_invalid_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel.test_invalid_model" title="Link to this definition"></a></dt>
+<dd><p>Test that get_SFH_model raises an error for an invalid model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel.test_returns_correct_instance">
+<span class="sig-name descname"><span class="pre">test_returns_correct_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestGetSFHModel.test_returns_correct_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel.test_returns_correct_instance" title="Link to this definition"></a></dt>
+<dd><p>Test that get_SFH_model returns the correct instance for each model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel.test_zavala_model">
+<span class="sig-name descname"><span class="pre">test_zavala_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestGetSFHModel.test_zavala_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestGetSFHModel.test_zavala_model" title="Link to this definition"></a></dt>
+<dd><p>Test that get_SFH_model returns Zavala21 instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestIllustrisTNG</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestIllustrisTNG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Tests for the IllustrisTNG SFH model with mocked data loading.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.illustris_model">
+<span class="sig-name descname"><span class="pre">illustris_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_illustris_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestIllustrisTNG.illustris_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.illustris_model" title="Link to this definition"></a></dt>
+<dd><p>Create an IllustrisTNG model instance with mocked data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.mock_illustris_data">
+<span class="sig-name descname"><span class="pre">mock_illustris_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestIllustrisTNG.mock_illustris_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.mock_illustris_data" title="Link to this definition"></a></dt>
+<dd><p>Create mock data for the IllustrisTNG class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.test_csfrd_calculation">
+<span class="sig-name descname"><span class="pre">test_csfrd_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">illustris_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_illustris_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestIllustrisTNG.test_csfrd_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.test_csfrd_calculation" title="Link to this definition"></a></dt>
+<dd><p>Test the CSFRD method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.test_fsfr_calculation">
+<span class="sig-name descname"><span class="pre">test_fsfr_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">illustris_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestIllustrisTNG.test_fsfr_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.test_fsfr_calculation" title="Link to this definition"></a></dt>
+<dd><p>Test the fSFR method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.test_init_parameters">
+<span class="sig-name descname"><span class="pre">test_init_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">illustris_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_illustris_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestIllustrisTNG.test_init_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.test_init_parameters" title="Link to this definition"></a></dt>
+<dd><p>Test that initialization sets the parameters correctly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.test_mean_metallicity">
+<span class="sig-name descname"><span class="pre">test_mean_metallicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">illustris_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_illustris_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestIllustrisTNG.test_mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestIllustrisTNG.test_mean_metallicity" title="Link to this definition"></a></dt>
+<dd><p>Test the mean_metallicity method.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestMadauBase</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Test class for MadauBase</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.ConcreteMadau">
+<span class="sig-name descname"><span class="pre">ConcreteMadau</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e_CSFRD_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauBase.ConcreteMadau"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.ConcreteMadau" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.e_CSFRD_params">
+<span class="sig-name descname"><span class="pre">e_CSFRD_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauBase.e_CSFRD_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.e_CSFRD_params" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_csfrd">
+<span class="sig-name descname"><span class="pre">test_csfrd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ConcreteMadau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e_CSFRD_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauBase.test_csfrd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_csfrd" title="Link to this definition"></a></dt>
+<dd><p>Test the CSFRD method</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_fsfr">
+<span class="sig-name descname"><span class="pre">test_fsfr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ConcreteMadau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauBase.test_fsfr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_fsfr" title="Link to this definition"></a></dt>
+<dd><p>Test the fSFR method</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_init_requires_sigma">
+<span class="sig-name descname"><span class="pre">test_init_requires_sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ConcreteMadau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauBase.test_init_requires_sigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_init_requires_sigma" title="Link to this definition"></a></dt>
+<dd><p>Test that MadauBase requires a sigma parameter</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_init_sets_csfrd_params_to_none">
+<span class="sig-name descname"><span class="pre">test_init_sets_csfrd_params_to_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ConcreteMadau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e_CSFRD_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauBase.test_init_sets_csfrd_params_to_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_init_sets_csfrd_params_to_none" title="Link to this definition"></a></dt>
+<dd><p>Test that CSFRD_params is not set to None initially</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_mean_metallicity">
+<span class="sig-name descname"><span class="pre">test_mean_metallicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ConcreteMadau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauBase.test_mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_mean_metallicity" title="Link to this definition"></a></dt>
+<dd><p>Test the mean_metallicity method</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_std_log_metallicity_dist">
+<span class="sig-name descname"><span class="pre">test_std_log_metallicity_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ConcreteMadau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauBase.test_std_log_metallicity_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauBase.test_std_log_metallicity_dist" title="Link to this definition"></a></dt>
+<dd><p>Test the std_log_metallicity_dist method with different sigma values</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauDickinson14">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestMadauDickinson14</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauDickinson14"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauDickinson14" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Tests for the MadauDickinson14 SFH model</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauDickinson14.test_csfrd_calculation">
+<span class="sig-name descname"><span class="pre">test_csfrd_calculation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauDickinson14.test_csfrd_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauDickinson14.test_csfrd_calculation" title="Link to this definition"></a></dt>
+<dd><p>Test that CSFRD calculations match expected values</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauDickinson14.test_init_parameters">
+<span class="sig-name descname"><span class="pre">test_init_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauDickinson14.test_init_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauDickinson14.test_init_parameters" title="Link to this definition"></a></dt>
+<dd><p>Test that initialization sets the correct CSFRD parameters</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauFragos17">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestMadauFragos17</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauFragos17"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauFragos17" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Tests for the MadauFragos17 SFH model</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestMadauFragos17.test_init_parameters">
+<span class="sig-name descname"><span class="pre">test_init_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestMadauFragos17.test_init_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestMadauFragos17.test_init_parameters" title="Link to this definition"></a></dt>
+<dd><p>Test that initialization sets the correct CSFRD parameters</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestNeijssel19">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestNeijssel19</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestNeijssel19"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestNeijssel19" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Tests for the Neijssel19 SFH model</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestNeijssel19.test_fsfr_with_lognormal">
+<span class="sig-name descname"><span class="pre">test_fsfr_with_lognormal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestNeijssel19.test_fsfr_with_lognormal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestNeijssel19.test_fsfr_with_lognormal" title="Link to this definition"></a></dt>
+<dd><p>Test the overridden fSFR method which uses a ln-normal distribution</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestNeijssel19.test_init_parameters">
+<span class="sig-name descname"><span class="pre">test_init_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestNeijssel19.test_init_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestNeijssel19.test_init_parameters" title="Link to this definition"></a></dt>
+<dd><p>Test that initialization sets the correct CSFRD parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestNeijssel19.test_mean_metallicity">
+<span class="sig-name descname"><span class="pre">test_mean_metallicity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestNeijssel19.test_mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestNeijssel19.test_mean_metallicity" title="Link to this definition"></a></dt>
+<dd><p>Test the overridden mean_metallicity method</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestSFHBase</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestSFHBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.ConcreteSFH">
+<span class="sig-name descname"><span class="pre">ConcreteSFH</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestSFHBase.ConcreteSFH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.ConcreteSFH" title="Link to this definition"></a></dt>
+<dd><p>Create a concrete subclass of SFHBase for testing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_abstract_methods">
+<span class="sig-name descname"><span class="pre">test_abstract_methods</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestSFHBase.test_abstract_methods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_abstract_methods" title="Link to this definition"></a></dt>
+<dd><p>Test that abstract methods must be implemented.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_call_method">
+<span class="sig-name descname"><span class="pre">test_call_method</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestSFHBase.test_call_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_call_method" title="Link to this definition"></a></dt>
+<dd><p>Test the __call__ method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_distribute_cdf">
+<span class="sig-name descname"><span class="pre">test_distribute_cdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ConcreteSFH</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalise</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">met_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warning</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestSFHBase.test_distribute_cdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_distribute_cdf" title="Link to this definition"></a></dt>
+<dd><p>Test the _distribute_cdf method with various scenarios.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_distribute_cdf_invalid">
+<span class="sig-name descname"><span class="pre">test_distribute_cdf_invalid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ConcreteSFH</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestSFHBase.test_distribute_cdf_invalid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_distribute_cdf_invalid" title="Link to this definition"></a></dt>
+<dd><p>Test the _distribute_cdf method with invalid inputs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_init_attributes">
+<span class="sig-name descname"><span class="pre">test_init_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ConcreteSFH</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestSFHBase.test_init_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_init_attributes" title="Link to this definition"></a></dt>
+<dd><p>Test that the initialization sets attributes correctly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_validation">
+<span class="sig-name descname"><span class="pre">test_validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ConcreteSFH</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestSFHBase.test_validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestSFHBase.test_validation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestSFR_per_met_at_z">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestSFR_per_met_at_z</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestSFR_per_met_at_z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestSFR_per_met_at_z" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Tests for SFR_per_met_at_z function.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestSFR_per_met_at_z.test_SFR_per_met_at_z">
+<span class="sig-name descname"><span class="pre">test_SFR_per_met_at_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestSFR_per_met_at_z.test_SFR_per_met_at_z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestSFR_per_met_at_z.test_SFR_per_met_at_z" title="Link to this definition"></a></dt>
+<dd><p>Test that SFR_per_met_at_z correctly calls the model.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.unit_tests.popsyn.test_star_formation_history.</span></span><span class="sig-name descname"><span class="pre">TestZavala21</span></span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestZavala21"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Tests for the Zavala21 SFH model with mocked data loading.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21.mock_zavala_data">
+<span class="sig-name descname"><span class="pre">mock_zavala_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monkeypatch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestZavala21.mock_zavala_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21.mock_zavala_data" title="Link to this definition"></a></dt>
+<dd><p>Create mock data for the Zavala21 class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21.test_csfrd_max_model">
+<span class="sig-name descname"><span class="pre">test_csfrd_max_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_zavala_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestZavala21.test_csfrd_max_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21.test_csfrd_max_model" title="Link to this definition"></a></dt>
+<dd><p>Test the CSFRD method with max sub-model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21.test_csfrd_min_model">
+<span class="sig-name descname"><span class="pre">test_csfrd_min_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_zavala_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestZavala21.test_csfrd_min_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21.test_csfrd_min_model" title="Link to this definition"></a></dt>
+<dd><p>Test the CSFRD method with min sub-model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21.test_fsfr_calculation">
+<span class="sig-name descname"><span class="pre">test_fsfr_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_zavala_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestZavala21.test_fsfr_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21.test_fsfr_calculation" title="Link to this definition"></a></dt>
+<dd><p>Test the fSFR method which is inherited from MadauBase.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21.test_init_parameters">
+<span class="sig-name descname"><span class="pre">test_init_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_zavala_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/unit_tests/popsyn/test_star_formation_history.html#TestZavala21.test_init_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.unit_tests.popsyn.test_star_formation_history.TestZavala21.test_init_parameters" title="Link to this definition"></a></dt>
+<dd><p>Test that initialization validates and sets parameters correctly.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 </section>
 
 

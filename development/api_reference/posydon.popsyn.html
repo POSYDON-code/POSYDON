@@ -143,13 +143,18 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.star_formation_history">posydon.popsyn.star_formation_history</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.SFR_Z_fraction_at_given_redshift"><code class="docutils literal notranslate"><span class="pre">SFR_Z_fraction_at_given_redshift()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.Chruslinska21"><code class="docutils literal notranslate"><span class="pre">Chruslinska21</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.Fujimoto24"><code class="docutils literal notranslate"><span class="pre">Fujimoto24</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.IllustrisTNG"><code class="docutils literal notranslate"><span class="pre">IllustrisTNG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.MadauBase"><code class="docutils literal notranslate"><span class="pre">MadauBase</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.MadauDickinson14"><code class="docutils literal notranslate"><span class="pre">MadauDickinson14</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.MadauFragos17"><code class="docutils literal notranslate"><span class="pre">MadauFragos17</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.Neijssel19"><code class="docutils literal notranslate"><span class="pre">Neijssel19</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.SFHBase"><code class="docutils literal notranslate"><span class="pre">SFHBase</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.SFR_per_met_at_z"><code class="docutils literal notranslate"><span class="pre">SFR_per_met_at_z()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.Zavala21"><code class="docutils literal notranslate"><span class="pre">Zavala21</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.get_SFH_model"><code class="docutils literal notranslate"><span class="pre">get_SFH_model()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.get_formation_times"><code class="docutils literal notranslate"><span class="pre">get_formation_times()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.get_illustrisTNG_data"><code class="docutils literal notranslate"><span class="pre">get_illustrisTNG_data()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.integrated_SFRH_over_redshift"><code class="docutils literal notranslate"><span class="pre">integrated_SFRH_over_redshift()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.mean_metallicity"><code class="docutils literal notranslate"><span class="pre">mean_metallicity()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.star_formation_rate"><code class="docutils literal notranslate"><span class="pre">star_formation_rate()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#posydon.popsyn.star_formation_history.std_log_metallicity_dist"><code class="docutils literal notranslate"><span class="pre">std_log_metallicity_dist()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-posydon.popsyn.synthetic_population">posydon.popsyn.synthetic_population</a><ul>
@@ -1119,33 +1124,804 @@ Required series in the dataframe:</p>
 <section id="module-posydon.popsyn.star_formation_history">
 <span id="posydon-popsyn-star-formation-history"></span><h2>posydon.popsyn.star_formation_history<a class="headerlink" href="#module-posydon.popsyn.star_formation_history" title="Link to this heading"></a></h2>
 <p>Implements the selection of different star-formation history scenarios.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.SFR_Z_fraction_at_given_redshift">
-<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">SFR_Z_fraction_at_given_redshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity_bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_one_met</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#SFR_Z_fraction_at_given_redshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.SFR_Z_fraction_at_given_redshift" title="Link to this definition"></a></dt>
-<dd><p>‘Fraction of the SFR at a given redshift z in a given metallicity bin as in Eq. (B.8) of Bavera et al. (2020).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.Chruslinska21">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">Chruslinska21</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#Chruslinska21"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.Chruslinska21" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.star_formation_history.SFHBase" title="posydon.popsyn.star_formation_history.SFHBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFHBase</span></code></a></p>
+<p>The Chruślińska+21 star formation history model <a class="reference internal" href="#r574e1fb7c033-1" id="id1">[1]</a>.</p>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r574e1fb7c033-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Chruślińska, M., et al. (2021). MNRAS, 508, 4994.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2021MNRAS.508.4994C">https://ui.adsabs.harvard.edu/abs/2021MNRAS.508.4994C</a></p>
+</div>
+</div>
+<p>Data source:
+<a class="reference external" href="https://ftp.science.ru.nl/astro/mchruslinska/Chruslinska_et_al_2021/">https://ftp.science.ru.nl/astro/mchruslinska/Chruslinska_et_al_2021/</a></p>
+<p>Initialise the Chruslinska+21 model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Chruslinska+21 requires the
+following parameters:
+- sub_model : str</p>
+<blockquote>
+<div><p>The sub-model to use.
+This is the name of the file containing the data.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_solar_scaling<span class="classifier">str</span></dt><dd><p>The scaling of the solar metallicity. Options are:
+- Asplund09
+- AndersGrevesse89
+- GrevesseSauval98
+- Villante14</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Additional SFH model parameters:
+- Z_max : float</p>
+<blockquote>
+<div><p>The maximum metallicity in absolute units.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_min<span class="classifier">float</span></dt><dd><p>The minimum metallicity in absolute units.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>normalise<span class="classifier">bool</span></dt><dd><p>Normalise the metallicity distribution to 1.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.Chruslinska21.CSFRD">
+<span class="sig-name descname"><span class="pre">CSFRD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#Chruslinska21.CSFRD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.Chruslinska21.CSFRD" title="Link to this definition"></a></dt>
+<dd><p>Interpolate the cosmic star formation rate density at the given redshift(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cosmic star formation rate density at the given redshift(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.Chruslinska21.fSFR">
+<span class="sig-name descname"><span class="pre">fSFR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity_bins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#Chruslinska21.fSFR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.Chruslinska21.fSFR" title="Link to this definition"></a></dt>
+<dd><p>Calculate the fractional SFR as a function of redshift and metallicity bins</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p></li>
+<li><p><strong>metallicity_bins</strong> (<em>array</em>) – Metallicity bins edges in absolute metallicity.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fraction of the SFR in the given metallicity bin at the given redshift.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.Chruslinska21.mean_metallicity">
+<span class="sig-name descname"><span class="pre">mean_metallicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#Chruslinska21.mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.Chruslinska21.mean_metallicity" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mean metallicity at a given redshift</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mean metallicity at the given redshift(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.Fujimoto24">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">Fujimoto24</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#Fujimoto24"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.Fujimoto24" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.star_formation_history.MadauBase" title="posydon.popsyn.star_formation_history.MadauBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">MadauBase</span></code></a></p>
+<p>The Fujimoto et al. (2024) star formation history model.
+mean metallicity evolution of Madau &amp; Fragos (2017).</p>
+<p>Fujimoto et al. (2024), ApJ SS, 275, 2, 36, 59
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2024ApJS..275...36F/abstract">https://ui.adsabs.harvard.edu/abs/2024ApJS..275…36F/abstract</a></p>
+<p>Initialise the Fujimoto+24 model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Fujimoto+24 requires the following parameters:
+- sigma : float or str</p>
+<blockquote>
+<div><p>The standard deviation of the log-normal metallicity distribution.
+Options are:
+- Bavera+20
+- Neijssel+19
+- float</p>
+</div></blockquote>
+<p>Additional SFH model parameters:
+- Z_max : float</p>
+<blockquote>
+<div><p>The maximum metallicity in absolute units.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_min<span class="classifier">float</span></dt><dd><p>The minimum metallicity in absolute units.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>normalise<span class="classifier">bool</span></dt><dd><p>Normalise the metallicity distribution to 1.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.IllustrisTNG">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">IllustrisTNG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#IllustrisTNG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.IllustrisTNG" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.star_formation_history.SFHBase" title="posydon.popsyn.star_formation_history.SFHBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFHBase</span></code></a></p>
+<p>The IllustrisTNG star formation history model.</p>
+<p>Uses the TNG100-1 model from the IllustrisTNG simulation.</p>
+<p><a class="reference external" href="https://www.tng-project.org/">https://www.tng-project.org/</a></p>
+<p>Initialise the IllustrisTNG model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>Additional SFH model parameters:
+- Z_max : float</p>
+<blockquote>
+<div><p>The maximum metallicity in absolute units.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_min<span class="classifier">float</span></dt><dd><p>The minimum metallicity in absolute units.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>normalise<span class="classifier">bool</span></dt><dd><p>Normalise the metallicity distribution to 1.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.IllustrisTNG.CSFRD">
+<span class="sig-name descname"><span class="pre">CSFRD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#IllustrisTNG.CSFRD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.IllustrisTNG.CSFRD" title="Link to this definition"></a></dt>
+<dd><p>The cosmic star formation rate density at a given redshift.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cosmic star formation rate density at the given redshift(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.IllustrisTNG.fSFR">
+<span class="sig-name descname"><span class="pre">fSFR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity_bins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#IllustrisTNG.fSFR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.IllustrisTNG.fSFR" title="Link to this definition"></a></dt>
+<dd><p>Calculate the fractional SFR as a function of redshift and
+metallicity bins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p></li>
+<li><p><strong>metallicity_bins</strong> (<em>array</em>) – Metallicity bins edges in absolute metallicity.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fraction of the SFR in the given metallicity bin at the given redshift.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.IllustrisTNG.mean_metallicity">
+<span class="sig-name descname"><span class="pre">mean_metallicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#IllustrisTNG.mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.IllustrisTNG.mean_metallicity" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mean metallicity at a given redshift</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mean metallicity at the given redshift(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.MadauBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">MadauBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#MadauBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.MadauBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.star_formation_history.SFHBase" title="posydon.popsyn.star_formation_history.SFHBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFHBase</span></code></a></p>
+<p>Base class for Madau-style star-formation history implementations.
+This class implements common methods for CSFRD, mean metallicity,
+and fractional SFR based on the chosen Madau parameterisation.
+The specific parameters for CSFRD must be provided by subclasses.</p>
+<p>Initialise the MadauBase class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. MadauBase requires the following parameters:
+- sigma : float or str</p>
+<blockquote>
+<div><p>The standard deviation of the log-normal metallicity distribution.
+Options are:
+- Bavera+20
+- Neijssel+19
+- float</p>
+</div></blockquote>
+<p>Additional SFH model parameters:
+- Z_max : float</p>
+<blockquote>
+<div><p>The maximum metallicity in absolute units.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_min<span class="classifier">float</span></dt><dd><p>The minimum metallicity in absolute units.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>normalise<span class="classifier">bool</span></dt><dd><p>Normalise the metallicity distribution to 1.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>CSFRD_params: dict</dt><dd><p>Parameters for the cosmic star formation rate density (CSFRD)
+- a, b, c, d : float
+Follows the Madau &amp; Dickinson (2014) CSFRD formula (Eq. 15) in <a class="reference internal" href="#r86ddbca86b72-1" id="id2">[1]</a></p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r86ddbca86b72-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<p>Madau, P., &amp; Dickinson, M. (2014). Cosmic star formation history.
+Annual Review of Astronomy and Astrophysics, 52, 415-486.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract">https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract</a></p>
+</div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.MadauBase.CSFRD">
+<span class="sig-name descname"><span class="pre">CSFRD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#MadauBase.CSFRD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.MadauBase.CSFRD" title="Link to this definition"></a></dt>
+<dd><p>The cosmic star formation rate density at a given redshift.</p>
+<p>Follows the Madau &amp; Dickinson (2014) cosmic star formation rate
+density formula.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cosmic star formation rate density at the given redshift.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.MadauBase.fSFR">
+<span class="sig-name descname"><span class="pre">fSFR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity_bins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#MadauBase.fSFR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.MadauBase.fSFR" title="Link to this definition"></a></dt>
+<dd><p>Fraction of the SFR at a given redshift z in a given metallicity
+bin as described in Bavera et al. (2020).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>z</strong> (<em>np.array</em>) – Cosmological redshift.</p></li>
-<li><p><strong>SFR</strong> (<em>string</em>) – Star formation rate assumption:
-- Madau+Fragos17 see arXiv:1606.07887
-- Madau+Dickinson14 see arXiv:1403.0007
-- IllustrisTNG see see arXiv:1707.03395
-- Neijssel+19 see arXiv:1906.08136</p></li>
-<li><p><strong>sigma</strong> (<em>double / string</em>) – Standard deviation of the log-metallicity distribution.
-If string, it can be ‘Bavera+20’ or ‘Neijssel+19’.</p></li>
 <li><p><strong>metallicity_bins</strong> (<em>array</em>) – Metallicity bins edges in absolute metallicity.</p></li>
-<li><p><strong>Z_max</strong> (<em>double</em>) – Maximum metallicity in absolute metallicity.</p></li>
-<li><p><strong>select_one_met</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, the function returns the fraction of the SFR in the given metallicity bin.
-If False, the function returns the fraction of the SFR in the given metallicity bin and the fraction of the SFR in the metallicity bin</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Fraction of the SFR in the given metallicity bin at the given redshift.
-In absolute metallicity.</p>
+<dd class="field-even"><p>Fraction of the SFR in the given metallicity bin at the given
+redshift.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>array</p>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.MadauBase.mean_metallicity">
+<span class="sig-name descname"><span class="pre">mean_metallicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#MadauBase.mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.MadauBase.mean_metallicity" title="Link to this definition"></a></dt>
+<dd><p>The mean metallicity at a given redshift</p>
+<p>Follows Madau &amp; Fragos (2017) mean metallicity evolution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mean metallicity at the given redshift.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.MadauBase.std_log_metallicity_dist">
+<span class="sig-name descname"><span class="pre">std_log_metallicity_dist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#MadauBase.std_log_metallicity_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.MadauBase.std_log_metallicity_dist" title="Link to this definition"></a></dt>
+<dd><p>Return the standard deviation of the log-normal metallicity
+distribution</p>
+<p>Either recognised the strings “Bavera+20” (sigma=0.5)
+or “Neijssel+19” (sigma=0.39) or a float value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The standard deviation of the log-normal metallicity distribution.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.MadauDickinson14">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">MadauDickinson14</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#MadauDickinson14"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.MadauDickinson14" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.star_formation_history.MadauBase" title="posydon.popsyn.star_formation_history.MadauBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">MadauBase</span></code></a></p>
+<p>Madau &amp; Dickinson (2014) <a class="reference internal" href="#id8" id="id3"><span>[Rc209e4668c41-1]</span></a> star formation history model using the
+mean metallicity evolution of Madau &amp; Fragos (2017) <a class="reference internal" href="#id9" id="id4"><span>[Rc209e4668c41-2]</span></a>.</p>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="rc209e4668c41-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Madau, P., &amp; Dickinson, M. (2014). ARA&amp;A, 52, 415-486.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M">https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M</a></p>
+</div>
+<div class="citation" id="rc209e4668c41-2" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p>Madau, P., &amp; Fragos, T. (2017). ApJ, 840(1), 39.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M">https://ui.adsabs.harvard.edu/abs/2017ApJ…840…39M</a></p>
+</div>
+</div>
+<p>Initialise the Madau &amp; Dickinson (2014) <a class="reference internal" href="#id8" id="id5"><span>[Rc209e4668c41-1]</span></a> SFH model with the
+metallicity evolution of Madau &amp; Fragos (2017) <a class="reference internal" href="#id9" id="id6"><span>[Rc209e4668c41-2]</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Madau+14 requires the following parameters:
+- sigma : float or str</p>
+<blockquote>
+<div><p>The standard deviation of the log-normal metallicity
+distribution.
+Options are:
+- Bavera+20
+- Neijssel+19
+- float</p>
+</div></blockquote>
+<p>Additional SFH model parameters:
+- Z_max : float</p>
+<blockquote>
+<div><p>The maximum metallicity in absolute units.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_min<span class="classifier">float</span></dt><dd><p>The minimum metallicity in absolute units.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>normalise<span class="classifier">bool</span></dt><dd><p>Normalise the metallicity distribution to 1.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>CSFRD_params: dict</dt><dd><p>Parameters for the cosmic star formation rate density (CSFRD)
+- a, b, c, d : float
+Follows the Madau &amp; Dickinson (2014) CSFRD formula (Eq. 15) in <a class="reference internal" href="#id8" id="id7"><span>[Rc209e4668c41-1]</span></a></p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="id8" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Madau, P., &amp; Dickinson, M. (2014). ARA&amp;A, 52, 415-486.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M">https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M</a></p>
+</div>
+<div class="citation" id="id9" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p>Madau, P., &amp; Fragos, T. (2017). ApJ, 840(1), 39.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M">https://ui.adsabs.harvard.edu/abs/2017ApJ…840…39M</a></p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.MadauFragos17">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">MadauFragos17</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#MadauFragos17"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.MadauFragos17" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.star_formation_history.MadauBase" title="posydon.popsyn.star_formation_history.MadauBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">MadauBase</span></code></a></p>
+<p>The Madau &amp; Fragos (2017) star formation history model with the
+metallicity evolution of Madau &amp; Fragos (2017) <a class="reference internal" href="#r2179a25d56a5-1" id="id10">[1]</a>.</p>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r2179a25d56a5-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">1</a><span class="fn-bracket">]</span></span>
+<p>Madau, P., &amp; Fragos, T. (2017). ApJ, 840(1), 39.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M/abstract">https://ui.adsabs.harvard.edu/abs/2017ApJ…840…39M/abstract</a></p>
+</div>
+</div>
+<p>Initialise the Madau+17 model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Madau+17 requires the following parameters:
+- sigma : float or str</p>
+<blockquote>
+<div><p>The standard deviation of the log-normal metallicity distribution.
+Options are:
+- Bavera+20
+- Neijssel+19
+- float</p>
+</div></blockquote>
+<p>Additional SFH model parameters:
+- Z_max : float</p>
+<blockquote>
+<div><p>The maximum metallicity in absolute units.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_min<span class="classifier">float</span></dt><dd><p>The minimum metallicity in absolute units.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>normalise<span class="classifier">bool</span></dt><dd><p>Normalise the metallicity distribution to 1.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.Neijssel19">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">Neijssel19</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#Neijssel19"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.Neijssel19" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.star_formation_history.MadauBase" title="posydon.popsyn.star_formation_history.MadauBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">MadauBase</span></code></a></p>
+<p>The Neijssel et al. (2019) <a class="reference internal" href="#rd61e1adb8edc-1" id="id11">[1]</a> star formation history model, which fits
+the Madau &amp; Dickinson (2014) <a class="reference internal" href="#rd61e1adb8edc-2" id="id12">[2]</a> cosmic star formation rate density formula
+with the BBH merger rate and uses a truncated log-normal distribution for
+the mean metallicity distribution.
+The mean metallicity evolution follows the Langer and Normal parameterisation
+also fitted to the BBH merger rate.</p>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="rd61e1adb8edc-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">1</a><span class="fn-bracket">]</span></span>
+<p>Neijssel, C. J., et al. (2019). MNRAS, 490, 3740.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2019MNRAS.490.3740N">https://ui.adsabs.harvard.edu/abs/2019MNRAS.490.3740N</a></p>
+</div>
+<div class="citation" id="rd61e1adb8edc-2" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">2</a><span class="fn-bracket">]</span></span>
+<p>Madau, P., &amp; Fragos, T. (2017). ApJ, 840(1), 39.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M/">https://ui.adsabs.harvard.edu/abs/2017ApJ…840…39M/</a></p>
+</div>
+</div>
+<p>Initialise the Neijssel+19 model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Neijssel+19 requires the following parameters:
+- sigma : float or str</p>
+<blockquote>
+<div><p>The standard deviation of the log-normal metallicity distribution.
+Options are:
+- Bavera+20
+- Neijssel+19
+- float</p>
+</div></blockquote>
+<p>Additional SFH model parameters:
+- Z_max : float</p>
+<blockquote>
+<div><p>The maximum metallicity in absolute units.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_min<span class="classifier">float</span></dt><dd><p>The minimum metallicity in absolute units.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>normalise<span class="classifier">bool</span></dt><dd><p>Normalise the metallicity distribution to 1.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.Neijssel19.fSFR">
+<span class="sig-name descname"><span class="pre">fSFR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity_bins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#Neijssel19.fSFR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.Neijssel19.fSFR" title="Link to this definition"></a></dt>
+<dd><p>Fraction of the SFR at a given redshift z in a given metallicity bin
+as described in Neijssel et al. (2019).</p>
+<p>Overwrites the fSFR method of MadauBase class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>np.array</em>) – Cosmological redshift.</p></li>
+<li><p><strong>metallicity_bins</strong> (<em>array</em>) – Metallicity bins edges in absolute metallicity.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fraction of the SFR in the given metallicity bins at the
+given redshift.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.Neijssel19.mean_metallicity">
+<span class="sig-name descname"><span class="pre">mean_metallicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#Neijssel19.mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.Neijssel19.mean_metallicity" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mean metallicity at a given redshift</p>
+<p>Overwrites the mean_metallicity method of MadauBase class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mean metallicity at the given redshift(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.SFHBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">SFHBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#SFHBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.SFHBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Abstract class for star formation history models</p>
+<p>Initialise the SFH model</p>
+<p>Adds the model parameters as attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters.
+- Z_max : float</p>
+<blockquote>
+<div><p>The maximum metallicity in absolute units.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_min<span class="classifier">float</span></dt><dd><p>The minimum metallicity in absolute units.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>normalise<span class="classifier">bool</span></dt><dd><p>Normalise the metallicity distribution to 1.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.SFHBase.CSFRD">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CSFRD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#SFHBase.CSFRD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.SFHBase.CSFRD" title="Link to this definition"></a></dt>
+<dd><p>Compute the cosmic star formation rate density.</p>
+<p>This is an abstract method that must be implemented by subclasses.
+The implementation should calculate and return the cosmic star formation
+rate density at the given redshift(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cosmic star formation rate density at the given redshift(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.13)"><strong>NotImplementedError</strong></a> – If the subclass does not implement this method.:</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.SFHBase.fSFR">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fSFR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity_bins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#SFHBase.fSFR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.SFHBase.fSFR" title="Link to this definition"></a></dt>
+<dd><p>Compute the star formation rate fraction (fSFR) at a given redshift
+using the specified metallicity bins.</p>
+<p>This is an abstract method that must be implemented by subclasses.
+The implementation should calculate and return the fractional SFR per
+metallicity bins at the provided redshift (z).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – The redshift(s) at which to compute the star formation rate.</p></li>
+<li><p><strong>metallicity_bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> or </em><em>array-like</em>) – The metallicity bin boundaries or labels used in the computation to
+account for different metallicity contributions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>float or array-like</em> – The calculated star formation rate at the given redshift(s) and
+metallicity bins in Msun/yr.</p></li>
+<li><p><em>Raises</em> – NotImplementedError: If the subclass does not implement this method.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.SFHBase.mean_metallicity">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mean_metallicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#SFHBase.mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.SFHBase.mean_metallicity" title="Link to this definition"></a></dt>
+<dd><p>Return the mean metallicity at redshift z.</p>
+<p>This is an abstract method that must be implemented by subclasses.
+The implementation should calculate and return the mean metallicity
+at the given redshift(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mean metallicity at the given redshift(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.13)"><strong>NotImplementedError</strong></a> – If the subclass does not implement this method.:</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.SFR_per_met_at_z">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">SFR_per_met_at_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">met_bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#SFR_per_met_at_z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.SFR_per_met_at_z" title="Link to this definition"></a></dt>
+<dd><p>Calculate the SFR per metallicity bin at a given redshift(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p></li>
+<li><p><strong>met_bins</strong> (<em>array</em>) – Metallicity bins edges in absolute metallicity.</p></li>
+<li><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – SFH model parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>SFH</strong> – Star formation history per metallicity bin at the given redshift(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>2D array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.Zavala21">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">Zavala21</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#Zavala21"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.Zavala21" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.star_formation_history.MadauBase" title="posydon.popsyn.star_formation_history.MadauBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">MadauBase</span></code></a></p>
+<p>The Zavala et al. (2021) star formation history model <a class="reference internal" href="#r3a1b7d73cf71-1" id="id13">[1]</a>.</p>
+<p>The “min” and “max” models are based on the obscured and unobscured
+star formation rate density models, respectively.</p>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r3a1b7d73cf71-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">1</a><span class="fn-bracket">]</span></span>
+<p>Zavala, J., et al. (2021). ApJ, 909(2), 165.
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2021ApJ...909..165Z/">https://ui.adsabs.harvard.edu/abs/2021ApJ…909..165Z/</a></p>
+</div>
+</div>
+<p>Initialise the Zavala+21 model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Zavala+21 requires the following parameters:
+- sub_model : str</p>
+<blockquote>
+<div><p>The sub-model to use. Either “min” or “max”.</p>
+</div></blockquote>
+<p>Additional SFH model parameters:
+- Z_max : float</p>
+<blockquote>
+<div><p>The maximum metallicity in absolute units.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_min<span class="classifier">float</span></dt><dd><p>The minimum metallicity in absolute units.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>normalise<span class="classifier">bool</span></dt><dd><p>Normalise the metallicity distribution to 1.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.Zavala21.CSFRD">
+<span class="sig-name descname"><span class="pre">CSFRD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#Zavala21.CSFRD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.Zavala21.CSFRD" title="Link to this definition"></a></dt>
+<dd><p>The cosmic star formation rate density at a given redshift.</p>
+<p>Follows the Madau &amp; Dickinson (2014) cosmic star formation rate
+density formula.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cosmic star formation rate density at the given redshift.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.get_SFH_model">
+<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">get_SFH_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#get_SFH_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.get_SFH_model" title="Link to this definition"></a></dt>
+<dd><p>Return the appropriate SFH model based on the given parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – SFH model parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The SFH model instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a SFHBase instance or subclass</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1171,98 +1947,6 @@ Burst - all stars are born at the same time.</p></li>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.get_illustrisTNG_data">
-<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">get_illustrisTNG_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#get_illustrisTNG_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.get_illustrisTNG_data" title="Link to this definition"></a></dt>
-<dd><p>Load IllustrisTNG SFR dataset.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.integrated_SFRH_over_redshift">
-<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">integrated_SFRH_over_redshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#integrated_SFRH_over_redshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.integrated_SFRH_over_redshift" title="Link to this definition"></a></dt>
-<dd><p>Integrated SFR history over z as in Eq. (B.10) of Bavera et al. (2020).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>SFR</strong> (<em>string</em>) – Star formation rate assumption:
-- Madau+Fragos17 see arXiv:1606.07887
-- Madau+Dickinson14 see arXiv:1403.0007
-- Neijssel+19 see arXiv:1906.08136</p></li>
-<li><p><strong>Z</strong> (<em>double</em>) – Metallicity.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The total mass of stars formed per comoving volume at a given
-metallicity Z.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>double</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.mean_metallicity">
-<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">mean_metallicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#mean_metallicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.mean_metallicity" title="Link to this definition"></a></dt>
-<dd><p>Empiric mean metallicity function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>SFR</strong> (<em>string</em>) – Star formation rate assumption:
-- Madau+Fragos17 see arXiv:1606.07887
-- Madau+Dickinson14 see arXiv:1403.0007
-- Neijssel+19 see arXiv:1906.08136</p></li>
-<li><p><strong>z</strong> (<em>double</em>) – Cosmological redshift.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Mean metallicty of the universe at the given redhist.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>double</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.star_formation_rate">
-<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">star_formation_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#star_formation_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.star_formation_rate" title="Link to this definition"></a></dt>
-<dd><p>Star formation rate in M_sun yr^-1 Mpc^-3.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>SFR</strong> (<em>string</em>) – Star formation rate assumption:
-- Madau+Fragos17 see arXiv:1606.07887
-- Madau+Dickinson14 see arXiv:1403.0007
-- Neijssel+19 see arXiv:1906.08136
-- IllustrisTNG see see arXiv:1707.03395</p></li>
-<li><p><strong>z</strong> (<em>double</em>) – Cosmological redshift.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The total mass of stars in M_sun formed per comoving volume Mpc^-3
-per year.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>double</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.std_log_metallicity_dist">
-<span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">std_log_metallicity_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#std_log_metallicity_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.std_log_metallicity_dist" title="Link to this definition"></a></dt>
-<dd><p>Standard deviation of the log-metallicity distribution.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Standard deviation of the adopted distribution.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>double</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2362,8 +3046,8 @@ the location ‘/transients/{transient_name}/rates/observable/{observable_name}�
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id1">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centers_metallicity_bins</span></span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id14">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centers_metallicity_bins</span></span><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
 <dd><p>Return the centers of the metallicity bins.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2377,8 +3061,8 @@ to the center of each metallicity bin.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id2">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centers_redshift_bins</span></span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id15">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centers_redshift_bins</span></span><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
 <dd><p>Compute redshift bin centers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2393,8 +3077,8 @@ redshift corresponding to center of these bins.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id3">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges_metallicity_bins</span></span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id16">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges_metallicity_bins</span></span><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
 <dd><p>Return the edges of the metallicity bins.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2408,8 +3092,8 @@ were binned in log-space.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id4">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges_redshift_bins</span></span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id17">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges_redshift_bins</span></span><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
 <dd><p>Compute redshift bin edges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2424,8 +3108,8 @@ redshift corresponding to edges of these bins.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id5">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">intrinsic_rate_density</span></span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id18">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">intrinsic_rate_density</span></span><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
 <dd><p>Return the intrinsic rate density of the transient population at the specified SFH_identifier and transient_name.</p>
 <p>The data is read from the HDF5 file at ‘/transients/{transient_name}/rates/{SFH_identifier}/intrinsic_rate_density’.</p>
 <dl class="field-list simple">
@@ -2459,8 +3143,8 @@ It loads the observable population from ‘/transients/{transient_name}/rates/ob
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id6">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observable_population_names</span></span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id19">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observable_population_names</span></span><a class="headerlink" href="#id19" title="Link to this definition"></a></dt>
 <dd><p>Return the names of the observable populations in the associated file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2532,8 +3216,8 @@ The key specifies which rates dataframe to select, and must be one of [‘weight
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id7">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id20">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#id20" title="Link to this definition"></a></dt>
 <dd><p>Retrieves the weights from the HDFStore.</p>
 <p>The rows are indexed by the binary index of the events, while to columns are indexed by the redshift of the birth bins.</p>
 <dl class="field-list simple">
@@ -2547,8 +3231,8 @@ The key specifies which rates dataframe to select, and must be one of [‘weight
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id8">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z_birth</span></span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id21">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z_birth</span></span><a class="headerlink" href="#id21" title="Link to this definition"></a></dt>
 <dd><p>Retrieves the ‘birth’ data from the HDFStore.</p>
 <p>The ‘birth’ DataFrame contains the redshift and age of the Universe of the birth bins with columns ‘z’ and ‘t’.</p>
 <dl class="field-list simple">
@@ -2562,8 +3246,8 @@ The key specifies which rates dataframe to select, and must be one of [‘weight
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id9">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z_events</span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id22">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z_events</span></span><a class="headerlink" href="#id22" title="Link to this definition"></a></dt>
 <dd><p>Returns the ‘z_events’ data from the HDFStore.</p>
 <p>The ‘z_events’ data contains the redshifts at which the events occur.
 The rows of the returned DataFrame are indexed by the binary index of the events.
@@ -2693,14 +3377,14 @@ distribution.</p>
 These can be accessed using the Rates class.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">transient_population</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="s1">&#39;filename.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;transient_name&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">transient_population</span><span class="o">.</span><span class="n">calculate_cosmic_weights</span><span class="p">(</span><span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">,</span> <span class="n">MODEL_in</span><span class="o">=</span><span class="n">DEFAULT_MODEL</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transient_population</span><span class="o">.</span><span class="n">calculate_cosmic_weights</span><span class="p">(</span><span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">,</span> <span class="n">MODEL_in</span><span class="o">=</span><span class="n">DEFAULT_SFH_MODEL</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id10">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">columns</span></span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id23">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">columns</span></span><a class="headerlink" href="#id23" title="Link to this definition"></a></dt>
 <dd><p>Return the columns of the transient population.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2777,8 +3461,8 @@ of the entire population will be plotted.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id11">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">population</span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id24">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">population</span></span><a class="headerlink" href="#id24" title="Link to this definition"></a></dt>
 <dd><p>Returns the entire transient population as a pandas DataFrame.</p>
 <p>This method retrieves the transient population data from a file and returns it as a pandas DataFrame.
 Please note that if the transient population is too large, it may consume a significant amount of memory.</p>

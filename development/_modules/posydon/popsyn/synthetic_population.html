@@ -176,15 +176,12 @@
     <span class="n">get_comoving_distance_from_redshift</span><span class="p">,</span>
     <span class="n">get_cosmic_time_from_redshift</span><span class="p">,</span>
     <span class="n">redshift_from_cosmic_time_interpolator</span><span class="p">,</span>
-    <span class="n">DEFAULT_MODEL</span><span class="p">,</span>
+    <span class="n">DEFAULT_SFH_MODEL</span><span class="p">,</span>
     <span class="n">get_redshift_bin_edges</span><span class="p">,</span>
     <span class="n">get_redshift_bin_centers</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.star_formation_history</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">star_formation_rate</span><span class="p">,</span>
-    <span class="n">SFR_Z_fraction_at_given_redshift</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.star_formation_history</span><span class="w"> </span><span class="kn">import</span> <span class="n">SFR_per_met_at_z</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.binarypopulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BinaryPopulation</span><span class="p">,</span>
@@ -2236,20 +2233,16 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; transient_population = TransientPopulation(&#39;filename.h5&#39;, &#39;transient_name&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; transient_population.calculate_cosmic_weights(&#39;IllustrisTNG&#39;, MODEL_in=DEFAULT_MODEL)</span>
+<span class="sd">        &gt;&gt;&gt; transient_population.calculate_cosmic_weights(&#39;IllustrisTNG&#39;, MODEL_in=DEFAULT_SFH_MODEL)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Set model to DEFAULT or provided MODEL parameters</span>
         <span class="c1"># Allows for partial model specification</span>
         <span class="k">if</span> <span class="n">MODEL_in</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">MODEL</span> <span class="o">=</span> <span class="n">DEFAULT_MODEL</span>
+            <span class="n">MODEL</span> <span class="o">=</span> <span class="n">DEFAULT_SFH_MODEL</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">MODEL_in</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DEFAULT_MODEL</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot; is not a valid parameter name!&quot;</span><span class="p">)</span>
-
-            <span class="c1"># write the DEFAULT_MODEL with updates parameters to self.MODEL.</span>
-            <span class="n">MODEL</span> <span class="o">=</span> <span class="n">DEFAULT_MODEL</span>
+            <span class="c1"># write the DEFAULT_SFH_MODEL with updated parameters to MODEL.</span>
+            <span class="n">MODEL</span> <span class="o">=</span> <span class="n">DEFAULT_SFH_MODEL</span>
             <span class="n">MODEL</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">MODEL_in</span><span class="p">)</span>
 
         <span class="n">path_in_file</span> <span class="o">=</span> <span class="p">(</span>
@@ -2289,23 +2282,12 @@
         <span class="n">get_redshift_from_cosmic_time</span> <span class="o">=</span> <span class="n">redshift_from_cosmic_time_interpolator</span><span class="p">()</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span>
 
+        <span class="n">met_edges</span> <span class="o">=</span> <span class="n">rates</span><span class="o">.</span><span class="n">edges_metallicity_bins</span>
         <span class="c1"># sample the SFH for only the events that are within the Hubble time</span>
         <span class="c1"># only need to sample the SFH at each metallicity and z_birth</span>
-        <span class="c1"># Not for every event!</span>
-        <span class="n">SFR_at_z_birth</span> <span class="o">=</span> <span class="n">star_formation_rate</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">],</span> <span class="n">z_birth</span><span class="p">)</span>
-        <span class="c1"># get metallicity bin edges</span>
-        <span class="n">met_edges</span> <span class="o">=</span> <span class="n">rates</span><span class="o">.</span><span class="n">edges_metallicity_bins</span>
-
-        <span class="c1"># get the fractional SFR at each metallicity and z_birth</span>
-        <span class="n">fSFR</span> <span class="o">=</span> <span class="n">SFR_Z_fraction_at_given_redshift</span><span class="p">(</span>
-            <span class="n">z_birth</span><span class="p">,</span>
-            <span class="n">rates</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">],</span>
-            <span class="n">rates</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;sigma_SFR&quot;</span><span class="p">],</span>
-            <span class="n">met_edges</span><span class="p">,</span>
-            <span class="n">rates</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;Z_max&quot;</span><span class="p">],</span>
-            <span class="n">rates</span><span class="o">.</span><span class="n">MODEL</span><span class="p">[</span><span class="s2">&quot;select_one_met&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-
+        <span class="c1"># Not for every event!        </span>
+        <span class="n">SFR_per_met_at_z_birth</span> <span class="o">=</span> <span class="n">SFR_per_met_at_z</span><span class="p">(</span><span class="n">z_birth</span><span class="p">,</span> <span class="n">met_edges</span><span class="p">,</span> <span class="n">rates</span><span class="o">.</span><span class="n">MODEL</span><span class="p">)</span>
+        
         <span class="c1"># simulated mass per given metallicity corrected for the unmodeled</span>
         <span class="c1"># single and binary stellar mass</span>
         <span class="n">M_model</span> <span class="o">=</span> <span class="n">rates</span><span class="o">.</span><span class="n">mass_per_metallicity</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rates</span><span class="o">.</span><span class="n">centers_metallicity_bins</span> <span class="o">/</span> <span class="n">Zsun</span><span class="p">][</span>
@@ -2359,7 +2341,7 @@
             <span class="p">)</span>
             
             <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">met_events</span><span class="p">),</span> <span class="n">nr_of_birth_bins</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">met</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">centers_metallicity_bins</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">met</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">centers_metallicity_bins</span><span class="p">):</span>
                 <span class="n">mask</span> <span class="o">=</span> <span class="n">met_events</span> <span class="o">==</span> <span class="n">met</span>
                 <span class="n">weights</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="mf">4.0</span>
@@ -2367,8 +2349,8 @@
                     <span class="o">*</span> <span class="n">c</span>
                     <span class="o">*</span> <span class="n">D_c</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
                     <span class="o">*</span> <span class="n">deltaT</span>
-                    <span class="o">*</span> <span class="p">(</span><span class="n">fSFR</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">SFR_at_z_birth</span><span class="p">)</span>
-                    <span class="o">/</span> <span class="n">M_model</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="o">*</span> <span class="n">SFR_per_met_at_z_birth</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span>
+                    <span class="o">/</span> <span class="n">M_model</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
                 <span class="p">)</span>  <span class="c1"># yr^-1</span>
 
             <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>

@@ -5,3 +5,13 @@ posydon.unit\_tests.popsyn
    :members:
    :show-inheritance:
    :undoc-members:
+
+
+
+posydon.unit\_tests.popsyn.test\_star\_formation\_history
+---------------------------------------------------------
+
+.. automodule:: posydon.unit_tests.popsyn.test_star_formation_history
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -138,12 +138,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
 
-<span class="n">DEFAULT_MODEL</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">DEFAULT_SFH_MODEL</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;delta_t&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>  <span class="c1"># Myr</span>
     <span class="s2">&quot;SFR&quot;</span><span class="p">:</span> <span class="s2">&quot;IllustrisTNG&quot;</span><span class="p">,</span>
     <span class="s2">&quot;sigma_SFR&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="s2">&quot;Z_max&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-    <span class="s2">&quot;select_one_met&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;Z_max&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># Zsun</span>
+    <span class="s2">&quot;Z_min&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># Zsun</span>
+    <span class="s2">&quot;normalise&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># normalise the SFR to 1</span>
     <span class="s2">&quot;dlogZ&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]</span>
     <span class="s2">&quot;Zsun&quot;</span><span class="p">:</span> <span class="n">Zsun</span><span class="p">,</span>
 <span class="p">}</span>
@@ -286,7 +287,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">trained_tz_interp</span> <span class="o">=</span> <span class="n">redshift_from_cosmic_time_interpolator</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">trained_tz_interp</span><span class="p">(</span><span class="n">t_cosm</span><span class="p">)</span></div>
-
 
 
 

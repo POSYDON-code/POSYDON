@@ -155,8 +155,9 @@
                     <span class="s1">&#39;ClassificationWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;EvolutionWarning&#39;</span><span class="p">,</span>\
                     <span class="s1">&#39;InappropriateValueWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;IncompletenessWarning&#39;</span><span class="p">,</span>\
                     <span class="s1">&#39;InterpolationWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;MissingFilesWarning&#39;</span><span class="p">,</span>\
-                    <span class="s1">&#39;NoPOSYDONWarnings&#39;</span><span class="p">,</span> <span class="s1">&#39;OverwriteWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;POSYDONWarning&#39;</span><span class="p">,</span>\
-                    <span class="s1">&#39;Pwarn&#39;</span><span class="p">,</span> <span class="s1">&#39;ReplaceValueWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;SetPOSYDONWarnings&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;NoPOSYDONWarnings&#39;</span><span class="p">,</span> <span class="s1">&#39;OverwriteWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;SFHModelWarning&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;POSYDONWarning&#39;</span><span class="p">,</span><span class="s1">&#39;Pwarn&#39;</span><span class="p">,</span> <span class="s1">&#39;ReplaceValueWarning&#39;</span><span class="p">,</span>\
+                    <span class="s1">&#39;SetPOSYDONWarnings&#39;</span><span class="p">,</span>\
                     <span class="s1">&#39;UnsupportedModelWarning&#39;</span><span class="p">,</span> <span class="s1">&#39;_CAUGHT_POSYDON_WARNINGS&#39;</span><span class="p">,</span>\
                     <span class="s1">&#39;_Caught_POSYDON_Warnings&#39;</span><span class="p">,</span> <span class="s1">&#39;_POSYDONWarning_subclasses&#39;</span><span class="p">,</span>\
                     <span class="s1">&#39;_POSYDON_WARNINGS_REGISTRY&#39;</span><span class="p">,</span> <span class="s1">&#39;__authors__&#39;</span><span class="p">,</span>\
@@ -265,6 +266,13 @@
         <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">UnsupportedModelWarning</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">UnsupportedModelWarning</span><span class="p">,</span>\
                           <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="TestElements.test_instance_SFHModelWarning">
+<a class="viewcode-back" href="../../../../api_reference/posydon.unit_tests.utils.html#posydon.unit_tests.utils.test_posydonwarning.TestElements.test_instance_SFHModelWarning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_instance_SFHModelWarning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">isclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">SFHModelWarning</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">totest</span><span class="o">.</span><span class="n">SFHModelWarning</span><span class="p">,</span> <span class="n">totest</span><span class="o">.</span><span class="n">POSYDONWarning</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TestElements.test_instance_POSYDONWarning_subclasses">
