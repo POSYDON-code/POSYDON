@@ -14,12 +14,13 @@ from scipy.interpolate import CubicSpline
 from astropy import units as u
 
 
-DEFAULT_MODEL = {
+DEFAULT_SFH_MODEL = {
     "delta_t": 100,  # Myr
     "SFR": "IllustrisTNG",
     "sigma_SFR": None,
-    "Z_max": 1.0,
-    "select_one_met": False,
+    "Z_max": None, # Zsun
+    "Z_min": None, # Zsun
+    "normalise": True, # normalise the SFR to 1
     "dlogZ": None,  # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
     "Zsun": Zsun,
 }
@@ -148,7 +149,6 @@ def get_redshift_from_cosmic_time(t_cosm):
     """
     trained_tz_interp = redshift_from_cosmic_time_interpolator()
     return trained_tz_interp(t_cosm)
-
 
 
 def get_redshift_bin_edges(delta_t):
