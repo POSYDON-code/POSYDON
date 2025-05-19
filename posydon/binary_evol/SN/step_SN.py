@@ -390,9 +390,6 @@ class StepSN(object):
                     print('Done')
         else:
             raise ValueError("Invalid core-collapse mechanism given.")
-        
-        # DEBUG
-        self.kick_distribution = None
 
     def __repr__(self):
         """Get the string representation of the class and any parameters."""
