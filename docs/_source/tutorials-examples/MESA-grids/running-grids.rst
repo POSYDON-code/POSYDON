@@ -23,7 +23,7 @@ Similarly to the POSYDON code repository, there is a `main` branch that points t
     cd grid_params/POSYDON-MESA-INLISTS/
     git checkout development
 
-To follow the next step of the tutorial, you will need to have MESA installed on your machine. If you do not have MESA installed, please follow the instructions on the `MESA website <https://docs.mesastar.org/en/release-r23.05.1/>`_.
+To follow the next step of the tutorial, you will need to have a MESA version compatible with POSYDON installed on your machine. If you do not have MESA installed, please follow the instructions on the `MESA website <https://docs.mesastar.org/en/release-r23.05.1/>`_.
 
 .. warning::
 
