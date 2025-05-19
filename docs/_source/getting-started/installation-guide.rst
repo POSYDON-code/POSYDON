@@ -46,32 +46,39 @@ Using Anaconda (Recommended)
 
         conda install -c posydon posydon
 
+    .. note:: 
+        Please remember the current path (get it via :code:`pwd`) or the one you specified for the next step.
+
 .. _posydon-env:
 
-4. **Download the Dataset**
+4. **Set Environment Variables**
 
-    .. warning::
-        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The above instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (230914) you must be a POSYDON core developer, please refer to the #developers Slack channel.
-
-    You can use POSYDON's built-in API command (by default the downloaded data will be saved in the current directory, hence please navigate to your desired location first):
-
-    .. code-block:: bash
-
-        get-posydon-data
-
-    Alternatively, you can manually download the dataset from Zenodo using the provided `link <https://zenodo.org/communities/posydon/>`_. (TODO: update link to v2)
-
-5. **Set Environment Variables**
-
-    Export the required paths (please change the location names accordingly to your installation):
+    Export the required paths (please change the location names accordingly to your installation from the previous step):
 
     .. code-block:: bash
 
         export PATH_TO_POSYDON=/path/to/your/posydon/installation
         export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
+    The path for the data location is up to your choice but we recommend :code:`PATH_TO_POSYDON_DATA=$PATH_TO_POSYDON/data`.
+
     .. note:: 
-        You can add these lines to your ``~/.bashrc`` or ``~/.bash_profile`` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
+        You can add these lines to your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
+
+5. **Download the Dataset**
+
+    .. warning::
+        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (241028) you must be a POSYDON core developer, please refer to the #developers Slack channel.
+
+    You can use POSYDON's built-in API command (the downloaded data will be saved in the directory specified by :code:`PATH_TO_POSYDON_DATA`):
+
+    .. code-block:: bash
+
+        get-posydon-data
+
+    May use :code:`get-posydon-data -h` to see all the options for this command, which allows to list all the datasets and download the one of your choice.
+
+    Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
 
 .. _dev-version:
 
@@ -82,7 +89,7 @@ For users interested in the latest features and developments, you can install PO
 
 1. **Clone the Repository**
 
-    In your terminal or command prompt (by default the repository will be placed in the current directory, hence please navigate to your desired location first):
+    In your terminal or command prompt (by default, the repository will be placed in the current directory, so navigate to your desired location before proceeding):
 
     .. code-block:: bash
 
@@ -91,7 +98,7 @@ For users interested in the latest features and developments, you can install PO
 2. **Install the Development Version**
 
     .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install `hdf5` and `pytables` through conda with `conda install hdf5 pytables`, before following the instractions below.
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install `hdf5` and `pytables` through conda with `conda install hdf5 pytables`, before following the instructions below.
 
     Navigate to the cloned repository's directory:
 

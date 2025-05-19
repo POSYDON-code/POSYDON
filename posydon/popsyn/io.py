@@ -31,7 +31,7 @@ BINARYPROPERTIES_DTYPES = {
     'separation': 'float64',               # binary orbital separation (solar radii)
     'orbital_period': 'float64',           # binary orbital period (days)
     'eccentricity': 'float64',             # binary eccentricity
-    'V_sys': 'object',                    # list of the 3 systemic velocity coordinates
+    'V_sys': 'object',                    # array of the 3 systemic velocity coordinates
     # (R_{star} - R_{Roche_lobe}) / R_{Roche_lobe}...
     'rl_relative_overflow_1': 'float64',   # ...for star 1
     'rl_relative_overflow_2': 'float64',   # ...for star 2
@@ -46,14 +46,19 @@ BINARYPROPERTIES_DTYPES = {
     't_sync_rad_2': 'float64',
     't_sync_conv_2': 'float64',
     'nearest_neighbour_distance': 'object',   # the distance of system from its nearest
-                                            # neighbour of MESA binary system  in case
-                                            # of interpolation during the the end of
-                                            # the previous step including MESA psygrid.
-                                            # The distance is normalized in the
-                                            # parameter space and limits at which it
-                                            # was calculated. See `mesa_step` for more.
+                                              # neighbour of MESA binary system  in case
+                                              # of interpolation during the the end of
+                                              # the previous step including MESA psygrid.
+                                              # The distance is normalized in the
+                                              # parameter space and limits at which it
+                                              # was calculated. See `mesa_step` for more.
 }
 
+# specifies the dtypes of elements within an object (e.g., of elements in an array)
+OBJECT_FIXED_SUB_DTYPES = {
+    'V_sys': 'float64',
+    'nearest_neighbour_distance': 'float64'
+}
 
 STARPROPERTIES_DTYPES = {
     'state': 'string',            # the evolutionary state of the star. For more info see
@@ -82,8 +87,8 @@ STARPROPERTIES_DTYPES = {
     'center_c12': 'float64',
     'center_n14': 'float64',
     'center_o16': 'float64',
-    'surface_h1': 'float64',
     # Mass fractions at the surface
+    'surface_h1': 'float64',
     'surface_he4': 'float64',
     'surface_c12': 'float64',
     'surface_n14': 'float64',
@@ -124,6 +129,8 @@ STARPROPERTIES_DTYPES = {
     'profile': 'object',    # the profile of the star, including extended information of
                             # its internal structure, for a specific timestep, usually for
                             # the end of the previous step including MESA psygrid.
+    'total_mass_h1': 'float64',   # total mass of Hydrogen throughout the star
+    'total_mass_he4': 'float64',  # total mass of Helium throughout the star
 }
 
 EXTRA_BINARY_COLUMNS_DTYPES = {

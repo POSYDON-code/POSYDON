@@ -1,7 +1,7 @@
 .. _initial-final-interp:
 
 ###########################################
-Intial Final Classification & Interpolation
+Initial-Final Classification & Interpolation
 ###########################################
 
 We showcase the initial-final interpolator which plays a critical role in the
@@ -18,9 +18,9 @@ Loading a Pretrained Interpolator
 
 To load a pretrained interpolator we need to
 pass in the ``filename`` argument into the ``IFInterpolator``
-constructor which specifies the path to a .pkl file where
+constructor which specifies the path to a :samp:`pkl` file where
 the pretrained interpolator can be loaded from. POSYDON provides
-various pretrained models whose corresponding .pkl files
+various pretrained models whose corresponding :samp:`pkl` files
 can be found in the data directory of the POSYDON repository.
 
 .. code-block:: python
@@ -33,7 +33,7 @@ Training the Interpolator
 
 The interpolator can be trained using an instance of the ``PSyGrid`` 
 class which can be constructed by running ones own simulations or
-by loading a simulation from an h5 file stored in the data directory
+by loading a simulation from an :samp:`h5` file stored in the data directory
 of the POSYDON repository. For more details on the ``PSyGrid`` class
 please visit the ``PSyGrid`` documentation. The ``IFInterpolator``
 class relies on the ``BaseIFInterpolator`` class to perform the interpolation 
@@ -53,24 +53,27 @@ be specified if ``interp_method`` is a list.
 3. ``class_method``: the classification method to be used, either ``kNN`` or
 ``1NN``.
 
-4. ``in_keys``: the keys to be used as the input to the interpolator, by default
-these are ``star_1_mass``, ``star_2_mass``, and ``period_days``.
+4. ``in_keys``: the keys to be used as the input to the interpolator, by 
+default these are ``star_1_mass``, ``star_2_mass``, and ``period_days``.
 
-5. ``out_keys``: the keys for which the interpolator is supposed to provide values,
-by default all keys are used.
+5. ``out_keys``: the keys for which the interpolator is supposed to provide 
+values, by default all keys are used.
 
-6. ``in_scaling``: The scalings for the input keys, by default these scalings are
-optimized through Monte Carlo Cross Validation.
+6. ``in_scaling``: The scalings for the input keys, by default these scalings 
+are optimized through Monte Carlo Cross Validation.
 
 7. ``out_scaling``: The scalings for the output keys, by default these scalings
 are optimized through Monte Carlo Cross Validation.
 
 8. ``c_keys``: A list of strings specifying which classifiers are to be trained
 
-9. ``c_key``: A string specifying by which class the interpolator should interpolate
-binaries. Only to be specified in the MCInterpolator case.
+9. ``c_key``: A string specifying by which class the interpolator should 
+interpolate binaries. Only to be specified in the MCInterpolator case.
 
-For most applications specifying only the first four parameters is recommended.
+For most applications specifying only the first four parameters is recommended. 
+Provided below is an example instantiation of the ``IFInterpolator`` class. 
+Note that there are a total of six dictionaries corresponding to the six 
+instances of the ``BaseIFInterpolator``.
 
 .. code-block:: python
 
@@ -136,9 +139,10 @@ For most applications specifying only the first four parameters is recommended.
 Using the Interpolator
 ======================
 
-Once the interpolator has been trained or loaded from a .pkl file it can be used
-to accomplish various tasks which most commonly are to classify a track into its class
-given an input vector and or to approximate a final vector given an input vector.
+Once the interpolator has been trained or loaded from a :samp:`pkl` file it 
+can be used to accomplish various tasks which most commonly are to classify a 
+track into its class given an input vector and or to approximate a final 
+vector given an input vector.
 
 .. code-block:: python
 
@@ -153,8 +157,8 @@ given an input vector and or to approximate a final vector given an input vector
     interpolation, classification = interp.evaluate(binary) # evaluating returns a tuple of dictionaries
 
 
-Finally a trained interpolator can be easily saved by specifying a path to a .pkl file
-where the interpolator will be saved to.
+Finally a trained interpolator can be easily saved by specifying a path to 
+a :samp:`pkl` file where the interpolator will be saved to.
 
 .. code-block:: python
 
