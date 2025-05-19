@@ -3,7 +3,7 @@
 Architecting MESA Simulation Grids with POSYDON
 ===============================================
 
-Boost your MESA simulation grid prowess by diving into the intricacies of POSYDON's grid creation techniques and the dedicated MESA configuration repository. Harness the power of our API to craft precise and customized grids.
+You can use POSYDON framework to run your own, customized MESA simulations of single and binary systems. Here we will go through POSYDON's dedicated MESA configuration repository and infrastructure for one or even big grids of MESA runs.
 
 Getting Started Tutorials
 -------------------------
