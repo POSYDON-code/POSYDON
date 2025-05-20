@@ -67,7 +67,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Architecting MESA Simulation Grids with POSYDON</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="1_hms_hms.html">Run your first MESA HMS-HMS binary simulation with POSYDON</a></li>
-<li class="toctree-l2"><a class="reference internal" href="laptop.html">Run one binary on your laptop for debugging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="running_a_grid.html">Running a real POSYDON MESA HMS-HMS gird</a></li>
 <li class="toctree-l2"><a class="reference internal" href="running_single_hms.html">Running Single Stars with POSYDON</a></li>
 </ul>
@@ -132,7 +131,7 @@
              
   <section id="architecting-mesa-simulation-grids-with-posydon">
 <span id="mesa-grids"></span><h1>Architecting MESA Simulation Grids with POSYDON<a class="headerlink" href="#architecting-mesa-simulation-grids-with-posydon" title="Link to this heading"></a></h1>
-<p>Boost your MESA simulation grid prowess by diving into the intricacies of POSYDON’s grid creation techniques and the dedicated MESA configuration repository. Harness the power of our API to craft precise and customized grids.</p>
+<p>You can use POSYDON framework to run your own, customized MESA simulations of single and binary systems. Here we will go through POSYDON’s dedicated MESA configuration repository and infrastructure for one or even big grids of MESA runs.</p>
 <section id="getting-started-tutorials">
 <h2>Getting Started Tutorials<a class="headerlink" href="#getting-started-tutorials" title="Link to this heading"></a></h2>
 <p>The POSYDON MESA simulation parameters are stored in <a class="reference external" href="https://github.com/POSYDON-code/POSYDON-MESA-INLISTS">POSYDON-MESA-INLISTS</a> GitHub submodule. To obtain the submodule, clone the POSYDON repository with the following command in your terminal:</p>
@@ -146,30 +145,27 @@ git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w
 git<span class="w"> </span>checkout<span class="w"> </span>development
 </pre></div>
 </div>
-<p>To follow the next step of the tutorial, you will need to have MESA installed on your machine. If you do not have MESA installed, please follow the instructions on the <a class="reference external" href="https://docs.mesastar.org/en/release-r23.05.1/">MESA website</a>.</p>
+<p>To follow the next step of the tutorial, you will need to have a MESA version compatible with POSYDON installed on your machine. If you do not have MESA installed, please follow the instructions on the <a class="reference external" href="https://docs.mesastar.org/en/release-r23.05.1/">MESA website</a>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>The POSYDON v2.0.0 code is compatible with MESA r11701. Support might not be available for the latest MacOS version.</p>
 </div>
 <section id="i-running-your-first-mesa-simulation-using-posydon">
 <h3>I. Running your first MESA simulation using POSYDON<a class="headerlink" href="#i-running-your-first-mesa-simulation-using-posydon" title="Link to this heading"></a></h3>
-<p>Immerse yourself in our Jupyter Notebook which guides you through our dedicated MESA submission API, showcasing how to simulate a HMS-HMS binary systems.</p>
+<p>The following Jupyter Notebook guides you through our dedicated MESA submission API, showcasing how to simulate a HMS-HMS binary systems.</p>
 <p>The first version of this tutorial showcases how to run the simulation using SLURM on HPC.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="1_hms_hms.html">Run your first MESA HMS-HMS binary simulation with POSYDON</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="1_hms_hms.html#Creating-the-Initialization-File-for-the-POSYDON-MESA-Submission-Script">Creating the Initialization File for the POSYDON MESA Submission Script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="1_hms_hms.html#Craeting-the-Initial-Simulation-Points-CSV-File">Craeting the Initial Simulation Points CSV File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="1_hms_hms.html#Running-the-MESA-Model-and-Exploring-the-Simulaiton-Output">Running the MESA Model and Exploring the Simulaiton Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1_hms_hms.html#Creating-the-Initial-Simulation-Points-CSV-File">Creating the Initial Simulation Points CSV File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1_hms_hms.html#Running-the-MESA-Model-and-Exploring-the-Simulation-Output">Running the MESA Model and Exploring the Simulation Output</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <p>In case you want to run the simulation locally, you can follow the second version of this tutorial.</p>
 <div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="laptop.html">Run one binary on your laptop for debugging</a></li>
-</ul>
 </div>
 <p>To gather more information about the MESA simulation submission API ini file, please refer to the <a class="reference internal" href="../../components-overview/mesa-grids.html#mesa-grids-api"><span class="std std-ref">MESA Grids API</span></a> section of the documentation.</p>
 </section>
