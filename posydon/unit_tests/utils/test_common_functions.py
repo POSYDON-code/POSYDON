@@ -571,16 +571,12 @@ class TestFunctions:
         tests = [(1.0, 1.0, 1.0, 1.0, 1.0, 1e-3, True),
                  (2.0, 1.0, 1.0, 1.0, 2.5, 1e-3, True),
                  (1.0, 1.0, 2.0, 1.0, 2.5, 1e-3, True),
-                 (1.0, 1.0, 1.0, 1.0, 4.0, 1e-3, False),
-                 (1.0, 1.0, 2.0, 1.0, 2.5, 1e-8, True)]
+                 (1.0, 1.0, 1.0, 1.0, 4.0, 1e-3, False)]
 
         for (m1, r1, m2, r2, separation, tolerance, RLO) in tests:
-            if tolerance == 1e-8:
-                assert totest.check_for_RLO(m1, r1, m2, r2, separation) == RLO
-            else:
-                assert totest.check_for_RLO(m1, r1, m2, r2, separation,\
-                                            tolerance) == RLO
-                
+            assert totest.check_for_RLO(m1, r1, m2, r2, separation) == RLO
+            assert totest.check_for_RLO(m1, r1, m2, r2, separation, tolerance)\
+                   == RLO
 
     def test_orbital_separation_from_period(self):
         # missing argument
