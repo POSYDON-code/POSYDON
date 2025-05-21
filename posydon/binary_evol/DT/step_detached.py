@@ -768,7 +768,7 @@ class detached_step:
 
         # >>>>>> START MATCHING
         # get the matched data of two stars, respectively
-        interp1d_sec, m0, t0 = self.track_matcher.get_star_data(binary, secondary, primary, secondary.htrack, co=False)
+        interp1d_sec, m0, t0 = self.track_matcher.get_star_data(binary, secondary, primary, co=False)
 
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
         primary_normal = (not primary.co) and self.non_existent_companion == 0
@@ -777,11 +777,11 @@ class detached_step:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             interp1d_pri = self.track_matcher.get_star_data(
-                binary, secondary, primary, secondary.htrack, co=True,
+                binary, secondary, primary, co=True,
                 copy_prev_m0=m0, copy_prev_t0=t0)[0]
         elif primary_normal:
             interp1d_pri = self.track_matcher.get_star_data(
-                binary, primary, secondary, primary.htrack, False)[0]
+                binary, primary, secondary, False)[0]
         else:
             raise ValueError("During matching, the primary should either be normal (stellar object) or ",
                              "not normal (CO, nonexistent companion).")

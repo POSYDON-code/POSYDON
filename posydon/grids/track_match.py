@@ -864,7 +864,7 @@ class track_matcher:
         return initials[0], initials[1], htrack
     
 
-    def get_star_data(self, binary, star1, star2, htrack, co, copy_prev_m0=None, copy_prev_t0=None):
+    def get_star_data(self, binary, star1, star2, co, copy_prev_m0=None, copy_prev_t0=None):
                 """Get and interpolate the properties of stars.
 
                 The data of a compact object can be stored as a copy of its
@@ -888,6 +888,8 @@ class track_matcher:
 
                 KEYS = self.KEYS
                 KEYS_POSITIVE = self.KEYS_POSITIVE
+
+                htrack = star1.htrack
 
                 with np.errstate(all="ignore"):
                     # get the initial m0, t0 track
