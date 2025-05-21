@@ -864,7 +864,7 @@ class track_matcher:
         return initials[0], initials[1], htrack
     
 
-    def get_star_data(self, binary, star1, star2, co, copy_prev_m0=None, copy_prev_t0=None):
+    def get_star_data(self, binary, star1, star2, copy_prev_m0=None, copy_prev_t0=None): #, co, copy_prev_m0=None, copy_prev_t0=None):
                 """Get and interpolate the properties of stars.
 
                 The data of a compact object can be stored as a copy of its
@@ -877,6 +877,13 @@ class track_matcher:
                     htrack of star1. False if star 1 is a stripped He star
                 co: bool
                     co of star2. True if star 2 is a compact object
+                copy_prev_m0 : float
+                    A mass value that may be copied from e.g., another star in the case
+                    of the target star being a compact object
+                copy_prev_t0 : float
+                    An age value that may be copied from e.g., another star in the case
+                    of the target star being a compact object
+
                 Return
                 -------
                 interp1d
@@ -890,6 +897,7 @@ class track_matcher:
                 KEYS_POSITIVE = self.KEYS_POSITIVE
 
                 htrack = star1.htrack
+                co = star1.co
 
                 with np.errstate(all="ignore"):
                     # get the initial m0, t0 track
@@ -916,12 +924,13 @@ class track_matcher:
                 else:
                     self.grid = self.grid_strippedHe
                 
-                # check if m0 is in the grid
+                # check if m0 is in the grid bounds
                 if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
                     set_binary_to_failed(binary)
                     raise MatchingError(f"The mass {m0} is out of the single star grid range and "
                                         "cannot be matched to a track.")
 
+                # get/interpolate track values for requested mass m0
                 get_track = self.grid.get
 
                 max_time = binary.properties.max_simulation_time
@@ -970,7 +979,7 @@ class track_matcher:
                 interp1d["m0"] = m0
 
                 if co:
-                    kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star2.mass
+                    kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star1.mass
                     kvalue["R"] = np.zeros_like(kvalue["log_R"])
                     kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
                     interp1d["mass"] = PchipInterpolator(age, kvalue["mass"])

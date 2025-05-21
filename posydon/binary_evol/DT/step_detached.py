@@ -666,85 +666,112 @@ class detached_step:
             else:                                   # no star in the system
                 raise POSYDONError("There is no star to evolve. Who summoned me?")
 
-        if self.non_existent_companion == 0: #no isolated evolution, detached step of an actual binary
-            # the primary in a real binary is potential compact object, or the more evolved star
-            if (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state in STAR_STATES_H_RICH):
+        if self.non_existent_companion == 0: #no isolated evolution, detached step of a binary 
+            # where both stars exist. The primary is a potential compact object, or the more evolved star
+
+            # star 1 is a CO, star 2 is H-rich
+            if (binary.star_1.state in STAR_STATES_CO and
+                binary.star_2.state in STAR_STATES_H_RICH):
+
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = True
                 primary.htrack = secondary.htrack
                 primary.co = True
 
-            elif (binary.star_1.state in STAR_STATES_CO
-                    and binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+            # star 1 is a CO, star 2 is an He star
+            elif (binary.star_1.state in STAR_STATES_CO and
+                  binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = False
                 primary.htrack = secondary.htrack
                 primary.co = True
 
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state in STAR_STATES_H_RICH):
+            # star 1 is H-rich, star 2 is a CO
+            elif (binary.star_1.state in STAR_STATES_H_RICH and
+                  binary.star_2.state in STAR_STATES_CO):
+                
                 primary = binary.star_2
                 secondary = binary.star_1
                 secondary.htrack = True
                 primary.htrack = secondary.htrack
                 primary.co = True
 
-            elif (binary.star_2.state in STAR_STATES_CO
-                    and binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+            # star 1 is an He star, star 2 is a CO
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
+                  binary.star_2.state in STAR_STATES_CO):
+                
                 primary = binary.star_2
                 secondary = binary.star_1
                 secondary.htrack = False
                 primary.htrack = secondary.htrack
                 primary.co = True
-            elif (binary.star_1.state in STAR_STATES_H_RICH
-                    and binary.star_2.state in STAR_STATES_H_RICH):
+            
+            # star 1 is H-rich, star 2 is H-rich
+            elif (binary.star_1.state in STAR_STATES_H_RICH and
+                  binary.star_2.state in STAR_STATES_H_RICH):
+                
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = True
                 primary.htrack = True
                 primary.co = False
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_2.state in STAR_STATES_H_RICH):
+
+            # star 1 is an He star, star 2 is H-rich
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
+                  binary.star_2.state in STAR_STATES_H_RICH):
+                
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = True
                 primary.htrack = False
                 primary.co = False
-            elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_1.state in STAR_STATES_H_RICH):
+
+            # star 1 is H-rich, star 2 is an He star
+            elif (binary.star_1.state in STAR_STATES_H_RICH and
+                  binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                
                 primary = binary.star_2
                 secondary = binary.star_1
                 secondary.htrack = True
                 primary.htrack = False
                 primary.co = False
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    and binary.star_2.state
-                    in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+
+            # star 1 is an He star, star 2 is an He star
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
+                  binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                
                 primary = binary.star_1
                 secondary = binary.star_2
                 secondary.htrack = False
                 primary.htrack = False
                 primary.co = False
+
             else:
                 raise ValueError("States not recognized!")
 
+        # In case a star is a massless remnant:
+        # We force primary.co = True for all isolated evolution
+        # where the primary does not exist (is a massless remnant) 
+        # and the secondary is the one evolving
+
         # star 1 is a massless remnant, only star 2 exists
         elif self.non_existent_companion == 1:
-            # we force primary.co=True for all isolated evolution,
-            # where the secondary is the one evolving one
             primary = binary.star_1
             primary.co = True
             primary.htrack = False
             secondary = binary.star_2
+
+            # only H-rich star left
             if (binary.star_2.state in STAR_STATES_H_RICH):
                 secondary.htrack = True
+            # only He star left
             elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 secondary.htrack = False
+            # only a compact object left
             elif (binary.star_2.state in STAR_STATES_CO):
-                # only a compact object left
                 return
             else:
                 raise ValueError("State not recognized!")
@@ -755,6 +782,7 @@ class detached_step:
             primary.co = True
             primary.htrack = False
             secondary = binary.star_1
+
             if (binary.star_1.state in STAR_STATES_H_RICH):
                 secondary.htrack = True
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
@@ -766,22 +794,27 @@ class detached_step:
         else:
             raise POSYDONError("Non existent companion has not a recognized value!")
 
+        secondary.co = False
+
         # >>>>>> START MATCHING
         # get the matched data of two stars, respectively
-        interp1d_sec, m0, t0 = self.track_matcher.get_star_data(binary, secondary, primary, co=False)
+        interp1d_sec, m0, t0 = self.track_matcher.get_star_data(binary, secondary)
 
+        # primary is a CO or does not exist (co=True)
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
+        # otherwise
         primary_normal = (not primary.co) and self.non_existent_companion == 0
+
+        print("primary_normal? ", primary_normal)
 
         if primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             interp1d_pri = self.track_matcher.get_star_data(
-                binary, secondary, primary, co=True,
-                copy_prev_m0=m0, copy_prev_t0=t0)[0]
+                binary, primary, copy_prev_m0=m0, copy_prev_t0=t0)[0]
         elif primary_normal:
             interp1d_pri = self.track_matcher.get_star_data(
-                binary, primary, secondary, False)[0]
+                binary, primary)[0]
         else:
             raise ValueError("During matching, the primary should either be normal (stellar object) or ",
                              "not normal (CO, nonexistent companion).")
