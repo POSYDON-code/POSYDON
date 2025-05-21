@@ -766,6 +766,7 @@ class detached_step:
         else:
             raise POSYDONError("Non existent companion has not a recognized value!")
 
+        # >>>>>> START MATCHING
         # get the matched data of two stars, respectively
         interp1d_sec, m0, t0 = self.track_matcher.get_star_data(binary, secondary, primary, secondary.htrack, co=False)
 
@@ -790,7 +791,8 @@ class detached_step:
             failed_state = binary.state
             set_binary_to_failed(binary)
             raise MatchingError(f"Grid matching failed for {failed_state} binary.")    
-                  
+
+        # >>>>>> END OF MATCHING
                    
         t0_sec = interp1d_sec["t0"]
         t0_pri = interp1d_pri["t0"]
@@ -1182,7 +1184,7 @@ class detached_step:
                     getattr(obj, key + "_history").extend(history)
 
             secondary.state = check_state_of_star(secondary, star_CO=False)
-
+            
             for timestep in range(-len(t[:-1]), 0):
                 secondary.state_history[timestep] = check_state_of_star(secondary, i=timestep, star_CO=False)
 

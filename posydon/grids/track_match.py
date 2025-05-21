@@ -548,7 +548,7 @@ class track_matcher:
         Returns
         -------
         list of 2 float values
-            Contains the associated (in solar units) and the time (in years)
+            Contains the associated mass (in solar units) and the time (in years)
             such that the time-series in the grid matches
             the properties of the secondary.
 
@@ -874,9 +874,9 @@ class track_matcher:
                 Parameters
                 ----------
                 htrack : bool
-                    htrack of star1. Whether star 1 is a stripped He star
+                    htrack of star1. False if star 1 is a stripped He star
                 co: bool
-                    co of star2. Whether star 2 is a compact object
+                    co of star2. True if star 2 is a compact object
                 Return
                 -------
                 interp1d
