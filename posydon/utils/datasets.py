@@ -38,11 +38,11 @@ ZENODO_COLLECTION['auxiliary'] = {
     'description': "Auxiliary data for POSYDON. It contains data on "\
                    + "supernova prescriptions (Sukhbold+2016, Couch+2020, "\
                    + "Patton+Sukhbold2020), star formation history "\
-                   + "(IllustrisTNG), and detector sensitivity (of O3, O4low, "\
-                   + "O4high, design of three gravitational wave detectors "\
-                   + "H1, L1, V1).", #TODO
+                   + "(IllustrisTNG, Zavala+2021, Chruslinska+2021), and "\
+                   + "detector sensitivity (of O3, O4low, O4high, design of "\
+                   + "three gravitational wave detectors H1, L1, V1).",
     'md5': None, #TODO
-    'title': "Auxiliary POSYDON data", #TODO
+    'title': "Auxiliary POSYDON data",
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
 
@@ -84,73 +84,81 @@ COMPLETE_SETS['super-Eddington_v1'] = ['v1_for_v2.0.0-pre1',
 ZENODO_COLLECTION['v2_grids_2Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at twice solar metallicity. It "\
-                   + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at twice solar metallicity.", #TODO
+                   + "contains single-HMS, single-HeMS, HMS-HMS, HMS-HMS_RLO,"\
+                   + " CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO all at twice solar "\
+                   + "metallicity.",
     'md5': None, #TODO
-    'title': "POSYDON v2.0 dataset at 2 Zsun", #TODO
+    'title': "POSYDON v2.0 dataset at 2 Zsun",
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
 ZENODO_COLLECTION['v2_grids_1Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at solar metallicity. It "\
-                   + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at solar metallicity.", #TODO
+                   + "contains single-HMS, single-HeMS, HMS-HMS, HMS-HMS_RLO,"\
+                   + " CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO all at twice solar "\
+                   + "metallicity.",
     'md5': None, #TODO
-    'title': "POSYDON v2.0 dataset at Zsun", #TODO
+    'title': "POSYDON v2.0 dataset at Zsun",
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
 ZENODO_COLLECTION['v2_grids_0.45Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.45 solar metallicity. It "\
-                   + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 0.45 solar metallicity.", #TODO
+                   + "contains single-HMS, single-HeMS, HMS-HMS, HMS-HMS_RLO,"\
+                   + " CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO all at twice solar "\
+                   + "metallicity.",
     'md5': None, #TODO
-    'title': "POSYDON v2.0 dataset at 0.45 Zsun", #TODO
+    'title': "POSYDON v2.0 dataset at 0.45 Zsun",
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
 ZENODO_COLLECTION['v2_grids_0.2Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.2 solar metallicity. It "\
-                   + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 0.2 solar metallicity.", #TODO
+                   + "contains single-HMS, single-HeMS, HMS-HMS, HMS-HMS_RLO,"\
+                   + " CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO all at twice solar "\
+                   + "metallicity.",
     'md5': None, #TODO
-    'title': "POSYDON v2.0 dataset at 0.2 Zsun", #TODO
+    'title': "POSYDON v2.0 dataset at 0.2 Zsun",
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
 ZENODO_COLLECTION['v2_grids_0.1Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.1 solar metallicity. It "\
-                   + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 0.1 solar metallicity.", #TODO
+                   + "contains single-HMS, single-HeMS, HMS-HMS, HMS-HMS_RLO,"\
+                   + " CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO all at twice solar "\
+                   + "metallicity.",
     'md5': None, #TODO
-    'title': "POSYDON v2.0 dataset at 0.1 Zsun", #TODO
+    'title': "POSYDON v2.0 dataset at 0.1 Zsun",
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
 ZENODO_COLLECTION['v2_grids_0.01Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 0.01 solar metallicity. It "\
-                   + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 0.01 solar metallicity.", #TODO
+                   + "contains single-HMS, single-HeMS, HMS-HMS, HMS-HMS_RLO,"\
+                   + " CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO all at twice solar "\
+                   + "metallicity.",
     'md5': None, #TODO
-    'title': "POSYDON v2.0 dataset at 0.01 Zsun", #TODO
+    'title': "POSYDON v2.0 dataset at 0.01 Zsun",
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
 ZENODO_COLLECTION['v2_grids_1e-3Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 10^{-3} solar metallicity. It "\
-                   + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 10^{-3} solar metallicity.", #TODO
+                   + "contains single-HMS, single-HeMS, HMS-HMS, HMS-HMS_RLO,"\
+                   + " CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO all at twice solar "\
+                   + "metallicity.",
     'md5': None, #TODO
-    'title': "POSYDON v2.0 dataset at 10^{-3} Zsun", #TODO
+    'title': "POSYDON v2.0 dataset at 10^{-3} Zsun",
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
 ZENODO_COLLECTION['v2_grids_1e-4Zsun'] = {
     'data': None, #TODO
     'description': "The POSYDON v2 dataset at 10^{-4} solar metallicity. It "\
-                   + "contains single-HMS, single-HeMS, HMS-HMS, CO-HMS_RLO, "\
-                   + "CO-HeMS, CO-HeMS_RLO all at 10^{-4} solar metallicity.", #TODO
+                   + "contains single-HMS, single-HeMS, HMS-HMS, HMS-HMS_RLO,"\
+                   + " CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO all at twice solar "\
+                   + "metallicity.",
     'md5': None, #TODO
-    'title': "POSYDON v2.0 dataset at 10^{-4} Zsun", #TODO
+    'title': "POSYDON v2.0 dataset at 10^{-4} Zsun",
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
 COMPLETE_SETS['v2'] = ['auxiliary', 'v2_grids_2Zsun', 'v2_grids_1Zsun',
