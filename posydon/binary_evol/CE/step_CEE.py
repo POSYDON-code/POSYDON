@@ -950,13 +950,13 @@ class StepCEE(object):
 
         # Calculate the post-CE binary properties
         if (common_envelope_option_after_succ_CEE
-            == "CEE_one_phase_variable_core_definition"):
+            == "one_phase_variable_core_definition"):
             (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
              merger) = self.CEE_one_phase_variable_core_definition(donor, 
                         mc1_i, rc1_i, comp_star, mc2_i, rc2_i, 
                         separation_postCEE, verbose=verbose)
         elif (common_envelope_option_after_succ_CEE
-              == "CEE_two_phases_stableMT"):
+              == "two_phases_stableMT"):
             (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
              merger) = self.CEE_two_phases_stableMT(donor, mc1_i, rc1_i,
                                                     donor_type, comp_star,
@@ -965,7 +965,7 @@ class StepCEE(object):
                                                     separation_postCEE,
                                                     verbose=verbose)
         elif (common_envelope_option_after_succ_CEE
-              == "CEE_two_phases_windloss"):
+              == "two_phases_windloss"):
             (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
              merger) = self.CEE_two_phases_windloss(donor, mc1_i, rc1_i,
                                                     donor_type, comp_star,
