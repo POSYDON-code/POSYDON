@@ -995,7 +995,9 @@ class StepCEE(object):
 
             # Adjust the binary and single star properties due to merger
             self.CEE_adjust_binary_upon_merger(binary, donor, comp_star, m1_i,
-                m2_i, donor_type, Mejected_donor, Mejected_comp, verbose)
+                                               m2_i, donor_type, comp_type,
+                                               Mejected_donor, Mejected_comp,
+                                               verbose)
         else:
             # Adjust the binary and single star properties due to ejection
             self.CEE_adjust_binary_upon_ejection(binary, donor, mc1_f, rc1_f,
@@ -1369,8 +1371,9 @@ class StepCEE(object):
         return Mejected_donor, Mejected_comp
 
     def CEE_adjust_binary_upon_merger(self, binary, donor, comp_star, m1_i,
-                                      m2_i, donor_type, Mejected_donor,
-                                      Mejected_comp, verbose=False):
+                                      m2_i, donor_type, comp_type,
+                                      Mejected_donor, Mejected_comp,
+                                      verbose=False):
         """Update the binary and component stars upon merging within a CEE.
 
         The binary's state and event are updated along with the donor and 
@@ -1390,6 +1393,8 @@ class StepCEE(object):
             Mass of the companion upon entering a CE (in Msun)
         donor_type : string
             Descriptor for the stellar type of the donor's core
+        comp_type : string
+            Descriptor for the stellar type of the companion or it's core
         Mejected_donor : float
             How much mass is ejected from the donor upon merger (in Msun)
         Mejected_comp : float
