@@ -52,15 +52,12 @@ from posydon.popsyn.rate_calculation import (
     get_comoving_distance_from_redshift,
     get_cosmic_time_from_redshift,
     redshift_from_cosmic_time_interpolator,
-    DEFAULT_MODEL,
+    DEFAULT_SFH_MODEL,
     get_redshift_bin_edges,
     get_redshift_bin_centers,
 )
 
-from posydon.popsyn.star_formation_history import (
-    star_formation_rate,
-    SFR_Z_fraction_at_given_redshift,
-)
+from posydon.popsyn.star_formation_history import SFR_per_met_at_z
 
 from posydon.popsyn.binarypopulation import (
     BinaryPopulation,
@@ -2030,20 +2027,16 @@ class TransientPopulation(Population):
         Examples
         --------
         >>> transient_population = TransientPopulation('filename.h5', 'transient_name')
-        >>> transient_population.calculate_cosmic_weights('IllustrisTNG', MODEL_in=DEFAULT_MODEL)
+        >>> transient_population.calculate_cosmic_weights('IllustrisTNG', MODEL_in=DEFAULT_SFH_MODEL)
         """
 
         # Set model to DEFAULT or provided MODEL parameters
         # Allows for partial model specification
         if MODEL_in is None:
-            MODEL = DEFAULT_MODEL
+            MODEL = DEFAULT_SFH_MODEL
         else:
-            for key in MODEL_in:
-                if key not in DEFAULT_MODEL:
-                    raise ValueError(key + " is not a valid parameter name!")
-
-            # write the DEFAULT_MODEL with updates parameters to self.MODEL.
-            MODEL = DEFAULT_MODEL
+            # write the DEFAULT_SFH_MODEL with updated parameters to MODEL.
+            MODEL = DEFAULT_SFH_MODEL
             MODEL.update(MODEL_in)
 
         path_in_file = (
@@ -2083,23 +2076,12 @@ class TransientPopulation(Population):
         get_redshift_from_cosmic_time = redshift_from_cosmic_time_interpolator()
         indices = self.indices
 
+        met_edges = rates.edges_metallicity_bins
         # sample the SFH for only the events that are within the Hubble time
         # only need to sample the SFH at each metallicity and z_birth
-        # Not for every event!
-        SFR_at_z_birth = star_formation_rate(rates.MODEL["SFR"], z_birth)
-        # get metallicity bin edges
-        met_edges = rates.edges_metallicity_bins
-
-        # get the fractional SFR at each metallicity and z_birth
-        fSFR = SFR_Z_fraction_at_given_redshift(
-            z_birth,
-            rates.MODEL["SFR"],
-            rates.MODEL["sigma_SFR"],
-            met_edges,
-            rates.MODEL["Z_max"],
-            rates.MODEL["select_one_met"],
-        )
-
+        # Not for every event!        
+        SFR_per_met_at_z_birth = SFR_per_met_at_z(z_birth, met_edges, rates.MODEL)
+        
         # simulated mass per given metallicity corrected for the unmodeled
         # single and binary stellar mass
         M_model = rates.mass_per_metallicity.loc[rates.centers_metallicity_bins / Zsun][
@@ -2153,7 +2135,7 @@ class TransientPopulation(Population):
             )
             
             weights = np.zeros((len(met_events), nr_of_birth_bins))
-            for i, met in enumerate(rates.centers_metallicity_bins):
+            for j, met in enumerate(rates.centers_metallicity_bins):
                 mask = met_events == met
                 weights[mask, :] = (
                     4.0
@@ -2161,8 +2143,8 @@ class TransientPopulation(Population):
                     * c
                     * D_c[mask] ** 2
                     * deltaT
-                    * (fSFR[:, i] * SFR_at_z_birth)
-                    / M_model[i]
+                    * SFR_per_met_at_z_birth[:, j]
+                    / M_model[j]
                 )  # yr^-1
 
             with pd.HDFStore(self.filename, mode="a") as store:

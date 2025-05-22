@@ -27,8 +27,9 @@ class TestElements:
                     'ClassificationWarning', 'EvolutionWarning',\
                     'InappropriateValueWarning', 'IncompletenessWarning',\
                     'InterpolationWarning', 'MissingFilesWarning',\
-                    'NoPOSYDONWarnings', 'OverwriteWarning', 'POSYDONWarning',\
-                    'Pwarn', 'ReplaceValueWarning', 'SetPOSYDONWarnings',\
+                    'NoPOSYDONWarnings', 'OverwriteWarning', 'SFHModelWarning',\
+                    'POSYDONWarning','Pwarn', 'ReplaceValueWarning',\
+                    'SetPOSYDONWarnings',\
                     'UnsupportedModelWarning', '_CAUGHT_POSYDON_WARNINGS',\
                     '_Caught_POSYDON_Warnings', '_POSYDONWarning_subclasses',\
                     '_POSYDON_WARNINGS_REGISTRY', '__authors__',\
@@ -101,6 +102,10 @@ class TestElements:
         assert isclass(totest.UnsupportedModelWarning)
         assert issubclass(totest.UnsupportedModelWarning,\
                           totest.POSYDONWarning)
+        
+    def test_instance_SFHModelWarning(self):
+        assert isclass(totest.SFHModelWarning)
+        assert issubclass(totest.SFHModelWarning, totest.POSYDONWarning)
 
     def test_instance_POSYDONWarning_subclasses(self):
         assert isinstance(totest._POSYDONWarning_subclasses, (dict))
