@@ -375,7 +375,7 @@ If the energy budget is less than the binding energy, the system is merged.
     - | The option for handling the system after a successful common envelope ejection.
      
       * ``'one_phase_variable_core_definition'`` : lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; no mass transfer (use this defined core mass as the stripped remnant mass)
-      * ``'two_phases_stableMT'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second have a stable, but fully non-conservative mass transfer from the core to the companion until stripped to the core defined in MESA; in the case of a double CE redirect to ``'two_phases_windloss'``
+      * ``'two_phases_stableMT'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second have a stable and fully non-conservative mass transfer from the core to the companion until stripped to the core defined in MESA; in the case of a double CE redirect to ``'two_phases_windloss'``
       * ``'two_phases_windloss'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second lose the mass remaining mass above the core defined in MESA as a fast wind
     - ``'two_phases_stableMT'``
 
