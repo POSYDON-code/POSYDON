@@ -11,6 +11,7 @@ __authors__ = [
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Camille Liotine <cliotine@u.northwestern.edu>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 import os
@@ -674,89 +675,97 @@ class detached_step:
             if (binary.star_1.state in STAR_STATES_CO and
                 binary.star_2.state in STAR_STATES_H_RICH):
 
-                primary = binary.star_1
-                primary.htrack = secondary.htrack
-                primary.co = True
                 secondary = binary.star_2
                 secondary.htrack = True
                 secondary.co = False
+
+                primary = binary.star_1
+                primary.htrack = secondary.htrack
+                primary.co = True
 
             # star 1 is a CO, star 2 is an He star
             elif (binary.star_1.state in STAR_STATES_CO and
                   binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 
-                primary = binary.star_1
-                primary.htrack = secondary.htrack
-                primary.co = True
                 secondary = binary.star_2
                 secondary.htrack = False
                 secondary.co = False
 
+                primary = binary.star_1
+                primary.htrack = secondary.htrack
+                primary.co = True
+
             # star 1 is H-rich, star 2 is a CO
             elif (binary.star_1.state in STAR_STATES_H_RICH and
                   binary.star_2.state in STAR_STATES_CO):
-                
-                primary = binary.star_2
-                primary.htrack = secondary.htrack
-                primary.co = True
+
                 secondary = binary.star_1
                 secondary.htrack = True
                 secondary.co = False
 
-            # star 1 is an He star, star 2 is a CO
-            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
-                  binary.star_2.state in STAR_STATES_CO):
-                
                 primary = binary.star_2
                 primary.htrack = secondary.htrack
                 primary.co = True
+
+            # star 1 is an He star, star 2 is a CO
+            elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
+                  binary.star_2.state in STAR_STATES_CO):
+
                 secondary = binary.star_1
                 secondary.htrack = False
                 secondary.co = False
+
+                primary = binary.star_2
+                primary.htrack = secondary.htrack
+                primary.co = True
             
             # star 1 is H-rich, star 2 is H-rich
             elif (binary.star_1.state in STAR_STATES_H_RICH and
                   binary.star_2.state in STAR_STATES_H_RICH):
                 
-                primary = binary.star_1
-                primary.htrack = True
-                primary.co = False
                 secondary = binary.star_2
                 secondary.htrack = True
                 secondary.co = False
+
+                primary = binary.star_1
+                primary.htrack = True
+                primary.co = False
 
             # star 1 is an He star, star 2 is H-rich
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
                   binary.star_2.state in STAR_STATES_H_RICH):
                 
-                primary = binary.star_1
-                primary.htrack = False
-                primary.co = False
                 secondary = binary.star_2
                 secondary.htrack = True
                 secondary.co = False
 
+                primary = binary.star_1
+                primary.htrack = False
+                primary.co = False
+
             # star 1 is H-rich, star 2 is an He star
             elif (binary.star_1.state in STAR_STATES_H_RICH and
                   binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
-                
-                primary = binary.star_2
-                primary.htrack = False
-                primary.co = False
+
                 secondary = binary.star_1
                 secondary.htrack = True
                 secondary.co = False
+
+                primary = binary.star_2
+                primary.htrack = False
+                primary.co = False
 
             # star 1 is an He star, star 2 is an He star
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
                   binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 
-                primary = binary.star_1
-                primary.htrack = False
-                primary.co = False
                 secondary = binary.star_2
                 secondary.htrack = False
                 secondary.co = False
+
+                primary = binary.star_1
+                primary.htrack = False
+                primary.co = False
 
             else:
                 raise ValueError("States not recognized!")
@@ -837,6 +846,9 @@ class detached_step:
             raise MatchingError(f"Grid matching failed for {failed_state} binary.")    
 
         # >>>>>> END OF MATCHING
+
+        #TESTING
+        binary.append_state()
                    
         t0_sec = interp1d_sec["t0"]
         t0_pri = interp1d_pri["t0"]
@@ -1267,6 +1279,7 @@ class detached_step:
                     binary.orbital_period - orbital_period_from_separation(
                         binary.separation, secondary.mass, primary.mass)
                 ) / binary.orbital_period < 10 ** (-2)
+
                 binary.eccentricity = 0
 
                 if s.t_events[0]:
