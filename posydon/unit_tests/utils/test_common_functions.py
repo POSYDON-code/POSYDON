@@ -62,7 +62,7 @@ def star_profile():
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['ALL_RLO_CASES', 'ALL_STAR_STATES', 'BURNING_STATES',\
+        elements = {'ALL_RLO_CASES', 'ALL_STAR_STATES', 'BURNING_STATES',\
                     'CEE_parameters_from_core_abundance_thresholds',\
                     'COMPACT_OBJECTS', 'CO_radius',\
                     'DEFAULT_CE_OPTION_FOR_LAMBDA', 'He_MS_lifetime',\
@@ -71,9 +71,11 @@ class TestElements:
                     'MT_CASE_BC', 'MT_CASE_C', 'MT_CASE_NONBURNING',\
                     'MT_CASE_NO_RLO', 'MT_CASE_TO_STR',\
                     'MT_CASE_UNDETERMINED', 'MT_STR_TO_CASE',\
-                    'PATH_TO_POSYDON', 'Pwarn', 'REL_LOG10_BURNING_THRESHOLD',\
+                    'Pwarn', 'REL_LOG10_BURNING_THRESHOLD',\
                     'RICHNESS_STATES', 'RL_RELATIVE_OVERFLOW_THRESHOLD',\
+                    'STATE_NS_STARMASS_LOWER_LIMIT',\
                     'STATE_NS_STARMASS_UPPER_LIMIT', 'STATE_UNDETERMINED',\
+                    'STATE_WD_STARMASS_UPPER_LIMIT',\
                     'Schwarzschild_Radius', 'THRESHOLD_CENTRAL_ABUNDANCE',\
                     'THRESHOLD_HE_NAKED_ABUNDANCE', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
@@ -108,13 +110,21 @@ class TestElements:
                     'roche_lobe_radius', 'check_for_RLO', 'rotate',\
                     'rzams', 'separation_evol_wind_loss',\
                     'set_binary_to_failed', 'spin_stable_mass_transfer',\
-                    'stefan_boltzmann_law']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
-
-    def test_instance_PATH_TO_POSYDON(self):
-        assert isinstance(totest.PATH_TO_POSYDON, str)
+                    'stefan_boltzmann_law'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_STATE_UNDETERMINED(self):
         assert isinstance(totest.STATE_UNDETERMINED, str)
@@ -179,8 +189,8 @@ class TestElements:
     def test_instance_rzams(self):
         assert isroutine(totest.rzams)
 
-    def test_instance_check_for_RLO(self):
-        assert isroutine(totest.check_for_RLO)
+    def test_instance_roche_lobe_radius(self):
+        assert isroutine(totest.roche_lobe_radius)
 
     def test_instance_check_for_RLO(self):
         assert isroutine(totest.check_for_RLO)
@@ -324,9 +334,6 @@ class TestElements:
 
 class TestValues:
     # check that the values fit
-    def test_value_PATH_TO_POSYDON(self):
-        assert '/' in totest.PATH_TO_POSYDON
-
     def test_value_STATE_UNDETERMINED(self):
         assert totest.STATE_UNDETERMINED == "undetermined_evolutionary_state"
 
@@ -555,18 +562,21 @@ class TestFunctions:
 
     def test_check_for_RLO(self):
         # missing argument
-        with raises(TypeError, match="missing 6 required positional "\
+        with raises(TypeError, match="missing 5 required positional "\
                                      +"arguments: 'm1', 'r1', 'm2', 'r2', "\
-                                     +"'separation', and 'tolerance'"):
+                                     +"and 'separation'"):
             totest.check_for_RLO()
 
         # examples
         tests = [(1.0, 1.0, 1.0, 1.0, 1.0, 1e-3, True),
+                 (2.0, 1.0, 1.0, 1.0, 2.5, 1e-3, True),
+                 (1.0, 1.0, 2.0, 1.0, 2.5, 1e-3, True),
                  (1.0, 1.0, 1.0, 1.0, 4.0, 1e-3, False)]
 
         for (m1, r1, m2, r2, separation, tolerance, RLO) in tests:
-            assert totest.check_for_RLO(m1, r1, m2, r2, separation, \
-                            tolerance) == RLO
+            assert totest.check_for_RLO(m1, r1, m2, r2, separation) == RLO
+            assert totest.check_for_RLO(m1, r1, m2, r2, separation, tolerance)\
+                   == RLO
 
     def test_orbital_separation_from_period(self):
         # missing argument
@@ -1076,7 +1086,7 @@ class TestFunctions:
     def test_get_binary_state_and_event_and_mt_case(self, binary, monkeypatch):
         def mock_infer_mass_transfer_case(rl_relative_overflow,\
                                           lg_mtransfer_rate, donor_state,\
-                                          verbose=False):
+                                          dominating_star=True, verbose=False):
             if rl_relative_overflow is not None:
                 if rl_relative_overflow > 0:
                     return totest.MT_CASE_A
@@ -1336,18 +1346,39 @@ class TestFunctions:
         assert binary.event == "FAILED"
 
     def test_infer_star_state(self):
-        # bad input
-        with raises(TypeError, match="'<=' not supported between instances "\
-                                     +"of 'NoneType' and 'float'"):
-            totest.infer_star_state(star_CO=True)
         # examples: undetermined
         assert totest.infer_star_state() == totest.STATE_UNDETERMINED
         # examples: compact objects
-        tests = [(0.5*totest.STATE_NS_STARMASS_UPPER_LIMIT, "NS"),\
+        tests = [(None, "massless_remnant"), (-1.0, "massless_remnant"),\
+                 (0.0, "massless_remnant"),\
+                 (0.5*min(totest.STATE_NS_STARMASS_LOWER_LIMIT,\
+                          totest.STATE_WD_STARMASS_UPPER_LIMIT), "WD"),\
+                 (totest.STATE_NS_STARMASS_LOWER_LIMIT, "NS"),\
+                 (0.5*(totest.STATE_NS_STARMASS_LOWER_LIMIT
+                       +totest.STATE_NS_STARMASS_UPPER_LIMIT), "NS"),\
                  (totest.STATE_NS_STARMASS_UPPER_LIMIT, "NS"),\
                  (2.0*totest.STATE_NS_STARMASS_UPPER_LIMIT, "BH")]
         for (m, CO) in tests:
             assert totest.infer_star_state(star_mass=m, star_CO=True) == CO
+        # examples: WDs
+        m = totest.STATE_WD_STARMASS_UPPER_LIMIT
+        for sH1 in [None, 0.0, 0.1]:
+            for cH1 in [None, 0.0, 0.1]:
+                for cHe4 in [None, 0.0, 0.1]:
+                    for cC12 in [None, 0.0, 0.1]:
+                        if (((sH1 is None) or (sH1<=0)) and\
+                            ((cH1 is None) or (cH1<=0)) and
+                            ((cHe4 is None) or (cHe4<=0)) and
+                            ((cC12 is None) or (cC12<=0))):
+                            CO = "NS"
+                        else:
+                            CO = "WD"
+                        assert totest.infer_star_state(star_mass=m,\
+                                                       surface_h1=sH1,\
+                                                       center_h1=cH1,\
+                                                       center_he4=cHe4,\
+                                                       center_c12=cC12,\
+                                                       star_CO=True) == CO
         # examples: loop over all cases
         THNA = totest.THRESHOLD_HE_NAKED_ABUNDANCE
         TCA = totest.THRESHOLD_CENTRAL_ABUNDANCE
@@ -1429,7 +1460,21 @@ class TestFunctions:
                  ("stripped_He_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("test_undetermined", totest.MT_CASE_UNDETERMINED)]
         for (ds, c) in tests:
-            assert totest.infer_mass_transfer_case(2*RROT, 2*LMRT, ds) == c
+            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT+1.0, ds) == c
+            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT-1.0, ds) == c
+            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT+1.0, ds,\
+                                                   dominating_star=False) == c
+            assert totest.infer_mass_transfer_case(RROT+1.0, LMRT-1.0, ds,\
+                                                   dominating_star=False) == c
+            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT+1.0, ds) == c
+            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT-1.0, ds)\
+                   == totest.MT_CASE_NO_RLO
+            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT+1.0, ds,\
+                                                   dominating_star=False)\
+                   == totest.MT_CASE_NO_RLO
+            assert totest.infer_mass_transfer_case(RROT-1.0, LMRT-1.0, ds,\
+                                                   dominating_star=False)\
+                   == totest.MT_CASE_NO_RLO
 
     def test_cumulative_mass_transfer_numeric(self):
         # missing argument
