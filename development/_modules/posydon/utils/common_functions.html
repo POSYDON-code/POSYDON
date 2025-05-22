@@ -403,6 +403,44 @@
     <span class="k">return</span> <span class="n">RL</span></div>
 
 
+<div class="viewcode-block" id="check_for_RLO">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.common_functions.check_for_RLO">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_for_RLO</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">separation</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if either star in a binary is overfilling its Roche lobe.</span>
+
+<span class="sd">    It uses roche_lobe_radius and the binary separation to determine if either</span>
+<span class="sd">    star is overfilling their Roche lobe.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    m1 : float</span>
+<span class="sd">        Mass of star 1 (in Msun)</span>
+<span class="sd">    r1 : float</span>
+<span class="sd">        Radius of star 1 (in Rsun)</span>
+<span class="sd">    m2 : float</span>
+<span class="sd">        Mass of star 2 (in Msun)</span>
+<span class="sd">    r2 : float</span>
+<span class="sd">        Radius of star 2 (in Rsun)</span>
+<span class="sd">    separation : float</span>
+<span class="sd">        Orbital separation (in Rsun)</span>
+<span class="sd">    tolerance : float</span>
+<span class="sd">        The tolerance to count Roche-lobe filling as Roche-lobe overflow (in Rsun).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    RLO: bool</span>
+<span class="sd">        Whether either star in the binary is overfilling its Roche Lobe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># First, calculate the Roche radii for each star</span>
+    <span class="n">RL1</span> <span class="o">=</span> <span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">separation</span><span class="p">)</span>
+    <span class="n">RL2</span> <span class="o">=</span> <span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">m2</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">separation</span><span class="p">)</span>
+
+    <span class="c1"># Now check for Roche-lobe overflow</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">r1</span> <span class="o">-</span> <span class="n">RL1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tolerance</span> <span class="ow">and</span> <span class="p">(</span><span class="n">r2</span> <span class="o">-</span> <span class="n">RL2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tolerance</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
 
 <div class="viewcode-block" id="orbital_separation_from_period">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.common_functions.orbital_separation_from_period">[docs]</a>

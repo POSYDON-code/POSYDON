@@ -636,7 +636,7 @@ If the energy budget is less than the binding energy, the system is merged.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">0.3</span></code></p></li>
 </ul>
 </td>
-<td><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.3</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">core_definition_He_fraction</span></code></p></td>
 <td><div class="line-block">
@@ -657,13 +657,12 @@ If the energy budget is less than the binding energy, the system is merged.</p>
 <div class="line">The option for handling the system after a successful common envelope ejection.</div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">'core_not_replaced_noMT'</span></code> : core not replaced, no mass transfer</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'core_replaced_noMT'</span></code> : core replaced, no mass transfer</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'core_not_replaced_stableMT'</span></code> : core not replaced, stable mass transfer</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'core_not_replaced_windloss'</span></code> : core not replaced, wind loss</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'one_phase_variable_core_definition'</span></code> : lose mass till the variable core definition (see <code class="docutils literal notranslate"><span class="pre">core_definition_H_fraction</span></code>/<code class="docutils literal notranslate"><span class="pre">core_definition_He_fraction</span></code>) with the given <code class="docutils literal notranslate"><span class="pre">prescription</span></code>; no mass transfer (use this defined core mass as the stripped remnant mass)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'two_phases_stableMT'</span></code> : first lose mass till the variable core definition (see <code class="docutils literal notranslate"><span class="pre">core_definition_H_fraction</span></code>/<code class="docutils literal notranslate"><span class="pre">core_definition_He_fraction</span></code>) with the given <code class="docutils literal notranslate"><span class="pre">prescription</span></code>; second have a stable and fully non-conservative mass transfer from the core to the companion until stripped to the core defined in MESA; in the case of a double CE redirect to <code class="docutils literal notranslate"><span class="pre">'two_phases_windloss'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'two_phases_windloss'</span></code> : first lose mass till the variable core definition (see <code class="docutils literal notranslate"><span class="pre">core_definition_H_fraction</span></code>/<code class="docutils literal notranslate"><span class="pre">core_definition_He_fraction</span></code>) with the given <code class="docutils literal notranslate"><span class="pre">prescription</span></code>; second lose the mass remaining mass above the core defined in MESA as a fast wind</p></li>
 </ul>
 </td>
-<td><p><code class="docutils literal notranslate"><span class="pre">'core_not_replaced_noMT'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'two_phases_stableMT'</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
 <td><div class="line-block">

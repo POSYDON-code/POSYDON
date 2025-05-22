@@ -176,15 +176,15 @@
          <span class="s2">&quot;common_envelope_option_for_lambda&quot;</span><span class="p">:</span> <span class="s1">&#39;lambda_from_grid_final_values&#39;</span><span class="p">,</span>
          <span class="s2">&quot;common_envelope_option_for_HG_star&quot;</span><span class="p">:</span> <span class="s2">&quot;optimistic&quot;</span><span class="p">,</span>
          <span class="s2">&quot;common_envelope_alpha_thermal&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-         <span class="s2">&quot;core_definition_H_fraction&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>     <span class="c1"># with 0.01 no CE BBHs</span>
+         <span class="s2">&quot;core_definition_H_fraction&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>     <span class="c1"># with 0.01 no CE BBHs</span>
          <span class="s2">&quot;core_definition_He_fraction&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
          <span class="s2">&quot;CEE_tolerance_err&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
          <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-         <span class="s2">&quot;common_envelope_option_after_succ_CEE&quot;</span><span class="p">:</span> <span class="s1">&#39;core_not_replaced_noMT&#39;</span><span class="p">,</span>
+         <span class="s2">&quot;common_envelope_option_after_succ_CEE&quot;</span><span class="p">:</span> <span class="s1">&#39;two_phases_stableMT&#39;</span><span class="p">,</span>
          <span class="s2">&quot;mass_loss_during_CEE_merged&quot;</span><span class="p">:</span> <span class="kc">False</span> <span class="c1"># If False, then no mass loss from this step for a merged star</span>
                                               <span class="c1"># If True, then we remove mass according to the alpha-lambda prescription</span>
                                               <span class="c1"># assuming a final separation where the inner core RLOF starts.</span>
-         <span class="c1"># &quot;core_replaced_noMT&quot; for core_definition_H_fraction=0.01</span>
+         <span class="c1"># &quot;one_phase_variable_core_definition&quot; for core_definition_H_fraction=0.01</span>
 
          <span class="p">}</span>
 
@@ -432,7 +432,7 @@
             <span class="k">if</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s1">&#39;He_core&#39;</span><span class="p">:</span>
                 <span class="n">mc1_i</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">he_core_mass</span>
                 <span class="n">rc1_i</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">he_core_radius</span>
-            <span class="k">elif</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s2">&quot;CO_core&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s1">&#39;CO_core&#39;</span><span class="p">:</span>
                 <span class="n">mc1_i</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_mass</span>
                 <span class="n">rc1_i</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_radius</span>
             <span class="k">else</span><span class="p">:</span>
@@ -490,7 +490,7 @@
             <span class="k">if</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s1">&#39;He_core&#39;</span><span class="p">:</span>
                 <span class="n">mc1_i</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">he_core_mass</span>
                 <span class="n">rc1_i</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">he_core_radius</span>
-            <span class="k">elif</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s2">&quot;CO_core&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s1">&#39;CO_core&#39;</span><span class="p">:</span>
                 <span class="n">mc1_i</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_mass</span>
                 <span class="n">rc1_i</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_radius</span>
             <span class="k">else</span><span class="p">:</span>
@@ -524,6 +524,429 @@
                 <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">lambda_CE</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">donor_type</span></div>
+
+
+<div class="viewcode-block" id="StepCEE.CEE_adjust_post_CE_core_masses">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.CE.html#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_post_CE_core_masses">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CEE_adjust_post_CE_core_masses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">donor</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">donor_type</span><span class="p">,</span>
+            <span class="n">comp_star</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> <span class="n">comp_type</span><span class="p">,</span> <span class="n">double_CE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the post-common-envelope core masses and radii.</span>
+
+<span class="sd">        It determines the post-CE parameters based on the core properties.</span>
+<span class="sd">        Note that these parameters may be updated in a subsequent step </span>
+<span class="sd">        depending on assumptions about whether and how the final layers</span>
+<span class="sd">        of the CE are removed from the cores.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        donor : SingleStar object</span>
+<span class="sd">            The donor star</span>
+<span class="sd">        mc1_i : float</span>
+<span class="sd">            Core mass of the donor after the fast CE phase (in Msun)</span>
+<span class="sd">        rc1_i : float</span>
+<span class="sd">            Core radius of the donor after the fast CE phase (in Rsun)</span>
+<span class="sd">        donor_type : string</span>
+<span class="sd">            String dictating whether the donor has a &#39;He_core&#39; or &#39;CO_core&#39;</span>
+<span class="sd">        comp_star : SingleStar object</span>
+<span class="sd">            The companion star</span>
+<span class="sd">        mc2_i : float</span>
+<span class="sd">            Core mass of the companion after the fast CE phase (in Msun)</span>
+<span class="sd">        rc2_i : float</span>
+<span class="sd">            Core radius of the companion after the fast CE phase (in Rsun)</span>
+<span class="sd">        comp_type : string</span>
+<span class="sd">            String dictating whether the companion has a &#39;He_core&#39;, &#39;CO_core&#39;,</span>
+<span class="sd">            or &#39;not_giant_companion&#39; (e.g. a compact object or MS star).</span>
+<span class="sd">        double_CE : bool</span>
+<span class="sd">            In case we have a double CE situation.</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            In case we want information about the CEE.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        m1c_f: float</span>
+<span class="sd">            Donor mass after the complete CE (in Msun)</span>
+<span class="sd">        r1c_f: float</span>
+<span class="sd">            Donor radius after the complete CE (in Rsun)</span>
+<span class="sd">        m2c_f: float</span>
+<span class="sd">            Companion mass after the complete CE (in Msun)</span>
+<span class="sd">        r2c_f: float</span>
+<span class="sd">            Companion radius after the complete CE (in Rsun)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s1">&#39;He_core&#39;</span><span class="p">:</span>
+            <span class="n">mc1_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">he_core_mass</span>
+            <span class="n">rc1_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">he_core_radius</span>
+        <span class="k">elif</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s1">&#39;CO_core&#39;</span><span class="p">:</span>
+            <span class="n">mc1_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_mass</span>
+            <span class="n">rc1_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_radius</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;donor_type in common envelope is not recognized. &quot;</span>
+                <span class="s2">&quot;donor_type = </span><span class="si">{}</span><span class="s2">, don&#39;t know how to proceed&quot;</span><span class="o">.</span>
+                <span class="nb">format</span><span class="p">(</span><span class="n">donor_type</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">mc1_f</span> <span class="o">&gt;</span> <span class="n">mc1_i</span><span class="p">:</span>
+            <span class="n">mc1_f</span> <span class="o">=</span> <span class="n">mc1_i</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;The final donor core mass (even after stable, postCEE MT)&quot;</span>
+                  <span class="s2">&quot; is higher than the postCEE core mass. Now equalizing to &quot;</span>
+                  <span class="s2">&quot;postCEE mass&quot;</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">double_CE</span><span class="p">:</span>
+            <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">mc2_i</span>
+            <span class="n">rc2_f</span> <span class="o">=</span> <span class="n">rc2_i</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">comp_type</span> <span class="o">==</span> <span class="s1">&#39;He_core&#39;</span><span class="p">:</span>
+                <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">he_core_mass</span>
+                <span class="n">rc2_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">he_core_radius</span>
+            <span class="k">elif</span> <span class="n">comp_type</span> <span class="o">==</span> <span class="s1">&#39;CO_core&#39;</span><span class="p">:</span>
+                <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">co_core_mass</span>
+                <span class="n">rc2_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_radius</span>
+            <span class="k">elif</span> <span class="n">comp_type</span> <span class="o">==</span> <span class="s1">&#39;not_giant_companion&#39;</span><span class="p">:</span>
+                <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">mass</span>
+                <span class="n">rc2_f</span> <span class="o">=</span> <span class="mf">10.</span><span class="o">**</span><span class="p">(</span><span class="n">comp_star</span><span class="o">.</span><span class="n">log_R</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;comp_type in common envelope is not recognized. &quot;</span>
+                    <span class="s2">&quot;comp_type = </span><span class="si">{}</span><span class="s2">, don&#39;t know how to proceed&quot;</span><span class="o">.</span>
+                    <span class="nb">format</span><span class="p">(</span><span class="n">comp_type</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">mc2_f</span> <span class="o">&gt;</span> <span class="n">mc2_i</span><span class="p">:</span>
+                <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">mc2_i</span>
+                <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;The accretor&#39;s final core mass (even after &quot;</span>
+                      <span class="s2">&quot;non-conservative stable, postCEE MT) is &quot;</span>
+                      <span class="s2">&quot;higher that postCEE core mass. &quot;</span>
+                      <span class="s2">&quot;Now equalizing to postCEE mass&quot;</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;m1 core mass (in Msun) change after fast CE phase from: &quot;</span><span class="p">,</span>
+                  <span class="n">mc1_i</span><span class="p">,</span> <span class="s2">&quot; to: &quot;</span><span class="p">,</span> <span class="n">mc1_f</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r1 core radius (in Rsun) change after fast CE phase &quot;</span>
+                  <span class="s2">&quot;from: &quot;</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="s2">&quot; to: &quot;</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;m2 core mass (in Msun) change after fast CE phase from: &quot;</span><span class="p">,</span>
+                  <span class="n">mc2_i</span><span class="p">,</span> <span class="s2">&quot; to: &quot;</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r2 core radius (in Rsun) change after fast CE phase &quot;</span>
+                  <span class="s2">&quot;from: &quot;</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> <span class="s2">&quot; to: &quot;</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span></div>
+
+
+<div class="viewcode-block" id="StepCEE.CEE_one_phase_variable_core_definition">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.CE.html#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_one_phase_variable_core_definition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CEE_one_phase_variable_core_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">donor</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span>
+                                               <span class="n">comp_star</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span>
+                                               <span class="n">separation_postCEE</span><span class="p">,</span>
+                                               <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the post-common-envelope parameters upon exiting a CEE.</span>
+
+<span class="sd">        This prescription assumes the he_core_mass/radius (or</span>
+<span class="sd">        co_core_mass/radius for CEE of stripped_He*) are not further stripped</span>
+<span class="sd">        beyond the core defined given by the core_definition_H/He_fraction.</span>
+<span class="sd">        Hence, there are no changes on the orbit after successful ejection.</span>
+<span class="sd">        Instead it is assumed that the defined core will become the remaining</span>
+<span class="sd">        stripped object with core abundances at its surface.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        donor : SingleStar object</span>
+<span class="sd">            The donor star</span>
+<span class="sd">        mc1_i : float</span>
+<span class="sd">            Core mass of the donor after the fast CE phase (in Msun)</span>
+<span class="sd">        rc1_i : float</span>
+<span class="sd">            Core radius of the donor after the fast CE phase (in Rsun)</span>
+<span class="sd">        comp_star : SingleStar object</span>
+<span class="sd">            The companion star</span>
+<span class="sd">        mc2_i : float</span>
+<span class="sd">            Core mass of the companion after the fast CE phase (in Msun)</span>
+<span class="sd">        rc2_i : float</span>
+<span class="sd">            Core radius of the companion after the fast CE phase (in Rsun)</span>
+<span class="sd">        separation_postCEE : float</span>
+<span class="sd">            Binary&#39;s separation after the fast CE phase (in cm)</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            In case we want information about the CEE.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        m1c_f: float</span>
+<span class="sd">            Donor mass after the complete CE (in Msun)</span>
+<span class="sd">        r1c_f: float</span>
+<span class="sd">            Donor radius after the complete CE (in Rsun)</span>
+<span class="sd">        m2c_f: float</span>
+<span class="sd">            Companion mass after the complete CE (in Msun)</span>
+<span class="sd">        r2c_f: float</span>
+<span class="sd">            Companion radius after the complete CE (in Rsun)</span>
+<span class="sd">        separation_f : float</span>
+<span class="sd">            Binary&#39;s final separation upon exiting the CE (in Rsun)</span>
+<span class="sd">        orbital_period_f : float</span>
+<span class="sd">            Binary&#39;s final orbital period upon exiting the CE (in days)</span>
+<span class="sd">        merger : bool</span>
+<span class="sd">            Whether the binary merged in the CE</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mc1_f</span> <span class="o">=</span> <span class="n">mc1_i</span>
+        <span class="n">rc1_f</span> <span class="o">=</span> <span class="n">rc1_i</span>
+        <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">mc2_i</span>
+        <span class="n">rc2_f</span> <span class="o">=</span> <span class="n">rc2_i</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;m1 core mass pre CEE (He,CO) / to after CEE : &quot;</span><span class="p">,</span>
+                  <span class="n">donor</span><span class="o">.</span><span class="n">he_core_mass</span><span class="p">,</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_mass</span><span class="p">,</span> <span class="n">mc1_f</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;m1 core radius pre CEE (He,CO) / to after CEE : &quot;</span><span class="p">,</span>
+                  <span class="n">donor</span><span class="o">.</span><span class="n">he_core_radius</span><span class="p">,</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_radius</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;m2 core mass pre CEE (He,CO) / to after CEE : &quot;</span><span class="p">,</span>
+                  <span class="n">comp_star</span><span class="o">.</span><span class="n">he_core_mass</span><span class="p">,</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">co_core_mass</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;m2 core radius pre CEE (He,CO) / to after CEE : &quot;</span><span class="p">,</span>
+                  <span class="n">comp_star</span><span class="o">.</span><span class="n">he_core_radius</span><span class="p">,</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">co_core_radius</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">)</span>
+
+        <span class="c1"># Check to see if the system has merged</span>
+        <span class="n">merger</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">check_for_RLO</span><span class="p">(</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span>
+                        <span class="n">separation_postCEE</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_tolerance_err</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">merger</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system merges within the CEE&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system survives CEE, the whole CE is ejected&quot;</span><span class="p">)</span>
+
+        <span class="c1"># since the binary components&#39; masses do not change, the output</span>
+        <span class="c1"># separation is just the input separation in different units</span>
+        <span class="n">separation_f</span> <span class="o">=</span> <span class="n">separation_postCEE</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span>
+
+        <span class="c1"># Calculate the orbital period accordingly</span>
+        <span class="n">orbital_period_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">orbital_period_from_separation</span><span class="p">(</span><span class="n">separation_f</span><span class="p">,</span>
+                                                             <span class="n">mc1_i</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">separation_f</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">,</span>
+                <span class="n">merger</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StepCEE.CEE_two_phases_stableMT">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.CE.html#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_two_phases_stableMT">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CEE_two_phases_stableMT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">donor</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">donor_type</span><span class="p">,</span>
+                                <span class="n">comp_star</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> <span class="n">comp_type</span><span class="p">,</span> <span class="n">double_CE</span><span class="p">,</span>
+                                <span class="n">separation_postCEE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the post-common-envelope parameters upon exiting a CEE.</span>
+
+<span class="sd">        This prescription assumes the he_core_mass/radius (or</span>
+<span class="sd">        co_core_mass/radius for CEE of stripped_He*) becomes the value</span>
+<span class="sd">        determined by MESA pre CEE. It stripes the envelope between the core</span>
+<span class="sd">        defined by the core_definition_H/He_fraction and the MESA core by</span>
+<span class="sd">        assuming an instantaneous stable MT phase (non-conservative, with mass</span>
+<span class="sd">        lost from the accretor) after the successful ejection of the outer</span>
+<span class="sd">        envelope part lost during the fast CE phase.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        donor : SingleStar object</span>
+<span class="sd">            The donor star</span>
+<span class="sd">        mc1_i : float</span>
+<span class="sd">            Core mass of the donor after the fast CE phase (in Msun)</span>
+<span class="sd">        rc1_i : float</span>
+<span class="sd">            Core radius of the donor after the fast CE phase (in Rsun)</span>
+<span class="sd">        comp_star : SingleStar object</span>
+<span class="sd">            The companion star</span>
+<span class="sd">        mc2_i : float</span>
+<span class="sd">            Core mass of the companion after the fast CE phase (in Msun)</span>
+<span class="sd">        rc2_i : float</span>
+<span class="sd">            Core radius of the companion after the fast CE phase (in Rsun)</span>
+<span class="sd">        separation_postCEE : float</span>
+<span class="sd">            Binary&#39;s separation after the fast CE phase (in cm)</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            In case we want information about the CEE.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        m1c_f: float</span>
+<span class="sd">            Donor mass after the complete CE (in Msun)</span>
+<span class="sd">        r1c_f: float</span>
+<span class="sd">            Donor radius after the complete CE (in Rsun)</span>
+<span class="sd">        m2c_f: float</span>
+<span class="sd">            Companion mass after the complete CE (in Msun)</span>
+<span class="sd">        r2c_f: float</span>
+<span class="sd">            Companion radius after the complete CE (in Rsun)</span>
+<span class="sd">        separation_f : float</span>
+<span class="sd">            Binary&#39;s final separation upon exiting the CE (in Rsun)</span>
+<span class="sd">        orbital_period_f : float</span>
+<span class="sd">            Binary&#39;s final orbital period upon exiting the CE (in days)</span>
+<span class="sd">        merger : bool</span>
+<span class="sd">            Whether the binary merged in the CE</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">double_CE</span><span class="p">:</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;A double CE cannot have a stable mass transfer afterwards &quot;</span>
+                  <span class="s2">&quot;as both cores are donors, switch to losing the mass as &quot;</span>
+                  <span class="s2">&quot;wind.&quot;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_two_phases_windloss</span><span class="p">(</span><span class="n">donor</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> 
+                                                <span class="n">donor_type</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> 
+                                                <span class="n">rc2_i</span><span class="p">,</span> <span class="n">comp_type</span><span class="p">,</span> <span class="n">double_CE</span><span class="p">,</span>
+                                                <span class="n">separation_postCEE</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># First find the post-CE parameters for each star</span>
+        <span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_adjust_post_CE_core_masses</span><span class="p">(</span>
+            <span class="n">donor</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">donor_type</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span>
+            <span class="n">comp_type</span><span class="p">,</span> <span class="n">double_CE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># calculate the orbital period after CEE (before adjustment)</span>
+        <span class="n">orbital_period_postCEE</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">orbital_period_from_separation</span><span class="p">(</span>
+            <span class="n">separation_postCEE</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">)</span>
+
+        <span class="c1"># First, check if merger happens before stable MT phase. Note this uses</span>
+        <span class="c1"># the final core radii as we are beyond the point of radius contraction</span>
+        <span class="c1"># (the final radii are a better estimate for the radius after</span>
+        <span class="c1">#  contraction) then the post-CEE value. But the masses are taken</span>
+        <span class="c1"># post-CEE. Hence, this might not detect all mergers, while not</span>
+        <span class="c1"># classifying any surviving binary as merger.</span>
+        <span class="n">merger</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">check_for_RLO</span><span class="p">(</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span>
+            <span class="n">separation_postCEE</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_tolerance_err</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">merger</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system merges within the CEE, prior to stable MT&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> \
+                <span class="n">separation_postCEE</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span> <span class="n">orbital_period_postCEE</span><span class="p">,</span> <span class="n">merger</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system survives initial CEE detachment&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;donor core mass / core radius:&quot;</span><span class="p">,</span> <span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;companion core mass / core radius:&quot;</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">)</span>
+
+
+        <span class="c1"># An assumed stable mass transfer case after postCEE with</span>
+        <span class="c1"># fully non-conservative MT and mass lost from the vicinity</span>
+        <span class="c1"># of the accretor:</span>
+        <span class="n">orbital_period_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">period_change_stable_MT</span><span class="p">(</span>
+            <span class="n">orbital_period_postCEE</span><span class="p">,</span> <span class="n">Mdon_i</span><span class="o">=</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">Mdon_f</span><span class="o">=</span><span class="n">mc1_f</span><span class="p">,</span>
+            <span class="n">Macc_i</span><span class="o">=</span><span class="n">mc2_i</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;during the assumed stable MT phase after postCE&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;the orbit changed from postCEE : &quot;</span><span class="p">,</span> <span class="n">orbital_period_postCEE</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;to : &quot;</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the post-CEE separation</span>
+        <span class="n">separation_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">orbital_separation_from_period</span><span class="p">(</span><span class="n">orbital_period_f</span><span class="p">,</span>
+            <span class="n">mc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">)</span>
+
+        <span class="c1"># Check once more to see if the system has merged during stable MT</span>
+        <span class="n">merger</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">check_for_RLO</span><span class="p">(</span><span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">separation_f</span><span class="p">,</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">CEE_tolerance_err</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">merger</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system merges within the CEE&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system survives CEE, the whole CE is ejected and the &quot;</span>
+                      <span class="s2">&quot;orbit is adopted according to the stable MT&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">separation_f</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">,</span>
+                <span class="n">merger</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StepCEE.CEE_two_phases_windloss">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.CE.html#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_two_phases_windloss">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CEE_two_phases_windloss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">donor</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">donor_type</span><span class="p">,</span>
+                                <span class="n">comp_star</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> <span class="n">comp_type</span><span class="p">,</span>
+                                <span class="n">double_CE</span><span class="p">,</span> <span class="n">separation_postCEE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the post-common-envelope parameters upon exiting a CEE.</span>
+
+<span class="sd">        This prescription assumes the he_core_mass/radius (or</span>
+<span class="sd">        co_core_mass/radius for CEE of stripped_He*) becomes the value</span>
+<span class="sd">        determined by MESA pre CEE. It stripes the envelope between the core</span>
+<span class="sd">        defined by the core_definition_H/He_fraction and the MESA core by</span>
+<span class="sd">        assuming an instantaneous wind loss phase from the donor (or both</span>
+<span class="sd">        components in case of a double CE) after the successful ejection of the</span>
+<span class="sd">        outer envelope part lost during the fast CE phase.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        donor : SingleStar object</span>
+<span class="sd">            The donor star</span>
+<span class="sd">        mc1_i : float</span>
+<span class="sd">            Core mass of the donor after the fast CE phase (in Msun)</span>
+<span class="sd">        rc1_i : float</span>
+<span class="sd">            Core radius of the donor after the fast CE phase (in Rsun)</span>
+<span class="sd">        comp_star : SingleStar object</span>
+<span class="sd">            The companion star</span>
+<span class="sd">        mc2_i : float</span>
+<span class="sd">            Core mass of the companion after the fast CE phase (in Msun)</span>
+<span class="sd">        rc2_i : float</span>
+<span class="sd">            Core radius of the companion after the fast CE phase (in Rsun)</span>
+<span class="sd">        separation_postCEE : float</span>
+<span class="sd">            Binary&#39;s separation after the fast CE phase (in cm)</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            In case we want information about the CEE.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        m1c_f: float</span>
+<span class="sd">            Donor mass after the complete CE (in Msun)</span>
+<span class="sd">        r1c_f: float</span>
+<span class="sd">            Donor radius after the complete CE (in Rsun)</span>
+<span class="sd">        m2c_f: float</span>
+<span class="sd">            Companion mass after the complete CE (in Msun)</span>
+<span class="sd">        r2c_f: float</span>
+<span class="sd">            Companion radius after the complete CE (in Rsun)</span>
+<span class="sd">        separation_f : float</span>
+<span class="sd">            Binary&#39;s final separation upon exiting the CE (in Rsun)</span>
+<span class="sd">        orbital_period_f : float</span>
+<span class="sd">            Binary&#39;s final orbital period upon exiting the CE (in days)</span>
+<span class="sd">        merger : bool</span>
+<span class="sd">            Whether the binary merged in the CE</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># First find the post-CE parameters for each star</span>
+        <span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_adjust_post_CE_core_masses</span><span class="p">(</span>
+            <span class="n">donor</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">donor_type</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span>
+            <span class="n">comp_type</span><span class="p">,</span> <span class="n">double_CE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># calculate the orbital period after CEE (before adjustment)</span>
+        <span class="n">orbital_period_postCEE</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">orbital_period_from_separation</span><span class="p">(</span>
+            <span class="n">separation_postCEE</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">)</span>
+
+        <span class="c1"># First, check if merger happens before wind loss phase. Note this uses</span>
+        <span class="c1"># the final core radii as we are beyond the point of radius contraction</span>
+        <span class="c1"># (the final radii are a better estimate for the radius after</span>
+        <span class="c1">#  contraction) then the post-CEE value. But the masses are taken</span>
+        <span class="c1"># post-CEE. Hence, this might not detect all mergers, while not</span>
+        <span class="c1"># classifying any surviving binary as merger.</span>
+        <span class="n">merger</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">check_for_RLO</span><span class="p">(</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span>
+            <span class="n">separation_postCEE</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_tolerance_err</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">merger</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system merges within the CEE, prior to wind loss&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> \
+                <span class="n">separation_postCEE</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span> <span class="n">orbital_period_postCEE</span><span class="p">,</span> <span class="n">merger</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system survives initial CEE detachment&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;donor core mass / core radius:&quot;</span><span class="p">,</span> <span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;companion core mass / core radius:&quot;</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">)</span>
+
+
+        <span class="c1"># An assumed wind loss after postCEE with mass lost</span>
+        <span class="c1"># from the vicinity of the donor</span>
+        <span class="n">orbital_period_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">period_change_stable_MT</span><span class="p">(</span>
+            <span class="n">orbital_period_postCEE</span><span class="p">,</span> <span class="n">Mdon_i</span><span class="o">=</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">Mdon_f</span><span class="o">=</span><span class="n">mc1_f</span><span class="p">,</span>
+            <span class="n">Macc_i</span><span class="o">=</span><span class="n">mc2_i</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">double_CE</span><span class="p">:</span>
+            <span class="c1"># a wind mass loss from the 2nd star assumed to be</span>
+            <span class="c1"># happening at the same time</span>
+            <span class="n">orbital_period_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">period_change_stable_MT</span><span class="p">(</span>
+                <span class="n">orbital_period_f</span><span class="p">,</span> <span class="n">Mdon_i</span><span class="o">=</span><span class="n">mc2_i</span><span class="p">,</span> <span class="n">Mdon_f</span><span class="o">=</span><span class="n">mc2_f</span><span class="p">,</span>
+                <span class="n">Macc_i</span><span class="o">=</span><span class="n">mc1_f</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;during the assumed windloss phase after postCE&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;the orbit changed from postCEE : &quot;</span><span class="p">,</span> <span class="n">orbital_period_postCEE</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;to : &quot;</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the post-CEE separation</span>
+        <span class="n">separation_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">orbital_separation_from_period</span><span class="p">(</span><span class="n">orbital_period_f</span><span class="p">,</span>
+            <span class="n">mc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">)</span>
+
+        <span class="c1"># Check once more to see if the system has merged during stable MT</span>
+        <span class="n">merger</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">check_for_RLO</span><span class="p">(</span><span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">separation_f</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">CEE_tolerance_err</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">merger</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system merges within the CEE&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system survives CEE, the whole CE is ejected and the &quot;</span>
+                      <span class="s2">&quot;orbit is adopted according to the wind mass loss&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">separation_f</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">,</span>
+                <span class="n">merger</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StepCEE.CEE_simple_alpha_prescription">
@@ -576,17 +999,13 @@
 <span class="sd">        common_envelope_option_after_succ_CEE: str</span>
 <span class="sd">            Options are:</span>
 
-<span class="sd">            1) &quot;core_replaced_noMT&quot;</span>
+<span class="sd">            1) &quot;one_phase_variable_core_definition&quot;</span>
 <span class="sd">                he_core_mass/radius (or co_core_mass/radius for CEE of</span>
 <span class="sd">                stripped_He*) are replaced according to the new core boundary</span>
 <span class="sd">                used for CEE (based on core_definition_H/He_fraction) but no</span>
 <span class="sd">                other change in period after succesful ejection at</span>
 <span class="sd">                alpha-lambda prescription.</span>
-<span class="sd">            2) &quot;core_not_replaced_noMT&quot;</span>
-<span class="sd">                he_core_mass/radius (or co_core_mass/radius for CEE of</span>
-<span class="sd">                stripped_He*) staying as preCEE and no other change in period</span>
-<span class="sd">                after succesful ejection at alpha-lambda prescription.</span>
-<span class="sd">            3) &quot;core_not_replaced_stableMT&quot;</span>
+<span class="sd">            2) &quot;two_phases_stableMT&quot;</span>
 <span class="sd">                he_core_mass/radius (or co_core_mass/radius for CEE of</span>
 <span class="sd">                stripped_He*) staying as preCEE and after succesful ejection at</span>
 <span class="sd">                alpha-lambda prescription, we assume an instantaneous stableMT</span>
@@ -595,7 +1014,7 @@
 <span class="sd">                double_CE), taking away the extra &quot;core&quot; mass as defined by the</span>
 <span class="sd">                core boundary used for CEE (based on</span>
 <span class="sd">                core_definition_H/He_fraction).</span>
-<span class="sd">            4) &quot;core_not_replaced_windloss&quot;</span>
+<span class="sd">            3) &quot;two_phases_windloss&quot;</span>
 <span class="sd">                he_core_mass/radius (or co_core_mass/radius for CEE of</span>
 <span class="sd">                stripped_He*) staying as preCEE and after succesful ejection</span>
 <span class="sd">                at alpha-lambda prescription, we assume a instantaneous</span>
@@ -659,7 +1078,7 @@
                               <span class="o">*</span> <span class="n">mc2_i</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">eorb_postCEE</span><span class="p">)</span>
 
         <span class="c1"># Check to make sure final orbital separation is positive</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">separation_postCEE</span> <span class="o">&gt;</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">CEE_tolerance_err</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">separation_postCEE</span> <span class="o">&lt;</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">CEE_tolerance_err</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;CEE problem, negative postCEE separation&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -671,365 +1090,491 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;separation_i in Rsun&quot;</span><span class="p">,</span> <span class="n">separation_i</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;separation_postCEE in Rsun&quot;</span><span class="p">,</span> <span class="n">separation_postCEE</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">)</span>
 
-        <span class="c1"># now we check if the roche Lobe of any of the cores that spiralled-in</span>
-        <span class="c1"># will be filled if reached this final separation</span>
-        <span class="n">RL1</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">separation_postCEE</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">)</span>
-        <span class="n">RL2</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">mc2_i</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">separation_postCEE</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the post-CE binary properties</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">common_envelope_option_after_succ_CEE</span>
+            <span class="o">==</span> <span class="s2">&quot;one_phase_variable_core_definition&quot;</span><span class="p">):</span>
+            <span class="p">(</span><span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">separation_f</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">,</span>
+             <span class="n">merger</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_one_phase_variable_core_definition</span><span class="p">(</span><span class="n">donor</span><span class="p">,</span> 
+                        <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> 
+                        <span class="n">separation_postCEE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">common_envelope_option_after_succ_CEE</span>
+              <span class="o">==</span> <span class="s2">&quot;two_phases_stableMT&quot;</span><span class="p">):</span>
+            <span class="p">(</span><span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">separation_f</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">,</span>
+             <span class="n">merger</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_two_phases_stableMT</span><span class="p">(</span><span class="n">donor</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span>
+                                                    <span class="n">donor_type</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span>
+                                                    <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> <span class="n">comp_type</span><span class="p">,</span>
+                                                    <span class="n">double_CE</span><span class="p">,</span>
+                                                    <span class="n">separation_postCEE</span><span class="p">,</span>
+                                                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">common_envelope_option_after_succ_CEE</span>
+              <span class="o">==</span> <span class="s2">&quot;two_phases_windloss&quot;</span><span class="p">):</span>
+            <span class="p">(</span><span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">separation_f</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">,</span>
+             <span class="n">merger</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_two_phases_windloss</span><span class="p">(</span><span class="n">donor</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span>
+                                                    <span class="n">donor_type</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span>
+                                                    <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> <span class="n">comp_type</span><span class="p">,</span>
+                                                    <span class="n">double_CE</span><span class="p">,</span>
+                                                    <span class="n">separation_postCEE</span><span class="p">,</span>
+                                                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not accepted option in &quot;</span>
+                             <span class="s2">&quot;common_envelope_option_after_succ_CEE = &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">common_envelope_option_after_succ_CEE</span><span class="si">}</span><span class="s2">, do &quot;</span>
+                             <span class="s2">&quot;not know how to proceed&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Adjust stellar and binary parameters depending on whether the system</span>
+        <span class="c1"># mergers in the CE or not</span>
+        <span class="k">if</span> <span class="n">merger</span><span class="p">:</span>
+            <span class="c1"># Calculate the amount of mass lost during the merger</span>
+            <span class="k">if</span> <span class="n">mass_loss_during_CEE_merged</span><span class="p">:</span>
+                <span class="n">Mejected_donor</span><span class="p">,</span> <span class="n">Mejected_comp</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">CEE_adjust_mass_loss_during_CEE_merged</span><span class="p">(</span><span class="n">donor</span><span class="p">,</span> <span class="n">m1_i</span><span class="p">,</span>
+                        <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span> <span class="n">m2_i</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span>
+                        <span class="n">separation_i</span><span class="p">,</span> <span class="n">alpha_CE</span><span class="p">,</span> <span class="n">radius1</span><span class="p">,</span> <span class="n">radius2</span><span class="p">,</span> <span class="n">double_CE</span><span class="p">,</span>
+                        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Mejected_donor</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">Mejected_comp</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="c1"># Adjust the binary and single star properties due to merger</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">CEE_adjust_binary_upon_merger</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">donor</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span> <span class="n">m1_i</span><span class="p">,</span>
+                                               <span class="n">m2_i</span><span class="p">,</span> <span class="n">donor_type</span><span class="p">,</span> <span class="n">comp_type</span><span class="p">,</span>
+                                               <span class="n">Mejected_donor</span><span class="p">,</span> <span class="n">Mejected_comp</span><span class="p">,</span>
+                                               <span class="n">verbose</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Adjust the binary and single star properties due to ejection</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">CEE_adjust_binary_upon_ejection</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">donor</span><span class="p">,</span> <span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span>
+                <span class="n">donor_type</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">comp_type</span><span class="p">,</span> <span class="n">double_CE</span><span class="p">,</span>
+                <span class="n">separation_f</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">,</span>
+                <span class="n">common_envelope_option_after_succ_CEE</span><span class="p">,</span>
+                <span class="n">core_definition_H_fraction</span><span class="p">,</span>
+                <span class="n">core_definition_He_fraction</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+
+
+
+
+<div class="viewcode-block" id="StepCEE.CEE_adjust_binary_upon_ejection">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.CE.html#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_binary_upon_ejection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CEE_adjust_binary_upon_ejection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">donor</span><span class="p">,</span> <span class="n">mc1_f</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span>
+                <span class="n">donor_type</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">comp_type</span><span class="p">,</span> <span class="n">double_CE</span><span class="p">,</span>
+                <span class="n">separation_f</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">,</span>
+                <span class="n">common_envelope_option_after_succ_CEE</span><span class="p">,</span>
+                <span class="n">core_definition_H_fraction</span><span class="p">,</span>
+                <span class="n">core_definition_He_fraction</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the binary and component stars upon exiting a CEE.</span>
+
+<span class="sd">        The binary&#39;s parameters (orbital period, separation, state, etc.) are</span>
+<span class="sd">        updated along with the donor&#39;s (and in the case of a double CE the</span>
+<span class="sd">        companion&#39;s) parameters as well. Note that certain parameters are set</span>
+<span class="sd">        to np.nan if they are undetermined after the CE.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary: BinaryStar object</span>
+<span class="sd">            The binary system</span>
+<span class="sd">        donor : SingleStar object</span>
+<span class="sd">            The donor star</span>
+<span class="sd">        mc1_f : float</span>
+<span class="sd">            Final core mass of the donor (in Msun)</span>
+<span class="sd">        rc1_f : float</span>
+<span class="sd">            Final core radius of the donor (in Rsun)</span>
+<span class="sd">        donor_type : string</span>
+<span class="sd">            Descriptor for the stellar type of the donor&#39;s core</span>
+<span class="sd">        comp_star : SingleStar object</span>
+<span class="sd">            The companion star</span>
+<span class="sd">        mc2_f : float</span>
+<span class="sd">            Final core mass of the companion (in Msun)</span>
+<span class="sd">        rc2_f : float</span>
+<span class="sd">            Final core radius of the companion (in Rsun)</span>
+<span class="sd">        comp_type : string</span>
+<span class="sd">            Descriptor for the stellar type of the companion or it&#39;s core</span>
+<span class="sd">        double_CE : bool</span>
+<span class="sd">            Whether the CEE is a double CE or not</span>
+<span class="sd">        separation_f : float</span>
+<span class="sd">            Final binary separation upon exiting the CEE (in Rsun)</span>
+<span class="sd">        orbital_period_f : float</span>
+<span class="sd">            Final orbital period upon exiting the CEE (in days)</span>
+<span class="sd">        common_envelope_option_after_succ_CEE : string</span>
+<span class="sd">            Which type of post-common envelope evolution is used to remove</span>
+<span class="sd">            the final layers around the core</span>
+<span class="sd">        core_definition_H_fraction : float</span>
+<span class="sd">            The fractional abundance of H defining the He core (0.3, 0.1, or </span>
+<span class="sd">            0.01)</span>
+<span class="sd">        core_definition_He_fraction : float</span>
+<span class="sd">            The fractional abundance of He defining the CO core (typically 0.1)</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            In case we want information about the CEE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Adjust binary properties</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">separation</span> <span class="o">=</span> <span class="n">separation_f</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span> <span class="o">=</span> <span class="n">orbital_period_f</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;detached&#39;</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># If the binary is sufficiently evolved (core helium exhaustion), then</span>
+        <span class="c1"># don&#39;t sent it to the detached step after successful ejection, but</span>
+        <span class="c1"># send the binary directly to the core collapse step to calculate the</span>
+        <span class="c1"># explosion</span>
+        <span class="k">if</span> <span class="n">donor</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;stripped_He_Central_He_depleted&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">donor</span> <span class="o">==</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">:</span>
+                <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s1">&#39;CC1&#39;</span>
+            <span class="k">elif</span> <span class="n">donor</span> <span class="o">==</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">:</span>
+                <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s1">&#39;CC2&#39;</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;donor radius / core radius / RL1:&quot;</span><span class="p">,</span> <span class="n">radius1</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">RL1</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;companion radius / core radius / RL2:&quot;</span><span class="p">,</span> <span class="n">radius2</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> <span class="n">RL2</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CEE succesfully ejected&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;new orbital period = &quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;new orbital separation = &quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">separation</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;binary event : &quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;double CEE : &quot;</span><span class="p">,</span> <span class="n">double_CE</span><span class="p">)</span>
 
-        <span class="c1"># Check if binary merges or survives</span>
-        <span class="k">if</span> <span class="p">((</span><span class="n">rc1_i</span> <span class="o">-</span> <span class="n">RL1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_tolerance_err</span>
-                <span class="ow">and</span> <span class="p">(</span><span class="n">rc2_i</span> <span class="o">-</span> <span class="n">RL2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">CEE_tolerance_err</span><span class="p">):</span>
-            <span class="c1"># system survives CEE, the whole CE is ejected</span>
-            <span class="c1"># and the new orbital separation for the cores is returned</span>
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system survives CEE, the whole CE is ejected and the &quot;</span>
-                      <span class="s2">&quot;new orbital separation for the cores is returned&quot;</span><span class="p">)</span>
+        <span class="c1"># Set binary values that are not set in CE step to np.nan</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
 
-            <span class="c1"># possible change of core masses</span>
-            <span class="k">if</span> <span class="n">common_envelope_option_after_succ_CEE</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;core_replaced_noMT&quot;</span><span class="p">]:</span>
-                <span class="n">mc1_f</span> <span class="o">=</span> <span class="n">mc1_i</span>
-                <span class="n">rc1_f</span> <span class="o">=</span> <span class="n">rc1_i</span>
-                <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">mc2_i</span>
-                <span class="n">rc2_f</span> <span class="o">=</span> <span class="n">rc2_i</span>
-                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;m1 core mass pre CEE (He,CO) / to after CEE : &quot;</span><span class="p">,</span>
-                          <span class="n">donor</span><span class="o">.</span><span class="n">he_core_mass</span><span class="p">,</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_mass</span><span class="p">,</span> <span class="n">mc1_f</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;m1 core radius pre CEE (He,CO) / to after CEE : &quot;</span><span class="p">,</span>
-                          <span class="n">donor</span><span class="o">.</span><span class="n">he_core_radius</span><span class="p">,</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_radius</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;m2 core mass pre CEE (He,CO) / to after CEE : &quot;</span><span class="p">,</span>
-                          <span class="n">comp_star</span><span class="o">.</span><span class="n">he_core_mass</span><span class="p">,</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">co_core_mass</span><span class="p">,</span> <span class="n">mc2_f</span>
-                          <span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;m2 core radius pre CEE (He,CO) / to after CEE : &quot;</span><span class="p">,</span>
-                          <span class="n">comp_star</span><span class="o">.</span><span class="n">he_core_radius</span><span class="p">,</span>
-                          <span class="n">comp_star</span><span class="o">.</span><span class="n">co_core_radius</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">common_envelope_option_after_succ_CEE</span> <span class="ow">in</span> <span class="p">[</span>
-                    <span class="s2">&quot;core_not_replaced_noMT&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;core_not_replaced_stableMT&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;core_not_replaced_windloss&quot;</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s1">&#39;He_core&#39;</span><span class="p">:</span>
-                    <span class="n">mc1_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">he_core_mass</span>
-                    <span class="n">rc1_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">he_core_radius</span>
-                <span class="k">elif</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s2">&quot;CO_core&quot;</span><span class="p">:</span>
-                    <span class="n">mc1_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_mass</span>
-                    <span class="n">rc1_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_radius</span>
-                <span class="k">if</span> <span class="n">mc1_f</span> <span class="o">&gt;</span> <span class="n">mc1_i</span><span class="p">:</span>
-                    <span class="n">mc1_f</span> <span class="o">=</span> <span class="n">mc1_i</span>
-                    <span class="n">Pwarn</span><span class="p">(</span>
-                        <span class="s2">&quot;The final donor core mass (even after stable, postCEE MT)&quot;</span>
-                        <span class="s2">&quot; is higher than the postCEE core mass. Now equalizing to &quot;</span>
-                        <span class="s2">&quot;postCEE mass&quot;</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">double_CE</span><span class="p">:</span>
-                    <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">mc2_i</span>
-                    <span class="n">rc2_f</span> <span class="o">=</span> <span class="n">rc2_i</span>
+            <span class="c1"># the binary attributes that are changed in the CE step</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">,</span> <span class="s2">&quot;orbital_period&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;eccentricity&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">]:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># the binary attributes that keep the same value from the</span>
+            <span class="c1"># previous step</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;V_sys&quot;</span><span class="p">,</span> <span class="s2">&quot;mass_transfer_case&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;nearest_neighbour_distance&quot;</span><span class="p">]:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># the rest become np.nan</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+        <span class="c1"># Create list of stars that need updated parameters. If normal CE,</span>
+        <span class="c1"># then only donor has updated properties</span>
+        <span class="n">stars</span> <span class="o">=</span> <span class="p">[</span><span class="n">donor</span><span class="p">]</span>
+        <span class="n">star_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">donor_type</span><span class="p">]</span>
+        <span class="n">core_masses</span> <span class="o">=</span> <span class="p">[</span><span class="n">mc1_f</span><span class="p">]</span>
+        <span class="n">core_radii</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc1_f</span><span class="p">]</span>
+
+        <span class="c1"># If a double CE, then the companion&#39;s properties are updated, too</span>
+        <span class="k">if</span> <span class="n">double_CE</span><span class="p">:</span>
+            <span class="n">stars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp_star</span><span class="p">)</span>
+            <span class="n">star_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp_type</span><span class="p">)</span>
+            <span class="n">core_masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mc2_f</span><span class="p">)</span>
+            <span class="n">core_radii</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rc2_f</span><span class="p">)</span>
+
+        <span class="c1"># Adjust stellar properties</span>
+        <span class="k">for</span> <span class="n">star</span><span class="p">,</span> <span class="n">star_type</span><span class="p">,</span> <span class="n">core_mass</span><span class="p">,</span> <span class="n">core_radius</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="n">stars</span><span class="p">,</span> <span class="n">star_types</span><span class="p">,</span> <span class="n">core_masses</span><span class="p">,</span> <span class="n">core_radii</span><span class="p">):</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">core_mass</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">core_radius</span><span class="p">)</span>
+            <span class="n">attributes_changing</span> <span class="o">=</span> <span class="p">[</span>
+                                    <span class="s2">&quot;mass&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;log_R&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;state&quot;</span>
+                                    <span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">star_type</span> <span class="o">==</span> <span class="s1">&#39;He_core&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">common_envelope_option_after_succ_CEE</span> <span class="ow">in</span> <span class="p">[</span>
+                        <span class="s2">&quot;one_phase_variable_core_definition&quot;</span><span class="p">]:</span>
+                    <span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="n">core_definition_H_fraction</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">comp_type</span> <span class="o">==</span> <span class="s1">&#39;He_core&#39;</span><span class="p">:</span>
-                        <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">he_core_mass</span>
-                        <span class="n">rc2_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">he_core_radius</span>
-                    <span class="k">elif</span> <span class="n">comp_type</span> <span class="o">==</span> <span class="s2">&quot;CO_core&quot;</span><span class="p">:</span>
-                        <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">co_core_mass</span>
-                        <span class="n">rc2_f</span> <span class="o">=</span> <span class="n">donor</span><span class="o">.</span><span class="n">co_core_radius</span>
-                    <span class="k">elif</span> <span class="n">comp_type</span> <span class="o">==</span> <span class="s2">&quot;not_giant_companion&quot;</span><span class="p">:</span>
-                        <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">mass</span>
-                        <span class="n">rc2_f</span> <span class="o">=</span> <span class="mf">10.</span><span class="o">**</span><span class="p">(</span><span class="n">comp_star</span><span class="o">.</span><span class="n">log_R</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">mc2_f</span> <span class="o">&gt;</span> <span class="n">mc2_i</span><span class="p">:</span>
-                        <span class="n">mc2_f</span> <span class="o">=</span> <span class="n">mc2_i</span>
-                        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;The accretor&#39;s final core mass (even after &quot;</span>
-                                      <span class="s2">&quot;non-conservative stable, postCEE MT) is &quot;</span>
-                                      <span class="s2">&quot;higher that postCEE core mass. &quot;</span>
-                                      <span class="s2">&quot;Now equalizing to postCEE mass&quot;</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;difference between m1 core mass defined by CEE step&quot;</span>
-                          <span class="s2">&quot; / to the final one as pre CEE : &quot;</span><span class="p">,</span> <span class="n">mc1_f</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;difference between r1 core mass defined by CEE step&quot;</span>
-                          <span class="s2">&quot; / to the final one as pre CEE : &quot;</span><span class="p">,</span> <span class="n">rc1_f</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;difference between m2 core mass defined by CEE step&quot;</span>
-                          <span class="s2">&quot; / to the final one as pre CEE : &quot;</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;difference between r2 core mass defined by CEE step&quot;</span>
-                          <span class="s2">&quot; / to the final one as pre CEE : &quot;</span><span class="p">,</span> <span class="n">rc2_f</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">)</span>
+                    <span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="mf">0.01</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">he_core_mass</span> <span class="o">=</span> <span class="n">core_mass</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">he_core_radius</span> <span class="o">=</span> <span class="n">core_radius</span>
+                <span class="k">if</span> <span class="n">star</span><span class="o">.</span><span class="n">metallicity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">-</span> <span class="mf">0.0142</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span><span class="o">-</span><span class="n">star</span><span class="o">.</span><span class="n">metallicity</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">log_LH</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e99</span>
+                <span class="n">attributes_changing</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                                        <span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;surface_he4&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;log_LH&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;log_LHe&quot;</span><span class="p">,</span>
+                                        <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;he_core_radius&#39;</span>
+                    <span class="p">])</span>
+            <span class="k">elif</span> <span class="n">star_type</span> <span class="o">==</span> <span class="s1">&#39;CO_core&#39;</span><span class="p">:</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">he_core_mass</span> <span class="o">=</span> <span class="n">core_mass</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">he_core_radius</span> <span class="o">=</span> <span class="n">core_radius</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">=</span> <span class="n">core_mass</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">co_core_radius</span> <span class="o">=</span> <span class="n">core_radius</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">if</span> <span class="n">common_envelope_option_after_succ_CEE</span> <span class="ow">in</span> <span class="p">[</span>
+                        <span class="s2">&quot;one_phase_variable_core_definition&quot;</span><span class="p">]:</span>
+                    <span class="n">star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="n">core_definition_He_fraction</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="mf">0.1</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">log_LH</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e99</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">log_LHe</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e99</span>
+                <span class="n">attributes_changing</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                                        <span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;surface_he4&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;log_LH&quot;</span><span class="p">,</span>
+                                        <span class="s2">&quot;log_LHe&quot;</span><span class="p">,</span>
+                                        <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;co_core_radius&#39;</span>
+
+                    <span class="p">])</span>
+            <span class="k">elif</span> <span class="n">star_type</span> <span class="o">==</span> <span class="s2">&quot;not_giant_companion&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Not accepted option in common_envelope_option_after_succ_&quot;</span>
-                    <span class="s2">&quot;CEE = </span><span class="si">{}</span><span class="s2">, dont know how to proceed&quot;</span><span class="o">.</span>
-                    <span class="nb">format</span><span class="p">(</span><span class="n">common_envelope_option_after_succ_CEE</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unrecognized star type:&quot;</span><span class="p">,</span> <span class="n">star_type</span><span class="p">)</span>
 
-            <span class="c1"># possible change of orbital period after CEE</span>
-            <span class="n">orbital_period_postCEE</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">orbital_period_from_separation</span><span class="p">(</span>
-                <span class="n">separation_postCEE</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">common_envelope_option_after_succ_CEE</span> <span class="ow">in</span> <span class="p">[</span>
-                    <span class="s2">&quot;core_replaced_noMT&quot;</span><span class="p">,</span> <span class="s2">&quot;core_not_replaced_noMT&quot;</span><span class="p">]:</span>
-                <span class="n">orbital_period_f</span> <span class="o">=</span> <span class="n">orbital_period_postCEE</span>
-            <span class="k">elif</span> <span class="n">common_envelope_option_after_succ_CEE</span> <span class="ow">in</span> <span class="p">[</span>
-                    <span class="s2">&quot;core_not_replaced_stableMT&quot;</span><span class="p">]:</span>
-                <span class="c1"># An assumed stable mass transfer case after postCEE with</span>
-                <span class="c1"># fully non-conservative MT and mass lost from the vicinity</span>
-                <span class="c1"># of the accretor:</span>
-                <span class="n">orbital_period_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">period_change_stable_MT</span><span class="p">(</span>
-                    <span class="n">orbital_period_postCEE</span><span class="p">,</span> <span class="n">Mdon_i</span><span class="o">=</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">Mdon_f</span><span class="o">=</span><span class="n">mc1_f</span><span class="p">,</span>
-                    <span class="n">Macc_i</span><span class="o">=</span><span class="n">mc2_i</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">double_CE</span><span class="p">:</span>
-                    <span class="c1"># a reverse stable MT assumed to be happening</span>
-                    <span class="c1"># at the same time</span>
-                    <span class="n">orbital_period_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">period_change_stable_MT</span><span class="p">(</span>
-                        <span class="n">orbital_period_f</span><span class="p">,</span> <span class="n">Mdon_i</span><span class="o">=</span><span class="n">mc2_i</span><span class="p">,</span> <span class="n">Mdon_f</span><span class="o">=</span><span class="n">mc2_f</span><span class="p">,</span>
-                        <span class="n">Macc_i</span><span class="o">=</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;during the assumed stable MT phase after postCE&quot;</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;with &#39;common_envelope_option_after_succ_CEE&#39; :&quot;</span><span class="p">,</span>
-                          <span class="n">common_envelope_option_after_succ_CEE</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;the orbit cahnged from postCEE : &quot;</span><span class="p">,</span>
-                          <span class="n">orbital_period_postCEE</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;to : &quot;</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">common_envelope_option_after_succ_CEE</span> <span class="ow">in</span> <span class="p">[</span>
-                    <span class="s2">&quot;core_not_replaced_windloss&quot;</span><span class="p">]:</span>
-                <span class="c1"># An assumed wind loss after postCEE with mass lost</span>
-                <span class="c1"># from the vicinity of the donor</span>
-                <span class="n">orbital_period_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">period_change_stable_MT</span><span class="p">(</span>
-                    <span class="n">orbital_period_postCEE</span><span class="p">,</span> <span class="n">Mdon_i</span><span class="o">=</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">Mdon_f</span><span class="o">=</span><span class="n">mc1_f</span><span class="p">,</span>
-                    <span class="n">Macc_i</span><span class="o">=</span><span class="n">mc2_i</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">double_CE</span><span class="p">:</span>
-                    <span class="c1"># a wind mass loss from the 2nd star assumed to be</span>
-                    <span class="c1"># happening at the same time</span>
-                    <span class="n">orbital_period_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">period_change_stable_MT</span><span class="p">(</span>
-                        <span class="n">orbital_period_f</span><span class="p">,</span> <span class="n">Mdon_i</span><span class="o">=</span><span class="n">mc2_i</span><span class="p">,</span> <span class="n">Mdon_f</span><span class="o">=</span><span class="n">mc2_f</span><span class="p">,</span>
-                        <span class="n">Macc_i</span><span class="o">=</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;during the assumed windloss phase after postCE&quot;</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;with &#39;common_envelope_option_after_succ_CEE&#39; :&quot;</span><span class="p">,</span>
-                          <span class="n">common_envelope_option_after_succ_CEE</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;the orbit cahnged from postCEE : &quot;</span><span class="p">,</span>
-                          <span class="n">orbital_period_postCEE</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;to : &quot;</span><span class="p">,</span> <span class="n">orbital_period_f</span><span class="p">)</span>
-            <span class="n">separation_f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">orbital_separation_from_period</span><span class="p">(</span><span class="n">orbital_period_f</span><span class="p">,</span>
-                                                             <span class="n">mc1_f</span><span class="p">,</span> <span class="n">mc2_f</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">state1_i</span> <span class="o">==</span> <span class="s1">&#39;stripped_He_Central_He_depleted&#39;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">donor</span> <span class="o">==</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">:</span>
-                    <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s1">&#39;CC1&#39;</span>
-                <span class="k">elif</span> <span class="n">donor</span> <span class="o">==</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">:</span>
-                    <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s1">&#39;CC2&#39;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
-
-            <span class="c1"># Adjust binary properties</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">separation</span> <span class="o">=</span> <span class="n">separation_f</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span> <span class="o">=</span> <span class="n">orbital_period_f</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;detached&#39;</span>
-            <span class="c1"># binary.event = None</span>
-
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
-                <span class="c1"># the binary attributes that are changed in the CE step</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">,</span> <span class="s2">&quot;orbital_period&quot;</span><span class="p">,</span>
-                               <span class="s2">&quot;eccentricity&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">]:</span>
-                    <span class="c1"># the binary attributes that keep the same value from the</span>
-                    <span class="c1"># previous step</span>
-                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;V_sys&quot;</span><span class="p">,</span> <span class="s2">&quot;mass_transfer_case&quot;</span><span class="p">,</span>
-                                   <span class="s2">&quot;nearest_neighbour_distance&quot;</span><span class="p">]:</span>
-                        <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>  <span class="c1"># the rest become np.nan</span>
-
-            <span class="n">stars</span> <span class="o">=</span> <span class="p">[</span><span class="n">donor</span><span class="p">]</span>
-            <span class="n">star_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">donor_type</span><span class="p">]</span>
-            <span class="n">core_masses</span> <span class="o">=</span> <span class="p">[</span><span class="n">mc1_f</span><span class="p">]</span>
-            <span class="n">core_radii</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc1_f</span><span class="p">]</span>
-
+            <span class="c1"># Update state of star</span>
+            <span class="n">state_old</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">state</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CEE succesfully ejected&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;new orbital period = &quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;binary event : &quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;double CEE : &quot;</span><span class="p">,</span> <span class="n">double_CE</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;star state of before/ after CE : &quot;</span><span class="p">,</span>
+                        <span class="n">state_old</span><span class="p">,</span> <span class="n">star</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">double_CE</span><span class="p">:</span>
-                <span class="n">stars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp_star</span><span class="p">)</span>
-                <span class="n">star_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp_type</span><span class="p">)</span>
-                <span class="n">core_masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mc2_f</span><span class="p">)</span>
-                <span class="n">core_radii</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rc2_f</span><span class="p">)</span>
+            <span class="c1"># Set star values that are unchanged in CE step to np.nan</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
 
-            <span class="c1"># Adjust donor star properties</span>
-            <span class="k">for</span> <span class="n">star</span><span class="p">,</span> <span class="n">star_type</span><span class="p">,</span> <span class="n">core_mass</span><span class="p">,</span> <span class="n">core_radius</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-                    <span class="n">stars</span><span class="p">,</span> <span class="n">star_types</span><span class="p">,</span> <span class="n">core_masses</span><span class="p">,</span> <span class="n">core_radii</span><span class="p">):</span>
-                <span class="n">star</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">core_mass</span>
-                <span class="n">star</span><span class="o">.</span><span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">core_radius</span><span class="p">)</span>
-                <span class="n">attributes_changing</span> <span class="o">=</span> <span class="p">[</span>
-                                        <span class="s2">&quot;mass&quot;</span><span class="p">,</span>
-                                        <span class="s2">&quot;log_R&quot;</span><span class="p">,</span>
-                                        <span class="s2">&quot;state&quot;</span>
-                                        <span class="p">]</span>
-
-                <span class="k">if</span> <span class="n">star_type</span> <span class="o">==</span> <span class="s1">&#39;He_core&#39;</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">common_envelope_option_after_succ_CEE</span> <span class="ow">in</span> <span class="p">[</span>
-                            <span class="s2">&quot;core_replaced_noMT&quot;</span><span class="p">]:</span>
-                        <span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="n">core_definition_H_fraction</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="mf">0.01</span>
-                    <span class="n">star</span><span class="o">.</span><span class="n">he_core_mass</span> <span class="o">=</span> <span class="n">core_mass</span>
-                    <span class="n">star</span><span class="o">.</span><span class="n">he_core_radius</span> <span class="o">=</span> <span class="n">core_radius</span>
-                    <span class="k">if</span> <span class="n">star</span><span class="o">.</span><span class="n">metallicity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">-</span> <span class="mf">0.0142</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span><span class="o">-</span><span class="n">star</span><span class="o">.</span><span class="n">metallicity</span>
-                    <span class="n">star</span><span class="o">.</span><span class="n">log_LH</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e99</span>
-                    <span class="n">attributes_changing</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-                                            <span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span>
-                                            <span class="s2">&quot;surface_he4&quot;</span><span class="p">,</span>
-                                            <span class="s2">&quot;log_LH&quot;</span><span class="p">,</span>
-                                            <span class="s2">&quot;log_LHe&quot;</span><span class="p">,</span>
-                                            <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>
-                                            <span class="s1">&#39;he_core_radius&#39;</span>
-                        <span class="p">])</span>
-                    <span class="c1">#TODO: update &#39;total_mass_h1&#39; and &#39;total_mass_he4&#39;</span>
-                <span class="k">elif</span> <span class="n">star_type</span> <span class="o">==</span> <span class="s1">&#39;CO_core&#39;</span><span class="p">:</span>
-                    <span class="n">star</span><span class="o">.</span><span class="n">he_core_mass</span> <span class="o">=</span> <span class="n">core_mass</span>
-                    <span class="n">star</span><span class="o">.</span><span class="n">he_core_radius</span> <span class="o">=</span> <span class="n">core_radius</span>
-                    <span class="n">star</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">=</span> <span class="n">core_mass</span>
-                    <span class="n">star</span><span class="o">.</span><span class="n">co_core_radius</span> <span class="o">=</span> <span class="n">core_radius</span>
-                    <span class="n">star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="mf">0.0</span>
-                    <span class="k">if</span> <span class="n">common_envelope_option_after_succ_CEE</span> <span class="ow">in</span> <span class="p">[</span>
-                            <span class="s2">&quot;core_replaced_noMT&quot;</span><span class="p">]:</span>
-                        <span class="n">star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="n">core_definition_He_fraction</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="mf">0.1</span>
-                    <span class="n">star</span><span class="o">.</span><span class="n">log_LH</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e99</span>
-                    <span class="n">star</span><span class="o">.</span><span class="n">log_LHe</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e99</span>
-                    <span class="n">attributes_changing</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-                                            <span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span>
-                                            <span class="s2">&quot;surface_he4&quot;</span><span class="p">,</span>
-                                            <span class="s2">&quot;log_LH&quot;</span><span class="p">,</span>
-                                            <span class="s2">&quot;log_LHe&quot;</span><span class="p">,</span>
-                                            <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>
-                                            <span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span>
-                                            <span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span>
-                                            <span class="s1">&#39;co_core_radius&#39;</span>
-
-                        <span class="p">])</span>
-                    <span class="c1">#TODO: update &#39;total_mass_h1&#39; and &#39;total_mass_he4&#39;</span>
-                <span class="k">elif</span> <span class="n">star_type</span> <span class="o">==</span> <span class="s2">&quot;not_giant_companion&quot;</span><span class="p">:</span>
+                <span class="c1"># the singlestar attributes that are changed</span>
+                <span class="c1"># in the CE step</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">attributes_changing</span><span class="p">:</span>
                     <span class="k">continue</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unrecognized star type:&quot;</span><span class="p">,</span> <span class="n">star_type</span><span class="p">)</span>
 
-                <span class="n">state_old</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">state</span>
-                <span class="n">star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;star state of before/ after CE : &quot;</span><span class="p">,</span>
-                          <span class="n">state_old</span><span class="p">,</span> <span class="n">star</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+                <span class="c1"># the singlestar attributes that keep the same value</span>
+                <span class="c1"># from previous step if not in attributes_changing</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span>
+                        <span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span> <span class="s2">&quot;surface_he4&quot;</span><span class="p">,</span> <span class="s2">&quot;log_LH&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;log_LHe&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_radius&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;co_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;co_core_radius&quot;</span><span class="p">,</span> <span class="s2">&quot;center_h1&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="s2">&quot;metallicity&quot;</span><span class="p">,</span> <span class="s2">&quot;log_LZ&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;log_Lnuc&quot;</span><span class="p">,</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
 
-                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attributes_changing</span><span class="p">:</span>
-                        <span class="c1"># the singlestar attributes that are changed</span>
-                        <span class="c1"># in the CE step</span>
+                <span class="c1"># the rest become NaN&#39;s</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="k">return</span></div>
 
-                        <span class="c1"># the singlestar attributes that keep the same value</span>
-                        <span class="c1"># from previous step if not in attributes_changing</span>
-                        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
-                                <span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span> <span class="s2">&quot;surface_he4&quot;</span><span class="p">,</span> <span class="s2">&quot;log_LH&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;log_LHe&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_radius&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;co_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;co_core_radius&quot;</span><span class="p">,</span> <span class="s2">&quot;center_h1&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="s2">&quot;metallicity&quot;</span><span class="p">,</span> <span class="s2">&quot;log_LZ&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;log_Lnuc&quot;</span><span class="p">,</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">]:</span>
-                            <span class="nb">setattr</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>  <span class="c1"># the rest become NaN&#39;s</span>
 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># system merges</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;merged&#39;</span>
-            <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;oCE1&quot;</span><span class="p">,</span> <span class="s2">&quot;oDoubleCE1&quot;</span><span class="p">]:</span>
-                <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;oMerging1&quot;</span>
-            <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;oCE2&quot;</span><span class="p">,</span> <span class="s2">&quot;oDoubleCE2&quot;</span><span class="p">]:</span>
-                <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;oMerging2&quot;</span>
+<div class="viewcode-block" id="StepCEE.CEE_adjust_mass_loss_during_CEE_merged">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.CE.html#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_mass_loss_during_CEE_merged">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CEE_adjust_mass_loss_during_CEE_merged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">donor</span><span class="p">,</span> <span class="n">m1_i</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span>
+                                               <span class="n">comp_star</span><span class="p">,</span> <span class="n">m2_i</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span>
+                                               <span class="n">separation_i</span><span class="p">,</span> <span class="n">alpha_CE</span><span class="p">,</span> <span class="n">radius1</span><span class="p">,</span>
+                                               <span class="n">radius2</span><span class="p">,</span>
+                                               <span class="n">double_CE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Calculate the amount of mass lost during a stellar merger in a CEE</span>
 
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system merges due to one of the two star&#39;s core filling&quot;</span>
-                      <span class="s2">&quot;its RL&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rdonor core vs RLdonor core = &quot;</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">RL1</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rcompanion vs RLcompanion= &quot;</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> <span class="n">RL2</span><span class="p">)</span>
+<span class="sd">        From the stellar profiles the mass ejected until merger is calculated.</span>
+<span class="sd">        Note that this function only returns non-zero mass-loss values if a</span>
+<span class="sd">        profile is available.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        donor : SingleStar object</span>
+<span class="sd">            The donor star</span>
+<span class="sd">        m1_i : float</span>
+<span class="sd">            Initial mass of the donor (in Msun)</span>
+<span class="sd">        mc1_i : float</span>
+<span class="sd">            Initial core mass of the donor (in Msun)</span>
+<span class="sd">        rc1_i : float</span>
+<span class="sd">            Initial core radius of the donor (in Rsun)</span>
+<span class="sd">        comp_star : SingleStar object</span>
+<span class="sd">            The companion star</span>
+<span class="sd">        m2_i : float</span>
+<span class="sd">            Initial mass of the companion (in Msun)</span>
+<span class="sd">        mc2_i : float</span>
+<span class="sd">            Initial core mass of the companion (in Msun)</span>
+<span class="sd">        rc2_i : float</span>
+<span class="sd">            Initial core radius of the companion (in Rsun)</span>
+<span class="sd">        separation_i : float</span>
+<span class="sd">            Initial separation of the binary (in cm)</span>
+<span class="sd">        alpha_CE : float</span>
+<span class="sd">            Common envelope efficiency parameter (unitless)</span>
+<span class="sd">        radius1 : float</span>
+<span class="sd">            Initial radius of the donor (in Rsun)</span>
+<span class="sd">        radius2 : float</span>
+<span class="sd">            Initial radius of the companion (in Rsun)</span>
+<span class="sd">        double_CE : bool</span>
+<span class="sd">            Whether the CEE is a double CE or not</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            In case we want information about the CEE.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Mejected_donor : float</span>
+<span class="sd">            Mass ejected from the donor (in Msun)</span>
+<span class="sd">        Mejected_comp : float</span>
+<span class="sd">            Mass ejected from the companion (in Msun)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># we calculate the ejected mass from part of the common envelope, using</span>
+        <span class="c1"># a_f = separation_postCEE so that one of the cores (or MS star) is </span>
+        <span class="c1"># filling its inner Roche lobe</span>
+
+        <span class="c1"># First, make sure we have information to calculate ejected mass</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">double_CE</span> <span class="ow">and</span> <span class="n">donor</span><span class="o">.</span><span class="n">profile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">Mejected_donor</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">Mejected_comp</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-            <span class="k">if</span> <span class="n">mass_loss_during_CEE_merged</span><span class="p">:</span>
-                <span class="c1"># we calculate the ejected mass from part of the commone envelope, using</span>
-                <span class="c1"># a_f = separation_postCEE so that one of the cores (or MS star) is filling its inner Roche lobe,</span>
-                <span class="c1"># and assuming that lambda(Menvelope) ~ lamda(Mejected) although</span>
-                <span class="c1"># Mejected &lt; Menvelope (e.g. see Fig1 of Dewi+Tauris2000)</span>
-
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">double_CE</span> <span class="ow">and</span> <span class="n">donor</span><span class="o">.</span><span class="n">profile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">Mejected_donor</span> <span class="o">=</span> <span class="mf">0.0</span>
-                    <span class="n">Mejected_comp</span> <span class="o">=</span> <span class="mf">0.0</span>
-                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;mass_loss_during_CEE_merged == True, but no profile found &quot;</span>
-                                  <span class="s2">&quot;for the donor star. Proceeding with no partial mass ejection.&quot;</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">double_CE</span> <span class="ow">and</span> <span class="p">(</span><span class="n">donor</span><span class="o">.</span><span class="n">profile</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">profile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-                    <span class="n">Mejected_comp</span> <span class="o">=</span> <span class="mf">0.0</span>
-                    <span class="n">Mejected_comp</span> <span class="o">=</span> <span class="mf">0.0</span>
-                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;mass_loss_during_CEE_merged == True, but not profile found &quot;</span>
-                                  <span class="s2">&quot;for the donor or companion star in double_CE. Proceeding with no partial mass ejection.&quot;</span><span class="p">,</span> 
-                                  <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
-
-                <span class="k">else</span><span class="p">:</span>
-
-                    <span class="n">separation_for_inner_RLO1</span> <span class="o">=</span> <span class="n">rc1_i</span> <span class="o">/</span> <span class="n">cf</span><span class="o">.</span><span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">a_orb</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                    <span class="n">separation_for_inner_RLO2</span> <span class="o">=</span> <span class="n">rc2_i</span> <span class="o">/</span> <span class="n">cf</span><span class="o">.</span><span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">mc2_i</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">a_orb</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-                    <span class="n">separation_before_merger</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span> <span class="n">separation_for_inner_RLO1</span><span class="p">,</span> <span class="n">separation_for_inner_RLO2</span> <span class="p">)</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span>
-
-                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;separation_before_merger (for the calculation of Mejected for the merger): &quot;</span><span class="p">,</span><span class="n">separation_before_merger</span><span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span> <span class="p">,</span> <span class="s2">&quot;in Rsun&quot;</span><span class="p">)</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;which is the max of RLO1 or RLO2 of the inner cores: &quot;</span><span class="p">,</span> <span class="n">separation_for_inner_RLO1</span> <span class="p">,</span>  <span class="n">separation_for_inner_RLO2</span><span class="p">,</span> <span class="s2">&quot;in Rsun&quot;</span><span class="p">)</span>
-
-                    <span class="n">E_orb_used_up_to_inner_RLOF</span> <span class="o">=</span> <span class="n">alpha_CE</span> <span class="o">*</span> <span class="p">(</span> <span class="o">-</span> <span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span> <span class="o">*</span> <span class="n">m1_i</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">Msun</span> <span class="o">*</span> <span class="n">m2_i</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">Msun</span><span class="o">/</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">separation_i</span><span class="p">)</span> <span class="o">+</span> \
-                             <span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span> <span class="o">*</span> <span class="n">mc1_i</span>  <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">Msun</span> <span class="o">*</span> <span class="n">mc2_i</span>  <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">Msun</span><span class="o">/</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">separation_before_merger</span><span class="p">)</span> <span class="p">)</span>
-
-                    <span class="c1"># We assume &quot;lambda_from_profile_gravitational_plus_internal_minus_recombination&quot;</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">double_CE</span><span class="p">:</span>
-                        <span class="n">Mejected_donor</span> <span class="o">=</span> <span class="n">calculate_Mejected_for_integrated_binding_energy</span><span class="p">(</span><span class="n">donor</span><span class="o">.</span><span class="n">profile</span><span class="p">,</span> <span class="n">E_orb_used_up_to_inner_RLOF</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">m1_i</span><span class="p">,</span> <span class="n">radius1</span><span class="p">)</span>
-
-                    <span class="k">else</span><span class="p">:</span> <span class="c1"># in double_CE</span>
-
-                        <span class="c1"># Assuming that the ratio of orbital energy used for the partial ejection of each (common) envelope</span>
-                        <span class="c1"># is the same as the ratio of the initial envelope masses:</span>
-
-                        <span class="n">WF</span> <span class="o">=</span> <span class="p">(</span><span class="n">m1_i</span>  <span class="o">-</span> <span class="n">mc1_i</span><span class="p">)</span><span class="o">/</span> <span class="p">(</span><span class="n">m2_i</span> <span class="o">-</span> <span class="n">mc2_i</span>  <span class="o">+</span>  <span class="n">m1_i</span>  <span class="o">-</span> <span class="n">mc1_i</span><span class="p">)</span> <span class="c1"># weight factor for 1:</span>
-                                                            <span class="c1"># = Mdonor,envelope / Mcomp,envelope</span>
-                        <span class="n">Eorb_for_partial_ej_1</span> <span class="o">=</span> <span class="n">E_orb_used_up_to_inner_RLOF</span> <span class="o">*</span> <span class="n">WF</span>
-                        <span class="n">Mejected_donor</span> <span class="o">=</span> <span class="n">calculate_Mejected_for_integrated_binding_energy</span><span class="p">(</span><span class="n">donor</span><span class="o">.</span><span class="n">profile</span><span class="p">,</span> <span class="n">Eorb_for_partial_ej_1</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">m1_i</span><span class="p">,</span> <span class="n">radius1</span><span class="p">)</span>
-
-                        <span class="n">Eorb_for_partial_ej_2</span> <span class="o">=</span> <span class="n">E_orb_used_up_to_inner_RLOF</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">WF</span><span class="p">)</span>
-                        <span class="n">Mejected_comp</span> <span class="o">=</span> <span class="n">calculate_Mejected_for_integrated_binding_energy</span><span class="p">(</span><span class="n">comp_star</span><span class="o">.</span><span class="n">profile</span><span class="p">,</span> <span class="n">Eorb_for_partial_ej_2</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> <span class="n">m2_i</span><span class="p">,</span> <span class="n">radius2</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mejecta_donor = &quot;</span><span class="p">,</span> <span class="n">Mejected_donor</span><span class="p">,</span> <span class="s2">&quot;in Msun compared to its initial envelope =&quot;</span><span class="p">,</span>  <span class="n">m1_i</span>  <span class="o">-</span> <span class="n">mc1_i</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mejecta_comp = &quot;</span><span class="p">,</span> <span class="n">Mejected_comp</span><span class="p">,</span> <span class="s2">&quot;in Msun compared to its initial envelope =&quot;</span><span class="p">,</span>  <span class="n">m2_i</span>  <span class="o">-</span> <span class="n">mc2_i</span><span class="p">)</span>
-<span class="w">                </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">                if not ( (Mejected_donor &lt;= m1_i  - mc1_i) and (Mejected_comp &lt;= m2_i  - mc2_i) ):</span>
-<span class="sd">                    raise Exception(&quot;Mejected_donor in double CEE with mass_loss_during_CEE_merged is found more than Menvelope&quot;)</span>
-<span class="sd">                if not (Mejected_donor &gt;= 0.):</span>
-<span class="sd">                    raise Exception(&quot;The root of the equation in double CEE with mass_loss_during_CEE_merged is found negative&quot;)</span>
-<span class="sd">                &#39;&#39;&#39;</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="n">Mejected_donor</span> <span class="o">&gt;</span> <span class="n">m1_i</span>  <span class="o">-</span> <span class="n">mc1_i</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Mejected_comp</span> <span class="o">&gt;</span> <span class="n">m2_i</span>  <span class="o">-</span> <span class="n">mc2_i</span><span class="p">):</span>
-                    <span class="n">Mejected_donor</span> <span class="o">=</span> <span class="p">(</span><span class="n">m1_i</span>  <span class="o">-</span> <span class="n">mc1_i</span><span class="p">)</span> <span class="o">-</span><span class="mf">0.01</span> <span class="c1"># at least this value of envelope is left.</span>
-                    <span class="n">Mejected_comp</span> <span class="o">=</span> <span class="p">(</span><span class="n">m2_i</span>  <span class="o">-</span> <span class="n">mc2_i</span><span class="p">)</span> <span class="o">-</span><span class="mf">0.01</span>
-                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;M_ejected of at least one star in double CEE is found to be more than the initial envelope. &quot;</span>
-                                  <span class="s2">&quot;Reducing both to their initial_envelope - 0.01 Msun&quot;</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
-
-            <span class="n">donor</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">m1_i</span> <span class="o">-</span> <span class="n">Mejected_donor</span>
-            <span class="n">donor</span><span class="o">.</span><span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="n">comp_star</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">m2_i</span> <span class="o">-</span> <span class="n">Mejected_comp</span>
-            <span class="n">comp_star</span><span class="o">.</span><span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">if</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s1">&#39;CO_core&#39;</span><span class="p">:</span>
-                <span class="n">donor</span><span class="o">.</span><span class="n">he_core_mass</span> <span class="o">=</span> <span class="n">m1_i</span> <span class="o">-</span> <span class="n">Mejected_donor</span>
-                <span class="n">donor</span><span class="o">.</span><span class="n">he_core_radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                <span class="n">comp_star</span><span class="o">.</span><span class="n">he_core_mass</span> <span class="o">=</span> <span class="n">m2_i</span> <span class="o">-</span> <span class="n">Mejected_comp</span>
-                <span class="n">comp_star</span><span class="o">.</span><span class="n">he_core_radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;mass_loss_during_CEE_merged == True, but no profile found &quot;</span>
+                  <span class="s2">&quot;for the donor star. Proceeding with no partial mass &quot;</span>
+                  <span class="s2">&quot;ejection.&quot;</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The mass loss during merging_CEE is: &quot;</span><span class="p">,</span> <span class="n">mass_loss_during_CEE_merged</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;so m1_i , m1_f = &quot;</span><span class="p">,</span> <span class="n">m1_i</span><span class="p">,</span> <span class="n">donor</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;so m2_i , m2_f = &quot;</span><span class="p">,</span> <span class="n">m2_i</span><span class="p">,</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mejecta_donor = 0 in Msun compared to its initial &quot;</span>
+                      <span class="s2">&quot;envelope =&quot;</span><span class="p">,</span>  <span class="n">m1_i</span>  <span class="o">-</span> <span class="n">mc1_i</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mejecta_comp = 0 in Msun compared to its initial &quot;</span>
+                      <span class="s2">&quot;envelope =&quot;</span><span class="p">,</span>  <span class="n">m2_i</span>  <span class="o">-</span> <span class="n">mc2_i</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Mejected_donor</span><span class="p">,</span> <span class="n">Mejected_comp</span>
+        <span class="k">elif</span> <span class="n">double_CE</span> <span class="ow">and</span> <span class="p">(</span><span class="n">donor</span><span class="o">.</span><span class="n">profile</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">comp_star</span><span class="o">.</span><span class="n">profile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">Mejected_donor</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">Mejected_comp</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;mass_loss_during_CEE_merged == True, but no profile found &quot;</span>
+                  <span class="s2">&quot;for the donor or companion star in double_CE. Proceeding &quot;</span>
+                  <span class="s2">&quot;with no partial mass ejection.&quot;</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mejecta_donor = 0 in Msun compared to its initial &quot;</span>
+                      <span class="s2">&quot;envelope =&quot;</span><span class="p">,</span>  <span class="n">m1_i</span>  <span class="o">-</span> <span class="n">mc1_i</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mejecta_comp = 0 in Msun compared to its initial &quot;</span>
+                      <span class="s2">&quot;envelope =&quot;</span><span class="p">,</span>  <span class="n">m2_i</span>  <span class="o">-</span> <span class="n">mc2_i</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Mejected_donor</span><span class="p">,</span> <span class="n">Mejected_comp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">separation_for_inner_RLO1</span> <span class="o">=</span> <span class="n">rc1_i</span> <span class="o">/</span> <span class="n">cf</span><span class="o">.</span><span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">mc1_i</span><span class="p">,</span> <span class="n">mc2_i</span><span class="p">,</span> <span class="n">a_orb</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">separation_for_inner_RLO2</span> <span class="o">=</span> <span class="n">rc2_i</span> <span class="o">/</span> <span class="n">cf</span><span class="o">.</span><span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">mc2_i</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">a_orb</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">separation_before_merger</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">separation_for_inner_RLO1</span><span class="p">,</span>
+                                       <span class="n">separation_for_inner_RLO2</span><span class="p">)</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;separation_before_merger (for the calculation of Mejected &quot;</span>
+                  <span class="s2">&quot;for the merger): &quot;</span><span class="p">,</span> <span class="n">separation_before_merger</span><span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">Rsun</span><span class="p">,</span>
+                  <span class="s2">&quot;in Rsun&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;which is the max of RLO1 or RLO2 of the inner cores: &quot;</span><span class="p">,</span>
+                  <span class="n">separation_for_inner_RLO1</span> <span class="p">,</span>  <span class="n">separation_for_inner_RLO2</span><span class="p">,</span>
+                  <span class="s2">&quot;in Rsun&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the initial and final orbital energies</span>
+        <span class="n">E_orb_initial</span> <span class="o">=</span> <span class="o">-</span> <span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span> <span class="o">*</span> <span class="n">m1_i</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">Msun</span> <span class="o">*</span> <span class="n">m2_i</span> <span class="o">*</span> \
+                        <span class="n">const</span><span class="o">.</span><span class="n">Msun</span><span class="o">/</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">separation_i</span><span class="p">)</span>
+        <span class="n">E_orb_final</span> <span class="o">=</span> <span class="o">-</span> <span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span> <span class="o">*</span> <span class="n">mc1_i</span>  <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">Msun</span> <span class="o">*</span> <span class="n">mc2_i</span> <span class="o">*</span> \
+                      <span class="n">const</span><span class="o">.</span><span class="n">Msun</span><span class="o">/</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">separation_before_merger</span><span class="p">)</span>
+        <span class="n">E_orb_released_to_inner_RLOF</span> <span class="o">=</span> <span class="n">alpha_CE</span> <span class="o">*</span> <span class="p">(</span><span class="n">E_orb_initial</span> <span class="o">-</span> <span class="n">E_orb_final</span><span class="p">)</span>
+
+        <span class="c1"># We assume &quot;lambda_from_profile_gravitational_plus_internal_minus_recombination&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">double_CE</span><span class="p">:</span>
+            <span class="n">Mejected_donor</span> <span class="o">=</span> \
+                <span class="n">calculate_Mejected_for_integrated_binding_energy</span><span class="p">(</span><span class="n">donor</span><span class="o">.</span><span class="n">profile</span><span class="p">,</span>
+                    <span class="n">E_orb_released_to_inner_RLOF</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span> <span class="n">rc1_i</span><span class="p">,</span> <span class="n">m1_i</span><span class="p">,</span> <span class="n">radius1</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># in double_CE</span>
+
+            <span class="c1"># Assuming that the ratio of orbital energy used for the partial</span>
+            <span class="c1"># ejection of each (common) envelope is the same as the ratio of</span>
+            <span class="c1"># the initial envelope masses:</span>
+
+            <span class="n">M_envelope_donor</span> <span class="o">=</span> <span class="n">m1_i</span>  <span class="o">-</span> <span class="n">mc1_i</span>
+            <span class="n">M_envelope_companion</span> <span class="o">=</span> <span class="n">m2_i</span> <span class="o">-</span> <span class="n">mc2_i</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="n">M_envelope_donor</span> <span class="o">/</span> <span class="p">(</span><span class="n">M_envelope_donor</span> <span class="o">+</span> <span class="n">M_envelope_companion</span><span class="p">)</span>
+
+            <span class="n">Eorb_for_partial_ej_donor</span> <span class="o">=</span> <span class="n">E_orb_released_to_inner_RLOF</span> <span class="o">*</span> <span class="n">weight</span>
+            <span class="n">Mejected_donor</span> <span class="o">=</span> <span class="n">calculate_Mejected_for_integrated_binding_energy</span><span class="p">(</span>
+                             <span class="n">donor</span><span class="o">.</span><span class="n">profile</span><span class="p">,</span> <span class="n">Eorb_for_partial_ej_donor</span><span class="p">,</span> <span class="n">mc1_i</span><span class="p">,</span>
+                             <span class="n">rc1_i</span><span class="p">,</span> <span class="n">m1_i</span><span class="p">,</span> <span class="n">radius1</span><span class="p">)</span>
+
+            <span class="n">Eorb_for_partial_ej_companion</span> <span class="o">=</span> <span class="n">E_orb_released_to_inner_RLOF</span> <span class="o">*</span> \
+                                    <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">weight</span><span class="p">)</span>
+            <span class="n">Mejected_comp</span> <span class="o">=</span> <span class="n">calculate_Mejected_for_integrated_binding_energy</span><span class="p">(</span>
+                            <span class="n">comp_star</span><span class="o">.</span><span class="n">profile</span><span class="p">,</span> <span class="n">Eorb_for_partial_ej_companion</span><span class="p">,</span>
+                            <span class="n">mc2_i</span><span class="p">,</span> <span class="n">rc2_i</span><span class="p">,</span> <span class="n">m2_i</span><span class="p">,</span> <span class="n">radius2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mejecta_donor = &quot;</span><span class="p">,</span> <span class="n">Mejected_donor</span><span class="p">,</span>
+                  <span class="s2">&quot;in Msun compared to its initial envelope =&quot;</span><span class="p">,</span>
+                  <span class="n">M_envelope_donor</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mejecta_comp = &quot;</span><span class="p">,</span> <span class="n">Mejected_comp</span><span class="p">,</span>
+                  <span class="s2">&quot;in Msun compared to its initial envelope =&quot;</span><span class="p">,</span>
+                  <span class="n">M_envelope_companion</span><span class="p">)</span>
+
+        <span class="c1"># Make sure that we are not removing more mass than the envelope has available</span>
+        <span class="c1"># If there is more removed keep 0.01 Msun</span>
+        <span class="k">if</span> <span class="n">Mejected_donor</span> <span class="o">&gt;</span> <span class="n">M_envelope_donor</span><span class="p">:</span>
+            <span class="n">Mejected_donor</span> <span class="o">=</span> <span class="n">M_envelope_donor</span> <span class="o">-</span> <span class="mf">0.01</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;M_ejected of the donor is found to be more than its initial &quot;</span>
+                  <span class="s2">&quot;envelope. Reducing its mass loss to have a remaining &quot;</span>
+                  <span class="s2">&quot;envelope of 0.01 Msun&quot;</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Mejected_comp</span> <span class="o">&gt;</span> <span class="n">M_envelope_companion</span><span class="p">:</span>
+            <span class="n">Mejected_comp</span> <span class="o">=</span> <span class="n">M_envelope_companion</span> <span class="o">-</span> <span class="mf">0.01</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;M_ejected of the companion is found to be more than its &quot;</span>
+                  <span class="s2">&quot;initial envelope. Reducing its mass loss to have a &quot;</span>
+                  <span class="s2">&quot;remaining envelope of 0.01 Msun&quot;</span><span class="p">,</span> <span class="s2">&quot;ApproximationWarning&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;In calculation for mass loss during merging_CEE&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initial donor mass = &quot;</span><span class="p">,</span> <span class="n">m1_i</span><span class="p">,</span>
+                  <span class="s2">&quot;Mass lost by donor = &quot;</span><span class="p">,</span> <span class="n">Mejected_donor</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initial companion mass = &quot;</span><span class="p">,</span> <span class="n">m2_i</span><span class="p">,</span>
+                  <span class="s2">&quot;Mass lost by companion = &quot;</span><span class="p">,</span> <span class="n">Mejected_comp</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Mejected_donor</span><span class="p">,</span> <span class="n">Mejected_comp</span></div>
+
+
+<div class="viewcode-block" id="StepCEE.CEE_adjust_binary_upon_merger">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.CE.html#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_binary_upon_merger">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CEE_adjust_binary_upon_merger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">donor</span><span class="p">,</span> <span class="n">comp_star</span><span class="p">,</span> <span class="n">m1_i</span><span class="p">,</span>
+                                      <span class="n">m2_i</span><span class="p">,</span> <span class="n">donor_type</span><span class="p">,</span> <span class="n">comp_type</span><span class="p">,</span>
+                                      <span class="n">Mejected_donor</span><span class="p">,</span> <span class="n">Mejected_comp</span><span class="p">,</span>
+                                      <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the binary and component stars upon merging within a CEE.</span>
+
+<span class="sd">        The binary&#39;s state and event are updated along with the donor and </span>
+<span class="sd">        companion star masses and radii corresponding to a merger event.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary: BinaryStar object</span>
+<span class="sd">            The binary system</span>
+<span class="sd">        donor : SingleStar object</span>
+<span class="sd">            The donor star</span>
+<span class="sd">        comp_star : SingleStar object</span>
+<span class="sd">            The companion star</span>
+<span class="sd">        m1_i : float</span>
+<span class="sd">            Mass of the donor upon entering a CE (in Msun)</span>
+<span class="sd">        m2_i : float</span>
+<span class="sd">            Mass of the companion upon entering a CE (in Msun)</span>
+<span class="sd">        donor_type : string</span>
+<span class="sd">            Descriptor for the stellar type of the donor&#39;s core</span>
+<span class="sd">        comp_type : string</span>
+<span class="sd">            Descriptor for the stellar type of the companion or it&#39;s core</span>
+<span class="sd">        Mejected_donor : float</span>
+<span class="sd">            How much mass is ejected from the donor upon merger (in Msun)</span>
+<span class="sd">        Mejected_comp : float</span>
+<span class="sd">            How much mass is ejected from the companion upon merger (in Msun)</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            In case we want information about the CEE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># system merges</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;merged&#39;</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;oCE1&quot;</span><span class="p">,</span> <span class="s2">&quot;oDoubleCE1&quot;</span><span class="p">]:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;oMerging1&quot;</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;oCE2&quot;</span><span class="p">,</span> <span class="s2">&quot;oDoubleCE2&quot;</span><span class="p">]:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;oMerging2&quot;</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;system merges due to one of the two star&#39;s core filling&quot;</span>
+                    <span class="s2">&quot;its RL&quot;</span><span class="p">)</span>
+
+        <span class="n">donor</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">m1_i</span> <span class="o">-</span> <span class="n">Mejected_donor</span>
+        <span class="n">donor</span><span class="o">.</span><span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">comp_star</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">m2_i</span> <span class="o">-</span> <span class="n">Mejected_comp</span>
+        <span class="n">comp_star</span><span class="o">.</span><span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">if</span> <span class="n">donor_type</span> <span class="o">==</span> <span class="s1">&#39;CO_core&#39;</span><span class="p">:</span>
+            <span class="n">donor</span><span class="o">.</span><span class="n">he_core_mass</span> <span class="o">=</span> <span class="n">m1_i</span> <span class="o">-</span> <span class="n">Mejected_donor</span>
+            <span class="n">donor</span><span class="o">.</span><span class="n">he_core_radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">if</span> <span class="n">comp_type</span> <span class="o">==</span> <span class="s1">&#39;CO_core&#39;</span><span class="p">:</span>
+            <span class="n">comp_star</span><span class="o">.</span><span class="n">he_core_mass</span> <span class="o">=</span> <span class="n">m2_i</span> <span class="o">-</span> <span class="n">Mejected_comp</span>
+            <span class="n">comp_star</span><span class="o">.</span><span class="n">he_core_radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
         <span class="k">return</span></div>
 </div>
