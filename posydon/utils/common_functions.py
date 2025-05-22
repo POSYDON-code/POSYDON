@@ -27,11 +27,12 @@ from posydon.utils.posydonwarning import Pwarn
 import copy
 from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
     THRESHOLD_HE_NAKED_ABUNDANCE, REL_LOG10_BURNING_THRESHOLD,
-    LOG10_BURNING_THRESHOLD, STATE_WD_STARMASS_UPPER_LIMIT,
-    STATE_NS_STARMASS_LOWER_LIMIT, STATE_NS_STARMASS_UPPER_LIMIT,
+    LOG10_BURNING_THRESHOLD, STATE_NS_STARMASS_UPPER_LIMIT,
     RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
 )
 from posydon.utils.interpolators import interp1d
+
+PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
 
 
 # Constants related to inferring star states
@@ -267,27 +268,24 @@ def roche_lobe_radius(m1, m2, a_orb=1):
     )
     return RL
 
-def check_for_RLO(m1, r1, m2, r2, separation, tolerance=1e-8):
+def check_for_RLO(m1, r1, m2, r2, separation, tolerance):
     """Check if either star in a binary is overfilling its Roche lobe.
-
     It uses roche_lobe_radius and the binary separation to determine if either
     star is overfilling their Roche lobe.
-
     Parameters
     ----------
     m1 : float
-        Mass of star 1 (in Msun)
+        mass of star 1
     r1 : float
-        Radius of star 1 (in Rsun)
+        radius of star 1 (in Rsun)
     m2 : float
-        Mass of star 2 (in Msun)
+        mass of star 2
     r2 : float
-        Radius of star 2 (in Rsun)
+        radius of star 2 (in Rsun)
     separation : float
         Orbital separation (in Rsun)
     tolerance : float
-        The tolerance to count Roche-lobe filling as Roche-lobe overflow (in Rsun).
-
+        The tolerance within which a merger occurs (in Rsun).
     Returns
     -------
     RLO: bool
@@ -297,11 +295,11 @@ def check_for_RLO(m1, r1, m2, r2, separation, tolerance=1e-8):
     RL1 = roche_lobe_radius(m1, m2, separation)
     RL2 = roche_lobe_radius(m2, m1, separation)
 
-    # Now check for Roche-lobe overflow
+    # Now check for merger
     if ((r1 - RL1) < tolerance and (r2 - RL2) < tolerance):
         return False
-    else:
-        return True
+
+    return True
 
 def orbital_separation_from_period(period_days, m1_solar, m2_solar):
     """Apply the Third Kepler law.
@@ -1124,17 +1122,9 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
             gamma2 = None
 
     # get numerical MT cases
-    if ((rl_overflow1 is not None) and (rl_overflow2 is not None)):
-        dominating_star1 = (rl_overflow1 >= rl_overflow2)
-    elif rl_overflow2 is not None:
-        dominating_star1 = False
-    else:
-        dominating_star1 = True
     mt_flag_1 = infer_mass_transfer_case(rl_overflow1, lg_mtransfer, state1,
-                                         dominating_star=dominating_star1,
                                          verbose=verbose)
     mt_flag_2 = infer_mass_transfer_case(rl_overflow2, lg_mtransfer, state2,
-                                         dominating_star=not dominating_star1,
                                          verbose=verbose)
     # convert to strings
     mt_flag_1_str = cumulative_mass_transfer_string([mt_flag_1])
@@ -1409,19 +1399,7 @@ def infer_star_state(star_mass=None, surface_h1=None,
                      log_LH=None, log_LHe=None, log_Lnuc=None, star_CO=False):
     """Infer the star state (corresponding to termination flags 2 and 3)."""
     if star_CO:
-        if ((star_mass is None) or (star_mass<=0)):
-            return "massless_remnant"
-        elif ((((surface_h1 is not None) and (surface_h1>0)) or
-               ((center_h1 is not None) and (center_h1>0)) or
-               ((center_he4 is not None) and (center_he4>0)) or
-               ((center_c12 is not None) and (center_c12>0)) or
-               (star_mass < STATE_NS_STARMASS_LOWER_LIMIT)) and
-              (star_mass <= STATE_WD_STARMASS_UPPER_LIMIT)):
-            return "WD"
-        elif (star_mass <= STATE_NS_STARMASS_UPPER_LIMIT):
-            return "NS"
-        else:
-            return "BH"
+        return "NS" if star_mass <= STATE_NS_STARMASS_UPPER_LIMIT else "BH"
 
     if surface_h1 is None:
         return STATE_UNDETERMINED
@@ -1463,22 +1441,15 @@ def infer_star_state(star_mass=None, surface_h1=None,
 def infer_mass_transfer_case(rl_relative_overflow,
                              lg_mtransfer_rate,
                              donor_state,
-                             dominating_star=True,
                              verbose=False):
     """Infer the mass-transfer case of a given star.
 
     Parameters
     ----------
     rl_relative_overflow : float
-        Relative Roche lobe overflowing parameter.
     lg_mtransfer_rate : float
-        The mass transfer rate in log_10.
     donor_state : str
         Values of star parameters at a specific step.
-    dominating_star : bool (default: True)
-        Whether this star is the orgin of the mass transfer rate.
-    verbose : bool (default: False)
-        In case we want additional information printed to standard output.
 
     Returns
     -------
@@ -1490,8 +1461,8 @@ def infer_mass_transfer_case(rl_relative_overflow,
         return MT_CASE_NO_RLO
 
     if ((rl_relative_overflow <= RL_RELATIVE_OVERFLOW_THRESHOLD) and
-        ((lg_mtransfer_rate <= LG_MTRANSFER_RATE_THRESHOLD) or
-         (not dominating_star))):
+        ((lg_mtransfer_rate <= LG_MTRANSFER_RATE_THRESHOLD) and
+         (rl_relative_overflow < 0.0))):
         if verbose:
             print("checking rl_relative_overflow / lg_mtransfer_rate,",
                   rl_relative_overflow, lg_mtransfer_rate)
@@ -2189,12 +2160,12 @@ def period_change_stable_MT(period_i, Mdon_i, Mdon_f, Macc_i,
 def linear_interpolation_between_two_cells(array_y, array_x, x_target,
                                            top=None, bot=None, verbose=False):
     """Interpolate quantities between two star profile shells."""
-    if (pd.isna(top) and pd.isna(bot)):
+    if ((top is None or np.isnan(top)) and (bot is None or np.isnan(bot))):
         top = np.argmax(array_x >= x_target)
         bot = top - 1
-    elif pd.isna(bot):
+    elif bot is None or np.isnan(bot):
         bot = top - 1
-    elif pd.isna(top):
+    elif top is None or np.isnan(top):
         top = bot + 1
 
     if top >= len(array_y):
@@ -2315,7 +2286,7 @@ def calculate_lambda_from_profile(
     # get mass and radius and dm from profile
     donor_mass, donor_radius, donor_dm = get_mass_radius_dm_from_profile(
         profile, m1_i, radius1, tolerance)
-    # if pd.isna(m1_i) or pd.isna(radius1)
+    # if np.isnan(m1_i) or m1_i is None or np.isnan(radius1) or radius1 is None
     m1_i = donor_mass[0]
     radius1 = donor_radius[0]
     specific_internal_energy = get_internal_energy_from_profile(
@@ -2384,7 +2355,7 @@ def calculate_lambda_from_profile(
               m1_i, radius1, len(donor_mass), " vs ", ind_core, mc1_i, rc1_i)
         print("Ebind_i from profile ", Ebind_i)
         print("lambda_CE ", lambda_CE)
-    if not (lambda_CE > -tolerance) and pd.notna(lambda_CE):
+    if not (lambda_CE > -tolerance) and not np.isnan(lambda_CE):
         raise ValueError("lambda_CE has a negative value")
     return lambda_CE, mc1_i, rc1_i
 
