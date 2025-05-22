@@ -155,7 +155,7 @@
     <span class="s1">&#39;separation&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>               <span class="c1"># binary orbital separation (solar radii)</span>
     <span class="s1">&#39;orbital_period&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>           <span class="c1"># binary orbital period (days)</span>
     <span class="s1">&#39;eccentricity&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>             <span class="c1"># binary eccentricity</span>
-    <span class="s1">&#39;V_sys&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>                    <span class="c1"># list of the 3 systemic velocity coordinates</span>
+    <span class="s1">&#39;V_sys&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>                    <span class="c1"># array of the 3 systemic velocity coordinates</span>
     <span class="c1"># (R_{star} - R_{Roche_lobe}) / R_{Roche_lobe}...</span>
     <span class="s1">&#39;rl_relative_overflow_1&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>   <span class="c1"># ...for star 1</span>
     <span class="s1">&#39;rl_relative_overflow_2&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>   <span class="c1"># ...for star 2</span>
@@ -170,14 +170,19 @@
     <span class="s1">&#39;t_sync_rad_2&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
     <span class="s1">&#39;t_sync_conv_2&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
     <span class="s1">&#39;nearest_neighbour_distance&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>   <span class="c1"># the distance of system from its nearest</span>
-                                            <span class="c1"># neighbour of MESA binary system  in case</span>
-                                            <span class="c1"># of interpolation during the the end of</span>
-                                            <span class="c1"># the previous step including MESA psygrid.</span>
-                                            <span class="c1"># The distance is normalized in the</span>
-                                            <span class="c1"># parameter space and limits at which it</span>
-                                            <span class="c1"># was calculated. See `mesa_step` for more.</span>
+                                              <span class="c1"># neighbour of MESA binary system  in case</span>
+                                              <span class="c1"># of interpolation during the the end of</span>
+                                              <span class="c1"># the previous step including MESA psygrid.</span>
+                                              <span class="c1"># The distance is normalized in the</span>
+                                              <span class="c1"># parameter space and limits at which it</span>
+                                              <span class="c1"># was calculated. See `mesa_step` for more.</span>
 <span class="p">}</span>
 
+<span class="c1"># specifies the dtypes of elements within an object (e.g., of elements in an array)</span>
+<span class="n">OBJECT_FIXED_SUB_DTYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;V_sys&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;nearest_neighbour_distance&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span>
+<span class="p">}</span>
 
 <span class="n">STARPROPERTIES_DTYPES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>            <span class="c1"># the evolutionary state of the star. For more info see</span>

@@ -147,6 +147,7 @@
     <span class="s2">&quot;Philipp Moura Srivastava &lt;philipp.msrivastava@gmail.com&gt;&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Seth Gossage &lt;seth.gossage@northwestern.edu&gt;&quot;</span>
 <span class="p">]</span>
 
 
@@ -159,7 +160,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">check_state_of_star</span><span class="p">,</span> <span class="n">orbital_period_from_separation</span><span class="p">,</span>
     <span class="n">orbital_separation_from_period</span><span class="p">,</span> <span class="n">get_binary_state_and_event_and_mt_case</span><span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">clean_binary_history_df</span><span class="p">,</span> <span class="n">clean_binary_oneline_df</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">clean_binary_history_df</span><span class="p">,</span> <span class="n">clean_binary_oneline_df</span><span class="p">,</span> 
+                               <span class="n">BINARYPROPERTIES_DTYPES</span><span class="p">,</span> <span class="n">OBJECT_FIXED_SUB_DTYPES</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNDEFINED_STATES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonerror</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlowError</span> 
 
@@ -276,13 +278,15 @@
         <span class="c1"># Set the initial binary properties</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;V_sys&#39;</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span>
+                                                                      <span class="mf">0.0</span><span class="p">,</span>
+                                                                      <span class="mf">0.0</span><span class="p">])))</span>
             <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;mass_transfer_case&#39;</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;None&#39;</span><span class="p">))</span>
             <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;nearest_neighbour_distance&#39;</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;None&#39;</span><span class="p">,</span>
-                                                             <span class="s1">&#39;None&#39;</span><span class="p">,</span>
-                                                             <span class="s1">&#39;None&#39;</span><span class="p">]))</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span>
+                                                             <span class="mf">0.0</span><span class="p">,</span>
+                                                             <span class="mf">0.0</span><span class="p">]))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">binary_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span> <span class="o">+</span> <span class="s1">&#39;_history&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)])</span>
@@ -515,6 +519,9 @@
         <span class="n">extra_binary_cols_dict</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extra_columns&#39;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">extra_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">extra_binary_cols_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
+        <span class="c1"># dictionary mapping binary properties (plus extras) to their dtypes</span>
+        <span class="n">properties_dtypes</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">BINARYPROPERTIES_DTYPES</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_binary_cols_dict</span><span class="p">}</span>
+
         <span class="n">all_keys</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;binary_index&quot;</span><span class="p">]</span>
                     <span class="o">+</span> <span class="p">[</span><span class="n">key</span><span class="o">+</span><span class="s1">&#39;_history&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">BINARYPROPERTIES</span><span class="p">]</span>
                     <span class="o">+</span> <span class="n">extra_columns</span><span class="p">)</span>
@@ -541,9 +548,41 @@
             <span class="c1"># If a binary fails, usually history cols have diff lengths.</span>
             <span class="c1"># This should append NAN to create even columns.</span>
             <span class="n">all_equal_length_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">col_lengths</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+
             <span class="k">if</span> <span class="ow">not</span> <span class="n">all_equal_length_cols</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">data_to_save</span><span class="p">:</span>
-                    <span class="n">col</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">max_col_length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_to_save</span><span class="p">):</span>
+
+                    <span class="n">dkey</span> <span class="o">=</span> <span class="n">all_keys</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">dtype</span> <span class="o">=</span> <span class="n">properties_dtypes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dkey</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                    <span class="c1"># check type of data and determine what to fill data column with</span>
+                    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">:</span>
+                        <span class="n">filler_value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                    <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;float64&#39;</span><span class="p">:</span>
+                        <span class="n">filler_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="c1"># array-like data</span>
+                    <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span><span class="p">:</span>
+                        <span class="c1"># get the max length that data elements have</span>
+                        <span class="n">ele_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
+                        <span class="n">max_ele_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ele_lengths</span><span class="p">)</span>
+                        <span class="n">sub_dtype</span> <span class="o">=</span> <span class="n">OBJECT_FIXED_SUB_DTYPES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dkey</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                        <span class="c1"># array of strings</span>
+                        <span class="k">if</span> <span class="n">sub_dtype</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">:</span>
+                            <span class="n">filler_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">max_ele_length</span><span class="p">)</span>
+                        <span class="c1"># array of float64&#39;s</span>
+                        <span class="k">elif</span> <span class="n">sub_dtype</span> <span class="o">==</span> <span class="s1">&#39;float64&#39;</span><span class="p">:</span>
+                            <span class="n">filler_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="n">max_ele_length</span><span class="p">)</span>
+                        <span class="c1"># default to array of NoneTypes</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">filler_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">max_ele_length</span><span class="p">)</span>
+                            
+                    <span class="c1"># defaulting to NoneType value (gets converted to np.nan below)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">filler_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+                    <span class="c1"># extend data column with determined filler values</span>
+                    <span class="n">col</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">filler_value</span><span class="p">]</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">max_col_length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
 
             <span class="n">where_none</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">True</span> <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">False</span>
                                     <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">column</span><span class="p">]</span>
