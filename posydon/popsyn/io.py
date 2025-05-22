@@ -31,7 +31,7 @@ BINARYPROPERTIES_DTYPES = {
     'separation': 'float64',               # binary orbital separation (solar radii)
     'orbital_period': 'float64',           # binary orbital period (days)
     'eccentricity': 'float64',             # binary eccentricity
-    'V_sys': 'object',                    # list of the 3 systemic velocity coordinates
+    'V_sys': 'object',                    # array of the 3 systemic velocity coordinates
     # (R_{star} - R_{Roche_lobe}) / R_{Roche_lobe}...
     'rl_relative_overflow_1': 'float64',   # ...for star 1
     'rl_relative_overflow_2': 'float64',   # ...for star 2
@@ -46,14 +46,19 @@ BINARYPROPERTIES_DTYPES = {
     't_sync_rad_2': 'float64',
     't_sync_conv_2': 'float64',
     'nearest_neighbour_distance': 'object',   # the distance of system from its nearest
-                                            # neighbour of MESA binary system  in case
-                                            # of interpolation during the the end of
-                                            # the previous step including MESA psygrid.
-                                            # The distance is normalized in the
-                                            # parameter space and limits at which it
-                                            # was calculated. See `mesa_step` for more.
+                                              # neighbour of MESA binary system  in case
+                                              # of interpolation during the the end of
+                                              # the previous step including MESA psygrid.
+                                              # The distance is normalized in the
+                                              # parameter space and limits at which it
+                                              # was calculated. See `mesa_step` for more.
 }
 
+# specifies the dtypes of elements within an object (e.g., of elements in an array)
+OBJECT_FIXED_SUB_DTYPES = {
+    'V_sys': 'float64',
+    'nearest_neighbour_distance': 'float64'
+}
 
 STARPROPERTIES_DTYPES = {
     'state': 'string',            # the evolutionary state of the star. For more info see
