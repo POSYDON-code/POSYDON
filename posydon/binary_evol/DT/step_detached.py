@@ -650,6 +650,7 @@ class detached_step:
         binary_sim_prop = getattr(binary, "properties")   ## simulation properties of the binary
         all_step_names = getattr(binary_sim_prop, "all_step_names")
 
+        # >>>>>> START DETERMINING PRIMARY/SECONDARY STATES
         companion_1_exists = (binary.star_1 is not None
                               and binary.star_1.state != "massless_remnant")
         companion_2_exists = (binary.star_2 is not None
@@ -674,80 +675,88 @@ class detached_step:
                 binary.star_2.state in STAR_STATES_H_RICH):
 
                 primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
                 primary.htrack = secondary.htrack
                 primary.co = True
+                secondary = binary.star_2
+                secondary.htrack = True
+                secondary.co = False
 
             # star 1 is a CO, star 2 is an He star
             elif (binary.star_1.state in STAR_STATES_CO and
                   binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 
                 primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = False
                 primary.htrack = secondary.htrack
                 primary.co = True
+                secondary = binary.star_2
+                secondary.htrack = False
+                secondary.co = False
 
             # star 1 is H-rich, star 2 is a CO
             elif (binary.star_1.state in STAR_STATES_H_RICH and
                   binary.star_2.state in STAR_STATES_CO):
                 
                 primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = True
                 primary.htrack = secondary.htrack
                 primary.co = True
+                secondary = binary.star_1
+                secondary.htrack = True
+                secondary.co = False
 
             # star 1 is an He star, star 2 is a CO
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
                   binary.star_2.state in STAR_STATES_CO):
                 
                 primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = False
                 primary.htrack = secondary.htrack
                 primary.co = True
+                secondary = binary.star_1
+                secondary.htrack = False
+                secondary.co = False
             
             # star 1 is H-rich, star 2 is H-rich
             elif (binary.star_1.state in STAR_STATES_H_RICH and
                   binary.star_2.state in STAR_STATES_H_RICH):
                 
                 primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
                 primary.htrack = True
                 primary.co = False
+                secondary = binary.star_2
+                secondary.htrack = True
+                secondary.co = False
 
             # star 1 is an He star, star 2 is H-rich
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
                   binary.star_2.state in STAR_STATES_H_RICH):
                 
                 primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = True
                 primary.htrack = False
                 primary.co = False
+                secondary = binary.star_2
+                secondary.htrack = True
+                secondary.co = False
 
             # star 1 is H-rich, star 2 is an He star
             elif (binary.star_1.state in STAR_STATES_H_RICH and
                   binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 
                 primary = binary.star_2
-                secondary = binary.star_1
-                secondary.htrack = True
                 primary.htrack = False
                 primary.co = False
+                secondary = binary.star_1
+                secondary.htrack = True
+                secondary.co = False
 
             # star 1 is an He star, star 2 is an He star
             elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
                   binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
                 
                 primary = binary.star_1
-                secondary = binary.star_2
-                secondary.htrack = False
                 primary.htrack = False
                 primary.co = False
+                secondary = binary.star_2
+                secondary.htrack = False
+                secondary.co = False
 
             else:
                 raise ValueError("States not recognized!")
@@ -763,6 +772,7 @@ class detached_step:
             primary.co = True
             primary.htrack = False
             secondary = binary.star_2
+            secondary.co = False
 
             # only H-rich star left
             if (binary.star_2.state in STAR_STATES_H_RICH):
@@ -782,6 +792,7 @@ class detached_step:
             primary.co = True
             primary.htrack = False
             secondary = binary.star_1
+            secondary.co = False
 
             if (binary.star_1.state in STAR_STATES_H_RICH):
                 secondary.htrack = True
@@ -794,7 +805,7 @@ class detached_step:
         else:
             raise POSYDONError("Non existent companion has not a recognized value!")
 
-        secondary.co = False
+        # >>>>>> DONE DETERMINING PRIMARY/SECONDARY STATES
 
         # >>>>>> START MATCHING
         # get the matched data of two stars, respectively
@@ -848,15 +859,17 @@ class detached_step:
                 raise ValueError("max_time is lower than the current time. "
                                 "Evolution of the detached binary will go to "
                                 "lower times.")
+            
             with np.errstate(all="ignore"):
                 omega_in_rad_per_year_sec = get_omega(secondary)
                 if primary_not_normal:
-                    # omega of compact objects or masslessremnant won't be used for intergration
+                    # omega of compact objects or massless remnant won't be used for integration
                     omega_in_rad_per_year_pri = omega_in_rad_per_year_sec
                 elif not primary.co:
-                    omega_in_rad_per_year_pri = get_omega(primary,is_secondary = False)
+                    omega_in_rad_per_year_pri = get_omega(primary, is_secondary = False)
 
                 t_before_ODEsolution = time.time()
+                
                 try:
                     s = solve_ivp(
                         lambda t, y: diffeq(
