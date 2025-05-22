@@ -23,6 +23,7 @@ __authors__ = [
     "Philipp Moura Srivastava <philipp.msrivastava@gmail.com>",
     "Devina Misra <devina.misra@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
@@ -35,7 +36,8 @@ from posydon.binary_evol.singlestar import SingleStar, STARPROPERTIES
 from posydon.utils.common_functions import (
     check_state_of_star, orbital_period_from_separation,
     orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
-from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df)
+from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df, 
+                               BINARYPROPERTIES_DTYPES, OBJECT_FIXED_SUB_DTYPES)
 from posydon.binary_evol.flow_chart import UNDEFINED_STATES
 from posydon.utils.posydonerror import FlowError 
 
@@ -147,13 +149,15 @@ class BinaryStar:
         # Set the initial binary properties
         for item in BINARYPROPERTIES:
             if item == 'V_sys':
-                setattr(self, item, binary_kwargs.pop(item, [0,0,0]))
+                setattr(self, item, binary_kwargs.pop(item, np.array([0.0,
+                                                                      0.0,
+                                                                      0.0])))
             elif item == 'mass_transfer_case':
                 setattr(self, item, binary_kwargs.pop(item, 'None'))
             elif item == 'nearest_neighbour_distance':
-                setattr(self, item, binary_kwargs.pop(item, ['None',
-                                                             'None',
-                                                             'None']))
+                setattr(self, item, binary_kwargs.pop(item, [0.0,
+                                                             0.0,
+                                                             0.0]))
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
@@ -363,6 +367,9 @@ class BinaryStar:
         extra_binary_cols_dict = kwargs.get('extra_columns', {})
         extra_columns = list(extra_binary_cols_dict.keys())
 
+        # dictionary mapping binary properties (plus extras) to their dtypes
+        properties_dtypes = {**BINARYPROPERTIES_DTYPES, **extra_binary_cols_dict}
+
         all_keys = (["binary_index"]
                     + [key+'_history' for key in BINARYPROPERTIES]
                     + extra_columns)
@@ -389,9 +396,41 @@ class BinaryStar:
             # If a binary fails, usually history cols have diff lengths.
             # This should append NAN to create even columns.
             all_equal_length_cols = len(set(col_lengths)) == 1
+
             if not all_equal_length_cols:
-                for col in data_to_save:
-                    col.extend([np.nan] * abs(max_col_length - len(col)))
+                for i, col in enumerate(data_to_save):
+
+                    dkey = all_keys[i]
+                    dtype = properties_dtypes.get(dkey, '')
+
+                    # check type of data and determine what to fill data column with
+                    if dtype == 'string':
+                        filler_value = ''
+                    elif dtype == 'float64':
+                        filler_value = np.nan
+                    # array-like data
+                    elif dtype == 'object':
+                        # get the max length that data elements have
+                        ele_lengths = [len(x) for x in col]
+                        max_ele_length = np.max(ele_lengths)
+                        sub_dtype = OBJECT_FIXED_SUB_DTYPES.get(dkey, '')
+
+                        # array of strings
+                        if sub_dtype == 'string':
+                            filler_value = np.array([''] * max_ele_length)
+                        # array of float64's
+                        elif sub_dtype == 'float64':
+                            filler_value = np.array([np.nan] * max_ele_length)
+                        # default to array of NoneTypes
+                        else:
+                            filler_value = np.array([None] * max_ele_length)
+                            
+                    # defaulting to NoneType value (gets converted to np.nan below)
+                    else:
+                        filler_value = None
+
+                    # extend data column with determined filler values
+                    col.extend([filler_value] * abs(max_col_length - len(col)))
 
             where_none = np.array([[True if var is None else False
                                     for var in column]
