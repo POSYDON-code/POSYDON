@@ -361,7 +361,7 @@ If the energy budget is less than the binding energy, the system is merged.
       * ``0.01``
       * ``0.1``
       * ``0.3``
-    - ``0.1``
+    - ``0.3``
 
   * - ``core_definition_He_fraction``
     - | The helium fraction for defining the core.
@@ -374,11 +374,10 @@ If the energy budget is less than the binding energy, the system is merged.
   * - ``common_envelope_option_after_succ_CEE``
     - | The option for handling the system after a successful common envelope ejection.
      
-      * ``'core_not_replaced_noMT'`` : core not replaced, no mass transfer
-      * ``'core_replaced_noMT'`` : core replaced, no mass transfer
-      * ``'core_not_replaced_stableMT'`` : core not replaced, stable mass transfer
-      * ``'core_not_replaced_windloss'`` : core not replaced, wind loss
-    - ``'core_not_replaced_noMT'``
+      * ``'one_phase_variable_core_definition'`` : lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; no mass transfer (use this defined core mass as the stripped remnant mass)
+      * ``'two_phases_stableMT'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second have a stable and fully non-conservative mass transfer from the core to the companion until stripped to the core defined in MESA; in the case of a double CE redirect to ``'two_phases_windloss'``
+      * ``'two_phases_windloss'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second lose the mass remaining mass above the core defined in MESA as a fast wind
+    - ``'two_phases_stableMT'``
 
   * - ``verbose``
     - | Enables verbose mode.
