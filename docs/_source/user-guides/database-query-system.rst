@@ -60,5 +60,5 @@ Best Practices
 Support & Feedback
 ------------------
 
-If you encounter any difficulties or have suggestions for improving the database and query system, please refer to the [contact-information.rst](contact-information.rst) page.
+If you encounter any difficulties or have suggestions for improving the database and query system, please refer to the :doc:`../contact-support/contact-information` page.
 

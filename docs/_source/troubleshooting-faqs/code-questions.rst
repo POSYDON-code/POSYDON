@@ -13,7 +13,7 @@ Frequently Asked Questions
 
 2. **I'm getting an error when using the** ``where`` **parameter in the** ``select`` **function**
 
-    If you're trying to select based on values in an unsupported column, you'll receive an error message like below.
+    If you're trying to select based on values in an unsupported column, you'll receive an error message like the one below.
     Only specific columns are supported for selection. These are limited to string columns, the indices, and the column names.
     Please perform the selection in-memory instead.
 
@@ -53,7 +53,7 @@ Frequently Asked Questions
 4. **What should the walltime and job array size be for my population synthesis run?**
 
     The :code:`walltime` and job array size are dependent on the number of binaries you want to simulate and the memory usage of the simulation.
-    The job array size should be set such that the number of binaries per job is at least 1000, since there's a minimum overhead per job due to loading the grids.
+    The job array size should be set such that the number of binaries per job is at least 1,000, since there's a minimum overhead per job due to loading the grids.
     
     The :code:`walltime` depends on the number of binaries per job, where each binary takes about 1-2 seconds to run.
     For example, 100,000 binaries split over 100 jobs (per metallicity) means that every job runs 1,000 binaries. This will take around 33 minutes per job. So a :code:`walltime` of :code:`00:45:00` is reasonable.
@@ -68,7 +68,7 @@ Frequently Asked Questions
 5. **I am unable to open HDF5 files created by POSYDON. What should I do?**    
     If you're on a Mac, there might be an issue with the HDF5 installation.
     Make sure you have the :code:`hdf5` and :code:`pytables` packages installed through conda in your environment with :code:`conda install hdf5 pytables` before running POSYDON!
-    Although they are dependencies of POSYDON, sometimes they're not installed correctly on Mac.
+    Although they are dependencies of POSYDON, sometimes they are not installed correctly on Mac.
 
 6. **Are there any examples or tutorials available?**
     Yes, you can check our :ref:`roadmap <roadmap>` for tutorials related to different POSYDON components, including population synthesis, creating core datasets, and running your own MESA grids with POSYDON.
@@ -84,11 +84,11 @@ Frequently Asked Questions
     You can regularly visit our `official website <https://posydon.org>`_ for news and updates. 
 
 10. **I've come across a FAILED binary. What does this mean?**
-     A :code:`FAILED` binary has encountered an error during the simulation due to POSYDON being unable to evolve it. This can be due to a variety of reasons:
+     A :code:`FAILED` binary has encountered an error during the simulation because POSYDON was unable to evolve it. This can be due to a variety of reasons:
     
-        -  The evolutionary state of the binary is not represented in the currently-supported stellar evolution grids. For example, we do not have a grid for Roche lobe overflow between two helium stars.
+        -  The evolutionary state of the binary is not represented in the currently supported stellar evolution grids. For example, we do not have a grid for Roche lobe overflow between two helium stars.
         -  The binary has masses outside the grid range. For example, the HMS-HMS grid does not contain binaries with a secondary mass below 0.5.
-        -  The binary could not be matched to single star or a binary due to a too large matching error.
+        -  The binary could not be matched to a single star or a binary due to a too large matching error.
 
 11. **What approximations does POSYDON make?**
      This is a complex question and the best answer is provided in the POSYDON papers: `Fragos et al. (2023) <https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract>`_ and `Andrews et al. (submitted) <https://ui.adsabs.harvard.edu/abs/2024arXiv241102376A/abstract>`_.

@@ -11,14 +11,14 @@ POSYDON Documentation
 Welcome to POSYDON!
 -------------------
 
-Welcome to the official documentation of **POSYDON** - *POpulation SYnthesis with Detailed binary-evolution simulatiONs*. Whether you're a new user, a contributor, or just exploring, we're delighted to have you here!
+Welcome to the official documentation of **POSYDON** - *POpulation SYnthesis with Detailed Binary-Evolution SimulatiONs*. Whether you\'re a new user, a contributor, or just exploring, we\'re delighted to have you here!
 
 About POSYDON
 -------------
 
-POSYDON is a next-generation single and binary-star population synthesis tool. Our vision is to provide researchers and enthusiasts with a state-of-the-art platform to delve into the intricacies of stellar structures and binary evolutions using MESA. With full stellar structure modeling, advanced machine learning techniques, and a modular architecture, POSYDON stands at the forefront of astrophysical simulations.
+POSYDON is a next-generation single- and binary-star population synthesis tool. Our vision is to provide researchers and enthusiasts with a state-of-the-art platform to delve into the intricacies of stellar structures and binary evolutions using MESA. With full stellar structure modeling, advanced machine learning techniques, and a modular architecture, POSYDON stands at the forefront of astrophysical simulations.
 
-To stay up to date with the latest news about POSYDON, check out our `official website <https://www.posydon.org>`_ for more details.
+To stay up-to-date with the latest news about POSYDON, check out our `official website <https://www.posydon.org>`_ for more details.
 
 How is this Documentation Structured?
 -------------------------------------
@@ -26,7 +26,7 @@ How is this Documentation Structured?
 - **Introductions** Discover what POSYDON is, its objectives, and its science scope.
 - **Getting Started:** A quick guide to get POSYDON up and running on your machine.
 - **User Guides:** Detailed guides on using various features.
-- **Tutorials and Examples:** Step-by-step walkthroughs of typical use-cases.
+- **Tutorials and Examples:** Step-by-step walk-throughs of typical use-cases.
 - **In-Depth Components Overview:** Delve deep into the core components of POSYDON.
 - **API Reference:** A comprehensive reference for developers.
 - **Troubleshooting and FAQs:** Answers to common questions and problems.
@@ -134,7 +134,7 @@ How is this Documentation Structured?
 Acknowledgments
 ---------------
 
-**Team Members:** POSYDON is being led and developed by a dedicated team of astrophysicists and computer scientists. At the helm are Principal Investigators Tassos Fragos (Université de Genève) and Vicky Kalogera (Northwestern University), along with many talented individuals. You can read more about the team and they research on :ref:`Collaborative Team <team-page>` page.
+**Team Members:** POSYDON is being led and developed by a dedicated team of astrophysicists and computer scientists. At the helm are Principal Investigators Tassos Fragos (Université de Genève) and Vicky Kalogera (Northwestern University), along with many talented individuals. You can read more about the team and their research on the :ref:`Collaborative Team <team-page>` page.
 
 **Funding Agencies:** The POSYDON project is supported primarily by two sources: the Swiss National Science Foundation Professorship grant (PI Fragos) and the Gordon and Betty Moore Foundation (PI Kalogera).
 

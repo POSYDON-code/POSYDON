@@ -11,7 +11,7 @@ Common Installation Issues
 1. **Slow `conda` solving:
 
 `conda` can be very slow and sometimes gets stuck on "Verifying transaction" or "Executing transaction", especially when installing packages on a cluster.
-It creates many small files, which can be difficult for HPC clusters to solve.
+It creates many small files, which can be difficult for HPC clusters to handle.
 One way to speed up the installation is to use the `mamba` package manager, which is a drop-in replacement for `conda` but is much faster (`click here for more details <https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community>`_).
 Please proceed at your own discretion, as this has not been fully vetted. Alternatively, you can install the `libmamba` solver to speed up the solving process for new installations in a `conda` environment.
 To install the `libmamba` solver, run the following command in your `conda` environment of choice or `base` `conda` environment:
@@ -21,7 +21,7 @@ conda install conda-libmamba-solver
 ```
 
 This will install the `libmamba` solver, which is a drop-in replacement for the default `conda` solver.
-This should speed up solving the environment and installing packages, but is not guaranteed to work in all cases.
+This should speed up solving the environment and installing packages but is not guaranteed to work in all cases.
 
 2. **Failed Dependencies**:
     - **Description**: Sometimes, certain dependencies might fail to install or conflict with pre-existing ones.
@@ -44,7 +44,7 @@ This should speed up solving the environment and installing packages, but is not
 
 6. **Error with Experimental Visualization Libraries**:
     - **Description**: Issues after installing the experimental visualization libraries with ``pip install ".[vis]"``.
-    - **Solution**: These libraries are experimental. Please ensure you have all required system dependencies. Consider reaching out to our support channels for more guidance or troubleshooting.
+    - **Solution**: These libraries are experimental. Please ensure you have all required system dependencies. Consider reaching out to our :ref:`support channels <contact_info>` for more guidance or troubleshooting.
 
 Troubleshooting Tips
 ~~~~~~~~~~~~~~~~~~~~

@@ -57,4 +57,3 @@ Elevate your expertise by diving deep into the creation of MESA simulation grids
 
 Congratulations! By mastering all the steps, you've now earned the ultimate badge: the **POSYDON Trident** 🔱. Wear it with pride and harness the boundless powers of POSYDON!
 
-For more in-depth topics and advanced tutorials, head over to our [Advanced Tutorials Section](link-to-advanced-tutorials). And always remember, the ocean of knowledge is vast, and there's always more to explore!
