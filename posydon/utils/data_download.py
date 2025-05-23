@@ -121,13 +121,12 @@ def list_datasets(individual_sets=False, verbose=False):
                     print(wrapper.fill("more information at "
                                        +ZENODO_COLLECTION[dataset]['url']))
 
-def download_one_dataset(dataset='v1_for_v2.0.0-pre1', MD5_check=True,
-                         verbose=False):
+def download_one_dataset(dataset='v2_1Zsun', MD5_check=True, verbose=False):
     """Download a data set from Zenodo if they do not exist.
 
         Parameters
         ----------
-        dataset : string (default: 'v1_for_v2.0.0-pre1')
+        dataset : string (default: 'v2_1Zsun')
             Name of the data set to be in COMPLETE_SETS or ZENODO_COLLECTION.
         MD5_check : boolean (default: True)
             Use the MD5 check to make sure data is not corrupted.
@@ -198,12 +197,12 @@ def download_one_dataset(dataset='v1_for_v2.0.0-pre1', MD5_check=True,
             print('Removed downloaded tar file.')
         os.remove(filepath)
 
-def data_download(set_name='v1', MD5_check=True, verbose=False):
+def data_download(set_name='v2', MD5_check=True, verbose=False):
     """Download data files from Zenodo if they do not exist.
 
         Parameters
         ----------
-        set_name : string (default: 'v1')
+        set_name : string (default: 'v2')
             Name of the data set to be in COMPLETE_SETS or ZENODO_COLLECTION.
         MD5_check : boolean (default: True)
             Use the MD5 check to make sure data is not corrupted.
