@@ -92,7 +92,7 @@ Running a dynamically sampled grid of MESA simulations
 
     This feature is experimental. Please contact us if you encounter any issues.
 
-Provided a sparsed, rectilinearly sampled MESA grid, POSYDON allows to dynamically sample the parameter space to henence the coverage of the paramter space to imporve classification and interpolation accuracy.
+Provided a sparsed, rectilinearly sampled MESA grid, POSYDON allows to dynamically sample the parameter space to enhance the coverage of the parameter space to improve classification and interpolation accuracy.
 
 .. toctree::
 

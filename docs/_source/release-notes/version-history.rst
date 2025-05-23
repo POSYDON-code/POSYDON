@@ -30,4 +30,4 @@ v1.0.0
 
 Stay Informed
 ~~~~~~~~~~~~~
-For a broader overview of major version updates, refer to our :ref:`Major Updates <major-updates>` page. To keep up with the latest changes and releases, visit our official website `POSYDON Official Website <https://poseydon.org>`_ and follow our repository on GitHub `POSYDON on GitHub <https://github.com/POSYDON-code/POSYDON.git>`_.
+For a broader overview of major version updates, refer to our :ref:`Major Updates <major-updates>` page. To keep up with the latest changes and releases, visit our official website `POSYDON Official Website <https://posydon.org>`_ and follow our repository on GitHub `POSYDON on GitHub <https://github.com/POSYDON-code/POSYDON.git>`_.

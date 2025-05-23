@@ -32,7 +32,7 @@ The :code:`formation_channels` is not immediately available, but can be created 
 :func:`~Population.calculate_formation_channels` function of the :class:`~Population` object.
 
 
-Additionally, :meth:`Population.mass_per_metallicity<Population.mass_per_metallicity>` contains some essential metadata calculated from the populaiton synthesis run.
+Additionally, :meth:`Population.mass_per_metallicity<Population.mass_per_metallicity>` contains some essential metadata calculated from the population synthesis run.
 It is a pandas.DataFrame with the metallicity (in solar units) as the index and 3 columns:
 
 1. :code:`count`, the number of systems at that metallicity in the file.
@@ -89,7 +89,7 @@ If you want to have a peak, you can use the :meth:`~Population.head` or :meth:`~
     pop.history.tail(10)
 
 
-Additional functions are made available for easy of use.
+Additional functions are made available for ease of use.
 
 If you want to check the length of the history of a system, you can use :attr:`Population.history.lengths<History.lengths>` or :attr:`Population.history_lengths<Population.history_lengths>`.
 

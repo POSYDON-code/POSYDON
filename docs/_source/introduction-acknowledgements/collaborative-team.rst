@@ -19,11 +19,11 @@ POSYDON Team, F2F meeting - University of Florida, February 2023
 Current Team Members
 ~~~~~~~~~~~~~~~~~~~~
 
-- **Jeff Answers\***, *University of Florida*: Core developer focused on coordinating the development MESA grid simulations and the overall POSYDON structure.
+- **Jeff Andrews\***, *University of Florida*: Core developer focused on coordinating the development MESA grid simulations and the overall POSYDON structure.
 
-- `Simone Bavera\* <https://www.unige.ch/sciences/astro/evolution/en/members/simone-bavera/>`_, *University of Geneva*: Leading the design and development of POSYDON since its conception. Simone uses POSYDON to study the formation mechanism of merging binary black holes, sources of gravitational waves.
+- `Simone Bavera <https://www.unige.ch/sciences/astro/evolution/en/members/simone-bavera/>`_, *University of Geneva*: Leading the design and development of POSYDON since its conception. Simone uses POSYDON to study the formation mechanism of merging binary black holes, sources of gravitational waves.
 
-- `Max M. Briel <http://maxbriel.com/>`_, *University of Geneva*.
+- `Max M. Briel\* <http://maxbriel.com/>`_, *University of Geneva*.
 
 - `Christopher Berry <https://cplberry.com/>`_, *University of Glasgow*.
 
@@ -45,15 +45,15 @@ Current Team Members
 
 - `Dean Kousiounelos <https://cierareu.northwestern.edu/2023CIERA_REU_websites/DeanKousiounelos/index.html>`_, *Lake Forest College*: Developing data visualization for Binary Stellar Evolution for POSYDON to aid in understanding an evolutionary narrative, and bridge the gap between astrophysics and broader audiences. Under the mentorship of Dr. Vicky Kalogera and Dr. Seth Gossage.
 
-- `Konstantinos Kovlakas* <https://sites.google.com/view/kovlakas/>`_, *Institute of Space Sciences (ICE/CSIC,IEEC)*: Core developer responsible for core infrastructure, the encoding of MESA output in POSYDON, and the characterization of stars based on their properties. His research focuses on the modeling of accreting compact objects and comparisons against observations.  
+- `Konstantinos Kovlakas <https://sites.google.com/view/kovlakas/>`_, *Institute of Space Sciences (ICE/CSIC,IEEC)*: Core developer responsible for core infrastructure, the encoding of MESA output in POSYDON, and the characterization of stars based on their properties. His research focuses on the modeling of accreting compact objects and comparisons against observations.  
 
-- **Matthias Kruckow\***, *University of Geneva*.
+- **Matthias Kruckow**, *University of Geneva*.
 
 - **Shamal Lalvani**, *Northwestern University*.
 
-- `Camille Liotine* <https://sites.google.com/view/camilleliotine/home/>`_, *Northwestern University*: Integrating pulsar modeling into POSYDON and facilitating general code development for POSYDON.
+- `Camille Liotine <https://sites.google.com/view/camilleliotine/home/>`_, *Northwestern University*: Integrating pulsar modeling into POSYDON and facilitating general code development for POSYDON.
 
-- **Devina Mishra\***, *Norwegian University of Science and Technology*.
+- **Devina Misra**, *Norwegian University of Science and Technology*.
 
 - **Kyle Rocha\***, *Northwestern University*: Development of the psy-cris active learning module, binary population API, evolutionary hooks, I/O for binary stars/populations, and integration with pandas DataFrame.
 
@@ -61,13 +61,13 @@ Current Team Members
 
 - **Philipp M. Srivastava\***, *Northwestern University*.
 
-- `Meng Sun* <https://sunmeng1118.wixsite.com/mysite/>`_, *Northwestern University*: Most of the contributions involved preparing detailed MESA binary modeling and assisting in the analysis of single-star and binary evolution results: reviewed the error distribution after MESA binary tracks were trained by the IFinterpolator; assisted in constructing MESA binary grids with metal-poor, metal-rich, and low-mass stars; and resolved code convergence issues.
+- `Meng Sun <https://sunmeng1118.wixsite.com/mysite/>`_, *Northwestern University*: Most of the contributions involved preparing detailed MESA binary modeling and assisting in the analysis of single-star and binary evolution results: reviewed the error distribution after MESA binary tracks were trained by the IFinterpolator; assisted in constructing MESA binary grids with metal-poor, metal-rich, and low-mass stars; and resolved code convergence issues.
 
 - `Elizabeth Teng* <https://www.elizabethteng.space/>`_, *Northwestern University*: Developed stellar profile interpolation and consulted on time-series interpolation.
 
 - `Goce Trajcevski <https://www.ece.iastate.edu/ece-directory/profile/gocet25//>`_, *Iowa State University*.
 
-- `Zepei Xing* <https://www.linkedin.com/in/zepei-xing-86ab10206//>`_, *University of Geneva*.
+- `Zepei Xing <https://www.linkedin.com/in/zepei-xing-86ab10206//>`_, *University of Geneva*.
 
 - `Manos Zapartas <https://www.unige.ch/sciences/astro/evolution/en/members/emmanouil-zapartas//>`_, *University of Geneva*.
 
@@ -103,5 +103,5 @@ Past Team Members
 Students Contributions
 ~~~~~~~~~~~~~~~~~~~~~~
 
-- `Petter Stahle </https://www.linkedin.com/in/petter-stahle/>`_, *Formerly, University of Geneva*: Developed the POSYDON web-application API interface to run POSYDON v1 population synthesis simulations.
+- `Petter Stahle <https://www.linkedin.com/in/petter-stahle/>`_, *Formerly, University of Geneva*: Developed the POSYDON web-application API interface to run POSYDON v1 population synthesis simulations.
 

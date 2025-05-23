@@ -24,7 +24,7 @@ Simulate your first 10 binaries and experience the power of POSYDON.
 
     10_binaries_pop_syn
 
-Now that you know how to run your first simulations, explore the different customization options reading the :ref:`population prameters <pop-params-guide>` documentation.
+Now that you know how to run your first simulations, explore the different customization options reading the :ref:`population parameters <pop-params-guide>` documentation.
 
 
 II. Large-Scale Population Synthesis on HPC Facilities 🚀

@@ -48,7 +48,7 @@ The binary properties are defined as follows
   * - ``eccentricity``
     - Orbital eccentricity.
   * - ``V_sys``
-    - Velocity of the centre of mass of the binary [Vx, Vy, Vz] in km/s.
+    - Velocity of the center of mass of the binary [Vx, Vy, Vz] in km/s.
   * - ``mass_transfer_case``
     - Mass transfer case, see MT case options.
   * - ``lg_mtransfer_rate``

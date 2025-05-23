@@ -10,7 +10,7 @@ Overview
 
 The web application offers the following features:
 
-- **Population Synthesis**: Run your own population synthesis model through your broseware without the need to have access to an HPC facility or installing POSYDON on your laptop.
+- **Population Synthesis**: Run your own population synthesis model through your browser without the need to have access to an HPC facility or installing POSYDON on your laptop.
   
 - **Model Selection**: Choose from different model assumptions and instantly select the model you want to run.
   
@@ -25,7 +25,7 @@ Getting Started
 
 2. **Open a account**
 
-    To use the web application, you will need to create an account. This is a simple process that only requires a valid email address and why you want to use the Webapp. Once you have created an account, we will grant you access and you will be able to submit population synthesis simulations throught the web application.
+    To use the web application, you will need to create an account. This is a simple process that only requires a valid email address and why you want to use the Webapp. Once you have created an account, we will grant you access and you will be able to submit population synthesis simulations through the web application.
 
 3. **Navigation**
 

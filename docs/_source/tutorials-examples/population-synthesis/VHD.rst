@@ -75,7 +75,7 @@ Advanced Visualization Techniques
 Visualizing Multiple Binaries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `VDdiagramm_m` module allows multiple binary visualizations to be arranged horizontally in a single plot:
+The `VHdiagramm_m` module allows multiple binary visualizations to be arranged horizontally in a single plot:
 
 .. code-block:: python
 
