@@ -7,7 +7,7 @@ This page provides an overview of the major versions of POSYDON, highlighting th
 
 v2.0.0
 ~~~~~~
-**Release Date:** [TODO wirte date here]
+**Release Date:** [TODO write date here]
 
 **Description:** 
 The v2.0.0 release of POSYDON has expanded its capabilities to cover a diverse range of metallicities. Specifically, this version allows for population synthesis of massive binary stars across 8 different metallicities, ranging from \(10^{-4}\) times solar metallicity up to 2 times solar metallicity. This significant enhancement caters to a broader array of astrophysical scenarios and environments.
@@ -21,5 +21,5 @@ The v1.0.0 marked the first stable release of POSYDON. It was primarily focused 
 
 Future Updates
 ~~~~~~~~~~~~~~
-Stay updated with the latest news and version releases by visiting our official website `POSYDON Official Website <https://poseydon.org>`_ and by following our repository on GitHub `POSYDON on GitHub <https://github.com/POSYDON-code/POSYDON.git>`_.
+Stay updated with the latest news and version releases by visiting our official website `POSYDON Official Website <https://posydon.org>`_ and by following our repository on GitHub `POSYDON on GitHub <https://github.com/POSYDON-code/POSYDON.git>`_.
 
