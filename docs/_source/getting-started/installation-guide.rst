@@ -76,7 +76,7 @@ Using Anaconda (Recommended)
 
         get-posydon-data
 
-    May use :code:`get-posydon-data -h` to see all the options for this command, which allows to list all the datasets and download the one of your choice.
+    May use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the one of your choice.
 
     Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
 
