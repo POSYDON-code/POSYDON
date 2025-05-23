@@ -47,7 +47,7 @@ Current Team Members
 
 - `Konstantinos Kovlakas <https://sites.google.com/view/kovlakas/>`_, *Institute of Space Sciences (ICE/CSIC,IEEC)*: Core developer responsible for core infrastructure, the encoding of MESA output in POSYDON, and the characterization of stars based on their properties. His research focuses on the modeling of accreting compact objects and comparisons against observations.  
 
-- **Matthias Kruckow**, *University of Geneva*.
+- **Matthias Kruckow\***, *University of Geneva*.
 
 - **Shamal Lalvani**, *Northwestern University*.
 
