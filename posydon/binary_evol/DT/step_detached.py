@@ -1315,11 +1315,8 @@ class detached_step:
 
             interp1d_sec["time"] = t
 
-            #TESTING
-            #update_properties([t0])
-
             # update properties after detached evolution
-            update_properties(t)
+            update_properties()
 
             secondary.state = check_state_of_star(secondary, star_CO=False)
             
