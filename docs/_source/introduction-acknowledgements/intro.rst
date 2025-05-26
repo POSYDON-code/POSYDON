@@ -6,7 +6,7 @@ Introduction, Objectives, and Scope
 What is POSYDON?
 ~~~~~~~~~~~~~~~~
 
-POSYDON, an acronym for **POpulation SYnthesis with Detailed Binary-Evolution SimulatiONs**, is a next-generation single- and binary-star population synthesis code. Designed to seamlessly incorporate full stellar structure and evolution modeling, it leverages the advanced capabilities of MESA for a comprehensive and accurate simulation of stellar systems.
+POSYDON, an acronym for **POpulation SYnthesis with Detailed binary-evolution simulatiONs**, is a next-generation single- and binary-star population synthesis code. Designed to seamlessly incorporate full stellar structure and evolution modeling, it leverages the advanced capabilities of MESA for a comprehensive and accurate simulation of stellar systems.
 
 Code Objectives
 ~~~~~~~~~~~~~~~~
