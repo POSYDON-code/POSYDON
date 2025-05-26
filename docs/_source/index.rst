@@ -41,7 +41,7 @@ How is this Documentation Structured?
    :caption: Introduction
 
    introduction-acknowledgements/intro
-   introduction-acknowledgements/collaborative-team
+   Collaborative Team <https://posydon.org/team.html>
    Publications <https://posydon.org/papers.html>
 
 .. toctree::
