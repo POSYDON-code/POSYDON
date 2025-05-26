@@ -11,7 +11,7 @@ POSYDON Documentation
 Welcome to POSYDON!
 -------------------
 
-Welcome to the official documentation of **POSYDON** - *POpulation SYnthesis with Detailed Binary-Evolution SimulatiONs*. Whether you\'re a new user, a contributor, or just exploring, we\'re delighted to have you here!
+Welcome to the official documentation of **POSYDON** - *POpulation SYnthesis with Detailed binary-evolution simulatiONs*. Whether you\'re a new user, a contributor, or just exploring, we\'re delighted to have you here!
 
 About POSYDON
 -------------
