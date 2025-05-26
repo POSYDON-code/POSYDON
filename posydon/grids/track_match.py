@@ -488,6 +488,7 @@ class track_matcher:
                 x = np.delete(x, i_bad)
                 y = np.delete(y, i_bad)
             val = np.interp(t, x, y)
+
         return val
     
     def scale(self, key, htrack, method):
@@ -988,6 +989,24 @@ class track_matcher:
                     interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
 
                 return interp1d, m0, t0
+
+    def update_star_properties(self, star, htrack, m0, t0):
+
+        #grid = self.grid_Hrich if htrack else self.grid_strippedHe
+        for key in self.KEYS:
+            #new_val = self.get_track_val(key, htrack, m0, t0)
+            if key == "log_total_angular_momentum":
+                new_val = self.get_track_val(key, htrack, m0, t0)
+                print(f"{key} = ", new_val)
+            elif key == "surf_avg_omega":
+                new_val = self.get_track_val(key, htrack, m0, t0)
+                print(f"{key} = ", new_val)
+            else:
+                debug = False
+                new_val = self.get_track_val(key, htrack, m0, t0)
+                
+            setattr(star, key, new_val)
+           
 
     def get_star_final_values(self, star, htrack, m0):  
 

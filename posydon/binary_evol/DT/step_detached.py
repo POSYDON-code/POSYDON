@@ -562,7 +562,7 @@ class detached_step:
         def ev_max_time2(t, y):
             return t_max_pri + t_offset_pri - t
         
-        def get_omega(star, is_secondary=True):
+        def get_omega(star, prematch_rotation, is_secondary=True):
             """Calculate the spin of a star.
 
             Parameters
@@ -575,37 +575,41 @@ class detached_step:
                 spin of the star in radians per year
             """
 
-            if (star.log_total_angular_momentum is not None
-                    and star.total_moment_of_inertia is not None
-                    and pd.notna(star.log_total_angular_momentum)
-                    and pd.notna(star.total_moment_of_inertia)):
-                
-                # the last factor converts rad/s to rad/yr
-                omega_in_rad_per_year = (
-                        10.0 ** star.log_total_angular_momentum
-                        / star.total_moment_of_inertia * const.secyer)  
+            log_total_angular_momentum = prematch_rotation['log_total_angular_momentum']
+            total_moment_of_inertia = prematch_rotation['total_moment_of_inertia']
+            surf_avg_omega_div_omega_crit = prematch_rotation['surf_avg_omega_div_omega_crit']
+            surf_avg_omega = prematch_rotation['surf_avg_omega']
+
+            if (log_total_angular_momentum is not None
+                    and total_moment_of_inertia is not None
+                    and pd.notna(log_total_angular_momentum)
+                    and pd.notna(total_moment_of_inertia)):
                 
                 if self.verbose:
                     print("calculating initial omega using angular momentum and moment of inertia")
+
+                # the last factor converts rad/s to rad/yr
+                omega_in_rad_per_year = (10.0 ** log_total_angular_momentum
+                                         / total_moment_of_inertia * const.secyer)  
+                
             else:
                 # we equate the secondary's initial omega to surf_avg_omega
                 # (although the critical rotation should be improved to
                 # take into account radiation pressure)
 
-                if pd.notna(star.surf_avg_omega):
+                if pd.notna(surf_avg_omega):
 
                     if self.verbose:
                         print("calculating initial omega using surf_avg_omega")
 
-                    omega_in_rad_per_year = star.surf_avg_omega * const.secyer                    
+                    omega_in_rad_per_year = surf_avg_omega * const.secyer                    
                         
-                elif pd.notna(star.surf_avg_omega_div_omega_crit):
+                elif pd.notna(surf_avg_omega_div_omega_crit):
                     
                     if pd.notna(star.log_R):
-                        omega_in_rad_per_year = (
-                            star.surf_avg_omega_div_omega_crit * np.sqrt(
-                                const.standard_cgrav * star.mass * const.msol
-                                / ((10.0 ** (star.log_R) * const.rsol) ** 3)) * const.secyer)
+                        omega_in_rad_per_year = (surf_avg_omega_div_omega_crit * np.sqrt(
+                                                  const.standard_cgrav * star.mass * const.msol
+                                                  / ((10.0 ** (star.log_R) * const.rsol) ** 3)) * const.secyer)
                         
                     else:
                         if is_secondary:
@@ -618,10 +622,9 @@ class detached_step:
                         if self.verbose:
                             print("calculating initial omega using surf_avg_omega_div_omega_crit")
 
-                        omega_in_rad_per_year = (
-                            star.surf_avg_omega_div_omega_crit * np.sqrt(
-                                const.standard_cgrav * mass_to_be_used * const.msol
-                                / ((radius_to_be_used * const.rsol) ** 3)) * const.secyer)
+                        omega_in_rad_per_year = (surf_avg_omega_div_omega_crit * np.sqrt(
+                                                  const.standard_cgrav * mass_to_be_used * const.msol
+                                                  / ((radius_to_be_used * const.rsol) ** 3)) * const.secyer)
                    
                 else:
                     omega_in_rad_per_year = 0.0
@@ -629,9 +632,308 @@ class detached_step:
                         print("could not calculate initial omega, setting to zero")
                         
             if self.verbose:
-                print("calculated omega_in_rad_per_year: ", omega_in_rad_per_year)
+                print("calculated omega_in_rad_per_year = ", omega_in_rad_per_year)
+                print("pre-match omega_in_rad_per_year = ", surf_avg_omega * const.secyer)
+                omega_percent_diff = np.nan_to_num(100.0*(omega_in_rad_per_year-surf_avg_omega*const.secyer) \
+                                                 / omega_in_rad_per_year, 0)
+                print("omega_in_rad_per_year percent_diff = ", 
+                      f"{omega_percent_diff:.1f}%")
 
             return omega_in_rad_per_year
+
+        def update_properties(time):
+
+            if len(time) > 1:
+                update_history = True
+            else:
+                update_history = False
+
+            ## UPDATE STAR AND BINARY PROPERTIES WITH INTERPOLATED VALUES
+            for obj, prop in zip([secondary, primary, binary], 
+                                    [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
+                
+                for key in prop:
+                    if key in ["event",
+                                "mass_transfer_case",
+                                "nearest_neighbour_distance",
+                                "state", "metallicity", "V_sys"]:
+                        current = getattr(obj, key)
+                        # For star objects, the state is calculated further below
+
+                        if update_history:
+                            history = [current] * len(time[:-1])
+
+                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj == secondary):
+                        # replace the actual surf_avg_w with the effective omega,
+                        # which takes into account the whole star
+                        # key  = 'effective_omega' # in rad/sec
+                        # current = s.y[2][-1] / 3.1558149984e7
+                        # history_of_attribute = s.y[2][:-1] / 3.1558149984e7
+                        omega_crit_current_sec = np.sqrt(const.standard_cgrav
+                            * interp1d_sec[self.translate["mass"]](time[-1] - t_offset_sec).item() * const.msol
+                            / (interp1d_sec[self.translate["R"]](time[-1] - t_offset_sec).item() * const.rsol)**3)
+                        
+                        if update_history:
+                            omega_crit_hist_sec = np.sqrt(const.standard_cgrav
+                                * interp1d_sec[self.translate["mass"]](time[:-1] - t_offset_sec) * const.msol
+                                / (interp1d_sec[self.translate["R"]](time[:-1] - t_offset_sec) * const.rsol)**3)
+
+                        current = (interp1d_sec["omega"][-1] / const.secyer / omega_crit_current_sec)
+
+                        if update_history:
+                            history = (interp1d_sec["omega"][:-1] / const.secyer / omega_crit_hist_sec)
+                        
+                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj == primary):
+                        if primary.co:
+                            current = None
+
+                            if update_history:
+                                history = [current] * len(time[:-1])
+
+                        elif not primary.co:
+                            # TODO: change `item()` to 0
+                            omega_crit_current_pri = np.sqrt(const.standard_cgrav
+                                * interp1d_pri[self.translate["mass"]](time[-1] - t_offset_pri).item() * const.msol
+                                / (interp1d_pri[self.translate["R"]](time[-1] - t_offset_pri).item() * const.rsol)**3)
+
+                            if update_history:
+                                omega_crit_hist_pri = np.sqrt(const.standard_cgrav
+                                    * interp1d_pri[self.translate["mass"]](time[:-1] - t_offset_pri) * const.msol
+                                    / (interp1d_pri[self.translate["R"]](time[:-1] - t_offset_pri) * const.rsol)**3)
+
+                            current = (interp1d_pri["omega"][-1] / const.secyer / omega_crit_current_pri)
+
+                            if update_history:
+                                history = (interp1d_pri["omega"][:-1] / const.secyer / omega_crit_hist_pri)
+                            
+                    elif (key in ["surf_avg_omega"] and obj == secondary):
+                        current = interp1d_sec["omega"][-1] / const.secyer
+
+                        if update_history:
+                            history = interp1d_sec["omega"][:-1] / const.secyer
+
+                    elif (key in ["surf_avg_omega"] and obj == primary):
+                        if primary.co:
+                            current = None
+
+                            if update_history:
+                                history = [current] * len(time[:-1])
+                        else:
+                            current = interp1d_pri["omega"][-1] / const.secyer
+
+                            if update_history:
+                                history = interp1d_pri["omega"][:-1] / const.secyer
+
+                    elif (key in ["rl_relative_overflow_1"] and obj == binary):
+                        if binary.star_1.state in ("BH", "NS", "WD","massless_remnant"):
+                            current = None
+
+                            if update_history:
+                                history = [current] * len(time[:-1])
+
+                        elif secondary == binary.star_1:
+                            current = ev_rel_rlo1(time[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
+
+                            if update_history:
+                                history = ev_rel_rlo1(time[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
+
+                        elif secondary == binary.star_2:
+                            current = ev_rel_rlo2(time[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
+
+                            if update_history:
+                                history = ev_rel_rlo2(time[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
+                            
+                    elif (key in ["rl_relative_overflow_2"] and obj == binary):
+                        if binary.star_2.state in ("BH", "NS", "WD","massless_remnant"):
+                            current = None
+
+                            if update_history:
+                                history = [current] * len(time[:-1])
+
+                        elif secondary == binary.star_2:
+                            current = ev_rel_rlo1(time[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
+
+                            if update_history:
+                                history = ev_rel_rlo1(time[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
+
+                        elif secondary == binary.star_1:
+                            current = ev_rel_rlo2(time[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
+
+                            if update_history:
+                                history = ev_rel_rlo2(time[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
+                            
+                    elif key in ["separation", "orbital_period", "eccentricity", "time"]:
+                        current = interp1d_sec[self.translate[key]][-1].item()
+
+                        if update_history:
+                            history = interp1d_sec[self.translate[key]][:-1]
+
+                    elif (key in ["total_moment_of_inertia"] and obj == secondary):
+                        current = interp1d_sec[self.translate[key]](
+                            time[-1] - t_offset_sec).item() * (const.msol * const.rsol**2)
+                        
+                        if update_history:
+                            history = interp1d_sec[self.translate[key]](
+                                time[:-1] - t_offset_sec) * (const.msol * const.rsol**2)
+                        
+                    elif (key in ["total_moment_of_inertia"] and obj == primary):
+                        if primary.co:
+                            current = getattr(obj, key)
+
+                            if update_history:
+                                history = [current] * len(time[:-1])
+                        else:
+                            current = interp1d_pri[self.translate[key]](
+                                time[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)
+                        
+                            if update_history:
+                                history = interp1d_pri[self.translate[key]](
+                                    time[:-1] - t_offset_pri) * (const.msol * const.rsol**2)
+                            
+                    elif (key in ["log_total_angular_momentum"] and obj == secondary):
+
+                        current_omega = interp1d_sec["omega"][-1]
+
+                        ## add a warning catch if the current omega has an invalid value
+                        ## (otherwise python will throw an insuppressible warning when taking the log)
+                        if interp1d_sec["omega"][-1] <=0:
+                            Pwarn("Trying to compute log angular momentum for object with no spin", 
+                                    "InappropriateValueWarning")
+                            current_omega = np.nan
+                                                
+                        current = np.log10(
+                            (current_omega / const.secyer)
+                                * (interp1d_sec[
+                                    self.translate["total_moment_of_inertia"]](time[-1] - t_offset_sec).item() * 
+                                    (const.msol * const.rsol ** 2))) 
+                        
+                        if update_history:                                            
+                            history = np.log10(
+                                (interp1d_sec["omega"][:-1] / const.secyer)
+                                * (interp1d_sec[self.translate["total_moment_of_inertia"]](
+                                        time[:-1] - t_offset_sec) * (const.msol * const.rsol**2)))
+                        
+                    elif (key in ["log_total_angular_momentum"] and obj == primary):
+                        if primary.co:
+                            current = getattr(obj, key)
+                            if update_history:
+                                history = [current] * len(time[:-1])
+                        else:
+                            current = np.log10(
+                                (interp1d_pri["omega"][-1] / const.secyer)
+                                * (interp1d_pri[self.translate["total_moment_of_inertia"]](
+                                        time[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)))
+                        
+                            if update_history:
+                                history = np.log10(
+                                    (interp1d_pri["omega"][:-1] / const.secyer)
+                                    * (interp1d_pri[self.translate["total_moment_of_inertia"]](
+                                            time[:-1] - t_offset_pri) * (const.msol * const.rsol**2)))
+                            
+                    elif (key in ["spin"] and obj == secondary):
+                        current = (const.clight
+                            * (interp1d_sec["omega"][-1] / const.secyer)
+                            * interp1d_sec[self.translate["total_moment_of_inertia"]](
+                                time[-1] - t_offset_sec).item() * (const.msol * const.rsol**2)
+                            / (const.standard_cgrav * (interp1d_sec[self.translate["mass"]](
+                                    time[-1] - t_offset_sec).item() * const.msol)**2))
+                        
+                        if update_history:
+                            history = (const.clight
+                                * (interp1d_sec["omega"][:-1] / const.secyer)
+                                * interp1d_sec[self.translate["total_moment_of_inertia"]](
+                                        time[:-1] - t_offset_sec)* (const.msol * const.rsol**2)
+                                / (const.standard_cgrav * (interp1d_sec[self.translate["mass"]](
+                                        time[:-1] - t_offset_sec) * const.msol)**2))
+                        
+                    elif (key in ["spin"] and obj == primary):
+                        if primary.co:
+                            current = getattr(obj, key)
+                            if update_history:
+                                history = [current] * len(time[:-1])
+                        else:
+                            current = (const.clight
+                                * (interp1d_pri["omega"][-1] / const.secyer)
+                                * interp1d_pri[self.translate["total_moment_of_inertia"]](
+                                        time[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)
+                                / (const.standard_cgrav * (interp1d_pri[self.translate["mass"]](
+                                        time[-1] - t_offset_pri).item() * const.msol)**2))
+                            
+                            if update_history:
+                                history = (const.clight 
+                                    * (interp1d_pri["omega"][:-1] / const.secyer)
+                                    * interp1d_pri[self.translate["total_moment_of_inertia"]](
+                                            time[:-1] - t_offset_pri) * (const.msol * const.rsol**2)
+                                    / (const.standard_cgrav * (interp1d_pri[self.translate["mass"]](
+                                            time[:-1] - t_offset_pri) * const.msol)**2))
+                            
+                    elif (key in ["lg_mdot", "lg_wind_mdot"] and obj == secondary):
+                        # in detached step, lg_mdot = lg_wind_mdot
+                        if interp1d_sec[self.translate[key]](time[-1] - t_offset_sec) == 0:
+                            current = -98.99
+                        else:
+                            current = np.log10(np.abs(interp1d_sec[self.translate[key]](
+                                time[-1] - t_offset_sec))).item()
+                        
+                        if update_history:
+                            history = np.ones_like(t[:-1])
+                            for i in range(len(time)-1):
+                                if interp1d_sec[self.translate[key]](time[i] - t_offset_sec) == 0:
+                                    history[i] = -98.99
+                                else:
+                                    history[i] = np.log10(np.abs(interp1d_sec[self.translate[key]](
+                                            time[i] - t_offset_sec)))
+
+                    elif (key in ["lg_mdot", "lg_wind_mdot"] and obj == primary):
+                        if primary.co:
+                            current = None
+                            if update_history:
+                                history = [current] * len(time[:-1])
+                        else:
+                            if interp1d_sec[self.translate[key]](time[-1] - t_offset_sec) == 0:
+                                current = -98.99
+                            else:
+                                current = np.log10(np.abs(interp1d_sec[self.translate[key]](
+                                        time[-1] - t_offset_sec))).item()
+                                
+                            if update_history:
+                                history = np.ones_like(time[:-1])
+                                for i in range(len(time)-1):
+                                    if (interp1d_sec[self.translate[key]](time[i] - t_offset_sec) == 0):
+                                        history[i] = -98.99
+                                    else:
+                                        history[i] = np.log10(np.abs(interp1d_sec[self.translate[key]](
+                                                time[i] - t_offset_sec)))
+                                    
+                    elif (self.translate[key] in interp1d_sec and obj == secondary):
+                        current = interp1d_sec[self.translate[key]](time[-1] - t_offset_sec).item()
+                        if update_history:
+                            history = interp1d_sec[self.translate[key]](time[:-1] - t_offset_sec)
+                        
+                    elif (self.translate[key] in interp1d_pri and obj == primary):
+                        if primary.co:
+                            current = getattr(obj, key)
+                            if update_history:
+                                history = [current] * len(time[:-1])
+                        else:
+                            current = interp1d_pri[self.translate[key]](time[-1] - t_offset_pri).item()
+                            if update_history:
+                                history = interp1d_pri[self.translate[key]](time[:-1] - t_offset_pri)
+                            
+                    elif key in ["profile"]:
+                        current = None
+                        if update_history:
+                            history = [current] * len(time[:-1])
+
+                    else:
+                        current = np.nan
+                        if update_history:
+                            history = np.ones_like(time[:-1]) * current
+
+                    setattr(obj, key, current)
+
+                    if update_history:
+                        getattr(obj, key + "_history").extend(history)
             
 
         KEYS = self.KEYS
@@ -768,7 +1070,7 @@ class detached_step:
                 primary.co = False
 
             else:
-                raise ValueError("States not recognized!")
+                raise ValueError(f"State {binary.star_1.state} is not recognized!")
 
         # In case a star is a massless remnant:
         # We force primary.co = True for all isolated evolution
@@ -793,7 +1095,7 @@ class detached_step:
             elif (binary.star_2.state in STAR_STATES_CO):
                 return
             else:
-                raise ValueError("State not recognized!")
+                raise ValueError(f"State {binary.star_2.state} is not recognized!")
 
         # star 2 is a massless remnant, only star 1 exists
         elif self.non_existent_companion == 2:
@@ -810,34 +1112,51 @@ class detached_step:
             elif (binary.star_1.state in STAR_STATES_CO):
                 return
             else:
-                raise ValueError("State not recognized!")
+                raise ValueError(f"State {binary.star_1.state} is not recognized!")
         else:
-            raise POSYDONError("Non existent companion has not a recognized value!")
+            raise POSYDONError(f"non_existent_companion = {self.non_existent_companion} (should be 0, 1, or 2).")
 
         # >>>>>> DONE DETERMINING PRIMARY/SECONDARY STATES
 
         # >>>>>> START MATCHING
-        # get the matched data of two stars, respectively
+        # record which star we performed matching on for reporting purposes
+        matched_s1 = False
+        matched_s2 = False
+
+        # get the matched data of binary components
+        # match secondary:
         interp1d_sec, m0, t0 = self.track_matcher.get_star_data(binary, secondary)
+        if secondary == binary.star_2:
+            matched_s2 = True
+        elif secondary == binary.star_1:
+            matched_s1 = True
 
-        # primary is a CO or does not exist (co=True)
+        # primary is a CO or massless remnant, or else it is "normal"
         primary_not_normal = (primary.co) or (self.non_existent_companion in [1,2])
-        # otherwise
         primary_normal = (not primary.co) and self.non_existent_companion == 0
-
-        print("primary_normal? ", primary_normal)
 
         if primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
-            interp1d_pri = self.track_matcher.get_star_data(
-                binary, primary, copy_prev_m0=m0, copy_prev_t0=t0)[0]
+            interp1d_pri = self.track_matcher.get_star_data(binary, primary, 
+                                                            copy_prev_m0 = m0, 
+                                                            copy_prev_t0 = t0)[0]
         elif primary_normal:
-            interp1d_pri = self.track_matcher.get_star_data(
-                binary, primary)[0]
+
+            # match primary
+            interp1d_pri = self.track_matcher.get_star_data(binary, primary)[0]
+
+            if primary == binary.star_1:
+                matched_s1 = True
+            elif primary == binary.star_2:
+                matched_s2 = True
         else:
             raise ValueError("During matching, the primary should either be normal (stellar object) or ",
-                             "not normal (CO, nonexistent companion).")
+                             "not normal (a CO or nonexistent companion).",
+                             f"\nprimary.co = {primary.co}",
+                             f"\nnon_existent_companion = {self.non_existent_companion}",
+                             f"\ncompanion_1_exists = {companion_1_exists}",
+                             f"\ncompanion_2_exists = {companion_2_exists}")
 
 
         if interp1d_sec is None or interp1d_pri is None:
@@ -846,20 +1165,66 @@ class detached_step:
             raise MatchingError(f"Grid matching failed for {failed_state} binary.")    
 
         # >>>>>> END OF MATCHING
-
-        #TESTING
-        binary.append_state()
                    
         t0_sec = interp1d_sec["t0"]
         t0_pri = interp1d_pri["t0"]
-        m01 = interp1d_sec["m0"]
-        m02 = interp1d_pri["m0"]
+        m0_sec = interp1d_sec["m0"]
+        m0_pri = interp1d_pri["m0"]
         t_max_sec = interp1d_sec["t_max"]
         t_max_pri = interp1d_pri["t_max"]
         t_offset_sec = binary.time - t0_sec
         t_offset_pri = binary.time - t0_pri
         max_time = interp1d_sec["max_time"]
 
+        #TESTING
+        prematch_rotation_sec = {"log_total_angular_momentum": secondary.log_total_angular_momentum,
+                                 "total_moment_of_inertia": secondary.total_moment_of_inertia,
+                                 "surf_avg_omega_div_omega_crit": secondary.surf_avg_omega_div_omega_crit,
+                                 "surf_avg_omega": secondary.surf_avg_omega}
+        
+        prematch_rotation_pri = {"log_total_angular_momentum": primary.log_total_angular_momentum,
+                                 "total_moment_of_inertia": primary.total_moment_of_inertia,
+                                 "surf_avg_omega_div_omega_crit": primary.surf_avg_omega_div_omega_crit,
+                                 "surf_avg_omega": primary.surf_avg_omega}
+
+        # after matching, add the state of binary to flow
+        self.track_matcher.update_star_properties(secondary, secondary.htrack, m0_sec, t0_sec)
+        if primary_normal:
+            self.track_matcher.update_star_properties(primary, primary.htrack, m0_pri, t0_pri)
+
+        # because we have matched to non-rotating single star grids, we need to calculate
+        # what the spin should be, based on properties of the angular momentum, etc., 
+        # before the match was made
+        omega_in_rad_per_year_sec = get_omega(secondary, prematch_rotation_sec)
+
+        secondary.surf_avg_omega_div_omega_crit = (omega_in_rad_per_year_sec / const.secyer / secondary.surf_avg_omega) \
+                                                  * secondary.surf_avg_omega_div_omega_crit
+        secondary.surf_avg_omega = omega_in_rad_per_year_sec / const.secyer
+        secondary.log_total_angular_momentum = np.log10((omega_in_rad_per_year_sec / const.secyer) \
+                                                         * secondary.total_moment_of_inertia)
+
+        if primary_normal:
+            omega_in_rad_per_year_pri = get_omega(primary, prematch_rotation_pri, is_secondary = False)
+            primary.surf_avg_omega_div_omega_crit = (omega_in_rad_per_year_pri / const.secyer / primary.surf_avg_omega) \
+                                            * primary.surf_avg_omega_div_omega_crit
+            primary.surf_avg_omega = omega_in_rad_per_year_pri / const.secyer
+            primary.log_total_angular_momentum = np.log10((omega_in_rad_per_year_pri / const.secyer) \
+                                                                * primary.total_moment_of_inertia)
+        else:
+            # omega of compact objects or massless remnant won't be used for integration
+            omega_in_rad_per_year_pri = omega_in_rad_per_year_sec
+
+        # append matching information as a part of step_detached
+        binary.step_names.append("step_detached")
+        if matched_s1 and matched_s2:
+            binary.event = "MATCH1,2"
+        elif matched_s2:
+            binary.event = "MATCH2"
+        elif matched_s1:
+            binary.event = "MATCH1"
+
+        binary.append_state()
+        # finished adding matched state to the flow
 
         if (ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
                 or ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
@@ -873,12 +1238,6 @@ class detached_step:
                                 "lower times.")
             
             with np.errstate(all="ignore"):
-                omega_in_rad_per_year_sec = get_omega(secondary)
-                if primary_not_normal:
-                    # omega of compact objects or massless remnant won't be used for integration
-                    omega_in_rad_per_year_pri = omega_in_rad_per_year_sec
-                elif not primary.co:
-                    omega_in_rad_per_year_pri = get_omega(primary, is_secondary = False)
 
                 t_before_ODEsolution = time.time()
                 
@@ -1011,235 +1370,11 @@ class detached_step:
 
             interp1d_sec["time"] = t
 
-            ## UPDATE STAR AND BINARY PROPERTIES WITH INTERPOLATED VALUES
-            for obj, prop in zip([secondary, primary, binary], 
-                                 [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
-                
-                for key in prop:
-                    if key in ["event",
-                               "mass_transfer_case",
-                               "nearest_neighbour_distance",
-                               "state", "metallicity", "V_sys"]:
-                        current = getattr(obj, key)
-                        # For star objects, the state is calculated further below
-                        history = [current] * len(t[:-1])
+            #TESTING
+            #update_properties([t0])
 
-                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj == secondary):
-                        # replace the actual surf_avg_w with the effective omega,
-                        # which takes into account the whole star
-                        # key  = 'effective_omega' # in rad/sec
-                        # current = s.y[2][-1] / 3.1558149984e7
-                        # history_of_attribute = s.y[2][:-1] / 3.1558149984e7
-                        omega_crit_current_sec = np.sqrt(const.standard_cgrav
-                            * interp1d_sec[self.translate["mass"]](t[-1] - t_offset_sec).item() * const.msol
-                            / (interp1d_sec[self.translate["R"]](t[-1] - t_offset_sec).item() * const.rsol)**3)
-                        
-                        omega_crit_hist_sec = np.sqrt(const.standard_cgrav
-                            * interp1d_sec[self.translate["mass"]](t[:-1] - t_offset_sec) * const.msol
-                            / (interp1d_sec[self.translate["R"]](t[:-1] - t_offset_sec) * const.rsol)**3)
-
-                        current = (interp1d_sec["omega"][-1] / const.secyer / omega_crit_current_sec)
-                        history = (interp1d_sec["omega"][:-1] / const.secyer / omega_crit_hist_sec)
-                        
-                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj == primary):
-                        if primary.co:
-                            current = None
-                            history = [current] * len(t[:-1])
-                        elif not primary.co:
-                            # TODO: change `item()` to 0
-                            omega_crit_current_pri = np.sqrt(const.standard_cgrav
-                                * interp1d_pri[self.translate["mass"]](t[-1] - t_offset_pri).item() * const.msol
-                                / (interp1d_pri[self.translate["R"]](t[-1] - t_offset_pri).item() * const.rsol)**3)
-
-                            omega_crit_hist_pri = np.sqrt(const.standard_cgrav
-                                * interp1d_pri[self.translate["mass"]](t[:-1] - t_offset_pri) * const.msol
-                                / (interp1d_pri[self.translate["R"]](t[:-1] - t_offset_pri) * const.rsol)**3)
-
-                            current = (interp1d_pri["omega"][-1] / const.secyer / omega_crit_current_pri)
-                            history = (interp1d_pri["omega"][:-1] / const.secyer / omega_crit_hist_pri)
-                            
-                    elif (key in ["surf_avg_omega"] and obj == secondary):
-                        current = interp1d_sec["omega"][-1] / const.secyer
-                        history = interp1d_sec["omega"][:-1] / const.secyer
-
-                    elif (key in ["surf_avg_omega"] and obj == primary):
-                        if primary.co:
-                            current = None
-                            history = [current] * len(t[:-1])
-                        else:
-                            current = interp1d_pri["omega"][-1] / const.secyer
-                            history = interp1d_pri["omega"][:-1] / const.secyer
-
-                    elif (key in ["rl_relative_overflow_1"] and obj == binary):
-                        if binary.star_1.state in ("BH", "NS", "WD","massless_remnant"):
-                            current = None
-                            history = [current] * len(t[:-1])
-
-                        elif secondary == binary.star_1:
-                            current = ev_rel_rlo1(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo1(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
-
-                        elif secondary == binary.star_2:
-                            current = ev_rel_rlo2(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo2(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
-                            
-                    elif (key in ["rl_relative_overflow_2"] and obj == binary):
-                        if binary.star_2.state in ("BH", "NS", "WD","massless_remnant"):
-                            current = None
-                            history = [current] * len(t[:-1])
-
-                        elif secondary == binary.star_2:
-                            current = ev_rel_rlo1(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo1(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
-
-                        elif secondary == binary.star_1:
-                            current = ev_rel_rlo2(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo2(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
-                            
-                    elif key in ["separation", "orbital_period", "eccentricity", "time"]:
-                        current = interp1d_sec[self.translate[key]][-1].item()
-                        history = interp1d_sec[self.translate[key]][:-1]
-
-                    elif (key in ["total_moment_of_inertia"] and obj == secondary):
-                        current = interp1d_sec[self.translate[key]](
-                            t[-1] - t_offset_sec).item() * (const.msol * const.rsol**2)
-                        history = interp1d_sec[self.translate[key]](
-                            t[:-1] - t_offset_sec) * (const.msol * const.rsol**2)
-                        
-                    elif (key in ["total_moment_of_inertia"] and obj == primary):
-                        if primary.co:
-                            current = getattr(obj, key)
-                            history = [current] * len(t[:-1])
-                        else:
-                            current = interp1d_pri[self.translate[key]](
-                                t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)
-                            history = interp1d_pri[self.translate[key]](
-                                t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)
-                            
-                    elif (key in ["log_total_angular_momentum"] and obj == secondary):
-
-                        current_omega = interp1d_sec["omega"][-1]
-
-                        ## add a warning catch if the current omega has an invalid value
-                        ## (otherwise python will throw an insuppressible warning when taking the log)
-                        if interp1d_sec["omega"][-1] <=0:
-                            Pwarn("Trying to compute log angular momentum for object with no spin", 
-                                  "InappropriateValueWarning")
-                            current_omega = np.nan
-                                               
-                        current = np.log10(
-                            (current_omega / const.secyer)
-                                * (interp1d_sec[
-                                    self.translate["total_moment_of_inertia"]](t[-1] - t_offset_sec).item() * 
-                                    (const.msol * const.rsol ** 2)))                                             
-                        history = np.log10(
-                            (interp1d_sec["omega"][:-1] / const.secyer)
-                            * (interp1d_sec[self.translate["total_moment_of_inertia"]](
-                                    t[:-1] - t_offset_sec) * (const.msol * const.rsol**2)))
-                        
-                    elif (key in ["log_total_angular_momentum"] and obj == primary):
-                        if primary.co:
-                            current = getattr(obj, key)
-                            history = [current] * len(t[:-1])
-                        else:
-                            current = np.log10(
-                                (interp1d_pri["omega"][-1] / const.secyer)
-                                * (interp1d_pri[self.translate["total_moment_of_inertia"]](
-                                        t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)))
-                            history = np.log10(
-                                (interp1d_pri["omega"][:-1] / const.secyer)
-                                * (interp1d_pri[self.translate["total_moment_of_inertia"]](
-                                        t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)))
-                            
-                    elif (key in ["spin"] and obj == secondary):
-                        current = (const.clight
-                            * (interp1d_sec["omega"][-1] / const.secyer)
-                            * interp1d_sec[self.translate["total_moment_of_inertia"]](
-                                t[-1] - t_offset_sec).item() * (const.msol * const.rsol**2)
-                            / (const.standard_cgrav * (interp1d_sec[self.translate["mass"]](
-                                    t[-1] - t_offset_sec).item() * const.msol)**2))
-                        history = (const.clight
-                            * (interp1d_sec["omega"][:-1] / const.secyer)
-                            * interp1d_sec[self.translate["total_moment_of_inertia"]](
-                                    t[:-1] - t_offset_sec)* (const.msol * const.rsol**2)
-                            / (const.standard_cgrav * (interp1d_sec[self.translate["mass"]](
-                                    t[:-1] - t_offset_sec) * const.msol)**2))
-                        
-                    elif (key in ["spin"] and obj == primary):
-                        if primary.co:
-                            current = getattr(obj, key)
-                            history = [current] * len(t[:-1])
-                        else:
-                            current = (const.clight
-                                * (interp1d_pri["omega"][-1] / const.secyer)
-                                * interp1d_pri[self.translate["total_moment_of_inertia"]](
-                                        t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)
-                                / (const.standard_cgrav * (interp1d_pri[self.translate["mass"]](
-                                        t[-1] - t_offset_pri).item() * const.msol)**2))
-                            history = (const.clight 
-                                * (interp1d_pri["omega"][:-1] / const.secyer)
-                                * interp1d_pri[self.translate["total_moment_of_inertia"]](
-                                        t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)
-                                / (const.standard_cgrav * (interp1d_pri[self.translate["mass"]](
-                                        t[:-1] - t_offset_pri) * const.msol)**2))
-                            
-                    elif (key in ["lg_mdot", "lg_wind_mdot"] and obj == secondary):
-                        # in detached step, lg_mdot = lg_wind_mdot
-                        if interp1d_sec[self.translate[key]](t[-1] - t_offset_sec) == 0:
-                            current = -98.99
-                        else:
-                            current = np.log10(np.abs(interp1d_sec[self.translate[key]](
-                                t[-1] - t_offset_sec))).item()
-                            
-                        history = np.ones_like(t[:-1])
-
-                        for i in range(len(t)-1):
-                            if interp1d_sec[self.translate[key]](t[i] - t_offset_sec) == 0:
-                                history[i] = -98.99
-                            else:
-                                history[i] = np.log10(np.abs(interp1d_sec[self.translate[key]](
-                                        t[i] - t_offset_sec)))
-
-                    elif (key in ["lg_mdot", "lg_wind_mdot"] and obj == primary):
-                        if primary.co:
-                            current = None
-                            history = [current] * len(t[:-1])
-                        else:
-                            if interp1d_sec[self.translate[key]](t[-1] - t_offset_sec) == 0:
-                                current = -98.99
-                            else:
-                                current = np.log10(np.abs(interp1d_sec[self.translate[key]](
-                                        t[-1] - t_offset_sec))).item()
-                            history = np.ones_like(t[:-1])
-                            for i in range(len(t)-1):
-                                if (interp1d_sec[self.translate[key]](t[i] - t_offset_sec) == 0):
-                                    history[i] = -98.99
-                                else:
-                                    history[i] = np.log10(np.abs(interp1d_sec[self.translate[key]](
-                                            t[i] - t_offset_sec)))
-                                    
-                    elif (self.translate[key] in interp1d_sec and obj == secondary):
-                        current = interp1d_sec[self.translate[key]](t[-1] - t_offset_sec).item()
-                        history = interp1d_sec[self.translate[key]](t[:-1] - t_offset_sec)
-                        
-                    elif (self.translate[key] in interp1d_pri and obj == primary):
-                        if primary.co:
-                            current = getattr(obj, key)
-                            history = [current] * len(t[:-1])
-                        else:
-                            current = interp1d_pri[self.translate[key]](t[-1] - t_offset_pri).item()
-                            history = interp1d_pri[self.translate[key]](t[:-1] - t_offset_pri)
-                            
-                    elif key in ["profile"]:
-                        current = None
-                        history = [current] * len(t[:-1])
-
-                    else:
-                        current = np.nan
-                        history = np.ones_like(t[:-1]) * current
-
-                    setattr(obj, key, current)
-                    getattr(obj, key + "_history").extend(history)
+            # update properties after detached evolution
+            update_properties(t)
 
             secondary.state = check_state_of_star(secondary, star_CO=False)
             
@@ -1275,10 +1410,16 @@ class detached_step:
                     binary.separation *= (1 - s.y[1][-1])
                     binary.orbital_period *= (1 - s.y[1][-1]) ** 1.5
 
-                assert np.abs(
-                    binary.orbital_period - orbital_period_from_separation(
-                        binary.separation, secondary.mass, primary.mass)
-                ) / binary.orbital_period < 10 ** (-2)
+                print(primary.mass)
+                print(secondary.mass)
+                abs_diff_porb = np.abs(binary.orbital_period - orbital_period_from_separation(
+                                binary.separation, secondary.mass, primary.mass)) / binary.orbital_period
+                
+                assert abs_diff_porb < 10 ** (-2),  \
+                f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
+                f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
+                "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) =" + \
+                f"{orbital_period_from_separation(binary.separation, secondary.mass, primary.mass):.4f}"
 
                 binary.eccentricity = 0
 
@@ -1322,8 +1463,8 @@ class detached_step:
                 else:
                     binary.event = "CC2"
 
-                self.track_matcher.get_star_final_values(secondary, secondary.htrack, m01)
-                self.track_matcher.get_star_profile(secondary, secondary.htrack, m01)
+                self.track_matcher.get_star_final_values(secondary, secondary.htrack, m0_sec)
+                self.track_matcher.get_star_profile(secondary, secondary.htrack, m0_sec)
 
                 if not primary.co and primary.state in STAR_STATES_CC:
                     # simultaneous core-collapse of the other star as well
@@ -1332,8 +1473,8 @@ class detached_step:
 
                     if primary_time == secondary_time:
                         # we manually check if s.t_events[3] should also be happening simultaneously
-                        self.track_matcher.get_star_final_values(primary, primary.htrack, m02)
-                        self.track_matcher.get_star_profile(primary, primary.htrack, m02)
+                        self.track_matcher.get_star_final_values(primary, primary.htrack, m0_pri)
+                        self.track_matcher.get_star_profile(primary, primary.htrack, m0_pri)
 
                     if primary.mass != secondary.mass:
                         raise POSYDONError(
@@ -1348,8 +1489,8 @@ class detached_step:
                 else:
                     binary.event = "CC1"
 
-                self.track_matcher.get_star_final_values(primary, primary.htrack, m02)
-                self.track_matcher.get_star_profile(primary, primary.htrack, m02)
+                self.track_matcher.get_star_final_values(primary, primary.htrack, m0_pri)
+                self.track_matcher.get_star_profile(primary, primary.htrack, m0_pri)
                 
             else:  # Reached max_time asked.
                 if binary.properties.max_simulation_time - binary.time < 0.0:
