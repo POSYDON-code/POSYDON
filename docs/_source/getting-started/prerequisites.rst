@@ -28,9 +28,9 @@ Hardware Requirements
 
 In order to run a population synthesis model with POSYDON, you must ensure that you have enough free storage space. It depends on the dataset how much free space you need:
 
-- v1: approximately **40GB**
-- v2: approximately **140GB** (the default in the :ref:`installation <installation-guide>`)
-- one of the eight metallicities in v2: approximately **20GB**
+- DR1: approximately **40GB**
+- DR2: approximately **140GB** (the default in the :ref:`installation <installation-guide>`)
+- one of the eight metallicities in DR2: approximately **20GB**
 
 This is crucial for downloading the lite MESA simulation library, interpolation objects, and other auxiliary files used by the code.
 
