@@ -998,9 +998,11 @@ class track_matcher:
             if key == "log_total_angular_momentum":
                 new_val = self.get_track_val(key, htrack, m0, t0)
                 print(f"{key} = ", new_val)
+                continue
             elif key == "surf_avg_omega":
                 new_val = self.get_track_val(key, htrack, m0, t0)
                 print(f"{key} = ", new_val)
+                continue
             else:
                 debug = False
                 new_val = self.get_track_val(key, htrack, m0, t0)
