@@ -338,7 +338,7 @@ class detached_step:
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None,
-            show_matching=False
+            record_matching=False
     ):
         """Initialize the step. See class documentation for details."""
         print("DEBUG Z: ", metallicity)
@@ -361,7 +361,7 @@ class detached_step:
         self.list_for_matching_HMS = list_for_matching_HMS
         self.list_for_matching_postMS = list_for_matching_postMS
         self.list_for_matching_HeStar = list_for_matching_HeStar
-        self.show_matching = show_matching
+        self.record_matching = record_matching
 
         # mapping a combination of (key, htrack, method) to a pre-trained
         # DataScaler instance, created the first time it is requested
@@ -1161,7 +1161,7 @@ class detached_step:
             # omega of compact objects or massless remnant won't be used for integration
             omega_in_rad_per_year_pri = omega_in_rad_per_year_sec
 
-        if self.show_matching:
+        if self.record_matching:
             # append matching information as a part of step_detached
             binary.step_names.append("step_detached")
             if matched_s1 and matched_s2:
