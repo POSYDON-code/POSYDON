@@ -18,8 +18,9 @@ __authors__ = [
 ]
 
 
-from matplotlib import checkdep_usetex
-
+# from matplotlib import checkdep_usetex
+import shutil
+has_latex = shutil.which('latex') is not None
 
 PLOT_PROPERTIES = {
     'show_fig': False,
@@ -39,7 +40,8 @@ PLOT_PROPERTIES = {
     'zmin': None,
     'zmax': None,
     'title': None,
-    'rcParams': {"text.usetex": checkdep_usetex(True),
+    'rcParams': {"text.usetex": has_latex,
+                #  "text.usetex": checkdep_usetex(True),
                  "font.family": "serif",
                  "font.sans-serif": ["Computer Modern Roman"]},
     'title_font_dict': {'fontsize': 10},
