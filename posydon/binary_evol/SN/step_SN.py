@@ -1967,6 +1967,27 @@ class StepSN(object):
         Vkick : double
             Natal orbital kick in km/s.
 
+        ---------------------------------------------------------------
+
+        Natal kicks based on the mass of the ejected envelope during SN.
+
+        Two kick prescriptions are provided below, both of which are 
+        based on the mass of ejecta lost during the supernova. 
+        
+        Each is named with the prefix "ejecta_mass" followed by the name of 
+        the first author of the respective kick prescription.
+
+        References
+        ----------
+
+        [1] Neutron Star Kicks by the Gravitational Tug-boat Mechanism in Asymmetric
+            Supernova Explosions: Progenitor and Explosion Dependence, Janka H.T., 2017, 
+            ApJ 837(1):84, arXiv:1611.07562 [astro-ph.HE]
+
+        [2] New constraints on the Bray conservation-of-momentum natal kick model from 
+            multiple distinct observations, Richards S. M., Eldridge J. J., Briel M. M., 
+            Stevance H. F., Willcox R., 2022, arXiv e-prints, p. arXiv:2208.02407
+
         """
         if self.kick_normalisation == 'one_minus_fallback':
             # Normalization from Eq. 21, Fryer, C. L., Belczynski, K., Wiktorowicz,
@@ -1977,6 +1998,28 @@ class StepSN(object):
                 norm = 1.4/star.mass
             else:
                 norm = 1.0
+
+        elif self.kick_normalisation == 'ejecta_mass_Janka17':
+           
+            f_kin = 0.1         # Fraction of SN explosion energy that is kinetic energy of the gas
+            beta = 0.1          # Fraction of ejecta mass that is neutrino heated
+            epsilon = 1    
+            alpha_ej = 0.01
+            M_NS = star.mass                                    # Neutron star mass
+            M_rembar=(((3*M_NS/20 + 1)**2) - 1)/0.3             # Remnant baryonic mass 
+            M_ej=abs(star.mass_history[-1] - M_rembar)          # Ejecta mass
+
+            Vkick_ej = 211*(f_kin*beta*epsilon)**(1/2)*(alpha_ej/0.1)*(M_ej/0.1)*(M_NS/1.5)**(-1)
+        
+         elif self.kick_normalisation == 'ejecta_mass_Richards+23':
+
+            M_ej = star.co_core_mass_history[-1]-star.mass        # Ejecta mass
+            M_rem = star.mass                                     # Neutron star mass
+            alpha = 115                                           # alpha and beta are best-fit parameters
+            beta = 15                                             
+
+            Vkick_ej = alpha * (M_ej/M_rem) + beta
+
         elif self.kick_normalisation == 'NS_one_minus_fallback_BH_one':
             if star.state == 'BH':
                 norm = 1.
@@ -1994,7 +2037,10 @@ class StepSN(object):
         if sigma is not None:
             # f_fb = self.compute_m_rembar(star, None)[1]
 
-            Vkick = norm * sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
+            if self.kick_normalisation in ['ejecta_mass_Janka17', 'ejecta_mass_Richards+23']:
+                Vkick = Vkick_ej
+            else:
+                Vkick = norm * sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
         else:
             Vkick = 0.0
 
