@@ -43,7 +43,7 @@ from posydon.utils.posydonerror import (NumericalError, MatchingError,
                                         ClassificationError)
 from posydon.utils.posydonwarning import Pwarn
 
-from posydon.grids.track_match import track_matcher
+from track_match import track_matcher
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
                                   "accreted_He_Core_H_burning"] # REMOVE
