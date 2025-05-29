@@ -43,7 +43,7 @@ from posydon.utils.posydonerror import (NumericalError, MatchingError,
                                         ClassificationError)
 from posydon.utils.posydonwarning import Pwarn
 
-from track_match import track_matcher
+from posydon.binary_evol.DT.track_match import track_matcher
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
                                   "accreted_He_Core_H_burning"] # REMOVE
@@ -337,7 +337,8 @@ class detached_step:
             RLO_orbit_at_orbit_with_same_am=False,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
-            list_for_matching_HeStar=None
+            list_for_matching_HeStar=None,
+            show_matching=False
     ):
         """Initialize the step. See class documentation for details."""
         print("DEBUG Z: ", metallicity)
@@ -360,6 +361,7 @@ class detached_step:
         self.list_for_matching_HMS = list_for_matching_HMS
         self.list_for_matching_postMS = list_for_matching_postMS
         self.list_for_matching_HeStar = list_for_matching_HeStar
+        self.show_matching = show_matching
 
         # mapping a combination of (key, htrack, method) to a pre-trained
         # DataScaler instance, created the first time it is requested
@@ -1159,16 +1161,17 @@ class detached_step:
             # omega of compact objects or massless remnant won't be used for integration
             omega_in_rad_per_year_pri = omega_in_rad_per_year_sec
 
-        # append matching information as a part of step_detached
-        binary.step_names.append("step_detached")
-        if matched_s1 and matched_s2:
-            binary.event = "MATCH1,2"
-        elif matched_s2:
-            binary.event = "MATCH2"
-        elif matched_s1:
-            binary.event = "MATCH1"
+        if self.show_matching:
+            # append matching information as a part of step_detached
+            binary.step_names.append("step_detached")
+            if matched_s1 and matched_s2:
+                binary.event = "Match1,2"
+            elif matched_s1:
+                binary.event = "Match1"
+            elif matched_s2:
+                binary.event = "Match2"
 
-        binary.append_state()
+            binary.append_state()
         # finished adding matched state to the flow
 
         if (ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
