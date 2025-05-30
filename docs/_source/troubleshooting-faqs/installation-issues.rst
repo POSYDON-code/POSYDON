@@ -34,17 +34,8 @@ This should speed up solving the environment and installing packages but is not 
     - **Solution**: Refer back to the :ref:`installation guide <installation-guide>` to ensure all post-installation steps are followed.
 
 4. **Insufficient Storage Space**:
-    - **Description**: POSYDON requires around 40GB of free storage space for the lite MESA simulation library and related files.
+    - **Description**: POSYDON requires around 140GB of free storage space for the lite MESA simulation library and related files.
     - **Solution**: Ensure you have enough space on your installation drive. Delete unnecessary files or consider using a larger storage solution.
-
-5. **Proxy or Network Issues**:
-    - **Description**: Installation might fail if you're behind a strict network proxy or firewall.
-    - **Solution**: If you're using ``conda``, you can set proxy settings using the ``--proxy`` flag. For pip, you can use the ``--proxy`` flag as well.
-
-
-6. **Error with Experimental Visualization Libraries**:
-    - **Description**: Issues after installing the experimental visualization libraries with ``pip install ".[vis]"``.
-    - **Solution**: These libraries are experimental. Please ensure you have all required system dependencies. Consider reaching out to our :ref:`support channels <contact_info>` for more guidance or troubleshooting.
 
 Troubleshooting Tips
 ~~~~~~~~~~~~~~~~~~~~
