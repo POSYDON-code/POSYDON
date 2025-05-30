@@ -583,8 +583,8 @@ def do_core_collapse_BH(star,
             # eq. 9 of Batta & Ramirez-Ruiz (2019) for theta<theta_disk
             # J_shell = J_direct + J_disk
 
-            # Analytic integral of int_0^theta sin^3(t) dt is 4 / 3 * (2 + cos(theta)) * sin(theta/2)**4
-            temp1 = 4 /3 * (2 + np.cos(theta_disk)) * np.sin(theta_disk/2)**4
+            # Analytic integral of int_0^theta sin^3(t) dt is 4 / 3 * (2 + cos(theta)) * sin(theta/2)^4
+            temp1 = 4 / 3 * (2 + np.cos(theta_disk)) * np.sin(theta_disk/2)**4
 
             # Analytic integral of int_r-dr^r r^4 dr is r^5/5 - (r-dr)^5/5
             temp2 = r_shell**5 / 5 - (r_shell - dr_shell)**5 / 5
