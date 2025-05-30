@@ -77,22 +77,6 @@ How is this Documentation Structured?
    api_reference/posydon
    api_reference/bin
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Troubleshooting and FAQs
-
-   troubleshooting-faqs/installation-issues
-   troubleshooting-faqs/code-questions
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Contributing to POSYDON
-
-   contributing/how-to-contribute
-   contributing/code-style-guidelines
-   contributing/reporting-issues
-
 
 .. toctree::
    :maxdepth: 1
@@ -104,10 +88,13 @@ How is this Documentation Structured?
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contact and Support
+   :caption: Support and contact
 
    contact-support/contact-information
-
+   contributing/how-to-contribute
+   contributing/reporting-issues
+   troubleshooting-faqs/installation-issues
+   troubleshooting-faqs/code-questions
 
 Acknowledgments
 ---------------
