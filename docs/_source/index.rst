@@ -42,7 +42,7 @@ How is this Documentation Structured?
 
    introduction-acknowledgements/intro
    Collaborative Team <https://posydon.org/team.html>
-   Publications <https://posydon.org/papers.html>
+   Publications <https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA>
 
 .. toctree::
    :maxdepth: 1
