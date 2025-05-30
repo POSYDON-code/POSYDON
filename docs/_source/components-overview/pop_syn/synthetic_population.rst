@@ -294,6 +294,7 @@ Plotting
 The :class:`~TransientPopulation` contains a few plotting functions for ease.
     
 .. code-block:: python
+  
     # plots the efficiency over metallicity per channel
     trans_pop.plot_efficiency_over_metallicity(channel=True)
 
