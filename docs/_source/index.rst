@@ -51,13 +51,6 @@ How is this Documentation Structured?
    getting-started/prerequisites
    getting-started/installation-guide
 
-
-.. toctree::
-   :maxdepth: 1
-   :caption: User Guides
-
-   user-guides/user-roadmap
-
 .. toctree::
    :maxdepth: 1
    :titlesonly:
@@ -66,7 +59,6 @@ How is this Documentation Structured?
    tutorials-examples/population-synthesis/binary-pop-syn
    tutorials-examples/generating-datasets/generating-datasets
    tutorials-examples/MESA-grids/running-grids
-
 
 .. toctree::
    :maxdepth: 1
