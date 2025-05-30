@@ -88,7 +88,7 @@ How is this Documentation Structured?
 
 .. toctree::
    :maxdepth: 1
-   :caption: Support and contact
+   :caption: Support and Contact
 
    contact-support/contact-information
    troubleshooting-faqs/installation-issues
