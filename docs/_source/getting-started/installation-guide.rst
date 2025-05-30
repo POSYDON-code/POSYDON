@@ -11,8 +11,8 @@ This guide will help you step by step in installing POSYDON. We recommend using 
 Installing POSYDON
 ==================
 
-Installation through Anaconda (Recommended)
--------------------------------------------
+Anaconda (Recommended)
+----------------------
 
 1. **Install Anaconda**
 
@@ -87,8 +87,8 @@ Installation through Anaconda (Recommended)
 
 .. _dev-version:
 
-Installation from GitHub (Development Version)
-----------------------------------------------
+GitHub (Development Version)
+----------------------------
 
 For users interested in the latest features and developments, you can install POSYDON directly from its GitHub repository:
 
