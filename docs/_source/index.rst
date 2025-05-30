@@ -50,7 +50,6 @@ How is this Documentation Structured?
 
    getting-started/prerequisites
    getting-started/installation-guide
-   getting-started/verification
 
 
 .. toctree::
