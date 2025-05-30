@@ -2,8 +2,11 @@
 
 .. py:currentmodule:: posydon.popsyn.synthetic_population
 
+Synthetic Populations
+#####################
 
-The Population Object 
+
+Population
 ===============================
 
 The :class:`~Population` object is an interface for the population data, which is stored in a HDF5 file.
@@ -463,8 +466,8 @@ If you like to overplot multiple properties, you can set ``show=False`` and manu
 
 .. _population-file-structure:
 
-The Structure of Population Files 
-=================================
+The Structure of Generated Population Files 
+###########################################
 
 The main output of a population synthesis run is a HDF5 population file.
 
