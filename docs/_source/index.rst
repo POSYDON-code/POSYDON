@@ -134,7 +134,7 @@ How is this Documentation Structured?
 Acknowledgments
 ---------------
 
-**Team Members:** POSYDON is being led and developed by a dedicated team of astrophysicists and computer scientists. At the helm are Principal Investigators Tassos Fragos (Université de Genève) and Vicky Kalogera (Northwestern University), along with many talented individuals. You can read more about the team on the :ref:`Collaborative Team <https://posydon.org/team.html>` page.
+**Team Members:** POSYDON is being led and developed by a dedicated team of astrophysicists and computer scientists. At the helm are Principal Investigators Tassos Fragos (Université de Genève) and Vicky Kalogera (Northwestern University), along with many talented individuals. You can read more about the team on the :ref:`Collaborative Team <https://posydon.org/team.html>`_ page.
 
 **Funding Agencies:** The POSYDON project is supported primarily by two sources: the Swiss National Science Foundation Professorship grant (PI Fragos) and the Gordon and Betty Moore Foundation (PI Kalogera).
 
