@@ -21,7 +21,7 @@ To learn more about the PSyGrid object or the Processing Pipeline API ini file, 
 
 
 II. The Full POSYDON Processing Pipeline Experience 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 From A to Z, this tutorial shows you how to process, concatenate, downsample, plot the grids and check failure rate, train the interpolation object and export the POSYDON dataset for population synthesis.
 
