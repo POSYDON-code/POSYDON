@@ -53,6 +53,6 @@ Feedback
 
 We continually strive to improve POSYDON, and your feedback is invaluable.
 If you have any suggestions, praise, or constructive criticism, please share it 
-with us through the `POSYDON mailing list <https://groups.google.com/g/posydon-users/>`_.
+with us.
 
 Thank you for being part of the POSYDON community!
