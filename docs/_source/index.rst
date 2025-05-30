@@ -70,16 +70,6 @@ How is this Documentation Structured?
    components-overview/machine-learning-components
    components-overview/stellar-binary-simulation
 
-.. .. toctree::
-..    :maxdepth: 1
-..    :caption: POSYDON Workflow
-
-..    posydon-workflow/population-specification
-..    posydon-workflow/stellar-evolution-choices
-..    posydon-workflow/mesa-evolutionary-tracks
-..    posydon-workflow/interacting-binary-grids
-..    posydon-workflow/running-simulations
-
 .. toctree::
    :maxdepth: 1
    :caption: API Reference
