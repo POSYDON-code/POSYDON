@@ -267,8 +267,8 @@ Machine Learning Dependencies
 ---------------------------------------
 
 For users who wish to utilize POSYDON's latest machine learning features. 
-This is specifically used in the active learning module.
-You do not require these dependencies, if you are using the provided interpolators.
+This is specifically used in the active learning module and profile interpolation.
+You do not require these dependencies if you are using the provided Initial-Final interpolators.
 
 1. **Navigate to your POSYDON directory** (where the `setup.py` is located) and run:
 
