@@ -229,7 +229,7 @@ pseudoxml: checkautodoc
 apidoc:
 #	remove old files
 	rm -f ./_source/api_reference/*.rst
-#	generate posydon reference (ignore config.py file)
+#	generate posydon reference (ignore config.py and tests file)
 	sphinx-apidoc --module-first \
 				  --templatedir=_source/sphinx-apidoc-templates \
 				  -d 2 \
