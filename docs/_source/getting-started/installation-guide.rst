@@ -60,7 +60,8 @@ Using Anaconda (Recommended)
         export PATH_TO_POSYDON=/path/to/your/posydon/installation
         export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
-    The path for the data location is up to your choice but we recommend :code:`PATH_TO_POSYDON_DATA=$PATH_TO_POSYDON/data`.
+    The path for the data location is up to you, but keeping the data separate 
+    from the code is recommended for better organization.
 
     .. note:: 
         You can add these lines to your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
@@ -68,15 +69,16 @@ Using Anaconda (Recommended)
 5. **Download the Dataset**
 
     .. warning::
-        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (241028) you must be a POSYDON core developer, please refer to the #developers Slack channel.
+        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The instructions currently point to the POSYDON v1.0.0 dataset release. 
+        Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (241028) you must be a POSYDON core developer, please refer to the #developers Slack channel.
 
-    You can use POSYDON's built-in API command (the downloaded data will be saved in the directory specified by :code:`PATH_TO_POSYDON_DATA`):
+    You can use POSYDON's built-in API command (the downloaded data will be downloaded in the directory specified by :code:`PATH_TO_POSYDON_DATA`):
 
     .. code-block:: bash
 
         get-posydon-data
 
-    May use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the one of your choice.
+    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the one of your choice.
 
     Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
 
