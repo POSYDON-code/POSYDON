@@ -88,6 +88,7 @@ A more powerful feature is the :func:`History.select` function, which allows you
 If you want to have a peak, you can use the :meth:`~Population.head` or :meth:`~Population.tail` functions.
 
 .. code-block:: python
+  
     pop.history.head(10)
     pop.history.tail(10)
 
@@ -139,6 +140,7 @@ Additionally, ``WARNING``, ``FAILED``, and metallicity columns are available in 
 .. csv-table:: Additional columns
   :header: "Properties", "Descriptions"
   :widths: 50, 150
+
   ``FAILED``, Indicates if the system failed during the population synthesis run.
   ``WARNING``, Indicates if there were any warnings for the system during the population synthesis run.
   ``metallicity``, The metallicity of the system.
@@ -294,7 +296,7 @@ Plotting
 The :class:`~TransientPopulation` contains a few plotting functions for ease.
     
 .. code-block:: python
-  
+
     # plots the efficiency over metallicity per channel
     trans_pop.plot_efficiency_over_metallicity(channel=True)
 
