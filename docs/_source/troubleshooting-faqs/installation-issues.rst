@@ -8,7 +8,7 @@ From time to time, users might encounter issues during the installation of POSYD
 Common Installation Issues
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. **Slow `conda` solving:
+1. **Slow `conda` solving:**
 
 `conda` can be very slow and sometimes gets stuck on "Verifying transaction" or "Executing transaction", especially when installing packages on a cluster.
 It creates many small files, which can be difficult for HPC clusters to handle.
