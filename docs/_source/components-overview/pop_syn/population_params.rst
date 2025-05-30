@@ -708,7 +708,7 @@ It also contains which sampling distributions to use for the initial conditions 
     
   * - ``history_verbose``
     - | If True, record extra functional steps in the output DataFrames
-    - | (These extra steps represent internal workings of POSYDON rather than physical phases of evolution)
+      | (These extra steps represent internal workings of POSYDON rather than physical phases of evolution)
     - ``False``
 
   * - ``entropy``
