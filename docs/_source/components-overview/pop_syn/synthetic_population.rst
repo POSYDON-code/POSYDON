@@ -252,7 +252,9 @@ The :code:`selection_function` takes 3 arguments: :code:`history_chunk`, :code:`
 These chunks are cut based on a given chunksize, which is set to 1000000 by default, and are cut on system. 
 This means that always a complete history of a system is passed to the function by :func:`Population.create_transient_population`.
 
-:code:`selection_function` is a function you can adapt to your own needs, and examples of building one are given in the :ref:`tutorial-examples.population-synthesis.bbh-analysis` or :ref:`tutorial-examples.population-synthesis.lgrb_pop_syn`.
+:code:`selection_function` is a function you can adapt to your own needs, and
+examples of building one are given in the `BBH <../../tutorials-examples/population-synthesis/bbh_analysis.html>`_ or `LGRB tutorial <../../tutorials-examples/population-synthesis/lgrb_pop_syn.html>`_.
+
 
 .. note::
 
