@@ -23,11 +23,11 @@ Frequently Asked Questions
 
     The above code will produce the following error:
 
-    .. code-block:: python
+    .. code-block::
         
         ValueError: The passed where expression S1_mass > 10 
         contains an invalid variable reference. All of the variable references 
-        must be a reference to an axis (e.g. ‘index’ or ‘columns’), or a data_column.
+        must be a reference to an axis (e.g. 'index' or 'columns'), or a data_column.
         The currently defined references are: index, columns, state, event, step_names, S1_state, S2_state
 
 
@@ -70,38 +70,32 @@ Frequently Asked Questions
     Make sure you have the :code:`hdf5` and :code:`pytables` packages installed through conda in your environment with :code:`conda install hdf5 pytables` before running POSYDON!
     Although they are dependencies of POSYDON, sometimes they are not installed correctly on Mac.
 
-6. **Are there any examples or tutorials available?**
-    Yes, you can check our :ref:`roadmap <roadmap>` for tutorials related to different POSYDON components, including population synthesis, creating core datasets, and running your own MESA grids with POSYDON.
-
-7. **Can I run POSYDON on an HPC facility?**
+6. **Can I run POSYDON on an HPC facility?**
     Absolutely! Refer to `our HPC guide <../tutorials-examples/population-synthesis/pop_syn.ipynb>`_ for detailed instructions on running POSYDON in an HPC environment.
 
-8. **Help, I'm stuck! Where can I get support?**
+7. **Help, I'm stuck! Where can I get support?**
     Please check `our email group <https://groups.google.com/g/posydon-users>`_ if your question hasn't been answered yet.
     Otherwise, please email us at posydon-users [at] googlegroups.com 
 
-9. **How can I stay updated with the latest features and updates?**
+8. **How can I stay updated with the latest features and updates?**
     You can regularly visit our `official website <https://posydon.org>`_ for news and updates. 
 
-10. **I've come across a FAILED binary. What does this mean?**
+9. **I've come across a FAILED binary. What does this mean?**
      A :code:`FAILED` binary has encountered an error during the simulation because POSYDON was unable to evolve it. This can be due to a variety of reasons:
     
         -  The evolutionary state of the binary is not represented in the currently supported stellar evolution grids. For example, we do not have a grid for Roche lobe overflow between two helium stars.
         -  The binary has masses outside the grid range. For example, the HMS-HMS grid does not contain binaries with a secondary mass below 0.5.
         -  The binary could not be matched to a single star or a binary due to a too large matching error.
 
-11. **What approximations does POSYDON make?**
+10. **What approximations does POSYDON make?**
      This is a complex question and the best answer is provided in the POSYDON papers: `Fragos et al. (2023) <https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract>`_ and `Andrews et al. (submitted) <https://ui.adsabs.harvard.edu/abs/2024arXiv241102376A/abstract>`_.
 
 
 Additional Resources
 ~~~~~~~~~~~~~~~~~~~~
-
-1. **User Guide**: For detailed instructions on all features of POSYDON, visit our comprehensive :ref:`roadmap <roadmap>`.
- 
+1. **Examples and Tutorials**: Learn by doing!
 2. **API Reference**: Dive deep into the functionality provided by POSYDON with our :ref:`API Reference <modules>`.
-
-3. **Examples and Tutorials**: Learn by doing! Visit :ref:`our roadmap page <roadmap>` for hands-on learning.
+3. **Github Discussions**: Engage with the community, ask questions, and share your experiences on our `GitHub Discussions <https://github.com/POSYDON-code/POSYDON/discussions>`_ page.
 
 Still Have Questions?
 ~~~~~~~~~~~~~~~~~~~~~
