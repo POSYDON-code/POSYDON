@@ -81,9 +81,13 @@ Step-by-step guide on how to leverage our MESA simulation submission API for cre
 
 Dive deeper into advanced techniques for grid creation, by layering MESA and POSYDON default inlist parameters and customizing your inlists variables on top to your needs.
 
-.. toctree::
+.. warning::
 
-    notebook: Creating and Customizing MESA Grids layer by layer
+    This feature is only partially implemented. Please contact us if you require more information.
+
+.. .. toctree::
+
+..     notebook: Creating and Customizing MESA Grids layer by layer
 
 Running a dynamically sampled grid of MESA simulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
