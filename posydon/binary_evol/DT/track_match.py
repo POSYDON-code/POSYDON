@@ -167,14 +167,31 @@ DEFAULT_TRANSLATED_KEYS = (
     'center_gamma'
 )
 
+KEYS_POSITIVE = (
+    'mass_conv_reg_fortides',
+    'thickness_conv_reg_fortides',
+    'radius_conv_reg_fortides'
+)
+
+DEFAULT_PROFILE_KEYS = (
+    'radius',
+    'mass',
+    'logRho',
+    'energy',
+    'x_mass_fraction_H',
+    'y_mass_fraction_He',
+    'z_mass_fraction_metals',
+    'neutral_fraction_H',
+    'neutral_fraction_He',
+    'avg_charge_He'
+)
+
 class track_matcher:
 
 
     def __init__(
             self,
             KEYS,
-            KEYS_POSITIVE,
-            DEFAULT_PROFILE_KEYS,
             grid_name_Hrich,
             grid_name_strippedHe,
             path=PATH_TO_POSYDON_DATA,
@@ -992,19 +1009,17 @@ class track_matcher:
 
     def update_star_properties(self, star, htrack, m0, t0):
 
-        #grid = self.grid_Hrich if htrack else self.grid_strippedHe
         for key in self.KEYS:
-            #new_val = self.get_track_val(key, htrack, m0, t0)
+            
+            # skip updating rotation rate quantities because
+            # they're 0 or not defined in non-rotating tracks
             if key == "log_total_angular_momentum":
                 new_val = self.get_track_val(key, htrack, m0, t0)
-                print(f"{key} = ", new_val)
                 continue
             elif key == "surf_avg_omega":
                 new_val = self.get_track_val(key, htrack, m0, t0)
-                print(f"{key} = ", new_val)
                 continue
             else:
-                debug = False
                 new_val = self.get_track_val(key, htrack, m0, t0)
                 
             setattr(star, key, new_val)

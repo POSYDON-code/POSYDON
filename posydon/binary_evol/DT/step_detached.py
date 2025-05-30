@@ -216,20 +216,20 @@ DEFAULT_TRANSLATED_KEYS = (
 )
 
 
-DEFAULT_PROFILE_KEYS = (
-    'radius',
-    'mass',
-    'logRho',
-    'energy',
-    'x_mass_fraction_H',
-    'y_mass_fraction_He',
-    'z_mass_fraction_metals',
-    'neutral_fraction_H',
-    'neutral_fraction_He',
-    'avg_charge_He'
-)
+#DEFAULT_PROFILE_KEYS = (
+#    'radius',
+#    'mass',
+#    'logRho',
+#    'energy',
+#    'x_mass_fraction_H',
+#    'y_mass_fraction_He',
+#    'z_mass_fraction_metals',
+#    'neutral_fraction_H',
+#    'neutral_fraction_He',
+#    'avg_charge_He'
+#)
 
-MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
+#MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
 
 
 
@@ -384,11 +384,11 @@ class detached_step:
         # these are the KEYS read from POSYDON h5 grid files (after translating
         # them to the appropriate columns)
         self.KEYS = DEFAULT_TRANSLATED_KEYS
-        self.KEYS_POSITIVE = (
-            'mass_conv_reg_fortides',
-            'thickness_conv_reg_fortides',
-            'radius_conv_reg_fortides'
-        )
+        #self.KEYS_POSITIVE = (
+        #    'mass_conv_reg_fortides',
+        #    'thickness_conv_reg_fortides',
+        #    'radius_conv_reg_fortides'
+        #)
 
         # keys for the final value interpolation
         self.final_keys = (
@@ -564,18 +564,37 @@ class detached_step:
         def ev_max_time2(t, y):
             return t_max_pri + t_offset_pri - t
         
-        def get_omega(star, prematch_rotation, is_secondary=True):
-            """Calculate the spin of a star.
+        def get_omega(star, prematch_rotation, interp1d):
+            """
+            
+              Calculate the spin of a star from its (pre-match) moment
+            of inertia and angular momentum (or rotation rates). This is 
+            required because we match a rotating model (from the binary grids) 
+            to a non-rotating model (from the single star grids).
 
             Parameters
             ----------
             star : SingleStar object
+                Star object containing the star properties.
+
+            prematch_rotation: dict 
+                A dictionary containing the pre-match values of 
+                angular momentum, moment of inertia, omega/omega_crit, 
+                and omega
+
+            interp1d: PchipInterpolator 
+                Interpolator object used to calculate radius and mass 
+                of the starin the event that star.log_R is NaN.
 
             Returns
             -------
-            float
-                spin of the star in radians per year
+            omega_in_rad_per_year: float
+                The rotation rate of the star in radians per year, 
+                calculated from the star's (pre-match) angular momentum
+                and moment of inertia.
             """
+
+            print(interp1d)
 
             log_total_angular_momentum = prematch_rotation['log_total_angular_momentum']
             total_moment_of_inertia = prematch_rotation['total_moment_of_inertia']
@@ -588,7 +607,7 @@ class detached_step:
                     and pd.notna(total_moment_of_inertia)):
                 
                 if self.verbose:
-                    print("calculating initial omega using angular momentum and moment of inertia")
+                    print("Calculating post-match omega using angular momentum and moment of inertia")
 
                 # the last factor converts rad/s to rad/yr
                 omega_in_rad_per_year = (10.0 ** log_total_angular_momentum
@@ -602,27 +621,24 @@ class detached_step:
                 if pd.notna(surf_avg_omega):
 
                     if self.verbose:
-                        print("calculating initial omega using surf_avg_omega")
+                        print("Calculating post-match omega using surf_avg_omega")
 
                     omega_in_rad_per_year = surf_avg_omega * const.secyer                    
                         
                 elif pd.notna(surf_avg_omega_div_omega_crit):
                     
+                    if self.verbose:
+                        print("Calculating post-match omega using surf_avg_omega_div_omega_crit")
+
                     if pd.notna(star.log_R):
                         omega_in_rad_per_year = (surf_avg_omega_div_omega_crit * np.sqrt(
                                                   const.standard_cgrav * star.mass * const.msol
                                                   / ((10.0 ** (star.log_R) * const.rsol) ** 3)) * const.secyer)
                         
                     else:
-                        if is_secondary:
-                            radius_to_be_used = interp1d_sec["R"](interp1d_sec["t0"])
-                            mass_to_be_used = interp1d_sec["mass"](interp1d_sec["t0"])
-                        else:
-                            radius_to_be_used = interp1d_pri["R"](interp1d_pri["t0"])
-                            mass_to_be_used = interp1d_pri["mass"](interp1d_pri["t0"])
                         
-                        if self.verbose:
-                            print("calculating initial omega using surf_avg_omega_div_omega_crit")
+                        radius_to_be_used = interp1d["R"](interp1d["t0"])
+                        mass_to_be_used = interp1d["mass"](interp1d["t0"])
 
                         omega_in_rad_per_year = (surf_avg_omega_div_omega_crit * np.sqrt(
                                                   const.standard_cgrav * mass_to_be_used * const.msol
@@ -631,11 +647,16 @@ class detached_step:
                 else:
                     omega_in_rad_per_year = 0.0
                     if self.verbose:
-                        print("could not calculate initial omega, setting to zero")
+                        print("Could not calculate post-match omega, pre-match values are bad.")
+                        print("Pre-match rotation rates:")
+                        print("surf_avg_omega = ", surf_avg_omega)
+                        print("surf_avg_omega_div_omega_crit = ", surf_avg_omega_div_omega_crit)
+                        Pwarn("Setting (post-match) rotation rate to zero.", "InappropriateValueWarning")
+                        
                         
             if self.verbose:
-                print("calculated omega_in_rad_per_year = ", omega_in_rad_per_year)
                 print("pre-match omega_in_rad_per_year = ", surf_avg_omega * const.secyer)
+                print("calculated omega_in_rad_per_year = ", omega_in_rad_per_year)
                 omega_percent_diff = np.nan_to_num(100.0*(omega_in_rad_per_year-surf_avg_omega*const.secyer) \
                                                  / omega_in_rad_per_year, 0)
                 print("omega_in_rad_per_year percent_diff = ", 
@@ -643,10 +664,26 @@ class detached_step:
 
             return omega_in_rad_per_year
 
-        def update_properties():
+        def update_interp_properties(binary, primary, secondary):
 
             """
-            Update star and binary properties with interpolated values.
+              Update star and binary properties with using interpolators. This update 
+            gives the binary/stars their appropriate values, according to the interpolation
+            after detached evolution.
+
+            Parameters
+            ----------
+            binary: BinaryStar object
+                A binary star object, containing the binary system's properties.
+
+            primary: SingleStar object
+                A single star object, representing the primary (more evolved) star 
+                in the binary and containing its properties.
+            
+            secondary: SingleStar object
+                A single star object, representing the secondary (less evolved) star 
+                in the binary and containing its properties.            
+
 
             """
 
@@ -889,8 +926,22 @@ class detached_step:
 
         def determine_star_states(binary):
 
-            states_OK = True
+            """
+            
+              Determines which star is primary (further evolved) and which is 
+            secondary (less evolved). Determines whether stars should be 
+            matched to the H- or He-rich grid, whether they exist, or if they
+            are compact objects/massless remnants. THis is used to determine
+            how to match the stars and also treat their detached evolution.
 
+            Parameters
+            ----------
+            binary: BinaryStar object
+                A binary star object, containing the binary system's properties.
+            
+            """
+
+            states_OK = True
 
             # >>>>>> START DETERMINING PRIMARY/SECONDARY STATES
             self.companion_1_exists = (binary.star_1 is not None
@@ -1061,7 +1112,36 @@ class detached_step:
             return primary, secondary, states_OK
 
         def do_matching(binary, primary, secondary):
-            # >>>>>> START MATCHING
+            
+            """
+                Perform binary to single star grid matching. This is currently
+            used when transitioning to detached star evolution from binary.
+            
+            Parameters
+            ----------
+            binary: BinaryStar object
+                A binary star object, containing the binary system's properties.
+
+            primary: SingleStar object
+                A single star object, representing the primary (more evolved) star 
+                in the binary and containing its properties.
+            
+            secondary: SingleStar object
+                A single star object, representing the secondary (less evolved) star 
+                in the binary and containing its properties. 
+
+            Returns
+            -------
+            interp1d_pri: PchipInterpolator 
+                Interpolator object used to interpolate star properties and
+                simulate detached evolution for the primary star.
+    
+            interp1d_sec: PchipInterpolator 
+                Interpolator object used to interpolate star properties and
+                simulate detached evolution for the secondary star.
+
+            """
+
             # record which star we performed matching on for reporting purposes
             self.matched_s1 = False
             self.matched_s2 = False
@@ -1107,10 +1187,40 @@ class detached_step:
                 set_binary_to_failed(binary)
                 raise MatchingError(f"Grid matching failed for {failed_state} binary.")    
 
-            # >>>>>> END OF MATCHING
             return interp1d_pri, interp1d_sec
 
         def update_rotation_info(primary, secondary):
+
+            """
+                Since we have matched to non-rotating single star grids, we need to calculate
+            what the spin should be, based on star properties from before the match was made. 
+            This calculates a new rotation rate for the matched star from the previous moment 
+            of intertia and angular momentum (or rotation rates). This also updates the stars 
+            in the binary with the newly calculated values to reflect this.
+
+            Parameters
+            ----------
+            primary: SingleStar object
+                A single star object, representing the primary (more evolved) star 
+                in the binary and containing its properties.
+            
+            secondary: SingleStar object
+                A single star object, representing the secondary (less evolved) star 
+                in the binary and containing its properties. 
+
+            Returns
+            -------
+            omega_in_rad_per_year_pri: PchipInterpolator 
+                The rotation rate of the primary star in radians per year, 
+                calculated from the star's (pre-match) angular momentum
+                and moment of inertia.
+    
+            omega_in_rad_per_year_sec: PchipInterpolator 
+                The rotation rate of the secondary star in radians per year, 
+                calculated from the star's (pre-match) angular momentum
+                and moment of inertia.
+
+            """
 
             prematch_rotation_sec = {"log_total_angular_momentum": secondary.log_total_angular_momentum,
                                     "total_moment_of_inertia": secondary.total_moment_of_inertia,
@@ -1122,10 +1232,7 @@ class detached_step:
                                     "surf_avg_omega_div_omega_crit": primary.surf_avg_omega_div_omega_crit,
                                     "surf_avg_omega": primary.surf_avg_omega}
 
-            # because we have matched to non-rotating single star grids, we need to calculate
-            # what the spin should be, based on properties of the angular momentum, etc., 
-            # before the match was made
-            omega_in_rad_per_year_sec = get_omega(secondary, prematch_rotation_sec)
+            omega_in_rad_per_year_sec = get_omega(secondary, prematch_rotation_sec, interp1d_sec)
 
             # recalculate rotation quantities using the newly calculated omega
             secondary.surf_avg_omega_div_omega_crit = (omega_in_rad_per_year_sec / const.secyer / secondary.surf_avg_omega) \
@@ -1135,7 +1242,7 @@ class detached_step:
                                                             * secondary.total_moment_of_inertia)
 
             if self.primary_normal:
-                omega_in_rad_per_year_pri = get_omega(primary, prematch_rotation_pri, is_secondary = False)
+                omega_in_rad_per_year_pri = get_omega(primary, prematch_rotation_pri, interp1d_pri)#is_secondary = False)
 
                 primary.surf_avg_omega_div_omega_crit = (omega_in_rad_per_year_pri / const.secyer / primary.surf_avg_omega) \
                                                 * primary.surf_avg_omega_div_omega_crit
@@ -1148,20 +1255,10 @@ class detached_step:
             
             return omega_in_rad_per_year_pri, omega_in_rad_per_year_sec
 
-
-        def update_match_info(primary, m0_pri, t0_pri, secondary, m0_sec, t0_sec):
-
-            # update binary star properties according to matched values
-            # (this gets overwritten after detached evolution)
-            self.track_matcher.update_star_properties(secondary, secondary.htrack, m0_sec, t0_sec)
-            if self.primary_normal:
-                self.track_matcher.update_star_properties(primary, primary.htrack, m0_pri, t0_pri)
-
         KEYS = self.KEYS
-        KEYS_POSITIVE = self.KEYS_POSITIVE
 
         # creating a track matching object
-        self.track_matcher = track_matcher(KEYS, KEYS_POSITIVE, DEFAULT_PROFILE_KEYS, 
+        self.track_matcher = track_matcher(KEYS, 
                                            grid_name_Hrich = self.grid_name_Hrich,
                                            grid_name_strippedHe = self.grid_name_strippedHe, 
                                            path=PATH_TO_POSYDON_DATA, metallicity=self.metallicity, 
@@ -1195,9 +1292,11 @@ class detached_step:
     
         # recalculate rotation quantities after matching
         omega_in_rad_per_year_pri, omega_in_rad_per_year_sec = update_rotation_info(primary, secondary)
-        
         # update binary history with matched values (only shown in history if record_match = True)
-        update_match_info(primary, m0_pri, t0_pri, secondary, m0_sec, t0_sec)
+        # (this gets overwritten after detached evolution)
+        self.track_matcher.update_star_properties(secondary, secondary.htrack, m0_sec, t0_sec)
+        if self.primary_normal:
+            self.track_matcher.update_star_properties(primary, primary.htrack, m0_pri, t0_pri)
 
         if self.record_matching:
             # append matching information as a part of step_detached
@@ -1357,7 +1456,7 @@ class detached_step:
             interp1d_sec["time"] = t
 
             # update properties after detached evolution
-            update_properties()
+            update_interp_properties(binary, primary, secondary)
 
             secondary.state = check_state_of_star(secondary, star_CO=False)
             
