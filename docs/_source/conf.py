@@ -350,7 +350,6 @@ htmlhelp_basename = 'posydondoc'
 html_logo = 'posydon_logo.png'
 html_theme_options = {
     'logo_only': True,
-    'display_version': True,
 }
 
 # -- Options for LaTeX output ---------------------------------------------
