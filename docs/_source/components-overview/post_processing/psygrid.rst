@@ -299,7 +299,7 @@ Work on/with a `PSyGrid` object
 -------------------------------
 
 Loop over a `PSyGrid` object
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Similarly to accessing a single value in the :samp:`PSyGrid` object, we can 
 loop over a :samp:`PSyGrid` object, which will loop over the individual runs 
