@@ -91,10 +91,10 @@ How is this Documentation Structured?
    :caption: Support and contact
 
    contact-support/contact-information
-   contributing/how-to-contribute
-   contributing/reporting-issues
    troubleshooting-faqs/installation-issues
    troubleshooting-faqs/code-questions
+   Report an Issue <https://github.com/POSYDON-code/POSYDON/issues/new/choose>
+   contributing/how-to-contribute
 
 Acknowledgments
 ---------------

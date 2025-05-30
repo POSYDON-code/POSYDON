@@ -1,12 +1,9 @@
 .. _installation-issues:
 
-Installation Issues
+Common Installation Issues
 -------------------
 
 From time to time, users might encounter issues during the installation of POSYDON. This page aims to address common installation problems and offer solutions. If your problem isn't covered here, please `report the issue <https://github.com/POSYDON-code/POSYDON/issues>`_ so we can assist you and possibly update this page for the benefit of others.
-
-Common Installation Issues
-~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. **Slow `conda` solving:**
 
