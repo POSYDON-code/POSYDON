@@ -27,7 +27,7 @@ From A to Z, this tutorial shows you how to process, concatenate, downsample, pl
 
 .. toctree::
 
-    run_full_piepeline
+    run_full_pipeline
 
 Congratulations! You now master the POSYDON Processing Pipeline. To learn more about the PSyGrid object or the Processing Pipeline API ini file, check out the [API Documentation](api.rst) and the indepth components overview.
 
