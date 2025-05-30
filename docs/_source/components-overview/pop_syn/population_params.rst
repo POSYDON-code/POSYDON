@@ -66,7 +66,6 @@ It controls the mapping between a POSYDON binary object and its step evolution, 
   :widths: 10 80 10
   :class: population-params-table
   :header-rows: 1
-  
 
   * - Parameter
     - Description
@@ -676,7 +675,7 @@ It also contains which sampling distributions to use for the initial conditions 
 
   * - ``dump_rate``
     - | Batch save after evolving N binaries.
-    - | To facilitate I/O performance, this should be at least 500 for populations of 100.000 binaries or more.
+      | To facilitate I/O performance, this should be at least 500 for populations of 100.000 binaries or more.
     - ``2000``
 
   * - ``temp_directory``
