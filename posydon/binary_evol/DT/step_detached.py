@@ -582,9 +582,10 @@ class detached_step:
                 angular momentum, moment of inertia, omega/omega_crit, 
                 and omega
 
-            interp1d: PchipInterpolator 
-                Interpolator object used to calculate radius and mass 
-                of the starin the event that star.log_R is NaN.
+            interp1d: dict
+                A dictionary of scipy.interpolate._cubic.PchipInterpolator 
+                objects. Here, used to calculate radius and mass of the star 
+                in the event that star.log_R is NaN.
 
             Returns
             -------
@@ -593,8 +594,6 @@ class detached_step:
                 calculated from the star's (pre-match) angular momentum
                 and moment of inertia.
             """
-
-            print(interp1d)
 
             log_total_angular_momentum = prematch_rotation['log_total_angular_momentum']
             total_moment_of_inertia = prematch_rotation['total_moment_of_inertia']

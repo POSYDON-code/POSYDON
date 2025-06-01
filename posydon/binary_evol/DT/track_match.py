@@ -468,22 +468,28 @@ class track_matcher:
         return m0, t
     
     def get_track_val(self, key, htrack, m0, t):
-        """Return a single value from the interpolated time-series.
+        """
+        
+            Return a single value of a stellar property from the 
+        interpolated time-series along a requested stellar track 
+        of mass `m0` at an age of `t`.
 
         Parameters
         ----------
-        key : str
-            Keyword of the required quantity.
-        m0 : float
-            The associated initial mass of the required quantity.
-        t  : float
-            The required time in the time-series.
+        key: str
+            Keyword of the desired quantity.
+
+        m0: float
+            The initial mass of the desired stellar track.
+
+        t: float
+            The desired age along the stellar track.
 
         Returns
         -------
-        float
-            The value of the quantity `key` from a MIST-like track of
-            initial mass `m0` at the time `t0`.
+        val: float
+            The value of the desired quantity from a stellar track of
+            initial mass `m0` at the time `t`.
 
         """
         # htrack as a boolean determines whether H or He grid is used
@@ -509,13 +515,21 @@ class track_matcher:
         return val
     
     def scale(self, key, htrack, method):
-        """Nomarlize quantities in the single star grids to (0,1).
+        """
+        
+            Normalize quantities in the single star grids to (0,1).
 
         Parameters
         ----------
-        key : str
+        key: str
             Keyword of the required quantity.
-        method : str
+
+        htrack: bool
+            A boolean that specifies whether the star would be found in the 
+            hydrogen rich single star grid or not (in which case it is
+            matched to the helium rich single star grid).
+
+        method: str
             Scalling method in the data normalization class
 
         Returns
@@ -549,26 +563,39 @@ class track_matcher:
         return scaler
 
     def match_to_single_star(self, star, htrack):
-        """Get the track in the grid that matches the time and mass of a star.
-
-        For "root" matching_method, the properties that are matched is always
-        the mass of the secondary star.
-        If the secondary has the state `MS` then
-        the center hydrogen abundance will also be matched
-        otherwise the mass of helium-core will be matched.
+        """
+        
+            Get the track in the grid that matches the time and mass of a star,
+        that has typically undergone prior binary star evolution. A match is made 
+        according to a given algorithm that minimizes the difference amongst several 
+        physical properties, e.g., mass, central hydrogen abundance, radius, and 
+        core helium mass, depending on the type of star being matched. However, these 
+        properties may also be customized by the user.
 
         Parameters
         ----------
-        star : SingleStar
-            The star which properties are required
-            to be matched with the single MIST-like grid.
+        star: SingleStar object
+            A single star object that contains the star's properties.
+        
+        htrack: bool
+            A boolean that specifies whether the star would be found in the 
+            hydrogen rich single star grid or not (in which case it is
+            matched to the helium rich single star grid).
 
         Returns
         -------
-        list of 2 float values
-            Contains the associated mass (in solar units) and the time (in years)
-            such that the time-series in the grid matches
-            the properties of the secondary.
+        m0: float
+            Mass (in solar units) of the matched model
+        
+        t0: float
+            Age (in years) of the matched model
+
+        htrack: bool
+            This has the same meaning as the given htrack, but the value
+            may change during the course of matching. In the event that 
+            a match can not be found, an He or post-MS star may be 
+            alternatively matched to the H or He grid, in spite of the 
+            star's actual state, as a last ditch effort to find a match.
 
         """
         def get_posydon_attributes(list_for_matching, star):
@@ -879,56 +906,65 @@ class track_matcher:
                     f'center_c12 = {star.center_c12:.4f}'
                 )
 
-        return initials[0], initials[1], htrack
+        m0 = initials[0]
+        t0 = initials[1]
+
+        return m0, t0, htrack
     
 
-    def get_star_data(self, binary, star1, copy_prev_m0=None, copy_prev_t0=None):
-                """Get and interpolate the properties of stars.
+    def get_star_data(self, binary, star, copy_prev_m0=None, copy_prev_t0=None):
+                """
+                    Match a given component of a binary (i.e., a star) to a 
+                single star model. This then creates and returns interpolator
+                objects that may be used to calculate properties of the star
+                as a function of time.
 
-                The data of a compact object can be stored as a copy of its
-                companion for convenience except its mass, radius, mdot, and Idot
-                are set to be zero.
+                    In the case of a compact object, radius, mdot, and Idot are 
+                set to zero. One may use another star, e.g., the companion of 
+                the compact object to provide an initial mass and age.
 
                 Parameters
                 ----------
-                htrack : bool
-                    htrack of star1. False if star 1 is a stripped He star
-                co: bool
-                    co of star2. True if star 2 is a compact object
-                copy_prev_m0 : float
-                    A mass value that may be copied from e.g., another star in the case
-                    of the target star being a compact object
-                copy_prev_t0 : float
-                    An age value that may be copied from e.g., another star in the case
-                    of the target star being a compact object
+                binary: BinaryStar object
+                    A binary star object, containing the binary system's properties.
+
+                star: SingleStar object
+                    A single star object that contains the star's properties.
+
+                copy_prev_m0: float
+                    A mass value that may be copied from another star in the case
+                    where the target star is a compact object
+
+                copy_prev_t0: float
+                    An age value that may be copied from another star in the case
+                    where the target star is a compact object
 
                 Return
                 -------
-                interp1d
-                    Contains the properties of star1 if co is false,
-                    if co is true, star2 is a compact object,
-                    return the properties of star2
+                interp1d: dict
+                    A dictionary of scipy.interpolate._cubic.PchipInterpolator 
+                    objects used to calculate star properties.
 
                 """
 
                 KEYS = self.KEYS
                 KEYS_POSITIVE = self.KEYS_POSITIVE
 
-                htrack = star1.htrack
-                co = star1.co
+                htrack = star.htrack
+                co = star.co
 
                 with np.errstate(all="ignore"):
                     # get the initial m0, t0 track
                     if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
                         # ZAMS stars in wide (non-mass exchaging binaries) that are
                         # directed to detached step at birth
-                        m0, t0 = star1.mass, 0
+                        m0, t0 = star.mass, 0
                     elif co:
                         m0, t0 = copy_prev_m0, copy_prev_t0
                     else:
                         t_before_matching = time.time()
                         # matching to single star grids
-                        m0, t0, htrack = self.match_to_single_star(star1, htrack)
+                        m0, t0, htrack = self.match_to_single_star(star, htrack)
                         t_after_matching = time.time()
                         
                         if self.verbose:
@@ -997,7 +1033,7 @@ class track_matcher:
                 interp1d["m0"] = m0
 
                 if co:
-                    kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star1.mass
+                    kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star.mass
                     kvalue["R"] = np.zeros_like(kvalue["log_R"])
                     kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
                     interp1d["mass"] = PchipInterpolator(age, kvalue["mass"])
