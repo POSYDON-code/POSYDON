@@ -387,32 +387,34 @@ class track_matcher:
         """
             Get the track in the grid with values closest to the requested ones.
 
-            Parameters
-            ----------
-            keys : list of str
-                   Contains the keys of the required specific quantities that will be
-                   matched in the MIST-like track.
+        Parameters
+        ----------
+        keys : list of str
+                Contains the keys of the requested specific quantities that will be
+                matched in the single star track.
 
-            x :    list of floats, of same length as "keys"
-                   Contains the latest values (from a previous POSYDON step) of the
-                   quantities of "keys" in the POSYDON SingleStar object.
+        x :    list[float]
+                This should be the same length as "keys". Contains the latest values 
+                (from a previous POSYDON step) of the quantities of "keys" in the 
+                POSYDON SingleStar object.
 
-            htrack : bool
-                     Set True to search the H-rich grids, or False to search the 
-                     stripped He-star grids.
-               
-            rs :    list of floats, same length as "keys"
-                    Contains normalization factors to be divided for rescaling
-                    x values.
+        htrack : bool
+                    Set True to search the single star H-rich grids, or False to search 
+                    the He-rich grids.
+            
+        rs :    list[float]
+                This should be the same length as "keys". Contains normalization 
+                factors to be divided for rescaling x values.
 
-            Returns
-            -------
-            list of 2 float values
-                Contains the associated initial mass (in solar units) and the time
-                (in years) such that the time-series of the `keys` at that time has
-                the closest values to `x`. These will become m0, t0 for the later
-                integration during the detached binary evolution.
-                If there is no match then NaNs will be returned instead.
+        Returns
+        -------
+        m0: float
+            Mass (in solar units) of the matched model. This is NaN if no match is 
+            found.
+    
+        t: float
+            Age (in years) of the matched model. This is NaN if no match is 
+            found.
 
         """
 
@@ -534,7 +536,7 @@ class track_matcher:
 
         Returns
         -------
-        class
+        scaler: class
             Data normalization class
 
         """
@@ -553,13 +555,16 @@ class track_matcher:
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
         self.initial_mass = grid.grid_mass
         all_attributes = []
+
         for mass in self.initial_mass:
             for i in grid.get(key, mass):
                 all_attributes.append(i)
+
         all_attributes = np.array(all_attributes)
         scaler = DataScaler()
         scaler.fit(all_attributes, method=method, lower=0.0, upper=1.0)
         self.stored_scalers[scaler_options] = scaler
+
         return scaler
 
     def match_to_single_star(self, star, htrack):
