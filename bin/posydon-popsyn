@@ -648,7 +648,7 @@ def generate_rescue_script(args, batch_status):
         print("")
         print("posydon-popsyn check <run_folder>")
         print("")
-        return None
+        raise ValueError("No missing indices found in batch status.")
     
     # create a new slurm script
     rescue_script = os.path.join(run_folder, f'{str_met}_Zsun_rescue.slurm')
