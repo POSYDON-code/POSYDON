@@ -114,7 +114,7 @@ MAXIMUM_STEP_TIME = 120
 
 def signal_handler(signum, frame):
     """React to a maximum time signal."""
-    raise RuntimeError("Binary Step Exceeded Alloted Time: {}".
+    raise RuntimeError("Binary Step Exceeded Allotted Time: {}".
                     format(MAXIMUM_STEP_TIME))
 
 
