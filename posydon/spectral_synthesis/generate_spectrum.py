@@ -39,17 +39,21 @@ def check_boundaries(grids,grid_name,**kwargs):
             return True
     grid = grids.spectral_grids[grid_name]
     axis_labels = grid.axis_labels
+    tol = 0.1
     for axis_label in axis_labels:
+        if axis_label == 'log(g)':
+                tol = 0.2
         if x[axis_label] < grid.axis_x_min[axis_label]:
-            if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < 0.1:
+            if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_min[axis_label]
             else:
                 return 'failed_grid',x 
         elif x[axis_label] > grid.axis_x_max[axis_label]:
-            if abs(x[axis_label] - grid.axis_x_max[axis_label])/(grid.axis_x_max[axis_label]) < 0.1:
+            if abs(x[axis_label] - grid.axis_x_max[axis_label])/(grid.axis_x_max[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_max[axis_label]
             else: 
-                return 'failed_grid',x 
+                return 'failed_grid',x
+
     #The star is within the grid limits.
     return grid_name,x 
 
@@ -297,11 +301,39 @@ def rename_star_state(star,i):
     """
     xH_surf = copy(star[f'{i}_surface_h1'])
     xHe_surf = copy(star[f'{i}_surface_he4'])
-    T = copy(star[f'{i}_Teff'])
-    lg_M_dot = copy(star[f'{i}_lg_mdot'])
-    k_e = 0.2*(1 + xH_surf)
+    v_0 = 20 *u.km * u.s**(-1)# cm *s^-1 
+    T = copy(star[f'{i}_Teff'])*u.K
+    lg_M_dot = -10**copy(star[f'{i}_lg_mdot']) *con.M_sun*u.yr**(-1)
+    R = 10**copy(star[f'{i}_log_R'])*con.R_sun
+    M = copy(star[f'{i}_mass'])*con.M_sun
+    k_e = 0.2*(1 + xH_surf) * u.cm**2 * u.g**(-1) 
     logg = copy(star[f'{i}_log_g'])
-    Gamma = k_e * con.sigma_sb*T**4/(con.c * 10**logg)
+    Gamma = k_e * con.sigma_sb*T**4/(con.c * (10**logg*u.cm*u.s**(-2)))
+    v_esc = np.sqrt(2 * con.G * M *R**(-1)* (1 - Gamma))
+    
+    v_terminal = 1.3 * v_esc
+    tau = - k_e * lg_M_dot/(4 * np.pi * R * (v_terminal - v_0) )* np.log(v_terminal/v_0)
+    if xH_surf > 0.1: 
+        if tau <= 0.5:
+            star[f'{i}_state'] = 'stripped_He_star'
+        else:
+            star[f'{i}_surface_h1'] = max(xH_surf,0.2)
+            star[f'{i}_state'] = 'WNL_star' 
+    elif (xH_surf <= 0.1) and (xHe_surf > 0.7):
+        if tau <= 1.0:
+            star[f'{i}_state'] = 'stripped_He_star'
+        else: 
+            star[f'{i}_state'] = 'WNE_star'
+    elif (xH_surf <= 0.1) and (xHe_surf < 0.7):
+        if tau <= 1.0:
+            star[f'{i}_state'] = 'stripped_He_star'
+        else: 
+            star[f'{i}_state'] = 'WC_star'
+    else: 
+        raise ValueError("This else shouldn't have been reached")
+    if star[f'{i}_state'] in ['WNL_star', 'WNE_star', 'WC_star']:
+        star[f'{i}_Rt'] = calculated_Rt(star,i)
+    """
     if lg_M_dot < -6:
         star[f'{i}_state'] = 'stripped_He_star'
     else:
@@ -314,7 +346,7 @@ def rename_star_state(star,i):
         else:
             star[f'{i}_surface_h1'] = max(xH_surf,0.2)
             star[f'{i}_state'] = 'WNL_star' 
-        
+    """    
 
 def calculated_Rt(star,i):
     M_dot = 10**copy(star[f'{i}_lg_mdot'])
