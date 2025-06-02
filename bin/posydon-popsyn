@@ -635,17 +635,25 @@ def generate_rescue_script(args, batch_status):
         elif line.startswith("export PATH_TO_POSYDON_DATA="):
             path_to_posydon_data = line.split('=')[1].strip()
         
-    # create a new slurm script
-    rescue_script = os.path.join(run_folder, f'{str_met}_Zsun_rescue.slurm')
-    if os.path.exists(rescue_script):
-        Pwarn('Replace '+rescue_script, "OverwriteWarning")
-        
     # Extract missing indices from batch_status
     missing_indices = batch_status.get('missing_indices', [])
     
     # Format job array string for SBATCH
     if missing_indices:
         job_array_str = ','.join(map(str, sorted(missing_indices)))
+    else:
+        print("No missing indices found in batch status.")
+        print("Cannot generate rescue script.")
+        print("Please run the check function to resubmit the merge jobs:")
+        print("")
+        print("posydon-popsyn rescue <run_folder>")
+        print("")
+        return None
+    
+    # create a new slurm script
+    rescue_script = os.path.join(run_folder, f'{str_met}_Zsun_rescue.slurm')
+    if os.path.exists(rescue_script):
+        Pwarn('Replace '+rescue_script, "OverwriteWarning")
         
     with open(rescue_script, 'w') as f:
         f.write(f'''#!/bin/bash
@@ -821,7 +829,7 @@ def check_popsyn_function(args):
                     str_met = convert_metallicity_to_string(met)
                     
                     os.system(
-                        f'sbatch{args.run_folder}/{str_met}_Zsun_merge_popsyn.slurm'
+                        f'sbatch {args.run_folder}/{str_met}_Zsun_merge_popsyn.slurm'
                     )
                 print("Merge jobs resubmitted.")
             else:
