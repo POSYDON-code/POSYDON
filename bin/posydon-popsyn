@@ -928,14 +928,14 @@ def rescue_popsyn_function(args):
                 script = os.path.basename(script)
                 met = script.split('_')[0]
                 f.write(f'resubmit=$(sbatch --parsable {script})\n')
-                f.write(f"echo 'Rescue script submitted as '${{resubmit}}\n")                
+                f.write("echo 'Rescue script submitted as '${resubmit}\n")                
                 f.write("merge=$(sbatch --parsable "
-                        "--dependency=afterok:${{resubmit}} "
+                        "--dependency=afterok:${resubmit} "
                         "--kill-on-invalid-dep=yes "
                         f"{met}_Zsun_merge_popsyn.slurm)\n")
-                f.write(f"echo 'Merge job submitted as '${{merge}}\n")
+                f.write("echo 'Merge job submitted as '${merge}\n")
 
-        print(f"Rescue scripts ready to be resubmitted by {resubmit_sh_file}") 
+        print(f"Rescue scripts ready to be resubmitted by 'sh {resubmit_sh_file}'") 
         print("Would you like to submit the rescue scripts?")
         choice = input("Enter 'yes' or 'y' to submit the rescue scripts: ")
         if choice.lower() == 'yes' or choice.lower() == 'y':
