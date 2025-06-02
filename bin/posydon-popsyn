@@ -646,7 +646,7 @@ def generate_rescue_script(args, batch_status):
         print("Cannot generate rescue script.")
         print("Please run the check function to resubmit the merge jobs:")
         print("")
-        print("posydon-popsyn rescue <run_folder>")
+        print("posydon-popsyn check <run_folder>")
         print("")
         return None
     
