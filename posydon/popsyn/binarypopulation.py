@@ -618,6 +618,10 @@ class PopulationManager:
             (self.kwargs['read_samples_from_file'] != '')):
             self.binary_generator = BinaryGenerator(\
                                      sampler=get_samples_from_file, **kwargs)
+        elif sampler=='Moe':
+            self.binary_generator = BinaryGenerator(\
+                                     sampler=new_function_MdS,\
+                                     **kwargs)
         else:
             self.binary_generator = BinaryGenerator(\
                                      sampler=generate_independent_samples,\
@@ -896,7 +900,7 @@ class BinaryGenerator:
         return binary
 
     def draw_initial_samples(self, orbital_scheme='separation', **kwargs):
-        """Generate all random varibles."""
+        """Generate all random variables."""
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
         # a, e, M_1, M_2, P
@@ -914,8 +918,12 @@ class BinaryGenerator:
         N_binaries = len(orbital_period)
         formation_times = get_formation_times(N_binaries, **kwargs)
 
-        #Get the binary_fraction
-        binary_fraction = self.binary_fraction_generator(m1=m1, **kwargs)
+        # Is this a single star or a binary
+        if np.isnan(separation):
+            is_binary = False
+        else:
+            is_binary = True
+        # binary_fraction = self.binary_fraction_generator(m1=m1, **kwargs)
 
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
@@ -934,7 +942,8 @@ class BinaryGenerator:
         # output
         output_dict = {
             'binary_index': indices,
-            'binary_fraction': binary_fraction,
+            'is_binary': is_binary,
+            # 'binary_fraction': binary_fraction,
             'time': formation_times,
             'separation': separation,
             'eccentricity': eccentricity,
@@ -967,7 +976,8 @@ class BinaryGenerator:
         output = self.draw_initial_samples(**sampler_kwargs)
 
         default_index = output['binary_index'].item()
-        binary_fraction = output['binary_fraction']
+        is_binary = output['is_binary'].item()
+        # binary_fraction = output['binary_fraction']
 
         formation_time = output['time'].item()
         m1 = output['S1_mass'].item()
@@ -988,7 +998,7 @@ class BinaryGenerator:
         X = 1. - Z - Y
         kick1 = output['S1_natal_kick_array'][0]
 
-        if self.RNG.uniform() < binary_fraction:
+        if is_binary:
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
             eccentricity = output['eccentricity'].item()

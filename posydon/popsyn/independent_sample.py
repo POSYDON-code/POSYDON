@@ -58,8 +58,9 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
         # generate samples
         m2_set, orbital_scheme_set, eccentricity_set, metallicity_set\
          = _gen_Moe+17-PsandQs(m1_set, M_min=M1_min, M_max=M1_max,
-                               all_binaries=True)
+                               all_binaries=False)
     else:
+
         # Generate secondary masses
         m2_set = generate_secondary_masses(m1_set, **kwargs)
 
@@ -75,6 +76,16 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
 
         # Generate eccentricities
         eccentricity_set = generate_eccentricities(**kwargs)
+
+    # Calculate the binary fraction
+    RNG = kwargs.get('RNG', np.random.default_rng())
+    binary_fraction = generate_binary_fraction(m1=m1_set, **kwargs)
+
+    # Set values to nan for single stars
+    idx = np.where(RNG.uniform(len(m1_set)) > binary_fraction)[0]
+    orbital_scheme_set[idx] = np.nan
+    eccentricity_set[idx] = np.nan
+    m2_set[idx] = np.nan
 
     return orbital_scheme_set, eccentricity_set, m1_set, m2_set
 
@@ -398,8 +409,8 @@ def generate_secondary_masses(primary_masses,
 
     return secondary_masses
 
-def binary_fraction_value(binary_fraction_const=1,
-                          binary_fraction_scheme='const', m1=None, **kwargs):
+def generate_binary_fraction(m1=None, binary_fraction_const=1,
+                             binary_fraction_scheme='const', **kwargs):
     """
     Getting the binary fraction depending on the scheme. The two possible
     option are a constant binary fraction and a binary fraction based on the
