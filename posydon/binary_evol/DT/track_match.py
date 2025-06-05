@@ -1,3 +1,16 @@
+__authors__ = [
+    "Devina Misra <devina.misra@unige.ch>",
+    "Zepei Xing <Zepei.Xing@unige.ch>",
+    "Emmanouil Zapartas <ezapartas@gmail.com>",
+    "Nam Tran <tranhn03@gmail.com>",
+    "Simone Bavera <Simone.Bavera@unige.ch>",
+    "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
+    "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
+    "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+    "Camille Liotine <cliotine@u.northwestern.edu>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
+]
+
 import os
 import time
 import numpy as np
@@ -15,6 +28,8 @@ from posydon.utils.interpolators import PchipInterpolator2
 from posydon.utils.posydonerror import (NumericalError, MatchingError)
 from posydon.utils.common_functions import (convert_metallicity_to_string,
                                             set_binary_to_failed)
+
+from posydon.binary_evol.singlestar import STARPROPERTIES
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
                                   "accreted_He_Core_H_burning"]
@@ -187,7 +202,115 @@ DEFAULT_PROFILE_KEYS = (
 )
 
 class track_matcher:
+    """
+        This class contains the functionality to match binary star components to
+    single star models for detached evolution. Typically, this is so that the 
+    binary star can continue evolving in a detached (non-interacting) state.
 
+        Several matching methods may be used, and metrics (physical quantities) 
+    that are used to determine the quality of the match may be customized. By 
+    default, the metrics are as follows:
+
+      Initial stellar matching metrics
+      ========================================
+        
+      MS:          total mass,                      center X, radius, He core mass
+      post-MS:     total mass,                      center Y, radius, He core mass
+      stripped He: He core mass (total mass proxy), center Y, radius
+
+        If an initial match can not be found, alternative sets of metrics are 
+    used. For example, stars after mass transfer could swell up so that log_R is 
+    not appropriate for matching. Lists for HMS and postMS stars drop radius as a 
+    matching metric in these alternatives:
+    
+      Alternative stellar matching metrics
+      ========================================
+        
+      MS:          total mass,                      center X, He core mass
+      post-MS:     total mass,                      center Y, He core mass
+      stripped He: He core mass (total mass proxy), center Y, radius
+    
+    The available matching methods are:
+
+        "root":     This method invokes a modified Powell's method to 
+                    minimize the difference between stellar mass and 
+                    central hydrogen abundance (if the star is H-rich), 
+                    or He core mass (if the star is He-rich). The function
+                    used is scipy.optimize.root with the 'hybr' method.
+
+        "minimize": This method minimizes the Euclidean distance between 
+                    several matching metrics (the same mentioned above). 
+                    This is the default matching method.
+        
+        Stellar tracks in either the H- or He-rich single star grids will 
+    be searched until a match is found within an acceptable tolerance. If 
+    no match can be found, the binary star will be marked as a failed 
+    binary as its evolution can progress no further.
+
+        If an acceptable match is found, then we were able to find a star 
+    within the single star grids that suitably represents the given star(s) 
+    at their current point in evolution. This class will return interpolator 
+    objects that may be used to calculate quantities along the matched stellar 
+    track so that the binary's stars may be evolved further, such as through 
+    detached evolution.
+            
+             
+    Parameters
+    ----------
+    path : str
+        Path to the directory that contains POSYDON data HDF5 files.
+    matching_method: str
+        Method to find the best match between a star from a previous step and a
+        point in a single MIST-like stellar track. Options "root" (which tries
+        to find a root of two matching quantities, and it is possible to not
+        achieve it) or "minimize" (minimizes the sum of squares of differences
+        of various quantities between the previous step and the track).
+    verbose : bool
+        True if we want to print stuff.
+
+    Attributes
+    ----------
+    KEYS : list[str]
+           Contains valid keywords which are used to extract quantities from 
+           the grids.
+
+    grid : GRIDInterpolator object
+           Object to interpolate between the time-series (i.e., along the 
+           evolutionary track) in the h5 grid.
+
+    initial_mass : list[float]
+            Contains the initial masses of the stars in the grid.
+
+    Note
+    ----
+    A matching between the properties of the star, and the h5 tracks are
+    required. In the "root" solver matching_method, if the root solver fails
+    then the evolution will immediately end and the binary state will be
+    tagged with "Root solver failed". In the "minimize" matching_method, we
+    minimize the sum of squares of differences of various quantities between
+    the previous step and the h5 track.
+
+    Warns
+    -----
+    EvolutionWarning
+        If attempting to match an He-star with an H-rich grid or post-MS star 
+        with a stripped-He grid. This can happen if an initial matching attempt 
+        fails; alternative grids are checked for a match in such cases.
+
+    Raises
+    ------
+    AttributeError
+        If a matching parameter does not exist in the single star 
+        grid options
+    
+    NumericalError
+        If SciPy numerical differentiation occured outside boundary 
+        while matching to single star track.
+
+    MatchingError
+        If the initial mass to be matched is out of the single star grid 
+        range, thereby preventing a possible match.
+    """
 
     def __init__(
             self,
@@ -206,7 +329,11 @@ class track_matcher:
     ):
 
         # MESA history column names used as matching metrics
-        self.root_keys = np.array(  
+        # TODO: should this be singlestar.STARPROPERTIES? An 
+        #       error is thrown when (possibly user defined) 
+        #       matching metrics don't exist in this array. 
+        #       That's not very flexible...
+        self.root_keys = np.array(
             [
                 "age",
                 "mass",
@@ -223,18 +350,7 @@ class track_matcher:
         # ==================================================================================
 
         self.metallicity = metallicity #convert_metallicity_to_string(metallicity)
-        #self.dt = dt
-        #self.n_o_steps_history = n_o_steps_history
         self.matching_method = matching_method
-        #self.do_wind_loss = do_wind_loss
-        #self.do_tides = do_tides
-        #self.do_gravitational_radiation = do_gravitational_radiation
-        #self.do_magnetic_braking = do_magnetic_braking
-        #self.magnetic_braking_mode = magnetic_braking_mode
-        #self.do_stellar_evolution_and_spin_from_winds = (
-        #    do_stellar_evolution_and_spin_from_winds
-        #)
-        #self.RLO_orbit_at_orbit_with_same_am = RLO_orbit_at_orbit_with_same_am
 
         self.initial_mass = initial_mass
         self.rootm = rootm
@@ -248,28 +364,10 @@ class track_matcher:
         # DataScaler instance, created the first time it is requested
         self.stored_scalers = {}
 
-        #if self.verbose:
-        #    print(
-        #        dt,
-        #        n_o_steps_history,
-        #        matching_method,
-        #        do_wind_loss,
-        #        do_tides,
-        #        do_gravitational_radiation,
-        #        do_magnetic_braking,
-        #        magnetic_braking_mode,
-        #        do_stellar_evolution_and_spin_from_winds)
-
-        #self.translate = DEFAULT_TRANSLATION
-
         # these are the KEYS read from POSYDON h5 grid files (after translating
         # them to the appropriate columns)
         self.KEYS = KEYS #DEFAULT_TRANSLATED_KEYS
-        self.KEYS_POSITIVE = KEYS_POSITIVE #(
-            #'mass_conv_reg_fortides',
-            #'thickness_conv_reg_fortides',
-            #'radius_conv_reg_fortides'
-        #)
+        self.KEYS_POSITIVE = KEYS_POSITIVE
 
         self.profile_keys = DEFAULT_PROFILE_KEYS
 
@@ -294,12 +392,10 @@ class track_matcher:
         if grid_name_Hrich is None:
             grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
         self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
-        #self.grid_Hrich = grid_Hrich
 
         if grid_name_strippedHe is None:
             grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
         self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
-        #self.grid_strippedHe = grid_strippedHe
 
         # ==================================================================================
 
@@ -314,10 +410,6 @@ class track_matcher:
         # Stellar parameter matching metrics
         # ========================================
         # At first, we try to match based on...
-        #
-        #     MS:          total mass,                      center X, radius, He core mass
-        #     post-MS:     total mass,                      center Y, radius, He core mass
-        #     stripped He: He core mass (total mass proxy), center Y, radius
 
         if self.list_for_matching_HMS is None:
             self.list_for_matching_HMS = [
@@ -343,11 +435,6 @@ class track_matcher:
 
         # Stellar parameter lists for alternative matching metrics
         # These are used in the event that an initial match can not be found
-
-        # e.g., stars after mass transfer could swell up so that log_R
-        # is not appropriate for matching. HMS and postMS lists drop radius
-        # as a matching metric in these alternatives
-
         self.list_for_matching_HMS_alternative = [
             ["mass", "center_h1", "he_core_mass"],
             [20.0, 1.0, 10.0],
@@ -368,13 +455,48 @@ class track_matcher:
         ]
 
     def square_difference(self, x, htrack, mesa_labels, posydon_attributes, colscalers, scales):
-        """Compute the square distance used for scaling."""
+        """
+            Compute the square difference between values along a single star 
+        evolution track and a given set of values. To find a 'good match', 
+        between the given values and the single star track, we ultimately seek 
+        to minimize these differences.
+
+        Parameters
+        ----------
+        x: list[float]
+            Contains a given initial mass `m0` and time `t`. These are used to get 
+            the square difference between a track of initial mass `m0` at time `t` 
+            and the given star values from prior evolution. 
+        
+        htrack: bool
+            Set True to search the single star H-rich grids, or False to search 
+            the He-rich grids.
+
+        mesa_labels: list[str]
+
+        posydon_attributes: list[str]
+
+        colscalers: 
+
+        scales:
+
+        Returns
+        -------
+        result: float
+            The square difference along
+
+        """
+
         result = 0.0
+        # TODO: colscaler is not used here. Should it be removed?
         for mesa_label, posy_attr, colscaler, scale_of_mesa_label in zip(
                  mesa_labels, posydon_attributes, colscalers, scales):
+            
             single_track_value = scale_of_mesa_label.transform(
-                self.get_track_val(mesa_label, htrack, *x))
+                                 self.get_track_val(mesa_label, htrack, *x))
+            
             posydon_value = scale_of_mesa_label.transform(posy_attr)
+
             if mesa_label in MATCHING_WITH_RELATIVE_DIFFERENCE:
                 result += ((single_track_value - posydon_value)
                            / posydon_value) ** 2
@@ -383,28 +505,32 @@ class track_matcher:
 
         return result
     
-    def get_root0(self, keys, x, htrack, rs=None):
+    def get_root0(self, keys, x, htrack, rescale_fac=None):
         """
-            Get the track in the grid with values closest to the requested ones.
+            Get the stellar evolution track in the single star grid with values 
+        closest to the requested ones. This calculates the difference in stellar 
+        properties between a given track and those in the single star grids. It 
+        then returns the mass of and age along the track where the minimum 
+        difference occurs.
 
         Parameters
         ----------
-        keys : list of str
-                Contains the keys of the requested specific quantities that will be
-                matched in the single star track.
+        keys: list[str]
+            Contains the keys of the requested specific quantities that will be
+            matched in the single star track.
 
-        x :    list[float]
-                This should be the same length as "keys". Contains the latest values 
-                (from a previous POSYDON step) of the quantities of "keys" in the 
-                POSYDON SingleStar object.
+        x: list[float]
+            Contains the latest values (from a previous POSYDON step) of the 
+            quantities of "keys" in the POSYDON SingleStar object. This should 
+            be the same length as "keys".
 
-        htrack : bool
-                    Set True to search the single star H-rich grids, or False to search 
-                    the He-rich grids.
+        htrack: bool
+            Set True to search the single star H-rich grids, or False to search 
+            the He-rich grids.
             
-        rs :    list[float]
-                This should be the same length as "keys". Contains normalization 
-                factors to be divided for rescaling x values.
+        rescale_fac: list[float]
+            Contains normalization factors to be divided for rescaling x values. 
+            This should be the same length as "keys". 
 
         Returns
         -------
@@ -421,12 +547,10 @@ class track_matcher:
         # set which grid to search based on htrack condition
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
 
-        # initial masses within grid (defined but never used?)
+        # initial masses within grid (defined but never used? used in scale())
         self.initial_mass = grid.grid_mass
 
-        # this will track the max track length
         max_track_length = 0
-
         # search across all initial masses and get max track length
         for mass in grid.grid_mass:
             max_track_length = max(max_track_length, len(grid.get("age", mass)))
@@ -446,10 +570,10 @@ class track_matcher:
                 self.rootm[i, : len(track), j] = track
 
         # rescaling factors
-        if rs is None:
-            rs = np.ones_like(keys)
+        if rescale_fac is None:
+            rescale_fac = np.ones_like(keys)
         else:
-            rs = np.asanyarray(rs)
+            rescale_fac = np.asanyarray(rescale_fac)
 
         # we're matching to the values stored in x
         x = np.asanyarray(x)
@@ -458,7 +582,7 @@ class track_matcher:
         # get all masses from grid, considering only supplied keys
         X = self.rootm[:, :, idx]
         # take difference, rescale, and take (Frobenius) norm
-        d = np.linalg.norm((X - x[None, None, :]) / rs[None, None, :], axis=-1)
+        d = np.linalg.norm((X - x[None, None, :]) / rescale_fac[None, None, :], axis=-1)
 
         # indices where minimum difference occurs (i.e., of closest matching track)
         idx = np.unravel_index(d.argmin(), X.shape[:-1])
@@ -524,7 +648,7 @@ class track_matcher:
         Parameters
         ----------
         key: str
-            Keyword of the required quantity.
+            Keyword of the requested quantity.
 
         htrack: bool
             A boolean that specifies whether the star would be found in the 
@@ -532,7 +656,7 @@ class track_matcher:
             matched to the helium rich single star grid).
 
         method: str
-            Scalling method in the data normalization class
+            Scaling method in the data normalization class
 
         Returns
         -------
@@ -569,7 +693,6 @@ class track_matcher:
 
     def match_to_single_star(self, star, htrack):
         """
-        
             Get the track in the grid that matches the time and mass of a star,
         that has typically undergone prior binary star evolution. A match is made 
         according to a given algorithm that minimizes the difference amongst several 
@@ -604,23 +727,54 @@ class track_matcher:
 
         """
         def get_posydon_attributes(list_for_matching, star):
-            
-            list_of_attributes = []
 
-            for attr in list_for_matching:
-                list_of_attributes.append(getattr(star, attr))
+            """
+                Given a set of attribute names, gets attribute 
+            values from a given SingleStar object.
+
+            Parameters
+            ----------
+            list_for_matching: list[str]
+                This list contains strings that are the names of 
+                data columns to be used as matching metrics.
+
+            star: SingleStar object
+                This is a SingleStar object, typically representing 
+                a member of a binary star system.
+
+            Returns
+            -------
+            attribute_values: list[float]
+                This is a list of the values associated with the 
+                provided attribute names.
+
+            """
             
-            return list_of_attributes
+            attribute_values = []
+
+            for attr_name in list_for_matching:
+                attribute_values.append(getattr(star, attr_name))
+            print("DEBUG")
+            print("attr_vals = ", attribute_values)
+            print("DEBUG")
+            return attribute_values
         
         def sq_diff_function(x):
 
-            return self.square_difference(
-                                          x, htrack=htrack, mesa_labels=MESA_labels,
+            """
+                This is a wrapper that calls a function to calculate the 
+            square difference between specified star attributes for matching.
+            """
+
+            return self.square_difference(x, htrack=htrack, mesa_labels=MESA_labels,
                                           posydon_attributes=posydon_attributes,
-                                          colscalers=colscalers, scales=scales
-                                         )
+                                          colscalers=colscalers, scales=scales)
         
         def get_MESA_labels(list_for_matching):
+
+            """
+               TODO: finish this
+            """
 
             MESA_labels = list_for_matching[0]
             
@@ -671,7 +825,7 @@ class track_matcher:
                 # get initial guess for matching via search for closest track
                 x0 = get_root0(["center_h1", "mass"],
                                [star.center_h1, star.mass],
-                               htrack, rs=[0.7, 300])
+                               htrack, rescale_fac=[0.7, 300])
                 
                 # Using modified Powell method to find match starting from time series from above (in x0)
                 # using difference of center X and stellar mass to find match
@@ -691,7 +845,7 @@ class track_matcher:
                                ["he_core_mass", "mass"],
                                [star.he_core_mass, star.mass],
                                htrack,
-                               rs=[11, 300]
+                               rescale_fac=[11, 300]
                               )
                 
                 sol = root(
@@ -701,7 +855,7 @@ class track_matcher:
                             x0, method="hybr"
                           )
                 
-            # if opptimizer failed for some reason set solution as NaN
+            # if optimizer failed for some reason set solution as NaN
             if not sol.success or sol.x[1] < 0:
                 initials = (np.nan, np.nan)
             else:
@@ -720,14 +874,16 @@ class track_matcher:
             
             MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
             
+            # MESA labels are what we will match with
             for param_name in MESA_labels:
                 if param_name not in self.root_keys:
-                    raise AttributeError(f"Expected matching parameter {param_name} not added in the single star grid options.")
+                    raise AttributeError(f"Expected matching parameter {param_name} not "+\
+                                         f"added in root_keys list: {self.root_keys}")
                 
             posydon_attributes = get_posydon_attributes(MESA_labels, star)
 
             # get closest time series from grids
-            x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
+            x0 = get_root0(MESA_labels, posydon_attributes, htrack, rescale_fac=rs)
 
             # Match using Newton method w/ x0 time series as guess
             # Minimizing Euclidean distance
@@ -776,7 +932,7 @@ class track_matcher:
                 posydon_attributes = get_posydon_attributes(MESA_labels, star)
 
                 # Minimize w/ Newton's method using alternative metrics
-                x0 = get_root0(MESA_labels, posydon_attributes, htrack, rs=rs)
+                x0 = get_root0(MESA_labels, posydon_attributes, htrack, rescale_fac=rs)
                 sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
 
                 if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
@@ -814,11 +970,11 @@ class track_matcher:
 
                     for param_name in MESA_labels:
                         if param_name not in self.root_keys:
-                            raise AttributeError(f"Expected matching parameter {param_name} not added "
-                                                  "in the single star grid options.")
+                            raise AttributeError(f"Expected matching parameter {param_name} not "+\
+                                                f"added in root_keys list: {self.root_keys}")
                         
                     posydon_attributes = get_posydon_attributes(MESA_labels, star)
-                    x0 = get_root0(MESA_labels, posydon_attributes, new_htrack, rs=rs)
+                    x0 = get_root0(MESA_labels, posydon_attributes, new_htrack, rescale_fac=rs)
 
                     try:
                         # minimize w/ Euclidean diff. and Newton's method

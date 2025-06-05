@@ -235,7 +235,8 @@ DEFAULT_TRANSLATED_KEYS = (
 
 
 class detached_step:
-    """Evolve a detached binary.
+    """
+    Evolve a detached binary.
 
     The binary will be evolved until Roche-lobe overflow, core-collapse or
     maximum simulation time, using the standard equations that govern the
@@ -408,14 +409,7 @@ class detached_step:
         #self.profile_keys = DEFAULT_PROFILE_KEYS
 
         self.grid_name_Hrich = grid_name_Hrich
-        #if grid_name_Hrich is None:
-        #    grid_name_Hrich = os.path.join('single_HMS', self.metallicity+'_Zsun.h5')
-        #self.grid_Hrich = GRIDInterpolator(os.path.join(path, grid_name_Hrich))
-
         self.grid_name_strippedHe = grid_name_strippedHe
-        #if grid_name_strippedHe is None:
-        #    grid_name_strippedHe = os.path.join('single_HeMS', self.metallicity+'_Zsun.h5')
-        #self.grid_strippedHe = GRIDInterpolator(os.path.join(path, grid_name_strippedHe))
         
         return
 
@@ -926,8 +920,7 @@ class detached_step:
         def determine_star_states(binary):
 
             """
-            
-              Determines which star is primary (further evolved) and which is 
+               Determines which star is primary (further evolved) and which is 
             secondary (less evolved). Determines whether stars should be 
             matched to the H- or He-rich grid, whether they exist, or if they
             are compact objects/massless remnants. THis is used to determine
@@ -1191,11 +1184,11 @@ class detached_step:
         def update_rotation_info(primary, secondary):
 
             """
-                Since we have matched to non-rotating single star grids, we need to calculate
-            what the spin should be, based on star properties from before the match was made. 
+                Once we have matched to a non-rotating single star, we need to calculate
+            what the single star's spin should be, based the star's rotation before matching. 
             This calculates a new rotation rate for the matched star from the previous moment 
-            of intertia and angular momentum (or rotation rates). This also updates the stars 
-            in the binary with the newly calculated values to reflect this.
+            of intertia and angular momentum (or rotation rate in lieu of those). This also 
+            updates the stars in the binary with the newly calculated values to reflect this.
 
             Parameters
             ----------
@@ -2278,14 +2271,14 @@ def diffeq(
 
         else:
             Pwarn("WARNING: Magnetic braking is not being calculated in the "
-                  "detached step. The given magnetic_braking_mode string \"",
-                  magnetic_braking_mode, "\" does not match the available "
+                  "detached step. The given magnetic_braking_mode string ",
+                  f"'{magnetic_braking_mode}' does not match the available "
                   "built-in cases. To enable magnetic braking, please set "
                   "magnetc_braking_mode to one of the following strings: "
-                  "\"RVJ83\" for Rappaport, Verbunt, & Joss 1983"
-                  "\"G18\" for Garraffo et al. 2018"
-                  "\"M15\" for Matt et al. 2015"
-                  "\"CARB\" for Van & Ivanova 2019", "UnsupportedModelWarning")
+                  "'RVJ83' for Rappaport, Verbunt, & Joss 1983"
+                  "'G18' for Garraffo et al. 2018"
+                  "'M15' for Matt et al. 2015"
+                  "'CARB' for Van & Ivanova 2019", "UnsupportedModelWarning")
 
         if verbose and verbose != 1:
             print("magnetic_braking_mode = ", magnetic_braking_mode)
