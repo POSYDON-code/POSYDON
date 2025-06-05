@@ -151,7 +151,7 @@
 
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Nam Tran &lt;tranhn03@gmail.com&gt;&quot;</span><span class="p">]</span>
 
-
+<span class="kn">import</span><span class="w"> </span><span class="nn">signal</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
@@ -473,7 +473,11 @@
 
                     <span class="n">e</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">initial_condition_message</span><span class="p">())</span>
                     <span class="n">traceback</span><span class="o">.</span><span class="n">print_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-
+                
+                <span class="c1"># If a binary has failed, the signal alarm for a step duration</span>
+                <span class="c1"># will not be disabled, so we need to disable it here.</span>
+                <span class="n">signal</span><span class="o">.</span><span class="n">alarm</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                
                 <span class="c1"># record if there were warnings caught during the binary</span>
                 <span class="c1"># evolution, this is needed to update the WARNINGS column in</span>
                 <span class="c1"># the oneline dataframe; this will only be updated if POSYDON</span>
