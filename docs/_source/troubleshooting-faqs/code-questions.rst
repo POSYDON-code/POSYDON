@@ -85,7 +85,7 @@ Frequently Asked Questions
     
         -  The evolutionary state of the binary is not represented in the currently supported stellar evolution grids. For example, we do not have a grid for Roche lobe overflow between two helium stars.
         -  The binary has masses outside the grid range. For example, the HMS-HMS grid does not contain binaries with a secondary mass below 0.5.
-        -  The binary could not be matched to a single star or a binary due to a too large matching error.
+        -  The binary could not be matched to a single star or a binary due to a too large matching error, preventing further evolution.
 
 10. **What approximations does POSYDON make?**
      This is a complex question and the best answer is provided in the POSYDON papers: `Fragos et al. (2023) <https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract>`_ and `Andrews et al. (submitted) <https://ui.adsabs.harvard.edu/abs/2024arXiv241102376A/abstract>`_.

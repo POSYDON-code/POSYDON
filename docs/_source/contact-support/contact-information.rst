@@ -4,7 +4,7 @@ Contact Information
 -------------------
 
 We're committed to helping the POSYDON community. If you have questions or 
-need assistance, please refer to the following channels:
+need assistance, please use the following channels:
 
 Official Website
 ~~~~~~~~~~~~~~~~

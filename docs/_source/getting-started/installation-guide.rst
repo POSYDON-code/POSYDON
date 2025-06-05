@@ -3,7 +3,7 @@
 Installation Guide
 ******************
 
-This guide will help you step by step in installing POSYDON. We recommend using Anaconda, a package manager, to manage the installation and dependencies, ensuring a smooth setup process.
+This guide will help you install POSYDON step-by-step. We recommend using Anaconda, a package manager, to manage the installation and dependencies, ensuring a smooth setup process.
 
 .. contents:: Table of Contents
    :local:

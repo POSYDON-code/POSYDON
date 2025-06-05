@@ -251,7 +251,7 @@ The :func:`Population.create_transient_population` function takes a function as 
 
 The :code:`selection_function` takes 3 arguments: :code:`history_chunk`, :code:`oneline_chunk`, and :code:`formation_channels_chunk` (optional).
 These chunks are cut based on a given chunksize, which is set to 1000000 by default, and are cut on system. 
-This means that always a complete history of a system is passed to the function by :func:`Population.create_transient_population`.
+This means that a complete history of a system is always passed to the function by :func:`Population.create_transient_population`.
 
 :code:`selection_function` is a function you can adapt to your own needs, and
 examples of building one are given in the `BBH <../../tutorials-examples/population-synthesis/bbh_analysis.html>`_ or `LGRB tutorial <../../tutorials-examples/population-synthesis/lgrb_pop_syn.html>`_.
@@ -437,7 +437,7 @@ Accessing Observable Population data
 ------------------------------------
 
 The observable population is accesed through the :code:`observable_population` attribute of the :class:`~Rates` object.
-You require to know the observable_identifier to access the data, which can be accessed with :attr:`Rates.observable_population_names<Rates.observable_population_names>`
+You need the observable_identifier to access the data, which can be accessed with :attr:`Rates.observable_population_names<Rates.observable_population_names>`
 
 .. code-block:: python
 
@@ -448,7 +448,7 @@ Plotting the observable population
 -----------------------------------
 
 The observable population can be plotted in the same way as the intrinsic rate density.
-However, you require to define which observable population you want to plot.
+However, you need to define which observable population you want to plot.
 
 .. code-block:: python
 
