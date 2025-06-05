@@ -12,7 +12,6 @@ Frequently Asked Questions
     Start with the :ref:`binary population synthesis guide <binary-pop-syn>` to learn how to run POSYDON.
 
 2. **I'm getting an error when using the** ``where`` **parameter in the** ``select`` **function**
-
     If you're trying to select based on values in an unsupported column, you'll receive an error message like the one below.
     Only specific columns are supported for selection. These are limited to string columns, the indices, and the column names.
     Please perform the selection in-memory instead.
@@ -32,26 +31,16 @@ Frequently Asked Questions
 
 
 3. **How should I tune my memory usage for a population synthesis run?**
-
-    A population run requires a bare minimum of 4GB of memory per CPU.
-    However, this restricts the number of binaries you can keep in memory and requires a :code:`dump_rate < 1000` to keep the memory usage low, which slows down the simulation.
+    A population run requires a bare minimum of 8GB of memory per CPU. The DR2 POSYDON grids need to be loaded in completely. At the moment, the binary grids are loaded in at startup, but single star models are loaded when needed. 
+    However, 8GB allows you to run a small population, but it restricts the number of binaries you can keep in memory and requires a :code:`dump_rate < 1000` to keep the memory usage low, which slows down the simulation.
     
-    As such, 5GB per CPU is a better starting point. This allows you to keep more binaries in memory and increases the speed of the population synthesis run.
-    The figure below can be used to fine-tune your memory usage.
-    It shows the memory usage of two large population synthesis runs with a 7GB and a 8GB limit with a :code:`dump_rate` of 8000 and 10,000 binaries respectively.
-
-    .. image:: ./large_pop_runs_memory.png
-        :alt: Memory usage of two large population synthesis runs.
-        :width: 700px
-    
-    The memory usage of the 8,000 :code:`dump_rate` run is stable at around 6GB, while the 10,000 :code:`dump_rate` run is stable at around 6.8GB.
+    As such, 9GB or 10GB per CPU is a better starting point. This allows you to keep more binaries in memory and increases the speed of the population synthesis run and work well with with a :code:`dump_rate` of 5.000 binaries.
 
     In general, the :code:`dump_rate` should be at least 500 for populations of 100,000 binaries or more.
     Setting a very low :code:`dump_rate` for larger populations can potentially introduce I/O issues during the reading, writing, and merging of output files.
 
 
 4. **What should the walltime and job array size be for my population synthesis run?**
-
     The :code:`walltime` and job array size are dependent on the number of binaries you want to simulate and the memory usage of the simulation.
     The job array size should be set such that the number of binaries per job is at least 1000, since there's a minimum overhead per job due to loading the grids.
     
@@ -65,7 +54,7 @@ Frequently Asked Questions
     .. note::
         The processing time increases if you make the :code:`dump_rate` too low due to many I/O operations.
 
-5. **I am unable to open HDF5 files created by POSYDON. What should I do?**    
+5. **I am unable to open HDF5 files created by POSYDON. What should I do?**
     If you're on a Mac, there might be an issue with the HDF5 installation.
     Make sure you have the :code:`hdf5` and :code:`pytables` packages installed through conda in your environment with :code:`conda install hdf5 pytables` before running POSYDON!
     Although they are dependencies of POSYDON, sometimes they are not installed correctly on Mac.
@@ -74,8 +63,10 @@ Frequently Asked Questions
     Absolutely! Refer to `our HPC guide <../tutorials-examples/population-synthesis/pop_syn.ipynb>`_ for detailed instructions on running POSYDON in an HPC environment.
 
 7. **Help, I'm stuck! Where can I get support?**
-    Please check `our email group <https://groups.google.com/g/posydon-users>`_ if your question hasn't been answered yet.
-    Otherwise, please email us at posydon-users [at] googlegroups.com 
+    Please check if your question has been answered already on the the POSYDON `Github Discussions <https://github.com/POSYDON-code/POSYDON/discussions>`_.
+    If it has not yet been answered, please make a new discussion with your question and a detailed description of your problem. 
+    
+    Are you unable to post on Github? Please check `our email group <https://groups.google.com/g/posydon-users>`_ or email us at posydon-users [at] googlegroups.com 
 
 8. **How can I stay updated with the latest features and updates?**
     You can regularly visit our `official website <https://posydon.org>`_ for news and updates. 
