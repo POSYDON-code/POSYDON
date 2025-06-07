@@ -29,7 +29,6 @@ from posydon.utils.posydonerror import (NumericalError, MatchingError)
 from posydon.utils.common_functions import (convert_metallicity_to_string,
                                             set_binary_to_failed)
 
-from posydon.binary_evol.singlestar import STARPROPERTIES
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
                                   "accreted_He_Core_H_burning"]
@@ -454,12 +453,13 @@ class track_matcher:
             [m_min_He, m_max_He], [0, None]
         ]
 
-    def square_difference(self, x, htrack, mesa_labels, posydon_attributes, colscalers, scales):
+    def square_difference(self, x, htrack, attr_names, attr_vals, attr_scalers):
         """
             Compute the square difference between values along a single star 
         evolution track and a given set of values. To find a 'good match', 
         between the given values and the single star track, we ultimately seek 
-        to minimize these differences.
+        to minimize these differences. This is the function used by the 
+        minimization algoritms when using matching_method=`minimize`. 
 
         Parameters
         ----------
@@ -472,40 +472,44 @@ class track_matcher:
             Set True to search the single star H-rich grids, or False to search 
             the He-rich grids.
 
-        mesa_labels: list[str]
+        attr_names: list[str]
+            Names of SingleStar object attributes that this will calculate the 
+            square differences of.
 
-        posydon_attributes: list[str]
+        attr_vals: list[float]
+            Associated values of provided SingleStar object attribute names. 
+            These values should correspond to the prior point in evolution from 
+            which we are making the stellar track match.
 
-        colscalers: 
-
-        scales:
+        scalers: list[DataScaler object]
+            DataScaler objects that have been trained previously. These are used 
+            to scale given star attributes to the range (0, 1).
 
         Returns
         -------
         result: float
-            The square difference along
+            The square difference between a single star track with initial mass and 
+            age taken from `x` and the given attributes of a SingleStar object.
 
         """
 
         result = 0.0
-        # TODO: colscaler is not used here. Should it be removed?
-        for mesa_label, posy_attr, colscaler, scale_of_mesa_label in zip(
-                 mesa_labels, posydon_attributes, colscalers, scales):
+        for attr_name, attr_val, attr_scaler in zip(attr_names, attr_vals, attr_scalers):
             
-            single_track_value = scale_of_mesa_label.transform(
-                                 self.get_track_val(mesa_label, htrack, *x))
+            scaled_grid_track_val = attr_scaler.transform(self.get_track_val(attr_name, 
+                                                                             htrack, *x))
             
-            posydon_value = scale_of_mesa_label.transform(posy_attr)
+            scaled_star_val = attr_scaler.transform(attr_val)
 
-            if mesa_label in MATCHING_WITH_RELATIVE_DIFFERENCE:
-                result += ((single_track_value - posydon_value)
-                           / posydon_value) ** 2
+            if attr_name in MATCHING_WITH_RELATIVE_DIFFERENCE:
+                result += ((scaled_grid_track_val - scaled_star_val)
+                           / scaled_star_val) ** 2
             else:
-                result += (single_track_value - posydon_value) ** 2
+                result += (scaled_grid_track_val - scaled_star_val) ** 2
 
         return result
     
-    def get_root0(self, keys, x, htrack, rescale_fac=None):
+    def get_root0(self, attr_names, attr_vals, htrack, rescale_facs=None):
         """
             Get the stellar evolution track in the single star grid with values 
         closest to the requested ones. This calculates the difference in stellar 
@@ -515,11 +519,11 @@ class track_matcher:
 
         Parameters
         ----------
-        keys: list[str]
+        attr_names: list[str]
             Contains the keys of the requested specific quantities that will be
             matched in the single star track.
 
-        x: list[float]
+        attr_vals: list[float]
             Contains the latest values (from a previous POSYDON step) of the 
             quantities of "keys" in the POSYDON SingleStar object. This should 
             be the same length as "keys".
@@ -528,9 +532,9 @@ class track_matcher:
             Set True to search the single star H-rich grids, or False to search 
             the He-rich grids.
             
-        rescale_fac: list[float]
-            Contains normalization factors to be divided for rescaling x values. 
-            This should be the same length as "keys". 
+        rescale_facs: list[float]
+            Contains normalization factors to be divided for rescaling attribute 
+            values. This should be the same length as attr_names. 
 
         Returns
         -------
@@ -555,41 +559,42 @@ class track_matcher:
         for mass in grid.grid_mass:
             max_track_length = max(max_track_length, len(grid.get("age", mass)))
 
-        # intialize root matrix (DIM = [N(Mi), N(max_track_length), N(matching_metrics)])
+        # intialize root matrix (DIM = [N(Mi), N(max_track_length), N(root_keys)])
         self.rootm = np.inf * np.ones((len(grid.grid_mass),
                                     max_track_length, len(self.root_keys)))
         
         # for each mass, get matching metrics and store in matrix
         for i, mass in enumerate(grid.grid_mass):
             for j, key in enumerate(self.root_keys):
-
-                # get track metric (key) for given initial mass
                 track = grid.get(key, mass)
-
-                # store metrics in grid matrix
                 self.rootm[i, : len(track), j] = track
 
         # rescaling factors
-        if rescale_fac is None:
-            rescale_fac = np.ones_like(keys)
+        if rescale_facs is None:
+            rescale_facs = np.ones_like(attr_names)
         else:
-            rescale_fac = np.asanyarray(rescale_fac)
+            rescale_facs = np.asanyarray(rescale_facs)
 
-        # we're matching to the values stored in x
-        x = np.asanyarray(x)
-        # single out the specified matching metrics supplied in keys
-        idx = np.argmax(np.asanyarray(keys)[:, None] == self.root_keys, axis=1)
-        # get all masses from grid, considering only supplied keys
-        X = self.rootm[:, :, idx]
-        # take difference, rescale, and take (Frobenius) norm
-        d = np.linalg.norm((X - x[None, None, :]) / rescale_fac[None, None, :], axis=-1)
+        star_attr_vals = np.asanyarray(attr_vals)
+        # indices where given attribute names match available matching metrics
+        idx = np.argmax(np.asanyarray(attr_names)[:, None] == self.root_keys, axis=1)
+        # Slice out just the matching metric data for all stellar tracks
+        # grid_attr_vals now has shape (N(Mi), N(max_track_len), N(matching_metrics))
+        grid_attr_vals = self.rootm[:, :, idx]
+        # For all stellar tracks in grid:
+        # Take difference btwn. track and given star values, rescale, and take (Frobenius) norm
+        grid_diff = np.linalg.norm((grid_attr_vals - star_attr_vals[None, None, :]) / rescale_facs[None, None, :], axis=-1)
 
         # indices where minimum difference occurs (i.e., of closest matching track)
-        idx = np.unravel_index(d.argmin(), X.shape[:-1])
+        # This contains the indices at position of (min diff mass, min diff age)
+        min_diff_inds = np.unravel_index(grid_diff.argmin(), grid_attr_vals.shape[:-1])
+
+        mindiff_mass_i = min_diff_inds[0]
+        mindiff_age_i = min_diff_inds[1]
 
         # time series and initial mass corresp. to track w/ minimum difference
-        t = self.rootm[idx][np.argmax("age" == self.root_keys)]
-        m0 = grid.grid_mass[idx[0]]
+        m0 = grid.grid_mass[mindiff_mass_i]
+        t = self.rootm[mindiff_mass_i][mindiff_age_i][np.argmax("age" == self.root_keys)]
 
         return m0, t
     
@@ -640,14 +645,14 @@ class track_matcher:
 
         return val
     
-    def scale(self, key, htrack, method):
+    def scale(self, attr_name, htrack, scaler_method):
         """
         
             Normalize quantities in the single star grids to (0,1).
 
         Parameters
         ----------
-        key: str
+        attr_name: str
             Keyword of the requested quantity.
 
         htrack: bool
@@ -655,38 +660,41 @@ class track_matcher:
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
 
-        method: str
-            Scaling method in the data normalization class
+        scaler_method: str
+            Scaling method in the DataScaler class. See 
+            posydon.interpolation.data_scaling.DataScaler().fit() for more 
+            details.
 
         Returns
         -------
-        scaler: class
-            Data normalization class
+        scaler: DataScaler object
+            This is a DataScaler object, trained to rescale the requested  
+            attribute to the range (0, 1).
 
         """
         # TODO: why this self.grid? Why not local variable. Should this affect
         # the whole detached_step instance?
 
         # collect all options for the scaler
-        scaler_options = (key, htrack, method)
+        scaler_options = (attr_name, htrack, scaler_method)
 
         # find if the scaler has already been fitted and return it if so...
         scaler = self.stored_scalers.get(scaler_options, None)
         if scaler is not None:
             return scaler
 
-        # ... if not, fit a new scaler, and store it for later use
+        # ...if not, fit a new scaler, and store it for later use
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
         self.initial_mass = grid.grid_mass
         all_attributes = []
 
         for mass in self.initial_mass:
-            for i in grid.get(key, mass):
+            for i in grid.get(attr_name, mass):
                 all_attributes.append(i)
 
         all_attributes = np.array(all_attributes)
         scaler = DataScaler()
-        scaler.fit(all_attributes, method=method, lower=0.0, upper=1.0)
+        scaler.fit(all_attributes, method=scaler_method, lower=0.0, upper=1.0)
         self.stored_scalers[scaler_options] = scaler
 
         return scaler
@@ -726,17 +734,19 @@ class track_matcher:
             star's actual state, as a last ditch effort to find a match.
 
         """
-        def get_posydon_attributes(list_for_matching, star):
+        def get_attr_values(attr_names, star):
 
             """
-                Given a set of attribute names, gets attribute 
-            values from a given SingleStar object.
+                Given a set of attribute names, gets attribute values 
+            from a given SingleStar object. These values correspond 
+            to the last evolution step of the SingleStar object.
 
             Parameters
             ----------
-            list_for_matching: list[str]
+            attr_names: list[str]
                 This list contains strings that are the names of 
-                data columns to be used as matching metrics.
+                data columns (attributes) to be used as matching 
+                metrics.
 
             star: SingleStar object
                 This is a SingleStar object, typically representing 
@@ -744,56 +754,105 @@ class track_matcher:
 
             Returns
             -------
-            attribute_values: list[float]
+            attr_values: list[float]
                 This is a list of the values associated with the 
-                provided attribute names.
+                provided attribute names at the last evolution 
+                step experienced by `star`.
 
             """
             
-            attribute_values = []
+            attr_values = []
 
-            for attr_name in list_for_matching:
-                attribute_values.append(getattr(star, attr_name))
-            print("DEBUG")
-            print("attr_vals = ", attribute_values)
-            print("DEBUG")
-            return attribute_values
+            for attr_name in attr_names:
+                attr_values.append(getattr(star, attr_name))
+
+            return attr_values
         
         def sq_diff_function(x):
 
             """
                 This is a wrapper that calls a function to calculate the 
             square difference between specified star attributes for matching.
+            When matching_method=`minimize`, this is the function that is 
+            used by the minimization algorithm.
+
+            Parameters
+            ----------
+            x: list[float]
+                A list containing the initial mass and age of a stellar track, 
+                which will be used to get values along a track and calculate the 
+                square difference between those values and the given star 
+                values that we are trying to find a match to.
+
             """
 
-            return self.square_difference(x, htrack=htrack, mesa_labels=MESA_labels,
-                                          posydon_attributes=posydon_attributes,
-                                          colscalers=colscalers, scales=scales)
+            return self.square_difference(x, htrack=htrack, 
+                                          attr_names=match_attr_names,
+                                          attr_vals=match_attr_vals,
+                                          attr_scalers=scalers)
         
-        def get_MESA_labels(list_for_matching):
+        def get_match_attr_props(list_for_matching):
 
             """
-               TODO: finish this
-            """
+               This unpacks a list_for_matching which has the following 
+            structure:
 
-            MESA_labels = list_for_matching[0]
+                list_for_matching = [[matching attr. names], [rescale_factors],
+                                    [scaling method], [mass_bnds], [age_bnds]]
             
-            rs = list_for_matching[1]
-            colscalers = list_for_matching[2]
-            bnds = []
-            for i in range(3, len(list_for_matching)):
-                bnds.append(list_for_matching[i])
+               This also trains DataScaler objects for each provided matching 
+            attribute, such that the values are scaled to the range (0, 1).
+
+            Parameters
+            ----------
+            list_for_matching: list
+                This is a list that contains sublists of types, str, float, 
+                str, float, float. The first sublist holds the names for 
+                star attributes that will be used to quantify a match. The 
+                second holds rescaling factors for those attributes. The 
+                third holds DataScaler scaling methods (see 
+                posydon.interpolation.data_scaling.DataScaler.fit() for more). 
+                The fourth and fifth hold bounds for the minimization algorithms 
+                on the stellar mass and age.
+
+            Returns
+            -------
+            match_attr_names: list[str]
+                The names of the attributes that will be used for matching. These 
+                should be SingleStar STARPROPERTIES keys.
+            
+            rescale_facs: list[float]
+                Contains normalization factors to be used for rescaling match attribtue 
+                values. This should be the same length as match_attr_names.
+                
+
+            bnds: list[list[float], list[float]]
+                Lower and upper bounds on initial stellar mass and age to be used 
+                in minimization algorithms.
+            
+            scalers: list[DataScaler object]
+                DataScaler objects for each attribute, trained to rescale quantities 
+                to the range (0, 1).
+                
+            """
+
+            match_attr_names = list_for_matching[0]
+            rescale_facs = list_for_matching[1]
+            scaler_methods = list_for_matching[2]
+            bnds = list_for_matching[3:]
 
             if self.verbose:
-                print("Matching parameters and their normalizations:\n", MESA_labels, rs)
+                print("Matching parameters and their normalizations:\n", 
+                      match_attr_names, rescale_facs)
             
-            scales = []
-            for MESA_label, colscaler in zip(MESA_labels, colscalers):
+            # get (or train and get) scalers for attributes
+            # attributes are scaled to range (0, 1)
+            scalers = []
+            for attr_name, scaler_method in zip(match_attr_names, scaler_methods):
+                scaler_of_attribute = scale(attr_name, htrack, scaler_method)
+                scalers.append(scaler_of_attribute)
 
-                scale_of_attribute = scale(MESA_label, htrack, colscaler)
-                scales.append(scale_of_attribute)
-            
-            return MESA_labels, rs, colscalers, bnds, scales
+            return match_attr_names, rescale_facs, bnds, scalers
 
             
         # setting whether to match to track from H-rich or stripped He star grid
@@ -807,10 +866,10 @@ class track_matcher:
         matching_method = self.matching_method
         scale = self.scale
 
-        initials = None
+        initial_track_vals = None
         
-        tolerance_matching_integration = 1e-2
-        tolerance_matching_integration_hard = 1e-1
+        matching_tolerance = 1e-2
+        matching_tolerance_hard = 1e-1
 
         if self.verbose:
             print(f"\nMatching process started in detached step for {star.state} star "
@@ -825,7 +884,7 @@ class track_matcher:
                 # get initial guess for matching via search for closest track
                 x0 = get_root0(["center_h1", "mass"],
                                [star.center_h1, star.mass],
-                               htrack, rescale_fac=[0.7, 300])
+                               htrack, rescale_facs=[0.7, 300])
                 
                 # Using modified Powell method to find match starting from time series from above (in x0)
                 # using difference of center X and stellar mass to find match
@@ -845,7 +904,7 @@ class track_matcher:
                                ["he_core_mass", "mass"],
                                [star.he_core_mass, star.mass],
                                htrack,
-                               rescale_fac=[11, 300]
+                               rescale_facs=[11, 300]
                               )
                 
                 sol = root(
@@ -857,11 +916,11 @@ class track_matcher:
                 
             # if optimizer failed for some reason set solution as NaN
             if not sol.success or sol.x[1] < 0:
-                initials = (np.nan, np.nan)
+                initial_track_vals = (np.nan, np.nan)
             else:
-                initials = sol.x
+                initial_track_vals = sol.x
 
-        # 1st attempt: match using minimize method (ultimately Newton minimization method)
+        # 1st attempt: match using minimize method (ultimately Newton or Powell method)
         elif matching_method == "minimize":
             
             # set matching metrics based on star state
@@ -872,50 +931,70 @@ class track_matcher:
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                 list_for_matching = self.list_for_matching_HeStar
             
-            MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
+            match_attr_names, rescale_facs, bnds, scalers = get_match_attr_props(list_for_matching)
             
             # MESA labels are what we will match with
-            for param_name in MESA_labels:
+            for param_name in match_attr_names:
                 if param_name not in self.root_keys:
                     raise AttributeError(f"Expected matching parameter {param_name} not "+\
                                          f"added in root_keys list: {self.root_keys}")
                 
-            posydon_attributes = get_posydon_attributes(MESA_labels, star)
+            match_attr_vals = get_attr_values(match_attr_names, star)
 
-            # get closest time series from grids
-            x0 = get_root0(MESA_labels, posydon_attributes, htrack, rescale_fac=rs)
+            # Get closest matching point along track single star grids. x0 contains the 
+            # corresponding initial mass and age
+            x0 = get_root0(match_attr_names, match_attr_vals, htrack, rescale_facs=rescale_facs)
+            print("DEBUG!!!!")
+            print(x0)
 
             # Match using Newton method w/ x0 time series as guess
-            # Minimizing Euclidean distance
-            sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
+            # Minimizing Euclidean distance (1st w/ Newton's method)
+            min_method = "TNC"
+            sol = minimize(sq_diff_function, x0, method=min_method, bounds=bnds)
 
             # save initial matching solution as best solution so far
             best_sol = sol
 
             ## Alternative matching attempts if default matching fails!
             # 2nd attempt: use a different minimization method
-            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
+            if (np.abs(best_sol.fun) > matching_tolerance or not best_sol.success):
+
+                # try alternative minimization method, Powell's
+                min_method = "Powell"
 
                 if self.verbose:
-                    print (f"Initial matching attempt was unsuccessful:"
-                           f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")
+                    if (np.abs(best_sol.fun) > matching_tolerance):
+                        print (f"\n\nInitial matching attempt was unsuccessful:"
+                               f"\nSolution exceeds tolerance: {np.abs(best_sol.fun)} > {matching_tolerance}")
+                    if (not best_sol.success):
+                        print (f"Initial matching attempt was unsuccessful:"
+                               f"\nOptimizer failed (sol.success = {best_sol.success})"
+                               f"\nOptimizer termination reason: {best_sol.message}")                        
 
                     print("\nAlternative matching started (1st attempt)")
-                    print("(Now trying an alternative minimization method)")
+                    print(f"(Trying alternative minimization method: {min_method})")
                 
                 # minimize w/ modified Powell's method
-                sol = minimize(sq_diff_function, x0, method="Powell")
+                sol = minimize(sq_diff_function, x0, method=min_method)
 
                 ## if alternative matching has a better solution, make it the new best solution
                 if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                     best_sol = sol
 
             # if 2nd fails, 3rd attempt: use alternative matching parameters
-            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):      
+            if (np.abs(best_sol.fun) > matching_tolerance or not best_sol.success):
+
+                # back to Newton's method
+                min_method = "TNC" 
                    
                 if self.verbose:
-                    print (f"Alternative matching (1st attempt) was unsuccessful:"
-                           f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")
+                    if (np.abs(best_sol.fun) > matching_tolerance):
+                        print (f"Alternative matching (1st attempt) was unsuccessful:"
+                               f"\nSolution exceeds tolerance: {np.abs(best_sol.fun)} > {matching_tolerance}")
+                    if (not best_sol.success):
+                        print (f"Alternative matching (1st attempt) was unsuccessful:"
+                               f"\nOptimizer failed (sol.success = {best_sol.success})"
+                               f"\nOptimizer termination reason: {best_sol.message}")
 
                     print("\nAlternative matching started (2nd attempt)")
                     print("(Now trying to match with alternative parameters)")     
@@ -928,22 +1007,30 @@ class track_matcher:
                 elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                     list_for_matching = (self.list_for_matching_HeStar_alternative)                
                     
-                MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
-                posydon_attributes = get_posydon_attributes(MESA_labels, star)
+                match_attr_names, rescale_facs, bnds, scalers = get_match_attr_props(list_for_matching)
+                match_attr_vals = get_attr_values(match_attr_names, star)
 
                 # Minimize w/ Newton's method using alternative metrics
-                x0 = get_root0(MESA_labels, posydon_attributes, htrack, rescale_fac=rs)
-                sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
+                x0 = get_root0(match_attr_names, match_attr_vals, htrack, rescale_facs=rescale_facs)
+                sol = minimize(sq_diff_function, x0, method=min_method, bounds=bnds)
 
                 if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                     best_sol = sol
 
             # 4th attempt: match an He-star with an H-rich grid, or vice versa (not applicable for HMS stars)
-            if (np.abs(best_sol.fun) > tolerance_matching_integration or not best_sol.success):
+            if (np.abs(best_sol.fun) > matching_tolerance or not best_sol.success):
+
+                # Using Newton's minimization method for 4th attempt
+                min_method = "TNC"
 
                 if self.verbose:
+                    if (np.abs(best_sol.fun) > matching_tolerance):
                         print (f"Alternative matching (2nd attempt) was unsuccessful:"
-                               f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, sol.success = {sol.success}")    
+                               f"\nSolution exceeds tolerance: {np.abs(best_sol.fun)} > {matching_tolerance}")
+                    if (not best_sol.success):
+                        print (f"Alternative matching (2nd attempt) was unsuccessful:"
+                               f"\nOptimizer failed (sol.success = {best_sol.success})"
+                               f"\nOptimizer termination reason: {best_sol.message}")  
                 
                 # if post-MS or stripped He star
                 if (star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
@@ -957,28 +1044,26 @@ class track_matcher:
                           " stripped-He grid", "EvolutionWarning")
                         
                     if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
-                        
                         new_htrack = True
                         list_for_matching = self.list_for_matching_HeStar
 
                     elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
-                        
                         new_htrack = False
                         list_for_matching = self.list_for_matching_postMS
 
-                    MESA_labels, rs, colscalers, bnds, scales = get_MESA_labels(list_for_matching)
+                    match_attr_names, rescale_facs, bnds, scalers = get_match_attr_props(list_for_matching)
 
-                    for param_name in MESA_labels:
+                    for param_name in match_attr_names:
                         if param_name not in self.root_keys:
                             raise AttributeError(f"Expected matching parameter {param_name} not "+\
                                                 f"added in root_keys list: {self.root_keys}")
                         
-                    posydon_attributes = get_posydon_attributes(MESA_labels, star)
-                    x0 = get_root0(MESA_labels, posydon_attributes, new_htrack, rescale_fac=rs)
+                    match_attr_vals = get_attr_values(match_attr_names, star)
+                    x0 = get_root0(match_attr_names, match_attr_vals, new_htrack, rescale_facs=rescale_facs)
 
                     try:
-                        # minimize w/ Euclidean diff. and Newton's method
-                        sol = minimize(sq_diff_function, x0, method="TNC", bounds=bnds)
+                        # minimize Euclidean dist. w/ Newton's method (TNC)
+                        sol = minimize(sq_diff_function, x0, method=min_method, bounds=bnds)
 
                         if (np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success):
                             best_sol = sol
@@ -986,29 +1071,42 @@ class track_matcher:
 
                         if self.verbose:
                             print (f"Alternative matching (3rd attempt) completed:"
-                                   f"\n tolerance {np.abs(sol.fun)} > {tolerance_matching_integration}, "
-                                   f"sol.success = {sol.success}")
+                                   f"\nBest solution: {np.abs(best_sol.fun)} (tol = {matching_tolerance})"
+                                   f"\nsol.success = {best_sol.success}")
                     except:
                         raise NumericalError("SciPy numerical differentiation occured outside boundary "
                                              "while matching to single star track")
 
             # if matching is still not successful, set result to NaN:
-            if (np.abs(best_sol.fun) > tolerance_matching_integration_hard or not best_sol.success):
+            # TODO: does it make sense that we fail the matching solution after all of this 
+            #       because it doesn't fall below the hard (stricter in this case) tolerance?
+            #       Shouldn't we check the strict tolerance always anduse the hard limit to give up
+            #       if all else fails?
+            if (np.abs(best_sol.fun) > matching_tolerance_hard or not best_sol.success):
                 if self.verbose:
-                    print("\nFinal matching result is NOT successful with best tolerance ",
-                          np.abs(best_sol.fun), ">", tolerance_matching_integration_hard)
-                initials = (np.nan, np.nan)
+                    print("\nFinal matching result is NOT successful with best tolerance ")#,
+                          #np.abs(best_sol.fun), ">", matching_tolerance_hard)
+                    if (np.abs(best_sol.fun) > matching_tolerance):
+                        print ("\nSolution exceeds hard tolerance: "+\
+                               f"{np.abs(best_sol.fun)} > {matching_tolerance_hard}")
+                    if (not best_sol.success):
+                        print (f"\nOptimizer failed, sol.success = {best_sol.success}"
+                               f"\nOptimizer termination reason: {best_sol.message}") 
+
+                initial_track_vals = (np.nan, np.nan)
                 
             # or else we found a solution
             else:
                 if self.verbose:
-                    print("\nFinal matching result is considered successful with best tolerance "
-                        f'{np.abs(best_sol.fun):.8f}', "<", tolerance_matching_integration_hard)
-                initials = best_sol.x
+                    print("\nFinal matching result successful. "
+                         f"\nBest solution within hard tolerance: "
+                         f"{np.abs(best_sol.fun):.8f}", "<", matching_tolerance_hard)
+                    
+                initial_track_vals = best_sol.x
 
         if self.verbose:
             # successful match
-            if not np.isnan(initials[0]):
+            if not np.isnan(initial_track_vals[0]):
                 val_names = ["  ", "mass", "log_R", "center_h1", "surface_h1", "he_core_mass", "center_he4", "surface_he4", 
                              "center_c12"]
 
@@ -1067,8 +1165,8 @@ class track_matcher:
                     f'center_c12 = {star.center_c12:.4f}'
                 )
 
-        m0 = initials[0]
-        t0 = initials[1]
+        m0 = initial_track_vals[0]
+        t0 = initial_track_vals[1]
 
         return m0, t0, htrack
     
@@ -1206,15 +1304,43 @@ class track_matcher:
 
     def update_star_properties(self, star, htrack, m0, t0):
 
+        """
+            This updates a SingleStar object (`star`) with the 
+        values from a single star track that has initial mass `m0` 
+        and age `t0`. This can be used after matching finds the 
+        closest `m0`, `t0` to update the SingleStar object with the 
+        values of the best matching single star track. This will 
+        not update the `log_total_angular_momentum` or 
+        `surf_avg_omega` because the single star track is non-rotating 
+        and those quantities are poorly defined.
+
+        Parameters
+        ----------
+        star: SingleStar object
+            A single star object that contains the star's properties.
+        
+        htrack: bool
+            A boolean that specifies whether the star would be found in the 
+            hydrogen rich single star grid or not (in which case it is
+            matched to the helium rich single star grid).
+
+        m0: float
+            Initial stellar mass (in solar units) of the single star track 
+            that we will grab values from and update `star` with.
+        
+        t0: float
+            Initial age (in years) of the single star track 
+            that we will grab values from and update `star` with.
+
+        """
+
         for key in self.KEYS:
             
             # skip updating rotation rate quantities because
             # they're 0 or not defined in non-rotating tracks
             if key == "log_total_angular_momentum":
-                new_val = self.get_track_val(key, htrack, m0, t0)
                 continue
             elif key == "surf_avg_omega":
-                new_val = self.get_track_val(key, htrack, m0, t0)
                 continue
             else:
                 new_val = self.get_track_val(key, htrack, m0, t0)
@@ -1222,7 +1348,27 @@ class track_matcher:
             setattr(star, key, new_val)
            
 
-    def get_star_final_values(self, star, htrack, m0):  
+    def get_star_final_values(self, star, htrack, m0): 
+        """
+            This updates the final values of a SingleStar object,
+        given an initial stellar mass `m0`, typically found from 
+        matching to a single star track.
+
+        Parameters
+        ----------
+        star: SingleStar object
+            A single star object that contains the star's properties.
+        
+        htrack: bool
+            A boolean that specifies whether the star would be found in the 
+            hydrogen rich single star grid or not (in which case it is
+            matched to the helium rich single star grid).
+
+        m0: float
+            Initial stellar mass (in solar units) of the single star track 
+            that we will grab values from and update `star` with.
+
+        """
 
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
         get_final_values = grid.get_final_values
@@ -1231,6 +1377,28 @@ class track_matcher:
             setattr(star, key, get_final_values('S1_%s' % (key), m0))
 
     def get_star_profile(self, star, htrack, m0):
+        """
+            This updates the stellar profile of a SingleStar object,
+        given an initial stellar mass `m0`, typically found from 
+        matching to a single star track. The profile of the SingleStar 
+        object is updated to become the profile of the (matched) single 
+        star track.
+
+        Parameters
+        ----------
+        star: SingleStar object
+            A single star object that contains the star's properties.
+        
+        htrack: bool
+            A boolean that specifies whether the star would be found in the 
+            hydrogen rich single star grid or not (in which case it is
+            matched to the helium rich single star grid).
+
+        m0: float
+            Initial stellar mass (in solar units) of the single star track 
+            that we will grab values from and update `star` with.
+
+        """
 
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
         get_profile = grid.get_profile

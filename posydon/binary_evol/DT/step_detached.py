@@ -14,17 +14,14 @@ __authors__ = [
     "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
-import os
 import numpy as np
 import pandas as pd
 import time
 from scipy.integrate import solve_ivp
-from scipy.interpolate import PchipInterpolator
 
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.interpolation.interpolation import GRIDInterpolator
 #from posydon.interpolation.data_scaling import DataScaler
 from posydon.utils.common_functions import (bondi_hoyle,
                                             orbital_period_from_separation,
@@ -32,7 +29,6 @@ from posydon.utils.common_functions import (bondi_hoyle,
                                             check_state_of_star,
                                             convert_metallicity_to_string,
                                             set_binary_to_failed)
-from posydon.utils.interpolators import PchipInterpolator2
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, 
                                             STAR_STATES_CO, 
                                             STAR_STATES_H_RICH_EVOLVABLE,
@@ -44,9 +40,6 @@ from posydon.utils.posydonerror import (NumericalError, MatchingError,
 from posydon.utils.posydonwarning import Pwarn
 
 from posydon.binary_evol.DT.track_match import track_matcher
-
-LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
-                                  "accreted_He_Core_H_burning"] # REMOVE
 
 LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "H-rich_Shell_H_burning",
