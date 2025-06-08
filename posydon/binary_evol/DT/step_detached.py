@@ -1443,8 +1443,6 @@ class detached_step:
                     binary.separation *= (1 - s.y[1][-1])
                     binary.orbital_period *= (1 - s.y[1][-1]) ** 1.5
 
-                print(primary.mass)
-                print(secondary.mass)
                 abs_diff_porb = np.abs(binary.orbital_period - orbital_period_from_separation(
                                 binary.separation, secondary.mass, primary.mass)) / binary.orbital_period
                 
