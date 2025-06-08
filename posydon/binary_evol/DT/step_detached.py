@@ -41,6 +41,7 @@ from posydon.utils.posydonwarning import Pwarn
 
 from posydon.binary_evol.DT.track_match import track_matcher
 
+# possible states for postMS stars
 LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "H-rich_Shell_H_burning",
     "H-rich_Core_He_burning",
@@ -51,6 +52,7 @@ LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "accreted_He_Shell_H_burning",
     "accreted_He_non_burning"]
 
+# possible states for He stars
 LIST_ACCEPTABLE_STATES_FOR_HeStar = [
     'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
@@ -60,6 +62,7 @@ LIST_ACCEPTABLE_STATES_FOR_HeStar = [
     'stripped_He_non_burning'
     ]
 
+# possible states for H-rich stars
 STAR_STATES_H_RICH = [
     'H-rich_Core_H_burning',
     'H-rich_Core_He_burning',
@@ -152,7 +155,7 @@ DEFAULT_TRANSLATION = {
     "total_mass_he4": "total_mass_he4",
 }
 
-
+# keys from POSYDON h5 file translated to MESA data column names
 DEFAULT_TRANSLATED_KEYS = (
     'age',
     'mass',
@@ -207,24 +210,6 @@ DEFAULT_TRANSLATED_KEYS = (
     'total_mass_h1',
     'total_mass_he4'
 )
-
-
-#DEFAULT_PROFILE_KEYS = (
-#    'radius',
-#    'mass',
-#    'logRho',
-#    'energy',
-#    'x_mass_fraction_H',
-#    'y_mass_fraction_He',
-#    'z_mass_fraction_metals',
-#    'neutral_fraction_H',
-#    'neutral_fraction_He',
-#    'avg_charge_He'
-#)
-
-#MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
-
-
 
 
 class detached_step:
@@ -289,15 +274,6 @@ class detached_step:
     initial_mass : list of float
             Contains the initial masses of the stars in the grid.
 
-    Note
-    ----
-    A matching between the properties of the star, and the h5 tracks are
-    required. In the "root" solver matching_method, if the root solver fails
-    then the evolution will immediately end, and the binary state will be
-    tagged with "Root solver failed". In the "minimize" matching_method, we
-    minimize the sum of squares of differences of various quantities between
-    the previous step and the h5 track.
-
     Warns
     -----
     UserWarning
@@ -335,7 +311,6 @@ class detached_step:
             record_matching=False
     ):
         """Initialize the step. See class documentation for details."""
-        print("DEBUG Z: ", metallicity)
         self.metallicity = convert_metallicity_to_string(metallicity)
         self.dt = dt
         self.n_o_steps_history = n_o_steps_history
@@ -378,11 +353,6 @@ class detached_step:
         # these are the KEYS read from POSYDON h5 grid files (after translating
         # them to the appropriate columns)
         self.KEYS = DEFAULT_TRANSLATED_KEYS
-        #self.KEYS_POSITIVE = (
-        #    'mass_conv_reg_fortides',
-        #    'thickness_conv_reg_fortides',
-        #    'radius_conv_reg_fortides'
-        #)
 
         # keys for the final value interpolation
         self.final_keys = (
@@ -398,16 +368,13 @@ class detached_step:
             'r_core_CE_pure_He_star_10cent'
         )
 
-        # keys for the star profile interpolation
-        #self.profile_keys = DEFAULT_PROFILE_KEYS
-
         self.grid_name_Hrich = grid_name_Hrich
         self.grid_name_strippedHe = grid_name_strippedHe
         
         return
 
     def __repr__(self):
-        """Return the type of evolution type."""
+        """Return the name of evolution step."""
         return "Detached Step."
 
     def __call__(self, binary):
@@ -1093,7 +1060,6 @@ class detached_step:
             else:
                 raise POSYDONError(f"non_existent_companion = {self.non_existent_companion} (should be 0, 1, or 2).")
 
-            # >>>>>> DONE DETERMINING PRIMARY/SECONDARY STATES
             return primary, secondary, states_OK
 
         def do_matching(binary, primary, secondary):

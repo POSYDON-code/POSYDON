@@ -258,12 +258,6 @@ class track_matcher:
     ----------
     path : str
         Path to the directory that contains POSYDON data HDF5 files.
-    matching_method: str
-        Method to find the best match between a star from a previous step and a
-        point in a single MIST-like stellar track. Options "root" (which tries
-        to find a root of two matching quantities, and it is possible to not
-        achieve it) or "minimize" (minimizes the sum of squares of differences
-        of various quantities between the previous step and the track).
     verbose : bool
         True if we want to print stuff.
 
@@ -273,6 +267,13 @@ class track_matcher:
            Contains valid keywords which are used to extract quantities from 
            the grids.
 
+    matching_method: str
+        Method to find the best match between a star from a previous step and a
+        point in a single MIST-like stellar track. Options "root" (which tries
+        to find a root of two matching quantities, and it is possible to not
+        achieve it) or "minimize" (minimizes the sum of squares of differences
+        of various quantities between the previous step and the track).
+           
     grid : GRIDInterpolator object
            Object to interpolate between the time-series (i.e., along the 
            evolutionary track) in the h5 grid.
@@ -289,26 +290,6 @@ class track_matcher:
     minimize the sum of squares of differences of various quantities between
     the previous step and the h5 track.
 
-    Warns
-    -----
-    EvolutionWarning
-        If attempting to match an He-star with an H-rich grid or post-MS star 
-        with a stripped-He grid. This can happen if an initial matching attempt 
-        fails; alternative grids are checked for a match in such cases.
-
-    Raises
-    ------
-    AttributeError
-        If a matching parameter does not exist in the single star 
-        grid options
-    
-    NumericalError
-        If SciPy numerical differentiation occured outside boundary 
-        while matching to single star track.
-
-    MatchingError
-        If the initial mass to be matched is out of the single star grid 
-        range, thereby preventing a possible match.
     """
 
     def __init__(
@@ -733,6 +714,27 @@ class track_matcher:
             alternatively matched to the H or He grid, in spite of the 
             star's actual state, as a last ditch effort to find a match.
 
+        Warns
+        -----
+        EvolutionWarning
+            If attempting to match an He-star with an H-rich grid or post-MS star 
+            with a stripped-He grid. This can happen if an initial matching attempt 
+            fails; alternative grids are checked for a match in such cases.
+
+        Raises
+        ------
+        AttributeError
+            If a matching parameter does not exist in the single star 
+            grid options
+        
+        NumericalError
+            If SciPy numerical differentiation occured outside boundary 
+            while matching to single star track.
+
+        MatchingError
+            If the initial mass to be matched is out of the single star grid 
+            range, thereby preventing a possible match.
+
         """
         def get_attr_values(attr_names, star):
 
@@ -944,8 +946,6 @@ class track_matcher:
             # Get closest matching point along track single star grids. x0 contains the 
             # corresponding initial mass and age
             x0 = get_root0(match_attr_names, match_attr_vals, htrack, rescale_facs=rescale_facs)
-            print("DEBUG!!!!")
-            print(x0)
 
             # Match using Newton method w/ x0 time series as guess
             # Minimizing Euclidean distance (1st w/ Newton's method)
@@ -1078,15 +1078,11 @@ class track_matcher:
                                              "while matching to single star track")
 
             # if matching is still not successful, set result to NaN:
-            # TODO: does it make sense that we fail the matching solution after all of this 
-            #       because it doesn't fall below the hard (stricter in this case) tolerance?
-            #       Shouldn't we check the strict tolerance always anduse the hard limit to give up
-            #       if all else fails?
             if (np.abs(best_sol.fun) > matching_tolerance_hard or not best_sol.success):
                 if self.verbose:
                     print("\nFinal matching result is NOT successful with best tolerance ")#,
                           #np.abs(best_sol.fun), ">", matching_tolerance_hard)
-                    if (np.abs(best_sol.fun) > matching_tolerance):
+                    if (np.abs(best_sol.fun) > matching_tolerance_hard):
                         print ("\nSolution exceeds hard tolerance: "+\
                                f"{np.abs(best_sol.fun)} > {matching_tolerance_hard}")
                     if (not best_sol.success):
