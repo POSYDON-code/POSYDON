@@ -267,7 +267,7 @@ class track_matcher:
            Contains valid keywords which are used to extract quantities from 
            the grids.
 
-    matching_method: str
+    matching_method : str
         Method to find the best match between a star from a previous step and a
         point in a single MIST-like stellar track. Options "root" (which tries
         to find a root of two matching quantities, and it is possible to not
@@ -444,31 +444,31 @@ class track_matcher:
 
         Parameters
         ----------
-        x: list[float]
+        x : list[float]
             Contains a given initial mass `m0` and time `t`. These are used to get 
             the square difference between a track of initial mass `m0` at time `t` 
             and the given star values from prior evolution. 
         
-        htrack: bool
+        htrack : bool
             Set True to search the single star H-rich grids, or False to search 
             the He-rich grids.
 
-        attr_names: list[str]
+        attr_names : list[str]
             Names of SingleStar object attributes that this will calculate the 
             square differences of.
 
-        attr_vals: list[float]
+        attr_vals : list[float]
             Associated values of provided SingleStar object attribute names. 
             These values should correspond to the prior point in evolution from 
             which we are making the stellar track match.
 
-        scalers: list[DataScaler object]
+        scalers : list[DataScaler object]
             DataScaler objects that have been trained previously. These are used 
             to scale given star attributes to the range (0, 1).
 
         Returns
         -------
-        result: float
+        result : float
             The square difference between a single star track with initial mass and 
             age taken from `x` and the given attributes of a SingleStar object.
 
@@ -500,30 +500,30 @@ class track_matcher:
 
         Parameters
         ----------
-        attr_names: list[str]
+        attr_names : list[str]
             Contains the keys of the requested specific quantities that will be
             matched in the single star track.
 
-        attr_vals: list[float]
+        attr_vals : list[float]
             Contains the latest values (from a previous POSYDON step) of the 
             quantities of "keys" in the POSYDON SingleStar object. This should 
             be the same length as "keys".
 
-        htrack: bool
+        htrack : bool
             Set True to search the single star H-rich grids, or False to search 
             the He-rich grids.
             
-        rescale_facs: list[float]
+        rescale_facs : list[float]
             Contains normalization factors to be divided for rescaling attribute 
             values. This should be the same length as attr_names. 
 
         Returns
         -------
-        m0: float
+        m0 : float
             Mass (in solar units) of the matched model. This is NaN if no match is 
             found.
     
-        t: float
+        t : float
             Age (in years) of the matched model. This is NaN if no match is 
             found.
 
@@ -588,18 +588,18 @@ class track_matcher:
 
         Parameters
         ----------
-        key: str
+        key : str
             Keyword of the desired quantity.
 
-        m0: float
+        m0 : float
             The initial mass of the desired stellar track.
 
-        t: float
+        t : float
             The desired age along the stellar track.
 
         Returns
         -------
-        val: float
+        val : float
             The value of the desired quantity from a stellar track of
             initial mass `m0` at the time `t`.
 
@@ -633,22 +633,22 @@ class track_matcher:
 
         Parameters
         ----------
-        attr_name: str
+        attr_name : str
             Keyword of the requested quantity.
 
-        htrack: bool
+        htrack : bool
             A boolean that specifies whether the star would be found in the 
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
 
-        scaler_method: str
+        scaler_method : str
             Scaling method in the DataScaler class. See 
             posydon.interpolation.data_scaling.DataScaler().fit() for more 
             details.
 
         Returns
         -------
-        scaler: DataScaler object
+        scaler : DataScaler object
             This is a DataScaler object, trained to rescale the requested  
             attribute to the range (0, 1).
 
@@ -691,7 +691,7 @@ class track_matcher:
 
         Parameters
         ----------
-        star: SingleStar object
+        star : SingleStar object
             A single star object that contains the star's properties.
         
         htrack: bool
@@ -964,10 +964,10 @@ class track_matcher:
 
                 if self.verbose:
                     if (np.abs(best_sol.fun) > matching_tolerance):
-                        print (f"\n\nInitial matching attempt was unsuccessful:"
+                        print (f"\n\nInitial matching attempt FAILED:"
                                f"\nSolution exceeds tolerance: {np.abs(best_sol.fun)} > {matching_tolerance}")
                     if (not best_sol.success):
-                        print (f"Initial matching attempt was unsuccessful:"
+                        print (f"Initial matching attempt FAILED:"
                                f"\nOptimizer failed (sol.success = {best_sol.success})"
                                f"\nOptimizer termination reason: {best_sol.message}")                        
 
@@ -989,10 +989,10 @@ class track_matcher:
                    
                 if self.verbose:
                     if (np.abs(best_sol.fun) > matching_tolerance):
-                        print (f"Alternative matching (1st attempt) was unsuccessful:"
+                        print (f"Alternative matching (1st attempt) FAILED:"
                                f"\nSolution exceeds tolerance: {np.abs(best_sol.fun)} > {matching_tolerance}")
                     if (not best_sol.success):
-                        print (f"Alternative matching (1st attempt) was unsuccessful:"
+                        print (f"Alternative matching (1st attempt) FAILED:"
                                f"\nOptimizer failed (sol.success = {best_sol.success})"
                                f"\nOptimizer termination reason: {best_sol.message}")
 
@@ -1025,10 +1025,10 @@ class track_matcher:
 
                 if self.verbose:
                     if (np.abs(best_sol.fun) > matching_tolerance):
-                        print (f"Alternative matching (2nd attempt) was unsuccessful:"
+                        print (f"Alternative matching (2nd attempt) FAILED:"
                                f"\nSolution exceeds tolerance: {np.abs(best_sol.fun)} > {matching_tolerance}")
                     if (not best_sol.success):
-                        print (f"Alternative matching (2nd attempt) was unsuccessful:"
+                        print (f"Alternative matching (2nd attempt) FAILED:"
                                f"\nOptimizer failed (sol.success = {best_sol.success})"
                                f"\nOptimizer termination reason: {best_sol.message}")  
                 
@@ -1080,7 +1080,7 @@ class track_matcher:
             # if matching is still not successful, set result to NaN:
             if (np.abs(best_sol.fun) > matching_tolerance_hard or not best_sol.success):
                 if self.verbose:
-                    print("\nFinal matching result is NOT successful with best tolerance ")#,
+                    print("\nFinal matching result with relaxed tolerance: FAILED")#,
                           #np.abs(best_sol.fun), ">", matching_tolerance_hard)
                     if (np.abs(best_sol.fun) > matching_tolerance_hard):
                         print ("\nSolution exceeds hard tolerance: "+\
@@ -1094,7 +1094,7 @@ class track_matcher:
             # or else we found a solution
             else:
                 if self.verbose:
-                    print("\nFinal matching result successful. "
+                    print("\nFinal matching result: SUCCESS. "
                          f"\nBest solution within hard tolerance: "
                          f"{np.abs(best_sol.fun):.8f}", "<", matching_tolerance_hard)
                     
@@ -1151,7 +1151,7 @@ class track_matcher:
             # failed match
             else:
                 print(
-                    "Matching completed unsuccessfully for star with properties: \n"
+                    "Matching was unsuccessful for star with properties: \n"
                     f'mass = {star.mass:.3f}, ',
                     f'log_R = {star.log_R:.3f}, ',
                     f'center_he4 = {star.center_he4:.4f}, ',
@@ -1167,7 +1167,7 @@ class track_matcher:
         return m0, t0, htrack
     
 
-    def get_star_data(self, binary, star, copy_prev_m0=None, copy_prev_t0=None):
+    def get_star_match_data(self, binary, star, copy_prev_m0=None, copy_prev_t0=None):
                 """
                     Match a given component of a binary (i.e., a star) to a 
                 single star model. This then creates and returns interpolator
@@ -1198,7 +1198,8 @@ class track_matcher:
                 -------
                 interp1d: dict
                     A dictionary of scipy.interpolate._cubic.PchipInterpolator 
-                    objects used to calculate star properties.
+                    objects used to calculate star properties corresponding to the 
+                    matched single star track.
 
                 """
 

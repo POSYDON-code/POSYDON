@@ -222,68 +222,122 @@ class detached_step:
 
     Parameters
     ----------
-    path : str
-        Path to the directory that contains a HDF5 grid.
-    dt : float
-        The timestep size, in years, to be appended to the history of the
-        binary. None means only the final step.
-        Note: do not select very small timesteps cause it may mess with the
-        solving of the ODE.
-    n_o_steps_history: int
-        Alternatively, we can define the number of timesteps to be appended to
-        the history of the binary. None means only the final step. If both `dt`
-        and `n_o_steps_history` are different than None, `dt` has priority.
-    matching_method: str
-        Method to find the best match between a star from a previous step and a
-        point in a single MIST-like stellar track. Options "root" (which tries
-        to find a root of two matching quantities, and it is possible to not
-        achieve it) or "minimize" (minimizes the sum of squares of differences
-        of various quantities between the previous step and the track).
-    verbose : Boolean
-        True if we want to print stuff.
-    do_wind_loss: Boolean
-        If True, take into account change of separation due to mass loss from
-        the star.
-    do_tides: Booleans
-        If True, take into account change of separation, eccentricity and star
-        spin due to tidal forces.
-    do_gravitational_radiation: Boolean
-        If True, take into account change of separation and eccentricity due to
-        gravitational wave radiation.
-    do_magnetic_braking: Boolean
-        If True, take into account change of star spin due to magnetic braking.
-    magnetic_braking_mode: String
-        A string corresponding to the desired magnetic braking prescription.
-            -- RVJ83: Rappaport, Verbunt, & Joss 1983
-            -- M15: Matt et al. 2015
-            -- G18: Garraffo et al. 2018
-            -- CARB: Van & Ivanova 2019
-    do_stellar_evolution_and_spin_from_winds: Boolean
-        If True, take into account change of star spin due to change of its
-        moment of inertia during its evolution and due to spin angular momentum
-        loss due to winds.
+    metallicity : float
+        The metallicity of the grid. This should be one of the eight 
+        supported metallicities:
+
+            [2e+00, 1e+00, 4.5e-01, 2e-01, 1e-01, 1e-02, 1e-03, 1e-04]
+
+        and this will be converted to a corresponding string (e.g.,
+        1e+00 --> "1e+00_Zsun") and stored as a class attribute.
 
     Attributes
     ----------
-    KEYS : list of str
-           Contains valid keywords which is used
-           to extract quantities from the grid.
-    grid : GRIDInterpolator
-           Object to interpolate between the time-series in
-           the h5 grid.
-    initial_mass : list of float
+    KEYS : list[str]
+        Contains keywords corresponding to MESA data column names 
+        which are used to extract quantities from the single star 
+        evolution grids.
+
+    grid_name_Hrich : str
+        Name of the single star H-rich grid h5 file, 
+        including its parent directory. This is set to 
+        (for example):
+
+            grid_name_Hrich = 'single_HMS/1e+00_Zsun.h5'  
+
+        by default if not specified.
+
+    grid_name_strippedHe : str
+        Name of the single star He-rich grid h5 file. This is 
+        set to (for example):
+
+            grid_name_strippedHe = 'single_HeMS/1e+00_Zsun.h5'
+        
+        by default if not specified.
+           
+    metallicity : str
+        The metallicity of the grid. This should be one of the eight 
+        supported metallicities, stored as a string (e.g.,
+        1e+00 as "1e+00_Zsun").
+        
+    dt : float
+        The timestep size, in years, to be appended to the history of the
+        binary. None means only the final step. Note: do not select very 
+        small timesteps because it may mess with the solving of the ODE.
+
+    n_o_steps_history : int
+        Alternatively, we can define the number of timesteps to be appended to
+        the history of the binary. None means only the final step. If both `dt`
+        and `n_o_steps_history` are different than None, `dt` has priority.
+
+    matching_method : str
+        Method to find the best match between a star from a previous step and a
+        point in a single star evolution track. Options: "root" (which tries
+        to find a root of two matching quantities, and it is possible to not
+        achieve it) or "minimize" (minimizes the sum of squares of differences
+        of various quantities between the previous step and the track).
+
+    initial_mass : list[float]
             Contains the initial masses of the stars in the grid.
 
-    Warns
-    -----
-    UserWarning
-        If the call cannot determine the primary or secondary in the binary.
+    do_wind_loss : bool
+        If True, take into account change of separation due to mass loss 
+        from the star.
 
-    Raises
-    ------
-    Exception
-        If the ode-solver fails to solve the differential equation
-        that governs the orbital evolution.
+    do_tides : bool
+        If True, take into account change of separation, eccentricity and 
+        star spin due to tidal forces.
+
+    do_gravitational_radiation : bool
+        If True, take into account change of separation and eccentricity 
+        due to gravitational wave radiation.
+
+    do_magnetic_braking : bool
+        If True, take into account change of star spin due to magnetic 
+        braking.
+
+    magnetic_braking_mode : str
+        A string corresponding to the desired magnetic braking prescription.
+            -- RVJ83: Rappaport, Verbunt, & Joss 1983 (Default)
+            -- M15: Matt et al. 2015
+            -- G18: Garraffo et al. 2018
+            -- CARB: Van & Ivanova 2019
+
+    do_stellar_evolution_and_spin_from_winds : bool
+        If True, take into account change of star spin due to change of its
+        moment of inertia during its evolution and due to spin angular 
+        momentum loss due to winds.
+
+    RLO_orbit_at_orbit_with_same_am : bool
+        Binaries are circularized instaneously when RLO occurs and this 
+        option dictates how that is handled. If False (default), place 
+        the binary in an orbit with separation equal to the binary's 
+        separation at periastron. If True, circularize the orbit assuming 
+        that angular momentum is conserved w.r.t. the previously (possibly) 
+        eccentric orbit. In the latter case, the star may no longer 
+        fill its Roche lobe after circularization, and may be further 
+        evolved until RLO commences once again, but without changing the 
+        orbit.
+        
+    list_for_matching_HMS : list
+        A list of mixed type that specifies properties of the matching 
+        process for HMS stars.
+
+    list_for_matching_postMS : list
+        A list of mixed type that specifies properties of the matching 
+        process for postMS stars.
+
+    list_for_matching_HeStar : list
+        A list of mixed type that specifies properties of the matching 
+        process for He stars.
+            
+    record_matching : bool
+        Whether properties of the matched star(s) should be recorded in the 
+        binary evolution history.
+
+    verbose : bool
+        True if we want to print stuff.
+
     """
 
     def __init__(
@@ -312,6 +366,7 @@ class detached_step:
     ):
         """Initialize the step. See class documentation for details."""
         self.metallicity = convert_metallicity_to_string(metallicity)
+        self.path = path
         self.dt = dt
         self.n_o_steps_history = n_o_steps_history
         self.matching_method = matching_method
@@ -378,7 +433,44 @@ class detached_step:
         return "Detached Step."
 
     def __call__(self, binary):
-        """Evolve the binary until RLO or compact object formation."""
+        """
+            Evolve the binary until RLO or compact object formation.
+
+        Parameters
+        ----------
+        binary : BinaryStar object
+            A BinaryStar object containing a binary system's properties. 
+            This binary will be evolved through detached evolution here.
+
+        Raises
+        ------
+        ValueError
+            If the max time is exceeded by the current time of 
+            evolution.
+
+        NumericalError
+            If numerical integration fails for the binary during 
+            the calculation of its detached evolution. We mark 
+            the binary as failed in this case.
+
+        FlowError
+            If the evolution of H-rich/He-rich stars in RLO onto 
+            H-rich/He-rich stars after HMS-HMS is detected. This 
+            evolution pathway is not yet supported by our grids. 
+            The binary evolution is marked as failed at this 
+            point.
+                
+        ClassificationError
+            If stable RLO between two HMS-HMS stars is determined 
+            as a result of detached evolution. We mark these 
+            binaries as failed.
+
+        POSYDONError
+            If both stars are calculated to be ready for collapse 
+            as a result of detached evolution, but the two stars 
+            differ in mass.
+             
+        """
         
         @event(True, 1)
         def ev_rlo1(t, y):
@@ -547,6 +639,13 @@ class detached_step:
                 The rotation rate of the star in radians per year, 
                 calculated from the star's (pre-match) angular momentum
                 and moment of inertia.
+
+            Warns
+            -----
+            InappropriateValueWarning
+                If the pre-match rotation quantities are NaN or None and can 
+                not calculate a the post-match rotation rate, we setting the 
+                post-match rotation rate to zero.
             """
 
             log_total_angular_momentum = prematch_rotation['log_total_angular_momentum']
@@ -570,7 +669,6 @@ class detached_step:
                 # we equate the secondary's initial omega to surf_avg_omega
                 # (although the critical rotation should be improved to
                 # take into account radiation pressure)
-
                 if pd.notna(surf_avg_omega):
 
                     if self.verbose:
@@ -600,7 +698,7 @@ class detached_step:
                 else:
                     omega_in_rad_per_year = 0.0
                     if self.verbose:
-                        print("Could not calculate post-match omega, pre-match values are bad.")
+                        print("Could not calculate post-match omega, pre-match values are None or NaN.")
                         print("Pre-match rotation rates:")
                         print("surf_avg_omega = ", surf_avg_omega)
                         print("surf_avg_omega_div_omega_crit = ", surf_avg_omega_div_omega_crit)
@@ -635,8 +733,12 @@ class detached_step:
             
             secondary: SingleStar object
                 A single star object, representing the secondary (less evolved) star 
-                in the binary and containing its properties.            
+                in the binary and containing its properties.
 
+            Warns
+            -----
+            InappropriateValueWarning
+                If trying to compute log angular momentum for object with no spin.
 
             """
 
@@ -890,6 +992,21 @@ class detached_step:
             ----------
             binary: BinaryStar object
                 A binary star object, containing the binary system's properties.
+
+            Raises
+            ------
+            POSYDONError
+                If there is no star to evolve (both are massless remnants), then 
+                evolution can no continue and detached step should not have been 
+                called.
+
+            ValueError
+                If the State of star 1 or 2 is not recognized.
+
+            POSYDONError
+                If the `non_existent_companion` of the binary is determined to 
+                be not equal to 0 (both stars exist), 1 (only star 2 exists), 
+                or 2 (only star 1 exists), something has gone wrong.
             
             """
 
@@ -1070,26 +1187,36 @@ class detached_step:
             
             Parameters
             ----------
-            binary: BinaryStar object
+            binary : BinaryStar object
                 A binary star object, containing the binary system's properties.
 
-            primary: SingleStar object
+            primary : SingleStar object
                 A single star object, representing the primary (more evolved) star 
                 in the binary and containing its properties.
             
-            secondary: SingleStar object
+            secondary : SingleStar object
                 A single star object, representing the secondary (less evolved) star 
                 in the binary and containing its properties. 
 
             Returns
             -------
-            interp1d_pri: PchipInterpolator 
+            interp1d_pri : PchipInterpolator object
                 Interpolator object used to interpolate star properties and
                 simulate detached evolution for the primary star.
     
-            interp1d_sec: PchipInterpolator 
+            interp1d_sec : PchipInterpolator object
                 Interpolator object used to interpolate star properties and
                 simulate detached evolution for the secondary star.
+
+            Raises
+            ------
+            ValueError
+                If the `primary_normal` and `primary_not_normal` flags are 
+                both determined to be False. One or the other should be True.
+
+            MatchingError
+                If the stellar matching to a single star model fails, or the 
+                PchipInterpolator object returned from matching is None.
 
             """
 
@@ -1099,7 +1226,7 @@ class detached_step:
 
             # get the matched data of binary components
             # match secondary:
-            interp1d_sec, m0, t0 = self.track_matcher.get_star_data(binary, secondary)
+            interp1d_sec, m0, t0 = self.track_matcher.get_star_match_data(binary, secondary)
             # record which star got matched
             if secondary == binary.star_2:
                 self.matched_s2 = True
@@ -1113,12 +1240,12 @@ class detached_step:
             if self.primary_not_normal:
                 # copy the secondary star except mass which is of the primary,
                 # and radius, mdot, Idot = 0
-                interp1d_pri = self.track_matcher.get_star_data(binary, primary, 
+                interp1d_pri = self.track_matcher.get_star_match_data(binary, primary, 
                                                                 copy_prev_m0 = m0, 
                                                                 copy_prev_t0 = t0)[0]
             elif self.primary_normal:
                 # match primary
-                interp1d_pri = self.track_matcher.get_star_data(binary, primary)[0]
+                interp1d_pri = self.track_matcher.get_star_match_data(binary, primary)[0]
 
                 if primary == binary.star_1:
                     self.matched_s1 = True
@@ -1212,7 +1339,7 @@ class detached_step:
         self.track_matcher = track_matcher(KEYS, 
                                            grid_name_Hrich = self.grid_name_Hrich,
                                            grid_name_strippedHe = self.grid_name_strippedHe, 
-                                           path=PATH_TO_POSYDON_DATA, metallicity=self.metallicity, 
+                                           path=self.path, metallicity=self.metallicity, 
                                            matching_method=self.matching_method, 
                                            initial_mass = self.initial_mass,
                                            rootm=self.rootm, verbose=self.verbose, 
@@ -1452,6 +1579,7 @@ class detached_step:
                 "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) =" + \
                 f"{orbital_period_from_separation(binary.separation, secondary.mass, primary.mass):.4f}"
 
+                # instantly circularize at RLO
                 binary.eccentricity = 0
 
                 if s.t_events[0]:
@@ -1586,9 +1714,10 @@ def diffeq(
         do_stellar_evolution_and_spin_from_winds=True,
         verbose=False,
 ):
-    """Diff. equation describing the orbital evolution of a detached binary.
+    """
+        Diff. equation describing the orbital evolution of a detached binary.
 
-    The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_
+        The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_
     effects and magnetic braking [4]_, [5]_, [6]_, [7]_, [8]_. It also handles
     the change of the secondary's stellar spin due to its change of moment of
     intertia and due to mass-loss from its spinning surface. It is assumed that
@@ -1603,7 +1732,7 @@ def diffeq(
     ----------
     t : float
         The age of the system in years
-    y : list of float
+    y : list[float]
         Contains the separation, eccentricity and angular velocity, in Rsolar,
         dimensionless and rad/year units, respectively.
     M_pri : float
@@ -1645,37 +1774,43 @@ def diffeq(
     Idot : float
         Rate of change of the moment of inertia of the star in
         Msolar*Rsolar^2 per year.
-    do_wind_loss: Boolean
+    do_wind_loss : bool
         If True, take into account change of separation due to mass loss from
         the secondary. Default: True.
-    do_tides: Booleans
+    do_tides : bool
        If True, take into account change of separation, eccentricity and
        secondary spin due to tidal forces. Default: True.
-    do_gravitational_radiation: Boolean
+    do_gravitational_radiation : bool
        If True, take into account change of separation and eccentricity due to
        gravitational wave radiation. Default: True
-    do_magnetic_braking: Boolean
+    do_magnetic_braking : bool
         If True, take into account change of star spin due to magnetic braking.
         Default: True.
-    magnetic_braking_mode: String
+    magnetic_braking_mode : str
         A string corresponding to the desired magnetic braking prescription.
-            - RVJ83 : Rappaport, Verbunt, & Joss 1983 [4]_
+            - RVJ83 : Rappaport, Verbunt, & Joss 1983 [4]_ (Default)
             - M15 : Matt et al. 2015 [5]_
             - G18 : Garraffo et al. 2018 [6]_
             - CARB : Van & Ivanova 2019 [7]_
-    do_stellar_evolution_and_spin_from_winds: Boolean
+    do_stellar_evolution_and_spin_from_winds : bool
         If True, take into account change of star spin due to change of its
         moment of inertia during its evolution and due to spin angular momentum
         loss due to winds. Default: True.
-    verbose : Boolean
+    verbose : bool
         If we want to print stuff. Default: False.
+
+    Warns
+    -----
+    UnsupportedModelWarning
+        If an unsupported model or model is unspecified is determined from 
+        `magnetic_braking_mode`. In this case, magnetic braking will not 
+        be calculated during the detached step.
 
     Returns
     -------
-    list of float
-        Contains the change of
-        the separation, eccentricity and angular velocity, in Rsolar,
-        dimensionless and rad/year units, respectively.
+    result : list[float]
+        Contains the change of the separation, eccentricity and angular 
+        velocity, in Rsolar, dimensionless and rad/year units, respectively.
 
     References
     ----------
@@ -2286,9 +2421,6 @@ def diffeq(
         print("da,de,dOmega (all) in 1yr is = ",
               da, de, dOmega_sec, dOmega_pri)
 
-    return [
-        da,
-        de,
-        dOmega_sec,
-        dOmega_pri,
-    ]
+    result = [da, de, dOmega_sec, dOmega_pri]
+
+    return result
