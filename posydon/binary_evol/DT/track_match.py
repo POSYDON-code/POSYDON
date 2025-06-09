@@ -252,14 +252,6 @@ class track_matcher:
     objects that may be used to calculate quantities along the matched stellar 
     track so that the binary's stars may be evolved further, such as through 
     detached evolution.
-            
-             
-    Parameters
-    ----------
-    path : str
-        Path to the directory that contains POSYDON data HDF5 files.
-    verbose : bool
-        True if we want to print stuff.
 
     Attributes
     ----------
@@ -267,19 +259,79 @@ class track_matcher:
            Contains valid keywords which are used to extract quantities from 
            the grids.
 
+    path : str
+        Path to the directory that contains POSYDON data HDF5 files. Defaults 
+        to the PATH_TO_POSYDON_DATA environment variable.
+
+    grid_name_Hrich : str
+        Name of the single star H-rich grid h5 file, 
+        including its parent directory. This is set to 
+        (for example):
+
+            grid_name_Hrich = 'single_HMS/1e+00_Zsun.h5'  
+
+        by default if not specified.
+
+    grid_name_strippedHe : str
+        Name of the single star He-rich grid h5 file. This is 
+        set to (for example):
+
+            grid_name_strippedHe = 'single_HeMS/1e+00_Zsun.h5'
+        
+        by default if not specified.
+
+    metallicity : str
+        The metallicity of the grid. This should be one of the eight 
+        supported metallicities, stored as a string (e.g.,
+        1e+00 as "1e+00_Zsun").
+
     matching_method : str
         Method to find the best match between a star from a previous step and a
-        point in a single MIST-like stellar track. Options "root" (which tries
+        point in a single star evolution track. Options: "root" (which tries
         to find a root of two matching quantities, and it is possible to not
         achieve it) or "minimize" (minimizes the sum of squares of differences
         of various quantities between the previous step and the track).
            
+    rootm : numpy.ndarray
+        A 3D matrix to hold roots with dimensions 
+            
+            DIM = [N(initial_masses), 
+                   N(max_evolution_track_length), 
+                   N(matching_metrics)]
+
+        Structured to hold the matching metrics along the entire evolution 
+        track of each stellar evolution track of a given initial mass in 
+        a single star grid.
+
     grid : GRIDInterpolator object
            Object to interpolate between the time-series (i.e., along the 
            evolutionary track) in the h5 grid.
 
     initial_mass : list[float]
-            Contains the initial masses of the stars in the grid.
+            Contains the initial masses of the stars in the single star 
+            grid in which we are searching for a match.
+
+    list_for_matching_HMS : list
+        A list of mixed type that specifies properties of the matching 
+        process for HMS stars.
+
+    list_for_matching_postMS : list
+        A list of mixed type that specifies properties of the matching 
+        process for postMS stars.
+
+    list_for_matching_HeStar : list
+        A list of mixed type that specifies properties of the matching 
+        process for He stars.
+
+    stored_scalers : dict
+        Mapping a combination of (key, htrack, scaling_method) to a pre-trained
+        DataScaler instance.
+
+    final_keys : tuple
+        Containing keys for final value interpolation.
+
+    verbose : bool
+        True if we want to print stuff.
 
     Note
     ----
@@ -302,10 +354,10 @@ class track_matcher:
             matching_method="minimize",
             initial_mass=None,
             rootm=None,
-            verbose=False,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None,
+            verbose=False
     ):
 
         # MESA history column names used as matching metrics
@@ -329,7 +381,7 @@ class track_matcher:
 
         # ==================================================================================
 
-        self.metallicity = metallicity #convert_metallicity_to_string(metallicity)
+        self.metallicity = convert_metallicity_to_string(metallicity)
         self.matching_method = matching_method
 
         self.initial_mass = initial_mass
@@ -932,6 +984,13 @@ class track_matcher:
                 list_for_matching = self.list_for_matching_postMS
             elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
                 list_for_matching = self.list_for_matching_HeStar
+
+            # begin matching attempts
+            divider_str = "_______________________________________________________________________\n"
+            if self.verbose:
+                print(divider_str)
+
+            print("Initial matching attempt started...")
             
             match_attr_names, rescale_facs, bnds, scalers = get_match_attr_props(list_for_matching)
             
@@ -964,14 +1023,14 @@ class track_matcher:
 
                 if self.verbose:
                     if (np.abs(best_sol.fun) > matching_tolerance):
-                        print (f"\n\nInitial matching attempt FAILED:"
-                               f"\nSolution exceeds tolerance: {np.abs(best_sol.fun)} > {matching_tolerance}")
+                        print (f"\nInitial matching attempt: FAILED"
+                               f"\nReason: Solution exceeds tolerance ({np.abs(best_sol.fun)} > {matching_tolerance})")
                     if (not best_sol.success):
-                        print (f"Initial matching attempt FAILED:"
-                               f"\nOptimizer failed (sol.success = {best_sol.success})"
+                        print (f"Initial matching attempt: FAILED"
+                               f"\nReason: Optimizer failed (sol.success = {best_sol.success})"
                                f"\nOptimizer termination reason: {best_sol.message}")                        
 
-                    print("\nAlternative matching started (1st attempt)")
+                    print("\nAlternative matching started (2nd attempt)...")
                     print(f"(Trying alternative minimization method: {min_method})")
                 
                 # minimize w/ modified Powell's method
@@ -989,14 +1048,14 @@ class track_matcher:
                    
                 if self.verbose:
                     if (np.abs(best_sol.fun) > matching_tolerance):
-                        print (f"Alternative matching (1st attempt) FAILED:"
-                               f"\nSolution exceeds tolerance: {np.abs(best_sol.fun)} > {matching_tolerance}")
+                        print (f"Alternative matching (2nd attempt): FAILED"
+                               f"\nReason: Solution exceeds tolerance ({np.abs(best_sol.fun)} > {matching_tolerance})")
                     if (not best_sol.success):
-                        print (f"Alternative matching (1st attempt) FAILED:"
-                               f"\nOptimizer failed (sol.success = {best_sol.success})"
+                        print (f"Alternative matching (2nd attempt): FAILED"
+                               f"\nReason: Optimizer failed (sol.success = {best_sol.success})"
                                f"\nOptimizer termination reason: {best_sol.message}")
 
-                    print("\nAlternative matching started (2nd attempt)")
+                    print("\nAlternative matching started (3rd attempt)...")
                     print("(Now trying to match with alternative parameters)")     
                       
                 # set alternative matching metrics based on star state
@@ -1025,11 +1084,11 @@ class track_matcher:
 
                 if self.verbose:
                     if (np.abs(best_sol.fun) > matching_tolerance):
-                        print (f"Alternative matching (2nd attempt) FAILED:"
-                               f"\nSolution exceeds tolerance: {np.abs(best_sol.fun)} > {matching_tolerance}")
+                        print (f"Alternative matching (3rd attempt): FAILED"
+                               f"\nReason: Solution exceeds tolerance ({np.abs(best_sol.fun)} > {matching_tolerance})")
                     if (not best_sol.success):
-                        print (f"Alternative matching (2nd attempt) FAILED:"
-                               f"\nOptimizer failed (sol.success = {best_sol.success})"
+                        print (f"Alternative matching (3rd attempt): FAILED"
+                               f"\nReason: Optimizer failed (sol.success = {best_sol.success})"
                                f"\nOptimizer termination reason: {best_sol.message}")  
                 
                 # if post-MS or stripped He star
@@ -1037,7 +1096,7 @@ class track_matcher:
                     or star.state in LIST_ACCEPTABLE_STATES_FOR_postMS):
 
                     if self.verbose:
-                        print("\nAlternative matching started (3rd attempt)")
+                        print("\nAlternative matching started (4th attempt)...")
                         print("(Now trying to match He-star or post-MS star to a different grid)")
 
                     Pwarn("Attempting to match an He-star with an H-rich grid or post-MS star with a"
@@ -1070,7 +1129,7 @@ class track_matcher:
                             htrack = new_htrack
 
                         if self.verbose:
-                            print (f"Alternative matching (3rd attempt) completed:"
+                            print (f"Alternative matching (4th attempt) completed:"
                                    f"\nBest solution: {np.abs(best_sol.fun)} (tol = {matching_tolerance})"
                                    f"\nsol.success = {best_sol.success}")
                     except:
@@ -1080,13 +1139,13 @@ class track_matcher:
             # if matching is still not successful, set result to NaN:
             if (np.abs(best_sol.fun) > matching_tolerance_hard or not best_sol.success):
                 if self.verbose:
-                    print("\nFinal matching result with relaxed tolerance: FAILED")#,
+                    print("\nFinal matching result: FAILED")#,
                           #np.abs(best_sol.fun), ">", matching_tolerance_hard)
                     if (np.abs(best_sol.fun) > matching_tolerance_hard):
-                        print ("\nSolution exceeds hard tolerance: "+\
-                               f"{np.abs(best_sol.fun)} > {matching_tolerance_hard}")
+                        print ("\nReason: Solution exceeds hard tolerance "+\
+                               f"({np.abs(best_sol.fun)} > {matching_tolerance_hard})")
                     if (not best_sol.success):
-                        print (f"\nOptimizer failed, sol.success = {best_sol.success}"
+                        print (f"\nReason: Optimizer failed, sol.success = {best_sol.success}"
                                f"\nOptimizer termination reason: {best_sol.message}") 
 
                 initial_track_vals = (np.nan, np.nan)
@@ -1094,7 +1153,7 @@ class track_matcher:
             # or else we found a solution
             else:
                 if self.verbose:
-                    print("\nFinal matching result: SUCCESS. "
+                    print("\nFinal matching result: SUCCESS"
                          f"\nBest solution within hard tolerance: "
                          f"{np.abs(best_sol.fun):.8f}", "<", matching_tolerance_hard)
                     
@@ -1160,6 +1219,9 @@ class track_matcher:
                     f'he_core_mass = {star.he_core_mass:.3f}, ',
                     f'center_c12 = {star.center_c12:.4f}'
                 )
+
+            # done with matching attempts
+            print(divider_str)
 
         m0 = initial_track_vals[0]
         t0 = initial_track_vals[1]

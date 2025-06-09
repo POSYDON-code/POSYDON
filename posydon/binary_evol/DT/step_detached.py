@@ -27,7 +27,6 @@ from posydon.utils.common_functions import (bondi_hoyle,
                                             orbital_period_from_separation,
                                             roche_lobe_radius,
                                             check_state_of_star,
-                                            convert_metallicity_to_string,
                                             set_binary_to_failed)
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, 
                                             STAR_STATES_CO, 
@@ -222,21 +221,10 @@ class detached_step:
 
     Parameters
     ----------
-    metallicity : float
-        The metallicity of the grid. This should be one of the eight 
-        supported metallicities:
-
-            [2e+00, 1e+00, 4.5e-01, 2e-01, 1e-01, 1e-02, 1e-03, 1e-04]
-
-        and this will be converted to a corresponding string (e.g.,
-        1e+00 --> "1e+00_Zsun") and stored as a class attribute.
-
-    Attributes
-    ----------
-    KEYS : list[str]
-        Contains keywords corresponding to MESA data column names 
-        which are used to extract quantities from the single star 
-        evolution grids.
+    path : str
+        Path to the directory that contains POSYDON data HDF5 files. Defaults 
+        to the PATH_TO_POSYDON_DATA environment variable. Used for track 
+        matching.
 
     grid_name_Hrich : str
         Name of the single star H-rich grid h5 file, 
@@ -245,7 +233,7 @@ class detached_step:
 
             grid_name_Hrich = 'single_HMS/1e+00_Zsun.h5'  
 
-        by default if not specified.
+        by default if not specified. Used for track matching.
 
     grid_name_strippedHe : str
         Name of the single star He-rich grid h5 file. This is 
@@ -253,12 +241,59 @@ class detached_step:
 
             grid_name_strippedHe = 'single_HeMS/1e+00_Zsun.h5'
         
-        by default if not specified.
-           
-    metallicity : str
+        by default if not specified. Used for track matching.
+
+    metallicity : float
         The metallicity of the grid. This should be one of the eight 
-        supported metallicities, stored as a string (e.g.,
-        1e+00 as "1e+00_Zsun").
+        supported metallicities:
+
+            [2e+00, 1e+00, 4.5e-01, 2e-01, 1e-01, 1e-02, 1e-03, 1e-04]
+
+        and this will be converted to a corresponding string (e.g.,
+        1e+00 --> "1e+00_Zsun"). Used for track matching. 
+
+    matching_method : str
+        Method to find the best match between a star from a previous step and a
+        point in a single star evolution track. Options: "root" (which tries
+        to find a root of two matching quantities, and it is possible to not
+        achieve it) or "minimize" (minimizes the sum of squares of differences
+        of various quantities between the previous step and the track). Used 
+        for track matching.
+
+    initial_mass : list[float]
+            Contains the initial masses of the stars in the grid. Used for 
+            track matching.
+
+    rootm : numpy.ndarray
+        A 3D matrix to hold roots with dimensions 
+            
+            DIM = [N(initial_masses), 
+                   N(max_evolution_track_length), 
+                   N(matching_metrics)]
+                   
+        Structured to hold the matching metrics along the entire evolution 
+        track of each stellar evolution track of a given initial mass in 
+        a single star grid. Used for track matching.
+
+    list_for_matching_HMS : list
+        A list of mixed type that specifies properties of the matching 
+        process for HMS stars. Used for track matching.
+
+    list_for_matching_postMS : list
+        A list of mixed type that specifies properties of the matching 
+        process for postMS stars. Used for track matching.
+
+    list_for_matching_HeStar : list
+        A list of mixed type that specifies properties of the matching 
+        process for He stars. Used for track matching.
+
+
+    Attributes
+    ----------
+    KEYS : list[str]
+        Contains keywords corresponding to MESA data column names 
+        which are used to extract quantities from the single star 
+        evolution grids.
         
     dt : float
         The timestep size, in years, to be appended to the history of the
@@ -269,16 +304,6 @@ class detached_step:
         Alternatively, we can define the number of timesteps to be appended to
         the history of the binary. None means only the final step. If both `dt`
         and `n_o_steps_history` are different than None, `dt` has priority.
-
-    matching_method : str
-        Method to find the best match between a star from a previous step and a
-        point in a single star evolution track. Options: "root" (which tries
-        to find a root of two matching quantities, and it is possible to not
-        achieve it) or "minimize" (minimizes the sum of squares of differences
-        of various quantities between the previous step and the track).
-
-    initial_mass : list[float]
-            Contains the initial masses of the stars in the grid.
 
     do_wind_loss : bool
         If True, take into account change of separation due to mass loss 
@@ -318,22 +343,18 @@ class detached_step:
         fill its Roche lobe after circularization, and may be further 
         evolved until RLO commences once again, but without changing the 
         orbit.
-        
-    list_for_matching_HMS : list
-        A list of mixed type that specifies properties of the matching 
-        process for HMS stars.
-
-    list_for_matching_postMS : list
-        A list of mixed type that specifies properties of the matching 
-        process for postMS stars.
-
-    list_for_matching_HeStar : list
-        A list of mixed type that specifies properties of the matching 
-        process for He stars.
             
     record_matching : bool
         Whether properties of the matched star(s) should be recorded in the 
         binary evolution history.
+
+    translate : dict
+        Dictionary containing data column name (key) translations between 
+        POSYDON h5 file PSyGrid data names and MESA data names.
+
+    track_matcher : track_matcher object
+        The track_matcher object performs functions related to matching 
+        binary stellar evolution components to single star evolution models.
 
     verbose : bool
         True if we want to print stuff.
@@ -342,16 +363,8 @@ class detached_step:
 
     def __init__(
             self,
-            grid_name_Hrich=None,
-            grid_name_strippedHe=None,
-            metallicity=None,
-            path=PATH_TO_POSYDON_DATA,
             dt=None,
             n_o_steps_history=None,
-            matching_method="minimize",
-            initial_mass=None,
-            rootm=None,
-            verbose=False,
             do_wind_loss=True,
             do_tides=True,
             do_gravitational_radiation=True,
@@ -359,17 +372,22 @@ class detached_step:
             magnetic_braking_mode="RVJ83",
             do_stellar_evolution_and_spin_from_winds=True,
             RLO_orbit_at_orbit_with_same_am=False,
+            record_matching=False,
+            verbose=False,
+            grid_name_Hrich=None,
+            grid_name_strippedHe=None,
+            metallicity=None,
+            path=PATH_TO_POSYDON_DATA,
+            matching_method="minimize",
+            initial_mass=None,
+            rootm=None,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
-            list_for_matching_HeStar=None,
-            record_matching=False
+            list_for_matching_HeStar=None
     ):
         """Initialize the step. See class documentation for details."""
-        self.metallicity = convert_metallicity_to_string(metallicity)
-        self.path = path
         self.dt = dt
         self.n_o_steps_history = n_o_steps_history
-        self.matching_method = matching_method
         self.do_wind_loss = do_wind_loss
         self.do_tides = do_tides
         self.do_gravitational_radiation = do_gravitational_radiation
@@ -379,17 +397,8 @@ class detached_step:
             do_stellar_evolution_and_spin_from_winds
         )
         self.RLO_orbit_at_orbit_with_same_am = RLO_orbit_at_orbit_with_same_am
-        self.initial_mass = initial_mass
-        self.rootm = rootm
         self.verbose = verbose
-        self.list_for_matching_HMS = list_for_matching_HMS
-        self.list_for_matching_postMS = list_for_matching_postMS
-        self.list_for_matching_HeStar = list_for_matching_HeStar
         self.record_matching = record_matching
-
-        # mapping a combination of (key, htrack, method) to a pre-trained
-        # DataScaler instance, created the first time it is requested
-        self.stored_scalers = {}
 
         if self.verbose:
             print(
@@ -409,22 +418,17 @@ class detached_step:
         # them to the appropriate columns)
         self.KEYS = DEFAULT_TRANSLATED_KEYS
 
-        # keys for the final value interpolation
-        self.final_keys = (
-            'avg_c_in_c_core_at_He_depletion',
-            'co_core_mass_at_He_depletion',
-            'm_core_CE_1cent',
-            'm_core_CE_10cent',
-            'm_core_CE_30cent',
-            'm_core_CE_pure_He_star_10cent',
-            'r_core_CE_1cent',
-            'r_core_CE_10cent',
-            'r_core_CE_30cent',
-            'r_core_CE_pure_He_star_10cent'
-        )
-
-        self.grid_name_Hrich = grid_name_Hrich
-        self.grid_name_strippedHe = grid_name_strippedHe
+        # creating a track matching object
+        self.track_matcher = track_matcher(self.KEYS, 
+                                           grid_name_Hrich = grid_name_Hrich,
+                                           grid_name_strippedHe = grid_name_strippedHe, 
+                                           path=path, metallicity=metallicity, 
+                                           matching_method=matching_method, 
+                                           initial_mass = initial_mass,
+                                           rootm=rootm, verbose=self.verbose, 
+                                           list_for_matching_HMS=list_for_matching_HMS,
+                                           list_for_matching_HeStar=list_for_matching_HeStar, 
+                                           list_for_matching_postMS=list_for_matching_postMS)
         
         return
 
@@ -1333,20 +1337,6 @@ class detached_step:
             
             return omega_in_rad_per_year_pri, omega_in_rad_per_year_sec
 
-        KEYS = self.KEYS
-
-        # creating a track matching object
-        self.track_matcher = track_matcher(KEYS, 
-                                           grid_name_Hrich = self.grid_name_Hrich,
-                                           grid_name_strippedHe = self.grid_name_strippedHe, 
-                                           path=self.path, metallicity=self.metallicity, 
-                                           matching_method=self.matching_method, 
-                                           initial_mass = self.initial_mass,
-                                           rootm=self.rootm, verbose=self.verbose, 
-                                           list_for_matching_HMS=self.list_for_matching_HMS,
-                                           list_for_matching_HeStar=self.list_for_matching_HeStar, 
-                                           list_for_matching_postMS=self.list_for_matching_postMS)
-
         binary_sim_prop = getattr(binary, "properties")   ## simulation properties of the binary
         all_step_names = getattr(binary_sim_prop, "all_step_names")
 
@@ -1413,7 +1403,7 @@ class detached_step:
                             interp1d_sec["L"](t - t_offset_sec),
                             *[
                                 interp1d_sec[key](t - t_offset_sec)
-                                for key in KEYS[1:11]
+                                for key in self.KEYS[1:11]
                             ],
                             interp1d_sec["Idot"](t - t_offset_sec),
                             interp1d_sec["conv_env_turnover_time_l_b"](
@@ -1422,7 +1412,7 @@ class detached_step:
                             interp1d_pri["L"](t - t_offset_pri),
                             *[
                                 interp1d_pri[key](t - t_offset_pri)
-                                for key in KEYS[1:11]
+                                for key in self.KEYS[1:11]
                             ],
                             interp1d_pri["Idot"](t - t_offset_pri),
                             interp1d_pri["conv_env_turnover_time_l_b"](
@@ -1456,7 +1446,7 @@ class detached_step:
                             interp1d_sec["L"](t - t_offset_sec),
                             *[
                                 interp1d_sec[key](t - t_offset_sec)
-                                for key in KEYS[1:11]
+                                for key in self.KEYS[1:11]
                             ],
                             interp1d_sec["Idot"](t - t_offset_sec),
                             interp1d_sec["conv_env_turnover_time_l_b"](
@@ -1465,7 +1455,7 @@ class detached_step:
                             interp1d_pri["L"](t - t_offset_pri),
                             *[
                                 interp1d_pri[key](t - t_offset_pri)
-                                for key in KEYS[1:11]
+                                for key in self.KEYS[1:11]
                             ],
                             interp1d_pri["Idot"](t - t_offset_pri),
                             interp1d_pri["conv_env_turnover_time_l_b"](
