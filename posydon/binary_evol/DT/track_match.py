@@ -1404,7 +1404,7 @@ class TrackMatcher:
         
         return omega0_pri, omega0_sec
 
-    def do_matching(self, binary):
+    def do_matching(self, binary, step_name="step_match"):
         
         """
             Perform binary to single star grid matching. This is currently

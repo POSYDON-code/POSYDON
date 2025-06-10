@@ -704,7 +704,7 @@ class detached_step:
         #    return
 
         # match stars to single star models for detached evolution
-        pri_out, sec_out, only_CO = self.track_matcher.do_matching(binary)
+        pri_out, sec_out, only_CO = self.track_matcher.do_matching(binary, step_name = "step_detached")
         primary, interp1d_pri, omega0_pri = pri_out
         secondary, interp1d_sec, omega0_sec = sec_out
         if only_CO:
