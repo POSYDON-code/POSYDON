@@ -151,3 +151,31 @@ DEFAULT_PROFILE_KEYS = (
     'neutral_fraction_He',
     'avg_charge_He'
 )
+
+"""
+# states to ID an HMS star
+# TODO: build these from the other lists to (hopefully) 
+#       ensure consistency
+STAR_STATES_FOR_HMS_MATCHING = ["H-rich_Core_H_burning",
+                                  "accreted_He_Core_H_burning"]
+
+# states to ID a postMS star
+STAR_STATES_FOR_postMS_MATCHING = [
+    "H-rich_Shell_H_burning",
+    "H-rich_Core_He_burning",
+    "H-rich_Central_He_depleted",
+    "H-rich_Core_C_burning",
+    "H-rich_Central_C_depletion",
+    "H-rich_non_burning",
+    "accreted_He_non_burning"]
+
+# states to ID an He star
+STAR_STATES_FOR_strippedHe_MATCHING = [
+    'accreted_He_Core_He_burning',
+    'stripped_He_Core_He_burning',
+    'stripped_He_Shell_He_burning',     # includes stars burning C in core, does this exist?
+    'stripped_He_Central_He_depleted',  # includes stars burning C in core
+    'stripped_He_Central_C_depletion',
+    'stripped_He_non_burning'
+    ]
+"""

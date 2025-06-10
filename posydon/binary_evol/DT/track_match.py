@@ -33,9 +33,9 @@ from posydon.binary_evol.DT.key_library import (DEFAULT_TRANSLATED_KEYS,
                                                 KEYS_POSITIVE,
                                                 DEFAULT_PROFILE_KEYS)
 
-from posydon.binary_evol.flow_chart import (LIST_ACCEPTABLE_STATES_FOR_HMS,
-                                            LIST_ACCEPTABLE_STATES_FOR_postMS,
-                                            LIST_ACCEPTABLE_STATES_FOR_HeStar)
+from posydon.binary_evol.flow_chart import (STAR_STATES_FOR_HMS_MATCHING,
+                                            STAR_STATES_FOR_postMS_MATCHING,
+                                            STAR_STATES_FOR_Hestar_MATCHING)
 
 
 MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
@@ -803,7 +803,7 @@ class track_matcher:
         if matching_method == "root":
 
             # if the star can be considered an HMS star
-            if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
+            if star.state in STAR_STATES_FOR_HMS_MATCHING:
 
                 # get initial guess for matching via search for closest track
                 x0 = get_root0(["center_h1", "mass"],
@@ -848,11 +848,11 @@ class track_matcher:
         elif matching_method == "minimize":
             
             # set matching metrics based on star state
-            if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
+            if star.state in STAR_STATES_FOR_HMS_MATCHING:
                 list_for_matching = self.list_for_matching_HMS
-            elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
+            elif star.state in STAR_STATES_FOR_postMS_MATCHING:
                 list_for_matching = self.list_for_matching_postMS
-            elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
+            elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
                 list_for_matching = self.list_for_matching_HeStar
 
             # begin matching attempts
@@ -929,11 +929,11 @@ class track_matcher:
                     print("(Now trying to match with alternative parameters)")     
                       
                 # set alternative matching metrics based on star state
-                if star.state in LIST_ACCEPTABLE_STATES_FOR_HMS:
+                if star.state in STAR_STATES_FOR_HMS_MATCHING:
                     list_for_matching = self.list_for_matching_HMS_alternative
-                elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
+                elif star.state in STAR_STATES_FOR_postMS_MATCHING:
                     list_for_matching = (self.list_for_matching_postMS_alternative)
-                elif star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
+                elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
                     list_for_matching = (self.list_for_matching_HeStar_alternative)                
                     
                 match_attr_names, rescale_facs, bnds, scalers = get_match_attr_props(list_for_matching)
@@ -962,8 +962,8 @@ class track_matcher:
                                f"\nOptimizer termination reason: {best_sol.message}")  
                 
                 # if post-MS or stripped He star
-                if (star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar
-                    or star.state in LIST_ACCEPTABLE_STATES_FOR_postMS):
+                if (star.state in STAR_STATES_FOR_Hestar_MATCHING
+                    or star.state in STAR_STATES_FOR_postMS_MATCHING):
 
                     if self.verbose:
                         print("\nAlternative matching started (4th attempt)...")
@@ -972,11 +972,11 @@ class track_matcher:
                     Pwarn("Attempting to match an He-star with an H-rich grid or post-MS star with a"
                           " stripped-He grid", "EvolutionWarning")
                         
-                    if star.state in LIST_ACCEPTABLE_STATES_FOR_HeStar:
+                    if star.state in STAR_STATES_FOR_Hestar_MATCHING:
                         new_htrack = True
                         list_for_matching = self.list_for_matching_HeStar
 
-                    elif star.state in LIST_ACCEPTABLE_STATES_FOR_postMS:
+                    elif star.state in STAR_STATES_FOR_postMS_MATCHING:
                         new_htrack = False
                         list_for_matching = self.list_for_matching_postMS
 

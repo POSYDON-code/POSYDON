@@ -16,33 +16,6 @@ __authors__ = [
     "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
-# states to ID an HMS star
-# TODO: build these from the other lists to (hopefully) 
-#       ensure consistency
-LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
-                                  "accreted_He_Core_H_burning"]
-
-# states to ID a postMS star
-LIST_ACCEPTABLE_STATES_FOR_postMS = [
-    "H-rich_Shell_H_burning",
-    "H-rich_Core_He_burning",
-    "H-rich_Central_He_depleted",
-    "H-rich_Core_C_burning",
-    "H-rich_Central_C_depletion",
-    "H-rich_non_burning",
-    "accreted_He_non_burning"]
-
-# states to ID an He star
-LIST_ACCEPTABLE_STATES_FOR_HeStar = [
-    'accreted_He_Core_He_burning',
-    'stripped_He_Core_He_burning',
-    'stripped_He_Shell_He_burning',     # includes stars burning C in core, does this exist?
-    'stripped_He_Central_He_depleted',  # includes stars burning C in core
-    'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning'
-    ]
-
-
 STAR_STATES_ALL = [
     'WD',
     'NS',
@@ -122,6 +95,20 @@ STAR_STATES_CC = [
     'accreted_He_Shell_H_burning',
     'accreted_He_non_burning'
     ]
+
+# states to ID an HMS star (Xcore > 0.01)
+# TODO: build these from the other lists to (hopefully) 
+#       ensure consistency
+STAR_STATES_FOR_HMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                ("Core_H_burning" in st)]
+
+# states to ID a postMS star (Xcore < 0.01, Xsurf > 0.01)
+STAR_STATES_FOR_postMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                   (("Core_H_burning" not in st) & ("stripped_He" not in st))]
+
+# states to ID an He star (Xcore < 0.01, Xsurf < 0.01)
+STAR_STATES_FOR_Hestar_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                   ("stripped_He" in st)]
 
 BINARY_STATES_ALL = [
     'initially_single_star',

@@ -33,7 +33,7 @@ from posydon.binary_evol.flow_chart import (STAR_STATES_CC,
                                             STAR_STATES_H_RICH,
                                             STAR_STATES_H_RICH_EVOLVABLE,
                                             STAR_STATES_HE_RICH_EVOLVABLE,
-                                            LIST_ACCEPTABLE_STATES_FOR_HeStar)
+                                            STAR_STATES_FOR_Hestar_MATCHING)
 import posydon.utils.constants as const
 from posydon.utils.posydonerror import (NumericalError, MatchingError,
                                         POSYDONError, FlowError,
@@ -869,7 +869,7 @@ class detached_step:
 
                 # star 1 is a CO, star 2 is an He star
                 elif (binary.star_1.state in STAR_STATES_CO and
-                    binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                    binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
                     
                     secondary = binary.star_2
                     secondary.htrack = False
@@ -892,7 +892,7 @@ class detached_step:
                     primary.co = True
 
                 # star 1 is an He star, star 2 is a CO
-                elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
+                elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING and
                     binary.star_2.state in STAR_STATES_CO):
 
                     secondary = binary.star_1
@@ -916,7 +916,7 @@ class detached_step:
                     primary.co = False
 
                 # star 1 is an He star, star 2 is H-rich
-                elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
+                elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING and
                     binary.star_2.state in STAR_STATES_H_RICH):
                     
                     secondary = binary.star_2
@@ -929,7 +929,7 @@ class detached_step:
 
                 # star 1 is H-rich, star 2 is an He star
                 elif (binary.star_1.state in STAR_STATES_H_RICH and
-                    binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                    binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
 
                     secondary = binary.star_1
                     secondary.htrack = True
@@ -940,8 +940,8 @@ class detached_step:
                     primary.co = False
 
                 # star 1 is an He star, star 2 is an He star
-                elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar and
-                    binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING and
+                    binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
                     
                     secondary = binary.star_2
                     secondary.htrack = False
@@ -971,7 +971,7 @@ class detached_step:
                 if (binary.star_2.state in STAR_STATES_H_RICH):
                     secondary.htrack = True
                 # only He star left
-                elif (binary.star_2.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                elif (binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
                     secondary.htrack = False
                 # only a compact object left
                 elif (binary.star_2.state in STAR_STATES_CO):
@@ -990,7 +990,7 @@ class detached_step:
 
                 if (binary.star_1.state in STAR_STATES_H_RICH):
                     secondary.htrack = True
-                elif (binary.star_1.state in LIST_ACCEPTABLE_STATES_FOR_HeStar):
+                elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING):
                     secondary.htrack = False
                 elif (binary.star_1.state in STAR_STATES_CO):
                     states_OK = False
