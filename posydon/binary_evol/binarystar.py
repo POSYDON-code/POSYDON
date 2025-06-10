@@ -275,6 +275,43 @@ class BinaryStar:
         """Switch stars."""
         self.star_1, self.star_2 = self.star_2, self.star_1
 
+    def check_who_exists(self):
+        """
+            Check and store which binary components exist (are not 
+        massless remnants). This sets additional attributes 
+
+            self.non_existent_companion with the following values:
+               -1 if neither star exists
+                0 if both stars exist
+                1 if Star 2 exists, Star 1 is a massless remnant
+                2 if Star 1 exists, Star 2 is a massless remnant
+        
+        and
+
+            self.companion_1_exists = True if Star 1 exists (is not 
+                                      None or a massless remnant)
+
+            self.companion_2_exists = True if Star 2 exists (is not 
+                                      None or a massless remnant)
+
+        """
+            
+        self.companion_1_exists = (self.star_1 is not None
+                            and self.star_1.state != "massless_remnant")
+        self.companion_2_exists = (self.star_2 is not None
+                            and self.star_2.state != "massless_remnant")
+
+        if self.companion_1_exists:
+            if self.companion_2_exists:             # both stars exist
+                self.non_existent_companion = 0
+            else:                                   # only star 1 exists
+                self.non_existent_companion = 2
+        else:
+            if self.companion_2_exists:             # only star 2 exists
+                self.non_existent_companion = 1
+            else:
+                self.non_existent_companion = -1    # no stars exist
+
     def restore(self, i=0):
         """Restore the BinaryStar() object to its i-th state, keeping the binary history before the i-th state.
 

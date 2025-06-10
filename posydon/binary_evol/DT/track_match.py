@@ -25,7 +25,8 @@ from posydon.utils.posydonwarning import Pwarn
 from posydon.interpolation.data_scaling import DataScaler
 from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.utils.interpolators import PchipInterpolator2
-from posydon.utils.posydonerror import (NumericalError, MatchingError)
+from posydon.utils.posydonerror import (NumericalError, MatchingError,
+                                        POSYDONError)
 from posydon.utils.common_functions import (convert_metallicity_to_string,
                                             set_binary_to_failed)
 
@@ -33,14 +34,16 @@ from posydon.binary_evol.DT.key_library import (DEFAULT_TRANSLATED_KEYS,
                                                 KEYS_POSITIVE,
                                                 DEFAULT_PROFILE_KEYS)
 
-from posydon.binary_evol.flow_chart import (STAR_STATES_FOR_HMS_MATCHING,
+from posydon.binary_evol.flow_chart import (STAR_STATES_CO,
+                                            STAR_STATES_H_RICH,
+                                            STAR_STATES_FOR_HMS_MATCHING,
                                             STAR_STATES_FOR_postMS_MATCHING,
                                             STAR_STATES_FOR_Hestar_MATCHING)
 
 
 MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
 
-class track_matcher:
+class TrackMatcher:
     """
         This class contains the functionality to match binary star components to
     single star models for detached evolution. Typically, this is so that the 
@@ -220,7 +223,6 @@ class track_matcher:
 
     def __init__(
             self,
-            KEYS,
             grid_name_Hrich,
             grid_name_strippedHe,
             path=PATH_TO_POSYDON_DATA,
@@ -229,6 +231,7 @@ class track_matcher:
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None,
+            record_matching=False,
             verbose=False
     ):
 
@@ -355,6 +358,8 @@ class track_matcher:
             ["min_max", "min_max", "min_max"],
             [m_min_He, m_max_He], [0, None]
         ]
+
+        self.record_matching = record_matching
 
     def square_difference(self, x, htrack, attr_names, attr_vals, attr_scalers):
         """
@@ -1226,6 +1231,488 @@ class track_matcher:
                     interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
 
                 return interp1d, m0, t0
+
+    def calc_omega(self, star, prematch_rotation, interp1d):
+        """
+        
+            Calculate the spin of a star from its (pre-match) moment
+        of inertia and angular momentum (or rotation rates). This is 
+        required because we match a rotating model (from the binary grids) 
+        to a non-rotating model (from the single star grids).
+
+        Parameters
+        ----------
+        star : SingleStar object
+            Star object containing the star properties.
+
+        prematch_rotation: dict 
+            A dictionary containing the pre-match values of 
+            angular momentum, moment of inertia, omega/omega_crit, 
+            and omega
+
+        interp1d: dict
+            A dictionary of scipy.interpolate._cubic.PchipInterpolator 
+            objects. Here, used to calculate radius and mass of the star 
+            in the event that star.log_R is NaN.
+
+        Returns
+        -------
+        omega_in_rad_per_year: float
+            The rotation rate of the star in radians per year, 
+            calculated from the star's (pre-match) angular momentum
+            and moment of inertia.
+
+        Warns
+        -----
+        InappropriateValueWarning
+            If the pre-match rotation quantities are NaN or None and can 
+            not calculate a the post-match rotation rate, we setting the 
+            post-match rotation rate to zero.
+        """
+
+        log_total_angular_momentum = prematch_rotation['log_total_angular_momentum']
+        total_moment_of_inertia = prematch_rotation['total_moment_of_inertia']
+        surf_avg_omega_div_omega_crit = prematch_rotation['surf_avg_omega_div_omega_crit']
+        surf_avg_omega = prematch_rotation['surf_avg_omega']
+
+        if (log_total_angular_momentum is not None
+                and total_moment_of_inertia is not None
+                and pd.notna(log_total_angular_momentum)
+                and pd.notna(total_moment_of_inertia)):
+            
+            if self.verbose:
+                print("Calculating post-match omega using angular momentum and moment of inertia")
+
+            # the last factor converts rad/s to rad/yr
+            omega_in_rad_per_year = (10.0 ** log_total_angular_momentum
+                                        / total_moment_of_inertia * const.secyer)  
+            
+        else:
+            # we equate the secondary's initial omega to surf_avg_omega
+            # (although the critical rotation should be improved to
+            # take into account radiation pressure)
+            if pd.notna(surf_avg_omega):
+
+                if self.verbose:
+                    print("Calculating post-match omega using surf_avg_omega")
+
+                omega_in_rad_per_year = surf_avg_omega * const.secyer                    
+                    
+            elif pd.notna(surf_avg_omega_div_omega_crit):
+                
+                if self.verbose:
+                    print("Calculating post-match omega using surf_avg_omega_div_omega_crit")
+
+                if pd.notna(star.log_R):
+                    omega_in_rad_per_year = (surf_avg_omega_div_omega_crit * np.sqrt(
+                                                const.standard_cgrav * star.mass * const.msol
+                                                / ((10.0 ** (star.log_R) * const.rsol) ** 3)) * const.secyer)
+                    
+                else:
+                    
+                    radius_to_be_used = interp1d["R"](interp1d["t0"])
+                    mass_to_be_used = interp1d["mass"](interp1d["t0"])
+
+                    omega_in_rad_per_year = (surf_avg_omega_div_omega_crit * np.sqrt(
+                                                const.standard_cgrav * mass_to_be_used * const.msol
+                                                / ((radius_to_be_used * const.rsol) ** 3)) * const.secyer)
+                
+            else:
+                omega_in_rad_per_year = 0.0
+                if self.verbose:
+                    print("Could not calculate post-match omega, pre-match values are None or NaN.")
+                    print("Pre-match rotation rates:")
+                    print("surf_avg_omega = ", surf_avg_omega)
+                    print("surf_avg_omega_div_omega_crit = ", surf_avg_omega_div_omega_crit)
+                    Pwarn("Setting (post-match) rotation rate to zero.", "InappropriateValueWarning")
+                    
+                    
+        if self.verbose:
+            print("pre-match omega_in_rad_per_year = ", surf_avg_omega * const.secyer)
+            print("calculated omega_in_rad_per_year = ", omega_in_rad_per_year)
+            omega_percent_diff = np.nan_to_num(100.0*(omega_in_rad_per_year-surf_avg_omega*const.secyer) \
+                                                / omega_in_rad_per_year, 0)
+            print("omega_in_rad_per_year % difference = ", 
+                    f"{omega_percent_diff:.1f}%")
+
+        return omega_in_rad_per_year
+        
+    def update_rotation_info(self, primary, secondary, interp1d_pri, interp1d_sec):
+
+        """
+            Once we have matched to a non-rotating single star, we need to calculate
+        what the single star's spin should be, based the star's rotation before matching. 
+        This calculates a new rotation rate for the matched star from the previous moment 
+        of intertia and angular momentum (or rotation rate in lieu of those). This also 
+        updates the stars in the binary with the newly calculated values to reflect this.
+
+        Parameters
+        ----------
+        primary: SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary: SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties. 
+
+        Returns
+        -------
+        omega0_pri: PchipInterpolator 
+            The rotation rate of the primary star in radians per year, 
+            calculated from the star's (pre-match) angular momentum
+            and moment of inertia.
+
+        omega0_sec: PchipInterpolator 
+            The rotation rate of the secondary star in radians per year, 
+            calculated from the star's (pre-match) angular momentum
+            and moment of inertia.
+
+        """
+
+        prematch_rotation_sec = {"log_total_angular_momentum": secondary.log_total_angular_momentum,
+                                "total_moment_of_inertia": secondary.total_moment_of_inertia,
+                                "surf_avg_omega_div_omega_crit": secondary.surf_avg_omega_div_omega_crit,
+                                "surf_avg_omega": secondary.surf_avg_omega}
+        
+        prematch_rotation_pri = {"log_total_angular_momentum": primary.log_total_angular_momentum,
+                                "total_moment_of_inertia": primary.total_moment_of_inertia,
+                                "surf_avg_omega_div_omega_crit": primary.surf_avg_omega_div_omega_crit,
+                                "surf_avg_omega": primary.surf_avg_omega}
+
+        omega0_sec = self.calc_omega(secondary, prematch_rotation_sec, interp1d_sec)
+
+        # recalculate rotation quantities using the newly calculated omega
+        secondary.surf_avg_omega_div_omega_crit = (omega0_sec / const.secyer / secondary.surf_avg_omega) \
+                                                * secondary.surf_avg_omega_div_omega_crit
+        secondary.surf_avg_omega = omega0_sec / const.secyer
+        secondary.log_total_angular_momentum = np.log10((omega0_sec / const.secyer) \
+                                                        * secondary.total_moment_of_inertia)
+
+        if self.primary_normal:
+            omega0_pri = self.calc_omega(primary, prematch_rotation_pri, interp1d_pri)
+
+            primary.surf_avg_omega_div_omega_crit = (omega0_pri / const.secyer / primary.surf_avg_omega) \
+                                            * primary.surf_avg_omega_div_omega_crit
+            primary.surf_avg_omega = omega0_pri / const.secyer
+            primary.log_total_angular_momentum = np.log10((omega0_pri / const.secyer) \
+                                                                * primary.total_moment_of_inertia)
+        else:
+            # omega of compact objects or massless remnant 
+            # (won't be used for integration)
+            omega0_pri = omega0_sec
+        
+        return omega0_pri, omega0_sec
+
+    def do_matching(self, binary):
+        
+        """
+            Perform binary to single star grid matching. This is currently
+        used when transitioning to detached star evolution from binary.
+        
+        Parameters
+        ----------
+        binary : BinaryStar object
+            A binary star object, containing the binary system's properties.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties. 
+
+        Returns
+        -------
+        interp1d_pri : PchipInterpolator object
+            Interpolator object used to interpolate star properties and
+            simulate detached evolution for the primary star.
+
+        interp1d_sec : PchipInterpolator object
+            Interpolator object used to interpolate star properties and
+            simulate detached evolution for the secondary star.
+
+        Raises
+        ------
+        ValueError
+            If the `primary_normal` and `primary_not_normal` flags are 
+            both determined to be False. One or the other should be True.
+
+        MatchingError
+            If the stellar matching to a single star model fails, or the 
+            PchipInterpolator object returned from matching is None.
+
+        """
+
+        # determine star states for matching
+        primary, secondary, only_CO = self.determine_star_states(binary)
+        if only_CO:
+            return (None, None, None), (None, None, None), only_CO
+
+        # record which star we performed matching on for reporting purposes
+        self.matched_s1 = False
+        self.matched_s2 = False
+
+        # get the matched data of binary components
+        # match secondary:
+        interp1d_sec, m0, t0 = self.get_star_match_data(binary, secondary)
+        # record which star got matched
+        if secondary == binary.star_2:
+            self.matched_s2 = True
+        elif secondary == binary.star_1:
+            self.matched_s1 = True
+
+        # primary is a CO or massless remnant, or else it is "normal"
+        # TODO: should these be star properties? also, do we only really need one?
+        self.primary_not_normal = (primary.co) or (binary.non_existent_companion in [1,2])
+        self.primary_normal = (not primary.co) and binary.non_existent_companion == 0
+
+        if self.primary_not_normal:
+            # copy the secondary star except mass which is of the primary,
+            # and radius, mdot, Idot = 0
+            interp1d_pri = self.get_star_match_data(binary, primary, 
+                                                            copy_prev_m0 = m0, 
+                                                            copy_prev_t0 = t0)[0]
+        elif self.primary_normal:
+            # match primary
+            interp1d_pri = self.get_star_match_data(binary, primary)[0]
+
+            if primary == binary.star_1:
+                self.matched_s1 = True
+            elif primary == binary.star_2:
+                self.matched_s2 = True
+        else:
+            raise ValueError("During matching, the primary should either be normal (stellar object) or ",
+                            "not normal (a CO or nonexistent companion).",
+                            f"\nprimary.co = {primary.co}",
+                            f"\nnon_existent_companion = {binary.non_existent_companion}",
+                            f"\ncompanion_1_exists = {binary.companion_1_exists}",
+                            f"\ncompanion_2_exists = {binary.companion_2_exists}")
+
+
+        if interp1d_sec is None or interp1d_pri is None:
+            failed_state = binary.state
+            set_binary_to_failed(binary)
+            raise MatchingError(f"Grid matching failed for {failed_state} binary.")   
+
+        # recalculate rotation quantities after matching
+        omega0_pri, omega0_sec = self.update_rotation_info(primary, secondary, 
+                                                           interp1d_pri, interp1d_sec)
+        
+        # update binary history with matched values (only shown in history if record_match = True)
+        # (this gets overwritten after detached evolution)
+        self.update_star_properties(secondary, secondary.htrack, 
+                                    interp1d_sec["m0"], interp1d_sec["t0"])
+        if self.primary_normal:
+            self.update_star_properties(primary, primary.htrack, 
+                                        interp1d_pri["m0"], interp1d_pri["t0"]) 
+
+        if self.record_matching:
+            # append matching information as a part of step_detached
+            binary.step_names.append("step_detached")
+            if self.matched_s1 and self.matched_s2:
+                binary.event = "Match1,2"
+            elif self.matched_s1:
+                binary.event = "Match1"
+            elif self.matched_s2:
+                binary.event = "Match2"
+
+            binary.append_state()
+
+        primary_out = (primary, interp1d_pri, omega0_pri)
+        secondary_out = (secondary, interp1d_sec, omega0_sec)
+
+        return primary_out, secondary_out, only_CO
+    
+    def determine_star_states(self, binary):
+
+        """
+            Determines which star is primary (further evolved) and which is 
+        secondary (less evolved). Determines whether stars should be 
+        matched to the H- or He-rich grid, whether they exist, or if they
+        are compact objects/massless remnants. THis is used to determine
+        how to match the stars and also treat their detached evolution.
+
+        Parameters
+        ----------
+        binary: BinaryStar object
+            A binary star object, containing the binary system's properties.
+
+        Raises
+        ------
+        POSYDONError
+            If there is no star to evolve (both are massless remnants), then 
+            evolution can no continue and detached step should not have been 
+            called.
+
+        ValueError
+            If the State of star 1 or 2 is not recognized.
+
+        POSYDONError
+            If the `non_existent_companion` of the binary is determined to 
+            be not equal to 0 (both stars exist), 1 (only star 2 exists), 
+            or 2 (only star 1 exists), something has gone wrong.
+        
+        """
+
+        only_CO = False
+
+        # update BinaryStar instance with attributes storing whether star 1/2 exists or not            
+        binary.check_who_exists()
+        if binary.non_existent_companion == -1:
+                raise POSYDONError("There is no star to evolve. Who summoned me?")
+
+        if binary.non_existent_companion == 0: # both stars exist, detached step of a binary 
+            # where both stars exist. The primary is a potential compact object, or 
+            # the more evolved star
+
+            # star 1 is a CO, star 2 is H-rich
+            if (binary.star_1.state in STAR_STATES_CO and
+                binary.star_2.state in STAR_STATES_H_RICH):
+
+                secondary = binary.star_2
+                secondary.htrack = True
+                secondary.co = False
+
+                primary = binary.star_1
+                primary.htrack = secondary.htrack
+                primary.co = True
+
+            # star 1 is a CO, star 2 is an He star
+            elif (binary.star_1.state in STAR_STATES_CO and
+                binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
+                
+                secondary = binary.star_2
+                secondary.htrack = False
+                secondary.co = False
+
+                primary = binary.star_1
+                primary.htrack = secondary.htrack
+                primary.co = True
+
+            # star 1 is H-rich, star 2 is a CO
+            elif (binary.star_1.state in STAR_STATES_H_RICH and
+                binary.star_2.state in STAR_STATES_CO):
+
+                secondary = binary.star_1
+                secondary.htrack = True
+                secondary.co = False
+
+                primary = binary.star_2
+                primary.htrack = secondary.htrack
+                primary.co = True
+
+            # star 1 is an He star, star 2 is a CO
+            elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING and
+                binary.star_2.state in STAR_STATES_CO):
+
+                secondary = binary.star_1
+                secondary.htrack = False
+                secondary.co = False
+
+                primary = binary.star_2
+                primary.htrack = secondary.htrack
+                primary.co = True
+            
+            # star 1 is H-rich, star 2 is H-rich
+            elif (binary.star_1.state in STAR_STATES_H_RICH and
+                binary.star_2.state in STAR_STATES_H_RICH):
+                
+                secondary = binary.star_2
+                secondary.htrack = True
+                secondary.co = False
+
+                primary = binary.star_1
+                primary.htrack = True
+                primary.co = False
+
+            # star 1 is an He star, star 2 is H-rich
+            elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING and
+                binary.star_2.state in STAR_STATES_H_RICH):
+                
+                secondary = binary.star_2
+                secondary.htrack = True
+                secondary.co = False
+
+                primary = binary.star_1
+                primary.htrack = False
+                primary.co = False
+
+            # star 1 is H-rich, star 2 is an He star
+            elif (binary.star_1.state in STAR_STATES_H_RICH and
+                binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
+
+                secondary = binary.star_1
+                secondary.htrack = True
+                secondary.co = False
+
+                primary = binary.star_2
+                primary.htrack = False
+                primary.co = False
+
+            # star 1 is an He star, star 2 is an He star
+            elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING and
+                binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
+                
+                secondary = binary.star_2
+                secondary.htrack = False
+                secondary.co = False
+
+                primary = binary.star_1
+                primary.htrack = False
+                primary.co = False
+
+            else:
+                raise ValueError(f"State {binary.star_1.state} is not recognized!")
+
+        # In case a star is a massless remnant:
+        # We force primary.co = True for all isolated evolution
+        # where the primary does not exist (is a massless remnant) 
+        # and the secondary is the one evolving
+
+        # star 1 is a massless remnant, only star 2 exists
+        elif binary.non_existent_companion == 1:
+            primary = binary.star_1
+            primary.co = True
+            primary.htrack = False
+            secondary = binary.star_2
+            secondary.co = False
+
+            # only H-rich star left
+            if (binary.star_2.state in STAR_STATES_H_RICH):
+                secondary.htrack = True
+            # only He star left
+            elif (binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
+                secondary.htrack = False
+            # only a compact object left
+            elif (binary.star_2.state in STAR_STATES_CO):
+                only_CO = True
+                return primary, secondary, only_CO
+            else:
+                raise ValueError(f"State {binary.star_2.state} is not recognized!")
+
+        # star 2 is a massless remnant, only star 1 exists
+        elif binary.non_existent_companion == 2:
+            primary = binary.star_2
+            primary.co = True
+            primary.htrack = False
+            secondary = binary.star_1
+            secondary.co = False
+
+            if (binary.star_1.state in STAR_STATES_H_RICH):
+                secondary.htrack = True
+            elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING):
+                secondary.htrack = False
+            elif (binary.star_1.state in STAR_STATES_CO):
+                only_CO = True
+                return primary, secondary, only_CO
+            else:
+                raise ValueError(f"State {binary.star_1.state} is not recognized!")
+        else:
+            raise POSYDONError(f"non_existent_companion = {binary.non_existent_companion} (should be -1, 0, 1, or 2).")
+
+        return primary, secondary, only_CO
 
     def update_star_properties(self, star, htrack, m0, t0):
 
