@@ -29,176 +29,16 @@ from posydon.utils.posydonerror import (NumericalError, MatchingError)
 from posydon.utils.common_functions import (convert_metallicity_to_string,
                                             set_binary_to_failed)
 
+from posydon.binary_evol.DT.key_library import (DEFAULT_TRANSLATED_KEYS,
+                                                KEYS_POSITIVE,
+                                                DEFAULT_PROFILE_KEYS)
 
-LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
-                                  "accreted_He_Core_H_burning"]
+from posydon.binary_evol.flow_chart import (LIST_ACCEPTABLE_STATES_FOR_HMS,
+                                            LIST_ACCEPTABLE_STATES_FOR_postMS,
+                                            LIST_ACCEPTABLE_STATES_FOR_HeStar)
 
-LIST_ACCEPTABLE_STATES_FOR_postMS = [
-    "H-rich_Shell_H_burning",
-    "H-rich_Core_He_burning",
-    "H-rich_Central_He_depleted",
-    "H-rich_Core_C_burning",
-    "H-rich_Central_C_depletion",
-    "H-rich_non_burning",
-    "accreted_He_non_burning"]
-
-LIST_ACCEPTABLE_STATES_FOR_HeStar = [
-    'accreted_He_Core_He_burning',
-    'stripped_He_Core_He_burning',
-    'stripped_He_Shell_He_burning',     # includes stars burning C in core
-    'stripped_He_Central_He_depleted',  # includes stars burning C in core
-    'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning'
-    ]
 
 MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
-
-DEFAULT_TRANSLATION = {
-    "time": "time",
-    "orbital_period": "porb",
-    "eccentricity": "ecc",
-    "separation": "sep",
-    "state": None,
-    "event": None,
-    "rl_relative_overflow_1": "rl_relative_overflow_1",
-    "rl_relative_overflow_2": "rl_relative_overflow_2",
-    "lg_mtransfer_rate": "lg_mtransfer_rate",
-    "V_sys": None,
-    "mass": "mass",
-    "log_R": "log_R",
-    "R": "R",
-    "lg_mdot": "mdot",
-    "log_L": "log_L",
-    "lg_wind_mdot": "mdot",
-    "lg_system_mdot": "lg_mdot",
-    "he_core_mass": "he_core_mass",
-    "he_core_radius": "he_core_radius",
-    "c_core_mass": "c_core_mass",
-    "c_core_radius": "c_core_radius",
-    "o_core_mass": "o_core_mass",
-    "o_core_radius": "o_core_radius",
-    "center_h1": "center_h1",
-    "center_he4": "center_he4",
-    "center_c12": "center_c12",
-    "center_o16": "center_o16",
-    "center_n14": "center_n14",
-    "surface_h1": "surface_h1",
-    "surface_he4": "surface_he4",
-    "surface_c12": "surface_c12",
-    "surface_n14": "surface_n14",
-    "surface_o16": "surface_o16",
-    "center_gamma": "center_gamma",
-    "log_LH": "log_LH",
-    "log_LHe": "log_LHe",
-    "log_LZ": "log_LZ",
-    "log_Lnuc": "log_Lnuc",
-    "c12_c12": "c12_c12",
-    "avg_c_in_c_core": "avg_c_in_c_core",
-    "surf_avg_omega_div_omega_crit": "surf_avg_omega_div_omega_crit",
-    "surf_avg_omega": "omega",
-    "total_moment_of_inertia": "inertia",
-    "log_total_angular_momentum": "log_total_angular_momentum",
-    "profile": None,
-    "metallicity": None,
-    "spin": "spin_parameter",
-    "conv_env_top_mass": "conv_env_top_mass",
-    "conv_env_bot_mass": "conv_env_bot_mass",
-    "conv_env_top_radius": "conv_env_top_radius",
-    "conv_env_bot_radius": "conv_env_bot_radius",
-    "conv_env_turnover_time_g": "conv_env_turnover_time_g",
-    "conv_env_turnover_time_l_b": "conv_env_turnover_time_l_b",
-    "conv_env_turnover_time_l_t": "conv_env_turnover_time_l_t",
-    "envelope_binding_energy": "envelope_binding_energy",
-    "mass_conv_reg_fortides": "mass_conv_reg_fortides",
-    "thickness_conv_reg_fortides": "thickness_conv_reg_fortides",
-    "radius_conv_reg_fortides": "radius_conv_reg_fortides",
-    "lambda_CE_1cent": "lambda_CE_1cent",
-    "lambda_CE_10cent": "lambda_CE_10cent",
-    "lambda_CE_30cent": "lambda_CE_30cent",
-    "co_core_mass": "co_core_mass",
-    "co_core_radius": "co_core_radius",
-    "lambda_CE_pure_He_star_10cent": "lambda_CE_pure_He_star_10cent",
-    "trap_radius": "trap_radius",
-    "acc_radius": "acc_radius",
-    "t_sync_rad_1": "t_sync_rad_1",
-    "t_sync_conv_1": "t_sync_conv_1",
-    "t_sync_rad_2": "t_sync_rad_2",
-    "t_sync_conv_2": "t_sync_conv_2",
-    "mass_transfer_case": None,
-    "nearest_neighbour_distance": None,
-}
-
-DEFAULT_TRANSLATED_KEYS = (
-    'age',
-    'mass',
-    'mdot',
-    'inertia',
-    'conv_mx1_top_r',
-    'conv_mx1_bot_r',
-    'surface_h1',
-    'center_h1',
-    'mass_conv_reg_fortides',
-    'thickness_conv_reg_fortides',
-    'radius_conv_reg_fortides',
-    'log_Teff',
-    'surface_he3',
-    'surface_he4',
-    'center_he4',
-    'avg_c_in_c_core',
-    'log_LH',
-    'log_LHe',
-    'log_LZ',
-    'log_Lnuc',
-    'c12_c12',
-    'center_c12',
-    'he_core_mass',
-    'log_L',
-    'log_R',
-    'c_core_mass',
-    'o_core_mass',
-    'co_core_mass',
-    'c_core_radius',
-    'o_core_radius',
-    'co_core_radius',
-    'spin_parameter',
-    'log_total_angular_momentum',
-    'center_n14',
-    'center_o16',
-    'surface_n14',
-    'surface_o16',
-    'conv_env_top_mass',
-    'conv_env_bot_mass',
-    'conv_env_top_radius',
-    'conv_env_bot_radius',
-    'conv_env_turnover_time_g',
-    'conv_env_turnover_time_l_b',
-    'conv_env_turnover_time_l_t',
-    'envelope_binding_energy',
-    'lambda_CE_1cent',
-    'lambda_CE_10cent',
-    'lambda_CE_30cent',
-    'lambda_CE_pure_He_star_10cent',
-    'center_gamma'
-)
-
-KEYS_POSITIVE = (
-    'mass_conv_reg_fortides',
-    'thickness_conv_reg_fortides',
-    'radius_conv_reg_fortides'
-)
-
-DEFAULT_PROFILE_KEYS = (
-    'radius',
-    'mass',
-    'logRho',
-    'energy',
-    'x_mass_fraction_H',
-    'y_mass_fraction_He',
-    'z_mass_fraction_metals',
-    'neutral_fraction_H',
-    'neutral_fraction_He',
-    'avg_charge_He'
-)
 
 class track_matcher:
     """
@@ -256,29 +96,17 @@ class track_matcher:
     Attributes
     ----------
     KEYS : list[str]
-           Contains valid keywords which are used to extract quantities from 
-           the grids.
+        Contains valid keywords which are used to extract quantities from 
+        the grids.
+
+    KEYS_POSITIVE : list[str]
+        Keys in this list are forced to be positive or else 0 by the 
+        posydon.utils.PchipInterpolator2 class following interpolation 
+        of the associated quantity.
 
     path : str
         Path to the directory that contains POSYDON data HDF5 files. Defaults 
         to the PATH_TO_POSYDON_DATA environment variable.
-
-    grid_name_Hrich : str
-        Name of the single star H-rich grid h5 file, 
-        including its parent directory. This is set to 
-        (for example):
-
-            grid_name_Hrich = 'single_HMS/1e+00_Zsun.h5'  
-
-        by default if not specified.
-
-    grid_name_strippedHe : str
-        Name of the single star He-rich grid h5 file. This is 
-        set to (for example):
-
-            grid_name_strippedHe = 'single_HeMS/1e+00_Zsun.h5'
-        
-        by default if not specified.
 
     metallicity : str
         The metallicity of the grid. This should be one of the eight 
@@ -287,10 +115,19 @@ class track_matcher:
 
     matching_method : str
         Method to find the best match between a star from a previous step and a
-        point in a single star evolution track. Options: "root" (which tries
-        to find a root of two matching quantities, and it is possible to not
-        achieve it) or "minimize" (minimizes the sum of squares of differences
-        of various quantities between the previous step and the track).
+        point in a single star evolution track. Options: 
+        
+            "root": Tries to find a root of two matching quantities. It is 
+                    possible to not find one, causing the evolution to fail.
+
+            "minimize": Minimizes the sum of squares of differences of 
+                        various quantities between the previous evolution step and 
+                        a stellar evolution track. 
+
+    root_keys : numpy.ndarray
+        An array of keys corresponding to possible matching metrics. These 
+        keys should exist as MESA history data column names. In practice, 
+        we match using only a subset of these.
            
     rootm : numpy.ndarray
         A 3D matrix to hold roots with dimensions 
@@ -301,34 +138,71 @@ class track_matcher:
 
         Structured to hold the matching metrics along the entire evolution 
         track of each stellar evolution track of a given initial mass in 
-        a single star grid.
+        a single star grid. Assigned after loading a grid and before storing 
+        matching metrics.
 
-    grid : GRIDInterpolator object
-           Object to interpolate between the time-series (i.e., along the 
-           evolutionary track) in the h5 grid.
+    grid_name_Hrich : str
+        Name of the single star H-rich grid h5 file, 
+        including its parent directory. This is set to 
+        (w/ Z = 1e+00, for example):
+
+            grid_name_Hrich = 'single_HMS/1e+00_Zsun.h5'  
+
+        by default if not specified.
+
+    grid_name_strippedHe : str
+        Name of the single star He-rich grid h5 file. This is 
+        set to (w/ Z = 1e+00, for example):
+
+            grid_name_strippedHe = 'single_HeMS/1e+00_Zsun.h5'
+        
+        by default if not specified.
+        
+    grid_Hrich : GRIDInterpolator object
+        Object to interpolate between the time-series (i.e., along the 
+        evolutionary track) in the H-rich single star h5 grid.
+
+    grid_strippedHe : GRIDInterpolator object
+        Object to interpolate between the time-series (i.e., along the 
+        evolutionary track) in the He-rich single star h5 grid.
 
     initial_mass : list[float]
             Contains the initial masses of the stars in the single star 
-            grid in which we are searching for a match.
+            grid in which we are searching for a match. Assigned after 
+            loading a grid to match to.
 
     list_for_matching_HMS : list
         A list of mixed type that specifies properties of the matching 
-        process for HMS stars.
+        process for HMS stars. This list has the following structure: 
+        
+            list_for_matching = [[matching attr. names], [rescale_factors],
+                                 [scaling method], [mass_bnds], [age_bnds]]
+        
+        See
 
     list_for_matching_postMS : list
         A list of mixed type that specifies properties of the matching 
-        process for postMS stars.
+        process for postMS stars. This list has the following structure: 
+        
+            list_for_matching = [[matching attr. names], [rescale_factors],
+                                 [scaling method], [mass_bnds], [age_bnds]]
 
     list_for_matching_HeStar : list
         A list of mixed type that specifies properties of the matching 
-        process for He stars.
+        process for He stars. This list has the following structure: 
+        
+            list_for_matching = [[matching attr. names], [rescale_factors],
+                                 [scaling method], [mass_bnds], [age_bnds]]
 
     stored_scalers : dict
         Mapping a combination of (key, htrack, scaling_method) to a pre-trained
         DataScaler instance.
 
     final_keys : tuple
-        Containing keys for final value interpolation.
+        Contains keys for final value interpolation.
+
+    profile_keys : tuple
+        Contains keys for profile interpolation.
 
     verbose : bool
         True if we want to print stuff.
@@ -352,8 +226,6 @@ class track_matcher:
             path=PATH_TO_POSYDON_DATA,
             metallicity=None,
             matching_method="minimize",
-            initial_mass=None,
-            rootm=None,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None,
@@ -384,8 +256,8 @@ class track_matcher:
         self.metallicity = convert_metallicity_to_string(metallicity)
         self.matching_method = matching_method
 
-        self.initial_mass = initial_mass
-        self.rootm = rootm
+        self.initial_mass = None
+        self.rootm = None
         self.verbose = verbose
 
         self.list_for_matching_HMS = list_for_matching_HMS
@@ -398,10 +270,8 @@ class track_matcher:
 
         # these are the KEYS read from POSYDON h5 grid files (after translating
         # them to the appropriate columns)
-        self.KEYS = KEYS #DEFAULT_TRANSLATED_KEYS
+        self.KEYS = DEFAULT_TRANSLATED_KEYS #KEYS #DEFAULT_TRANSLATED_KEYS
         self.KEYS_POSITIVE = KEYS_POSITIVE
-
-        self.profile_keys = DEFAULT_PROFILE_KEYS
 
         # keys for the final value interpolation
         self.final_keys = (
@@ -746,20 +616,20 @@ class track_matcher:
         star : SingleStar object
             A single star object that contains the star's properties.
         
-        htrack: bool
+        htrack : bool
             A boolean that specifies whether the star would be found in the 
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
 
         Returns
         -------
-        m0: float
+        m0 : float
             Mass (in solar units) of the matched model
         
-        t0: float
+        t0 : float
             Age (in years) of the matched model
 
-        htrack: bool
+        htrack : bool
             This has the same meaning as the given htrack, but the value
             may change during the course of matching. In the event that 
             a match can not be found, an He or post-MS star may be 
@@ -797,18 +667,18 @@ class track_matcher:
 
             Parameters
             ----------
-            attr_names: list[str]
+            attr_names : list[str]
                 This list contains strings that are the names of 
                 data columns (attributes) to be used as matching 
                 metrics.
 
-            star: SingleStar object
+            star : SingleStar object
                 This is a SingleStar object, typically representing 
                 a member of a binary star system.
 
             Returns
             -------
-            attr_values: list[float]
+            attr_values : list[float]
                 This is a list of the values associated with the 
                 provided attribute names at the last evolution 
                 step experienced by `star`.
@@ -832,7 +702,7 @@ class track_matcher:
 
             Parameters
             ----------
-            x: list[float]
+            x : list[float]
                 A list containing the initial mass and age of a stellar track, 
                 which will be used to get values along a track and calculate the 
                 square difference between those values and the given star 
@@ -859,7 +729,7 @@ class track_matcher:
 
             Parameters
             ----------
-            list_for_matching: list
+            list_for_matching : list
                 This is a list that contains sublists of types, str, float, 
                 str, float, float. The first sublist holds the names for 
                 star attributes that will be used to quantify a match. The 
@@ -871,20 +741,20 @@ class track_matcher:
 
             Returns
             -------
-            match_attr_names: list[str]
+            match_attr_names : list[str]
                 The names of the attributes that will be used for matching. These 
                 should be SingleStar STARPROPERTIES keys.
             
-            rescale_facs: list[float]
+            rescale_facs : list[float]
                 Contains normalization factors to be used for rescaling match attribtue 
                 values. This should be the same length as match_attr_names.
                 
 
-            bnds: list[list[float], list[float]]
+            bnds : list[list[float], list[float]]
                 Lower and upper bounds on initial stellar mass and age to be used 
                 in minimization algorithms.
             
-            scalers: list[DataScaler object]
+            scalers : list[DataScaler object]
                 DataScaler objects for each attribute, trained to rescale quantities 
                 to the range (0, 1).
                 
@@ -1242,34 +1112,30 @@ class track_matcher:
 
                 Parameters
                 ----------
-                binary: BinaryStar object
+                binary : BinaryStar object
                     A binary star object, containing the binary system's properties.
 
-                star: SingleStar object
+                star : SingleStar object
                     A single star object that contains the star's properties.
 
-                copy_prev_m0: float
+                copy_prev_m0 : float
                     A mass value that may be copied from another star in the case
                     where the target star is a compact object
 
-                copy_prev_t0: float
+                copy_prev_t0 : float
                     An age value that may be copied from another star in the case
                     where the target star is a compact object
 
                 Return
                 -------
-                interp1d: dict
+                interp1d : dict
                     A dictionary of scipy.interpolate._cubic.PchipInterpolator 
                     objects used to calculate star properties corresponding to the 
                     matched single star track.
 
                 """
 
-                KEYS = self.KEYS
-                KEYS_POSITIVE = self.KEYS_POSITIVE
-
                 htrack = star.htrack
-                co = star.co
 
                 with np.errstate(all="ignore"):
                     # get the initial m0, t0 track
@@ -1277,7 +1143,7 @@ class track_matcher:
                         # ZAMS stars in wide (non-mass exchaging binaries) that are
                         # directed to detached step at birth
                         m0, t0 = star.mass, 0
-                    elif co:
+                    elif star.co:
                         m0, t0 = copy_prev_m0, copy_prev_t0
                     else:
                         t_before_matching = time.time()
@@ -1312,11 +1178,11 @@ class track_matcher:
                 t_max = age.max()  # max timelength of the track
                 interp1d = dict()
                 kvalue = dict()
-                for key in KEYS[1:]:
+                for key in self.KEYS[1:]:
                     kvalue[key] = get_track(key, m0)
                 try:
-                    for key in KEYS[1:]:
-                        if key in KEYS_POSITIVE:
+                    for key in self.KEYS[1:]:
+                        if key in self.KEYS_POSITIVE:
                             positive = True
                             interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
                         else:
@@ -1326,11 +1192,11 @@ class track_matcher:
                     while len(i_bad) != 0:
                         i_bad = np.where(np.diff(age) <= 0)[0]
                         age = np.delete(age, i_bad)
-                        for key in KEYS[1:]:
+                        for key in self.KEYS[1:]:
                             kvalue[key] = np.delete(kvalue[key], i_bad)
 
-                    for key in KEYS[1:]:
-                        if key in KEYS_POSITIVE:
+                    for key in self.KEYS[1:]:
+                        if key in self.KEYS_POSITIVE:
                             positive = True
                             interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
                         else:
@@ -1350,7 +1216,7 @@ class track_matcher:
                 interp1d["t0"] = t0
                 interp1d["m0"] = m0
 
-                if co:
+                if star.co:
                     kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star.mass
                     kvalue["R"] = np.zeros_like(kvalue["log_R"])
                     kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
@@ -1375,19 +1241,19 @@ class track_matcher:
 
         Parameters
         ----------
-        star: SingleStar object
+        star : SingleStar object
             A single star object that contains the star's properties.
         
-        htrack: bool
+        htrack : bool
             A boolean that specifies whether the star would be found in the 
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
 
-        m0: float
+        m0 : float
             Initial stellar mass (in solar units) of the single star track 
             that we will grab values from and update `star` with.
         
-        t0: float
+        t0 : float
             Initial age (in years) of the single star track 
             that we will grab values from and update `star` with.
 
@@ -1415,15 +1281,15 @@ class track_matcher:
 
         Parameters
         ----------
-        star: SingleStar object
+        star : SingleStar object
             A single star object that contains the star's properties.
         
-        htrack: bool
+        htrack : bool
             A boolean that specifies whether the star would be found in the 
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
 
-        m0: float
+        m0 : float
             Initial stellar mass (in solar units) of the single star track 
             that we will grab values from and update `star` with.
 
@@ -1445,15 +1311,15 @@ class track_matcher:
 
         Parameters
         ----------
-        star: SingleStar object
+        star : SingleStar object
             A single star object that contains the star's properties.
         
-        htrack: bool
+        htrack : bool
             A boolean that specifies whether the star would be found in the 
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
 
-        m0: float
+        m0 : float
             Initial stellar mass (in solar units) of the single star track 
             that we will grab values from and update `star` with.
 

@@ -29,9 +29,11 @@ from posydon.utils.common_functions import (bondi_hoyle,
                                             check_state_of_star,
                                             set_binary_to_failed)
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, 
-                                            STAR_STATES_CO, 
+                                            STAR_STATES_CO,
+                                            STAR_STATES_H_RICH,
                                             STAR_STATES_H_RICH_EVOLVABLE,
-                                            STAR_STATES_HE_RICH_EVOLVABLE)
+                                            STAR_STATES_HE_RICH_EVOLVABLE,
+                                            LIST_ACCEPTABLE_STATES_FOR_HeStar)
 import posydon.utils.constants as const
 from posydon.utils.posydonerror import (NumericalError, MatchingError,
                                         POSYDONError, FlowError,
@@ -39,177 +41,8 @@ from posydon.utils.posydonerror import (NumericalError, MatchingError,
 from posydon.utils.posydonwarning import Pwarn
 
 from posydon.binary_evol.DT.track_match import track_matcher
-
-# possible states for postMS stars
-LIST_ACCEPTABLE_STATES_FOR_postMS = [
-    "H-rich_Shell_H_burning",
-    "H-rich_Core_He_burning",
-    "H-rich_Central_He_depleted",
-    "H-rich_Core_C_burning",
-    "H-rich_Central_C_depletion",
-    "H-rich_non_burning",
-    "accreted_He_Shell_H_burning",
-    "accreted_He_non_burning"]
-
-# possible states for He stars
-LIST_ACCEPTABLE_STATES_FOR_HeStar = [
-    'accreted_He_Core_He_burning',
-    'stripped_He_Core_He_burning',
-    'stripped_He_Shell_He_burning',     # includes stars burning C in core
-    'stripped_He_Central_He_depleted',  # includes stars burning C in core
-    'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning'
-    ]
-
-# possible states for H-rich stars
-STAR_STATES_H_RICH = [
-    'H-rich_Core_H_burning',
-    'H-rich_Core_He_burning',
-    'H-rich_Shell_H_burning',
-    'H-rich_Central_He_depleted',
-    'H-rich_Shell_He_burning',
-    'H-rich_Core_C_burning',
-    'H-rich_Central_C_depletion',
-    'H-rich_non_burning',
-    'accreted_He_Core_H_burning',
-    'accreted_He_Shell_H_burning',
-    'accreted_He_non_burning'
-]
-
-
-DEFAULT_TRANSLATION = {
-    "time": "time",
-    "orbital_period": "porb",
-    "eccentricity": "ecc",
-    "separation": "sep",
-    "state": None,
-    "event": None,
-    "rl_relative_overflow_1": "rl_relative_overflow_1",
-    "rl_relative_overflow_2": "rl_relative_overflow_2",
-    "lg_mtransfer_rate": "lg_mtransfer_rate",
-    "V_sys": None,
-    "mass": "mass",
-    "log_R": "log_R",
-    "R": "R",
-    "lg_mdot": "mdot",
-    "log_L": "log_L",
-    "lg_wind_mdot": "mdot",
-    "lg_system_mdot": "lg_mdot",
-    "he_core_mass": "he_core_mass",
-    "he_core_radius": "he_core_radius",
-    "c_core_mass": "c_core_mass",
-    "c_core_radius": "c_core_radius",
-    "o_core_mass": "o_core_mass",
-    "o_core_radius": "o_core_radius",
-    "center_h1": "center_h1",
-    "center_he4": "center_he4",
-    "center_c12": "center_c12",
-    "center_o16": "center_o16",
-    "center_n14": "center_n14",
-    "surface_h1": "surface_h1",
-    "surface_he4": "surface_he4",
-    "surface_c12": "surface_c12",
-    "surface_n14": "surface_n14",
-    "surface_o16": "surface_o16",
-    "center_gamma": "center_gamma",
-    "log_LH": "log_LH",
-    "log_LHe": "log_LHe",
-    "log_LZ": "log_LZ",
-    "log_Lnuc": "log_Lnuc",
-    "c12_c12": "c12_c12",
-    "avg_c_in_c_core": "avg_c_in_c_core",
-    "surf_avg_omega_div_omega_crit": "surf_avg_omega_div_omega_crit",
-    "surf_avg_omega": "omega",
-    "total_moment_of_inertia": "inertia",
-    "log_total_angular_momentum": "log_total_angular_momentum",
-    "profile": None,
-    "metallicity": None,
-    "spin": "spin_parameter",
-    "conv_env_top_mass": "conv_env_top_mass",
-    "conv_env_bot_mass": "conv_env_bot_mass",
-    "conv_env_top_radius": "conv_env_top_radius",
-    "conv_env_bot_radius": "conv_env_bot_radius",
-    "conv_env_turnover_time_g": "conv_env_turnover_time_g",
-    "conv_env_turnover_time_l_b": "conv_env_turnover_time_l_b",
-    "conv_env_turnover_time_l_t": "conv_env_turnover_time_l_t",
-    "envelope_binding_energy": "envelope_binding_energy",
-    "mass_conv_reg_fortides": "mass_conv_reg_fortides",
-    "thickness_conv_reg_fortides": "thickness_conv_reg_fortides",
-    "radius_conv_reg_fortides": "radius_conv_reg_fortides",
-    "lambda_CE_1cent": "lambda_CE_1cent",
-    "lambda_CE_10cent": "lambda_CE_10cent",
-    "lambda_CE_30cent": "lambda_CE_30cent",
-    "co_core_mass": "co_core_mass",
-    "co_core_radius": "co_core_radius",
-    "lambda_CE_pure_He_star_10cent": "lambda_CE_pure_He_star_10cent",
-    "trap_radius": "trap_radius",
-    "acc_radius": "acc_radius",
-    "t_sync_rad_1": "t_sync_rad_1",
-    "t_sync_conv_1": "t_sync_conv_1",
-    "t_sync_rad_2": "t_sync_rad_2",
-    "t_sync_conv_2": "t_sync_conv_2",
-    "mass_transfer_case": None,
-    "nearest_neighbour_distance": None,
-    "total_mass_h1": "total_mass_h1",
-    "total_mass_he4": "total_mass_he4",
-}
-
-# keys from POSYDON h5 file translated to MESA data column names
-DEFAULT_TRANSLATED_KEYS = (
-    'age',
-    'mass',
-    'mdot',
-    'inertia',
-    'conv_mx1_top_r',
-    'conv_mx1_bot_r',
-    'surface_h1',
-    'center_h1',
-    'mass_conv_reg_fortides',
-    'thickness_conv_reg_fortides',
-    'radius_conv_reg_fortides',
-    'log_Teff',
-    'surface_he3',
-    'surface_he4',
-    'center_he4',
-    'avg_c_in_c_core',
-    'log_LH',
-    'log_LHe',
-    'log_LZ',
-    'log_Lnuc',
-    'c12_c12',
-    'center_c12',
-    'he_core_mass',
-    'log_L',
-    'log_R',
-    'c_core_mass',
-    'o_core_mass',
-    'co_core_mass',
-    'c_core_radius',
-    'o_core_radius',
-    'co_core_radius',
-    'spin_parameter',
-    'log_total_angular_momentum',
-    'center_n14',
-    'center_o16',
-    'surface_n14',
-    'surface_o16',
-    'conv_env_top_mass',
-    'conv_env_bot_mass',
-    'conv_env_top_radius',
-    'conv_env_bot_radius',
-    'conv_env_turnover_time_g',
-    'conv_env_turnover_time_l_b',
-    'conv_env_turnover_time_l_t',
-    'envelope_binding_energy',
-    'lambda_CE_1cent',
-    'lambda_CE_10cent',
-    'lambda_CE_30cent',
-    'lambda_CE_pure_He_star_10cent',
-    'center_gamma',
-    'total_mass_h1',
-    'total_mass_he4'
-)
-
+from posydon.binary_evol.DT.key_library import (DEFAULT_TRANSLATION,
+                                                DEFAULT_TRANSLATED_KEYS)
 
 class detached_step:
     """
@@ -225,6 +58,28 @@ class detached_step:
         Path to the directory that contains POSYDON data HDF5 files. Defaults 
         to the PATH_TO_POSYDON_DATA environment variable. Used for track 
         matching.
+
+    metallicity : float
+        The metallicity of the grid. This should be one of the eight 
+        supported metallicities:
+
+            [2e+00, 1e+00, 4.5e-01, 2e-01, 1e-01, 1e-02, 1e-03, 1e-04]
+
+        and this will be converted to a corresponding string (e.g.,
+        1e+00 --> "1e+00_Zsun"). Used for track matching. 
+
+    matching_method : str
+        Method to find the best match between a star from a previous step and a
+        point in a single star evolution track. Options: 
+        
+            "root": Tries to find a root of two matching quantities. It is 
+                    possible to not find one, causing the evolution to fail.
+
+            "minimize": Minimizes the sum of squares of differences of 
+                        various quantities between the previous evolution step and 
+                        a stellar evolution track. 
+                        
+        Used for track matching.
 
     grid_name_Hrich : str
         Name of the single star H-rich grid h5 file, 
@@ -243,38 +98,6 @@ class detached_step:
         
         by default if not specified. Used for track matching.
 
-    metallicity : float
-        The metallicity of the grid. This should be one of the eight 
-        supported metallicities:
-
-            [2e+00, 1e+00, 4.5e-01, 2e-01, 1e-01, 1e-02, 1e-03, 1e-04]
-
-        and this will be converted to a corresponding string (e.g.,
-        1e+00 --> "1e+00_Zsun"). Used for track matching. 
-
-    matching_method : str
-        Method to find the best match between a star from a previous step and a
-        point in a single star evolution track. Options: "root" (which tries
-        to find a root of two matching quantities, and it is possible to not
-        achieve it) or "minimize" (minimizes the sum of squares of differences
-        of various quantities between the previous step and the track). Used 
-        for track matching.
-
-    initial_mass : list[float]
-            Contains the initial masses of the stars in the grid. Used for 
-            track matching.
-
-    rootm : numpy.ndarray
-        A 3D matrix to hold roots with dimensions 
-            
-            DIM = [N(initial_masses), 
-                   N(max_evolution_track_length), 
-                   N(matching_metrics)]
-                   
-        Structured to hold the matching metrics along the entire evolution 
-        track of each stellar evolution track of a given initial mass in 
-        a single star grid. Used for track matching.
-
     list_for_matching_HMS : list
         A list of mixed type that specifies properties of the matching 
         process for HMS stars. Used for track matching.
@@ -286,7 +109,6 @@ class detached_step:
     list_for_matching_HeStar : list
         A list of mixed type that specifies properties of the matching 
         process for He stars. Used for track matching.
-
 
     Attributes
     ----------
@@ -379,8 +201,6 @@ class detached_step:
             metallicity=None,
             path=PATH_TO_POSYDON_DATA,
             matching_method="minimize",
-            initial_mass=None,
-            rootm=None,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None
@@ -424,8 +244,7 @@ class detached_step:
                                            grid_name_strippedHe = grid_name_strippedHe, 
                                            path=path, metallicity=metallicity, 
                                            matching_method=matching_method, 
-                                           initial_mass = initial_mass,
-                                           rootm=rootm, verbose=self.verbose, 
+                                           verbose=self.verbose, 
                                            list_for_matching_HMS=list_for_matching_HMS,
                                            list_for_matching_HeStar=list_for_matching_HeStar, 
                                            list_for_matching_postMS=list_for_matching_postMS)
@@ -714,7 +533,7 @@ class detached_step:
                 print("calculated omega_in_rad_per_year = ", omega_in_rad_per_year)
                 omega_percent_diff = np.nan_to_num(100.0*(omega_in_rad_per_year-surf_avg_omega*const.secyer) \
                                                  / omega_in_rad_per_year, 0)
-                print("omega_in_rad_per_year percent_diff = ", 
+                print("omega_in_rad_per_year % difference = ", 
                       f"{omega_percent_diff:.1f}%")
 
             return omega_in_rad_per_year
