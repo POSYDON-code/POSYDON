@@ -23,7 +23,7 @@ import numpy as np
 from scipy.integrate import newton_cotes, quad
 
 
-class Moe+17-PsandQs():
+class Moe_17_PsandQs():
     """Generate initial parameters following Moe & Di Stefano (2017) [1]_.
     
     References
@@ -454,7 +454,7 @@ class Moe+17-PsandQs():
             else:
                 # If instead random number > binary star fraction, generate single
                 # star
-                myq = 0.0
+                myq = np.nan
                 mylogP = np.nan
                 mye = np.nan
             # Get metallicity
