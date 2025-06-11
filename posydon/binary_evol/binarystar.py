@@ -278,7 +278,7 @@ class BinaryStar:
     def check_who_exists(self):
         """
             Check and store which binary components exist (are not 
-        massless remnants). This sets additional attributes 
+        massless remnants). This sets additional class attributes 
 
             self.non_existent_companion with the following values:
                -1 if neither star exists

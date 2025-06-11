@@ -180,8 +180,6 @@ class TrackMatcher:
         
             list_for_matching = [[matching attr. names], [rescale_factors],
                                  [scaling method], [mass_bnds], [age_bnds]]
-        
-        See
 
     list_for_matching_postMS : list
         A list of mixed type that specifies properties of the matching 
@@ -206,6 +204,21 @@ class TrackMatcher:
 
     profile_keys : tuple
         Contains keys for profile interpolation.
+
+    matching_tolerance : float
+        When using the "minimize" matching method, a computed square 
+        Euclidean distance between the pre-match and post-match values 
+        less than this must be achieved for a successful match.
+
+    matching_tolerance_hard : float
+        When using the "minimize" matching method, a computed square 
+        Euclidean distance between the pre-match and post-match values 
+        less than at most this must be achieved for a successful match. 
+        This tolerance is checked after all else fails, as a last attempt 
+        to find a solution.
+
+    record_matching : bool
+        True if we want to append matched quantities to the binary history.
 
     verbose : bool
         True if we want to print stuff.
@@ -258,6 +271,8 @@ class TrackMatcher:
 
         self.metallicity = convert_metallicity_to_string(metallicity)
         self.matching_method = matching_method
+        self.matching_tolerance = 1e-2 # DEF: 1e-2
+        self.matching_tolerance_hard = 1e-1 # DEF: 1e-1
 
         self.initial_mass = None
         self.rootm = None
@@ -753,7 +768,6 @@ class TrackMatcher:
             rescale_facs : list[float]
                 Contains normalization factors to be used for rescaling match attribtue 
                 values. This should be the same length as match_attr_names.
-                
 
             bnds : list[list[float], list[float]]
                 Lower and upper bounds on initial stellar mass and age to be used 
@@ -792,20 +806,19 @@ class TrackMatcher:
 
         get_root0 = self.get_root0
         get_track_val = self.get_track_val
-        matching_method = self.matching_method
         scale = self.scale
 
         initial_track_vals = None
-        
-        matching_tolerance = 1e-2
-        matching_tolerance_hard = 1e-1
 
         if self.verbose:
             print(f"\nMatching process started in detached step for {star.state} star "
-                  f"with matching method = {matching_method}")
+                  f"with matching method = {self.matching_method}")
+            if self.matching_method == "minimize":
+                  print(f"matching_tolerance = {self.matching_tolerance}\n"
+                        f"matching_tolerance_hard = {self.matching_tolerance_hard}")
 
         # matching via root method (ultimately modified Powell's method)
-        if matching_method == "root":
+        if self.matching_method == "root":
 
             # if the star can be considered an HMS star
             if star.state in STAR_STATES_FOR_HMS_MATCHING:
@@ -815,12 +828,17 @@ class TrackMatcher:
                                [star.center_h1, star.mass],
                                htrack, rescale_facs=[0.7, 300])
                 
-                # Using modified Powell method to find match starting from time series from above (in x0)
-                # using difference of center X and stellar mass to find match
+                # Using modified Powell method to find match starting 
+                # from time series from above (in x0) using difference 
+                # of center X and stellar mass to find match
                 sol = root(
                             lambda x: [
-                                        get_track_val("center_h1", htrack, *x) - star.center_h1,
-                                        get_track_val("mass", htrack, *x) - star.mass
+                                        get_track_val("center_h1", 
+                                                      htrack, 
+                                                      *x) - star.center_h1,
+                                        get_track_val("mass", 
+                                                      htrack, 
+                                                      *x) - star.mass
                                       ],
                             x0, method="hybr"
                           )
@@ -838,8 +856,12 @@ class TrackMatcher:
                 
                 sol = root(
                             lambda x: [
-                                        get_track_val("he_core_mass", htrack, *x) - star.he_core_mass,
-                                        get_track_val("mass", htrack, *x) - star.mass],
+                                        get_track_val("he_core_mass", 
+                                                      htrack, 
+                                                      *x) - star.he_core_mass,
+                                        get_track_val("mass", 
+                                                      htrack, 
+                                                      *x) - star.mass],
                             x0, method="hybr"
                           )
                 
@@ -849,8 +871,8 @@ class TrackMatcher:
             else:
                 initial_track_vals = sol.x
 
-        # 1st attempt: match using minimize method (ultimately Newton or Powell method)
-        elif matching_method == "minimize":
+        # 1st attempt: match using minimize method (Newton or Powell method)
+        elif self.matching_method == "minimize":
             
             # set matching metrics based on star state
             if star.state in STAR_STATES_FOR_HMS_MATCHING:
@@ -861,11 +883,18 @@ class TrackMatcher:
                 list_for_matching = self.list_for_matching_HeStar
 
             # begin matching attempts
-            divider_str = "_______________________________________________________________________\n"
             if self.verbose:
+                val_names = [" ", "mass", "log_R", "center_h1", "surface_h1", 
+                             "he_core_mass", "center_he4", "surface_he4", 
+                             "center_c12"]
+                str_fmts = ["{:>14}", "{:>9}","{:>9}", 
+                            "{:>9}",  "{:>10}",  "{:>12}",  
+                            "{:>10}",  "{:>11}",  "{:>10}"]
+                row_str = " ".join(str_fmts)
+                divider_str = "_"*len(row_str.format(*[""]*len(str_fmts)))
                 print(divider_str)
 
-            print("Initial matching attempt started...")
+            print("Initial matching attempt started (1st attempt)...")
             
             match_attr_names, rescale_facs, bnds, scalers = get_match_attr_props(list_for_matching)
             
@@ -891,15 +920,16 @@ class TrackMatcher:
 
             ## Alternative matching attempts if default matching fails!
             # 2nd attempt: use a different minimization method
-            if (np.abs(best_sol.fun) > matching_tolerance or not best_sol.success):
+            if (np.abs(best_sol.fun) > self.matching_tolerance or not best_sol.success):
 
                 # try alternative minimization method, Powell's
                 min_method = "Powell"
 
                 if self.verbose:
-                    if (np.abs(best_sol.fun) > matching_tolerance):
-                        print (f"\nInitial matching attempt: FAILED"
-                               f"\nReason: Solution exceeds tolerance ({np.abs(best_sol.fun)} > {matching_tolerance})")
+                    if (np.abs(best_sol.fun) > self.matching_tolerance):
+                        print (f"Initial matching attempt: FAILED"
+                               "\nReason: Solution exceeds tolerance "
+                               f"({np.abs(best_sol.fun)} > {self.matching_tolerance})")
                     if (not best_sol.success):
                         print (f"Initial matching attempt: FAILED"
                                f"\nReason: Optimizer failed (sol.success = {best_sol.success})"
@@ -916,15 +946,16 @@ class TrackMatcher:
                     best_sol = sol
 
             # if 2nd fails, 3rd attempt: use alternative matching parameters
-            if (np.abs(best_sol.fun) > matching_tolerance or not best_sol.success):
+            if (np.abs(best_sol.fun) > self.matching_tolerance or not best_sol.success):
 
                 # back to Newton's method
                 min_method = "TNC" 
                    
                 if self.verbose:
-                    if (np.abs(best_sol.fun) > matching_tolerance):
+                    if (np.abs(best_sol.fun) > self.matching_tolerance):
                         print (f"Alternative matching (2nd attempt): FAILED"
-                               f"\nReason: Solution exceeds tolerance ({np.abs(best_sol.fun)} > {matching_tolerance})")
+                               "\nReason: Solution exceeds tolerance "
+                               f"({np.abs(best_sol.fun)} > {self.matching_tolerance})")
                     if (not best_sol.success):
                         print (f"Alternative matching (2nd attempt): FAILED"
                                f"\nReason: Optimizer failed (sol.success = {best_sol.success})"
@@ -952,15 +983,16 @@ class TrackMatcher:
                     best_sol = sol
 
             # 4th attempt: match an He-star with an H-rich grid, or vice versa (not applicable for HMS stars)
-            if (np.abs(best_sol.fun) > matching_tolerance or not best_sol.success):
+            if (np.abs(best_sol.fun) > self.matching_tolerance or not best_sol.success):
 
                 # Using Newton's minimization method for 4th attempt
                 min_method = "TNC"
 
                 if self.verbose:
-                    if (np.abs(best_sol.fun) > matching_tolerance):
+                    if (np.abs(best_sol.fun) > self.matching_tolerance):
                         print (f"Alternative matching (3rd attempt): FAILED"
-                               f"\nReason: Solution exceeds tolerance ({np.abs(best_sol.fun)} > {matching_tolerance})")
+                               "\nReason: Solution exceeds tolerance "
+                               f"({np.abs(best_sol.fun)} > {self.matching_tolerance})")
                     if (not best_sol.success):
                         print (f"Alternative matching (3rd attempt): FAILED"
                                f"\nReason: Optimizer failed (sol.success = {best_sol.success})"
@@ -993,7 +1025,8 @@ class TrackMatcher:
                                                 f"added in root_keys list: {self.root_keys}")
                         
                     match_attr_vals = get_attr_values(match_attr_names, star)
-                    x0 = get_root0(match_attr_names, match_attr_vals, new_htrack, rescale_facs=rescale_facs)
+                    x0 = get_root0(match_attr_names, match_attr_vals, 
+                                   new_htrack, rescale_facs=rescale_facs)
 
                     try:
                         # minimize Euclidean dist. w/ Newton's method (TNC)
@@ -1005,20 +1038,21 @@ class TrackMatcher:
 
                         if self.verbose:
                             print (f"Alternative matching (4th attempt) completed:"
-                                   f"\nBest solution: {np.abs(best_sol.fun)} (tol = {matching_tolerance})"
+                                   f"\nBest solution: {np.abs(best_sol.fun)} " 
+                                   f"(tol = {self.matching_tolerance})"
                                    f"\nsol.success = {best_sol.success}")
                     except:
                         raise NumericalError("SciPy numerical differentiation occured outside boundary "
                                              "while matching to single star track")
 
             # if matching is still not successful, set result to NaN:
-            if (np.abs(best_sol.fun) > matching_tolerance_hard or not best_sol.success):
+            if (np.abs(best_sol.fun) > self.matching_tolerance_hard or not best_sol.success):
                 if self.verbose:
                     print("\nFinal matching result: FAILED")#,
-                          #np.abs(best_sol.fun), ">", matching_tolerance_hard)
-                    if (np.abs(best_sol.fun) > matching_tolerance_hard):
+                          #np.abs(best_sol.fun), ">", self.matching_tolerance_hard)
+                    if (np.abs(best_sol.fun) > self.matching_tolerance_hard):
                         print ("\nReason: Solution exceeds hard tolerance "+\
-                               f"({np.abs(best_sol.fun)} > {matching_tolerance_hard})")
+                               f"({np.abs(best_sol.fun)} > {self.matching_tolerance_hard})")
                     if (not best_sol.success):
                         print (f"\nReason: Optimizer failed, sol.success = {best_sol.success}"
                                f"\nOptimizer termination reason: {best_sol.message}") 
@@ -1030,57 +1064,37 @@ class TrackMatcher:
                 if self.verbose:
                     print("\nFinal matching result: SUCCESS"
                          f"\nBest solution within hard tolerance: "
-                         f"{np.abs(best_sol.fun):.8f}", "<", matching_tolerance_hard)
+                         f"{np.abs(best_sol.fun):.8f}", "<", 
+                         self.matching_tolerance_hard)
                     
                 initial_track_vals = best_sol.x
 
         if self.verbose:
             # successful match
             if not np.isnan(initial_track_vals[0]):
-                val_names = ["  ", "mass", "log_R", "center_h1", "surface_h1", "he_core_mass", "center_he4", "surface_he4", 
-                             "center_c12"]
 
-                initial_vals = [
-                                "initial values",
-                                f'{star.mass:.3f}', 
-                                f'{star.log_R:.3f}', 
-                                f'{star.center_h1:.3f}', 
-                                f'{star.surface_h1:.4f}',
-                                f'{star.he_core_mass:.3f}',
-                                f'{star.center_he4:.4f}', 
-                                f'{star.surface_he4:.4f}',  
-                                f'{star.center_c12:.4f}'
-                               ]
+                matchv = lambda n: get_track_val(n, htrack, *best_sol.x)
+                match_vals = [matchv(vn) for vn in val_names[1::]]
+                init_vals = [getattr(star, vn) for vn in val_names[1::]]
 
-                matched_vals = [
-                                "matched values",
-                                f'{self.get_track_val("mass", htrack, *best_sol.x):.3f}', 
-                                f'{self.get_track_val("log_R", htrack, *best_sol.x):.3f}',
-                                f'{self.get_track_val("center_h1", htrack, *best_sol.x):.3f}',
-                                f'{self.get_track_val("surface_h1", htrack, *best_sol.x):.4f}',
-                                f'{self.get_track_val("he_core_mass", htrack, *best_sol.x):.3f}',
-                                f'{self.get_track_val("center_he4", htrack, *best_sol.x):.4f}',
-                                f'{self.get_track_val("surface_he4", htrack, *best_sol.x):.4f}',    
-                                f'{self.get_track_val("center_c12", htrack, *best_sol.x):.4f}'
-                               ]
-                
-                percent_diff = [
-                                "% difference",
-                                f'{np.nan_to_num(100.0*(self.get_track_val("mass", htrack, *best_sol.x) - star.mass)/star.mass, 0):.1e}%', 
-                                f'{np.nan_to_num(100.0*(self.get_track_val("log_R", htrack, *best_sol.x) - star.log_R)/star.log_R, 0):.1e}%',
-                                f'{np.nan_to_num(100.0*(self.get_track_val("center_h1", htrack, *best_sol.x) - star.center_h1)/star.center_h1, 0):.1e}%',
-                                f'{np.nan_to_num(100.0*(self.get_track_val("surface_h1", htrack, *best_sol.x) - star.surface_h1)/star.surface_h1, 0):.1e}%',
-                                f'{np.nan_to_num(100.0*(self.get_track_val("he_core_mass", htrack, *best_sol.x) - star.he_core_mass)/star.he_core_mass, 0):.1e}%',
-                                f'{np.nan_to_num(100.0*(self.get_track_val("center_he4", htrack, *best_sol.x) - star.center_he4)/star.center_he4, 0):.1e}%',
-                                f'{np.nan_to_num(100.0*(self.get_track_val("surface_he4", htrack, *best_sol.x) - star.surface_he4)/star.surface_he4, 0):.1e}%',    
-                                f'{np.nan_to_num(100.0*(self.get_track_val("center_c12", htrack, *best_sol.x) - star.center_c12)/star.center_c12, 0):.1e}%'
-                               ]
+                initial_val_str = ["initial values"]+\
+                                   [f"{v:.3e}" for v in init_vals]
 
-                output_table = [val_names, initial_vals, matched_vals, percent_diff]
+                match_val_str = ["matched values"]+\
+                                [f"{v:.3e}" for v in match_vals]
+
+                pcntd_fn = lambda m, i: np.nan_to_num(100.0*(m - i)/i, 0)
+                zip_vals = zip(match_vals, init_vals)
+                pcntd_vals = [pcntd_fn(mval, ival) for mval, ival in zip_vals]
+                percent_diff_str = ["% difference"]+\
+                                   [f"{pcntd:.1e}%" for pcntd in pcntd_vals]
+
+                output_table = [val_names, initial_val_str, match_val_str, 
+                                percent_diff_str]
 
                 print("\nMatching completed for", star.state, "star!\n")
                 for row in output_table:
-                    print("{:>14}  {:>9}  {:>9}  {:>9}  {:>10}  {:>12}  {:>10}  {:>11}  {:>10}".format(*row))                
+                    print(row_str.format(*row))                
 
             # failed match
             else:
@@ -1328,11 +1342,11 @@ class TrackMatcher:
                     
                     
         if self.verbose:
-            print("pre-match omega_in_rad_per_year = ", surf_avg_omega * const.secyer)
-            print("calculated omega_in_rad_per_year = ", omega_in_rad_per_year)
+            print("pre-match omega [rad/yr] = ", surf_avg_omega * const.secyer)
+            print("calculated omega [rad/yr] = ", omega_in_rad_per_year)
             omega_percent_diff = np.nan_to_num(100.0*(omega_in_rad_per_year-surf_avg_omega*const.secyer) \
                                                 / omega_in_rad_per_year, 0)
-            print("omega_in_rad_per_year % difference = ", 
+            print("omega [rad/yr] % difference = ", 
                     f"{omega_percent_diff:.1f}%")
 
         return omega_in_rad_per_year
@@ -1408,30 +1422,57 @@ class TrackMatcher:
         
         """
             Perform binary to single star grid matching. This is currently
-        used when transitioning to detached star evolution from binary.
+        used when transitioning to detached star evolution from binary but 
+        may be used in other steps. This performs several actions:
+
+            a. Determines which star is primary/secondary in the evolution
+               and their evolutionary states. If evolvable, matching will 
+               proceed.
+            b. Match either one or both stars to a (non-rotating) single 
+               star evolution track.
+            c. Calculate the matched star's rotation using the pre-match 
+               step's angular momentum-related properties.
+            d. Returns the primary/secondary stars with interpolator 
+               objects that may be used to calculate quantities along the 
+               time series of each star for further evolution.
         
         Parameters
         ----------
         binary : BinaryStar object
             A binary star object, containing the binary system's properties.
 
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star 
-            in the binary and containing its properties.
-        
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star 
-            in the binary and containing its properties. 
+        step_name : str
+            If self.record_matching is True, then the matched quantities of 
+            the star will be appended to the history. This is a string that 
+            can be used as a custom label in the BinaryStar object's history, 
+            meant to indicate the relevant evolution step's name. This should 
+            normally match the name of the step in which the matching was 
+            made, e.g., "step_detached".
 
         Returns
         -------
-        interp1d_pri : PchipInterpolator object
-            Interpolator object used to interpolate star properties and
-            simulate detached evolution for the primary star.
-
-        interp1d_sec : PchipInterpolator object
-            Interpolator object used to interpolate star properties and
-            simulate detached evolution for the secondary star.
+        primary_out : tuple(SingleStar, PchipInterpolator, float)
+            The first element is the SingleStar object of the primary 
+            (more evolved) star. The second element is the primary's 
+            PchipInterpolator object, used to interpolate values along 
+            this star's time series. The third is the primary's 
+            calculated (post-match) rotation rate, using angular 
+            momentum-related quantites from the pre-match step.
+        
+        secondary_out :  tuple(SingleStar, PchipInterpolator, float)
+            The first element is the SingleStar object of the secondary 
+            (less evolved) star. The second element is the secondary's 
+            PchipInterpolator object, used to interpolate values along 
+            this star's time series. The third is the secondary's 
+            calculated (post-match) rotation rate, using angular 
+            momentum-related quantites from the pre-match step.
+        
+        only_CO : bool
+            A boolean indicating whether the binary system contains only a 
+            single compact object (True) or not (False). As in the detached 
+            step, it may be desirable to use this flag to exit an evolution 
+            step, as a single compact obejct (point mass) can not be evolved 
+            further.
 
         Raises
         ------
@@ -1483,8 +1524,9 @@ class TrackMatcher:
             elif primary == binary.star_2:
                 self.matched_s2 = True
         else:
-            raise ValueError("During matching, the primary should either be normal (stellar object) or ",
-                            "not normal (a CO or nonexistent companion).",
+            raise ValueError("During matching, the primary should either be "
+                             "normal (stellar object) or "
+                             "not normal (a CO or nonexistent companion).",
                             f"\nprimary.co = {primary.co}",
                             f"\nnon_existent_companion = {binary.non_existent_companion}",
                             f"\ncompanion_1_exists = {binary.companion_1_exists}",
@@ -1510,7 +1552,7 @@ class TrackMatcher:
 
         if self.record_matching:
             # append matching information as a part of step_detached
-            binary.step_names.append("step_detached")
+            binary.step_names.append(step_name)
             if self.matched_s1 and self.matched_s2:
                 binary.event = "Match1,2"
             elif self.matched_s1:
@@ -1531,13 +1573,30 @@ class TrackMatcher:
             Determines which star is primary (further evolved) and which is 
         secondary (less evolved). Determines whether stars should be 
         matched to the H- or He-rich grid, whether they exist, or if they
-        are compact objects/massless remnants. THis is used to determine
-        how to match the stars and also treat their detached evolution.
+        are compact objects/massless remnants. This is used to determine
+        how to match the stars.
 
         Parameters
         ----------
         binary: BinaryStar object
             A binary star object, containing the binary system's properties.
+
+        Returns
+        -------
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties. 
+        
+        only_CO : bool
+            A boolean indicating whether the binary system contains only a 
+            single compact object (True) or not (False). As in the detached 
+            step, it may be desirable to use this flag to exit an evolution 
+            step, as a single compact obejct (point mass) can not be evolved 
+            further.
 
         Raises
         ------
@@ -1563,108 +1622,60 @@ class TrackMatcher:
         if binary.non_existent_companion == -1:
                 raise POSYDONError("There is no star to evolve. Who summoned me?")
 
+        # where both stars exist. The primary is a potential compact object, or 
+        # the more evolved star
+        s_arr = np.array([binary.star_1, binary.star_2])
+        s_CO = np.array([s.state in STAR_STATES_CO for s in s_arr])
+        s_H = np.array([s.state in STAR_STATES_H_RICH for s in s_arr])
+        s_He = np.array([s.state in STAR_STATES_FOR_Hestar_MATCHING for s in s_arr])
+        s_massless = np.array([s.state == "massless_remnant" for s in s_arr])
+        s_valid = s_H | s_He | s_CO | s_massless    # states considered here
+        s_htrack = s_H & ~(s_CO)                    # only true if h rich and not a CO
+
+        # check if star states are recognizable
+        if (any(~s_valid)):
+            raise ValueError(f"Star1 state: {binary.star_1.state} "
+                                f"(valid: {s_valid[0]})\n"
+                                f"Star2 state: {binary.star_2.state} "
+                                f"(valid: {s_valid[1]})\n")
+
         if binary.non_existent_companion == 0: # both stars exist, detached step of a binary 
-            # where both stars exist. The primary is a potential compact object, or 
-            # the more evolved star
-
-            # star 1 is a CO, star 2 is H-rich
-            if (binary.star_1.state in STAR_STATES_CO and
-                binary.star_2.state in STAR_STATES_H_RICH):
-
-                secondary = binary.star_2
-                secondary.htrack = True
-                secondary.co = False
-
-                primary = binary.star_1
-                primary.htrack = secondary.htrack
-                primary.co = True
-
-            # star 1 is a CO, star 2 is an He star
-            elif (binary.star_1.state in STAR_STATES_CO and
-                binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
-                
-                secondary = binary.star_2
-                secondary.htrack = False
-                secondary.co = False
-
-                primary = binary.star_1
-                primary.htrack = secondary.htrack
-                primary.co = True
-
-            # star 1 is H-rich, star 2 is a CO
-            elif (binary.star_1.state in STAR_STATES_H_RICH and
-                binary.star_2.state in STAR_STATES_CO):
-
-                secondary = binary.star_1
-                secondary.htrack = True
-                secondary.co = False
-
-                primary = binary.star_2
-                primary.htrack = secondary.htrack
-                primary.co = True
-
-            # star 1 is an He star, star 2 is a CO
-            elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING and
-                binary.star_2.state in STAR_STATES_CO):
-
-                secondary = binary.star_1
-                secondary.htrack = False
-                secondary.co = False
-
-                primary = binary.star_2
-                primary.htrack = secondary.htrack
-                primary.co = True
             
-            # star 1 is H-rich, star 2 is H-rich
-            elif (binary.star_1.state in STAR_STATES_H_RICH and
-                binary.star_2.state in STAR_STATES_H_RICH):
-                
-                secondary = binary.star_2
-                secondary.htrack = True
-                secondary.co = False
+            # states match, either both H stars or both He stars
+            if (all(s_valid) and (all(s_htrack) or all(~s_htrack))):
+                primary = s_arr[0]
+                primary.co = s_CO[0]
+                primary.htrack = s_htrack[0]
 
-                primary = binary.star_1
-                primary.htrack = True
-                primary.co = False
+                secondary = s_arr[1]
+                secondary.co = s_CO[1]     
+                secondary.htrack = s_htrack[1]
+            # states mismatch, one is an H star and the other is an He star
+            elif (all(s_valid) and not any(s_CO)):
+                htrack_mask = s_htrack == True
 
-            # star 1 is an He star, star 2 is H-rich
-            elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING and
-                binary.star_2.state in STAR_STATES_H_RICH):
-                
-                secondary = binary.star_2
-                secondary.htrack = True
-                secondary.co = False
+                primary = s_arr[~htrack_mask].item()
+                primary.co = s_CO[~htrack_mask].item()
+                primary.htrack = s_htrack[~htrack_mask].item()
 
-                primary = binary.star_1
-                primary.htrack = False
-                primary.co = False
+                secondary = s_arr[htrack_mask].item()
+                secondary.co = s_CO[htrack_mask].item()
+                secondary.htrack = s_htrack[htrack_mask].item()
+            # states mismatch, one is a CO and other is an H or He star
+            elif (all(s_valid) and (any(s_CO) and not all(s_CO))):
+                CO_mask = s_CO == True
 
-            # star 1 is H-rich, star 2 is an He star
-            elif (binary.star_1.state in STAR_STATES_H_RICH and
-                binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
+                primary = s_arr[CO_mask].item()
+                primary.co = s_CO[CO_mask].item()
+                primary.htrack = s_htrack[CO_mask].item()
 
-                secondary = binary.star_1
-                secondary.htrack = True
-                secondary.co = False
-
-                primary = binary.star_2
-                primary.htrack = False
-                primary.co = False
-
-            # star 1 is an He star, star 2 is an He star
-            elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING and
-                binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
-                
-                secondary = binary.star_2
-                secondary.htrack = False
-                secondary.co = False
-
-                primary = binary.star_1
-                primary.htrack = False
-                primary.co = False
+                secondary = s_arr[~CO_mask].item()
+                secondary.co = s_CO[~CO_mask].item()
+                secondary.htrack = s_htrack[~CO_mask].item()
 
             else:
-                raise ValueError(f"State {binary.star_1.state} is not recognized!")
+                # both stars are compact objects, should redirect to step_dco
+                return None, None, only_CO
 
         # In case a star is a massless remnant:
         # We force primary.co = True for all isolated evolution
@@ -1673,42 +1684,31 @@ class TrackMatcher:
 
         # star 1 is a massless remnant, only star 2 exists
         elif binary.non_existent_companion == 1:
-            primary = binary.star_1
+
+            primary = s_arr[0]
             primary.co = True
             primary.htrack = False
-            secondary = binary.star_2
-            secondary.co = False
 
-            # only H-rich star left
-            if (binary.star_2.state in STAR_STATES_H_RICH):
-                secondary.htrack = True
-            # only He star left
-            elif (binary.star_2.state in STAR_STATES_FOR_Hestar_MATCHING):
-                secondary.htrack = False
-            # only a compact object left
-            elif (binary.star_2.state in STAR_STATES_CO):
+            secondary = s_arr[1]
+            secondary.htrack = s_htrack[1]
+            secondary.co = s_CO[1]
+            if secondary.co:
                 only_CO = True
                 return primary, secondary, only_CO
-            else:
-                raise ValueError(f"State {binary.star_2.state} is not recognized!")
 
         # star 2 is a massless remnant, only star 1 exists
         elif binary.non_existent_companion == 2:
-            primary = binary.star_2
+            primary = s_arr[1]
             primary.co = True
             primary.htrack = False
-            secondary = binary.star_1
-            secondary.co = False
-
-            if (binary.star_1.state in STAR_STATES_H_RICH):
-                secondary.htrack = True
-            elif (binary.star_1.state in STAR_STATES_FOR_Hestar_MATCHING):
-                secondary.htrack = False
-            elif (binary.star_1.state in STAR_STATES_CO):
+            
+            secondary = s_arr[0]
+            secondary.htrack = s_htrack[0]
+            secondary.co = s_CO[0]
+            if secondary.co:
                 only_CO = True
                 return primary, secondary, only_CO
-            else:
-                raise ValueError(f"State {binary.star_1.state} is not recognized!")
+            
         else:
             raise POSYDONError(f"non_existent_companion = {binary.non_existent_companion} (should be -1, 0, 1, or 2).")
 

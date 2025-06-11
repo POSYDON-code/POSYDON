@@ -110,6 +110,10 @@ class detached_step:
         A list of mixed type that specifies properties of the matching 
         process for He stars. Used for track matching.
 
+    record_matching : bool
+        Whether properties of the matched star(s) should be recorded in the 
+        binary evolution history.
+
     Attributes
     ----------
     KEYS : list[str]
@@ -165,10 +169,6 @@ class detached_step:
         fill its Roche lobe after circularization, and may be further 
         evolved until RLO commences once again, but without changing the 
         orbit.
-            
-    record_matching : bool
-        Whether properties of the matched star(s) should be recorded in the 
-        binary evolution history.
 
     translate : dict
         Dictionary containing data column name (key) translations between 
@@ -242,11 +242,11 @@ class detached_step:
                                           grid_name_strippedHe = grid_name_strippedHe, 
                                           path=path, metallicity = metallicity, 
                                           matching_method = matching_method, 
-                                          record_matching = record_matching,
-                                          verbose = self.verbose,
                                           list_for_matching_HMS = list_for_matching_HMS,
                                           list_for_matching_HeStar = list_for_matching_HeStar, 
-                                          list_for_matching_postMS = list_for_matching_postMS)
+                                          list_for_matching_postMS = list_for_matching_postMS,
+                                          record_matching = record_matching,
+                                          verbose = self.verbose,)
         
         return
 
@@ -698,17 +698,16 @@ class detached_step:
         binary_sim_prop = getattr(binary, "properties")             # simulation properties of the binary
         all_step_names = getattr(binary_sim_prop, "all_step_names")
 
-        # determine star states for matching
-        #primary, secondary, only_CO = self.track_matcher.determine_star_states(binary)
-        #if only_CO:
-        #    return
-
         # match stars to single star models for detached evolution
         pri_out, sec_out, only_CO = self.track_matcher.do_matching(binary, step_name = "step_detached")
+        if only_CO:
+            if self.verbose:
+                print("Binary system only contains compact objects."
+                      "Exiting step_detached, nothing left to do.")
+            return
+        
         primary, interp1d_pri, omega0_pri = pri_out
         secondary, interp1d_sec, omega0_sec = sec_out
-        if only_CO:
-            return
 
         t0_sec = interp1d_sec["t0"]
         t0_pri = interp1d_pri["t0"]
@@ -721,7 +720,7 @@ class detached_step:
         max_time = interp1d_sec["max_time"]
 
         if (ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
-                or ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
+            or ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
             binary.state = "initial_RLOF"
             return
             

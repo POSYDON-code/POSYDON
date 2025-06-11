@@ -142,7 +142,10 @@ BINARY_EVENTS_ALL = [
     'MaxTime_exceeded',
     'maxtime',
     'oMerging1',
-    'oMerging2'
+    'oMerging2',
+    'Match1',
+    'Match2',
+    'Match12'
 ]
 
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
