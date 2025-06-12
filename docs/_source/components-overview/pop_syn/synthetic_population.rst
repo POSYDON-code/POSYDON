@@ -445,7 +445,7 @@ You need the observable_identifier to access the data, which can be accessed wit
     print(rates.observable_population('design_H1L1V1'))
 
 Plotting the observable population
------------------------------------
+----------------------------------
 
 The observable population can be plotted in the same way as the intrinsic rate density.
 However, you need to define which observable population you want to plot.
