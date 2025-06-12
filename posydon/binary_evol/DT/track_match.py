@@ -1341,7 +1341,7 @@ class TrackMatcher:
                     Pwarn("Setting (post-match) rotation rate to zero.", "InappropriateValueWarning")
                     
                     
-        if self.verbose:
+        if self.verbose and surf_avg_omega is not None:
             print("pre-match omega [rad/yr] = ", surf_avg_omega * const.secyer)
             print("calculated omega [rad/yr] = ", omega_in_rad_per_year)
             omega_percent_diff = np.nan_to_num(100.0*(omega_in_rad_per_year-surf_avg_omega*const.secyer) \
@@ -1396,21 +1396,32 @@ class TrackMatcher:
 
         omega0_sec = self.calc_omega(secondary, prematch_rotation_sec, interp1d_sec)
 
-        # recalculate rotation quantities using the newly calculated omega
-        secondary.surf_avg_omega_div_omega_crit = (omega0_sec / const.secyer / secondary.surf_avg_omega) \
-                                                * secondary.surf_avg_omega_div_omega_crit
-        secondary.surf_avg_omega = omega0_sec / const.secyer
-        secondary.log_total_angular_momentum = np.log10((omega0_sec / const.secyer) \
-                                                        * secondary.total_moment_of_inertia)
+        # recalculate rotation quantities using the newly calculated omega [rad/s] here
+        # need to be careful about case where omega was made/is 0 to avoid div by zero errors or None * float
+        if secondary.surf_avg_omega is not None:
+            secondary.surf_avg_omega_div_omega_crit = (omega0_sec / const.secyer / secondary.surf_avg_omega) \
+                                                    * secondary.surf_avg_omega_div_omega_crit
+            secondary.surf_avg_omega = omega0_sec / const.secyer
+            secondary.log_total_angular_momentum = np.log10((omega0_sec / const.secyer) \
+                                                            * secondary.total_moment_of_inertia)
+        else:
+            secondary.surf_avg_omega_div_omega_crit = 0.0
+            secondary.surf_avg_omega = 0.0
+            secondary.log_total_angular_momentum = 0.0
 
         if self.primary_normal:
             omega0_pri = self.calc_omega(primary, prematch_rotation_pri, interp1d_pri)
 
-            primary.surf_avg_omega_div_omega_crit = (omega0_pri / const.secyer / primary.surf_avg_omega) \
-                                            * primary.surf_avg_omega_div_omega_crit
-            primary.surf_avg_omega = omega0_pri / const.secyer
-            primary.log_total_angular_momentum = np.log10((omega0_pri / const.secyer) \
-                                                                * primary.total_moment_of_inertia)
+            if primary.surf_avg_omega is not None:
+                primary.surf_avg_omega_div_omega_crit = (omega0_pri / const.secyer / primary.surf_avg_omega) \
+                                                        * primary.surf_avg_omega_div_omega_crit
+                primary.surf_avg_omega = omega0_pri / const.secyer
+                primary.log_total_angular_momentum = np.log10((omega0_pri / const.secyer) \
+                                                                    * primary.total_moment_of_inertia)
+            else:
+                primary.surf_avg_omega_div_omega_crit = 0.0
+                primary.surf_avg_omega = 0.0
+                primary.log_total_angular_momentum = 0.0
         else:
             # omega of compact objects or massless remnant 
             # (won't be used for integration)

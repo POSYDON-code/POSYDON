@@ -462,6 +462,9 @@ class detached_step:
             for obj, prop in zip([secondary, primary, binary], 
                                     [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
                 
+                interp1d = interp1d_pri if obj == primary else interp1d_sec
+                t_offset = t_offset_pri if obj == primary else t_offset_sec
+
                 for key in prop:
                     if key in ["event",
                                 "mass_transfer_case",
@@ -471,218 +474,128 @@ class detached_step:
                         # For star objects, the state is calculated further below
                         history = [current] * len(t[:-1])
 
-                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj == secondary):
-                        # replace the actual surf_avg_w with the effective omega,
-                        # which takes into account the whole star
-                        # key  = 'effective_omega' # in rad/sec
-                        # current = s.y[2][-1] / 3.1558149984e7
-                        # history_of_attribute = s.y[2][:-1] / 3.1558149984e7
-                        omega_crit_current_sec = np.sqrt(const.standard_cgrav
-                            * interp1d_sec[self.translate["mass"]](t[-1] - t_offset_sec).item() * const.msol
-                            / (interp1d_sec[self.translate["R"]](t[-1] - t_offset_sec).item() * const.rsol)**3)
-                        
-                        omega_crit_hist_sec = np.sqrt(const.standard_cgrav
-                            * interp1d_sec[self.translate["mass"]](t[:-1] - t_offset_sec) * const.msol
-                            / (interp1d_sec[self.translate["R"]](t[:-1] - t_offset_sec) * const.rsol)**3)
-
-                        current = (interp1d_sec["omega"][-1] / const.secyer / omega_crit_current_sec)
-                        history = (interp1d_sec["omega"][:-1] / const.secyer / omega_crit_hist_sec)
-                        
-                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj == primary):
-                        if primary.co:
+                    # replace the actual surf_avg_w with the effective omega,
+                    # which takes into account the whole star
+                    # key  = 'effective_omega' # in rad/sec
+                    # current = s.y[2][-1] / 3.1558149984e7
+                    # history_of_attribute = s.y[2][:-1] / 3.1558149984e7
+                    elif (key in ["surf_avg_omega_div_omega_crit"] and obj != binary):#primary):
+                        if obj.co: #primary.co:
                             current = None
                             history = [current] * len(t[:-1])
 
-                        elif not primary.co:
+                        else:
                             # TODO: change `item()` to 0
-                            omega_crit_current_pri = np.sqrt(const.standard_cgrav
-                                * interp1d_pri[self.translate["mass"]](t[-1] - t_offset_pri).item() * const.msol
-                                / (interp1d_pri[self.translate["R"]](t[-1] - t_offset_pri).item() * const.rsol)**3)
+                            omega_crit_current = np.sqrt(const.standard_cgrav
+                                * interp1d[self.translate["mass"]](t[-1] - t_offset).item() * const.msol
+                                / (interp1d[self.translate["R"]](t[-1] - t_offset).item() * const.rsol)**3)
 
-                            omega_crit_hist_pri = np.sqrt(const.standard_cgrav
-                                * interp1d_pri[self.translate["mass"]](t[:-1] - t_offset_pri) * const.msol
-                                / (interp1d_pri[self.translate["R"]](t[:-1] - t_offset_pri) * const.rsol)**3)
+                            omega_crit_hist = np.sqrt(const.standard_cgrav
+                                * interp1d[self.translate["mass"]](t[:-1] - t_offset) * const.msol
+                                / (interp1d[self.translate["R"]](t[:-1] - t_offset) * const.rsol)**3)
 
-                            current = (interp1d_pri["omega"][-1] / const.secyer / omega_crit_current_pri)
-                            history = (interp1d_pri["omega"][:-1] / const.secyer / omega_crit_hist_pri)
+                            current = (interp1d["omega"][-1] / const.secyer / omega_crit_current)
+                            history = (interp1d["omega"][:-1] / const.secyer / omega_crit_hist)
                             
-                    elif (key in ["surf_avg_omega"] and obj == secondary):
-                        current = interp1d_sec["omega"][-1] / const.secyer
-                        history = interp1d_sec["omega"][:-1] / const.secyer
 
-                    elif (key in ["surf_avg_omega"] and obj == primary):
-                        if primary.co:
+                    elif (key in ["surf_avg_omega"] and obj != binary):
+                        if obj.co:
                             current = None
                             history = [current] * len(t[:-1])
                         else:
-                            current = interp1d_pri["omega"][-1] / const.secyer
-                            history = interp1d_pri["omega"][:-1] / const.secyer
-
-                    elif (key in ["rl_relative_overflow_1"] and obj == binary):
-                        if binary.star_1.state in ("BH", "NS", "WD","massless_remnant"):
-                            current = None
-                            history = [current] * len(t[:-1])
-
-                        elif secondary == binary.star_1:
-                            current = ev_rel_rlo1(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo1(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
-
-                        elif secondary == binary.star_2:
-                            current = ev_rel_rlo2(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo2(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
+                            current = interp1d["omega"][-1] / const.secyer
+                            history = interp1d["omega"][:-1] / const.secyer
                             
-                    elif (key in ["rl_relative_overflow_2"] and obj == binary):
-                        if binary.star_2.state in ("BH", "NS", "WD","massless_remnant"):
+                    elif ("rl_relative_overflow_" in key and obj == binary):
+                        s = binary.star_1 if "_1" in key[-2:] else binary.star_2
+                        s_alt = binary.star_2 if "_1" in key[-2:] else binary.star_1
+                        if s.state in ("BH", "NS", "WD","massless_remnant"):
                             current = None
                             history = [current] * len(t[:-1])
 
-                        elif secondary == binary.star_2:
-                            current = ev_rel_rlo1(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo1(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
+                        elif secondary == s:
+                            current = ev_rel_rlo1(t[-1], [interp1d["sep"][-1], interp1d["ecc"][-1]])
+                            history = ev_rel_rlo1(t[:-1], [interp1d["sep"][:-1], interp1d["ecc"][:-1]])
 
-                        elif secondary == binary.star_1:
-                            current = ev_rel_rlo2(t[-1], [interp1d_sec["sep"][-1], interp1d_sec["ecc"][-1]])
-                            history = ev_rel_rlo2(t[:-1], [interp1d_sec["sep"][:-1], interp1d_sec["ecc"][:-1]])
+                        elif secondary == s_alt:
+                            current = ev_rel_rlo2(t[-1], [interp1d["sep"][-1], interp1d["ecc"][-1]])
+                            history = ev_rel_rlo2(t[:-1], [interp1d["sep"][:-1], interp1d["ecc"][:-1]])
                             
                     elif key in ["separation", "orbital_period", "eccentricity", "time"]:
-                        current = interp1d_sec[self.translate[key]][-1].item()
-                        history = interp1d_sec[self.translate[key]][:-1]
-
-                    elif (key in ["total_moment_of_inertia"] and obj == secondary):
-                        current = interp1d_sec[self.translate[key]](
-                            t[-1] - t_offset_sec).item() * (const.msol * const.rsol**2)
+                        current = interp1d[self.translate[key]][-1].item()
+                        history = interp1d[self.translate[key]][:-1]
                         
-                        history = interp1d_sec[self.translate[key]](
-                            t[:-1] - t_offset_sec) * (const.msol * const.rsol**2)
-                        
-                    elif (key in ["total_moment_of_inertia"] and obj == primary):
-                        if primary.co:
+                    elif (key in ["total_moment_of_inertia"] and obj != binary):
+                        if obj.co:
                             current = getattr(obj, key)
                             history = [current] * len(t[:-1])
                         else:
-                            current = interp1d_pri[self.translate[key]](
-                                t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)
+                            current = interp1d[self.translate[key]](
+                                t[-1] - t_offset).item() * (const.msol * const.rsol**2)
 
-                            history = interp1d_pri[self.translate[key]](
-                                t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)
-                            
-                    elif (key in ["log_total_angular_momentum"] and obj == secondary):
-
-                        current_omega = interp1d_sec["omega"][-1]
-
-                        ## add a warning catch if the current omega has an invalid value
-                        ## (otherwise python will throw an insuppressible warning when taking the log)
-                        if interp1d_sec["omega"][-1] <= 0:
-                            Pwarn("Trying to compute log angular momentum for object with no spin", 
-                                    "InappropriateValueWarning")
-                            current_omega = np.nan
-                                                
-                        current = np.log10(
-                            (current_omega / const.secyer)
-                                * (interp1d_sec[
-                                    self.translate["total_moment_of_inertia"]](t[-1] - t_offset_sec).item() * 
-                                    (const.msol * const.rsol ** 2))) 
-                                                                    
-                        history = np.log10(
-                            (interp1d_sec["omega"][:-1] / const.secyer)
-                                * (interp1d_sec[self.translate["total_moment_of_inertia"]](
-                                        t[:-1] - t_offset_sec) * (const.msol * const.rsol**2)))
+                            history = interp1d[self.translate[key]](
+                                t[:-1] - t_offset) * (const.msol * const.rsol**2)
                         
-                    elif (key in ["log_total_angular_momentum"] and obj == primary):
-                        if primary.co:
+                    elif (key in ["log_total_angular_momentum"] and obj != binary):
+                        if obj.co:
                             current = getattr(obj, key)
                             history = [current] * len(t[:-1])
                         else:
                             current = np.log10(
-                                (interp1d_pri["omega"][-1] / const.secyer)
-                                * (interp1d_pri[self.translate["total_moment_of_inertia"]](
-                                        t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)))
+                                (interp1d["omega"][-1] / const.secyer)
+                                * (interp1d[self.translate["total_moment_of_inertia"]](
+                                        t[-1] - t_offset).item() * (const.msol * const.rsol**2)))
                         
                             history = np.log10(
-                                (interp1d_pri["omega"][:-1] / const.secyer)
-                                * (interp1d_pri[self.translate["total_moment_of_inertia"]](
-                                        t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)))
-                            
-                    elif (key in ["spin"] and obj == secondary):
-                        current = (const.clight
-                            * (interp1d_sec["omega"][-1] / const.secyer)
-                            * interp1d_sec[self.translate["total_moment_of_inertia"]](
-                                t[-1] - t_offset_sec).item() * (const.msol * const.rsol**2)
-                            / (const.standard_cgrav * (interp1d_sec[self.translate["mass"]](
-                                    t[-1] - t_offset_sec).item() * const.msol)**2))
+                                (interp1d["omega"][:-1] / const.secyer)
+                                * (interp1d[self.translate["total_moment_of_inertia"]](
+                                        t[:-1] - t_offset) * (const.msol * const.rsol**2)))
                         
-                        history = (const.clight
-                            * (interp1d_sec["omega"][:-1] / const.secyer)
-                            * interp1d_sec[self.translate["total_moment_of_inertia"]](
-                                    t[:-1] - t_offset_sec)* (const.msol * const.rsol**2)
-                            / (const.standard_cgrav * (interp1d_sec[self.translate["mass"]](
-                                    t[:-1] - t_offset_sec) * const.msol)**2))
-                        
-                    elif (key in ["spin"] and obj == primary):
-                        if primary.co:
+                    elif (key in ["spin"] and obj != binary):
+                        if obj.co:
                             current = getattr(obj, key)
                             history = [current] * len(t[:-1])
                         else:
                             current = (const.clight
-                                * (interp1d_pri["omega"][-1] / const.secyer)
-                                * interp1d_pri[self.translate["total_moment_of_inertia"]](
-                                        t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)
-                                / (const.standard_cgrav * (interp1d_pri[self.translate["mass"]](
-                                        t[-1] - t_offset_pri).item() * const.msol)**2))
+                                * (interp1d["omega"][-1] / const.secyer)
+                                * interp1d[self.translate["total_moment_of_inertia"]](
+                                        t[-1] - t_offset).item() * (const.msol * const.rsol**2)
+                                / (const.standard_cgrav * (interp1d[self.translate["mass"]](
+                                        t[-1] - t_offset).item() * const.msol)**2))
                             
                             history = (const.clight 
-                                * (interp1d_pri["omega"][:-1] / const.secyer)
-                                * interp1d_pri[self.translate["total_moment_of_inertia"]](
-                                        t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)
-                                / (const.standard_cgrav * (interp1d_pri[self.translate["mass"]](
-                                        t[:-1] - t_offset_pri) * const.msol)**2))
-                            
-                    elif (key in ["lg_mdot", "lg_wind_mdot"] and obj == secondary):
-                        # in detached step, lg_mdot = lg_wind_mdot
-                        if interp1d_sec[self.translate[key]](t[-1] - t_offset_sec) == 0:
-                            current = -98.99
-                        else:
-                            current = np.log10(np.abs(interp1d_sec[self.translate[key]](
-                                t[-1] - t_offset_sec))).item()
-                        
-                        history = np.ones_like(t[:-1])
-                        for i in range(len(t)-1):
-                            if interp1d_sec[self.translate[key]](t[i] - t_offset_sec) == 0:
-                                history[i] = -98.99
-                            else:
-                                history[i] = np.log10(np.abs(interp1d_sec[self.translate[key]](
-                                            t[i] - t_offset_sec)))
+                                * (interp1d["omega"][:-1] / const.secyer)
+                                * interp1d[self.translate["total_moment_of_inertia"]](
+                                        t[:-1] - t_offset) * (const.msol * const.rsol**2)
+                                / (const.standard_cgrav * (interp1d[self.translate["mass"]](
+                                        t[:-1] - t_offset) * const.msol)**2))
 
-                    elif (key in ["lg_mdot", "lg_wind_mdot"] and obj == primary):
-                        if primary.co:
+                    elif (key in ["lg_mdot", "lg_wind_mdot"] and obj != binary):
+                        if obj.co:
                             current = None
                             history = [current] * len(t[:-1])
                         else:
-                            if interp1d_sec[self.translate[key]](t[-1] - t_offset_sec) == 0:
+                            if interp1d[self.translate[key]](t[-1] - t_offset) == 0:
                                 current = -98.99
                             else:
-                                current = np.log10(np.abs(interp1d_sec[self.translate[key]](
-                                        t[-1] - t_offset_sec))).item()
+                                current = np.log10(np.abs(interp1d[self.translate[key]](
+                                        t[-1] - t_offset))).item()
                                 
                             history = np.ones_like(t[:-1])
                             for i in range(len(t)-1):
-                                if (interp1d_sec[self.translate[key]](t[i] - t_offset_sec) == 0):
+                                if (interp1d[self.translate[key]](t[i] - t_offset) == 0):
                                     history[i] = -98.99
                                 else:
-                                    history[i] = np.log10(np.abs(interp1d_sec[self.translate[key]](
-                                                t[i] - t_offset_sec)))
-                                    
-                    elif (self.translate[key] in interp1d_sec and obj == secondary):
-                        current = interp1d_sec[self.translate[key]](t[-1] - t_offset_sec).item()
-                        history = interp1d_sec[self.translate[key]](t[:-1] - t_offset_sec)
+                                    history[i] = np.log10(np.abs(interp1d[self.translate[key]](
+                                                t[i] - t_offset)))
                         
-                    elif (self.translate[key] in interp1d_pri and obj == primary):
-                        if primary.co:
+                    elif (self.translate[key] in interp1d and obj != binary):
+                        if obj.co:
                             current = getattr(obj, key)
                             history = [current] * len(t[:-1])
                         else:
-                            current = interp1d_pri[self.translate[key]](t[-1] - t_offset_pri).item()
-                            history = interp1d_pri[self.translate[key]](t[:-1] - t_offset_pri)
+                            current = interp1d[self.translate[key]](t[-1] - t_offset).item()
+                            history = interp1d[self.translate[key]](t[:-1] - t_offset)
                             
                     elif key in ["profile"]:
                         current = None
@@ -703,7 +616,7 @@ class detached_step:
         if only_CO:
             if self.verbose:
                 print("Binary system only contains compact objects."
-                      "Exiting step_detached, nothing left to do.")
+                      "Exiting step_detached, nothing left to do here.")
             return
         
         primary, interp1d_pri, omega0_pri = pri_out
