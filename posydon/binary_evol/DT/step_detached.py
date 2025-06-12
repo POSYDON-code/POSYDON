@@ -112,7 +112,7 @@ class detached_step:
 
     record_matching : bool
         Whether properties of the matched star(s) should be recorded in the 
-        binary evolution history.
+        binary evolution history. Used for track matching.
 
     Attributes
     ----------
@@ -172,7 +172,7 @@ class detached_step:
 
     translate : dict
         Dictionary containing data column name (key) translations between 
-        POSYDON h5 file PSyGrid data names and MESA data names.
+        POSYDON h5 file PSyGrid data names (items) and MESA data names (keys).
 
     track_matcher : TrackMatcher object
         The TrackMatcher object performs functions related to matching 

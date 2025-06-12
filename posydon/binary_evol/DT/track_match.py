@@ -1340,12 +1340,12 @@ class TrackMatcher:
                     print("surf_avg_omega_div_omega_crit = ", surf_avg_omega_div_omega_crit)
                     Pwarn("Setting (post-match) rotation rate to zero.", "InappropriateValueWarning")
                     
-                    
         if self.verbose and surf_avg_omega is not None:
             print("pre-match omega [rad/yr] = ", surf_avg_omega * const.secyer)
             print("calculated omega [rad/yr] = ", omega_in_rad_per_year)
-            omega_percent_diff = np.nan_to_num(100.0*(omega_in_rad_per_year-surf_avg_omega*const.secyer) \
-                                                / omega_in_rad_per_year, 0)
+            pcdiff = 100.0*(omega_in_rad_per_year-surf_avg_omega*const.secyer) \
+                                                / omega_in_rad_per_year
+            omega_percent_diff = np.nan_to_num(pcdiff, 0)
             print("omega [rad/yr] % difference = ", 
                     f"{omega_percent_diff:.1f}%")
 
@@ -1398,7 +1398,7 @@ class TrackMatcher:
 
         # recalculate rotation quantities using the newly calculated omega [rad/s] here
         # need to be careful about case where omega was made/is 0 to avoid div by zero errors or None * float
-        if secondary.surf_avg_omega is not None:
+        if secondary.surf_avg_omega is not None and not pd.isna(secondary.surf_avg_omega):
             secondary.surf_avg_omega_div_omega_crit = (omega0_sec / const.secyer / secondary.surf_avg_omega) \
                                                     * secondary.surf_avg_omega_div_omega_crit
             secondary.surf_avg_omega = omega0_sec / const.secyer
@@ -1412,7 +1412,7 @@ class TrackMatcher:
         if self.primary_normal:
             omega0_pri = self.calc_omega(primary, prematch_rotation_pri, interp1d_pri)
 
-            if primary.surf_avg_omega is not None:
+            if primary.surf_avg_omega is not None and not pd.isna(primary.surf_avg_omega):
                 primary.surf_avg_omega_div_omega_crit = (omega0_pri / const.secyer / primary.surf_avg_omega) \
                                                         * primary.surf_avg_omega_div_omega_crit
                 primary.surf_avg_omega = omega0_pri / const.secyer
@@ -1553,7 +1553,8 @@ class TrackMatcher:
         omega0_pri, omega0_sec = self.update_rotation_info(primary, secondary, 
                                                            interp1d_pri, interp1d_sec)
         
-        # update binary history with matched values (only shown in history if record_match = True)
+        # update binary history with matched values 
+        # (only shown in history if record_match = True)
         # (this gets overwritten after detached evolution)
         self.update_star_properties(secondary, secondary.htrack, 
                                     interp1d_sec["m0"], interp1d_sec["t0"])
@@ -1721,7 +1722,8 @@ class TrackMatcher:
                 return primary, secondary, only_CO
             
         else:
-            raise POSYDONError(f"non_existent_companion = {binary.non_existent_companion} (should be -1, 0, 1, or 2).")
+            raise POSYDONError("non_existent_companion = "
+                f"{binary.non_existent_companion} (should be -1, 0, 1, or 2).")
 
         return primary, secondary, only_CO
 
