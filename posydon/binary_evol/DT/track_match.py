@@ -1687,6 +1687,7 @@ class TrackMatcher:
 
             else:
                 # both stars are compact objects, should redirect to step_dco
+                only_CO = True
                 return None, None, only_CO
 
         # In case a star is a massless remnant:
