@@ -392,7 +392,7 @@ The :class:`~Rates` object also contains information about the metallicity and r
     print(rates.edges_redshift_bins)
 
 Plotting Rates
------------------------------
+--------------
 
 Besides plotting the intrinsic rate, you can plot the distribution of properties of the population.
 You can use any property in the TransientPopulation table.
