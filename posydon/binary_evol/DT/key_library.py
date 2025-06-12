@@ -1,5 +1,6 @@
-# Dictionary containing data column name (key) translations between 
-# POSYDON h5 file PSyGrid data names and MESA data names.
+# Dictionary containing data column name (key) 
+# translations between POSYDON h5 file PSyGrid 
+# data names (items) and MESA data names (keys).
 DEFAULT_TRANSLATION = {
     "time": "time",
     "orbital_period": "porb",
