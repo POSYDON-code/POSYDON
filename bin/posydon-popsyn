@@ -323,8 +323,7 @@ def check_population_files(run_folder, metallicities):
     dict
         Dictionary with metallicity as key and existence status as value
     """
-    print("POPULATION FILES CHECK ....................")
-    print("")
+    print("POPULATION FILES CHECK ....................\n")
     print("MET\t\tPOP_FILE")
     
     all_exist = True
@@ -369,8 +368,7 @@ def check_binary_counts(run_folder, metallicities, expected_count):
     dict
         Dictionary with metallicity as key and binary count as value
     """
-    print("BINARY COUNT CHECK     ....................")
-    print("")
+    print("BINARY COUNT CHECK     ....................\n")
     print("MET\t\tEXPECTED\tFOUND\tSTATUS")
     
     all_match = True
@@ -642,13 +640,10 @@ def generate_rescue_script(args, batch_status):
     if missing_indices:
         job_array_str = ','.join(map(str, sorted(missing_indices)))
     else:
-        print("No missing indices found in batch status.")
-        print("Cannot generate rescue script.")
-        print("Please run the check function to resubmit the merge jobs:")
-        print("")
-        print("posydon-popsyn check <run_folder>")
-        print("")
-        raise ValueError("No missing indices found in batch status.")
+        raise ValueError("No missing indices found in batch status.\n"
+                         "Cannot generate rescue script.\n"
+                         "Please run the check function to resubmit the merge jobs.\n\n"
+                         "posydon-popsyn check <run_folder>\n")
     
     # create a new slurm script
     rescue_script = os.path.join(run_folder, f'{str_met}_Zsun_rescue.slurm')
@@ -709,8 +704,7 @@ def get_ini_file(args):
     
     # Handle multiple INI files
     if len(ini_files) > 1:
-        print("Multiple INI files found:")
-        print("")
+        print("Multiple INI files found:\n")
         for idx, file in enumerate(ini_files):
             print(f"{idx}: {file}")
         
@@ -764,20 +758,17 @@ def check_popsyn_function(args):
     args : argparse.Namespace
         The arguments passed to the function
     """
-    print(f"Checking the status of the population run in {args.run_folder}")
-    print("")
+    print(f"Checking the status of the population run in {args.run_folder}\n")
     
     ini_file = get_ini_file(args)
-    print("")
-    print(f"Using INI file:\n{ini_file}")
+    print(f"\nUsing INI file:\n{ini_file}")
     
     num_metallicities, number_of_binaries,\
         metallicities, synpop_params=  get_binary_params(ini_file)
     
     print("REQUESTED PARAMETERS")
     print(f"# metallicities: {num_metallicities}")
-    print(f"# binaries:      {number_of_binaries}")
-    print("")
+    print(f"# binaries:      {number_of_binaries}\n")
     print("Checking the status of the population run")
     print("-"*80)
     
@@ -836,16 +827,14 @@ def check_popsyn_function(args):
                 print("Merge jobs not resubmitted.")
 
         else:
-            print("\nOne or more batch files are incomplete.")
-            print("We need to resubmit some of the batch jobs.")
-            print("Please use the following command to create and"
-                  "submit a rescue script:")
-            print("")
-            print(f"posydon-popsyn rescue {args.run_folder}")
-            print("")
-            print("You can add additional arguments to the command, such as "
-                  + "--email, --partition, etc.")
-            print("This will generate resubmission scripts that you can review "
+            print("\nOne or more batch files are incomplete.\n"
+                  "We need to resubmit some of the batch jobs.\n"
+                  "Please use the following command to create and\n"
+                  "submit a rescue script:\n\n"
+                  f"posydon-popsyn rescue {args.run_folder}\n\n"
+                  "You can add additional arguments to the command, such as \n"
+                  "--email, --partition, etc.\n"
+                  "This will generate resubmission scripts that you can review\n"
                   + "and run to resubmit failed jobs.")
     
 def rescue_popsyn_function(args):
@@ -861,16 +850,14 @@ def rescue_popsyn_function(args):
     
     # 1. Check status of the run
     ini_file = get_ini_file(args)
-    print("")
-    print(f"Using INI file:\n{ini_file}")
+    print(f"\nUsing INI file:\n{ini_file}")
     
     num_metallicities, number_of_binaries,\
         metallicities, synpop_params=  get_binary_params(ini_file)
     
     print("REQUESTED PARAMETERS")
     print(f"# metallicities: {num_metallicities}")
-    print(f"# binaries:      {number_of_binaries}")
-    print("")
+    print(f"# binaries:      {number_of_binaries}\n")
     print("Checking the status of the population run")
     print("-"*80)
         
@@ -908,8 +895,7 @@ def rescue_popsyn_function(args):
                                 )
            
             print("#"*80)
-            print("")
-            print("GENERATING A RESCUE SCRIPT ....................")
+            print("\nGENERATING A RESCUE SCRIPT ....................")
             
             # Generate a rescue script
             rescue_scripts.append(
@@ -919,8 +905,7 @@ def rescue_popsyn_function(args):
             print("-"*80)
             
         # Generate a resubmit_slurm.sh script
-        print("GENERATING A RESUBMIT SCRIPT ....................")
-        print("")
+        print("GENERATING A RESUBMIT SCRIPT ....................\n")
         resubmit_sh_file = os.path.join(args.run_folder, 'resubmit_slurm.sh')
         with open(resubmit_sh_file, 'w') as f:
             f.write("#!/bin/bash\n")
