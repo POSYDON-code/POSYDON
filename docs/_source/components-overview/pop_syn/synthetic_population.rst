@@ -363,7 +363,7 @@ The table below shows the Default values and the supported values.
 
 
 Accessing rates data
------------------------------
+--------------------
 
 The cosmic rate data is stored in 3 different tables in the population file:
 
