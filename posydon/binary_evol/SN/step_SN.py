@@ -2010,8 +2010,8 @@ class StepSN(object):
 
             Vkick_ej = 211*(f_kin*beta*epsilon)**(1/2)*(alpha_ej/0.1)*(M_ej/0.1)*(M_NS/1.5)**(-1)
         
-         elif self.kick_normalisation == 'ejecta_mass_Richards+23':
-
+        elif self.kick_normalisation == 'ejecta_mass_Richards+23':
+            
             M_ej = star.co_core_mass_history[-1]-star.mass        # Ejecta mass
             M_rem = star.mass                                     # Neutron star mass
             alpha = 115                                           # alpha and beta are best-fit parameters
