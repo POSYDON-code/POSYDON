@@ -1119,132 +1119,132 @@ class TrackMatcher:
     
 
     def get_star_match_data(self, binary, star, copy_prev_m0=None, copy_prev_t0=None):
-                """
-                    Match a given component of a binary (i.e., a star) to a 
-                single star model. This then creates and returns interpolator
-                objects that may be used to calculate properties of the star
-                as a function of time.
+        """
+            Match a given component of a binary (i.e., a star) to a 
+        single star model. This then creates and returns interpolator
+        objects that may be used to calculate properties of the star
+        as a function of time.
 
-                    In the case of a compact object, radius, mdot, and Idot are 
-                set to zero. One may use another star, e.g., the companion of 
-                the compact object to provide an initial mass and age.
+            In the case of a compact object, radius, mdot, and Idot are 
+        set to zero. One may use another star, e.g., the companion of 
+        the compact object to provide an initial mass and age.
 
-                Parameters
-                ----------
-                binary : BinaryStar object
-                    A binary star object, containing the binary system's properties.
+        Parameters
+        ----------
+        binary : BinaryStar object
+            A binary star object, containing the binary system's properties.
 
-                star : SingleStar object
-                    A single star object that contains the star's properties.
+        star : SingleStar object
+            A single star object that contains the star's properties.
 
-                copy_prev_m0 : float
-                    A mass value that may be copied from another star in the case
-                    where the target star is a compact object
+        copy_prev_m0 : float
+            A mass value that may be copied from another star in the case
+            where the target star is a compact object
 
-                copy_prev_t0 : float
-                    An age value that may be copied from another star in the case
-                    where the target star is a compact object
+        copy_prev_t0 : float
+            An age value that may be copied from another star in the case
+            where the target star is a compact object
 
-                Return
-                -------
-                interp1d : dict
-                    A dictionary of scipy.interpolate._cubic.PchipInterpolator 
-                    objects used to calculate star properties corresponding to the 
-                    matched single star track.
+        Return
+        -------
+        interp1d : dict
+            A dictionary of scipy.interpolate._cubic.PchipInterpolator 
+            objects used to calculate star properties corresponding to the 
+            matched single star track.
 
-                """
+        """
 
-                htrack = star.htrack
+        htrack = star.htrack
 
-                with np.errstate(all="ignore"):
-                    # get the initial m0, t0 track
-                    if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
-                        # ZAMS stars in wide (non-mass exchaging binaries) that are
-                        # directed to detached step at birth
-                        m0, t0 = star.mass, 0
-                    elif star.co:
-                        m0, t0 = copy_prev_m0, copy_prev_t0
-                    else:
-                        t_before_matching = time.time()
-                        # matching to single star grids
-                        m0, t0, htrack = self.match_to_single_star(star, htrack)
-                        t_after_matching = time.time()
-                        
-                        if self.verbose:
-                            print(f"Matching duration: {t_after_matching-t_before_matching:.6g} sec\n")
+        with np.errstate(all="ignore"):
+            # get the initial m0, t0 track
+            if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
+                # ZAMS stars in wide (non-mass exchaging binaries) that are
+                # directed to detached step at birth
+                m0, t0 = star.mass, 0
+            elif star.co:
+                m0, t0 = copy_prev_m0, copy_prev_t0
+            else:
+                t_before_matching = time.time()
+                # matching to single star grids
+                m0, t0, htrack = self.match_to_single_star(star, htrack)
+                t_after_matching = time.time()
                 
-                if pd.isna(m0) or pd.isna(t0):
-                    return None, None, None
-                
-                if htrack:
-                    self.grid = self.grid_Hrich
+                if self.verbose:
+                    print(f"Matching duration: {t_after_matching-t_before_matching:.6g} sec\n")
+        
+        if pd.isna(m0) or pd.isna(t0):
+            return None, None, None
+        
+        if htrack:
+            self.grid = self.grid_Hrich
+        else:
+            self.grid = self.grid_strippedHe
+        
+        # check if m0 is in the grid bounds
+        if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
+            set_binary_to_failed(binary)
+            raise MatchingError(f"The mass {m0} is out of the single star grid range and "
+                                "cannot be matched to a track.")
+
+        # get/interpolate track values for requested mass m0
+        get_track = self.grid.get
+
+        max_time = binary.properties.max_simulation_time
+        assert max_time > 0.0, "max_time is non-positive"
+
+        age = get_track("age", m0)
+        t_max = age.max()  # max timelength of the track
+        interp1d = dict()
+        kvalue = dict()
+        for key in self.KEYS[1:]:
+            kvalue[key] = get_track(key, m0)
+        try:
+            for key in self.KEYS[1:]:
+                if key in self.KEYS_POSITIVE:
+                    positive = True
+                    interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
                 else:
-                    self.grid = self.grid_strippedHe
-                
-                # check if m0 is in the grid bounds
-                if m0 < self.grid.grid_mass.min() or m0 > self.grid.grid_mass.max():
-                    set_binary_to_failed(binary)
-                    raise MatchingError(f"The mass {m0} is out of the single star grid range and "
-                                        "cannot be matched to a track.")
-
-                # get/interpolate track values for requested mass m0
-                get_track = self.grid.get
-
-                max_time = binary.properties.max_simulation_time
-                assert max_time > 0.0, "max_time is non-positive"
-
-                age = get_track("age", m0)
-                t_max = age.max()  # max timelength of the track
-                interp1d = dict()
-                kvalue = dict()
+                    interp1d[key] = PchipInterpolator2(age, kvalue[key])
+        except ValueError:
+            i_bad = [None]
+            while len(i_bad) != 0:
+                i_bad = np.where(np.diff(age) <= 0)[0]
+                age = np.delete(age, i_bad)
                 for key in self.KEYS[1:]:
-                    kvalue[key] = get_track(key, m0)
-                try:
-                    for key in self.KEYS[1:]:
-                        if key in self.KEYS_POSITIVE:
-                            positive = True
-                            interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
-                        else:
-                            interp1d[key] = PchipInterpolator2(age, kvalue[key])
-                except ValueError:
-                    i_bad = [None]
-                    while len(i_bad) != 0:
-                        i_bad = np.where(np.diff(age) <= 0)[0]
-                        age = np.delete(age, i_bad)
-                        for key in self.KEYS[1:]:
-                            kvalue[key] = np.delete(kvalue[key], i_bad)
+                    kvalue[key] = np.delete(kvalue[key], i_bad)
 
-                    for key in self.KEYS[1:]:
-                        if key in self.KEYS_POSITIVE:
-                            positive = True
-                            interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
-                        else:
-                            interp1d[key] = PchipInterpolator2(age, kvalue[key])
+            for key in self.KEYS[1:]:
+                if key in self.KEYS_POSITIVE:
+                    positive = True
+                    interp1d[key] = PchipInterpolator2(age, kvalue[key], positive=positive)
+                else:
+                    interp1d[key] = PchipInterpolator2(age, kvalue[key])
 
-                interp1d["inertia"] = PchipInterpolator(
-                    age, kvalue["inertia"] / (const.msol * const.rsol**2))
-                interp1d["Idot"] = interp1d["inertia"].derivative()
+        interp1d["inertia"] = PchipInterpolator(
+            age, kvalue["inertia"] / (const.msol * const.rsol**2))
+        interp1d["Idot"] = interp1d["inertia"].derivative()
 
-                interp1d["conv_env_turnover_time_l_b"] = PchipInterpolator2(
-                    age, kvalue['conv_env_turnover_time_l_b'] / const.secyer)
+        interp1d["conv_env_turnover_time_l_b"] = PchipInterpolator2(
+            age, kvalue['conv_env_turnover_time_l_b'] / const.secyer)
 
-                interp1d["L"] = PchipInterpolator(age, 10 ** kvalue["log_L"])
-                interp1d["R"] = PchipInterpolator(age, 10 ** kvalue["log_R"])
-                interp1d["t_max"] = t_max
-                interp1d["max_time"] = max_time
-                interp1d["t0"] = t0
-                interp1d["m0"] = m0
+        interp1d["L"] = PchipInterpolator(age, 10 ** kvalue["log_L"])
+        interp1d["R"] = PchipInterpolator(age, 10 ** kvalue["log_R"])
+        interp1d["t_max"] = t_max
+        interp1d["max_time"] = max_time
+        interp1d["t0"] = t0
+        interp1d["m0"] = m0
 
-                if star.co:
-                    kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star.mass
-                    kvalue["R"] = np.zeros_like(kvalue["log_R"])
-                    kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
-                    interp1d["mass"] = PchipInterpolator(age, kvalue["mass"])
-                    interp1d["R"] = PchipInterpolator(age, kvalue["R"])
-                    interp1d["mdot"] = PchipInterpolator(age, kvalue["mdot"])
-                    interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
+        if star.co:
+            kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star.mass
+            kvalue["R"] = np.zeros_like(kvalue["log_R"])
+            kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
+            interp1d["mass"] = PchipInterpolator(age, kvalue["mass"])
+            interp1d["R"] = PchipInterpolator(age, kvalue["R"])
+            interp1d["mdot"] = PchipInterpolator(age, kvalue["mdot"])
+            interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
 
-                return interp1d, m0, t0
+        return interp1d, m0, t0
 
     def calc_omega(self, star, prematch_rotation, interp1d):
         """
