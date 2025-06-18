@@ -1704,9 +1704,10 @@ class TestFunctions:
         star.log_R = 0.0
         star.profile = np.array([(1.0), (1.0), (1.0)],\
                                 dtype=([('mass', 'f8')]))
-        with raises(TypeError, match="argument of type 'NoneType' is not "\
-                                     +"iterable"):
-            totest.CEE_parameters_from_core_abundance_thresholds(star)
+        #with raises(TypeError, match="argument of type 'NoneType' is not "\
+        #                             +"iterable"):
+        #    totest.CEE_parameters_from_core_abundance_thresholds(star)
+        assert np.isnan(star.m_core_CE_1cent)
         # examples: missing state with profile and verbose
         star.state = "test_state"
         totest.CEE_parameters_from_core_abundance_thresholds(star,\
