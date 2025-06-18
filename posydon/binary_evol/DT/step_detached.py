@@ -239,15 +239,15 @@ class detached_step:
 
         # creating a track matching object
         self.track_matcher = TrackMatcher(grid_name_Hrich = grid_name_Hrich,
-                                          grid_name_strippedHe = grid_name_strippedHe, 
-                                          path=path, metallicity = metallicity, 
-                                          matching_method = matching_method, 
+                                          grid_name_strippedHe = grid_name_strippedHe,
+                                          path=path, metallicity = metallicity,
+                                          matching_method = matching_method,
                                           list_for_matching_HMS = list_for_matching_HMS,
-                                          list_for_matching_HeStar = list_for_matching_HeStar, 
+                                          list_for_matching_HeStar = list_for_matching_HeStar,
                                           list_for_matching_postMS = list_for_matching_postMS,
                                           record_matching = record_matching,
                                           verbose = self.verbose,)
-        
+
         return
 
     def __repr__(self):
@@ -618,7 +618,7 @@ class detached_step:
                 print("Binary system only contains compact objects."
                       "Exiting step_detached, nothing left to do here.")
             return
-        
+
         primary, interp1d_pri, omega0_pri = pri_out
         secondary, interp1d_sec, omega0_sec = sec_out
 
@@ -636,17 +636,17 @@ class detached_step:
             or ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
             binary.state = "initial_RLOF"
             return
-            
+
         else:
             if not (max_time - binary.time > 0.0):
                 raise ValueError("max_time is lower than the current time. "
                                 "Evolution of the detached binary will go to "
                                 "lower times.")
-            
+
             with np.errstate(all="ignore"):
 
                 t_before_ODEsolution = time.time()
-                
+
                 try:
                     s = solve_ivp(
                         lambda t, y: diffeq(
@@ -780,7 +780,7 @@ class detached_step:
             update_interp_properties(binary, primary, secondary)
 
             secondary.state = check_state_of_star(secondary, star_CO=False)
-            
+
             for timestep in range(-len(t[:-1]), 0):
                 secondary.state_history[timestep] = check_state_of_star(secondary, i=timestep, star_CO=False)
 
@@ -801,7 +801,7 @@ class detached_step:
                     primary.state_history[timestep] = check_state_of_star(primary, i=timestep, star_CO=False)
 
             ## CHECK IF THE BINARY IS IN RLO
-            if s.t_events[0] or s.t_events[1]:  
+            if s.t_events[0] or s.t_events[1]:
 
                 if self.RLO_orbit_at_orbit_with_same_am:
                     # final circular orbit conserves angular momentum
@@ -815,7 +815,7 @@ class detached_step:
 
                 abs_diff_porb = np.abs(binary.orbital_period - orbital_period_from_separation(
                                 binary.separation, secondary.mass, primary.mass)) / binary.orbital_period
-                
+
                 assert abs_diff_porb < 10 ** (-2),  \
                 f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
                 f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
@@ -840,7 +840,7 @@ class detached_step:
                     else:
                         binary.state = "RLO1"
                         binary.event = "oRLO1"
-                
+
                 if ('step_HMS_HMS_RLO' not in all_step_names):
                     if ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE 
                          and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE)
@@ -849,13 +849,13 @@ class detached_step:
                         set_binary_to_failed(binary)
                         raise FlowError("Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after " 
                                     "HMS-HMS not yet supported.") 
-                
+
                     elif (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
                          and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE):
                         set_binary_to_failed(binary)
                         raise ClassificationError("Binary is in the detached step but has stable RLO with two HMS stars - "
                                               "should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)") 
-                    
+
 
             ## CHECK IF STARS WILL UNDERGO CC
             elif s.t_events[2]:
@@ -883,7 +883,7 @@ class detached_step:
                             "Both stars are found to be ready for collapse "
                             "(i.e. end of their life) during the detached "
                             "step, but do not have the same mass")
-                    
+
             elif s.t_events[3]:
                 # reached t_max of track. End of life (possible collapse) of primary
                 if secondary == binary.star_1:
@@ -893,7 +893,7 @@ class detached_step:
 
                 self.track_matcher.get_star_final_values(primary, primary.htrack, m0_pri)
                 self.track_matcher.get_star_profile(primary, primary.htrack, m0_pri)
-                
+
             else:  # Reached max_time asked.
                 if binary.properties.max_simulation_time - binary.time < 0.0:
                     binary.event = "MaxTime_exceeded"

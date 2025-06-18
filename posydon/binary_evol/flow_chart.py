@@ -151,7 +151,7 @@ BINARY_EVENTS_ALL = [
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 [BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
 
-## a list of known total binary states that can occur, 
+## a list of known total binary states that can occur,
 ## but are not in the flow chart and will not be added to POSYDON
 UNDEFINED_STATES = []
 for s1 in STAR_STATES_CO:

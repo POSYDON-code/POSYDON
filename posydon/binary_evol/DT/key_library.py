@@ -1,6 +1,12 @@
-# Dictionary containing data column name (key) 
-# translations between POSYDON h5 file PSyGrid 
-# data names (items) and MESA data names (keys).
+"""Dictionary containing data column name (key) translations between POSYDON h5
+file PSyGrid data names (items) and MESA data names (keys).
+
+"""
+
+__authors__ = [
+    "Seth Gossage <seth.gossage@northwestern.edu>"
+]
+
 DEFAULT_TRANSLATION = {
     "time": "time",
     "orbital_period": "porb",
@@ -158,7 +164,7 @@ DEFAULT_PROFILE_KEYS = (
 # TODO: build these from the other lists to (hopefully) 
 #       ensure consistency
 STAR_STATES_FOR_HMS_MATCHING = ["H-rich_Core_H_burning",
-                                  "accreted_He_Core_H_burning"]
+                                "accreted_He_Core_H_burning"]
 
 # states to ID a postMS star
 STAR_STATES_FOR_postMS_MATCHING = [
