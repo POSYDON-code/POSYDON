@@ -1747,7 +1747,7 @@ class TestFunctions:
                     assert np.isnan(getattr(star, attr))
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("m_core" in attr)):
-                    assert getattr(star, attr) == star.mass
+                    assert np.isnan(getattr(star, attr)) and np.isnan(star.mass)
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("r_core" in attr)):
                     assert getattr(star, attr) == 10 ** star.log_R
