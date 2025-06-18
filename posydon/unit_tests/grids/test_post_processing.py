@@ -496,7 +496,7 @@ class TestFunctions:
         #assert "While accessing abundances in star" in output
         with warns(POSYDONWarning): 
             with warns(ReplaceValueWarning, match="While accessing "
-                                                   +"abundances in star "):
+                                                   +"abundances in star"):
                 MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
                                             test_PSyGrid, single_star=True,\
                                             verbose=True)
