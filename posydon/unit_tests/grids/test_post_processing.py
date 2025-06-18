@@ -18,6 +18,7 @@ import h5py
 import json
 import os
 from posydon.utils.posydonwarning import InappropriateValueWarning,\
+                                         ReplaceValueWarning,\
                                          POSYDONWarning
 from posydon.grids.psygrid import PSyGrid
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
@@ -492,7 +493,13 @@ class TestFunctions:
         assert "The error was raised by" in output
         assert "in CEE_parameters_from_core_abundance_thresholds" in output
         assert "The exception was raised by" in output
-        assert "While accessing abundances in star" in output
+        #assert "While accessing abundances in star" in output
+        with warns(POSYDONWarning): 
+            with warns(ReplaceValueWarning, match="While accessing "
+                                                   +"abundances in star "):
+                MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
+                                            test_PSyGrid, single_star=True,\
+                                            verbose=True)
         assert "in check_state_of_star(star_2) with IC=" in output
         # examples: single and verbose
         with warns(POSYDONWarning): # warnings from SN
