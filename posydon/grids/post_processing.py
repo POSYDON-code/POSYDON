@@ -245,18 +245,27 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
                     for val in [1, 10, 30, 'pure_He_star_10']:
                         EXTRA_COLUMNS[f'S{j+1}_{quantity}_{val}cent'].append(
                                             getattr(star, f'{quantity}_{val}cent'))
-                # aboundances
-                try:
-                    s_o = (1. - star.surface_h1 - star.surface_he4 - star.surface_c12
+                # abundances
+                # now that np.nan is used as default, this won't throw TypeError
+                #try:
+                s_o = (1. - star.surface_h1 - star.surface_he4 - star.surface_c12
                            - star.surface_n14 - star.surface_o16)
-                    c_o = (1. - star.center_h1 - star.center_he4 - star.center_c12
+                c_o = (1. - star.center_h1 - star.center_he4 - star.center_c12
                            - star.center_n14 - star.center_o16)
-                except TypeError as ex:
+                #except TypeError as ex:
+                if np.isnan(s_o):
                     s_o = 0.
+                    Pwarn(f'While accessing aboundances in star_{j+1}, surface abundances'+\
+                      f'were NaN. We have set s_o to 0.', 
+                      "ReplaceValueWarning")
+                if np.isnan(c_o):
                     c_o = 0.
-                    print(ex)
-                    print(f'The error was raised by {grid.MESA_dirs[i]} '
-                           f'while accessing aboundances in star_{j+1}.')
+                    Pwarn(f'While accessing aboundances in star_{j+1}, central abundances'+\
+                      f'were NaN. We have set c_o to 0.', 
+                      "ReplaceValueWarning")
+                #    print(ex)
+                #print(f'The error was raised by {grid.MESA_dirs[i]} '
+                #           f'while accessing aboundances in star_{j+1}.')
                 EXTRA_COLUMNS['S%s_surface_other' % (j+1)].append(s_o)
                 EXTRA_COLUMNS['S%s_center_other' % (j+1)].append(c_o)
             else:
