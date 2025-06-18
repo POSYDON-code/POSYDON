@@ -1409,12 +1409,12 @@ def infer_star_state(star_mass=None, surface_h1=None,
                      log_LH=None, log_LHe=None, log_Lnuc=None, star_CO=False):
     """Infer the star state (corresponding to termination flags 2 and 3)."""
     if star_CO:
-        if ((star_mass is None) or (star_mass<=0)):
+        if ((pd.isna(star_mass)) or (star_mass<=0)):
             return "massless_remnant"
-        elif ((((surface_h1 is not None) and (surface_h1>0)) or
-               ((center_h1 is not None) and (center_h1>0)) or
-               ((center_he4 is not None) and (center_he4>0)) or
-               ((center_c12 is not None) and (center_c12>0)) or
+        elif ((((not pd.isna(surface_h1)) and (surface_h1>0)) or
+               ((not pd.isna(center_h1)) and (center_h1>0)) or
+               ((not pd.isna(center_he4)) and (center_he4>0)) or
+               ((not pd.isna(center_c12)) and (center_c12>0)) or
                (star_mass < STATE_NS_STARMASS_LOWER_LIMIT)) and
               (star_mass <= STATE_WD_STARMASS_UPPER_LIMIT)):
             return "WD"
@@ -1423,7 +1423,7 @@ def infer_star_state(star_mass=None, surface_h1=None,
         else:
             return "BH"
 
-    if surface_h1 is None:
+    if pd.isna(surface_h1):
         return STATE_UNDETERMINED
 
     rich_in = ("H-rich" if surface_h1 > THRESHOLD_HE_NAKED_ABUNDANCE
