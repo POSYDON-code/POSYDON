@@ -255,12 +255,12 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
                 #except TypeError as ex:
                 if np.isnan(s_o):
                     s_o = 0.
-                    Pwarn(f'While accessing aboundances in star_{j+1}, surface abundances'+\
+                    Pwarn(f'While accessing abundances in star_{j+1}, surface abundances'+\
                       f'were NaN. We have set s_o to 0.', 
                       "ReplaceValueWarning")
                 if np.isnan(c_o):
                     c_o = 0.
-                    Pwarn(f'While accessing aboundances in star_{j+1}, central abundances'+\
+                    Pwarn(f'While accessing abundances in star_{j+1}, central abundances'+\
                       f'were NaN. We have set c_o to 0.', 
                       "ReplaceValueWarning")
                 #    print(ex)

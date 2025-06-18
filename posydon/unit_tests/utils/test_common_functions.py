@@ -1699,6 +1699,7 @@ class TestFunctions:
         #                                   + "** or pow(): 'float' and "\
         #                                   + "'NoneType'"
         # instead, calculated values should come out as NaN, as asserted below
+        totest.CEE_parameters_from_core_abundance_thresholds(star)
         assert np.isnan(star.m_core_CE_1cent)
         star.log_R = 0.0
         star.profile = np.array([(1.0), (1.0), (1.0)],\

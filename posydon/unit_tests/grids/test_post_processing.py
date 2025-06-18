@@ -492,7 +492,7 @@ class TestFunctions:
         assert "The error was raised by" in output
         assert "in CEE_parameters_from_core_abundance_thresholds" in output
         assert "The exception was raised by" in output
-        assert "while accessing aboundances in star" in output
+        assert "While accessing abundances in star" in output
         assert "in check_state_of_star(star_2) with IC=" in output
         # examples: single and verbose
         with warns(POSYDONWarning): # warnings from SN
