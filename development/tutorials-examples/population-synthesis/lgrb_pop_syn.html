@@ -49,23 +49,19 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
 <li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
@@ -89,25 +85,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -168,11 +157,11 @@
 </pre></div>
 </div>
 </div>
-<p>We had already selected only binaries that result in a BBH merger in the <code class="docutils literal notranslate"><span class="pre">BBH_contact.h5</span></code> file, so we don’t need to perform any selection on the binaries.</p>
-<p>Thus, our next step is to create a selection function for LGRBs based on the properties in the history and onelines of the binaries.</p>
-<p>POSYDON already includes a basic selection function for GRBs named <code class="docutils literal notranslate"><span class="pre">GRB_selection</span></code> in <code class="docutils literal notranslate"><span class="pre">posydon.popsyn.transient_select_func</span></code>, which identifies if a GRB occured based on the presence of <code class="docutils literal notranslate"><span class="pre">m_disk_radiated</span></code> for either star. <code class="docutils literal notranslate"><span class="pre">GRB_selection</span></code> also outputs some pre and post supernova properties.</p>
+<p>We already selected only binaries that result in a BBH merger in the <code class="docutils literal notranslate"><span class="pre">BBH_contact.h5</span></code> file, so we don’t need to perform any selection on the binaries.</p>
+<p>Thus, our next step is to create a selection function for LGRBs based on the properties in the history and oneline data of the binaries.</p>
+<p>POSYDON already includes a basic selection function for GRBs named <code class="docutils literal notranslate"><span class="pre">GRB_selection</span></code> in the <code class="docutils literal notranslate"><span class="pre">posydon.popsyn.transient_select_funcs</span></code> module, which identifies if a GRB occurred based on the presence of <code class="docutils literal notranslate"><span class="pre">m_disk_radiated</span></code> for either star. <code class="docutils literal notranslate"><span class="pre">GRB_selection</span></code> also outputs some pre and post supernova properties.</p>
 <p>However, as you can see below, the <code class="docutils literal notranslate"><span class="pre">GRB_selection</span></code> requires an additional input parameter of <code class="docutils literal notranslate"><span class="pre">S1_S2</span></code>. The <code class="docutils literal notranslate"><span class="pre">Population.create_transient_population</span></code> function cannot pass these additional arguments to the sub-function, <code class="docutils literal notranslate"><span class="pre">GRB_selection</span></code>. Thus, we need to wrap the <code class="docutils literal notranslate"><span class="pre">GRB_selection</span></code> function.</p>
-<p>This is useful, if you would like to create a similar population, but use different model parameters.</p>
+<p>This is useful if you would like to create a similar population, but use different model parameters.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -222,7 +211,7 @@
 </div>
 </div>
 <p>You’ve now created a LGRB population, where either the first and/or second star has some amount of radiative disk.</p>
-<p>This is, of course, just an example and the actual amount of disk required to power a LGRB will be higher than some of the values included in our “LGRB” rate. Moreover, the number of binaries in this population is insufficient to actually see the all unique events.</p>
+<p>This is, of course, just an example and the actual amount of disk required to power a LGRB will be higher than some of the values included in our “LGRB” rate. Moreover, the number of binaries in this population is insufficient to actually see all unique events.</p>
 <p>For now, let’s continue and calculate the metallicity bias function for the LGRBs. We don’t need to calculate the <code class="docutils literal notranslate"><span class="pre">underlying_mass</span></code> of the population, because we already did this in the <a class="reference internal" href="bbh_analysis.html"><span class="doc">BBH tutorial</span></a>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -241,7 +230,7 @@
 </div>
 </div>
 <p>After this selection, we follow similar steps to the BBH analysis for creating and plotting a cosmic star formation history weighted rate.</p>
-<p>If you’ve followed the previous tutorial on the BBH analaysis, you will still have access to those populations too.</p>
+<p>If you’ve followed the previous tutorial on the BBH analysis, you will still have access to those populations too.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -275,7 +264,7 @@
 </pre></div>
 </div>
 </div>
-<p>Below we plot the BBH rate and the un-normalised LGRB rate together, showing how you can access multiple event rates, and transient populations from the same file.</p>
+<p>Below we plot the BBH rate and the unnormalized LGRB rate together, showing how you can access multiple event rates, and transient populations from the same file.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -315,8 +304,8 @@
 </div>
 <p>It’s possible to calculate more properties for the LGRBs using the <code class="docutils literal notranslate"><span class="pre">posydon.popsyn.GRB</span></code> module.</p>
 <p>It contains the <code class="docutils literal notranslate"><span class="pre">get_GRB_properties</span></code> that can provide more detailed GRB properties based on empirical or simulation relations for the LGRB energy and beaming factor.</p>
-<p>Enjoy exploring this function and creating a more detailed GRB population! Keep in mind that it’s not possible to add additional columns to the transient population without overwritting the population.</p>
-<p>The next tutorial will focus on rerunning specific binaries in a population or setting up an unique binary yourself.</p>
+<p>Enjoy exploring this function and creating a more detailed GRB population! Keep in mind that it’s not possible to add additional columns to the transient population without overwriting the population.</p>
+<p>The next tutorial will focus on rerunning specific binaries in a population or setting up a unique binary yourself.</p>
 </section>
 </section>
 

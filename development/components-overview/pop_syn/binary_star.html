@@ -48,18 +48,13 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul>
@@ -76,14 +71,12 @@
 <li class="toctree-l2"><a class="reference internal" href="single_star.html">The SingleStar object</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">The BinaryStar object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSDYON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSYDON Population Synthesis Configuration Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow_chart.html">The Flow Chart Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">The Population Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#transientpopulation">TransientPopulation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#rates">Rates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-population-files">The Structure of Population Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pop_syn_debug.html">Debugging POSYDON population synthesis models</a></li>
 </ul>
 </li>
@@ -93,25 +86,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -190,7 +176,7 @@ history. The current parameter value of the star object is accessed with, e.g.
 <td><p>Orbital eccentricity.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">V_sys</span></code></p></td>
-<td><p>Velocity of the centre of mass of the binary [Vx, Vy, Vz] in km/s.</p></td>
+<td><p>Velocity of the center of mass of the binary [Vx, Vy, Vz] in km/s.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mass_transfer_case</span></code></p></td>
 <td><p>Mass transfer case, see MT case options.</p></td>
@@ -332,13 +318,114 @@ These can be requested and will be stored in the output oneline (See the
 <section id="event-options">
 <h3>Event options<a class="headerlink" href="#event-options" title="Link to this heading"></a></h3>
 <p>Binary events are defined according to the following table:</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Events</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Event</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ZAMS</span></code></p></td>
+<td><p>Zero Age Main Sequence</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CC1</span></code></p></td>
+<td><p>Core collapse of star 1.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CC2</span></code></p></td>
+<td><p>Core collapse of star 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oRLO1</span></code></p></td>
+<td><p>The binary is at onset of Roche Lobe overflow, star 1 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oRLO2</span></code></p></td>
+<td><p>The binary is at onset of Roche Lobe overflow, star 2 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oCE1</span></code></p></td>
+<td><p>The binary is at the onset of Common Envelope initiated by star 1.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oCE2</span></code></p></td>
+<td><p>The binary is at the onset of Common Envelope initiated by star 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oDoubleCE1</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary is at the onset of Double Common Envelope initiated by star 1.</div>
+<div class="line">Both stars are post main-sequence.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oDoubleCE2</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary is at the onset of Double Common Envelope initiated by star 2.</div>
+<div class="line">Both stars are post main-sequence.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CO_contact</span></code></p></td>
+<td><p>The binary reached contact in the compact object phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">redirect_from_ZAMS</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary was redirected from ZAMS for a variety of reasons.</div>
+<div class="line">Only recorded if history_verbose = True</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">redirect_from_CO_HMS_RLO</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary was redirected from CO_HMS_RLO for a variety of reasons.</div>
+<div class="line">Only recorded if history_verbose = True</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">redirect_from_CO_HeMS</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary was redirected from CO_HeMS for a variety of reasons.</div>
+<div class="line">Only recorded if history_verbose = True</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">redirect_from_CO_HeMS_RLO</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary was redirected from CO_HeMS_RLO for a variety of reasons.</div>
+<div class="line">Only recorded if <cite>history_verbose = True</cite></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MaxTime_exceeded</span></code></p></td>
+<td><p>The maximum time of the evolution was exceeded.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">maxtime</span></code></p></td>
+<td><p>The maximum time of the evolution was reached.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oMerging1</span></code></p></td>
+<td><p>The binary is at the onset of merging, star 1 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oMerging2</span></code></p></td>
+<td><p>The binary is at the onset of merging, star 2 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>No event occurred.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ERR</span></code></p></td>
+<td><p>An error occurred in the evolution.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">END</span></code></p></td>
+<td><p>The binary evolution was stopped.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="mass-transfer-case">
 <h3>Mass Transfer case<a class="headerlink" href="#mass-transfer-case" title="Link to this heading"></a></h3>
 <p>The mass transfer cases are stored in <cite>mt_history_GRIDTYPE</cite> and are defined
 according to the following table: TODO: add the table below</p>
-<table class="docutils align-default" id="id4">
-<caption><span class="caption-text">Mass transfer cases</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Mass transfer cases</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 25.0%" />
 <col style="width: 75.0%" />

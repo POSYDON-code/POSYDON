@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>POSDYON Population Synthesis Configuration Guide &mdash; posydon development documentation</title>
+  <title>POSYDON Population Synthesis Configuration Guide &mdash; posydon development documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
@@ -48,18 +48,13 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul>
@@ -76,14 +71,12 @@
 <li class="toctree-l2"><a class="reference internal" href="single_star.html">The SingleStar object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="binary_star.html">The BinaryStar object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">POSDYON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">POSYDON Population Synthesis Configuration Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow_chart.html">The Flow Chart Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">The Population Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#transientpopulation">TransientPopulation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#rates">Rates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-population-files">The Structure of Population Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pop_syn_debug.html">Debugging POSYDON population synthesis models</a></li>
 </ul>
 </li>
@@ -93,25 +86,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -129,7 +115,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
-      <li class="breadcrumb-item active">POSDYON Population Synthesis Configuration Guide</li>
+      <li class="breadcrumb-item active">POSYDON Population Synthesis Configuration Guide</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/components-overview/pop_syn/population_params.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -139,8 +125,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="posdyon-population-synthesis-configuration-guide">
-<span id="pop-params-guide"></span><h1>POSDYON Population Synthesis Configuration Guide<a class="headerlink" href="#posdyon-population-synthesis-configuration-guide" title="Link to this heading"></a></h1>
+  <section id="posydon-population-synthesis-configuration-guide">
+<span id="pop-params-guide"></span><h1>POSYDON Population Synthesis Configuration Guide<a class="headerlink" href="#posydon-population-synthesis-configuration-guide" title="Link to this heading"></a></h1>
 <p>This documentation provides a detailed overview of the configuration options available in the Posydon software package.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -181,7 +167,7 @@ Note that the loading of the simulation steps is separate from creating the obje
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">simprop_kwargs_from_ini</span>
 
 <span class="c1"># read from file</span>
-<span class="n">sim_props</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">,</span> <span class="n">vebose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">sim_props</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># create SimulationProperties object</span>
 <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_props</span><span class="p">)</span>
@@ -457,7 +443,7 @@ It evolves the binary object in isolation until Roche lobe overflow occurs.</p>
 </section>
 <section id="step-disrupted">
 <h3>Step Disrupted<a class="headerlink" href="#step-disrupted" title="Link to this heading"></a></h3>
-<p>The dirtupted step evolves a system when a supernova has unbound the binary components.
+<p>The disrupted step evolves a system when a supernova has unbound the binary components.
 This class inherits from the detached step, but only evolves the remaining star in isolation.
 This means that this step uses the single stars loaded by the detached step.</p>
 <table class="population-params-table docutils align-default">
@@ -1053,7 +1039,7 @@ This includes, the number of binaries, the metallicity, how often to save the po
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">binarypop_kwargs_from_ini</span>
 
 <span class="c1"># read from file</span>
-<span class="n">pop_params</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">,</span> <span class="n">vebose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pop_params</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># create BinaryPopulation object</span>
 <span class="n">pop</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="p">(</span><span class="o">**</span><span class="n">pop_params</span><span class="p">)</span>
@@ -1063,6 +1049,291 @@ This includes, the number of binaries, the metallicity, how often to save the po
 <h3>BinaryPopulation Options<a class="headerlink" href="#binarypopulation-options" title="Link to this heading"></a></h3>
 <p>These parameters contain options on how the population is evolved, in practical terms, ie. the number of binaries.
 It also contains which sampling distributions to use for the initial conditions of the binaries.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">optimize_ram</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Save population in batches.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ram_per_cpu</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Set maximum RAM per CPU before batch saving (in GB).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dump_rate</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Batch save after evolving N binaries.</div>
+<div class="line">To facilitate I/O performance, this should be at least 500 for populations of 100.000 binaries or more.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2000</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temp_directory</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Folder for keeping batch files.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'batches'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tqdm</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable progress bar.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">breakdown_to_df</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Convert BinaryStars into DataFrames after evolution.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">use_MPI</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If True, evolve with MPI (equivalent to: <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">mpi4py</span> <span class="pre">import</span> <span class="pre">MPI,</span> <span class="pre">comm</span> <span class="pre">=</span> <span class="pre">MPI.COMM_WORLD</span></code>).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metallicity</span></code></p></td>
+<td><div class="line-block">
+<div class="line">In units of solar metallicity. Supported values <code class="docutils literal notranslate"><span class="pre">[2.,</span> <span class="pre">1.,</span> <span class="pre">0.45,</span> <span class="pre">0.2,</span> <span class="pre">0.1,</span> <span class="pre">0.01,</span> <span class="pre">0.001,</span> <span class="pre">0.0001]</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1.]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">error_checking_verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If True, write all POSYDON errors to stderr at runtime</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">warnings_verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If True, write all POSYDON warnings to stderr at runtime</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">history_verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If True, record extra functional steps in the output DataFrames</div>
+<div class="line">(These extra steps represent internal workings of POSYDON rather than physical phases of evolution)</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">entropy</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Random Number Generation: uses system entropy.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">number_of_binaries</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Number of binaries to evolve.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">star_formation</span></code></p></td>
+<td><div class="line-block">
+<div class="line">What star formation is used to sample the binaries.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'constant'</span></code>: sample with a constant rate over time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'burst'</span></code>: sample from a burst of star formation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'custom_linear'</span></code>: sample with a custom linear rate over time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'custom_log10'</span></code>: sample with a custom log10 rate over time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'custom_linear_histogram'</span></code>: sample from a custom linear histogram rate over time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'custom_log10_histogram'</span></code>: sample from a custom log10 histogram rate over time</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'burst'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_simulation_time</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Maximum simulation time (in years).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">13.8e9</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">binary_fraction</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Fraction of binaries (0 &lt; fraction &lt;= 1).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">primary_mass_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Salpeter</span></code>: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1955ApJ...121..161S/abstract">Salpeter E. E., 1955, ApJ, 121, 161</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Kroupa1993'</span></code>: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1993MNRAS.262..545K/abstract">Kroupa P., Tout C. A., Gilmore G., 1993, MNRAS, 262, 545</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Kroupa2001'</span></code>: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2001MNRAS.322..231K/abstract">Kroupa P., 2001, MNRAS, 322, 231</a></p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'Kroupa2001'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">primary_mass_min</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Minimum primary mass (in solar masses)</div>
+<div class="line">limits: 0-300</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">7.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">primary_mass_max</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Maximum primary mass (in solar masses).</div>
+<div class="line">Needs to be larger than <code class="docutils literal notranslate"><span class="pre">secondary_mass_min</span></code>.</div>
+<div class="line">limits: 0-300</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">150.0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">secondary_mass_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'flat_mass_ratio'</span></code>: flat mass ratio distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'q=1'</span></code>: mass ratio of 1. Ignores <code class="docutils literal notranslate"><span class="pre">secondary_mass_min/max</span></code> and sets the secondary mass to the primary mass.</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'flat_mass_ratio'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">secondary_mass_min</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Minimum secondary mass (in solar masses).</div>
+<div class="line">Is required to be smaller than the minimum primary mass.</div>
+<div class="line">limits: 0-270</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.35</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">secondary_mass_max</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Maximum secondary mass (in solar masses).</div>
+<div class="line">limits: 0-270</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">150.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">orbital_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">How to the orbital parameter is sampled.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'separation'</span></code>: use orbital separation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'period'</span></code>: use orbital period</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'period'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">orbital_period_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Used only for <code class="docutils literal notranslate"><span class="pre">orbital_scheme</span> <span class="pre">=</span> <span class="pre">'period'</span></code>.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Sana+12_period_extended</span></code>: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2012Sci...337..444S/abstract">Sana et al. 2012</a></p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'Sana+12_period_extended'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">orbital_period_min</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Minimum orbital period (in days).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.75</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">orbital_period_max</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Maximum orbital period (in days).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6000.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">#orbital_separation_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Used only for <code class="docutils literal notranslate"><span class="pre">orbital_scheme</span> <span class="pre">=</span> <span class="pre">'separation'</span></code>.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_uniform'</span></code>: log-uniform distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_normal'</span></code>: log-normal distribution</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'log_uniform'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">#orbital_separation_min</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Minimum orbital separation (in solar radii).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">#orbital_separation_max</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Maximum orbital separation (in solar radii).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1e5</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">#log_orbital_separation_mean</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Used only for <code class="docutils literal notranslate"><span class="pre">orbital_separation_scheme</span> <span class="pre">=</span> <span class="pre">'log_normal'</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">#log_orbital_separation_sigma</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Used only for <code class="docutils literal notranslate"><span class="pre">orbital_separation_scheme</span> <span class="pre">=</span> <span class="pre">'log_normal'</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eccentricity_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">How the initial binary eccentricity is sampled.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'zero'</span></code> : zero eccentricity</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'thermal'</span></code>: thermal distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'uniform'</span></code>: uniform distribution</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'zero'</span></code></p></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 <section id="saving-output">

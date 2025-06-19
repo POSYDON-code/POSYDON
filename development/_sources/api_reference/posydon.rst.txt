@@ -16,7 +16,6 @@ posydon
    posydon.grids
    posydon.interpolation
    posydon.popsyn
-   posydon.unit_tests
    posydon.user_modules
    posydon.utils
    posydon.visualization

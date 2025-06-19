@@ -49,23 +49,19 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
 <li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
@@ -89,25 +85,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -137,7 +126,7 @@
              
   <section id="Evolve-individual-binaries-🐞">
 <h1>Evolve individual binaries 🐞<a class="headerlink" href="#Evolve-individual-binaries-🐞" title="Link to this heading"></a></h1>
-<p>It can be extremely useful to evolve a single binary from specific initial conditions or to start at a specific evolutionary state. This is useful for debugging binaries and checking if your custom steps or flow are correctly working.</p>
+<p>It can be extremely useful to evolve a single binary from specific initial conditions or to start at a specific evolutionary state. This is useful for debugging binaries and checking if your custom steps or flow are working correctly.</p>
 <p>This tutorial will cover:</p>
 <ul class="simple">
 <li><p>How to initialise a zero-age main sequence binary (ZAMS).</p></li>
@@ -228,7 +217,7 @@
 </pre></div>
 </div>
 </div>
-<p>You’re now able to access the binary and evolutionary information. Using the function, <code class="docutils literal notranslate"><span class="pre">BinaryStar.to_df()</span></code> we can inspect the evolution of the systm.</p>
+<p>You’re now able to access the binary and evolutionary information. Using the function, <code class="docutils literal notranslate"><span class="pre">BinaryStar.to_df()</span></code> we can inspect the evolution of the system.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -261,7 +250,7 @@
 </pre></div>
 </div>
 </div>
-<p>Even though we reset the binary, the natal kick properties stored in the natal kick array are not reset. This is because we want to be able to re-evolve the binary to the same final state. In case you want to reset the natal kick array values, then set the list to <code class="docutils literal notranslate"><span class="pre">None</span></code> values.</p>
+<p>Even though we reset the binary, the natal kick properties stored in the natal kick array are not reset. This is because we want to be able to re-evolve the binary to the same final state. If you want to reset the natal kick array values, then set its elements to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -348,11 +337,11 @@
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[143]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Because the original population contains two extre columns. These have to be defined manually here.</span>
-<span class="c1"># Otherwise, the reseting of the binaries fails.</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Because the original population contains two extra columns. These have to be defined manually here.</span>
+<span class="c1"># Otherwise, resetting the binaries will fail.</span>
 <span class="n">BINARY</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                             <span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">,</span><span class="s1">&#39;step_times&#39;</span><span class="p">:</span><span class="s1">&#39;float&#39;</span><span class="p">})</span>
 
@@ -393,7 +382,7 @@
 </section>
 <section id="Evolving-a-Binary-Star-starting-from-an-arbitrary-state">
 <h2>Evolving a Binary Star starting from an arbitrary state<a class="headerlink" href="#Evolving-a-Binary-Star-starting-from-an-arbitrary-state" title="Link to this heading"></a></h2>
-<p>If you want to evolve a custom binary star, you can do so by crafting yourself the <code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> object and providing the <code class="docutils literal notranslate"><span class="pre">SimulationProperties</span></code> object. For example, let’s evolve a neutron star with a low mass helium star in Roche lobe overflow. And start a binary in the detached step, which requires a bit of additional input data.</p>
+<p>If you want to evolve a custom binary star, you can do so by manually creating the <code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> object and providing the <code class="docutils literal notranslate"><span class="pre">SimulationProperties</span></code> object. For example, let’s evolve a neutron star with a low-mass helium star in Roche lobe overflow. And start a binary in the detached step, which requires a bit of additional input data.</p>
 <p>We will use the standard SimulationProperties, loaded earlier in this notebook.</p>
 <div class="admonition warning">
 <p class="admonition-title fa fa-exclamation-circle">Caution!</p>

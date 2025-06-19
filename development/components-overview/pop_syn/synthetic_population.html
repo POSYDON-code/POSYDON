@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Population Object &mdash; posydon development documentation</title>
+  <title>Synthetic Populations &mdash; posydon development documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
@@ -48,18 +48,13 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul>
@@ -76,14 +71,12 @@
 <li class="toctree-l2"><a class="reference internal" href="single_star.html">The SingleStar object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="binary_star.html">The BinaryStar object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSDYON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSYDON Population Synthesis Configuration Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow_chart.html">The Flow Chart Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">The Population Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#transientpopulation">TransientPopulation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#rates">Rates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#the-structure-of-population-files">The Structure of Population Files</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pop_syn_debug.html">Debugging POSYDON population synthesis models</a></li>
 </ul>
 </li>
@@ -93,25 +86,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -129,7 +115,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
-      <li class="breadcrumb-item active">The Population Object</li>
+      <li class="breadcrumb-item active">Synthetic Populations</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/components-overview/pop_syn/synthetic_population.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -139,10 +125,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="the-population-object">
-<span id="synthetic-population"></span><h1>The Population Object<a class="headerlink" href="#the-population-object" title="Link to this heading"></a></h1>
+  <section id="synthetic-populations">
+<span id="synthetic-population"></span><h1>Synthetic Populations<a class="headerlink" href="#synthetic-populations" title="Link to this heading"></a></h1>
+<section id="population">
+<h2>Population<a class="headerlink" href="#population" title="Link to this heading"></a></h2>
 <p>The <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><code class="xref py py-class docutils literal notranslate"><span class="pre">Population</span></code></a> object is an interface for the population data, which is stored in a HDF5 file.
-You can find more information about the file structure here: <a class="reference internal" href="#population-file-structure"><span class="std std-ref">The Structure of Population Files</span></a>.</p>
+You can find more information about the file structure here: <a class="reference internal" href="#population-file-structure"><span class="std std-ref">The Structure of Generated Population Files</span></a>.</p>
 <p>The population file is created by a population synthesis run, and contains the history of each system in the population, and an oneline description of each system and its evolution.</p>
 <p>The <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><code class="xref py py-class docutils literal notranslate"><span class="pre">Population</span></code></a> object is created by passing the path to the population file to the constructor.
 It will not load in the data immediately, but only when requested.</p>
@@ -159,7 +147,7 @@ It will not load in the data immediately, but only when requested.</p>
 </ul>
 <p>The <code class="code docutils literal notranslate"><span class="pre">formation_channels</span></code> is not immediately available, but can be created using the
 <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.calculate_formation_channels" title="posydon.popsyn.synthetic_population.Population.calculate_formation_channels"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_formation_channels()</span></code></a> function of the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><code class="xref py py-class docutils literal notranslate"><span class="pre">Population</span></code></a> object.</p>
-<p>Additionally, <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.mass_per_metallicity" title="posydon.popsyn.synthetic_population.Population.mass_per_metallicity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Population.mass_per_metallicity</span></code></a> contains some essential metadata calculated from the populaiton synthesis run.
+<p>Additionally, <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.mass_per_metallicity" title="posydon.popsyn.synthetic_population.Population.mass_per_metallicity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Population.mass_per_metallicity</span></code></a> contains some essential metadata calculated from the population synthesis run.
 It is a pandas.DataFrame with the metallicity (in solar units) as the index and 3 columns:</p>
 <ol class="arabic simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">count</span></code>, the number of systems at that metallicity in the file.</p></li>
@@ -167,7 +155,7 @@ It is a pandas.DataFrame with the metallicity (in solar units) as the index and 
 <li><p><code class="code docutils literal notranslate"><span class="pre">underlying_mass</span></code>, the total mass of the population run at that metallicity, assuming a binary fraction of 1. This is calculated in <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.normalized_pop_mass.initial_total_underlying_mass" title="posydon.popsyn.normalized_pop_mass.initial_total_underlying_mass"><code class="xref py py-func docutils literal notranslate"><span class="pre">initial_total_underlying_mass()</span></code></a>.</p></li>
 </ol>
 <section id="history">
-<h2>history<a class="headerlink" href="#history" title="Link to this heading"></a></h2>
+<h3>history<a class="headerlink" href="#history" title="Link to this heading"></a></h3>
 <p><a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.history" title="posydon.popsyn.synthetic_population.Population.history"><code class="xref py py-class docutils literal notranslate"><span class="pre">history</span></code></a> contains the full history of each system in the population.
 The history is stored in a pandas DataFrame, where each row is a timestep in the evolution of a system.
 The columns of the DataFrame are the parameters of the system at each timestep.</p>
@@ -197,7 +185,11 @@ for specific columns and the index. The columns are limited to those containing 
 </pre></div>
 </div>
 <p>If you want to have a peak, you can use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">head()</span></code> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">tail()</span></code> functions.</p>
-<p>Additional functions are made available for easy of use.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Additional functions are made available for ease of use.</p>
 <p>If you want to check the length of the history of a system, you can use <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.History.lengths" title="posydon.popsyn.synthetic_population.History.lengths"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Population.history.lengths</span></code></a> or <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.history_lengths" title="posydon.popsyn.synthetic_population.Population.history_lengths"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Population.history_lengths</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">lengths</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">history_lengths</span><span class="p">)</span>
@@ -219,7 +211,7 @@ The indices are useful in selecting systems from the population.</p>
 </div>
 </section>
 <section id="oneline">
-<h2>oneline<a class="headerlink" href="#oneline" title="Link to this heading"></a></h2>
+<h3>oneline<a class="headerlink" href="#oneline" title="Link to this heading"></a></h3>
 <p><a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.oneline" title="posydon.popsyn.synthetic_population.Population.oneline"><code class="xref py py-meth docutils literal notranslate"><span class="pre">oneline()</span></code></a> contains a single line description of each system in the population.
 This is useful for a quick inspection of the population.
 The oneline data is stored in a pandas DataFrame, where each row is a system in the population.</p>
@@ -228,6 +220,29 @@ Besides the initial and final properties of the system, this table also contains
 <p>The initial-final properties are those in the history table, but with the postfix <code class="code docutils literal notranslate"><span class="pre">_i</span></code> and <code class="code docutils literal notranslate"><span class="pre">_f</span></code> depending on the initial or final value.
 The additional values are the scalar values from the individual stars and the binary properties (See <a class="reference internal" href="single_star.html#single-star"><span class="std std-ref">Single Star</span></a> and <a class="reference internal" href="binary_star.html#binary-star"><span class="std std-ref">Binary Star</span></a>).</p>
 <p>Additionally, <code class="docutils literal notranslate"><span class="pre">WARNING</span></code>, <code class="docutils literal notranslate"><span class="pre">FAILED</span></code>, and metallicity columns are available in the oneline table.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Additional columns</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Properties</p></th>
+<th class="head"><p>Descriptions</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FAILED</span></code></p></td>
+<td><p>Indicates if the system failed during the population synthesis run.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></p></td>
+<td><p>Indicates if there were any warnings for the system during the population synthesis run.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metallicity</span></code></p></td>
+<td><p>The metallicity of the system.</p></td>
+</tr>
+</tbody>
+</table>
 <p>Like the <code class="code docutils literal notranslate"><span class="pre">history</span></code> access, you can access the oneline data by using the index of the system or the columns.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">binary_0</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">mass</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="s1">&#39;S1_mass_i&#39;</span><span class="p">]</span>
@@ -248,7 +263,7 @@ The length and indices of the oneline table can be found with <code class="xref 
 </div>
 </section>
 <section id="formation-channels">
-<h2>formation_channels<a class="headerlink" href="#formation-channels" title="Link to this heading"></a></h2>
+<h3>formation_channels<a class="headerlink" href="#formation-channels" title="Link to this heading"></a></h3>
 <p><a class="reference internal" href="../../api_reference/posydon.popsyn.html#id0" title="posydon.popsyn.synthetic_population.Population.formation_channels"><code class="xref py py-class docutils literal notranslate"><span class="pre">formation_channels</span></code></a> contains the formation channels of each system in the population.
 The formation channels are stored in a pandas DataFrame, where each row is a system in the population.</p>
 <p>The formation channels are calculated by combining the <cite>event</cite> column in the history table into a single string using the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.calculate_formation_channels" title="posydon.popsyn.synthetic_population.Population.calculate_formation_channels"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_formation_channels()</span></code></a> function of the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><code class="xref py py-class docutils literal notranslate"><span class="pre">Population</span></code></a> object.</p>
@@ -259,7 +274,7 @@ The formation channels are stored in a pandas DataFrame, where each row is a sys
 </ul>
 </section>
 <section id="additional-attributes">
-<h2>Additional Attributes<a class="headerlink" href="#additional-attributes" title="Link to this heading"></a></h2>
+<h3>Additional Attributes<a class="headerlink" href="#additional-attributes" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">ini_parameters</span></code>: The parameters for the initial sampling conditions of the population synthesis run.</p></li>
 <li><p><a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.mass_per_metallicity" title="posydon.popsyn.synthetic_population.Population.mass_per_metallicity"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mass_per_metallicity</span></code></a>: The mass per metallicity bin for the population synthesis run.
@@ -272,7 +287,7 @@ The <cite>underlying_mass</cite> is calculated with the assumption that binary f
 </ul>
 </section>
 <section id="exporting-part-of-the-population">
-<h2>Exporting part of the population<a class="headerlink" href="#exporting-part-of-the-population" title="Link to this heading"></a></h2>
+<h3>Exporting part of the population<a class="headerlink" href="#exporting-part-of-the-population" title="Link to this heading"></a></h3>
 <p>The class function <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.export_selection" title="posydon.popsyn.synthetic_population.Population.export_selection"><code class="xref py py-func docutils literal notranslate"><span class="pre">Population.export_selection</span></code></a> allows you to export part of the population to a new HDF5 file.
 It takes a list of indices of the systems you want to export, and the path to the new file.
 This will copy the systems with the given indices to the new file, which includes their history, oneline data, and formation channels (if presen).</p>
@@ -287,7 +302,7 @@ This will copy the systems with the given indices to the new file, which include
 </section>
 </section>
 <section id="transientpopulation">
-<h1>TransientPopulation<a class="headerlink" href="#transientpopulation" title="Link to this heading"></a></h1>
+<h2>TransientPopulation<a class="headerlink" href="#transientpopulation" title="Link to this heading"></a></h2>
 <p>The <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.TransientPopulation" title="posydon.popsyn.synthetic_population.TransientPopulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransientPopulation</span></code></a> object is an interface for the transient data of the population.
 It inherits from the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><code class="xref py py-class docutils literal notranslate"><span class="pre">Population</span></code></a> object, but also allows access to the transient populations in the population file.</p>
 <p>A transient population consists of instantaneous events in the population, such as supernovae, kilonovae, or gamma-ray bursts.
@@ -299,14 +314,17 @@ The <a class="reference internal" href="../../api_reference/posydon.popsyn.html#
 <span class="n">trans_pop</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="s1">&#39;path/to/population.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;transient_name&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<section id="creating-a-transientpopulation">
+<h3>Creating a TransientPopulation<a class="headerlink" href="#creating-a-transientpopulation" title="Link to this heading"></a></h3>
 <p>The transient population is created using the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.create_transient_population" title="posydon.popsyn.synthetic_population.Population.create_transient_population"><code class="xref py py-func docutils literal notranslate"><span class="pre">Population.create_transient_population()</span></code></a> function of the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><code class="xref py py-class docutils literal notranslate"><span class="pre">Population</span></code></a> object.
 This function creates a separate table with each transient in the population file.
 It loops over all the systems in the population in chunks and applies the given function to them.</p>
 <p>The <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.create_transient_population" title="posydon.popsyn.synthetic_population.Population.create_transient_population"><code class="xref py py-func docutils literal notranslate"><span class="pre">Population.create_transient_population()</span></code></a> function takes a function as an argument: <code class="code docutils literal notranslate"><span class="pre">selection_function</span></code>.</p>
 <p>The <code class="code docutils literal notranslate"><span class="pre">selection_function</span></code> takes 3 arguments: <code class="code docutils literal notranslate"><span class="pre">history_chunk</span></code>, <code class="code docutils literal notranslate"><span class="pre">oneline_chunk</span></code>, and <code class="code docutils literal notranslate"><span class="pre">formation_channels_chunk</span></code> (optional).
 These chunks are cut based on a given chunksize, which is set to 1000000 by default, and are cut on system.
-This means that always a complete history of a system is passed to the function by <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.create_transient_population" title="posydon.popsyn.synthetic_population.Population.create_transient_population"><code class="xref py py-func docutils literal notranslate"><span class="pre">Population.create_transient_population()</span></code></a>.</p>
-<p><code class="code docutils literal notranslate"><span class="pre">selection_function</span></code> is a function you can adapt to your own needs, and examples of building one are given in the <span class="xref std std-ref">tutorial-examples.population-synthesis.bbh-analysis</span> or <span class="xref std std-ref">tutorial-examples.population-synthesis.lgrb_pop_syn</span>.</p>
+This means that a complete history of a system is always passed to the function by <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.create_transient_population" title="posydon.popsyn.synthetic_population.Population.create_transient_population"><code class="xref py py-func docutils literal notranslate"><span class="pre">Population.create_transient_population()</span></code></a>.</p>
+<p><code class="code docutils literal notranslate"><span class="pre">selection_function</span></code> is a function you can adapt to your own needs, and
+examples of building one are given in the <a class="reference external" href="../../tutorials-examples/population-synthesis/bbh_analysis.html">BBH</a> or <a class="reference external" href="../../tutorials-examples/population-synthesis/lgrb_pop_syn.html">LGRB tutorial</a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <code class="code docutils literal notranslate"><span class="pre">selection_function</span></code> should return a pandas DataFrame with at least a <code class="code docutils literal notranslate"><span class="pre">metallicity</span></code> and <code class="code docutils literal notranslate"><span class="pre">time</span></code> column of each event.
@@ -314,17 +332,30 @@ Moreover, every row should only contain a single event.</p>
 </div>
 <p>We provide a few standard selection functions for the most common transient populations, such as binary black holes and long gamma-ray bursts.
 These functions are available in the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#module-posydon.popsyn.transient_select_funcs" title="posydon.popsyn.transient_select_funcs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">posydon.popsyn.transient_select_funcs</span></code></a> module.</p>
+</section>
+<section id="accessing-transientpopulation">
+<h3>Accessing TransientPopulation<a class="headerlink" href="#accessing-transientpopulation" title="Link to this heading"></a></h3>
 <p>After loading a transient population, you keep access to the history and oneline data of the population.
 Now, you can access the transient data of the population using <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.TransientPopulation" title="posydon.popsyn.synthetic_population.TransientPopulation"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TrannsientPopulation.population</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">trans_pop</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="calculating-efficiencies">
+<h3>Calculating Efficiencies<a class="headerlink" href="#calculating-efficiencies" title="Link to this heading"></a></h3>
 <p>With this population, you can calculate additional information, such as the efficiency over metallicity.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trans_pop</span><span class="o">.</span><span class="n">calculate_efficiency_over_metallicity</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="code docutils literal notranslate"><span class="pre">channels=True</span></code> includes the formation channels in the efficiency calculation.</p>
+</section>
+<section id="plotting">
+<h3>Plotting<a class="headerlink" href="#plotting" title="Link to this heading"></a></h3>
 <p>The <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.TransientPopulation" title="posydon.popsyn.synthetic_population.TransientPopulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransientPopulation</span></code></a> contains a few plotting functions for ease.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># plots the efficiency over metallicity per channel</span>
+<span class="n">trans_pop</span><span class="o">.</span><span class="n">plot_efficiency_over_metallicity</span><span class="p">(</span><span class="n">channel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">log_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mf">6.5</span><span class="p">,</span> <span class="mf">10.5</span><span class="p">,</span> <span class="mi">51</span><span class="p">)</span>
 <span class="n">trans_pop</span><span class="o">.</span><span class="n">plot_delay_time_distribution</span><span class="p">(</span><span class="n">metallicity</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">log_bins</span><span class="p">)</span>
 </pre></div>
@@ -342,8 +373,9 @@ These are required to plot over the grid slices.</p>
 </pre></div>
 </div>
 </section>
+</section>
 <section id="rates">
-<h1>Rates<a class="headerlink" href="#rates" title="Link to this heading"></a></h1>
+<h2>Rates<a class="headerlink" href="#rates" title="Link to this heading"></a></h2>
 <p>The <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Rates" title="posydon.popsyn.synthetic_population.Rates"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rates</span></code></a> object inherits from the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.TransientPopulation" title="posydon.popsyn.synthetic_population.TransientPopulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransientPopulation</span></code></a> object
 and is used to access the cosmic rate data of the transient population.</p>
 <p>It also allows the user to calculate the intrinsic rate density of the events in the population, and apply observational effects to the population.</p>
@@ -352,13 +384,15 @@ and is used to access the cosmic rate data of the transient population.</p>
 <span class="n">rates</span> <span class="o">=</span> <span class="n">Rates</span><span class="p">(</span><span class="s1">&#39;path/to/population.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;transient_name&#39;</span><span class="p">,</span> <span class="s1">&#39;SFH_identifier&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<section id="creating-a-rates-object">
+<h3>Creating a Rates object<a class="headerlink" href="#creating-a-rates-object" title="Link to this heading"></a></h3>
 <p>Cosmic weights are added to the population file using the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights" title="posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_cosmic_weights()</span></code></a> function.
 This function calculates the cosmic weights of the events in the population based on the birth redshifts and the population weight.
 The function takes an <code class="docutils literal notranslate"><span class="pre">SFH_identifier</span></code>, which is where the cosmic weights are stored in the population file.
 The <code class="docutils literal notranslate"><span class="pre">MODEL_in</span></code> argument is used to specify the model parameters for the rate calculation.</p>
 <p>The table below shows the Default values and the supported values.</p>
-<table class="docutils align-default" id="id1">
-<caption><span class="caption-text">MODEL_in</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">MODEL_in</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 14.3%" />
 <col style="width: 14.3%" />
@@ -401,6 +435,9 @@ The <code class="docutils literal notranslate"><span class="pre">MODEL_in</span>
 </tr>
 </tbody>
 </table>
+</section>
+<section id="accessing-rates-data">
+<h3>Accessing rates data<a class="headerlink" href="#accessing-rates-data" title="Link to this heading"></a></h3>
 <p>The cosmic rate data is stored in 3 different tables in the population file:</p>
 <ol class="arabic simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">birth</span></code> : A table containing the birth redshifts and lookback times used in the rate calculation.</p></li>
@@ -422,11 +459,17 @@ This populates the <code class="code docutils literal notranslate"><span class="
 <span class="nb">print</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">edges_redshift_bins</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="plotting-rates">
+<h3>Plotting Rates<a class="headerlink" href="#plotting-rates" title="Link to this heading"></a></h3>
 <p>Besides plotting the intrinsic rate, you can plot the distribution of properties of the population.
 You can use any property in the TransientPopulation table.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="applying-observational-effects">
+<h3>Applying observational effects<a class="headerlink" href="#applying-observational-effects" title="Link to this heading"></a></h3>
 <p>Although the intrinsic rate density is a useful quantity, it is not directly observable, especially for binary black holes.</p>
 <p>As such, we also include the possibility to apply observational effects to the population.
 This is done using the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Rates.calculate_observable_population" title="posydon.popsyn.synthetic_population.Rates.calculate_observable_population"><code class="xref py py-func docutils literal notranslate"><span class="pre">Rates.calculate_observable_population()</span></code></a> function.
@@ -448,14 +491,20 @@ We have included an example in the <code class="xref py py-func docutils literal
 <span class="n">rates</span><span class="o">.</span><span class="n">calculate_observable_population</span><span class="p">(</span><span class="n">DCO_wrapper</span><span class="p">,</span> <span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="accessing-observable-population-data">
+<h3>Accessing Observable Population data<a class="headerlink" href="#accessing-observable-population-data" title="Link to this heading"></a></h3>
 <p>The observable population is accesed through the <code class="code docutils literal notranslate"><span class="pre">observable_population</span></code> attribute of the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Rates" title="posydon.popsyn.synthetic_population.Rates"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rates</span></code></a> object.
-You require to know the observable_identifier to access the data, which can be accessed with <a class="reference internal" href="../../api_reference/posydon.popsyn.html#id19" title="posydon.popsyn.synthetic_population.Rates.observable_population_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Rates.observable_population_names</span></code></a></p>
+You need the observable_identifier to access the data, which can be accessed with <a class="reference internal" href="../../api_reference/posydon.popsyn.html#id19" title="posydon.popsyn.synthetic_population.Rates.observable_population_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Rates.observable_population_names</span></code></a></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">observable_population_names</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">observable_population</span><span class="p">(</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
+</section>
+<section id="plotting-the-observable-population">
+<h3>Plotting the observable population<a class="headerlink" href="#plotting-the-observable-population" title="Link to this heading"></a></h3>
 <p>The observable population can be plotted in the same way as the intrinsic rate density.
-However, you require to define which observable population you want to plot.</p>
+However, you need to define which observable population you want to plot.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -470,8 +519,10 @@ However, you require to define which observable population you want to plot.</p>
 </pre></div>
 </div>
 </section>
-<section id="the-structure-of-population-files">
-<span id="population-file-structure"></span><h1>The Structure of Population Files<a class="headerlink" href="#the-structure-of-population-files" title="Link to this heading"></a></h1>
+</section>
+</section>
+<section id="the-structure-of-generated-population-files">
+<span id="population-file-structure"></span><h1>The Structure of Generated Population Files<a class="headerlink" href="#the-structure-of-generated-population-files" title="Link to this heading"></a></h1>
 <p>The main output of a population synthesis run is a HDF5 population file.</p>
 <p>Each element in the file is stored as a pandas DataFrame.
 While some elements are always present, because they’re calculated as part of the population synthesis run,
@@ -479,8 +530,8 @@ other elements are optional and can be added by the user.</p>
 <p>The tables describe the location of the data inside the population file.
 This is only necessary if you want to access the data directly from the file.
 If you use the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Population()</span></code></a> object, you can access the data directly from the object.</p>
-<table class="docutils align-default" id="id2">
-<caption><span class="caption-text">Standard Components of a Population file</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Standard Components of a Population file</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 25.0%" />
 <col style="width: 75.0%" />
@@ -508,8 +559,8 @@ The <cite>underlying_mass</cite> is calculated with the assumption that binary f
 </table>
 <p>As you work with your population, you can add additional components to the population file.
 Based on the components and the user given identifiers, the data is stored in the following locations in the population file.</p>
-<table class="docutils align-default" id="id3">
-<caption><span class="caption-text">Additional components</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Additional components</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 25.0%" />
 <col style="width: 75.0%" />

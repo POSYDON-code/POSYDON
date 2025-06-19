@@ -48,18 +48,13 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul>
@@ -76,14 +71,12 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">The SingleStar object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="binary_star.html">The BinaryStar object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSDYON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSYDON Population Synthesis Configuration Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow_chart.html">The Flow Chart Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">The Population Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#transientpopulation">TransientPopulation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#rates">Rates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-population-files">The Structure of Population Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pop_syn_debug.html">Debugging POSYDON population synthesis models</a></li>
 </ul>
 </li>
@@ -93,25 +86,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -235,13 +221,13 @@ The current parameter value of the star object is accessed as, e.g. <code class=
 <td><p>Oxygen surface mass fraction abundance.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log_LH</span></code></p></td>
-<td><p>log10 total thermal power from PP and CNO, excluding neutrinos devided by L_sun.</p></td>
+<td><p>log10 total thermal power from PP and CNO, excluding neutrinos divided by L_sun.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">log_LHe</span></code></p></td>
-<td><p>log10 total thermal power from triple-alpha, excluding neutrinos devided by L_sun.</p></td>
+<td><p>log10 total thermal power from triple-alpha, excluding neutrinos divided by L_sun.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log_LZ</span></code></p></td>
-<td><p>log10 total burning power excluding LH and LHe and photodisintegrations devided by L_sun.</p></td>
+<td><p>log10 total burning power excluding LH and LHe and photodisintegrations divided by L_sun.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">log_Lnuc</span></code></p></td>
 <td><p>log10 total nuclear reaction luminosity (LH + LHe LZ) in L_sun.</p></td>
@@ -273,14 +259,55 @@ The current parameter value of the star object is accessed as, e.g. <code class=
 </tbody>
 </table>
 <p>Additional scalar properties are added during the evolution depending on which steps the star has undergone. These properties are not stored in the history.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Additional output
+ :header-rows: 1
+ :widths: 50 150</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<tbody>
+<tr class="row-odd"><td><p>Properties</p></td>
+<td><p>Descriptions</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">natal_kick_array</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The natal kick array for the star if it has undergone a SN.</div>
+<div class="line">contains:</div>
+</div>
+<ul class="simple">
+<li><p>velocity</p></li>
+<li><p>theta</p></li>
+<li><p>phi</p></li>
+<li><p>mean anomaly</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SN_type</span></code></p></td>
+<td><p>The supernova type of the star.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">f_fb</span></code></p></td>
+<td><p>The fraction of fallback mass.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spin_orbit_tilt_first_SN</span></code></p></td>
+<td><p>The spin-orbit tilt after the first SN, if the star has undergone a SN.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spin_orbit_tilt_second_SN</span></code></p></td>
+<td><p>The spin-orbit tilt after the second SN, if a second SN has occurred.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">m_disk_radiated</span></code></p></td>
+<td><p>The mass of the disk radiated in the collapse of the star.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">m_disk_accreted</span></code></p></td>
+<td><p>The mass of the disk accreted in the collapse of the star.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="state-options">
 <h3>State options<a class="headerlink" href="#state-options" title="Link to this heading"></a></h3>
 <p>Star states are defined by their burning and surface properties.
 These states are combined to describe the stellar state.
 We also have additional extra states for objects that are not stars.</p>
-<table class="docutils align-default" id="id2">
-<caption><span class="caption-text">Surface state</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Surface state</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 25.0%" />
 <col style="width: 75.0%" />
@@ -302,8 +329,8 @@ We also have additional extra states for objects that are not stars.</p>
 </tr>
 </tbody>
 </table>
-<table class="docutils align-default" id="id3">
-<caption><span class="caption-text">Burning state</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Burning state</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 25.0%" />
 <col style="width: 75.0%" />
@@ -340,8 +367,8 @@ We also have additional extra states for objects that are not stars.</p>
 </tr>
 </tbody>
 </table>
-<table class="docutils align-default" id="id4">
-<caption><span class="caption-text">Additional States</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Additional States</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 25.0%" />
 <col style="width: 75.0%" />

@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌" href="lgrb_pop_syn.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="pop_syn.html" /> 
+    <link rel="prev" title="Large-Scale Population Synthesis on HPC Facilities 🚀" href="pop_syn.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,23 +51,19 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Stellar Transient Populations 🔍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
 <li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
@@ -91,25 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -158,8 +147,10 @@
 <p>We will load one of the population files to build our merging binaries selection.</p>
 <div class="admonition warning">
 <p class="admonition-title fa fa-exclamation-circle">No indices?</p>
-<p>It might be that the population you generated does not contain any merging BBHs, they’re rare after all.</p>
-<p>As such, we have provided an example population run at <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON_DATA/population-synthesis/example/</span></code>, this simulation contains 10.000 binaries at the 8 metallicity.</p>
+<p>It might be that the population you generated does not contain any merging BBHs, they’re rare after all!</p>
+<p>You can download an example population, which contains 10,000 binaries at each of the 8 metallicities.</p>
+<p><code class="docutils literal notranslate"><span class="pre">get-posydon-data</span> <span class="pre">tutorial_population</span></code></p>
+<p>This automatically downloads the tutorial populations from <a class="reference external" href="https://zenodo.org/communities/posydon">Zenodo</a> into <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON_DATA/tutorial_populations</span></code></p>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -167,6 +158,8 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
 
+<span class="c1"># change the path to $PATH_TO_POSYDON_DATA/tutorial_populations/1e+00_Zsun_population.h5</span>
+<span class="c1"># when using the example population file.</span>
 <span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;1e+00_Zsun_population.h5&#39;</span><span class="p">)</span>
 <span class="n">tmp_data</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_state&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">])</span>
 <br/></pre></div>
@@ -219,6 +212,8 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
 
+<span class="c1"># Change the path to the data you want to use</span>
+<span class="c1"># or the path to the tutorial data: # $PATH_TO_POSYDON_DATA/tutorial_populations/</span>
 <span class="n">data_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;PATH/TO/TUTORIAL/DATA/&#39;</span>
 
 <span class="c1"># Let&#39;s load one of the populations</span>
@@ -302,13 +297,13 @@
 <li><p>Mass ratio</p></li>
 <li><p>Binary fraction</p></li>
 </ul>
-<p>The default parameters do not sample the complete distributions. For example, we sample the binary between 7 and 150 <span class="math notranslate nohighlight">\(M_\odot\)</span>, and a binary fraction of 1. While you can use the population as it is, you should consider the weight of the unsampled distributions.</p>
+<p>The default parameters do not sample the complete distributions. For example, we sample binaries with primary masses between 7 and 150 <span class="math notranslate nohighlight">\(M_\odot\)</span>, and a binary fraction of 1. While you can use the population as it is, you should consider the weight of the unsampled distributions.</p>
 <p>You can calculate the underlying mass of these distributions, which is the actual weight of the binary in our population. Since we’ve stored essential information about the population run, we are able to calculate this even after our selection. This will return the <code class="docutils literal notranslate"><span class="pre">underlying_mass</span></code> of the sampled population and add it to the population file.</p>
 <p>We will need these weights to be able to continue with the rest of the calculations.</p>
 <div class="admonition warning">
 <p class="admonition-title fa fa-exclamation-circle"><strong>Caveats</strong></p>
 <p>Currently, only changing the binary fraction (<code class="docutils literal notranslate"><span class="pre">f_bin</span></code>) is supported in the calculation of the underlying mass! The initially sampled population can have any binary fraction.</p>
-<p>Additionally, only parts of the period, IMF, and mass ratio distribution are included. We allow for different parameter limits to be set for sampling, but these are not included in this normalisation!</p>
+<p>Additionally, only parts of the period, IMF, and mass ratio distribution are included. We allow for different parameter limits to be set for sampling, but these are not included in this normalization!</p>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -328,13 +323,13 @@
 <p>Although we now have selected all binaries with a BBH merger, we don’t have the exact moment of the merger yet. This will be required to calculate merger rates across cosmic time.</p>
 <p>For this, we will create a <code class="docutils literal notranslate"><span class="pre">TransientPopulation</span></code>. This class is used to hold information about a specific event/moment in time. In our case, this is the moment of “CO_contact”, the moment of the BBH merger. However, we might want to store and calculate some additional values, such as the <span class="math notranslate nohighlight">\(M_\mathrm{chirp}\)</span> or <span class="math notranslate nohighlight">\(\chi_\mathrm{eff}\)</span>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">Population</span></code> class has a function <code class="docutils literal notranslate"><span class="pre">create_transient_population</span></code> (see <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.create_transient_population"><span class="std std-ref">here for more details</span></a>). In short, it takes a <code class="docutils literal notranslate"><span class="pre">selection_function</span></code> and a <code class="docutils literal notranslate"><span class="pre">transient_name</span></code>. The <code class="docutils literal notranslate"><span class="pre">transient_name</span></code> is a string identifying the transient population in the file, while <code class="docutils literal notranslate"><span class="pre">selection_function</span></code> extracts the <code class="docutils literal notranslate"><span class="pre">TransientPopulation</span></code> for us. This can be any custom function you want it to be,
-as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ column.</p>
+as long as it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ column.</p>
 <p>Several selection functions are provided in <code class="docutils literal notranslate"><span class="pre">posydon.popsyn.transient_select_funcs</span></code>:</p>
 <ol class="arabic simple">
 <li><p><a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.transient_select_funcs.BBH_selection_function"><span class="std std-ref">BBH_selection_function</span></a></p></li>
 <li><p><a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.transient_select_funcs.GRB_selection"><span class="std std-ref">GRB_selection_function</span></a></p></li>
 </ol>
-<p>We have copied part of the <code class="docutils literal notranslate"><span class="pre">BBH_selection_function</span></code> below to explain how a <code class="docutils literal notranslate"><span class="pre">selections_function</span></code> works.</p>
+<p>We have copied part of the <code class="docutils literal notranslate"><span class="pre">BBH_selection_function</span></code> below to explain how a <code class="docutils literal notranslate"><span class="pre">selection_function</span></code> works.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -353,8 +348,8 @@ as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ co
 </pre></div>
 </div>
 </div>
-<p>A <code class="docutils literal notranslate"><span class="pre">selection_function</span></code> always has as an input a chunk of the history, oneline, and formation_pathways (optional). For example, you set your <code class="docutils literal notranslate"><span class="pre">chunksize=10000</span></code> when you initialise the <code class="docutils literal notranslate"><span class="pre">Population</span></code>, like we’ve done above for <code class="docutils literal notranslate"><span class="pre">BBH_pop</span></code>, each chunk will contain 10000 binaries. This means that the complete history, oneline and formation_pathways of those 10 binaries are passed to this function.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">BBH_selection_function</span></code> selects the moment the binary reaches CO_contact as the moment of merger, and stores it in the <code class="docutils literal notranslate"><span class="pre">time</span></code> columns in Myr. The <code class="docutils literal notranslate"><span class="pre">metallicity</span></code> is also outputted, since this will be essential when combining it with the star formation history.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">selection_function</span></code> always has as an input a chunk of the history, oneline, and formation_pathways (optional). For example, you set your <code class="docutils literal notranslate"><span class="pre">chunksize=10000</span></code> when you initialise the <code class="docutils literal notranslate"><span class="pre">Population</span></code>, like we’ve done above for <code class="docutils literal notranslate"><span class="pre">BBH_pop</span></code>, each chunk will contain 10,000 binaries. This means that the complete history, oneline and formation_pathways of those 10,000 binaries are passed to this function.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">BBH_selection_function</span></code> selects the moment the binary reaches CO_contact as the moment of merger, and stores it in the <code class="docutils literal notranslate"><span class="pre">time</span></code> column in Myr. The <code class="docutils literal notranslate"><span class="pre">metallicity</span></code> is also outputted, since this will be essential when combining it with the star formation history.</p>
 <p>We can test this function by inputting a single binary into it, as done below. If you’ve used the example populations, you might not have calculated the formation_channels yet. We will set that input to None.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -364,8 +359,8 @@ as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ co
 </pre></div>
 </div>
 </div>
-<p>This gives us a dataframe containing our 1 binary, its index (0), the moment of merger, and its metallicity.</p>
-<p>Of course, we could like to know a bit more about our merger than just when it occurs. Let’s expand our output with the BH masses, their spin, their tilt, and the orbital period at DCO formation.</p>
+<p>This gives us a DataFrame containing our 1 binary, its index (0), the moment of merger, and its metallicity.</p>
+<p>Of course, we would like to know a bit more about our merger than just when it occurs. Let’s expand our output with the BH masses, their spin, their tilt, and the orbital period at DCO formation.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -406,8 +401,8 @@ as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ co
 </div>
 </div>
 <p>With this new function, we have a lot more information available in the TransientPopulation.</p>
-<p>You can further customise this to your liking, if you want to store specific information. It’s also possible to calculate additional information based on any value in the history, oneline or formation_channels.</p>
-<p>We will import some functions to calculate <span class="math notranslate nohighlight">\(\chi_\mathrm{eff}\)</span>, <span class="math notranslate nohighlight">\(q\)</span> and <span class="math notranslate nohighlight">\(\mathcal{M}_\mathrm{chirp}\)</span> and also add them to the dataframe.</p>
+<p>You can further customize this to your liking, if you want to store specific information. It’s also possible to calculate additional information based on any value in the history, oneline or formation_channels.</p>
+<p>We will import some functions to calculate <span class="math notranslate nohighlight">\(\chi_\mathrm{eff}\)</span>, <span class="math notranslate nohighlight">\(q\)</span> and <span class="math notranslate nohighlight">\(\mathcal{M}_\mathrm{chirp}\)</span> and also add them to the DataFrame.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -569,7 +564,7 @@ as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ co
 <p class="admonition-title fa fa-exclamation-circle"><strong>Underlying mass</strong></p>
 <p>Make sure you’ve calculated the underlying mass for the population, as done earlier in this tutorial.</p>
 </div>
-<p>Applying the underlying mass normalisation assumes that no events occur outside the sampled parameter space.</p>
+<p>Applying the underlying mass normalization assumes that no events occur outside the sampled parameter space.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -595,7 +590,7 @@ as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ co
 </pre></div>
 </div>
 </div>
-<p>You can also plot the delay time distribution based on the time columns in the TransientPopulation.</p>
+<p>You can also plot the delay time distribution based on the time column in the TransientPopulation.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -610,8 +605,8 @@ as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ co
 </div>
 <p>You might also be interested in seeing the evolution of the binary in more detail.</p>
 <p>For this, you can plot the TransientPopulation over a grid slice. For example, below we plot binaries over the <span class="math notranslate nohighlight">\(q=0.7\)</span> slice at <span class="math notranslate nohighlight">\(Z=10^{-4} Z_\odot\)</span> on the HMS-HMS grid.</p>
-<p>If no slice is give, all mass ratios are plotted.</p>
-<p>You can also plot a property from the <code class="docutils literal notranslate"><span class="pre">TransientPopulation.population</span></code> DataFrame as a colourmap. And specific formation_channels if they’re in the DataFrame.</p>
+<p>If no slice is given, all mass ratios are plotted.</p>
+<p>You can also plot a property from the <code class="docutils literal notranslate"><span class="pre">TransientPopulation.population</span></code> DataFrame as a colormap. And specific formation_channels if they’re in the DataFrame.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -759,7 +754,7 @@ as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ co
 <section id="Observable-population">
 <h3>Observable population<a class="headerlink" href="#Observable-population" title="Link to this heading"></a></h3>
 <p>Sometimes, however, you’re not just interested in the intrinsic population, and want an observable population. This could be a supernova detection fraction for a telescope survey, or the LVK detection efficiency for GW mergers.</p>
-<p>You can apply these using <code class="docutils literal notranslate"><span class="pre">calculate_observable_population</span></code>. Similar to the <code class="docutils literal notranslate"><span class="pre">create_transient_population</span></code>, this function takes a <code class="docutils literal notranslate"><span class="pre">observable_func</span></code>, which described the observability of a transient.</p>
+<p>You can apply these using <code class="docutils literal notranslate"><span class="pre">calculate_observable_population</span></code>. Similar to the <code class="docutils literal notranslate"><span class="pre">create_transient_population</span></code>, this function takes a <code class="docutils literal notranslate"><span class="pre">observable_func</span></code>, which describes the observability of a transient.</p>
 <p>An <code class="docutils literal notranslate"><span class="pre">observable_func</span></code> takes chunks of</p>
 <ol class="arabic simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">TransientPopulation.population</span></code></p></li>
@@ -819,7 +814,7 @@ as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ co
 </pre></div>
 </div>
 </div>
-<p>Cogratulations, you are now ready to analyze any DCO population data you generated with POSYDON. Feel free to further explore the BBH model or to use this tutorial to study other populations. The next tutorials show you how to <a class="reference internal" href="lgrb_pop_syn.html"><span class="doc">select GRBs</span></a>, perform a <a class="reference internal" href="one_met_pop_syn.html"><span class="doc">SFH calculation at a single metallicity</span></a>, and <a class="reference external" href="debug_pop.ipynb">how to run an individual binary</a>.</p>
+<p>Congratulations, you are now ready to analyze any DCO population data you generated with POSYDON. Feel free to further explore the BBH model or to use this tutorial to study other populations. The next tutorials show you how to <a class="reference internal" href="lgrb_pop_syn.html"><span class="doc">select GRBs</span></a>, perform a <a class="reference internal" href="one_met_pop_syn.html"><span class="doc">SFH calculation at a single metallicity</span></a>, and <a class="reference internal" href="evolve_single_binaries.html"><span class="doc">how to run an individual binary</span></a>.</p>
 </section>
 </section>
 </section>
@@ -828,7 +823,7 @@ as long it outputs a pandas DataFrame with a ‘time’ and ‘metallicity’ co
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pop_syn.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pop_syn.html" class="btn btn-neutral float-left" title="Large-Scale Population Synthesis on HPC Facilities 🚀" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="lgrb_pop_syn.html" class="btn btn-neutral float-right" title="Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

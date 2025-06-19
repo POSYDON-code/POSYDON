@@ -49,25 +49,20 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="generating-datasets.html">Crafting the Core Datasets for POSYDON</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="just_step_1.html">Processing MESA grids with the POSYDON pipeline API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="run_full_piepeline.html">The fullt POSYDON Processing Pipeline experince</a></li>
+<li class="toctree-l2"><a class="reference internal" href="run_full_pipeline.html">The full POSYDON Processing Pipeline experience</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_1D.html">1D Plotting Functionalities for POSYDON PSyGrids</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">2D Plotting Functionalities for POSYDON PSyGrids</a></li>
 <li class="toctree-l2"><a class="reference internal" href="step_rerun.html">Export Rerun Grids with POSYDON Post Processing Pipeline</a></li>
@@ -88,25 +83,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -137,7 +125,7 @@
   <section id="2D-Plotting-Functionalities-for-POSYDON-PSyGrids">
 <h1>2D Plotting Functionalities for POSYDON PSyGrids<a class="headerlink" href="#2D-Plotting-Functionalities-for-POSYDON-PSyGrids" title="Link to this heading"></a></h1>
 <p>This tutorial shows you how to plot single and binary stellar tracks using the <code class="docutils literal notranslate"><span class="pre">plot2D</span></code> visualization library. The <code class="docutils literal notranslate"><span class="pre">plot2D</span></code> method supports either a MESA grid which samples the 2D parameter space of binary initial conditions in a 2D, 3D or 4D MESA space, e.g., star_1_mass, star_2_mass (or mass ratio), period_days, metallicity. In the 3D and 4D cases the MESA grid will be sliced along the dimensions specified by the user.</p>
-<p>If you haven’t done it already, export the environemnt variables.</p>
+<p>If you haven’t done it already, export the environment variables.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -157,8 +145,8 @@ env: PATH_TO_POSYDON_DATA=/Volumes/T7/
 </pre></div></div>
 </div>
 <p>Any plotting parameter is passed to the <code class="docutils literal notranslate"><span class="pre">plot2D</span></code> method through the kwarg <code class="docutils literal notranslate"><span class="pre">PLOT_PROPERTIES</span></code>. Note that you can save each plot to a given <code class="docutils literal notranslate"><span class="pre">path_to_file</span></code> by specifying the filename `<code class="docutils literal notranslate"><span class="pre">fname</span></code>.</p>
-<section id="Example:-the-HMS-HMS-gird">
-<h2>Example: the HMS-HMS gird<a class="headerlink" href="#Example:-the-HMS-HMS-gird" title="Link to this heading"></a></h2>
+<section id="Example:-the-HMS-HMS-grid">
+<h2>Example: the HMS-HMS grid<a class="headerlink" href="#Example:-the-HMS-HMS-grid" title="Link to this heading"></a></h2>
 <p>Let’s start by loading the grid.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -168,15 +156,15 @@ env: PATH_TO_POSYDON_DATA=/Volumes/T7/
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
 
-<span class="n">path_to_gird</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s1">&#39;POSYDON_data/HMS-HMS/1e-01_Zsun.h5&#39;</span><span class="p">)</span>
-<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">path_to_gird</span><span class="p">)</span>
+<span class="n">path_to_grid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s1">&#39;POSYDON_data/HMS-HMS/1e-01_Zsun.h5&#39;</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">path_to_grid</span><span class="p">)</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<section id="MESA-Termination-Flags-1-and-2-Combied">
-<h3>MESA Termination Flags 1 and 2 Combied<a class="headerlink" href="#MESA-Termination-Flags-1-and-2-Combied" title="Link to this heading"></a></h3>
-<p>This plot summarise the binary evolutioary simulation.</p>
+<section id="MESA-Termination-Flags-1-and-2-combined">
+<h3>MESA Termination Flags 1 and 2 combined<a class="headerlink" href="#MESA-Termination-Flags-1-and-2-combined" title="Link to this heading"></a></h3>
+<p>This plot summarizes the binary evolutionary simulation.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -386,16 +374,8 @@ env: PATH_TO_POSYDON_DATA=/Volumes/T7/
 <img alt="../../_images/tutorials-examples_generating-datasets_plot_2D_29_0.png" src="../../_images/tutorials-examples_generating-datasets_plot_2D_29_0.png" />
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">missig</span> <span class="n">points</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">above</span> <span class="n">plots</span> <span class="n">are</span> <span class="n">NaN</span> <span class="n">values</span> <span class="n">associated</span> <span class="n">to</span> <span class="n">disruped</span> <span class="n">stars</span> <span class="n">due</span> <span class="n">to</span> <span class="n">pair</span> <span class="n">instability</span> <span class="n">supernovae</span> <span class="p">(</span><span class="n">PISN</span><span class="p">)</span><span class="o">.</span>
-
-<span class="n">To</span> <span class="n">display</span> <span class="n">supernova</span> <span class="nb">type</span> <span class="p">(</span><span class="n">SN_type</span><span class="p">)</span> <span class="ow">and</span> <span class="n">compact</span> <span class="nb">object</span> <span class="nb">type</span> <span class="p">(</span><span class="n">CO_type</span><span class="p">)</span> <span class="n">are</span> <span class="n">stored</span> <span class="k">as</span> <span class="n">strings</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">dataset</span><span class="o">.</span> <span class="n">These</span> <span class="n">quantities</span> <span class="n">can</span> <span class="n">be</span> <span class="n">plotted</span> <span class="n">using</span> <span class="n">the</span> <span class="err">``</span><span class="n">termination_flag</span><span class="err">``</span> <span class="n">option</span> <span class="n">of</span> <span class="err">``</span><span class="n">plot2D</span><span class="err">``</span><span class="p">,</span> <span class="k">as</span>
-</pre></div>
-</div>
-</div>
+<p>The missing points in the above plots are NaN values associated with disrupted stars due to pair instability supernovae (PISN).</p>
+<p>The supernova type (SN_type) and compact object type (CO_type) are stored as strings in the dataset. These quantities can be plotted using the <code class="docutils literal notranslate"><span class="pre">termination_flag</span></code> option of <code class="docutils literal notranslate"><span class="pre">plot2D</span></code>, as</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>

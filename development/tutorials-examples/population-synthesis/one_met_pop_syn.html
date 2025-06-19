@@ -51,23 +51,19 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
@@ -91,25 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -149,10 +138,10 @@
 </pre></div>
 </div>
 </div>
-<section id="Creating-the-Synthetic-Poupulation-DataFrame">
-<h2>Creating the Synthetic Poupulation DataFrame<a class="headerlink" href="#Creating-the-Synthetic-Poupulation-DataFrame" title="Link to this heading"></a></h2>
-<p>We will use the same BBH population as in the <code class="docutils literal notranslate"><span class="pre">Stellar</span> <span class="pre">Transient</span> <span class="pre">Populations</span></code> tutorial. Instead of computing the distributions and rates at all metallicities, we will just focus on one metallicity, <span class="math notranslate nohighlight">\(Z_\odot\)</span>, and integrate the star formation history around solar metallicity, say <span class="math notranslate nohighlight">\([0.5Z_\odot,2Z_\odot]\)</span>. Let’s extract the merging BBH population from the <span class="math notranslate nohighlight">\(Z_\odot\)</span> population synthesis model. In this sample there are only a few systems, to increase the statistics we suggest you
-run a population containing x50 more binaries, if you want to do a more thorough analysis.</p>
+<section id="Creating-the-Synthetic-Population-DataFrame">
+<h2>Creating the Synthetic Population DataFrame<a class="headerlink" href="#Creating-the-Synthetic-Population-DataFrame" title="Link to this heading"></a></h2>
+<p>We will use the same BBH population as in the <code class="docutils literal notranslate"><span class="pre">Stellar</span> <span class="pre">Transient</span> <span class="pre">Populations</span></code> tutorial. Instead of computing the distributions and rates at all metallicities, we will just focus on one metallicity, <span class="math notranslate nohighlight">\(Z_\odot\)</span>, and integrate the star formation history around solar metallicity, say <span class="math notranslate nohighlight">\([0.5Z_\odot,2Z_\odot]\)</span>. Let’s extract the merging BBH population from the <span class="math notranslate nohighlight">\(Z_\odot\)</span> population synthesis model. In this sample there are only a few systems; to increase the statistics we suggest you
+run a population containing more binaries, if you want to do a more thorough analysis.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -170,13 +159,13 @@ run a population containing x50 more binaries, if you want to do a more thorough
 </div>
 </div>
 <p>POSYDON supports different assumptions for the star formation history, e.g. instead of using the IllustrisTNG SFH, we can use the star formation rate from Madau &amp; Fragos (2018) (see Andrews et al. 2024) and assume a log-normal metallicity distribution around the empirically measured mean metallicity at each redshift from Madau &amp; Fragos (2018), taking a dispersion of 0.5 dex (see Bavera et al. 2020). The IllustrisTNG star formation rate and metallicity evolution (solid line) is compared to the
-Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see Andrews et al. 2024), which figure is reproduced below. The dotted line corresponds to the metallicity distribution of Neijssel et al. (2019).</p>
-<img alt="Star Fromation Rate" src="../../_images/SFR.png" />
+Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see Andrews et al. 2024), which is reproduced below. The dotted line corresponds to the metallicity distribution of Neijssel et al. (2019).</p>
+<img alt="Star Formation Rate" src="../../_images/SFR.png" />
 <img alt="Metallicity Distribution" src="../../_images/met_dist.png" />
 </section>
 <section id="Single-metallicity-population">
 <h2>Single metallicity population<a class="headerlink" href="#Single-metallicity-population" title="Link to this heading"></a></h2>
-<p>Similar to the multi-metallicity tutorial, we will setup a BBH selection from our <span class="math notranslate nohighlight">\(Z_\odot\)</span> population and then calculate the transient population.</p>
+<p>Similar to the multi-metallicity tutorial, we will set up a BBH selection from our <span class="math notranslate nohighlight">\(Z_\odot\)</span> population and then calculate the transient population.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>

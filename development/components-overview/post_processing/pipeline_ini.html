@@ -48,18 +48,13 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul>
@@ -84,25 +79,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -135,8 +123,8 @@
 <section id="aim-of-the-ini-file">
 <h2>Aim of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file<a class="headerlink" href="#aim-of-the-ini-file" title="Link to this heading"></a></h2>
 <p>Using an <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file should help to keep an overview on large grid
-repositories and ensures that all workflows will be setup the same way.</p>
-<p>There is a script to setup the pipeline, it takes one argument:</p>
+repositories and ensures that all workflows will be set up the same way.</p>
+<p>There is a script to set up the pipeline, it takes one argument:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>posydon-setup-pipeline<span class="w"> </span>PATH_TO_INI
 </pre></div>
 </div>
@@ -196,7 +184,7 @@ plots can be set according to the restrictions of
 as pages in a single PDF.</p>
 <div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[pipeline setup]</span>
 <span class="w">    </span><span class="na">PATH_TO_GRIDS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/&#39;</span>
-<span class="w">    </span><span class="na">VERSION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;&#39;</span><span class="w"> </span><span class="c1"># to have a verion below the grid type level</span>
+<span class="w">    </span><span class="na">VERSION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;&#39;</span><span class="w"> </span><span class="c1"># to have a version below the grid type level</span>
 <span class="w">    </span><span class="na">PATH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;.&#39;</span><span class="w"> </span><span class="c1"># working dir</span>
 <span class="w">    </span><span class="na">VERBOSE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
 

@@ -48,18 +48,13 @@
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/collaborative-team.html">Collaborative Team</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://posydon.org/papers.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../getting-started/verification.html">Verification</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../user-guides/user-roadmap.html">Roadmap to Becoming an Expert POSYDON User</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
 <ul class="current">
@@ -67,7 +62,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Architecting MESA Simulation Grids with POSYDON</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="1_hms_hms.html">Run your first MESA HMS-HMS binary simulation with POSYDON</a></li>
-<li class="toctree-l2"><a class="reference internal" href="running_a_grid.html">Running a real POSYDON MESA HMS-HMS gird</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laptop.html">Run one binary on your laptop for debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="running_a_grid.html">Running a real POSYDON MESA HMS-HMS grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="running_single_hms.html">Running Single Stars with POSYDON</a></li>
 </ul>
 </li>
@@ -84,25 +80,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Troubleshooting and FAQs</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Installation Issues</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Contributing to POSYDON</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/code-style-guidelines.html">Code Style Guidelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/reporting-issues.html">Reporting issues</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contact and Support</span></p>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
 </ul>
 
         </div>
@@ -166,6 +155,9 @@ git<span class="w"> </span>checkout<span class="w"> </span>development
 </div>
 <p>In case you want to run the simulation locally, you can follow the second version of this tutorial.</p>
 <div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="laptop.html">Run one binary on your laptop for debugging</a></li>
+</ul>
 </div>
 <p>To gather more information about the MESA simulation submission API ini file, please refer to the <a class="reference internal" href="../../components-overview/mesa-grids.html#mesa-grids-api"><span class="std std-ref">MESA Grids API</span></a> section of the documentation.</p>
 </section>
@@ -174,7 +166,7 @@ git<span class="w"> </span>checkout<span class="w"> </span>development
 <p>The following tutorial will show you how to run a grid of MESA simulations using POSYDON. The grid will consist of 100 simulations of HMS-HMS binary systems at 0.1Zsun metallicity in the mass ratio slice 0.7 each with different primary masses and orbital periods. The simulations will be run on a HPC using SLURM.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="running_a_grid.html">Running a real POSYDON MESA HMS-HMS gird</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="running_a_grid.html">Running a real POSYDON MESA HMS-HMS grid</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="running_a_grid.html#Creating-the-Initialization-File-to-Submit-the-MESA-Grid">Creating the Initialization File to Submit the MESA Grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="running_a_grid.html#Run-the-MESA-Grid-with-the-POSYDON-Submission-Script">Run the MESA Grid with the POSYDON Submission Script</a></li>
 </ul>
@@ -191,7 +183,7 @@ git<span class="w"> </span>checkout<span class="w"> </span>development
 <li class="toctree-l1"><a class="reference internal" href="running_single_hms.html">Running Single Stars with POSYDON</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="running_single_hms.html#Creating-the-Initialization-File">Creating the Initialization File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="running_single_hms.html#Creating-the-Initial-Simulation-Points-CSV-File">Creating the Initial Simulation Points CSV File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="running_single_hms.html#Runing-the-MESA-Grid-with-the-POSYDON-Submission-Script">Runing the MESA Grid with the POSYDON Submission Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="running_single_hms.html#Running-the-MESA-Grid-with-the-POSYDON-Submission-Script">Running the MESA Grid with the POSYDON Submission Script</a></li>
 </ul>
 </li>
 </ul>
@@ -205,7 +197,9 @@ git<span class="w"> </span>checkout<span class="w"> </span>development
 <h3>Creating and Customizing MESA Grids layer by layer<a class="headerlink" href="#creating-and-customizing-mesa-grids-layer-by-layer" title="Link to this heading"></a></h3>
 <p>Step-by-step guide on how to leverage our MESA simulation submission API for creating and customizing MESA grids to suit your needs.</p>
 <p>Dive deeper into advanced techniques for grid creation, by layering MESA and POSYDON default inlist parameters and customizing your inlists variables on top to your needs.</p>
-<div class="toctree-wrapper compound">
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This feature is only partially implemented. Please contact us if you require more information.</p>
 </div>
 </section>
 <section id="running-a-dynamically-sampled-grid-of-mesa-simulations">
@@ -214,9 +208,7 @@ git<span class="w"> </span>checkout<span class="w"> </span>development
 <p class="admonition-title">Warning</p>
 <p>This feature is experimental. Please contact us if you encounter any issues.</p>
 </div>
-<p>Provided a sparsed, rectilinearly sampled MESA grid, POSYDON allows to dynamically sample the parameter space to henence the coverage of the paramter space to imporve classification and interpolation accuracy.</p>
-<div class="toctree-wrapper compound">
-</div>
+<p>Provided a sparse, rectilinearly sampled MESA grid, POSYDON allows to dynamically sample the parameter space to enhance the coverage of the parameter space to improve classification and interpolation accuracy.</p>
 </section>
 </section>
 <section id="support-feedback">
