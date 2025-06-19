@@ -1,7 +1,7 @@
 .. _pop-params-guide:
 
 ================================================
-POSDYON Population Synthesis Configuration Guide
+POSYDON Population Synthesis Configuration Guide
 ================================================
 
 This documentation provides a detailed overview of the configuration options available in the Posydon software package.
@@ -47,7 +47,7 @@ Note that the loading of the simulation steps is separate from creating the obje
     from posydon.popsyn.io import simprop_kwargs_from_ini
 
     # read from file
-    sim_props = simprop_kwargs_from_ini('population_params.ini', vebose=False)
+    sim_props = simprop_kwargs_from_ini('population_params.ini', verbose=False)
     
     # create SimulationProperties object
     sim = SimulationProperties(**sim_props)
@@ -66,7 +66,6 @@ It controls the mapping between a POSYDON binary object and its step evolution, 
   :widths: 10 80 10
   :class: population-params-table
   :header-rows: 1
-  
 
   * - Parameter
     - Description
@@ -237,7 +236,7 @@ It evolves the binary object in isolation until Roche lobe overflow occurs.
 Step Disrupted
 ~~~~~~~~~~~~~~
 
-The dirtupted step evolves a system when a supernova has unbound the binary components.
+The disrupted step evolves a system when a supernova has unbound the binary components.
 This class inherits from the detached step, but only evolves the remaining star in isolation.
 This means that this step uses the single stars loaded by the detached step.
 
@@ -644,7 +643,7 @@ When reading the binary population arguments from a ``population_params.ini`` fi
     from posydon.popsyn.io import binarypop_kwargs_from_ini
 
     # read from file
-    pop_params = binarypop_kwargs_from_ini('population_params.ini', vebose=False)
+    pop_params = binarypop_kwargs_from_ini('population_params.ini', verbose=False)
     
     # create BinaryPopulation object
     pop = BinaryPopulation(**pop_params)
@@ -676,7 +675,7 @@ It also contains which sampling distributions to use for the initial conditions 
 
   * - ``dump_rate``
     - | Batch save after evolving N binaries.
-    - | To facilitate I/O performance, this should be at least 500 for populations of 100.000 binaries or more.
+      | To facilitate I/O performance, this should be at least 500 for populations of 100.000 binaries or more.
     - ``2000``
 
   * - ``temp_directory``
@@ -709,7 +708,7 @@ It also contains which sampling distributions to use for the initial conditions 
     
   * - ``history_verbose``
     - | If True, record extra functional steps in the output DataFrames
-    - | (These extra steps represent internal workings of POSYDON rather than physical phases of evolution)
+      | (These extra steps represent internal workings of POSYDON rather than physical phases of evolution)
     - ``False``
 
   * - ``entropy``

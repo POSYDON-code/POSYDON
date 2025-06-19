@@ -1,2 +1,0 @@
-MESA Evolutionary Tracks
-------------------------
