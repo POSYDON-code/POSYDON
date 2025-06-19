@@ -516,7 +516,13 @@ class TestFunctions:
         #assert "The error was raised by" in output # DEBUG
         assert "in CEE_parameters_from_core_abundance_thresholds" in output
         assert "The exception was raised by" in output
-        assert "while accessing aboundances in star" in output
+        #assert "while accessing aboundances in star" in output
+        with warns(POSYDONWarning): 
+            with warns(ReplaceValueWarning, match="While accessing "
+                                                   +"abundances in star"):
+                MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
+                                            test_PSyGrid, single_star=True,\
+                                            verbose=True)
 
     def test_add_post_processed_quantities(self, grid, monkeypatch):
         def mock_add_column(colname, array, where="final_values",\
