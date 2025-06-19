@@ -458,8 +458,7 @@
 <span class="sd">    dict</span>
 <span class="sd">        Dictionary with metallicity as key and existence status as value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;POPULATION FILES CHECK ....................&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;POPULATION FILES CHECK ....................</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MET</span><span class="se">\t\t</span><span class="s2">POP_FILE&quot;</span><span class="p">)</span>
     
     <span class="n">all_exist</span> <span class="o">=</span> <span class="kc">True</span>
@@ -507,8 +506,7 @@
 <span class="sd">    dict</span>
 <span class="sd">        Dictionary with metallicity as key and binary count as value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;BINARY COUNT CHECK     ....................&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;BINARY COUNT CHECK     ....................</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MET</span><span class="se">\t\t</span><span class="s2">EXPECTED</span><span class="se">\t</span><span class="s2">FOUND</span><span class="se">\t</span><span class="s2">STATUS&quot;</span><span class="p">)</span>
     
     <span class="n">all_match</span> <span class="o">=</span> <span class="kc">True</span>
@@ -779,17 +777,22 @@
         <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;export PATH_TO_POSYDON_DATA=&quot;</span><span class="p">):</span>
             <span class="n">path_to_posydon_data</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         
-    <span class="c1"># create a new slurm script</span>
-    <span class="n">rescue_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_rescue.slurm&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">rescue_script</span><span class="p">):</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">rescue_script</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
-        
     <span class="c1"># Extract missing indices from batch_status</span>
     <span class="n">missing_indices</span> <span class="o">=</span> <span class="n">batch_status</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;missing_indices&#39;</span><span class="p">,</span> <span class="p">[])</span>
     
     <span class="c1"># Format job array string for SBATCH</span>
     <span class="k">if</span> <span class="n">missing_indices</span><span class="p">:</span>
         <span class="n">job_array_str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No missing indices found in batch status.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;Cannot generate rescue script.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;Please run the check function to resubmit the merge jobs.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;posydon-popsyn check &lt;run_folder&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># create a new slurm script</span>
+    <span class="n">rescue_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_rescue.slurm&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">rescue_script</span><span class="p">):</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">rescue_script</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
         
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rescue_script</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;#!/bin/bash</span>
@@ -848,8 +851,7 @@
     
     <span class="c1"># Handle multiple INI files</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ini_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Multiple INI files found:&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Multiple INI files found:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ini_files</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
@@ -909,20 +911,17 @@
 <span class="sd">    args : argparse.Namespace</span>
 <span class="sd">        The arguments passed to the function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking the status of the population run in </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking the status of the population run in </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     
     <span class="n">ini_file</span> <span class="o">=</span> <span class="n">get_ini_file</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using INI file:</span><span class="se">\n</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Using INI file:</span><span class="se">\n</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     
     <span class="n">num_metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span><span class="p">,</span>\
         <span class="n">metallicities</span><span class="p">,</span> <span class="n">synpop_params</span><span class="o">=</span>  <span class="n">get_binary_params</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
     
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;REQUESTED PARAMETERS&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# metallicities: </span><span class="si">{</span><span class="n">num_metallicities</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# binaries:      </span><span class="si">{</span><span class="n">number_of_binaries</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# binaries:      </span><span class="si">{</span><span class="n">number_of_binaries</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Checking the status of the population run&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
     
@@ -974,23 +973,21 @@
                     <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
                     
                     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s1">&#39;sbatch</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_merge_popsyn.slurm&#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;sbatch </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_merge_popsyn.slurm&#39;</span>
                     <span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Merge jobs resubmitted.&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Merge jobs not resubmitted.&quot;</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">One or more batch files are incomplete.&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We need to resubmit some of the batch jobs.&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please use the following command to create and&quot;</span>
-                  <span class="s2">&quot;submit a rescue script:&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;posydon-popsyn rescue </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;You can add additional arguments to the command, such as &quot;</span>
-                  <span class="o">+</span> <span class="s2">&quot;--email, --partition, etc.&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This will generate resubmission scripts that you can review &quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">One or more batch files are incomplete.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;We need to resubmit some of the batch jobs.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;Please use the following command to create and</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;submit a rescue script:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;posydon-popsyn rescue </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;You can add additional arguments to the command, such as </span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;--email, --partition, etc.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;This will generate resubmission scripts that you can review</span><span class="se">\n</span><span class="s2">&quot;</span>
                   <span class="o">+</span> <span class="s2">&quot;and run to resubmit failed jobs.&quot;</span><span class="p">)</span></div>
 
     
@@ -1009,16 +1006,14 @@
     
     <span class="c1"># 1. Check status of the run</span>
     <span class="n">ini_file</span> <span class="o">=</span> <span class="n">get_ini_file</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using INI file:</span><span class="se">\n</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Using INI file:</span><span class="se">\n</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     
     <span class="n">num_metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span><span class="p">,</span>\
         <span class="n">metallicities</span><span class="p">,</span> <span class="n">synpop_params</span><span class="o">=</span>  <span class="n">get_binary_params</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
     
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;REQUESTED PARAMETERS&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# metallicities: </span><span class="si">{</span><span class="n">num_metallicities</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# binaries:      </span><span class="si">{</span><span class="n">number_of_binaries</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# binaries:      </span><span class="si">{</span><span class="n">number_of_binaries</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Checking the status of the population run&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
         
@@ -1056,8 +1051,7 @@
                                 <span class="p">)</span>
            
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GENERATING A RESCUE SCRIPT ....................&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">GENERATING A RESCUE SCRIPT ....................&quot;</span><span class="p">)</span>
             
             <span class="c1"># Generate a rescue script</span>
             <span class="n">rescue_scripts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -1067,8 +1061,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
             
         <span class="c1"># Generate a resubmit_slurm.sh script</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GENERATING A RESUBMIT SCRIPT ....................&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GENERATING A RESUBMIT SCRIPT ....................</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">resubmit_sh_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span> <span class="s1">&#39;resubmit_slurm.sh&#39;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">resubmit_sh_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#!/bin/bash</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1076,14 +1069,14 @@
                 <span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
                 <span class="n">met</span> <span class="o">=</span> <span class="n">script</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;resubmit=$(sbatch --parsable </span><span class="si">{</span><span class="n">script</span><span class="si">}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;echo &#39;Rescue script submitted as &#39;$</span><span class="se">{{</span><span class="s2">resubmit</span><span class="se">}}\n</span><span class="s2">&quot;</span><span class="p">)</span>                
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;echo &#39;Rescue script submitted as &#39;$</span><span class="si">{resubmit}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>                
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;merge=$(sbatch --parsable &quot;</span>
-                        <span class="s2">&quot;--dependency=afterok:${{resubmit}} &quot;</span>
+                        <span class="s2">&quot;--dependency=afterok:$</span><span class="si">{resubmit}</span><span class="s2"> &quot;</span>
                         <span class="s2">&quot;--kill-on-invalid-dep=yes &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">met</span><span class="si">}</span><span class="s2">_Zsun_merge_popsyn.slurm)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;echo &#39;Merge job submitted as &#39;$</span><span class="se">{{</span><span class="s2">merge</span><span class="se">}}\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;echo &#39;Merge job submitted as &#39;$</span><span class="si">{merge}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rescue scripts ready to be resubmitted by </span><span class="si">{</span><span class="n">resubmit_sh_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rescue scripts ready to be resubmitted by &#39;sh </span><span class="si">{</span><span class="n">resubmit_sh_file</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span> 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Would you like to submit the rescue scripts?&quot;</span><span class="p">)</span>
         <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter &#39;yes&#39; or &#39;y&#39; to submit the rescue scripts: &quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;yes&#39;</span> <span class="ow">or</span> <span class="n">choice</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
