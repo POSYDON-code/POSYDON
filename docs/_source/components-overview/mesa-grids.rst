@@ -27,8 +27,8 @@ Learn how to run dynamic type grids using the POSYDON API. TODO
    mesa_grids/dynamic
 
 
-Ini file documetation
-~~~~~~~~~~~~~~~~~~~~~
+Ini file documentation
+~~~~~~~~~~~~~~~~~~~~~~
 
 Learn more about the MESA ini file content and how to use it in your own code.
 

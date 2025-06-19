@@ -30,9 +30,9 @@ what you can do with this tool.
    post_processing/pipeline
    
 :samp:`ini` file documentation
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Learn how to use an :samp:`ini` file to setup the post-processing pipeline.
+Learn how to use an :samp:`ini` file to set up the post-processing pipeline.
 
 .. toctree::
 
