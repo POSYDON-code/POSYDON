@@ -463,7 +463,6 @@ def get_SN_MODEL(name):
         Dictionary with the properties of the supernova model. If the given
         name does not exist in the pre-defined models, the default supernova
         model is returned.
-    
     """
     if name in SN_MODELS:
         SN_MODEL = DEFAULT_SN_MODEL.copy()
@@ -510,5 +509,5 @@ def get_SN_MODEL_NAME(input_SN_MODEL, verbose=False):
             if verbose:
                 print('matched to supernova model:', tmp)
             SN_MODEL_NAME_SEL = tmp
-            
+
     return SN_MODEL_NAME_SEL

@@ -396,7 +396,8 @@ class detached_step:
                 "surface_he4",
                 "surface_h1",
                 "log_R",
-                "center_c12"
+                "center_c12",
+                "co_core_mass",
             ]
         )
 
@@ -854,7 +855,7 @@ class detached_step:
         if self.verbose:
             if pd.notna(initials[0]):
                 val_names = ["  ", "mass", "log_R", "center_h1", "surface_h1", "he_core_mass", "center_he4", "surface_he4", 
-                             "center_c12"]
+                             "center_c12","co_core_mass"]
 
                 initial_vals = [
                     "initial values",
@@ -865,7 +866,8 @@ class detached_step:
                     f'{star.he_core_mass:.3f}',
                     f'{star.center_he4:.4f}', 
                     f'{star.surface_he4:.4f}',  
-                    f'{star.center_c12:.4f}'
+                    f'{star.center_c12:.4f}',
+                    f'{star.co_core_mass:.3f}',
                     ]
 
                 matched_vals = [
@@ -877,8 +879,10 @@ class detached_step:
                     f'{self.get_track_val("he_core_mass", htrack, *best_sol.x):.3f}',
                     f'{self.get_track_val("center_he4", htrack, *best_sol.x):.4f}',
                     f'{self.get_track_val("surface_he4", htrack, *best_sol.x):.4f}',    
-                    f'{self.get_track_val("center_c12", htrack, *best_sol.x):.4f}'
-                    ]
+                    f'{self.get_track_val("center_c12", htrack, *best_sol.x):.4f}',
+                    f'{self.get_track_val("co_core_mass", htrack, *best_sol.x):.3f}'
+
+                     ]
                 
                 output_table = [val_names, initial_vals, matched_vals]
 
@@ -895,7 +899,8 @@ class detached_step:
                     f'surface_he4 = {star.surface_he4:.4f}, ',
                     f'surface_h1 = {star.surface_h1:.4f}, ',
                     f'he_core_mass = {star.he_core_mass:.3f}, ',
-                    f'center_c12 = {star.center_c12:.4f}'
+                    f'center_c12 = {star.center_c12:.4f}',
+                    f'co_core_mass = {star.co_core_mass:.4f}'
                 )
 
         return initials[0], initials[1], htrack
