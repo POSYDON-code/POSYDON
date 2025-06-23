@@ -1,8 +1,8 @@
 .. _initial-final-interp:
 
-###########################################
+############################################
 Initial-Final Classification & Interpolation
-###########################################
+############################################
 
 We showcase the initial-final interpolator which plays a critical role in the
 evolving binary populations. To use the initial-final interpolator we first

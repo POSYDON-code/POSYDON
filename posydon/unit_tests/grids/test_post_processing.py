@@ -17,7 +17,8 @@ from inspect import isclass, isroutine
 import h5py
 import json
 import os
-from posydon.utils.posydonwarning import InappropriateValueWarning
+from posydon.utils.posydonwarning import InappropriateValueWarning,\
+                                         POSYDONWarning
 from posydon.grids.psygrid import PSyGrid
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.unit_tests._helper_functions_for_tests.psygrid import get_PSyGrid
@@ -29,7 +30,7 @@ class TestElements:
         elements = {'BinaryStar', 'CC_quantities',\
                     'CEE_parameters_from_core_abundance_thresholds',\
                     'Catch_POSYDON_Warnings',\
-                    'DEFAULT_MARKERS_COLORS_LEGENDS', 'MODELS', 'Pwarn',\
+                    'DEFAULT_MARKERS_COLORS_LEGENDS', 'SN_MODELS', 'Pwarn',\
                     'STAR_STATES_CC', 'SingleStar', 'StepSN',\
                     'TF1_POOL_STABLE', '__authors__', '__builtins__',\
                     '__cached__', '__credits__', '__doc__', '__file__',\
@@ -38,7 +39,8 @@ class TestElements:
                     'assign_core_collapse_quantities_none',\
                     'calculate_Patton20_values_at_He_depl',\
                     'check_state_of_star', 'combine_TF12', 'copy', 'np',\
-                    'post_process_grid', 'print_CC_quantities', 'tqdm'}
+                    'post_process_grid', 'print_CC_quantities', 'tqdm',\
+                    'get_SN_MODEL'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -109,7 +111,7 @@ class TestFunctions:
                          (1.0e+3, 3.2, 0.0, 0.2, 0.4, 0.09, 0.3, 0.79, 0.2,\
                           0.0, 0.0, 0.0, -10.0, -2.0, -2.0, 0.1, 2.0, 0.0),\
                          (1.0e+4, 2.3, 0.0, 0.0, 0.2, 0.1, 0.6, 0.79, 0.2,\
-                          0.0, 0.0, 0.0, -10.0, -3.1, -3.0, 11.0, 3.0, 2.0)],\
+                          0.0, 0.0, 0.0, -10.0, -3.1, -3.0, 11.0, 13.0, 12.0)],\
                         dtype=[('star_age', '<f8'), ('log_R', '<f8'),\
                                ('center_h1', '<f8'), ('center_he4', '<f8'),\
                                ('center_c12', '<f8'), ('center_n14', '<f8'),\
@@ -124,13 +126,13 @@ class TestFunctions:
     @fixture
     def binary_history(self):
         # a temporary binary history for testing
-        return np.array([(9.1, 5.2, 1.0, 1.0, -99.1, -99.2, -98.1, -98.2,\
+        return np.array([(19.1, 5.2, 1.0, 1.0, -99.1, -99.2, -98.1, -98.2,\
                           -97.1, -97.2),\
-                         (8.1, 5.2, 1.1, 1.0e+2, -99.1, -99.2, -98.1, -98.2,\
+                         (18.1, 5.2, 1.1, 1.0e+2, -99.1, -99.2, -98.1, -98.2,\
                           -97.1, -97.2),\
-                         (6.1, 5.2, 1.2, 1.0e+3, -99.1, -99.2, -98.1, -98.2,\
+                         (16.1, 5.2, 1.2, 1.0e+3, -99.1, -99.2, -98.1, -98.2,\
                           -97.1, -97.2),\
-                         (5.1, 5.1, 1.3, 1.0e+4, -99.1, -99.2, -98.1, -98.2,\
+                         (15.1, 5.1, 1.3, 1.0e+4, -99.1, -99.2, -98.1, -98.2,\
                           -97.1, -97.2)],\
                         dtype=[('star_1_mass', '<f8'), ('star_2_mass', '<f8'),\
                                ('period_days', '<f8'), ('age', '<f8'),\
@@ -144,7 +146,7 @@ class TestFunctions:
     @fixture
     def profile(self):
         # a temporary profile for testing
-        return np.array([(5.1, 10**2.3, 1.0, 1.0, 1.0, 0.79, 0.2, 0.01, 0.9,\
+        return np.array([(15.1, 10**2.3, 1.0, 1.0, 1.0, 0.79, 0.2, 0.01, 0.9,\
                           0.8, 0.2),\
                          (1.1, 1.0e+2, 1.0, 1.0, 1.0, 0.79, 0.2, 0.01, 0.5,\
                           0.4, 1.2),\
@@ -213,21 +215,21 @@ class TestFunctions:
         with raises(ValueError, match="'star_i' should be 1 or 2."):
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, 0)
         # bad input
-        with raises(TypeError, match="'MODEL_NAME' should be a string, a "\
+        with raises(TypeError, match="'SN_MODEL_NAME' should be a string, a "\
                                      +"list of strings, or None."):
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, 1,\
                                                         1)
         # bad input
-        with raises(KeyError, match="'S1_MODEL01_state'"):
+        with raises(KeyError, match="'S1_SN_MODEL_v2_01_state'"):
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, 1)
-        # examples: all models in MODELS.py
+        # examples: all models in SN_MODELS.py
         for s in [1, 2]:
             test_EXTRA_COLUMNS = {}
-            for m in totest.MODELS.keys():
+            for m in totest.SN_MODELS.keys():
                 for q in totest.CC_quantities:
                     test_EXTRA_COLUMNS[f'S{s}_{m}_{q}'] = []
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, s)
-            for m in totest.MODELS.keys():
+            for m in totest.SN_MODELS.keys():
                 for q in totest.CC_quantities:
                     assert test_EXTRA_COLUMNS[f'S{s}_{m}_{q}'] == [None]
         # examples: given model
@@ -237,7 +239,7 @@ class TestFunctions:
                 for q in totest.CC_quantities:
                     test_EXTRA_COLUMNS[f'S{s}_{m}_{q}'] = []
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, s,\
-                                                        MODEL_NAME=m)
+                                                        SN_MODEL_NAME=m)
             for m in ["TESTMODEL"]:
                 for q in totest.CC_quantities:
                     assert test_EXTRA_COLUMNS[f'S{s}_{m}_{q}'] == [None]
@@ -316,10 +318,10 @@ class TestFunctions:
                     if ((i == 0) and (k != "mt_history")):
                         # check missing run: all None
                         assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
-                    elif (("S2_MODEL" in k) and (i in [1, 2, 4, 6])):
+                    elif (("S2_SN_MODEL" in k) and (i in [1, 2, 4, 6])):
                         # check star2: all None beside state
                         assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
-                    elif (("S1_MODEL" in k) and (i in [2, 4, 6])):
+                    elif (("S1_SN_MODEL" in k) and (i in [2, 4, 6])):
                         # check SN of star1 for None
                         assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
         def check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, n_runs, keys):
@@ -384,13 +386,14 @@ class TestFunctions:
             for q in ['lambda_CE', 'm_core_CE', 'r_core_CE']:
                 for v in [1, 10, 30, 'pure_He_star_10']:
                     keys += [f'S{s}_{q}_{v}cent']
-            for m in totest.MODELS:
+            for m in totest.SN_MODELS:
                 for q in totest.CC_quantities:
                     if q == 'state':
                         q = 'CO_type'
                     keys += [f'S{s}_{m}_{q}']
         # examples: all
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
+        with warns(POSYDONWarning): # warnings from SN
+            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
         # examples: run 2 only
@@ -401,55 +404,53 @@ class TestFunctions:
             assert k in EXTRA_COLUMNS
             assert len(EXTRA_COLUMNS[k]) == 1
         # examples: 1 and 2
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                                            index=[1,3])
+        with warns(POSYDONWarning): # warnings from SN
+            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                                                index=[1,3])
         assert MESA_dirs == test_PSyGrid.MESA_dirs[1:3]
         for k in keys:
             assert k in EXTRA_COLUMNS
             assert len(EXTRA_COLUMNS[k]) == 2
         # examples: HMS-HMS
-        with warns(InappropriateValueWarning, match="ended with "\
-                                                    +"TF1=gamma_center_limit "\
-                                                    +"however the star has "\
-                                                    +"center_gamma < 10. "\
-                                                    +"This star cannot go "\
-                                                    +"through step_SN "\
-                                                    +"appending NONE compact "\
-                                                    +"object properties!"):
-            with warns(InappropriateValueWarning, match="ended with "\
-                                                        +"TF=max_age and "\
-                                                        +"IC=stable_MT. This "\
-                                                        +"star cannot go "\
-                                                        +"through step_SN "\
-                                                        +"appending NONE "\
-                                                        +"compact object "\
-                                                        +"properties!"):
-                MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
-                                            test_PSyGrid, star_2_CO=False)
+        with warns(POSYDONWarning): # warnings from SN
+            with warns(InappropriateValueWarning,\
+                       match="ended with TF1=gamma_center_limit however the "\
+                             +"star has center_gamma < 10. This star cannot "\
+                             +"go through step_SN appending NONE compact "\
+                             +"object properties!"):
+                with warns(InappropriateValueWarning,\
+                           match="ended with TF=max_age and IC=stable_MT. "\
+                                 +"This star cannot go through step_SN "\
+                                 +"appending NONE compact object properties!"):
+                    MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
+                                                test_PSyGrid, star_2_CO=False)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
         # examples: less SN MODELS
         TEST_MODELS = {}
-        for m,v in totest.MODELS.items():
-            if m != 'MODEL01':
+        for m,v in totest.SN_MODELS.items():
+            if m != 'SN_MODEL_v2_01':
                 TEST_MODELS[m] = v
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                                            MODELS=TEST_MODELS)
+        with warns(POSYDONWarning): # warnings from SN
+            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                        SN_MODELS=TEST_MODELS)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         for k in keys:
-            if 'MODEL01' in k:
+            if 'SN_MODEL_v2_01' in k:
                 assert k not in EXTRA_COLUMNS
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7,\
-                            [k for k in keys if 'MODEL01' not in k])
+                            [k for k in keys if 'SN_MODEL_v2_01' not in k])
         # examples: single
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                                            single_star=True)
+        with warns(POSYDONWarning): # warnings from SN
+            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
+                                        single_star=True)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 7, keys)
         # examples: failing check_state_of_star
         with monkeypatch.context() as mp:
             mp.setattr(totest, "check_state_of_star", mock_check_state_of_star)
-            MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
+            with warns(POSYDONWarning): # warnings from SN
+                MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
         # examples: failing collapse_star
@@ -478,8 +479,11 @@ class TestFunctions:
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 7, keys)
         # examples: verbose
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                                            verbose=True)
+        with warns(POSYDONWarning): # warnings from SN
+            with warns(InappropriateValueWarning, match="Failed to print "\
+                                                        +"star values!"):
+                MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
+                                            test_PSyGrid, verbose=True)
         output = capsys.readouterr().out
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
@@ -491,9 +495,12 @@ class TestFunctions:
         assert "while accessing aboundances in star" in output
         assert "in check_state_of_star(star_2) with IC=" in output
         # examples: single and verbose
-        MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
-                                                            single_star=True,\
-                                                            verbose=True)
+        with warns(POSYDONWarning): # warnings from SN
+            with warns(InappropriateValueWarning, match="Failed to print "\
+                                                        +"star values!"):
+                MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
+                                            test_PSyGrid, single_star=True,\
+                                            verbose=True)
         output = capsys.readouterr().out
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 7, keys)

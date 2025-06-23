@@ -29,7 +29,7 @@ from posydon.utils.common_functions import (flip_stars,
                                             set_binary_to_failed,)
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.data_download import data_download
-from posydon.grids.MODELS import MODELS
+from posydon.grids.SN_MODELS import SN_MODELS
 from posydon.utils.posydonerror import FlowError, GridError
 from posydon.utils.posydonwarning import Pwarn
 
@@ -815,23 +815,27 @@ class MesaGridStep:
 
         # update nearest neighbor core collapse quantites
         if interpolation_class != 'unstable_MT':
-            for MODEL_NAME in MODELS.keys():
+            for SN_MODEL_NAME in SN_MODELS.keys():
                 for i, star in enumerate(stars):
-                    if (not stars_CO[i] and cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
+                    col_name = f'S{i+1}_{SN_MODEL_NAME}_CO_type'
+                    if ((not stars_CO[i])
+                        and (cb.final_values[col_name] != 'None')):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated', 'M4', 'mu4',
-                                    'h1_mass_ej', 'he4_mass_ej']:
+                                    'm_disk_accreted', 'm_disk_radiated', 'M4',
+                                    'mu4', 'h1_mass_ej', 'he4_mass_ej']:
                             if key == "state":
-                                state = cb.final_values[f'S{i+1}_{MODEL_NAME}_CO_type']
+                                state = cb.final_values[col_name]
                                 values[key] = state
                             elif key == "SN_type":
-                                values[key] = cb.final_values[f'S{i+1}_{MODEL_NAME}_{key}']
+                                col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
+                                values[key] = cb.final_values[col_name]
                             else:
-                                values[key] = cb.final_values[f'S{i+1}_{MODEL_NAME}_{key}']
-                        setattr(star, MODEL_NAME, values)
+                                col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
+                                values[key] = cb.final_values[col_name]
+                        setattr(star, SN_MODEL_NAME, values)
                     else:
-                        setattr(star, MODEL_NAME, None)
+                        setattr(star, SN_MODEL_NAME, None)
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""
@@ -980,28 +984,31 @@ class MesaGridStep:
 
         # update interpolated core collapse quantites
         if interpolation_class != 'unstable_MT':
-            for MODEL_NAME in MODELS.keys():
+            for SN_MODEL_NAME in SN_MODELS.keys():
                 for i, star in enumerate(stars):
-                    if (not stars_CO[i] and self.classes[f'S{i+1}_{MODEL_NAME}_CO_type'] != 'None'):
+                    col_name = f'S{i+1}_{SN_MODEL_NAME}_CO_type'
+                    if (not stars_CO[i] and self.classes[col_name] != 'None'):
                         values = {}
                         for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
                                     'm_disk_accreted', 'm_disk_radiated', 'M4',
                                     'mu4', 'h1_mass_ej', 'he4_mass_ej']:
                             if key == "state":
-                                state = self.classes[f'S{i+1}_{MODEL_NAME}_CO_type']
+                                state = self.classes[col_name]
                                 values[key] = state
                             elif key == "SN_type":
-                                values[key] = self.classes[f'S{i+1}_{MODEL_NAME}_{key}']
-                            elif f'S{i+1}_{MODEL_NAME}_{key}' in fv:
-                                values[key] = fv[f'S{i+1}_{MODEL_NAME}_{key}']
+                                col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
+                                values[key] = self.classes[col_name]
+                            elif f'S{i+1}_{SN_MODEL_NAME}_{key}' in fv:
+                                col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
+                                values[key] = fv[col_name]
                             else:
-                                Pwarn(f"S{i+1}_{MODEL_NAME}_{key} not found in fv",
-                                      "UnsupportedModelWarning")
+                                Pwarn(f"S{i+1}_{SN_MODEL_NAME}_{key} not "
+                                      "found in fv", "UnsupportedModelWarning")
                                 values = None
                                 break
-                        setattr(star, MODEL_NAME, values)
+                        setattr(star, SN_MODEL_NAME, values)
                     else:
-                        setattr(star, MODEL_NAME, None)
+                        setattr(star, SN_MODEL_NAME, None)
 
     # STOPPING METHODS
 

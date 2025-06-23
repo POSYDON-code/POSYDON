@@ -48,7 +48,7 @@ The binary properties are defined as follows
   * - ``eccentricity``
     - Orbital eccentricity.
   * - ``V_sys``
-    - Velocity of the centre of mass of the binary [Vx, Vy, Vz] in km/s.
+    - Velocity of the center of mass of the binary [Vx, Vy, Vz] in km/s.
   * - ``mass_transfer_case``
     - Mass transfer case, see MT case options.
   * - ``lg_mtransfer_rate``
@@ -172,25 +172,25 @@ Binary events are defined according to the following table:
   * - ``oCE2``
     - The binary is at the onset of Common Envelope initiated by star 2.
   * - ``oDoubleCE1``
-    - The binary is at the onset of Double Common Envelope initiated by star 1. 
-      Both stars are post main-sequence.
+    - | The binary is at the onset of Double Common Envelope initiated by star 1. 
+      | Both stars are post main-sequence.
   * - ``oDoubleCE2``
-    - The binary is at the onset of Double Common Envelope initiated by star 2. 
-      Both stars are post main-sequence.
+    - | The binary is at the onset of Double Common Envelope initiated by star 2. 
+      | Both stars are post main-sequence.
   * - ``CO_contact``
     - The binary reached contact in the compact object phase.
   * - ``redirect_from_ZAMS``
-    - The binary was redirected from ZAMS for a variety of reasons.
-    - Only recorded if history_verbose = True
+    - | The binary was redirected from ZAMS for a variety of reasons.
+      | Only recorded if history_verbose = True
   * - ``redirect_from_CO_HMS_RLO``
-    - The binary was redirected from CO_HMS_RLO for a variety of reasons.
-    - Only recorded if history_verbose = True
+    - | The binary was redirected from CO_HMS_RLO for a variety of reasons.
+      | Only recorded if history_verbose = True
   * - ``redirect_from_CO_HeMS``
-    - The binary was redirected from CO_HeMS for a variety of reasons.
-    - Only recorded if history_verbose = True
+    - | The binary was redirected from CO_HeMS for a variety of reasons.
+      | Only recorded if history_verbose = True
   * - ``redirect_from_CO_HeMS_RLO``
-    - The binary was redirected from CO_HeMS_RLO for a variety of reasons.
-    - Only recorded if history_verbose = True
+    - | The binary was redirected from CO_HeMS_RLO for a variety of reasons.
+      | Only recorded if `history_verbose = True`
   * - ``MaxTime_exceeded``
     - The maximum time of the evolution was exceeded.
   * - ``maxtime``
