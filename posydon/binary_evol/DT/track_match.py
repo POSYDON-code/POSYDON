@@ -829,7 +829,7 @@ class TrackMatcher:
 
             return initial_track_vals, sol
 
-        def match_through_minimize(htrack, get_root0, get_track_val):
+        def match_through_minimize(htrack, get_root0):
             """Match the star through a minimization method.
             
             Parameters
@@ -1176,9 +1176,7 @@ class TrackMatcher:
 
         # matching using minimize method (Newton or Powell method)
         elif self.matching_method == "minimize":
-            initial_track_vals, best_sol = match_through_minimize(htrack,
-                                                                  get_root0,
-                                                                  get_track_val)
+            initial_track_vals, best_sol = match_through_minimize(htrack, get_root0)
 
         if self.verbose:
             # successful match
@@ -1358,9 +1356,11 @@ class TrackMatcher:
             interp1d["mdot"] = PchipInterpolator(age, kvalue["mdot"])
             interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
 
-        return interp1d, m0, t0
+        star.interp1d = interp1d
 
-    def calc_omega(self, star, prematch_rotation, interp1d):
+        return m0, t0
+
+    def calc_omega(self, star, prematch_rotation):
         """
         
             Calculate the spin of a star from its (pre-match) moment
@@ -1438,8 +1438,8 @@ class TrackMatcher:
 
                 else:
 
-                    radius_to_be_used = interp1d["R"](interp1d["t0"])
-                    mass_to_be_used = interp1d["mass"](interp1d["t0"])
+                    radius_to_be_used = star.interp1d["R"](star.interp1d["t0"])
+                    mass_to_be_used = star.interp1d["mass"](star.interp1d["t0"])
 
                     omega_in_rad_per_year = (surf_avg_omega_div_omega_crit * np.sqrt(
                                                 const.standard_cgrav * mass_to_be_used * const.msol
@@ -1465,7 +1465,7 @@ class TrackMatcher:
 
         return omega_in_rad_per_year
 
-    def update_rotation_info(self, primary, secondary, interp1d_pri, interp1d_sec):
+    def update_rotation_info(self, primary, secondary):
 
         """
             Once we have matched to a non-rotating single star, we need to calculate
@@ -1508,7 +1508,7 @@ class TrackMatcher:
                                 "surf_avg_omega_div_omega_crit": primary.surf_avg_omega_div_omega_crit,
                                 "surf_avg_omega": primary.surf_avg_omega}
 
-        omega0_sec = self.calc_omega(secondary, prematch_rotation_sec, interp1d_sec)
+        omega0_sec = self.calc_omega(secondary, prematch_rotation_sec)
 
         # recalculate rotation quantities using the newly calculated omega [rad/s] here
         # need to be careful about case where omega was made/is 0 to avoid div by zero errors or None * float
@@ -1524,7 +1524,7 @@ class TrackMatcher:
             secondary.log_total_angular_momentum = 0.0
 
         if self.primary_normal:
-            omega0_pri = self.calc_omega(primary, prematch_rotation_pri, interp1d_pri)
+            omega0_pri = self.calc_omega(primary, prematch_rotation_pri)
 
             if primary.surf_avg_omega is not None and not pd.isna(primary.surf_avg_omega):
                 primary.surf_avg_omega_div_omega_crit = (omega0_pri / const.secyer / primary.surf_avg_omega) \
@@ -1622,7 +1622,7 @@ class TrackMatcher:
 
         # get the matched data of binary components
         # match secondary:
-        interp1d_sec, m0, t0 = self.get_star_match_data(binary, secondary)
+        m0, t0 = self.get_star_match_data(binary, secondary)
         # record which star got matched
         if secondary == binary.star_2:
             self.matched_s2 = True
@@ -1637,12 +1637,12 @@ class TrackMatcher:
         if self.primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
-            interp1d_pri = self.get_star_match_data(binary, primary,
-                                                            copy_prev_m0 = m0,
-                                                            copy_prev_t0 = t0)[0]
+            self.get_star_match_data(binary, primary,
+                                     copy_prev_m0 = m0,
+                                     copy_prev_t0 = t0)
         elif self.primary_normal:
             # match primary
-            interp1d_pri = self.get_star_match_data(binary, primary)[0]
+            self.get_star_match_data(binary, primary)
 
             if primary == binary.star_1:
                 self.matched_s1 = True
@@ -1658,23 +1658,20 @@ class TrackMatcher:
                             f"\ncompanion_2_exists = {binary.companion_2_exists}")
 
 
-        if interp1d_sec is None or interp1d_pri is None:
+        if secondary.interp1d is None or primary.interp1d is None:
             failed_state = binary.state
             set_binary_to_failed(binary)
             raise MatchingError(f"Grid matching failed for {failed_state} binary.")
 
         # recalculate rotation quantities after matching
-        omega0_pri, omega0_sec = self.update_rotation_info(primary, secondary, 
-                                                           interp1d_pri, interp1d_sec)
+        omega0_pri, omega0_sec = self.update_rotation_info(primary, secondary)
 
         # update binary history with matched values
         # (only shown in history if record_matching = True)
         # (this gets overwritten after detached evolution)
-        self.update_star_properties(secondary, secondary.htrack,
-                                    interp1d_sec["m0"], interp1d_sec["t0"])
+        self.update_star_properties(secondary, secondary.htrack)
         if self.primary_normal:
-            self.update_star_properties(primary, primary.htrack,
-                                        interp1d_pri["m0"], interp1d_pri["t0"])
+            self.update_star_properties(primary, primary.htrack)
 
         if self.record_matching:
             # append matching information as a part of step_detached
@@ -1688,10 +1685,10 @@ class TrackMatcher:
 
             binary.append_state()
 
-        primary_out = (primary, interp1d_pri, omega0_pri)
-        secondary_out = (secondary, interp1d_sec, omega0_sec)
+        primary.omega0 = omega0_pri
+        secondary.omega0 = omega0_sec
 
-        return primary_out, secondary_out, only_CO
+        return primary, secondary, only_CO
 
     def determine_star_states(self, binary):
 
@@ -1842,7 +1839,7 @@ class TrackMatcher:
 
         return primary, secondary, only_CO
 
-    def update_star_properties(self, star, htrack, m0, t0):
+    def update_star_properties(self, star, htrack):
 
         """
             This updates a SingleStar object (`star`) with the 
@@ -1874,6 +1871,9 @@ class TrackMatcher:
 
         """
 
+        m0 = star.interp1d["m0"]
+        t0 = star.interp1d["t0"]
+
         for key in self.KEYS:
 
             # skip updating rotation rate quantities because
@@ -1888,7 +1888,7 @@ class TrackMatcher:
             setattr(star, key, new_val)
 
 
-    def get_star_final_values(self, star, htrack, m0):
+    def get_star_final_values(self, star, htrack):
         """
             This updates the final values of a SingleStar object,
         given an initial stellar mass `m0`, typically found from 
@@ -1910,13 +1910,15 @@ class TrackMatcher:
 
         """
 
+        m0 = star.interp1d["m0"]
+
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
         get_final_values = grid.get_final_values
 
         for key in self.final_keys:
             setattr(star, key, get_final_values('S1_%s' % (key), m0))
 
-    def get_star_profile(self, star, htrack, m0):
+    def get_star_profile(self, star, htrack):
         """
             This updates the stellar profile of a SingleStar object,
         given an initial stellar mass `m0`, typically found from 
@@ -1939,6 +1941,8 @@ class TrackMatcher:
             that we will grab values from and update `star` with.
 
         """
+
+        m0 = star.interp1d["m0"]
 
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
         get_profile = grid.get_profile
