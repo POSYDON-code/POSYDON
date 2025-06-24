@@ -409,7 +409,19 @@ class BinaryStar:
 
         def equalize_columns(data_to_save, all_keys, properties_dtypes,
                              max_col_length):
-            """Iterate through data_to_save to append null values."""
+            """Iterate through data_to_save to append null values.
+            
+            Parameters
+            -----------
+            data_to_save : list[str]
+                Columns to save to the final dataframe
+            all_keys : list[str]
+                All available keys to store.
+           properties_dtypes : dict
+               Types of all available keys
+           max_col_length: int
+               The maximum length of columns.  
+            """
             for i, col in enumerate(data_to_save):
 
                 dkey = all_keys[i]
