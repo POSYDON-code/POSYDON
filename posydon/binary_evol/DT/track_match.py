@@ -853,14 +853,14 @@ class TrackMatcher:
         
         Parameters
         ----------
+        star : SingleStar object
+            This is a SingleStar object, typically representing 
+            a member of a binary star system that we are trying 
+            to match to a single star track.
+
         get_root0 : function
             Function that calculates the stellar evolution track in the
             single star grid with values 
-
-        get_track_val : function
-            Function that returns a single value of a stellar property
-            from the interpolated time-series along a requested stellar
-            track of mass `m0` at an age of `t`.
 
         Returns
         -------
@@ -868,6 +868,7 @@ class TrackMatcher:
             Values of the initial star found through matching
                         
         """
+        # START SUBFUNCTION DEFIITIONS
         def get_attr_values(attr_names):
 
             """
@@ -881,10 +882,6 @@ class TrackMatcher:
                 This list contains strings that are the names of 
                 data columns (attributes) to be used as matching 
                 metrics.
-
-            star : SingleStar object
-                This is a SingleStar object, typically representing 
-                a member of a binary star system.
 
             Returns
             -------
@@ -914,7 +911,7 @@ class TrackMatcher:
             Parameters
             ----------
             x : list[float]
-                A list containing the initial mass and age of a stellar track, 
+                A list containing the mass and age of a stellar track, 
                 which will be used to get values along a track and calculate the 
                 square difference between those values and the given star 
                 values that we are trying to find a match to.
@@ -933,16 +930,23 @@ class TrackMatcher:
                 
             Parameters
             ----------
-            star : SingleStar object
-                A SingleStar class object that holds properties of the star 
-                to be matched.
-
             match_type : str
                 A string that sets which matching list to use when obtaining 
                 attributes. The defined options are:
 
-                    "default" : This gets the set default list of attributes,
-                                which are dependent on the star's evol 
+                    "default" :     This gets the set default list of 
+                                    attributes, which are dependent on the 
+                                    star's evolutionary state.
+
+                    "alt" :         This selects alternate lists of attributes 
+                                    that are meant to ease the match finding 
+                                    process, ignoring certain parameters like 
+                                    stellar radius.
+
+                    "alt_evolved" : This switches the grids that are searched 
+                                    for a match for evolved stars, meaning 
+                                    post-MS and stripped He stars as a last 
+                                    ditch effort to find a match. 
 
             Returns
             -------
@@ -1021,7 +1025,48 @@ class TrackMatcher:
             return match_attrs, scls_bnds, new_htrack, match_ok
 
         def get_match_params(match_type, match_ok=True):
-            """Get starting point for minimizaion and matching specs."""
+            """
+                Get starting point for minimization and matching specs. 
+            The starting point is found via the get_root0 function (see 
+            that function for further details). The other specs gathered 
+            by this function are the function arguments needed for the 
+            square_difference function matching attribute boundaries 
+            used by SciPy's minimization function.
+            
+            Parameters
+            ----------
+            match_type :str
+                This string sets the type of matching to be done. This can 
+                be 'default', 'alt', or 'alt_evolved'. This string will 
+                dictate which matching parameters to use when considering 
+                which stellar track is the closest match. (See 
+                get_match_attrs() for more details.)
+
+            match_ok : bool
+                This boolean tracks whether something went wrong or not. If 
+                this is False, the matching is considered failed and will 
+                abort.
+            
+            Returns
+            -------
+            x0 : list[float]
+                A list that contains the initial stellar mass and age of a 
+                stellar track.
+
+            fnc_args : tuple
+                This tuple contains the arguments that will be passed to the 
+                minimization function. The minimization function uses the 
+                square_difference function. See that function for more details.
+
+            bnds : list
+                Lower and upper bounds on initial stellar mass and age to be used 
+                in minimization algorithms.
+
+            match_ok : bool
+                This boolean tracks whether something went wrong or not. If 
+                this is False, the matching is considered failed and will 
+                abort.
+            """
             # get names, values, bounds, and scalings of attributes to be matched
             match_attrs, scls_bnds, new_htrack, match_ok = get_match_attrs(match_type, 
                                                                             match_ok=match_ok)
@@ -1037,12 +1082,48 @@ class TrackMatcher:
                            new_htrack, rescale_facs=rescale_facs)
             fnc_args = (new_htrack, match_attr_names, match_attr_vals, scalers)
 
-            return x0, fnc_args, bnds, new_htrack, match_ok
+            return x0, fnc_args, bnds, match_ok
 
         def do_minimization(method='TNC', match_type="default"):
-            """do minimization"""
+            """
+                Perform minimization procedure with a given method and 
+            match type, using SciPy's minimize function.
 
-            x0, fnc_args, bounds, new_htrack, match_ok = get_match_params(match_type)
+            Parameters
+            ----------
+            method : str
+               This sets the desired solver to be used by SciPy's minimize 
+               function. The default is 'TNC', but we also use 'Powell' as 
+               an alternative.
+
+            match_type :str
+                This string sets the type of matching to be done. This can 
+                be 'default', 'alt', or 'alt_evolved'. This string will 
+                dictate which matching parameters to use when considering 
+                which stellar track is the closest match. (See 
+                get_match_attrs() for more details.)
+
+            Returns
+            -------
+            sol : OptimizeResult object
+                This is the OptimizeResult object returned by SciPy's 
+                minimize function. It contains the mass and age of the 
+                closest matching stellar track, found through 
+                minimization.
+
+            new_htrack : bool
+                This boolean tracks whether the star should be matched to 
+                the H- or He-rich single star grid. This can change in the 
+                match finding process.
+            
+            match_ok : bool
+                This boolean tracks whether something went wrong or not. If 
+                this is False, the matching is considered failed and will 
+                abort.
+            """
+
+            x0, fnc_args, bounds, match_ok = get_match_params(match_type)
+            new_htrack = fnc_args[0]
 
             if not match_ok:
                 return failed_sol, new_htrack, match_ok
@@ -1155,7 +1236,8 @@ class TrackMatcher:
                 scalers.append(scaler_of_attribute)
 
             return match_attr_names, rescale_facs, bnds, scalers
-
+        # END SUBFUNCTION DEFIITIONS
+        
         if self.verbose:
             print(DIVIDER_STR)
 
