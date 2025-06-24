@@ -960,7 +960,7 @@ def diffeq(
     """
         Diff. equation describing the orbital evolution of a detached binary.
 
-        The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_
+    The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_
     effects and magnetic braking [4]_, [5]_, [6]_, [7]_, [8]_. It also handles
     the change of the secondary's stellar spin due to its change of moment of
     intertia and due to mass-loss from its spinning surface. It is assumed that
