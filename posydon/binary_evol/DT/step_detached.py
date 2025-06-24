@@ -29,15 +29,11 @@ from posydon.utils.common_functions import (bondi_hoyle,
                                             check_state_of_star,
                                             set_binary_to_failed)
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, 
-                                            STAR_STATES_CO,
-                                            STAR_STATES_H_RICH,
                                             STAR_STATES_H_RICH_EVOLVABLE,
-                                            STAR_STATES_HE_RICH_EVOLVABLE,
-                                            STAR_STATES_FOR_Hestar_MATCHING)
+                                            STAR_STATES_HE_RICH_EVOLVABLE)
 import posydon.utils.constants as const
-from posydon.utils.posydonerror import (NumericalError, MatchingError,
-                                        POSYDONError, FlowError,
-                                        ClassificationError)
+from posydon.utils.posydonerror import (NumericalError, POSYDONError, 
+                                        FlowError, ClassificationError)
 from posydon.utils.posydonwarning import Pwarn
 
 from posydon.binary_evol.DT.track_match import TrackMatcher
