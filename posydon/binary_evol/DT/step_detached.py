@@ -452,8 +452,8 @@ class detached_step:
                 else:
                     binary.event = "CC2"
 
-                self.track_matcher.get_star_final_values(secondary, secondary.htrack)
-                self.track_matcher.get_star_profile(secondary, secondary.htrack)
+                self.track_matcher.get_star_final_values(secondary)
+                self.track_matcher.get_star_profile(secondary)
 
                 if not primary.co and primary.state in STAR_STATES_CC:
                     # simultaneous core-collapse of the other star as well
@@ -462,8 +462,8 @@ class detached_step:
 
                     if primary_time == secondary_time:
                         # we manually check if s.t_events[3] should also be happening simultaneously
-                        self.track_matcher.get_star_final_values(primary, primary.htrack)
-                        self.track_matcher.get_star_profile(primary, primary.htrack)
+                        self.track_matcher.get_star_final_values(primary)
+                        self.track_matcher.get_star_profile(primary)
 
                     if primary.mass != secondary.mass:
                         raise POSYDONError(
@@ -478,8 +478,8 @@ class detached_step:
                 else:
                     binary.event = "CC1"
 
-                self.track_matcher.get_star_final_values(primary, primary.htrack)
-                self.track_matcher.get_star_profile(primary, primary.htrack)
+                self.track_matcher.get_star_final_values(primary)
+                self.track_matcher.get_star_profile(primary)
 
             else:  # Reached max_time asked.
                 if binary.properties.max_simulation_time - binary.time < 0.0:

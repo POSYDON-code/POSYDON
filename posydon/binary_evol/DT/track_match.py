@@ -641,7 +641,7 @@ class TrackMatcher:
 
         return scaler
 
-    def match_to_single_star(self, star, htrack):
+    def match_to_single_star(self, star):
         """
             Get the track in the grid that matches the time and mass of a star,
         that has typically undergone prior binary star evolution. A match is made 
@@ -697,7 +697,178 @@ class TrackMatcher:
             range, thereby preventing a possible match.
 
         """
-        def get_attr_values(attr_names, star):
+
+        # setting whether to match to track from H-rich or stripped He star grid
+        if star.htrack:
+            self.grid = self.grid_Hrich
+        else:
+            self.grid = self.grid_strippedHe
+
+        get_root0 = self.get_root0
+        get_track_val = self.get_track_val
+
+        initial_track_vals = None
+
+        if self.verbose:
+            print(f"\nMatching process started in detached step for {star.state} star "
+                  f"with matching method = {self.matching_method}")
+            if self.matching_method == "minimize":
+                  print(f"matching_tolerance = {self.matching_tolerance}\n"
+                        f"matching_tolerance_hard = {self.matching_tolerance_hard}")
+
+        # matching via root method (ultimately modified Powell's method)
+        if self.matching_method == "root":
+            initial_track_vals, best_sol = self.match_through_root(star, get_root0, get_track_val)
+
+        # matching using minimize method (Newton or Powell method)
+        elif self.matching_method == "minimize":
+            initial_track_vals, best_sol = self.match_through_minimize(star, get_root0)
+
+        if self.verbose:
+            # successful match
+            if not np.isnan(initial_track_vals[0]):
+
+                matchv = lambda n: get_track_val(n, star.htrack, *best_sol.x)
+                match_vals = [matchv(vn) for vn in val_names[1::]]
+                init_vals = [getattr(star, vn) for vn in val_names[1::]]
+
+                initial_val_str = ["initial values"]+\
+                                   [f"{v:.3e}" for v in init_vals]
+
+                match_val_str = ["matched values"]+\
+                                [f"{v:.3e}" for v in match_vals]
+
+                pcntd_fn = lambda m, i: np.nan_to_num(100.0*(m - i)/i, 0)
+                zip_vals = zip(match_vals, init_vals)
+                pcntd_vals = [pcntd_fn(mval, ival) for mval, ival in zip_vals]
+                percent_diff_str = ["% difference"]+\
+                                   [f"{pcntd:.1e}%" for pcntd in pcntd_vals]
+
+                output_table = [val_names, initial_val_str, match_val_str, 
+                                percent_diff_str]
+
+                print("\nMatching completed for", star.state, "star!\n")
+                for row in output_table:
+                    print(row_str.format(*row))
+
+            # failed match
+            else:
+                print(
+                    "Matching was unsuccessful for star with properties: \n"
+                    f'mass = {star.mass:.3f}, ',
+                    f'log_R = {star.log_R:.3f}, ',
+                    f'center_he4 = {star.center_he4:.4f}, ',
+                    f'surface_he4 = {star.surface_he4:.4f}, ',
+                    f'surface_h1 = {star.surface_h1:.4f}, ',
+                    f'he_core_mass = {star.he_core_mass:.3f}, ',
+                    f'center_c12 = {star.center_c12:.4f}'
+                )
+
+            # done with matching attempts
+            print(DIVIDER_STR)
+
+        m0 = initial_track_vals[0]
+        t0 = initial_track_vals[1]
+
+        return m0, t0
+
+    def match_through_root(self, star, get_root0, get_track_val):
+        """Match the star through a root method.
+        
+        Parameters
+        ----------
+        get_root0 : function
+            Function that calculates the stellar evolution track in the
+            single star grid with values 
+
+        get_track_val : function
+            Function that returns a single value of a stellar property
+            from the interpolated time-series along a requested stellar
+            track of mass `m0` at an age of `t`.
+
+        Returns
+        -------
+        initial_track_vals : array
+            Values of the initial star found through matching
+                        
+        """
+
+        htrack = star.htrack
+
+        # if the star can be considered an HMS star
+        if star.state in STAR_STATES_FOR_HMS_MATCHING:
+
+            # get initial guess for matching via search for closest track
+            x0 = get_root0(["center_h1", "mass"],
+                            [star.center_h1, star.mass],
+                            htrack, rescale_facs=[0.7, 300])
+
+            # Using modified Powell method to find match starting 
+            # from time series from above (in x0) using difference 
+            # of center X and stellar mass to find match
+            sol = root(
+                        lambda x: [
+                                    get_track_val("center_h1",
+                                                    htrack,
+                                                    *x) - star.center_h1,
+                                    get_track_val("mass",
+                                                    htrack,
+                                                    *x) - star.mass
+                                    ],
+                        x0, method="hybr"
+                        )
+            
+        # or if not an HMS star
+        else:
+
+            # same as above but using He core mass and total mass
+            x0 = get_root0(
+                            ["he_core_mass", "mass"],
+                            [star.he_core_mass, star.mass],
+                            htrack,
+                            rescale_facs=[11, 300]
+                            )
+
+            sol = root(
+                        lambda x: [
+                                    get_track_val("he_core_mass", 
+                                                    htrack, 
+                                                    *x) - star.he_core_mass,
+                                    get_track_val("mass", 
+                                                    htrack, 
+                                                    *x) - star.mass],
+                        x0, method="hybr"
+                        )
+
+        # if optimizer failed for some reason set solution as NaN
+        if not sol.success or sol.x[1] < 0:
+            initial_track_vals = (np.nan, np.nan)
+        else:
+            initial_track_vals = sol.x
+
+        return initial_track_vals, sol
+
+    def match_through_minimize(self, star, get_root0):
+        """Match the star through a minimization method.
+        
+        Parameters
+        ----------
+        get_root0 : function
+            Function that calculates the stellar evolution track in the
+            single star grid with values 
+
+        get_track_val : function
+            Function that returns a single value of a stellar property
+            from the interpolated time-series along a requested stellar
+            track of mass `m0` at an age of `t`.
+
+        Returns
+        -------
+        initial_track_vals : array
+            Values of the initial star found through matching
+                        
+        """
+        def get_attr_values(attr_names):
 
             """
                 Given a set of attribute names, gets attribute values 
@@ -755,341 +926,170 @@ class TrackMatcher:
                                              attr_vals=match_attr_vals,
                                              attr_scalers=scalers)
 
-        def match_through_root(get_root0, get_track_val):
-            """Match the star through a root method.
-            
-            Parameters
-            ----------
-            get_root0 : function
-                Function that calculates the stellar evolution track in the
-                single star grid with values 
+        def get_match_attrs(match_type="default", match_ok=True):
 
-            get_track_val : function
-                Function that returns a single value of a stellar property
-                from the interpolated time-series along a requested stellar
-                track of mass `m0` at an age of `t`.
-
-            Returns
-            -------
-            initial_track_vals : array
-                Values of the initial star found through matching
-                            
-            """
-
-            # if the star can be considered an HMS star
-            if star.state in STAR_STATES_FOR_HMS_MATCHING:
-
-                # get initial guess for matching via search for closest track
-                x0 = get_root0(["center_h1", "mass"],
-                               [star.center_h1, star.mass],
-                               htrack, rescale_facs=[0.7, 300])
-
-                # Using modified Powell method to find match starting 
-                # from time series from above (in x0) using difference 
-                # of center X and stellar mass to find match
-                sol = root(
-                            lambda x: [
-                                        get_track_val("center_h1",
-                                                      htrack,
-                                                      *x) - star.center_h1,
-                                        get_track_val("mass",
-                                                      htrack,
-                                                      *x) - star.mass
-                                      ],
-                            x0, method="hybr"
-                          )
+            """Gather the attribute names and values for matching
+                a given star, plus the attribute bounds and scalings.
                 
-            # or if not an HMS star
-            else:
-
-                # same as above but using He core mass and total mass
-                x0 = get_root0(
-                               ["he_core_mass", "mass"],
-                               [star.he_core_mass, star.mass],
-                               htrack,
-                               rescale_facs=[11, 300]
-                              )
-
-                sol = root(
-                            lambda x: [
-                                        get_track_val("he_core_mass", 
-                                                      htrack, 
-                                                      *x) - star.he_core_mass,
-                                        get_track_val("mass", 
-                                                      htrack, 
-                                                      *x) - star.mass],
-                            x0, method="hybr"
-                          )
-
-            # if optimizer failed for some reason set solution as NaN
-            if not sol.success or sol.x[1] < 0:
-                initial_track_vals = (np.nan, np.nan)
-            else:
-                initial_track_vals = sol.x
-
-            return initial_track_vals, sol
-
-        def match_through_minimize(htrack, get_root0):
-            """Match the star through a minimization method.
-            
             Parameters
             ----------
-            get_root0 : function
-                Function that calculates the stellar evolution track in the
-                single star grid with values 
+            star : SingleStar object
+                A SingleStar class object that holds properties of the star 
+                to be matched.
 
-            get_track_val : function
-                Function that returns a single value of a stellar property
-                from the interpolated time-series along a requested stellar
-                track of mass `m0` at an age of `t`.
+            match_type : str
+                A string that sets which matching list to use when obtaining 
+                attributes. The defined options are:
+
+                    "default" : This gets the set default list of attributes,
+                                which are dependent on the star's evol 
 
             Returns
             -------
-            initial_track_vals : array
-                Values of the initial star found through matching
-                            
+            match_attrs : tuple(str, float)
+                A tuple that contains the match_attr_names, which are the 
+                data column names of the match attributes and the 
+                match_attr_vals, which are the associated values.
+
+            scls_bnds : tuple(float, float, DataScaler)
+                A tuple that contains the associated rescaling factors,
+                boundaries, and DataScaler objects of the matching 
+                attributes.
+                    
             """
 
-            def get_match_attrs(match_type="default", match_ok=True):
-
-                """Gather the attribute names and values for matching
-                   a given star, plus the attribute bounds and scalings.
-                   
-                Parameters
-                ----------
-                star : SingleStar object
-                    A SingleStar class object that holds properties of the star 
-                    to be matched.
-
-                match_type : str
-                    A string that sets which matching list to use when obtaining 
-                    attributes. The defined options are:
-
-                        "default" : This gets the set default list of attributes,
-                                    which are dependent on the star's evol 
-
-                Returns
-                -------
-                match_attrs : tuple(str, float)
-                    A tuple that contains the match_attr_names, which are the 
-                    data column names of the match attributes and the 
-                    match_attr_vals, which are the associated values.
-
-                scls_bnds : tuple(float, float, DataScaler)
-                    A tuple that contains the associated rescaling factors,
-                    boundaries, and DataScaler objects of the matching 
-                    attributes.
-                      
-                """
-
-                # set matching metrics based on star state
-                new_htrack = htrack
-                if match_type == "default":
-                    if star.state in STAR_STATES_FOR_HMS_MATCHING:
-                        list_for_matching = self.list_for_matching_HMS
-                    elif star.state in STAR_STATES_FOR_postMS_MATCHING:
-                        list_for_matching = self.list_for_matching_postMS
-                    elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
-                        list_for_matching = self.list_for_matching_HeStar
-                    else:
-                        raise ValueError("Star state is not allowable for matching step")
-                        
-                elif match_type == "alt":
-                    if self.verbose:
-                        print("(Now trying to match with alternative parameters)")
-
-                    # set alternative matching metrics based on star state
-                    if star.state in STAR_STATES_FOR_HMS_MATCHING:
-                        list_for_matching = self.list_for_matching_HMS_alternative
-                    elif star.state in STAR_STATES_FOR_postMS_MATCHING:
-                        list_for_matching = (self.list_for_matching_postMS_alternative)
-                    elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
-                        list_for_matching = (self.list_for_matching_HeStar_alternative)
-                    else:
-                        raise ValueError("Star state is not allowable for matching step")
-                        
-                elif match_type == "evolved_alt":
-                    Pwarn("Attempting to match an He-star with an H-rich grid or " \
-                          "post-MS star with a stripped-He grid", "EvolutionWarning")
-
-                    if star.state in STAR_STATES_FOR_HMS_MATCHING:
-                        if self.verbose:
-                            print(f"We cannot use match_type={match_type} " \
-                                  "since star is on the MS. Skipping...")
-                        match_ok = False
-                        return None, None, False, match_ok
-
-                    # if he star, try matching to H-rich grid
-                    elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
-                        new_htrack = True
-                        list_for_matching = self.list_for_matching_HeStar
-
-                    # if post MS star, try matching to He-rich grid
-                    elif star.state in STAR_STATES_FOR_postMS_MATCHING:
-                        new_htrack = False
-                        list_for_matching = self.list_for_matching_postMS
-
+            # set matching metrics based on star state
+            new_htrack = star.htrack
+            if match_type == "default":
+                if star.state in STAR_STATES_FOR_HMS_MATCHING:
+                    list_for_matching = self.list_for_matching_HMS
+                elif star.state in STAR_STATES_FOR_postMS_MATCHING:
+                    list_for_matching = self.list_for_matching_postMS
+                elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
+                    list_for_matching = self.list_for_matching_HeStar
                 else:
-                    raise POSYDONError(f"In getting match attributes, match_type '{match_type}' " \
-                            "is not a recognized option. Please check how this happened " \
-                            "and either create a new option in get_match_attrs() or " \
-                            "correct it.")
-
-                # have approriate matching list, now get necessary attr properties
-                match_attr_names, rescale_facs, bnds, scalers = get_match_attr_props(list_for_matching)
-
-                # check that attributes are allowed as matching attributes
-                for param_name in match_attr_names:
-                    if param_name not in self.root_keys:
-                        raise AttributeError(f"Expected matching parameter {param_name} not "+\
-                                             f"added in root_keys list: {self.root_keys}")
-
-                match_attr_vals = get_attr_values(match_attr_names, star)
-
-                match_attrs = (match_attr_names, match_attr_vals)
-                scls_bnds = (rescale_facs, bnds, scalers)
-
-                return match_attrs, scls_bnds, new_htrack, match_ok
-
-            def get_match_params(match_type, match_ok=True):
-                """Get starting point for minimizaion and matching specs."""
-                # get names, values, bounds, and scalings of attributes to be matched
-                match_attrs, scls_bnds, new_htrack, match_ok = get_match_attrs(match_type, 
-                                                                               match_ok=match_ok)
-                if not match_ok:
-                    return None, None, None, new_htrack, match_ok
-
-                match_attr_names, match_attr_vals = match_attrs
-                rescale_facs, bnds, scalers = scls_bnds
-
-                # Get closest matching point along track single star grids. x0 contains the
-                # corresponding initial mass and age
-                x0 = get_root0(match_attr_names, match_attr_vals, new_htrack, rescale_facs=rescale_facs)
-                fnc_args = (new_htrack, match_attr_names, match_attr_vals, scalers)
-
-                return x0, fnc_args, bnds, new_htrack, match_ok
-
-            def do_minimization(method='TNC', match_type="default"):
-                """do minimization"""
-
-                x0, fnc_args, bounds, new_htrack, match_ok = get_match_params(match_type)
-
-                if not match_ok:
-                    return failed_sol, new_htrack, match_ok
- 
-                # Powell's method does not work with bound in SciPy version < 1.5.x
-                if method == 'Powell' and SCIPY_VER < 1.5:
-                    if self.verbose:
-                        print(f"Ignoring bounds because method = {method} "
-                              f"does not accept them in SciPy version {SCIPY_VER}.")
-                    bounds = None
-
-                # Run minimization method
-                try:
-                    # Minimize sq, Euclidean dist. w/ Newton's method (TNC)
-                    sol = minimize(sq_diff_function, x0, args=fnc_args,
-                                   method=method, bounds=bounds)
-
-                    if self.verbose:
-                        print (f"Matching attempt completed:"
-                               f"\nBest solution: {np.abs(sol.fun)} " 
-                               f"(tol = {self.matching_tolerance})"
-                               f"\nsol.success = {sol.success}")
-                except:
-                    raise NumericalError("SciPy numerical differentiation "
-                                         "occurred outside boundary while "
-                                         "matching to single star track")
-
-                # check for failures:
-                if (np.abs(sol.fun) > self.matching_tolerance):
-                    if self.verbose:
-                        print (f"Matching result: FAILED"
-                               "\nReason: Solution exceeds tolerance "
-                               f"({np.abs(sol.fun)} > {self.matching_tolerance})")
-                    match_ok = False
-                if (not sol.success):
-                    if self.verbose:
-                        print (f"Matching result: FAILED"
-                               f"\nReason: Optimizer failed (sol.success = {sol.success})"
-                               f"\nOptimizer termination reason: {sol.message}")
-                    match_ok = False
-
-                if match_ok and self.verbose:
-                    print("Matching result: OK")
-
-                return sol, new_htrack, match_ok
-
-            if self.verbose:
-                print(DIVIDER_STR)
-
-            # defined sequence of matching attempts
-            match_sequence = {
-                              1: {"type":"default", 
-                                  "method":"TNC"},
-                              2: {"type":"default", 
-                                  "method":"Powell"},
-                              3: {"type":"alt", 
-                                  "method":"TNC"},
-                              4: {"type":"evolved_alt", 
-                                  "method":"TNC"}
-                             }
-            
-            # dummy
-            failed_sol = types.SimpleNamespace()
-            failed_sol.success = False
-            failed_sol.fun = 1e99
-            failed_sol.message = "This is a dummy that mimics SciPy's OptimizeResult object."
-            
-            best_sol = failed_sol
-            for attempt_num in match_sequence.keys():
-
-                match_type = match_sequence[attempt_num]["type"]
-                method = match_sequence[attempt_num]["method"]
-
+                    raise ValueError("Star state is not allowable for matching step")
+                    
+            elif match_type == "alt":
                 if self.verbose:
-                    print(f"\nMatching attempt {attempt_num} started...")
-                    print(f"match_type = {match_type}")
-                    print(f"method = {method}")
+                    print("(Now trying to match with alternative parameters)")
 
-                sol, new_htrack, match_ok = do_minimization(method, match_type)
+                # set alternative matching metrics based on star state
+                if star.state in STAR_STATES_FOR_HMS_MATCHING:
+                    list_for_matching = self.list_for_matching_HMS_alternative
+                elif star.state in STAR_STATES_FOR_postMS_MATCHING:
+                    list_for_matching = (self.list_for_matching_postMS_alternative)
+                elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
+                    list_for_matching = (self.list_for_matching_HeStar_alternative)
+                else:
+                    raise ValueError("Star state is not allowable for matching step")
+                    
+            elif match_type == "evolved_alt":
+                Pwarn("Attempting to match an He-star with an H-rich grid or " \
+                        "post-MS star with a stripped-He grid", "EvolutionWarning")
 
-                sol_is_better = np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success
-                # TODO: case for nan solution
-                # if a better solution is found, update it
-                if sol_is_better:
-                    htrack = new_htrack
-                    best_sol = sol
+                if star.state in STAR_STATES_FOR_HMS_MATCHING:
+                    if self.verbose:
+                        print(f"We cannot use match_type={match_type} " \
+                                "since star is on the MS. Skipping...")
+                    match_ok = False
+                    return None, None, False, match_ok
 
-                # if we matched successfully and solution was better, we're done
-                if sol_is_better and match_ok:
-                    break
+                # if he star, try matching to H-rich grid
+                elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
+                    new_htrack = True
+                    list_for_matching = self.list_for_matching_HeStar
 
-            # if matching is still not successful, set result to NaN:
-            if (np.abs(best_sol.fun) > self.matching_tolerance_hard or not best_sol.success):
-                if self.verbose:
-                    print("\nFinal matching result: FAILED")
-                    if (np.abs(best_sol.fun) > self.matching_tolerance_hard):
-                        print ("\nReason: Solution exceeds hard tolerance "+\
-                               f"({np.abs(best_sol.fun)} > {self.matching_tolerance_hard})")
-                    if (not best_sol.success):
-                        print (f"\nReason: Optimizer failed, sol.success = {best_sol.success}"
-                               f"\nOptimizer termination reason: {best_sol.message}") 
+                # if post MS star, try matching to He-rich grid
+                elif star.state in STAR_STATES_FOR_postMS_MATCHING:
+                    new_htrack = False
+                    list_for_matching = self.list_for_matching_postMS
 
-                initial_track_vals = (np.nan, np.nan)
-
-            # or else we found a solution
             else:
+                raise POSYDONError(f"In getting match attributes, match_type '{match_type}' " \
+                        "is not a recognized option. Please check how this happened " \
+                        "and either create a new option in get_match_attrs() or " \
+                        "correct it.")
+
+            # have approriate matching list, now get necessary attr properties
+            match_attr_names, rescale_facs, bnds, scalers = get_attr_props(new_htrack, list_for_matching)
+            match_attr_vals = get_attr_values(match_attr_names)
+
+            match_attrs = (match_attr_names, match_attr_vals)
+            scls_bnds = (rescale_facs, bnds, scalers)
+
+            return match_attrs, scls_bnds, new_htrack, match_ok
+
+        def get_match_params(match_type, match_ok=True):
+            """Get starting point for minimizaion and matching specs."""
+            # get names, values, bounds, and scalings of attributes to be matched
+            match_attrs, scls_bnds, new_htrack, match_ok = get_match_attrs(match_type, 
+                                                                            match_ok=match_ok)
+            if not match_ok:
+                return None, None, None, new_htrack, match_ok
+
+            match_attr_names, match_attr_vals = match_attrs
+            rescale_facs, bnds, scalers = scls_bnds
+
+            # Get closest matching point along track single star grids. x0 contains the
+            # corresponding initial mass and age
+            x0 = get_root0(match_attr_names, match_attr_vals, 
+                           new_htrack, rescale_facs=rescale_facs)
+            fnc_args = (new_htrack, match_attr_names, match_attr_vals, scalers)
+
+            return x0, fnc_args, bnds, new_htrack, match_ok
+
+        def do_minimization(method='TNC', match_type="default"):
+            """do minimization"""
+
+            x0, fnc_args, bounds, new_htrack, match_ok = get_match_params(match_type)
+
+            if not match_ok:
+                return failed_sol, new_htrack, match_ok
+
+            # Powell's method does not work with bound in SciPy version < 1.5.x
+            if method == 'Powell' and SCIPY_VER < 1.5:
                 if self.verbose:
-                    print("\nFinal matching result: SUCCESS"
-                         f"\nBest solution within hard tolerance: "
-                         f"{np.abs(best_sol.fun):.8f}", "<", 
-                         self.matching_tolerance_hard)
+                    print(f"Ignoring bounds because method = {method} "
+                            f"does not accept them in SciPy version {SCIPY_VER}.")
+                bounds = None
 
-                initial_track_vals = best_sol.x
+            # Run minimization method
+            try:
+                # Minimize sq, Euclidean dist. w/ Newton's method (TNC)
+                sol = minimize(sq_diff_function, x0, args=fnc_args,
+                                method=method, bounds=bounds)
 
-            return initial_track_vals, best_sol
+                if self.verbose:
+                    print (f"Matching attempt completed:"
+                            f"\nBest solution: {np.abs(sol.fun)} " 
+                            f"(tol = {self.matching_tolerance})"
+                            f"\nsol.success = {sol.success}")
+            except:
+                raise NumericalError("SciPy numerical differentiation "
+                                        "occurred outside boundary while "
+                                        "matching to single star track")
 
-        def get_match_attr_props(list_for_matching):
+            # check for failures:
+            if (np.abs(sol.fun) > self.matching_tolerance):
+                if self.verbose:
+                    print (f"Matching result: FAILED"
+                            "\nReason: Solution exceeds tolerance "
+                            f"({np.abs(sol.fun)} > {self.matching_tolerance})")
+                match_ok = False
+            if (not sol.success):
+                if self.verbose:
+                    print (f"Matching result: FAILED"
+                            f"\nReason: Optimizer failed (sol.success = {sol.success})"
+                            f"\nOptimizer termination reason: {sol.message}")
+                match_ok = False
+
+            if match_ok and self.verbose:
+                print("Matching result: OK")
+
+            return sol, new_htrack, match_ok
+
+        def get_attr_props(htrack, list_for_matching):
 
             """
                This unpacks a list_for_matching which has the following 
@@ -1146,85 +1146,85 @@ class TrackMatcher:
             # attributes are scaled to range (0, 1)
             scalers = []
             for attr_name, scaler_method in zip(match_attr_names, scaler_methods):
-                scaler_of_attribute = scale(attr_name, htrack, scaler_method)
+                # check that attributes are allowed as matching attributes
+                if attr_name not in self.root_keys:
+                    raise AttributeError(f"Expected matching attribute {attr_name} not "+\
+                                         f"added in root_keys list: {self.root_keys}")
+                # create attribute scalers
+                scaler_of_attribute = self.scale(attr_name, htrack, scaler_method)
                 scalers.append(scaler_of_attribute)
 
             return match_attr_names, rescale_facs, bnds, scalers
 
-        # setting whether to match to track from H-rich or stripped He star grid
-        if htrack:
-            self.grid = self.grid_Hrich
-        else:
-            self.grid = self.grid_strippedHe
-
-        get_root0 = self.get_root0
-        get_track_val = self.get_track_val
-        scale = self.scale
-
-        initial_track_vals = None
-
         if self.verbose:
-            print(f"\nMatching process started in detached step for {star.state} star "
-                  f"with matching method = {self.matching_method}")
-            if self.matching_method == "minimize":
-                  print(f"matching_tolerance = {self.matching_tolerance}\n"
-                        f"matching_tolerance_hard = {self.matching_tolerance_hard}")
-
-        # matching via root method (ultimately modified Powell's method)
-        if self.matching_method == "root":
-            initial_track_vals, best_sol = match_through_root(get_root0, get_track_val)
-
-        # matching using minimize method (Newton or Powell method)
-        elif self.matching_method == "minimize":
-            initial_track_vals, best_sol = match_through_minimize(htrack, get_root0)
-
-        if self.verbose:
-            # successful match
-            if not np.isnan(initial_track_vals[0]):
-
-                matchv = lambda n: get_track_val(n, htrack, *best_sol.x)
-                match_vals = [matchv(vn) for vn in val_names[1::]]
-                init_vals = [getattr(star, vn) for vn in val_names[1::]]
-
-                initial_val_str = ["initial values"]+\
-                                   [f"{v:.3e}" for v in init_vals]
-
-                match_val_str = ["matched values"]+\
-                                [f"{v:.3e}" for v in match_vals]
-
-                pcntd_fn = lambda m, i: np.nan_to_num(100.0*(m - i)/i, 0)
-                zip_vals = zip(match_vals, init_vals)
-                pcntd_vals = [pcntd_fn(mval, ival) for mval, ival in zip_vals]
-                percent_diff_str = ["% difference"]+\
-                                   [f"{pcntd:.1e}%" for pcntd in pcntd_vals]
-
-                output_table = [val_names, initial_val_str, match_val_str, 
-                                percent_diff_str]
-
-                print("\nMatching completed for", star.state, "star!\n")
-                for row in output_table:
-                    print(row_str.format(*row))
-
-            # failed match
-            else:
-                print(
-                    "Matching was unsuccessful for star with properties: \n"
-                    f'mass = {star.mass:.3f}, ',
-                    f'log_R = {star.log_R:.3f}, ',
-                    f'center_he4 = {star.center_he4:.4f}, ',
-                    f'surface_he4 = {star.surface_he4:.4f}, ',
-                    f'surface_h1 = {star.surface_h1:.4f}, ',
-                    f'he_core_mass = {star.he_core_mass:.3f}, ',
-                    f'center_c12 = {star.center_c12:.4f}'
-                )
-
-            # done with matching attempts
             print(DIVIDER_STR)
 
-        m0 = initial_track_vals[0]
-        t0 = initial_track_vals[1]
+        # defined sequence of matching attempts
+        match_sequence = {
+                            1: {"type":"default", 
+                                "method":"TNC"},
+                            2: {"type":"default", 
+                                "method":"Powell"},
+                            3: {"type":"alt", 
+                                "method":"TNC"},
+                            4: {"type":"evolved_alt", 
+                                "method":"TNC"}
+                            }
+        
+        # dummy
+        failed_sol = types.SimpleNamespace()
+        failed_sol.success = False
+        failed_sol.fun = 1e99
+        failed_sol.message = "This is a dummy that mimics SciPy's OptimizeResult object."
+        
+        best_sol = failed_sol
+        for attempt_num in match_sequence.keys():
 
-        return m0, t0, htrack
+            match_type = match_sequence[attempt_num]["type"]
+            method = match_sequence[attempt_num]["method"]
+
+            if self.verbose:
+                print(f"\nMatching attempt {attempt_num} started...")
+                print(f"match_type = {match_type}")
+                print(f"method = {method}")
+
+            sol, new_htrack, match_ok = do_minimization(method, match_type)
+
+            sol_is_better = np.abs(sol.fun) < np.abs(best_sol.fun) and sol.success
+            # TODO: case for nan solution
+            # if a better solution is found, update it
+            if sol_is_better:
+                star.htrack = new_htrack
+                best_sol = sol
+
+            # if we matched successfully and solution was better, we're done
+            if sol_is_better and match_ok:
+                break
+
+        # if matching is still not successful, set result to NaN:
+        if (np.abs(best_sol.fun) > self.matching_tolerance_hard or not best_sol.success):
+            if self.verbose:
+                print("\nFinal matching result: FAILED")
+                if (np.abs(best_sol.fun) > self.matching_tolerance_hard):
+                    print ("\nReason: Solution exceeds hard tolerance "+\
+                            f"({np.abs(best_sol.fun)} > {self.matching_tolerance_hard})")
+                if (not best_sol.success):
+                    print (f"\nReason: Optimizer failed, sol.success = {best_sol.success}"
+                            f"\nOptimizer termination reason: {best_sol.message}") 
+
+            initial_track_vals = (np.nan, np.nan)
+
+        # or else we found a solution
+        else:
+            if self.verbose:
+                print("\nFinal matching result: SUCCESS"
+                        f"\nBest solution within hard tolerance: "
+                        f"{np.abs(best_sol.fun):.8f}", "<", 
+                        self.matching_tolerance_hard)
+
+            initial_track_vals = best_sol.x
+
+        return initial_track_vals, best_sol
 
 
     def get_star_match_data(self, binary, star, copy_prev_m0=None, copy_prev_t0=None):
@@ -1263,7 +1263,7 @@ class TrackMatcher:
 
         """
 
-        htrack = star.htrack
+        #htrack = star.htrack
 
         with np.errstate(all="ignore"):
             # get the initial m0, t0 track
@@ -1276,7 +1276,7 @@ class TrackMatcher:
             else:
                 t_before_matching = time.time()
                 # matching to single star grids (getting initial mass,age of closest track)
-                m0, t0, htrack = self.match_to_single_star(star, htrack)
+                m0, t0 = self.match_to_single_star(star)
                 t_after_matching = time.time()
 
                 if self.verbose:
@@ -1286,7 +1286,7 @@ class TrackMatcher:
         if pd.isna(m0) or pd.isna(t0):
             return None, None, None
 
-        if htrack:
+        if star.htrack:
             self.grid = self.grid_Hrich
         else:
             self.grid = self.grid_strippedHe
@@ -1888,7 +1888,7 @@ class TrackMatcher:
             setattr(star, key, new_val)
 
 
-    def get_star_final_values(self, star, htrack):
+    def get_star_final_values(self, star):
         """
             This updates the final values of a SingleStar object,
         given an initial stellar mass `m0`, typically found from 
@@ -1911,6 +1911,7 @@ class TrackMatcher:
         """
 
         m0 = star.interp1d["m0"]
+        htrack = star.htrack
 
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
         get_final_values = grid.get_final_values
@@ -1918,7 +1919,7 @@ class TrackMatcher:
         for key in self.final_keys:
             setattr(star, key, get_final_values('S1_%s' % (key), m0))
 
-    def get_star_profile(self, star, htrack):
+    def get_star_profile(self, star):
         """
             This updates the stellar profile of a SingleStar object,
         given an initial stellar mass `m0`, typically found from 
@@ -1943,6 +1944,7 @@ class TrackMatcher:
         """
 
         m0 = star.interp1d["m0"]
+        htrack = star.htrack
 
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
         get_profile = grid.get_profile
