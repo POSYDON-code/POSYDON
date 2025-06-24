@@ -489,24 +489,33 @@ class detached_step:
 
     @event(True, 1)
     def ev_rlo1(self, t, y, primary, secondary):
-        """Difference between radius and Roche lobe at a given time.
-
-        Used to check if there is RLOF mass transfer during the detached
-        binary evolution interpolation.
+        """
+            Difference between radius and Roche lobe at a given time. Used 
+        to check if there is RLOF mass transfer during the detached binary 
+        evolution interpolation. Calculated for the secondary.
 
         Parameters
         ----------
         t : float
             Time of the evolution, in years.
-        y : tuple of floats
+
+        y : tuple(float)
             [separation, eccentricity] at that time. Separation should be
             in solar radii.
 
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
         Returns
         -------
-        float
-            Difference between stellar radius and Roche lobe radius in
-            solar radii.
+        RL_diff : float
+            Difference between stellar radius and 95% of the Roche lobe 
+            radius in solar radii.
 
         """
         pri_mass = primary.interp1d["mass"](t - primary.t_offset)
@@ -519,28 +528,38 @@ class detached_step:
         
         # 95% filling of the RL is enough to assume beginning of RLO,
         # as we do in CO-HMS_RLO grid
-        return secondary.interp1d["R"](t - secondary.t_offset) - 0.95*RL
+        RL_diff = secondary.interp1d["R"](t - secondary.t_offset) - 0.95*RL
+        return RL_diff
 
     @event(True, 1)
     def ev_rlo2(self, t, y, primary, secondary):
-        """Difference between radius and Roche lobe at a given time.
-
-        Used to check if there is RLOF mass transfer during the detached
-        binary evolution interpolation.
+        """
+            Difference between radius and Roche lobe at a given time. Used 
+        to check if there is RLOF mass transfer during the detached binary 
+        evolution interpolation. Calculated for the primary.
 
         Parameters
         ----------
         t : float
             Time of the evolution, in years
-        y : tuple of floats
+
+        y : tuple(float)
             [separation, eccentricity] at that time. Separation should be
             in solar radii.
 
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
         Returns
         -------
-        float
-            Difference between stellar radius and Roche lobe radius in
-            solar radii.
+        RL_diff : float
+            Difference between stellar radius and 95% of the Roche lobe 
+            radius in solar radii.
 
         """
         pri_mass = primary.interp1d["mass"](t - primary.t_offset)
@@ -550,27 +569,37 @@ class detached_step:
         ecc = y[1]
         
         RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
-        
-        return primary.interp1d["R"](t - primary.t_offset) - 0.95*RL
+        RL_diff = primary.interp1d["R"](t - primary.t_offset) - 0.95*RL
+
+        return RL_diff
 
     @event(True, 1)
     def ev_rel_rlo1(self, t, y, primary, secondary):
-        """Relative difference between radius and Roche lobe.
-
-        Used to check if there is RLOF mass transfer during the detached
-        binary evolution interpolation.
+        """
+            Relative difference between radius and Roche lobe. Used to 
+        check if there is RLOF mass transfer during the detached binary 
+        evolution interpolation. Calculated for the secondary.
 
         Parameters
         ----------
         t : float
             Time of the evolution, in years.
-        y : tuple of floats
+
+        y : tuple(float)
             [separation, eccentricity] at that time. Separation should be
             in solar radii.
 
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
         Returns
         -------
-        float
+        RL_rel_diff : float
             Relative difference between stellar radius and Roche lobe
             radius.
 
@@ -582,30 +611,38 @@ class detached_step:
         ecc = y[1]
         
         RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
-
-        return (secondary.interp1d["R"](t - secondary.t_offset) - RL) / RL
+        RL_rel_diff = (secondary.interp1d["R"](t - secondary.t_offset) - RL) / RL
+        return RL_rel_diff
 
     @event(True, 1)
     def ev_rel_rlo2(self, t, y, primary, secondary):
-        """Relative difference between radius and Roche lobe.
-
-        Used to check if there is RLOF mass transfer during the detached
-        binary evolution interpolation.
+        """
+            Relative difference between radius and Roche lobe. Used to 
+        check if there is RLOF mass transfer during the detached binary 
+        evolution interpolation. Calculated for the primary.
 
         Parameters
         ----------
         t : float
             Time of the evolution, in years.
-        y : tuple of floats
+
+        y : tuple(float)
             [separation, eccentricity] at that time. Separation should be
             in solar radii.
 
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
         Returns
         -------
-        float
+        RL_rel_diff : float
             Relative difference between stellar radius and Roche lobe
             radius.
-
         """
         pri_mass = primary.interp1d["mass"](t - primary.t_offset)
         sec_mass = secondary.interp1d["mass"](t - secondary.t_offset)
@@ -614,8 +651,8 @@ class detached_step:
         ecc = y[1]
         
         RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
-
-        return (primary.interp1d["R"](t - primary.t_offset) - RL) / RL
+        RL_rel_diff = (primary.interp1d["R"](t - primary.t_offset) - RL) / RL
+        return RL_rel_diff
 
     @event(True, -1)
     def ev_max_time1(self, t, y, primary, secondary):
@@ -626,7 +663,29 @@ class detached_step:
         return primary.t_max + primary.t_offset - t
     
     def get_time_after_evo(self, res, binary):
-        """Update Interp1D objects with ODESolver result"""
+        """
+            After detached evolution, this uses the ODESolver result 
+        to determine what the current time is.
+
+        Parameters
+        ----------
+        res : ODESolver object
+            This is the ODESolver object produced by SciPy's 
+            solve_ivp function that contains calculated values 
+            of the stars evolution through the detached step.
+
+        binary: BinaryStar object
+            A binary star object, containing the binary system's properties.
+        
+        Returns
+        -------
+        t : float or array[float]
+            This is the time elapsed as a result of detached 
+            evolution in years. This is a float unless the 
+            user specifies a timestep to use via the simulation 
+            properties ini file, in which case it is an array.
+        
+        """
         
         if self.dt is not None and self.dt > 0:
             t = np.arange(binary.time, res.t[-1] + self.dt/2.0, self.dt)[1:]
@@ -646,20 +705,31 @@ class detached_step:
     def update_after_evo(self, res, t, binary, primary, secondary):
 
         """
-            Update star and binary properties with using interpolators. This update 
-        gives the binary/stars their appropriate values, according to the interpolation
-        after detached evolution.
+            Update star and binary properties with using interpolators. 
+        This update gives the binary/stars their appropriate values, 
+        according to the interpolation after detached evolution.
 
         Parameters
         ----------
-        binary: BinaryStar object
+        res : ODESolver object
+            This is the ODESolver object produced by SciPy's 
+            solve_ivp function that contains calculated values 
+            of the stars evolution through the detached step.
+
+        t : float or array[float]
+            This is the time elapsed as a result of detached 
+            evolution in years. This is a float unless the 
+            user specifies a timestep to use via the simulation 
+            properties ini file, in which case it is an array.
+
+        binary : BinaryStar object
             A binary star object, containing the binary system's properties.
 
-        primary: SingleStar object
+        primary : SingleStar object
             A single star object, representing the primary (more evolved) star 
             in the binary and containing its properties.
         
-        secondary: SingleStar object
+        secondary : SingleStar object
             A single star object, representing the secondary (less evolved) star 
             in the binary and containing its properties.
 
@@ -850,78 +920,24 @@ class detached_step:
         with mass larger then 1.5 Msun. The effect of magnetic braking falls
         linearly for stars with mass between 1.3 Msun and 1.5 Msun.
 
-        TODO: exaplin new features (e.g., double COs)
+        TODO: explain new features (e.g., double COs)
 
         Parameters
         ----------
         t : float
             The age of the system in years
+
         y : list[float]
             Contains the separation, eccentricity and angular velocity, in Rsolar,
             dimensionless and rad/year units, respectively.
-        M_pri : float
-            Mass of the primary in Msolar units.
-        M_sec : float
-            Mass of the secondary in Msolar units.
-        Mdot : float
-            Rate of change of mass of the star in Msolar/year units.
-            (Negative for wind mass loss.)
-        R : float
-            Radius of the star in Rsolar units.
-        I : float
-            Moment of inertia of the star in Msolar*Rsolar^2.
-        tau_conv: float
-            Convective turnover time of the star, calculated @
-            0.5*pressure_scale_height above the bottom of the outer convection
-            zone in yr.
-        L : float
-            Luminosity of the star in solar units.
-        #mass_conv_core : float
-        #    Convective core mass of the secondary in Msolar units.
-        conv_mx1_top_r : float
-            Coordinate of top convective mixing zone coordinate in Rsolar.
-        conv_mx1_bot_r : float
-            Coordinate of bottom convective mixing zone coordinate in Rsolar.
-        surface_h1 : float
-            surface mass Hydrogen abundance
-        center_h1 : float
-            center mass Hydrogen abundance
-        M_env : float
-            mass of the dominant convective region for tides above the core,
-            in Msolar.
-        DR_env : float
-            thickness of the dominant convective region for tides above the core,
-            in Rsolar.
-        Renv_middle : float
-            position of the dominant convective region for tides above the core,
-            in Rsolar.
-        Idot : float
-            Rate of change of the moment of inertia of the star in
-            Msolar*Rsolar^2 per year.
-        do_wind_loss : bool
-            If True, take into account change of separation due to mass loss from
-            the secondary. Default: True.
-        do_tides : bool
-        If True, take into account change of separation, eccentricity and
-        secondary spin due to tidal forces. Default: True.
-        do_gravitational_radiation : bool
-        If True, take into account change of separation and eccentricity due to
-        gravitational wave radiation. Default: True
-        do_magnetic_braking : bool
-            If True, take into account change of star spin due to magnetic braking.
-            Default: True.
-        magnetic_braking_mode : str
-            A string corresponding to the desired magnetic braking prescription.
-                - RVJ83 : Rappaport, Verbunt, & Joss 1983 [4]_ (Default)
-                - M15 : Matt et al. 2015 [5]_
-                - G18 : Garraffo et al. 2018 [6]_
-                - CARB : Van & Ivanova 2019 [7]_
-        do_stellar_evolution_and_spin_from_winds : bool
-            If True, take into account change of star spin due to change of its
-            moment of inertia during its evolution and due to spin angular momentum
-            loss due to winds. Default: True.
-        verbose : bool
-            If we want to print stuff. Default: False.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
 
         Warns
         -----
@@ -950,20 +966,20 @@ class detached_step:
 
         """
         # secondary star properties used in evolution
-        R_sec = secondary.interp1d["R"](t - secondary.t_offset)
-        L_sec = secondary.interp1d["L"](t - secondary.t_offset)
-        M_sec = secondary.interp1d["mass"](t - secondary.t_offset)
-        Mdot_sec = secondary.interp1d["mdot"](t - secondary.t_offset)
-        I_sec = secondary.interp1d["inertia"](t - secondary.t_offset)
-        conv_mx1_top_r_sec = secondary.interp1d["conv_mx1_top_r"](t - secondary.t_offset)
-        conv_mx1_bot_r_sec = secondary.interp1d["conv_mx1_bot_r"](t - secondary.t_offset)
-        surface_h1_sec = secondary.interp1d["surface_h1"](t - secondary.t_offset)
-        center_h1_sec = secondary.interp1d["center_h1"](t - secondary.t_offset)
-        M_env_sec = secondary.interp1d["mass_conv_reg_fortides"](t - secondary.t_offset)
-        DR_env_sec = secondary.interp1d["thickness_conv_reg_fortides"](t - secondary.t_offset)
-        Renv_middle_sec = secondary.interp1d["radius_conv_reg_fortides"](t - secondary.t_offset)
-        Idot_sec = secondary.interp1d["Idot"](t - secondary.t_offset)
-        tau_conv_sec = secondary.interp1d["conv_env_turnover_time_l_b"](t - secondary.t_offset)
+        R_sec = secondary.interp1d["R"](t - secondary.t_offset) # Rsol
+        L_sec = secondary.interp1d["L"](t - secondary.t_offset) # Lsol
+        M_sec = secondary.interp1d["mass"](t - secondary.t_offset) # Msol
+        Mdot_sec = secondary.interp1d["mdot"](t - secondary.t_offset) # Msol/yr
+        I_sec = secondary.interp1d["inertia"](t - secondary.t_offset) # Msol*Rsol^2
+        conv_mx1_top_r_sec = secondary.interp1d["conv_mx1_top_r"](t - secondary.t_offset) # Rsol
+        conv_mx1_bot_r_sec = secondary.interp1d["conv_mx1_bot_r"](t - secondary.t_offset) # Rsol
+        surface_h1_sec = secondary.interp1d["surface_h1"](t - secondary.t_offset) # dex
+        center_h1_sec = secondary.interp1d["center_h1"](t - secondary.t_offset) # dex
+        M_env_sec = secondary.interp1d["mass_conv_reg_fortides"](t - secondary.t_offset) # Msol
+        DR_env_sec = secondary.interp1d["thickness_conv_reg_fortides"](t - secondary.t_offset) # Rsol
+        Renv_middle_sec = secondary.interp1d["radius_conv_reg_fortides"](t - secondary.t_offset) # Rsol
+        Idot_sec = secondary.interp1d["Idot"](t - secondary.t_offset) # Msol*Rsol^2/yr
+        tau_conv_sec = secondary.interp1d["conv_env_turnover_time_l_b"](t - secondary.t_offset) # yr
 
         # primary star properties used in evolution
         R_pri = primary.interp1d["R"](t - primary.t_offset)

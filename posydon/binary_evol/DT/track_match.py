@@ -911,10 +911,26 @@ class TrackMatcher:
             Parameters
             ----------
             x : list[float]
-                A list containing the mass and age of a stellar track, 
-                which will be used to get values along a track and calculate the 
-                square difference between those values and the given star 
-                values that we are trying to find a match to.
+                Contains a given initial mass `m0` and time `t`. These are used to get 
+                the square difference between a track of initial mass `m0` at time `t` 
+                and the given star values from prior evolution. 
+            
+            htrack : bool
+                Set True to search the single star H-rich grids, or False to search 
+                the He-rich grids.
+
+            attr_names : list[str]
+                Names of SingleStar object attributes that this will calculate the 
+                square differences of.
+
+            attr_vals : list[float]
+                Associated values of provided SingleStar object attribute names. 
+                These values should correspond to the prior point in evolution from 
+                which we are making the stellar track match.
+
+            scalers : list[DataScaler object]
+                DataScaler objects that have been trained previously. These are used 
+                to scale given star attributes to the range (0, 1).
 
             """
 
@@ -925,8 +941,9 @@ class TrackMatcher:
 
         def get_match_attrs(match_type="default", match_ok=True):
 
-            """Gather the attribute names and values for matching
-                a given star, plus the attribute bounds and scalings.
+            """
+                Gather the attribute names and values for matching
+            a given star, plus the attribute bounds and scalings.
                 
             Parameters
             ----------
@@ -950,7 +967,7 @@ class TrackMatcher:
 
             Returns
             -------
-            match_attrs : tuple(str, float)
+            match_attrs : tuple(list[str], list[float])
                 A tuple that contains the match_attr_names, which are the 
                 data column names of the match attributes and the 
                 match_attr_vals, which are the associated values.
@@ -1053,12 +1070,12 @@ class TrackMatcher:
                 A list that contains the initial stellar mass and age of a 
                 stellar track.
 
-            fnc_args : tuple
+            fnc_args : tuple(bool, list[str], list[float], list[DataScaler])
                 This tuple contains the arguments that will be passed to the 
                 minimization function. The minimization function uses the 
                 square_difference function. See that function for more details.
 
-            bnds : list
+            bnds : list[float]
                 Lower and upper bounds on initial stellar mass and age to be used 
                 in minimization algorithms.
 
@@ -1241,7 +1258,7 @@ class TrackMatcher:
         if self.verbose:
             print(DIVIDER_STR)
 
-        # defined sequence of matching attempts
+        # defined sequence of matching attempt types and methods
         match_sequence = {
                             1: {"type":"default", 
                                 "method":"TNC"},
