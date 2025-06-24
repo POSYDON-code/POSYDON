@@ -261,7 +261,8 @@ class detached_step:
 
     def __call__(self, binary):
         """
-            Evolve the binary until RLO or compact object formation.
+            Evolve the binary through detached evolution until RLO or 
+        compact object formation.
 
         Parameters
         ----------
@@ -705,9 +706,10 @@ class detached_step:
     def update_after_evo(self, res, t, binary, primary, secondary):
 
         """
-            Update star and binary properties with using interpolators. 
-        This update gives the binary/stars their appropriate values, 
-        according to the interpolation after detached evolution.
+            Update star and binary properties and interpolators with 
+        ODESolver result from detached evolution. This update gives 
+        the binary/stars their appropriate values, according to the 
+        interpolation after detached evolution.
 
         Parameters
         ----------
