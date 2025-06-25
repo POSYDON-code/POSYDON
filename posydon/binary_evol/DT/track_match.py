@@ -154,8 +154,8 @@ class TrackMatcher:
 
         Structured to hold the matching metrics along the entire evolution 
         track of each stellar evolution track of a given initial mass in 
-        a single star grid. Assigned after loading a grid and before storing 
-        matching metrics.
+        a single star grid. Assigned after loading a grid and before 
+        storing matching metrics.
 
     grid_name_Hrich : str
         Name of the single star H-rich grid h5 file, 
@@ -425,7 +425,8 @@ class TrackMatcher:
         Returns
         -------
         m0 : float
-            Mass (in solar units) of the minimum diff model for initial guess.
+            Initial mass (in solar units) of the minimum diff model for initial 
+            guess.
     
         t0 : float
             Age (in years) of the minimum diff model for initial guess.
@@ -599,10 +600,10 @@ class TrackMatcher:
 
         Returns
         -------
-        m0 : float
-            Mass (in solar units) of the matched model.
+        match_m0 : float
+            Initial mass (in solar units) of the matched model.
         
-        t0 : float
+        match_t0 : float
             Age (in years) of the matched model.
 
         Warns
@@ -701,10 +702,10 @@ class TrackMatcher:
             # done with matching attempts
             print(DIVIDER_STR)
 
-        m0 = match_vals[0]
-        t0 = match_vals[1]
+        match_m0 = match_vals[0]
+        match_t0 = match_vals[1]
 
-        return m0, t0
+        return match_m0, match_t0
 
     def match_through_root(self, star, get_root0, get_track_val):
         """Match the star through a root method.
@@ -897,7 +898,7 @@ class TrackMatcher:
             Returns
             -------
             result : float
-                The square difference between a single star track with initial mass and 
+                The square difference between a single star track with mass and 
                 age taken from `x` and the given attributes of a SingleStar object.
 
             """
@@ -1316,7 +1317,7 @@ class TrackMatcher:
 
             In the case of a compact object, radius, mdot, and Idot are 
         set to zero. One may use another star, e.g., the companion of 
-        the compact object to provide an initial mass and age.
+        the compact object to provide a mass and age.
 
         Parameters
         ----------
@@ -1337,7 +1338,7 @@ class TrackMatcher:
         Returns
         -------
         match_m0 : float
-            Mass (in solar units) of the matched model.
+            Initial mass (in solar units) of the matched model.
         
         match_t0 : float
             Age (in years) of the matched model.
@@ -1354,7 +1355,7 @@ class TrackMatcher:
                 match_m0, match_t0 = copy_prev_m0, copy_prev_t0
             else:
                 t_before_matching = time.time()
-                # matching to single star grids (getting initial mass,age of closest track)
+                # matching to single star grids (getting mass, age of closest track)
                 match_m0, match_t0 = self.match_to_single_star(star)
                 t_after_matching = time.time()
 
@@ -1940,17 +1941,9 @@ class TrackMatcher:
             A boolean that specifies whether the star would be found in the 
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
-
-        m0 : float
-            Initial stellar mass (in solar units) of the single star track 
-            that we will grab values from and update `star` with.
-        
-        t0 : float
-            Initial age (in years) of the single star track 
-            that we will grab values from and update `star` with.
-
         """
 
+        # initial mass and age at point of closest match
         m0 = star.interp1d["m0"]
         t0 = star.interp1d["t0"]
 
