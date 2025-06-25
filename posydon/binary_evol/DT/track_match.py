@@ -1489,7 +1489,7 @@ class TrackMatcher:
 
         return match_m0, match_t0
 
-    def calc_omega(self, star, prev):
+    def calc_omega(self, star):
         """
         
             Calculate the spin of a star from its (pre-match) moment
@@ -1501,16 +1501,6 @@ class TrackMatcher:
         ----------
         star : SingleStar object
             Star object containing the star properties.
-
-        prev: dict 
-            A dictionary containing the previous (pre-match) values of 
-            angular momentum, moment of inertia, omega/omega_crit, 
-            and omega
-
-        interp1d: dict
-            A dictionary of scipy.interpolate._cubic.PchipInterpolator 
-            objects. Here, used to calculate radius and mass of the star 
-            in the event that star.log_R is NaN.
 
         Returns
         -------
@@ -1527,10 +1517,10 @@ class TrackMatcher:
             post-match rotation rate to zero.
         """
 
-        log_total_J = prev['log_total_angular_momentum']
-        total_MOI = prev['total_moment_of_inertia']
-        omega_div_omega_c = prev['surf_avg_omega_div_omega_crit']
-        omega = prev['surf_avg_omega']
+        log_total_J = star.log_total_angular_momentum
+        total_MOI = star.total_moment_of_inertia
+        omega_div_omega_c = star.surf_avg_omega_div_omega_crit
+        omega = star.surf_avg_omega
 
         if (pd.notna(log_total_J) and pd.notna(total_MOI)):
 
@@ -1634,14 +1624,7 @@ class TrackMatcher:
 
         """
 
-        anames = ["log_total_angular_momentum",
-                  "total_moment_of_inertia",
-                  "surf_avg_omega_div_omega_crit",
-                  "surf_avg_omega"]
-        prev_rotation_sec = {n : getattr(secondary, n) for n in anames}
-        prev_rotation_pri = {n : getattr(primary, n) for n in anames}
-
-        omega0_sec = self.calc_omega(secondary, prev_rotation_sec)
+        omega0_sec = self.calc_omega(secondary)
 
         # recalculate rotation quantities using the newly calculated 
         # omega [rad/s] here. Need to be careful about case where 
@@ -1664,7 +1647,7 @@ class TrackMatcher:
             secondary.log_total_angular_momentum = 0.0
 
         if self.primary_normal:
-            omega0_pri = self.calc_omega(primary, prev_rotation_pri)
+            omega0_pri = self.calc_omega(primary)
 
             surf_avg_omega = primary.surf_avg_omega
             if pd.notna(surf_avg_omega) and surf_avg_omega > 0.0:
