@@ -683,8 +683,9 @@ class detached_step:
         t : float or array[float]
             This is the time elapsed as a result of detached 
             evolution in years. This is a float unless the 
-            user specifies a timestep to use via the simulation 
-            properties ini file, in which case it is an array.
+            user specifies a timestep (see `n_o_steps_history` 
+            or `dt`) to use via the simulation properties ini 
+            file, in which case it is an array.
         
         """
         
