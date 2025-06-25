@@ -1239,6 +1239,9 @@ class TrackMatcher:
                 # Minimize sq, Euclidean dist. w/ Newton's method (TNC)
                 sol = minimize(square_difference, x0, args=fnc_args,
                                 method=method, bounds=bounds)
+            
+                # guard against NaN solutions, ensuring this will fail
+                sol.fun = 1e99 if np.isnan(sol.fun) else sol.fun
 
                 if self.verbose:
                     print (f"Matching attempt completed:"
