@@ -358,7 +358,8 @@ class detached_step:
             t_after_ODEsolution = time.time()
 
             if self.verbose:
-                print(f"\nODE solver duration: {t_after_ODEsolution-t_before_ODEsolution:.6g}")
+                ivp_tspan = t_after_ODEsolution - t_before_ODEsolution
+                print(f"\nODE solver duration: {ivp_tspan:.6g} sec")
                 print("solution of ODE", res)
 
             if res.status == -1:
