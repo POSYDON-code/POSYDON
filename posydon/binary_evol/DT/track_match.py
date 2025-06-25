@@ -684,7 +684,7 @@ class TrackMatcher:
 
         if self.verbose:
             # successful match
-            if not any(pd.isna(match_vals)):
+            if all(pd.notna(match_vals)):
 
                 getv = lambda n: get_track_val(n, star.htrack, *best_sol.x)
                 sol_vals = [getv(vn) for vn in val_names[1::]]
