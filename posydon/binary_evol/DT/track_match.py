@@ -326,7 +326,7 @@ class TrackMatcher:
         if grid_name_Hrich is None:
             grid_name_Hrich = os.path.join('single_HMS', 
                                            self.metallicity+'_Zsun.h5')
-        grid_path_Hrich = os.path.join(path, grid_name_strippedHe)
+        grid_path_Hrich = os.path.join(path, grid_name_Hrich)
         self.grid_Hrich = GRIDInterpolator(grid_path_Hrich)
 
         if grid_name_strippedHe is None:
@@ -1606,7 +1606,7 @@ class TrackMatcher:
             Once we have matched to a non-rotating single star, we need to 
         calculate what the single star's spin should be, based the star's 
         rotation before matching. This calculates a new rotation rate for the 
-        matched star from the previous moment of intertia and angular 
+        matched star from the previous moment of inertia and angular 
         momentum (or rotation rate in lieu of those). This also updates the 
         stars in the binary with the newly calculated values to reflect this.
 
@@ -1653,10 +1653,10 @@ class TrackMatcher:
             old_omega = surf_avg_omega
             old_omega_c = old_omega / old_ratio
             new_ratio = new_omega / old_omega_c
-            new_J = np.log10(new_omega * secondary.total_moment_of_intertia)
+            new_lgJ = np.log10(new_omega * secondary.total_moment_of_inertia)
             setattr(secondary, "surf_avg_omega_div_omega_crit", new_ratio)
             setattr(secondary, "surf_avg_omega", new_omega)
-            setattr(secondary, "log_total_angular_momentum", new_J)
+            setattr(secondary, "log_total_angular_momentum", new_lgJ)
 
         else:
             secondary.surf_avg_omega_div_omega_crit = 0.0
@@ -1673,10 +1673,10 @@ class TrackMatcher:
                 old_omega = surf_avg_omega
                 old_omega_c = old_omega / old_ratio
                 new_ratio = new_omega / old_omega_c
-                new_J = np.log10(new_omega * primary.total_moment_of_intertia)
+                new_lgJ = np.log10(new_omega * primary.total_moment_of_inertia)
                 setattr(primary, "surf_avg_omega_div_omega_crit", new_ratio)
                 setattr(primary, "surf_avg_omega", new_omega)
-                setattr(primary, "log_total_angular_momentum", new_J)
+                setattr(primary, "log_total_angular_momentum", new_lgJ)
 
             else:
                 primary.surf_avg_omega_div_omega_crit = 0.0
