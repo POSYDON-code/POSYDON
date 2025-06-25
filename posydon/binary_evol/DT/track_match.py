@@ -1240,7 +1240,7 @@ class TrackMatcher:
                 sol = minimize(square_difference, x0, args=fnc_args,
                                 method=method, bounds=bounds)
             
-                # guard against NaN solutions, ensuring this will fail
+                # guard against NaN solutions, ensuring they will fail
                 sol.fun = 1e99 if np.isnan(sol.fun) else sol.fun
 
                 if self.verbose:
