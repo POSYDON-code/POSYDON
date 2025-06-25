@@ -37,11 +37,10 @@ jobs:
         export PATH_TO_POSYDON_DATA=./posydon/unit_tests/_data/
         export MESA_DIR=./
         python -m pytest posydon/unit_tests/ \
-                         --cov=posydon.config \
-                         --cov=posydon.utils \
-                         --cov=posydon.grids \
-                         --cov=posydon.popsyn.IMFs \
-                         --cov=posydon.popsyn.norm_pop \
-                         --cov-branch \
-                         --cov-report term-missing \
-                         --cov-fail-under=100
+                          --cov=posydon.config \
+                          --cov=posydon.utils \
+                          --cov=posydon.grids \
+                          --cov=posydon.popsyn.star_formation_history \
+                          --cov=posydon.popsyn.IMFs \
+                          --cov=posydon.popsyn.norm_pop \
+                          --cov-branch --cov-report term-missing --cov-fail-under=100

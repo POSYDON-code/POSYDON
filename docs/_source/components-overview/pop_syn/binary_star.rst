@@ -4,10 +4,14 @@
 The BinaryStar object
 ======================
 
-The ``BinaryStar`` object is composed of two ``SingleStar`` objects (see :ref:`single-star`) and contains the current and past states of the binary.
-Only parameters in the ``BINARYPROPERTIES`` list are stored in the history. 
-The current parameter value of the star object is accessed with, e.g. ``binary.orbital_period`` and the past history via ``binary.orbital_period_history``.
-The two stars are accessed with, e.g. (for star 1), ``binary.star_1.mass`` and the past history via ``binary.star_1.mass_history``.
+The ``BinaryStar`` object is composed of two ``SingleStar`` objects 
+(see :ref:`single-star`) and contains the current and past states of 
+the binary. Only parameters in the ``BINARYPROPERTIES`` list are stored in the 
+history. The current parameter value of the star object is accessed with, e.g. 
+``binary.orbital_period`` and the past history via 
+``binary.orbital_period_history``. The two stars are accessed with, e.g. 
+(for star 1), ``binary.star_1.mass`` and the past history via 
+``binary.star_1.mass_history``.
 
 To use BinaryStar object import it using:
 
@@ -44,7 +48,7 @@ The binary properties are defined as follows
   * - ``eccentricity``
     - Orbital eccentricity.
   * - ``V_sys``
-    - Velocity of the centre of mass of the binary [Vx, Vy, Vz] in km/s.
+    - Velocity of the center of mass of the binary [Vx, Vy, Vz] in km/s.
   * - ``mass_transfer_case``
     - Mass transfer case, see MT case options.
   * - ``lg_mtransfer_rate``
@@ -76,7 +80,9 @@ The binary properties are defined as follows
 Additional scalar properties can be added during the evolution.
 
 Since they do not change over time, they are not stored in the history.
-These can be requested and will be stored in the output oneline (See the :ref:`Synthetic Population<synthetic-population>` and :ref:`Population Parameter Guide<pop-params-guide>` for more information).
+These can be requested and will be stored in the output oneline (See the 
+:ref:`Synthetic Population<synthetic-population>` and 
+:ref:`Population Parameter Guide<pop-params-guide>` for more information).
 
 Additional columns
 ~~~~~~~~~~~~~~~~~~
@@ -166,25 +172,25 @@ Binary events are defined according to the following table:
   * - ``oCE2``
     - The binary is at the onset of Common Envelope initiated by star 2.
   * - ``oDoubleCE1``
-    - The binary is at the onset of Double Common Envelope initiated by star 1. 
-      Both stars are post main-sequence.
+    - | The binary is at the onset of Double Common Envelope initiated by star 1. 
+      | Both stars are post main-sequence.
   * - ``oDoubleCE2``
-    - The binary is at the onset of Double Common Envelope initiated by star 2. 
-      Both stars are post main-sequence.
+    - | The binary is at the onset of Double Common Envelope initiated by star 2. 
+      | Both stars are post main-sequence.
   * - ``CO_contact``
     - The binary reached contact in the compact object phase.
   * - ``redirect_from_ZAMS``
-    - The binary was redirected from ZAMS for a variety of reasons.
-    - Only recorded if history_verbose = True
+    - | The binary was redirected from ZAMS for a variety of reasons.
+      | Only recorded if history_verbose = True
   * - ``redirect_from_CO_HMS_RLO``
-    - The binary was redirected from CO_HMS_RLO for a variety of reasons.
-    - Only recorded if history_verbose = True
+    - | The binary was redirected from CO_HMS_RLO for a variety of reasons.
+      | Only recorded if history_verbose = True
   * - ``redirect_from_CO_HeMS``
-    - The binary was redirected from CO_HeMS for a variety of reasons.
-    - Only recorded if history_verbose = True
+    - | The binary was redirected from CO_HeMS for a variety of reasons.
+      | Only recorded if history_verbose = True
   * - ``redirect_from_CO_HeMS_RLO``
-    - The binary was redirected from CO_HeMS_RLO for a variety of reasons.
-    - Only recorded if history_verbose = True
+    - | The binary was redirected from CO_HeMS_RLO for a variety of reasons.
+      | Only recorded if `history_verbose = True`
   * - ``MaxTime_exceeded``
     - The maximum time of the evolution was exceeded.
   * - ``maxtime``
@@ -204,7 +210,8 @@ Binary events are defined according to the following table:
 Mass Transfer case
 ~~~~~~~~~~~~~~~~~~
 
-The mass transfer cases are stored in `mt_history_GRIDTYPE` and are defined according to the following table: TODO: add the table below
+The mass transfer cases are stored in `mt_history_GRIDTYPE` and are defined 
+according to the following table: TODO: add the table below
 
 .. list-table:: Mass transfer cases
   :header-rows: 1
@@ -222,19 +229,22 @@ TODO: update properties
 Basic example
 ~~~~~~~~~~~~~
 
-The simplest method is to provide the two star objects and `kwargs` of the initial binary parameters.
+The simplest method is to provide the two star objects and `kwargs` of the 
+initial binary parameters.
 
 .. code-block:: python
 
-  kwargs1 = {'state' : 'MS',
+  from posydon.utils.constants import Zsun
+
+  kwargs1 = {'state' : 'H-rich_Core_H_burning',
              'mass' : 20.0,
-             'metallicity' : 0.014}
+             'metallicity' : Zsun}
 
   star_1 = SingleStar(**kwargs1)
 
-  kwargs2 = {'state' : 'MS',
+  kwargs2 = {'state' : 'H-rich_Core_H_burning',
              'mass' : 10.0,
-             'metallicity' : 0.014}
+             'metallicity' : Zsun}
 
   star_2 = SingleStar(**kwargs2)
 
@@ -244,6 +254,4 @@ The simplest method is to provide the two star objects and `kwargs` of the initi
              'orbital_period' : 3.,
              'eccentricity' : 0.}
 
-
   binary = BinaryStar(star_1, star_2, **kwargs3)
-

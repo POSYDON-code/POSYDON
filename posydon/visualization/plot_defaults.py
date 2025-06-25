@@ -20,6 +20,7 @@ __authors__ = [
 
 from matplotlib import rcParams
 import shutil
+from posydon.grids.SN_MODELS import SN_MODELS
 
 PLOT_PROPERTIES = {
     'show_fig': False,
@@ -1062,22 +1063,22 @@ DEFAULT_LABELS = {
     'state' : [r'Remnant state', r'Remnant state'],
 }
 
-# add core collapse MODEL variables
-for i in range(1, 11):
-    DEFAULT_LABELS[f'MODEL{i:02d}_mass'] = [r'$M_\mathrm{CO} \, [M_\odot]$',
+# add core collapse model variables
+for SN_MODEL_NAME in SN_MODELS.keys():
+    DEFAULT_LABELS[f'{SN_MODEL_NAME}_mass'] = [r'$M_\mathrm{CO} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{CO} / M_\odot)$']
-    DEFAULT_LABELS[f'MODEL{i:02d}_spin'] = [r'$\chi_\mathrm{CO}$', r'$\log_{10}(\chi_\mathrm{CO})$']
-    DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_accreted'] = [r'$M_\mathrm{disk, acc} \, [M_\odot]$',
+    DEFAULT_LABELS[f'{SN_MODEL_NAME}_spin'] = [r'$\chi_\mathrm{CO}$', r'$\log_{10}(\chi_\mathrm{CO})$']
+    DEFAULT_LABELS[f'{SN_MODEL_NAME}_m_disk_accreted'] = [r'$M_\mathrm{disk, acc} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{disk, acc} / M_\odot)$']
-    DEFAULT_LABELS[f'MODEL{i:02d}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
+    DEFAULT_LABELS[f'{SN_MODEL_NAME}_m_disk_radiated'] = [r'$M_\mathrm{disk, rad} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{disk, rad} / M_\odot)$']
-    DEFAULT_LABELS[f'MODEL{i:02d}_M4'] = [r'$M_4 [= m/M_\odot]_{s=4}$',
+    DEFAULT_LABELS[f'{SN_MODEL_NAME}_M4'] = [r'$M_4 [= m/M_\odot]_{s=4}$',
                                               r'$\log_{10}(M_4)$']
-    DEFAULT_LABELS[f'MODEL{i:02d}_mu4'] = [r'$\mu_4 \, [(dm/M_\odot)/(dr/1000\mathrm{km/s})]_{s=4}$',
+    DEFAULT_LABELS[f'{SN_MODEL_NAME}_mu4'] = [r'$\mu_4 \, [(dm/M_\odot)/(dr/1000\mathrm{km/s})]_{s=4}$',
                                               r'$\log_{10}(\mu_4)$']
-    DEFAULT_LABELS[f'MODEL{i:02d}_h1_mass_ej'] = [r'$M_\mathrm{H,ej} \, [M_\odot]$',
+    DEFAULT_LABELS[f'{SN_MODEL_NAME}_h1_mass_ej'] = [r'$M_\mathrm{H,ej} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{H,ej} / M_\odot)$']
-    DEFAULT_LABELS[f'MODEL{i:02d}_he4_mass_ej'] = [r'$M_\mathrm{He,ej} \, [M_\odot]$',
+    DEFAULT_LABELS[f'{SN_MODEL_NAME}_he4_mass_ej'] = [r'$M_\mathrm{He,ej} \, [M_\odot]$',
                                               r'$\log_{10}(M_\mathrm{He,ej} / M_\odot)$']
 
 
@@ -1128,40 +1129,40 @@ PRE_SET_PLOTS = {
         'zmax' : -1
     },
     # SN stuff
-    'S1_MODEL_DEFAULT_CO_type' : {
+    'S1_SN_MODEL_DEFAULT_CO_type' : {
         'zvar' : None,
-        'term_flag' : 'S1_MODEL01_CO_type'
+        'term_flag' : 'S1_' + list(SN_MODELS.keys())[0] + '_CO_type'
     },
-    'S1_MODEL_DEFAULT_SN_type' : {
+    'S1_SN_MODEL_DEFAULT_SN_type' : {
         'zvar' : None,
-        'term_flag' : 'S1_MODEL01_SN_type'
+        'term_flag' : 'S1_' + list(SN_MODELS.keys())[0] + '_SN_type'
     },
-    'S1_MODEL_DEFAULT_mass' : {
+    'S1_SN_MODEL_DEFAULT_mass' : {
         'zlog' : True,
         'zmin' : 0.,
         'zmax' : 2.
     },
-    'S1_MODEL_DEFAULT_spin' : {
+    'S1_SN_MODEL_DEFAULT_spin' : {
         'zmin' : 0.,
         'zmax' : 1.
     },
-    'S1_MODEL_DEFAULT_m_disk_radiated' : {
+    'S1_SN_MODEL_DEFAULT_m_disk_radiated' : {
         'zmin' : 0.,
         'zmax' : 3.
     },
-    'S1_MODEL_DEFAULT_M4' : {
+    'S1_SN_MODEL_DEFAULT_M4' : {
         'zmin' : 1.,
         'zmax' : 4.
     },
-    'S1_MODEL_DEFAULT_mu4' : {
+    'S1_SN_MODEL_DEFAULT_mu4' : {
         'zmin' : 0.0,
         'zmax' : .5
     },
-    'S1_MODEL_DEFAULT_h1_mass_ej' : {
+    'S1_SN_MODEL_DEFAULT_h1_mass_ej' : {
         'zmin' : 0.,
         'zmax' : 20
     },
-    'S1_MODEL_DEFAULT_he4_mass_ej' : {
+    'S1_SN_MODEL_DEFAULT_he4_mass_ej' : {
         'zmin' : 0.,
         'zmax' : 20
     },

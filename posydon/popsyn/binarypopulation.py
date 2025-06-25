@@ -27,7 +27,7 @@ __authors__ = [
 
 __credits__ = ["Nam Tran <tranhn03@gmail.com>"]
 
-
+import signal
 import pandas as pd
 import numpy as np
 import traceback
@@ -340,7 +340,11 @@ class BinaryPopulation:
 
                     e.add_note(binary.initial_condition_message())
                     traceback.print_exception(e)
-
+                
+                # If a binary has failed, the signal alarm for a step duration
+                # will not be disabled, so we need to disable it here.
+                signal.alarm(0)
+                
                 # record if there were warnings caught during the binary
                 # evolution, this is needed to update the WARNINGS column in
                 # the oneline dataframe; this will only be updated if POSYDON

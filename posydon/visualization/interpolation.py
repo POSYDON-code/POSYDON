@@ -81,8 +81,8 @@ class EvaluateIFInterpolator:
 
             matrix = {}
             
-            # catch cases where nothing is cl,assified, e.g. S2_MODELXX_SN_type
-            # when S2 is a compact object
+            # catch cases where nothing is classified, e.g.
+            # S2_SN_MODEL_v2_XX_SN_type when S2 is a compact object
             if len(classes) == 1 and  classes[0] == 'None':
                 matrix['None'] = 1.
             else:
@@ -136,7 +136,7 @@ class EvaluateIFInterpolator:
             
             if key in interp.classifiers.keys():
                 # if classifier does not exist assign 'None' label
-                # this happens, e.g. for S2_MODELXX_SN_type, when S2 is
+                # this happens, e.g. for S2_SN_MODEL_v2_XX_SN_type, when S2 is
                 # a compac object
                 if interp.classifiers[key] is None:
                     labels = ['None']

@@ -1,15 +1,18 @@
 .. _installation-guide:
 
 Installation Guide
-------------------
+******************
 
-This guide will help you step by step in installing POSYDON. We recommend using Anaconda, a package manager, to manage the installation and dependencies, ensuring a smooth setup process.
+This guide will help you install POSYDON step-by-step. We recommend using Anaconda, a package manager, to manage the installation and dependencies, ensuring a smooth setup process.
 
 .. contents:: Table of Contents
    :local:
 
-Using Anaconda (Recommended)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Installing POSYDON
+==================
+
+Anaconda (Recommended)
+----------------------
 
 1. **Install Anaconda**
 
@@ -60,7 +63,8 @@ Using Anaconda (Recommended)
         export PATH_TO_POSYDON=/path/to/your/posydon/installation
         export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
-    The path for the data location is up to your choice but we recommend :code:`PATH_TO_POSYDON_DATA=$PATH_TO_POSYDON/data`.
+    The path for the data location is up to you, but keeping the data separate 
+    from the code is recommended for better organization.
 
     .. note:: 
         You can add these lines to your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
@@ -68,28 +72,29 @@ Using Anaconda (Recommended)
 5. **Download the Dataset**
 
     .. warning::
-        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The instructions currently point to the POSYDON v1.0.0 dataset release. Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (241028) you must be a POSYDON core developer, please refer to the #developers Slack channel.
+        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The instructions currently point to the POSYDON v1.0.0 dataset release. 
+        Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (241028) you must be a POSYDON core developer, please refer to the #developers Slack channel.
 
-    You can use POSYDON's built-in API command (the downloaded data will be saved in the directory specified by :code:`PATH_TO_POSYDON_DATA`):
+    You can use POSYDON's built-in API command (the downloaded data will be downloaded to the directory specified by :code:`PATH_TO_POSYDON_DATA`):
 
     .. code-block:: bash
 
         get-posydon-data
 
-    May use :code:`get-posydon-data -h` to see all the options for this command, which allows to list all the datasets and download the one of your choice.
+    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the one of your choice.
 
     Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
 
 .. _dev-version:
 
-Using the Development Version
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+GitHub (Development Version)
+----------------------------
 
 For users interested in the latest features and developments, you can install POSYDON directly from its GitHub repository:
 
 1. **Clone the Repository**
 
-    In your terminal or command prompt (by default the repository will be placed in the current directory, hence please navigate to your desired location first):
+    In your terminal or command prompt (by default, the repository will be placed in the current directory, so navigate to your desired location before proceeding):
 
     .. code-block:: bash
 
@@ -98,7 +103,7 @@ For users interested in the latest features and developments, you can install PO
 2. **Install the Development Version**
 
     .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install `hdf5` and `pytables` through conda with `conda install hdf5 pytables`, before following the instractions below.
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install `hdf5` and `pytables` through conda with `conda install hdf5 pytables`, before following the instructions below.
 
     Navigate to the cloned repository's directory:
 
@@ -117,104 +122,8 @@ For users interested in the latest features and developments, you can install PO
     Refer back to the recommended installation steps, starting from :ref:`point 4 <posydon-env>`, to download the required dataset and set the necessary environment variables.
 
 
-Running grids using POSYDON on HPC Facilities
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you are planning to create MESA grids using POSYDON on HPC facilities, it's essential to have ``mpi4py`` installed to take advantage of parallel computations.
-You do not need to have ``mpi4py`` installed if you are only running population synthesis simulations.
-
-1. **Install mpi4py via Anaconda (Recommended)**:
-
-    .. code-block:: bash
-
-        conda install mpi4py
-
-2. **Alternatively, via pip**:
-
-    .. code-block:: bash
-
-        pip install ".[hpc]"
-
-
-.. warning::
-    Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact_info>` page.
-
-Machine Learning Modules Installation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For users who wish to utilize POSYDON's latest machine learning features:
-
-1. **Navigate to your POSYDON directory** (where the `setup.py` is located) and run:
-
-    .. code-block:: bash
-
-        pip install ".[ml]"
-
-
-Installing Experimental Visualization Libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-POSYDON provides experimental visualization libraries to enhance the experience of data analysis and results visualization. While these libraries offer advanced features, please note that they might still be in development and could be subject to changes.
-
-To install these experimental visualization libraries
-
-1. **Navigate to your POSYDON directory** (where the `setup.py` is located) and run:
-
-    .. code-block:: bash
-   
-        pip install ".[vis]"
-
-    After installing these libraries, you can access various visualization tools and features integrated within POSYDON. Ensure to consult the documentation or any guides associated with these features for their optimal usage.
-
-    .. note::
-        As these are experimental features, feedback, and bug reports regarding the visualization tools are highly appreciated. It will aid the development and optimization of these features for future stable releases.
-
-
-Documentation Installation & Compilation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you're interested in building the POSYDON documentation locally:
-
-1. **Install Documentation Modules**:
-
-    Navigate to your POSYDON directory and install the required documentation modules:
-
-    .. code-block:: bash
-
-        pip install ".[doc]"
-
-2. **Compile the Documentation**:
-
-    Once you have the required modules installed, you can build the documentation using Sphinx:
-
-    .. code-block:: bash
-
-        cd docs
-        make html
-
-3. **Install Pandoc via Anaconda**
-
-    .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install `pandoc` through brew with `brew install pandoc`.
-
-    .. code-block:: bash
-
-        conda install pandoc
-
-4. **Open the Compiled Documentation**:
-
-    After successfully building the documentation, you can view it in your preferred browser. Navigate to the build directory and open the `index.html`:
-
-    .. code-block:: bash
-
-        open _build/html/index.html
-
-    .. note::
-        The `open` command works on macOS. If you're using a different OS, you might need to open the `index.html` using your file manager or use a different command.
-
-
 Installing Jupyter for Tutorials
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=================================
 
 Our tutorials are provided as Jupyter notebooks. If you want to run these notebooks interactively, you will need to have either Jupyter Lab or Jupyter Notebook installed.
 
@@ -269,10 +178,119 @@ Our tutorials are provided as Jupyter notebooks. If you want to run these notebo
         Remember to navigate to the directory containing the Jupyter notebooks or you won't see them listed in the Jupyter interface.
 
 
-Additional Notes
-~~~~~~~~~~~~~~~~~
 
-- After installation, ensure you verify the setup by following our :ref:`Verification Guide <verification>`.
-- Always ensure you activate the `posydon_env` environment before running POSYDON.
-- If you encounter issues during the installation, consult our :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact_info>` page.
+Installing additional dependencies (Optional) 
+=============================================
 
+For some specific functionalities, you may need to install additional dependencies.
+Below are the instructions for installing these dependencies and what they are used for.
+
+Running grids of MESA models using POSYDON
+------------------------------------------
+
+If you are planning to create MESA grids using POSYDON on HPC facilities, it's essential to have ``mpi4py`` installed to take advantage of parallel computations.
+You do not need to have ``mpi4py`` installed if you are only running population synthesis simulations.
+
+1. **Install mpi4py via Anaconda (Recommended)**:
+
+    .. code-block:: bash
+
+        conda install mpi4py
+
+2. **Alternatively, via pip**:
+
+    .. code-block:: bash
+
+        pip install ".[hpc]"
+
+
+.. warning::
+    Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact_info>` page.
+
+
+Documentation Building
+------------------------
+
+If you're interested in building the POSYDON documentation locally:
+
+1. **Install Documentation Modules**:
+
+    Navigate to your POSYDON directory and install the required documentation modules:
+
+    .. code-block:: bash
+
+        pip install ".[doc]"
+
+2. **Compile the Documentation**:
+
+    Once you have the required modules installed, you can build the documentation using Sphinx:
+
+    .. code-block:: bash
+
+        cd docs
+        make html
+
+3. **Install Pandoc via Anaconda**
+
+    .. warning::
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install `pandoc` through brew with `brew install pandoc`.
+
+    .. code-block:: bash
+
+        conda install pandoc
+
+4. **Make the documentation**:
+
+    After installing `pandoc`, you can make the documentation using Sphinx:
+
+    .. code-block:: bash
+
+        cd docs
+        make html
+
+    This command will generate the HTML documentation in the `_build/html` directory within the `docs` folder.
+
+4. **Open the Compiled Documentation**:
+
+    After successfully building the documentation, you can view it in your preferred browser. Navigate to the build directory and open the `index.html`:
+
+    .. code-block:: bash
+
+        open _build/html/index.html
+
+    .. note::
+        The `open` command works on macOS. If you're using a different OS, you might need to open the `index.html` using your file manager or use a different command.
+
+
+
+Machine Learning Dependencies
+---------------------------------------
+
+For users who wish to utilize POSYDON's latest machine learning features. 
+This is specifically used in the active learning module and profile interpolation.
+You do not require these dependencies if you are using the provided Initial-Final interpolators.
+
+1. **Navigate to your POSYDON directory** (where the `setup.py` is located) and run:
+
+    .. code-block:: bash
+
+        pip install ".[ml]"
+
+
+Installing Experimental Visualization Libraries
+-----------------------------------------------
+
+POSYDON provides experimental visualization libraries to enhance the experience of data analysis and results visualization. While these libraries offer advanced features, please note that they might still be in development and could be subject to changes.
+
+To install these experimental visualization libraries
+
+1. **Navigate to your POSYDON directory** (where the `setup.py` is located) and run:
+
+    .. code-block:: bash
+   
+        pip install ".[vis]"
+
+    After installing these libraries, you can access various visualization tools and features integrated within POSYDON. Ensure to consult the documentation or any guides associated with these features for their optimal usage.
+
+    .. note::
+        As these are experimental features, feedback, and bug reports regarding the visualization tools are highly appreciated. It will aid the development and optimization of these features for future stable releases.
