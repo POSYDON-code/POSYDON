@@ -945,7 +945,7 @@ class TrackMatcher:
 
             return result
 
-        def get_attr_props(htrack, list_for_matching):
+        def get_attr_props(new_htrack, list_for_matching):
 
             """
                This unpacks a list_for_matching which has the following 
@@ -959,6 +959,11 @@ class TrackMatcher:
 
             Parameters
             ----------
+            new_htrack : bool
+                Set True to search the single star H-rich grids, or False to 
+                search the He-rich grids. This is determined primarily 
+                through the current `match_type`.
+
             list_for_matching : list
                 This is a list that contains sublists of types, str, float, 
                 str, float, float. The first sublist holds the names for 
@@ -1010,7 +1015,7 @@ class TrackMatcher:
                                          "added in root_keys list: "
                                          f"{self.root_keys}")
                 # create attribute scalers
-                scaler_of_attribute = self.scale(attr_name, htrack, method)
+                scaler_of_attribute = self.scale(attr_name, new_htrack, method)
                 scalers.append(scaler_of_attribute)
 
             return match_attr_names, rescale_facs, bnds, scalers
