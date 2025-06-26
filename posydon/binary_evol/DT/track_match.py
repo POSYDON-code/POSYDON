@@ -932,9 +932,14 @@ class TrackMatcher:
             zip_attr_props = zip(attr_names, attr_vals, attr_scalers)
             for attr_name, star_val, attr_scaler in zip_attr_props:
                 
+                # get interpolated attribute value from grid at 
+                # proposed x (m0, t) values
+                # TODO: can this be sped up? w/o this call, 
+                #       execution time lowers by a factor of 100
                 grid_track_val = get_track_val(attr_name, new_htrack, *x)
+
+                # scale values
                 scaled_grid_track_val = attr_scaler.transform(grid_track_val)
-                
                 scaled_star_val = attr_scaler.transform(star_val)
 
                 if attr_name in MATCHING_WITH_RELATIVE_DIFFERENCE:
