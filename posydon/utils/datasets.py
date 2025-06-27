@@ -173,7 +173,7 @@ ZENODO_COLLECTION['v2_tutorial_populations'] = {
                    + "example binary populations that can be used in the "\
                    + "tutorials of the code. It contians a 10.000 binary "\
                    + "population at each of the DR2 grid metallicities.",
-    'md5': "063fd7def7193291ef5d8649e0bedc77",
+    'md5': "d66d181bbd74d3cd30b4360729034566",
     'title': "POSYDON v2.0 tutorial population data",
     'url': "https://zenodo.org/communities/posydon" #TODO
 }
