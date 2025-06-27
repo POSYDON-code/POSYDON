@@ -1967,7 +1967,7 @@ class StepSN(object):
         Vkick : double
             Natal orbital kick in km/s.
 
-        ---------------------------------------------------------------
+        -------------------------------------------------------------------------------------
 
         Natal kicks based on the mass of the ejected envelope during SN.
 
@@ -1988,12 +1988,23 @@ class StepSN(object):
             multiple distinct observations, Richards S. M., Eldridge J. J., Briel M. M., 
             Stevance H. F., Willcox R., 2022, arXiv e-prints, p. arXiv:2208.02407
 
+        -------------------------------------------------------------------------------------
+
+        Log-normal kicks are based on Disberg P., Mandel I., 2025, arXiv e-prints, p. arXiv:2505.22102v1
+
+
         """
         if self.kick_normalisation == 'one_minus_fallback':
             # Normalization from Eq. 21, Fryer, C. L., Belczynski, K., Wiktorowicz,
             # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
             norm = (1.0 - star.f_fb)
         elif self.kick_normalisation == 'one_over_mass':
+            if star.state == 'BH':
+                norm = 1.4/star.mass
+            else:
+                norm = 1.0
+
+        elif self.kick_normalisation == 'log_normal':
             if star.state == 'BH':
                 norm = 1.4/star.mass
             else:
@@ -2039,8 +2050,11 @@ class StepSN(object):
 
             if self.kick_normalisation in ['ejecta_mass_Janka17', 'ejecta_mass_Richards+23']:
                 Vkick = Vkick_ej
+            elif self.kick_normalisation == 'log_normal':
+                Vkick = norm * sp.stats.lognorm.rvs(s=0.68, scale=np.exp(5.60), size=1)[0]
             else:
                 Vkick = norm * sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
+            
         else:
             Vkick = 0.0
 
