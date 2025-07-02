@@ -1,16 +1,16 @@
 .. _pipeline_ini:
 
-##############################################################
+#######################################################################
 Documentation of the :samp:`ini` file for the post-processing pipeline
-##############################################################
+#######################################################################
 
 Aim of the :samp:`ini` file
-===================
+===========================
 
 Using an :samp:`ini` file should help to keep an overview on large grid 
-repositories and ensures that all workflows will be setup the same way.
+repositories and ensures that all workflows will be set up the same way.
 
-There is a script to setup the pipeline, it takes one argument:
+There is a script to set up the pipeline, it takes one argument:
 
 .. code-block:: bash
 
@@ -40,7 +40,7 @@ all :ref:`tasks <pipeline>`. Hence, you can run all
 .. _pipeline_ini_sections:
 
 Sections in the :samp:`ini` file
-========================
+=================================
 
 Account and slurm settings
 --------------------------
@@ -84,7 +84,7 @@ as pages in a single PDF.
 
     [pipeline setup]
         PATH_TO_GRIDS = '/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/'
-        VERSION = '' # to have a verion below the grid type level
+        VERSION = '' # to have a version below the grid type level
         PATH = '.' # working dir
         VERBOSE = True
         

@@ -161,20 +161,6 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
         Maxium Helium in SN ejecta.
 
     """
-    if not (hasattr(star, 'profile') and isinstance(star.profile, np.ndarray)
-            and ('mass' in star.profile.dtype.names)
-            and ('radius' in star.profile.dtype.names)
-            and ('logRho' in star.profile.dtype.names)
-            and ('omega' in star.profile.dtype.names)
-#            and ('he3' in star.profile.dtype.names)
-            and ('he4' in star.profile.dtype.names)):
-        Pwarn("The stellar profile does not contain enough information to "
-              "collapse the star and determine the remnant properties.",
-              'InappropriateValueWarning')
-        return [np.nan, np.nan, np.nan, np.array([]), np.array([]),
-                np.array([]), np.array([]), np.array([]), np.array([]),
-                np.array([]), np.array([]), np.nan]
-
     if neutrino_mass_loss < 0.:
         raise ValueError(
             'Something went wrong, neutrino_mass_loss must be positive!')
@@ -187,6 +173,20 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
             'while neutrino_mass_loss = {:2.2f} Msun'.format(
                 neutrino_mass_loss), 'was passed!')
 
+    if not (hasattr(star, 'profile') and isinstance(star.profile, np.ndarray)
+            and ('mass' in star.profile.dtype.names)
+            and ('radius' in star.profile.dtype.names)
+            and ('logRho' in star.profile.dtype.names)
+            and ('omega' in star.profile.dtype.names)):
+        Pwarn("The stellar profile does not contain enough information to "
+              "collapse the star and determine the remnant properties.",
+              'InappropriateValueWarning')
+        # estimate still initial BH mass
+        mass_initial_BH = mass_central_BH - neutrino_mass_loss
+        return [mass_initial_BH, np.nan, np.nan, np.array([]), np.array([]),
+                np.array([]), np.array([]), np.array([]), np.array([]),
+                np.array([]), np.array([]), np.nan]
+
     # load units and convert to CGS units
     G = const.standard_cgrav
     c = const.clight
@@ -196,16 +196,17 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
     neutrino_mass_loss *= Mo
 
     # read star quantities
-    enclosed_mass_all = star.profile['mass'][::-1]*Mo  # cell outer total mass
-    radius_all = star.profile['radius'][::-1] * Ro  # cell outer radius
-    density_all = 10**(star.profile['logRho'][::-1])  # cell density
-    angular_frequency_all = star.profile['omega'][::-1]  # cell angular freq.
+    enclosed_mass_all = star.profile['mass'][::-1] * Mo # cell outer total mass
+    radius_all = star.profile['radius'][::-1] * Ro      # cell outer radius
+    density_all = 10**(star.profile['logRho'][::-1])    # cell density
+    angular_frequency_all = star.profile['omega'][::-1] # cell angular freq.
     if 'he4' in star.profile.dtype.names:
-        # he3_all = star.profile['he3'][::-1]  # he4 mass fraction
-        he4_all = star.profile['he4'][::-1]  # he4 mass fraction
-        he3_all = np.zeros(len(enclosed_mass_all))  # ENHANCEMENT support he3
+        he4_all = star.profile['he4'][::-1]             # he4 mass fraction
     else:
         he4_all = np.zeros(len(enclosed_mass_all))
+    if 'he3' in star.profile.dtype.names:
+        he3_all = star.profile['he3'][::-1]             # he3 mass fraction
+    else:
         he3_all = np.zeros(len(enclosed_mass_all))
 
     # cut the ejected layers of the profile due to the SN event:

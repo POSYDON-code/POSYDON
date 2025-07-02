@@ -21,7 +21,7 @@ __authors__ = [
 import numpy as np
 import pandas as pd
 from posydon.utils.common_functions import check_state_of_star
-from posydon.grids.MODELS import MODELS
+from posydon.grids.SN_MODELS import SN_MODELS
 
 
 
@@ -180,9 +180,9 @@ class SingleStar:
                 setattr(self, quantity, None)
 
         # core collapse quantities
-        for MODEL_NAME in MODELS.keys():
-            if not hasattr(self, MODEL_NAME):
-                setattr(self, MODEL_NAME, None)
+        for SN_MODEL_NAME in SN_MODELS.keys():
+            if not hasattr(self, SN_MODEL_NAME):
+                setattr(self, SN_MODEL_NAME, None)
 
     def append_state(self):
         """Append the new version of the star to the end of the star state."""

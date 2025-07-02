@@ -1,7 +1,7 @@
 .. _pop-params-guide:
 
 ================================================
-POSDYON Population Synthesis Configuration Guide
+POSYDON Population Synthesis Configuration Guide
 ================================================
 
 This documentation provides a detailed overview of the configuration options available in the Posydon software package.
@@ -47,7 +47,7 @@ Note that the loading of the simulation steps is separate from creating the obje
     from posydon.popsyn.io import simprop_kwargs_from_ini
 
     # read from file
-    sim_props = simprop_kwargs_from_ini('population_params.ini', vebose=False)
+    sim_props = simprop_kwargs_from_ini('population_params.ini', verbose=False)
     
     # create SimulationProperties object
     sim = SimulationProperties(**sim_props)
@@ -66,7 +66,6 @@ It controls the mapping between a POSYDON binary object and its step evolution, 
   :widths: 10 80 10
   :class: population-params-table
   :header-rows: 1
-  
 
   * - Parameter
     - Description
@@ -237,7 +236,7 @@ It evolves the binary object in isolation until Roche lobe overflow occurs.
 Step Disrupted
 ~~~~~~~~~~~~~~
 
-The dirtupted step evolves a system when a supernova has unbound the binary components.
+The disrupted step evolves a system when a supernova has unbound the binary components.
 This class inherits from the detached step, but only evolves the remaining star in isolation.
 This means that this step uses the single stars loaded by the detached step.
 
@@ -361,7 +360,7 @@ If the energy budget is less than the binding energy, the system is merged.
       * ``0.01``
       * ``0.1``
       * ``0.3``
-    - ``0.1``
+    - ``0.3``
 
   * - ``core_definition_He_fraction``
     - | The helium fraction for defining the core.
@@ -374,11 +373,10 @@ If the energy budget is less than the binding energy, the system is merged.
   * - ``common_envelope_option_after_succ_CEE``
     - | The option for handling the system after a successful common envelope ejection.
      
-      * ``'core_not_replaced_noMT'`` : core not replaced, no mass transfer
-      * ``'core_replaced_noMT'`` : core replaced, no mass transfer
-      * ``'core_not_replaced_stableMT'`` : core not replaced, stable mass transfer
-      * ``'core_not_replaced_windloss'`` : core not replaced, wind loss
-    - ``'core_not_replaced_noMT'``
+      * ``'one_phase_variable_core_definition'`` : lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; no mass transfer (use this defined core mass as the stripped remnant mass)
+      * ``'two_phases_stableMT'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second have a stable and fully non-conservative mass transfer from the core to the companion until stripped to the core defined in MESA; in the case of a double CE redirect to ``'two_phases_windloss'``
+      * ``'two_phases_windloss'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second lose the mass remaining mass above the core defined in MESA as a fast wind
+    - ``'two_phases_stableMT'``
 
   * - ``verbose``
     - | Enables verbose mode.
@@ -428,12 +426,19 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``'Fryer+12-delayed'``
       * ``'Sukhbold+16-engine'``
       * ``'Patton&Sukhbold20-engine'``
-    - ``'Patton&Sukhbold20-engine'``
+    - ``'Fryer+12-delayed'``
 
   * - ``engine``
     - | The engine used for the supernova.
       | Relevant for ``'Sukhbold+16-engine'`` and ``'Patton&Sukhbold20-engine'`` mechanisms.
-    - ``'N20'``
+     
+      * ``''``
+      * ``'N20'``
+      * ``'S19.8'``
+      * ``'W15'``
+      * ``'W20'``
+      * ``'W18'``
+    - ``''``
 
   * - ``PISN``
     - | The prescription used for pair-instability supernova.
@@ -441,7 +446,7 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``None``
       * ``'Marchant+19'``
       * ``'Hendriks+23'``
-    - ``'Marchant+19'``
+    - ``'Hendriks+23'``
 
   * - ``PISN_CO_shift``
     - | The shift in CO core mass for the start of the Hendriks+23 PPI prescription
@@ -449,18 +454,18 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
 
   * - ``PPI_extra_mass_loss``
     - | Additional PPI mass loss for the Hendriks+23 prescription
-    - ``0.0``
+    - ``-20.0``
 
   * - ``ECSN``
     - | The prescription used for electron-capture supernova.
      
       * ``'Tauris+15'``
       * ``'Podsiadlowksi+04'``
-    - ``'Podsiadlowksi+04'``
+    - ``'Tauris+15'``
 
   * - ``conserve_hydrogen_envelope``
     - | Conserve the hydrogen envelope during the supernova.
-    - ``True``
+    - ``False``
 
   *  - ``conserve_hydrogen_PPI``
      - | Include the hydrogen envelope during the calculation of the 
@@ -486,6 +491,10 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
   * - ``use_core_masses``
     - | Use core masses for the supernova.
     - ``True``
+
+  * - ``allow_spin_None``
+    - | Allow compact objects to have undetermined spin values in the lack of profile data.
+    - ``False``
 
   * - ``approx_at_he_depletion``
     - | Approximate at helium depletion.
@@ -634,7 +643,7 @@ When reading the binary population arguments from a ``population_params.ini`` fi
     from posydon.popsyn.io import binarypop_kwargs_from_ini
 
     # read from file
-    pop_params = binarypop_kwargs_from_ini('population_params.ini', vebose=False)
+    pop_params = binarypop_kwargs_from_ini('population_params.ini', verbose=False)
     
     # create BinaryPopulation object
     pop = BinaryPopulation(**pop_params)
@@ -666,7 +675,7 @@ It also contains which sampling distributions to use for the initial conditions 
 
   * - ``dump_rate``
     - | Batch save after evolving N binaries.
-    - | To facilitate I/O performance, this should be at least 500 for populations of 100.000 binaries or more.
+      | To facilitate I/O performance, this should be at least 500 for populations of 100.000 binaries or more.
     - ``2000``
 
   * - ``temp_directory``
@@ -699,7 +708,7 @@ It also contains which sampling distributions to use for the initial conditions 
     
   * - ``history_verbose``
     - | If True, record extra functional steps in the output DataFrames
-    - | (These extra steps represent internal workings of POSYDON rather than physical phases of evolution)
+      | (These extra steps represent internal workings of POSYDON rather than physical phases of evolution)
     - ``False``
 
   * - ``entropy``

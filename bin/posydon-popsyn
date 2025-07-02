@@ -21,7 +21,7 @@ from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.popsyn.synthetic_population import Population
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
-from posydon.grids.MODELS import get_MODEL_NAME
+from posydon.grids.SN_MODELS import get_SN_MODEL_NAME
 import glob
 import numpy as np
 
@@ -198,18 +198,20 @@ srun python ./merge_metallicity.py {metallicity}
     with open(filename, mode='w') as file:
         file.write(text)
 
-def check_SN_MODEL_validity(ini_file):
-    '''Checks if the step_SN MODEL is valid for this script
+def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
+    '''Checks if the step_SN model is valid for this script
 
     Parameters
     ----------
     ini_file : str
         the path to the ini file
+    verbose_on_fail : bool (default: True)
+        if `True` rerun the model selection with verbose mode if this failed
     
     Returns
     -------
     bool
-        True if the MODEL is valid or use_interp_values=False, False otherwise    
+        True if the model is valid or use_interp_values=False, False otherwise    
     '''
 
     simprop_kwargs = simprop_kwargs_from_ini(ini_file)
@@ -218,9 +220,11 @@ def check_SN_MODEL_validity(ini_file):
     if step_SN_MODEL['use_interp_values'] == False:
         return True
     # step_SN MODEL check
-    MODEL_NAME_SEL = get_MODEL_NAME(step_SN_MODEL)
+    SN_MODEL_NAME_SEL = get_SN_MODEL_NAME(step_SN_MODEL)
 
-    if MODEL_NAME_SEL is None:
+    if SN_MODEL_NAME_SEL is None:
+        if verbose_on_fail:
+            get_SN_MODEL_NAME(step_SN_MODEL, verbose=True)
         return False
     else:
         return True
@@ -237,8 +241,8 @@ def setup_popsyn_function(args):
         raise FileNotFoundError(f'File {args.ini_file} not found')
     
     if not check_SN_MODEL_validity(args.ini_file):
-        raise ValueError("The step_SN MODEL is not valid for this script."
-                        "Please check the MODEL in the ini file")
+        raise ValueError("The step_SN MODEL is not valid for this script. "
+                         "Please check the MODEL in the ini file")
 
     synpop_params = binarypop_kwargs_from_ini(args.ini_file)
     metallicities = synpop_params['metallicity']
@@ -319,8 +323,7 @@ def check_population_files(run_folder, metallicities):
     dict
         Dictionary with metallicity as key and existence status as value
     """
-    print("POPULATION FILES CHECK ....................")
-    print("")
+    print("POPULATION FILES CHECK ....................\n")
     print("MET\t\tPOP_FILE")
     
     all_exist = True
@@ -365,8 +368,7 @@ def check_binary_counts(run_folder, metallicities, expected_count):
     dict
         Dictionary with metallicity as key and binary count as value
     """
-    print("BINARY COUNT CHECK     ....................")
-    print("")
+    print("BINARY COUNT CHECK     ....................\n")
     print("MET\t\tEXPECTED\tFOUND\tSTATUS")
     
     all_match = True
@@ -507,7 +509,7 @@ def check_batches(run_folder, metallicity, batch_folder_name):
                     idx = int(input("\nEnter the index to the job ID: "))
                     if 0 <= idx < len(jobIDs):
                         selected_job_idx = idx
-                        jobID = [jobIDs[idx]]  # Filter to only the selected job ID
+                        jobID = jobIDs[idx]  # Filter to only the selected job ID
                     else:
                         print("Invalid selection. Please try again.")
                 except ValueError:
@@ -631,17 +633,22 @@ def generate_rescue_script(args, batch_status):
         elif line.startswith("export PATH_TO_POSYDON_DATA="):
             path_to_posydon_data = line.split('=')[1].strip()
         
-    # create a new slurm script
-    rescue_script = os.path.join(run_folder, f'{str_met}_Zsun_rescue.slurm')
-    if os.path.exists(rescue_script):
-        Pwarn('Replace '+rescue_script, "OverwriteWarning")
-        
     # Extract missing indices from batch_status
     missing_indices = batch_status.get('missing_indices', [])
     
     # Format job array string for SBATCH
     if missing_indices:
         job_array_str = ','.join(map(str, sorted(missing_indices)))
+    else:
+        raise ValueError("No missing indices found in batch status.\n"
+                         "Cannot generate rescue script.\n"
+                         "Please run the check function to resubmit the merge jobs.\n\n"
+                         "posydon-popsyn check <run_folder>\n")
+    
+    # create a new slurm script
+    rescue_script = os.path.join(run_folder, f'{str_met}_Zsun_rescue.slurm')
+    if os.path.exists(rescue_script):
+        Pwarn('Replace '+rescue_script, "OverwriteWarning")
         
     with open(rescue_script, 'w') as f:
         f.write(f'''#!/bin/bash
@@ -697,8 +704,7 @@ def get_ini_file(args):
     
     # Handle multiple INI files
     if len(ini_files) > 1:
-        print("Multiple INI files found:")
-        print("")
+        print("Multiple INI files found:\n")
         for idx, file in enumerate(ini_files):
             print(f"{idx}: {file}")
         
@@ -752,20 +758,17 @@ def check_popsyn_function(args):
     args : argparse.Namespace
         The arguments passed to the function
     """
-    print(f"Checking the status of the population run in {args.run_folder}")
-    print("")
+    print(f"Checking the status of the population run in {args.run_folder}\n")
     
     ini_file = get_ini_file(args)
-    print("")
-    print(f"Using INI file:\n{ini_file}")
+    print(f"\nUsing INI file:\n{ini_file}")
     
     num_metallicities, number_of_binaries,\
         metallicities, synpop_params=  get_binary_params(ini_file)
     
     print("REQUESTED PARAMETERS")
     print(f"# metallicities: {num_metallicities}")
-    print(f"# binaries:      {number_of_binaries}")
-    print("")
+    print(f"# binaries:      {number_of_binaries}\n")
     print("Checking the status of the population run")
     print("-"*80)
     
@@ -817,23 +820,21 @@ def check_popsyn_function(args):
                     str_met = convert_metallicity_to_string(met)
                     
                     os.system(
-                        f'sbatch{args.run_folder}/{str_met}_Zsun_merge_popsyn.slurm'
+                        f'sbatch {args.run_folder}/{str_met}_Zsun_merge_popsyn.slurm'
                     )
                 print("Merge jobs resubmitted.")
             else:
                 print("Merge jobs not resubmitted.")
 
         else:
-            print("\nOne or more batch files are incomplete.")
-            print("We need to resubmit some of the batch jobs.")
-            print("Please use the following command to create and"
-                  "submit a rescue script:")
-            print("")
-            print(f"posydon-popsyn rescue {args.run_folder}")
-            print("")
-            print("You can add additional arguments to the command, such as "
-                  + "--email, --partition, etc.")
-            print("This will generate resubmission scripts that you can review "
+            print("\nOne or more batch files are incomplete.\n"
+                  "We need to resubmit some of the batch jobs.\n"
+                  "Please use the following command to create and\n"
+                  "submit a rescue script:\n\n"
+                  f"posydon-popsyn rescue {args.run_folder}\n\n"
+                  "You can add additional arguments to the command, such as \n"
+                  "--email, --partition, etc.\n"
+                  "This will generate resubmission scripts that you can review\n"
                   + "and run to resubmit failed jobs.")
     
 def rescue_popsyn_function(args):
@@ -849,16 +850,14 @@ def rescue_popsyn_function(args):
     
     # 1. Check status of the run
     ini_file = get_ini_file(args)
-    print("")
-    print(f"Using INI file:\n{ini_file}")
+    print(f"\nUsing INI file:\n{ini_file}")
     
     num_metallicities, number_of_binaries,\
         metallicities, synpop_params=  get_binary_params(ini_file)
     
     print("REQUESTED PARAMETERS")
     print(f"# metallicities: {num_metallicities}")
-    print(f"# binaries:      {number_of_binaries}")
-    print("")
+    print(f"# binaries:      {number_of_binaries}\n")
     print("Checking the status of the population run")
     print("-"*80)
         
@@ -896,8 +895,7 @@ def rescue_popsyn_function(args):
                                 )
            
             print("#"*80)
-            print("")
-            print("GENERATING A RESCUE SCRIPT ....................")
+            print("\nGENERATING A RESCUE SCRIPT ....................")
             
             # Generate a rescue script
             rescue_scripts.append(
@@ -907,8 +905,7 @@ def rescue_popsyn_function(args):
             print("-"*80)
             
         # Generate a resubmit_slurm.sh script
-        print("GENERATING A RESUBMIT SCRIPT ....................")
-        print("")
+        print("GENERATING A RESUBMIT SCRIPT ....................\n")
         resubmit_sh_file = os.path.join(args.run_folder, 'resubmit_slurm.sh')
         with open(resubmit_sh_file, 'w') as f:
             f.write("#!/bin/bash\n")
@@ -916,14 +913,14 @@ def rescue_popsyn_function(args):
                 script = os.path.basename(script)
                 met = script.split('_')[0]
                 f.write(f'resubmit=$(sbatch --parsable {script})\n')
-                f.write(f"echo 'Rescue script submitted as '${{resubmit}}\n")                
+                f.write("echo 'Rescue script submitted as '${resubmit}\n")                
                 f.write("merge=$(sbatch --parsable "
-                        "--dependency=afterok:${{resubmit}} "
+                        "--dependency=afterok:${resubmit} "
                         "--kill-on-invalid-dep=yes "
                         f"{met}_Zsun_merge_popsyn.slurm)\n")
-                f.write(f"echo 'Merge job submitted as '${{merge}}\n")
+                f.write("echo 'Merge job submitted as '${merge}\n")
 
-        print(f"Rescue scripts ready to be resubmitted by {resubmit_sh_file}") 
+        print(f"Rescue scripts ready to be resubmitted by 'sh {resubmit_sh_file}'") 
         print("Would you like to submit the rescue scripts?")
         choice = input("Enter 'yes' or 'y' to submit the rescue scripts: ")
         if choice.lower() == 'yes' or choice.lower() == 'y':
