@@ -385,7 +385,7 @@ def parse_inifile(path, verbose=False):
 
     files_read = parser.read(path)
     # Catch silent errors from configparser.read
-    if len(files_read) == 0:
+    if len(files_read) == 0: # pragma: no cover
         raise ValueError("No files were read successfully. Given {}.".
                          format(path))
     return parser
