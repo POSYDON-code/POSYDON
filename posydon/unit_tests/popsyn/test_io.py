@@ -140,12 +140,79 @@ class TestFunctions:
             f.write(ini_content)
         return file_path
 
+    @fixture
+    def history_df(self):
+        data = {
+            'state': ['RLOF'],
+            'time': [1.23],
+            'S1_mass': [10.0],
+            'S2_spin': [0.3],
+            'extra_binary': [42]
+        }
+        return pd.DataFrame(data)
     
-#     def test_clean_binary_history_df(self):
-#         pass 
+    @fixture
+    def oneline_df(self):
+        data = {
+            'state_i': ['evolving', 'collapsed'],
+            'state_f': ['collapsed', 'remnant'],
+            'mass_i': [1.4, 2.1],
+            'mass_f': [1.3, 2.0],
+            'extra_col_i': [5, 6],
+            'extra_col_f': [7, 8],
+            'S1_spin_i': [0.5, 0.6],
+            'S1_spin_f': [0.7, 0.8],
+            'S1_SN_type': ['type1', 'type2'],
+            'S2_kick': [123.0, 456.0],
+        }
+        df = pd.DataFrame(data)
+        return df
+    
+    def test_clean_binary_history_df(self, history_df):
+        extra_binary = {'extra_binary': 'int32'}
+        extra_S1 = {}
+        extra_S2 = {}
+
+        clean_df = totest.clean_binary_history_df(
+            history_df,
+            extra_binary_dtypes_user=extra_binary,
+            extra_S1_dtypes_user=extra_S1,
+            extra_S2_dtypes_user=extra_S2
+        )
+
+        assert isinstance(clean_df, pd.DataFrame)
+        assert clean_df.dtypes['time'] == np.dtype('float64')
+        assert clean_df.dtypes['S1_mass'] == np.dtype('float64')
+        assert clean_df.dtypes['S2_spin'] == np.dtype('float64')
+        assert clean_df.dtypes['extra_binary'] == np.dtype('int32')
+        # 'state' is declared as 'string', should be converted to object
+        assert clean_df.dtypes['state'] == np.dtype('O')
         
-#     def test_clean_binary_oneline_df(self):
-#         pass
+    def test_clean_binary_oneline_df(self, oneline_df):
+        cleaned_df = totest.clean_binary_oneline_df(oneline_df)
+
+        # Check returned object is a DataFrame
+        assert isinstance(cleaned_df, pd.DataFrame)
+
+        # Check that dtype is set correctly for a float column
+        assert cleaned_df['mass_i'].dtype == np.float64
+        assert cleaned_df['S1_spin_i'].dtype == np.float64
+
+        # Check string columns have dtype object (due to conversion for HDF saving)
+        assert cleaned_df['state_i'].dtype == 'object'
+        assert cleaned_df['state_f'].dtype == 'object'
+        assert cleaned_df['S1_SN_type'].dtype == 'object'
+
+        # Check integer columns
+        assert cleaned_df['extra_col_i'].dtype == np.int64
+        assert cleaned_df['extra_col_f'].dtype == np.int64
+
+        # Check scalar column dtype
+        assert cleaned_df['S2_kick'].dtype == np.float64
+
+        # Check values are preserved (optional)
+        assert cleaned_df.loc[0, 'mass_i'] == 1.4
+        assert cleaned_df.loc[1, 'state_f'] == 'remnant'
         
     def test_parse_inifile(self,simple_ini,multi_ini,textfile):
         # missing argument
