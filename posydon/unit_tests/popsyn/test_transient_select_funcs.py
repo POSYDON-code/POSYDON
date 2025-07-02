@@ -57,12 +57,9 @@ class TestFunctions:
     
     def test_GRB_selection():
         
-        
     def test_chi_eff():
         
-        
     def test_m_chirp():
-        
         
     def test_mass_ratio():
         
