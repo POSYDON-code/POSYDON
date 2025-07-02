@@ -19,13 +19,14 @@ import textwrap
 import os
 import errno
 import pprint
+from configparser import MissingSectionHeaderError, ConfigParser
 from posydon.binary_evol.simulationproperties import SimulationProperties
 
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['BINARYPROPERTIES_DTYPES', \#'OBJECT_FIXED_SUB_DTYPES', \
+        elements = ['BINARYPROPERTIES_DTYPES', 'OBJECT_FIXED_SUB_DTYPES', \
                     'STARPROPERTIES_DTYPES', 'EXTRA_BINARY_COLUMNS_DTYPES', \
                     'EXTRA_STAR_COLUMNS_DTYPES', 'SCALAR_NAMES_DTYPES', \
                     'clean_binary_history_df', 'clean_binary_oneline_df', \
@@ -54,14 +55,14 @@ class TestElements:
 class TestFunctions:
     
     @fixture
-    def simple_ini(tmp_path):
+    def simple_ini(self,tmp_path):
         file_path = os.path.join(tmp_path, "test.ini")
         with open(file_path, "w") as f:
             f.write("[section]\nkey=value\n")
         return file_path
     
     @fixture
-    def multi_ini(tmp_path):
+    def multi_ini(self,tmp_path):
         file1 = os.path.join(tmp_path, "a.ini")
         file2 = os.path.join(tmp_path, "b.ini")
         with open(file1, "w") as f:
@@ -71,59 +72,52 @@ class TestFunctions:
         return [file1, file2]
 
     @fixture
-    def empty_ini(tmp_path):
-        file_path = os.path.join(tmp_path, "empty.ini")
-        with open(file_path, "w") as f:
-            f.write("")
-        return file_path
-
-    @fixture
-    def textfile(tmp_path):
+    def textfile(self,tmp_path):
         file_path = os.path.join(tmp_path, "textfile.txt")
         with open(file_path, "w") as f:
             f.write("test")
         return file_path
 
     
-#     def test_clean_binary_history_df():
+#     def test_clean_binary_history_df(self):
+#         pass 
+        
+#     def test_clean_binary_oneline_df(self):
 #         pass
         
-#     def test_clean_binary_oneline_df():
-#         pass
-        
-    def test_parse_inifile():
+    def test_parse_inifile(self,simple_ini,multi_ini,textfile):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'path'"):
             totest.parse_inifile()
         # bad input
-        with raises(FileNotFoundError, match="[Errno 2] No such file or directory: '/none.ini'"):
-            totest.parse_inifile('/nonexistent.ini')
-        with raises(FileNotFoundError, match="[Errno 2] No such file or directory: '/none.ini'"):
-            totest.parse_inifile([simple_ini,'/nonexistent.ini'])
+        with raises(FileNotFoundError):
+            totest.parse_inifile('nonexistent.ini')
+        with raises(FileNotFoundError):
+            totest.parse_inifile([simple_ini,'nonexistent.ini'])
         with raises(MissingSectionHeaderError, match="File contains no section headers"):
             totest.parse_inifile(textfile)
         with raises(ValueError, match="Path must be a string or list of strings."):
             totest.parse_inifile(0)
-            
+             
         # example: single inifile
-        parser = parse_inifile(simple_ini)
+        parser = totest.parse_inifile(simple_ini)
         assert isinstance(parser, ConfigParser)
         assert parser.has_section("section")
         assert parser.get("section", "key") == "value"
         
         # example: multiple inifiles
-        parser = parse_inifile(multi_ini)
+        parser = totest.parse_inifile(multi_ini)
         assert parser.has_option("section", "key1")
         assert parser.has_option("section", "key2")
 
         
-#     def test_simprop_kwargs_from_ini():
+#     def test_simprop_kwargs_from_ini(self):
 #         pass
         
-#     def test_binarypop_kwargs_from_ini():
+#     def test_binarypop_kwargs_from_ini(self):
 #         pass
         
-    def test_create_run_script_text():
+    def test_create_run_script_text(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'ini_file'"):
             totest.create_run_script_text()
@@ -149,7 +143,7 @@ class TestFunctions:
         assert totest.create_run_script_text('testfile.ini') == out
         
         
-    def test_create_merge_script_text():
+    def test_create_merge_script_text(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'ini_file'"):
             totest.create_merge_script_text()
