@@ -24,7 +24,8 @@ class TestElements:
     def test_dir(self):
         elements = ['KNNmodel', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
-                    '__loader__', '__name__', '__package__', '__spec__']
+                    '__loader__', '__name__', '__package__', '__spec__',
+                    'np','pd','time','KNeighborsRegressor']
         assert dir(totest) == elements, "There might be added or removed "\
                                         + "objects without an update on the "\
                                         + "unit test."
