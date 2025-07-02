@@ -366,7 +366,7 @@ def parse_inifile(path, verbose=False):
 
     if isinstance(path, str):
         path = os.path.abspath(path)
-        if verbose:
+        if verbose: # pragma: no cover
             print('Reading inifile: \n\t{}'.format(path))
         if not os.path.exists(path):
             raise FileNotFoundError(
@@ -374,7 +374,7 @@ def parse_inifile(path, verbose=False):
     elif isinstance(path, (list, np.ndarray)):
         path = [os.path.abspath(f) for f in path]
 
-        if verbose:
+        if verbose: # pragma: no cover
             print('Reading inifiles: \n{}'.format(pprint.pformat(path)))
         bad_files = []
         for f in path:
@@ -418,7 +418,7 @@ def simprop_kwargs_from_ini(path, verbose=False):
     parser_dict = {}
     for section in parser:
         # skip default section
-        if section == 'DEFAULT':
+        if section == 'DEFAULT': # pragma: no cover
             continue
 
         # evaluate str values as literal python and put
