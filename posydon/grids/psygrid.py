@@ -335,7 +335,7 @@ EXTRA_COLS_DS_EXCLUDE = [
 GRIDPROPERTIES = {
     # file loading parameters
     "description": "",                      # description text
-    "": None,
+    "max_number_of_runs": None,
     "format": "hdf5",
     "compression": "gzip9",
     # history downsampling parameters
