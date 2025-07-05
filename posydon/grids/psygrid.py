@@ -335,7 +335,7 @@ EXTRA_COLS_DS_EXCLUDE = [
 GRIDPROPERTIES = {
     # file loading parameters
     "description": "",                      # description text
-    "max_number_of_runs": None,
+    "": None,
     "format": "hdf5",
     "compression": "gzip9",
     # history downsampling parameters
@@ -593,7 +593,7 @@ class PSyGrid:
 
         # Determine expected number of runs (may not be as many in the end)
         N_runs = len(grid.runs)
-        if not self.config['max_number_of_runs'] is None:
+        if not self.config['max_number_of_runs'] is None: # pragma: no cover
             N_runs = min(N_runs, self.config['max_number_of_runs'])
 
         # Decide on the columns to be included
@@ -684,8 +684,8 @@ class PSyGrid:
             self._say('Processing {}'.format(run.path))
 
             # Restrict number of runs if limit is set inside config
-            if self.config['max_number_of_runs'] is not None:
-                if run_index == self.config['max_number_of_runs']: # pragma: no cover
+            if self.config['max_number_of_runs'] is not None: # pragma: no cover
+                if run_index == self.config['max_number_of_runs']:
                     self._say("Maximum number of runs reached.")
                     break
 
