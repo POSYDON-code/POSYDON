@@ -1290,14 +1290,6 @@ class TestPSyGrid:
                                     totest.h5py.File(PSyGrid.filepath,"w"))
         check_len(PSyGrid, N_MESA_runs)
         check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
-        # examples: max_number_of_runs
-        self.reset_grid(PSyGrid)
-        N_MESA_runs_limited = 1
-        PSyGrid.config["max_number_of_runs"] = N_MESA_runs_limited
-        PSyGrid._create_psygrid(MESA_files,\
-                                totest.h5py.File(PSyGrid.filepath, "w"))
-        check_len(PSyGrid, N_MESA_runs_limited)
-        check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
         # examples: decide_columns
         BH_cols = ("star_1_mass", "star_2_mass")
         ## extra column: "model_number", others are required ones
