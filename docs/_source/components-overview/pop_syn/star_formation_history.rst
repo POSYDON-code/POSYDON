@@ -161,20 +161,20 @@ Summary of SFH MODEL options
     * - ``SFR``
       - The name of the star formation rate density model to use. See the table above for available models.
     * - ``sigma``
-      - The standard deviation of the metallicity distribution, if applicable.
+      - | The standard deviation of the metallicity distribution, if applicable.
         | This is a float or string, where the string can be a name of a model
         | ``Bavera+20`` (sigma=0.5) or ``Neijssel+19`` (sigma=0.39).
     * - ``Z_min``
-      - The minimum metallicity to consider in the distribution (in absolute units).
-      | Default = None. If not provided, the lowest bin edge of the metallicity distribution will be used.
+      - | The minimum metallicity to consider in the distribution (in absolute units).
+        | Default = None. If not provided, the lowest bin edge of the metallicity distribution will be used.
     * - ``Z_max``
-      - The maximum metallicity to consider in the distribution (in absolute units).
-      | Default = None. If not provided, the highest bin edge of the metallicity distribution will be used.
+      - | The maximum metallicity to consider in the distribution (in absolute units).
+        | Default = None. If not provided, the highest bin edge of the metallicity distribution will be used.
     * - ``normalise``
-      - Whether to normalise the distribution to 1, in the metallicity range.
-      | Default = False.
-      | If ``Z_min`` and/or ``Z_max`` are provided, the distribution will be normalised within that range.
-      | Otherwise, the lower edge of the lowest bin and the upper edge of the highest bin will be used as boundaries.
+      - | Whether to normalise the distribution to 1, in the metallicity range.
+        | Default = False.
+        | If ``Z_min`` and/or ``Z_max`` are provided, the distribution will be normalised within that range.
+        | Otherwise, the lower edge of the lowest bin and the upper edge of the highest bin will be used as boundaries.
 
 Depending on the specific SFR models, additional parameters may be required. See the
 documentation of the specific model for more details.
