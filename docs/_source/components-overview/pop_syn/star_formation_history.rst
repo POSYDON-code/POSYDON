@@ -55,7 +55,7 @@ Cosmic star formation rate densities
 
 .. list-table:: Cosmic Star Formation Rate Densities
   :header-rows: 1
-  :widths: 10 30 10
+  :widths: 10 30 10 30
 
   * - Name
     - Reference
