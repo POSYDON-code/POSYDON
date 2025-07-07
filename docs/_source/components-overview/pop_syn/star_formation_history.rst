@@ -76,9 +76,9 @@ Cosmic star formation rate densities
   * - ``Neijssel+19``
     -  `Neijssel et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019MNRAS.490.3740N>`_ 
     - Kroupa 2001
-    - ``sigma`` (float; string) the standard deviation of the log-normal distribution.
-    | Note that this models uses a log10 scaling instead of a natural logarithm scaling for the metallicity, which
-    | affects the conversion of ``sigma``.
+    - | ``sigma`` (float; string) the standard deviation of the log-normal distribution.
+      | Note that this models uses a log10 scaling instead of a natural logarithm scaling for the metallicity, which
+      | affects the conversion of ``sigma``.
   * - ``IllustrisTNG``
     - `IllustrisTNG <https://www.tng-project.org/>`_
     - Kroupa 2001
@@ -86,15 +86,15 @@ Cosmic star formation rate densities
   * - ``Chruslinska+21``
     - `Chruslinska et al. (2021) <https://ui.adsabs.harvard.edu/abs/2021MNRAS.508.4994C>`_
     - Kroupa 2001
-    - ``sub_model`` (string) the sub-model to use, any of the available model names.
-    | ``Z_solar_scaling`` (string) what solar metallicity to use, ``"Asplund09"``, ``"AndersGrevesse89"``,
-    | ``"GrevesseSauval98"``, or ``"Villante14"``.
+    - | ``sub_model`` (string) the sub-model to use, any of the available model names.
+      | ``Z_solar_scaling`` (string) what solar metallicity to use, ``"Asplund09"``, ``"AndersGrevesse89"``,
+      | ``"GrevesseSauval98"``, or ``"Villante14"``.
   * - ``Zavala+21``
     - `Zavala et al. (2021) <https://ui.adsabs.harvard.edu/abs/2021ApJ...909..165Z/>`_
     - Chabrier 2003
-    - ``sigma`` (float; string) the standard deviation of the log-normal distribution.
-    | ``sub_model`` (string) the sub-model to use, ``"min"`` or ``"max"``. For the minimum or maximum
-    | star formation rate density, respectively.
+    - | ``sigma`` (float; string) the standard deviation of the log-normal distribution.
+      | ``sub_model`` (string) the sub-model to use, ``"min"`` or ``"max"``. For the minimum or maximum
+      | star formation rate density, respectively.
 
 
 
@@ -129,16 +129,16 @@ history model. Additionally, specific options can be provided to the function:
     * - Name
       - Description
     * - ``normalise``
-      - This makes sure that the metallicity distribution is normalised to 1, in the metallicity range.
-       | If ``Z_min`` and/or ``Z_max`` are provided, the distribution will be normalised within that range.
-       | Otherwise, the lower edge of the lowest bin and the upper edge of the highest bin will be used as boundaries.
-       | This ensures the full CSFRD is used.
+      - | This makes sure that the metallicity distribution is normalised to 1, in the metallicity range.
+        | If ``Z_min`` and/or ``Z_max`` are provided, the distribution will be normalised within that range.
+        | Otherwise, the lower edge of the lowest bin and the upper edge of the highest bin will be used as boundaries.
+        | This ensures the full CSFRD is used.
     * - ``Z_min``
-      - The minimum metallicity to consider in the distribution (in absolute units).
-       | If not provided, the lowest bin edge of the metallicity distribution will be used.
+      - | The minimum metallicity to consider in the distribution (in absolute units).
+        | If not provided, the lowest bin edge of the metallicity distribution will be used.
     * - ``Z_max``
-      - The maximum metallicity to consider in the distribution (in absolute units).
-       | If not provided, the highest bin edge of the metallicity distribution will be used.
+      - | The maximum metallicity to consider in the distribution (in absolute units).
+        | If not provided, the highest bin edge of the metallicity distribution will be used.
 
     
 .. note::
