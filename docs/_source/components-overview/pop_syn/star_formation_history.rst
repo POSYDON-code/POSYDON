@@ -122,7 +122,7 @@ The metallicity distribution is given as a dictionary to the
 :func:`~TransientPopulation.calculate_cosmic_weights` function, similar to the star formation
 history model. Additionally, specific options can be provided to the function:
 
-.. list-table:: Options for the metallicity distribution
+.. list-table:: General options for the metallicity distribution
     :header-rows: 1
     :widths: 10 30
 
@@ -151,8 +151,7 @@ history model. Additionally, specific options can be provided to the function:
 Summary of SFH MODEL options
 ----------------------------
 
-.. list-table::
-
+.. list-table:: Summary of SFH MODEL options
     :header-rows: 1
     :widths: 10 30
 
