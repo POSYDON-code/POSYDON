@@ -130,15 +130,15 @@ history model. Additionally, specific options can be provided to the function:
       - Description
     * - ``normalise``
       - This makes sure that the metallicity distribution is normalised to 1, in the metallicity range.
-      | If ``Z_min`` and/or ``Z_max`` are provided, the distribution will be normalised within that range.
-      | Otherwise, the lower edge of the lowest bin and the upper edge of the highest bin will be used as boundaries.
-      | This ensures the full CSFRD is used.
+       | If ``Z_min`` and/or ``Z_max`` are provided, the distribution will be normalised within that range.
+       | Otherwise, the lower edge of the lowest bin and the upper edge of the highest bin will be used as boundaries.
+       | This ensures the full CSFRD is used.
     * - ``Z_min``
       - The minimum metallicity to consider in the distribution (in absolute units).
-      | If not provided, the lowest bin edge of the metallicity distribution will be used.
+       | If not provided, the lowest bin edge of the metallicity distribution will be used.
     * - ``Z_max``
       - The maximum metallicity to consider in the distribution (in absolute units).
-      | If not provided, the highest bin edge of the metallicity distribution will be used.
+       | If not provided, the highest bin edge of the metallicity distribution will be used.
 
     
 .. note::
