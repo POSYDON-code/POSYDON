@@ -713,7 +713,7 @@
 
         <span class="c1"># Determine expected number of runs (may not be as many in the end)</span>
         <span class="n">N_runs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">runs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;max_number_of_runs&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;max_number_of_runs&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
             <span class="n">N_runs</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">N_runs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;max_number_of_runs&#39;</span><span class="p">])</span>
 
         <span class="c1"># Decide on the columns to be included</span>
@@ -804,8 +804,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_say</span><span class="p">(</span><span class="s1">&#39;Processing </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">run</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
 
             <span class="c1"># Restrict number of runs if limit is set inside config</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;max_number_of_runs&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">run_index</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;max_number_of_runs&#39;</span><span class="p">]:</span> <span class="c1"># pragma: no cover</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;max_number_of_runs&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+                <span class="k">if</span> <span class="n">run_index</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;max_number_of_runs&#39;</span><span class="p">]:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_say</span><span class="p">(</span><span class="s2">&quot;Maximum number of runs reached.&quot;</span><span class="p">)</span>
                     <span class="k">break</span>
 
