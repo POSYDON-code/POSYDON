@@ -141,6 +141,79 @@ class TestFunctions:
         return file_path
 
     @fixture
+    def binpop_ini_mpi(self, tmp_path):
+        ini_content = """
+        [BinaryPopulation_options]
+        use_MPI = True
+        metallicity = [0.02]
+        number_of_binaries = 1
+        temp_directory = 'tmp'
+
+        [BinaryStar_output]
+        extra_columns = {}
+        only_select_columns = []
+        scalar_names = []
+
+        [SingleStar_1_output]
+        include_S1 = False
+
+        [SingleStar_2_output]
+        include_S2 = False
+
+        [flow]
+        import = ['builtins', 'int']
+
+        [extra_hooks]
+        import_1 = ['builtins', 'int']
+        absolute_import_1 = None
+        kwargs_1 = {}
+        """
+        file_path = os.path.join(tmp_path, "binpop_mpi.ini")
+        with open(file_path, "w") as f:
+            f.write(ini_content)
+        return file_path
+
+    @fixture
+    def binpop_ini_stars(self, tmp_path):
+        ini_content = """
+        [BinaryPopulation_options]
+        use_MPI = False
+        metallicity = [0.02]
+        number_of_binaries = 1
+        temp_directory = 'tmp'
+
+        [BinaryStar_output]
+        extra_columns = {}
+        only_select_columns = []
+        scalar_names = []
+
+        [SingleStar_1_output]
+        include_S1 = True
+        only_select_columns = [
+            'state',
+            'mass',
+            'log_R']
+            
+        [SingleStar_2_output]
+        include_S2 = True
+        only_select_columns = [
+            'log_L',
+            'lg_mdot']
+
+        [flow]
+        import = ['builtins', 'int']
+
+        [extra_hooks]
+        import_1 = ['builtins', 'int']
+        absolute_import_1 = None
+        kwargs_1 = {}
+        """
+        file_path = os.path.join(tmp_path, "binpop_stars.ini")
+        with open(file_path, "w") as f:
+            f.write(ini_content)
+        return file_path
+    
+    @fixture
     def history_df(self):
         data = {
             'state': ['RLOF'],
@@ -163,6 +236,8 @@ class TestFunctions:
             'S1_spin_i': [0.5, 0.6],
             'S1_spin_f': [0.7, 0.8],
             'S1_SN_type': ['type1', 'type2'],
+            'S2_mass_i': [5.0, 6.0],
+            'S2_mass_f': [7.0, 8.0],
             'S2_kick': [123.0, 456.0],
         }
         df = pd.DataFrame(data)
@@ -240,7 +315,7 @@ class TestFunctions:
         assert parser.has_option("section", "key2")
 
         
-    def test_simprop_kwargs_from_ini(self,monkeypatch,sim_ini):
+    def test_simprop_kwargs_from_ini(self,monkeypatch,sim_ini,tmp_path):
         # example
         dummy_cls = type('DummyClass', (), {})()
 
@@ -275,20 +350,64 @@ class TestFunctions:
         assert hooks[1][0] is dummy_cls
         assert hooks[1][1] == {}
         
-    def test_binarypop_kwargs_from_ini(self,monkeypatch,binpop_ini):
-        # example
+        # absolute imports
+        dummy_code = """
+class MyDummyClass:
+    def __init__(self):
+        self.value = 42
+"""
+        dummy_path = os.path.join(tmp_path, "dummy.py")
+        with open(dummy_path, "w") as f:
+            f.write(dummy_code)
+        ini_content = f"""
+        [flow]
+        import = ['builtins', 'int']
+        absolute_import = ['{dummy_path}', 'MyDummyClass']
+        """
+        ini_path = os.path.join(tmp_path, "sim_abs_import.ini")
+        with open(ini_path, "w") as f:
+            f.write(ini_content)
+        simkwargs = totest.simprop_kwargs_from_ini(str(ini_path))
+        dummy_class = simkwargs['flow'][0]
+        assert dummy_class.__name__ == "MyDummyClass"
+        instance = dummy_class()
+        assert instance.value == 42
+
+        
+    def test_binarypop_kwargs_from_ini(self,monkeypatch,binpop_ini,
+                                       binpop_ini_mpi,binpop_ini_stars):
+        # bad configuration: MPI and job array
+        monkeypatch.setenv("SLURM_ARRAY_JOB_ID", "123")
+        with raises(ValueError, match="MPI must be turned off for job arrays."):
+            totest.binarypop_kwargs_from_ini(binpop_ini_mpi)
+        # example: include s1 and s2
         class DummySimProps:
             def __init__(self, **kwargs):
                 self.config = kwargs
-
         monkeypatch.setattr(totest, "SimulationProperties", DummySimProps)
-
+        monkeypatch.setenv("SLURM_ARRAY_JOB_ID", "456")
+        monkeypatch.setenv("SLURM_ARRAY_TASK_ID", "4")
+        monkeypatch.setenv("SLURM_ARRAY_TASK_MIN", "2")
+        monkeypatch.setenv("SLURM_ARRAY_TASK_COUNT", "10")
+        binkwargs = totest.binarypop_kwargs_from_ini(binpop_ini_stars)
+        assert binkwargs["include_S1"] is True
+        assert "only_select_columns" in binkwargs["S1_kwargs"]
+        assert "S2_kwargs" in binkwargs
+        assert "log_L" in binkwargs["S2_kwargs"]["only_select_columns"]
+        # example: environment variables
         binkwargs = totest.binarypop_kwargs_from_ini(binpop_ini)
-
+        assert binkwargs["JOB_ID"] == 456
+        assert binkwargs["RANK"] == 2  # 4 - 2
+        assert binkwargs["size"] == 10
         assert isinstance(binkwargs, dict)
         assert binkwargs["metallicity"] == [0.02]
         assert isinstance(binkwargs["population_properties"], DummySimProps)
         assert "flow" in binkwargs["population_properties"].config
+        # example: no Job ID, no MPI
+        monkeypatch.delenv('SLURM_ARRAY_JOB_ID', raising=False)
+        binkwargs = totest.binarypop_kwargs_from_ini(binpop_ini)
+        assert binkwargs['RANK'] is None
+        assert binkwargs['size'] is None
 
         
     def test_create_run_script_text(self):
