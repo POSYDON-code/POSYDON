@@ -67,7 +67,7 @@ class TestValues:
 
     def test_value_COMPLETE_SETS(self):
         # check base versions
-        for k in ['v1', 'v2']:
+        for k in ['DR1', 'DR2']:
             assert k in totest.COMPLETE_SETS
         # check complete datasets
         for k,s in totest.COMPLETE_SETS.items():
