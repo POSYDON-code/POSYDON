@@ -4,22 +4,11 @@
 __authors__ = [
     "Max Briel <max.briel@gmail.com>",
 ]
-
-import numpy as np
-import pandas as pd
-import pytest
+import posydon.popsyn.star_formation_history as totest
+np = totest.np
+pd = totest.pd
 from posydon.utils.posydonwarning import SFHModelWarning
-from posydon.popsyn.star_formation_history import SFHBase, MadauBase
-from posydon.popsyn.star_formation_history import (
-    MadauDickinson14,
-    MadauFragos17,
-    Neijssel19,
-    Fujimoto24,
-    IllustrisTNG,
-    Chruslinska21,
-    Zavala21,
-    get_SFH_model
-)
+import pytest
 
 
 class TestSFHBase:
@@ -27,7 +16,7 @@ class TestSFHBase:
     @pytest.fixture
     def ConcreteSFH(self):
         """Create a concrete subclass of SFHBase for testing."""
-        class ConcreteSFH(SFHBase):
+        class ConcreteSFH(totest.SFHBase):
             def CSFRD(self, z):
                 return z
             
@@ -74,11 +63,11 @@ class TestSFHBase:
     def test_abstract_methods(self):
         """Test that abstract methods must be implemented."""
         # Create incomplete subclasses that don't implement all abstract methods
-        class IncompleteSFH1(SFHBase):
+        class IncompleteSFH1(totest.SFHBase):
             def CSFRD(self, z):
                 return z
                 
-        class IncompleteSFH2(SFHBase):
+        class IncompleteSFH2(totest.SFHBase):
             def CSFRD(self, z):
                 return z
             def mean_metallicity(self, z):
@@ -181,7 +170,7 @@ class TestSFHBase:
 
     def test_call_method(self):
         """Test the __call__ method."""
-        class ConcreteSFH(SFHBase):
+        class ConcreteSFH(totest.SFHBase):
             def CSFRD(self, z):
                 return z*2.0
             
@@ -229,7 +218,7 @@ class TestMadauBase:
     
     @pytest.fixture
     def ConcreteMadau(self, e_CSFRD_params):
-        class ConcreteMadau(MadauBase):
+        class ConcreteMadau(totest.MadauBase):
             """Concrete subclass of MadauBase for testing"""
             def __init__(self, MODEL):
                 super().__init__(MODEL)
@@ -450,11 +439,11 @@ class TestIllustrisTNG:
             return mock_illustris_data
         
         # Patch the _get_illustrisTNG_data method
-        monkeypatch.setattr(IllustrisTNG, "_get_illustrisTNG_data", mock_get_illustrisTNG_data)
+        monkeypatch.setattr(totest.IllustrisTNG, "_get_illustrisTNG_data", mock_get_illustrisTNG_data)
         
         # Create and return the model
         model_dict = {"Z_max": 0.3}
-        return IllustrisTNG(model_dict)
+        return totest.IllustrisTNG(model_dict)
     
     def test_init_parameters(self, illustris_model, mock_illustris_data):
         """Test that initialization sets the parameters correctly."""
@@ -537,7 +526,7 @@ class TestMadauDickinson14:
     def test_init_parameters(self):
         """Test that initialization sets the correct CSFRD parameters"""
         model_dict = {"sigma": 0.5, "Z_max": 0.03}
-        madau = MadauDickinson14(model_dict)
+        madau = totest.MadauDickinson14(model_dict)
         
         # Check that CSFRD_params were set correctly
         assert madau.CSFRD_params["a"] == 0.015
@@ -546,12 +535,12 @@ class TestMadauDickinson14:
         assert madau.CSFRD_params["d"] == 5.6
         
         # Check that it inherits correctly from MadauBase
-        assert isinstance(madau, MadauBase)
+        assert isinstance(madau, totest.MadauBase)
     
     def test_csfrd_calculation(self):
         """Test that CSFRD calculations match expected values"""
         model_dict = {"sigma": 0.5, "Z_max": 0.03}
-        madau = MadauDickinson14(model_dict)
+        madau = totest.MadauDickinson14(model_dict)
         
         # Test at specific redshifts
         z_values = np.array([0.0, 1.0, 2.0, 6.0])
@@ -570,7 +559,7 @@ class TestMadauFragos17:
     def test_init_parameters(self):
         """Test that initialization sets the correct CSFRD parameters"""
         model_dict = {"sigma": 0.5, "Z_max": 0.03}
-        madau = MadauFragos17(model_dict)
+        madau = totest.MadauFragos17(model_dict)
         
         # Check that CSFRD_params were set correctly
         assert madau.CSFRD_params["a"] == 0.01
@@ -579,7 +568,7 @@ class TestMadauFragos17:
         assert madau.CSFRD_params["d"] == 6.2
         
         # Check that it inherits correctly from MadauBase
-        assert isinstance(madau, MadauBase)
+        assert isinstance(madau, totest.MadauBase)
 
 class TestNeijssel19:
     """Tests for the Neijssel19 SFH model"""
@@ -587,7 +576,7 @@ class TestNeijssel19:
     def test_init_parameters(self):
         """Test that initialization sets the correct CSFRD parameters"""
         model_dict = {"sigma": 0.5, "Z_max": 0.03}
-        neijssel = Neijssel19(model_dict)
+        neijssel = totest.Neijssel19(model_dict)
         
         # Check that CSFRD_params were set correctly
         assert neijssel.CSFRD_params["a"] == 0.01
@@ -596,12 +585,12 @@ class TestNeijssel19:
         assert neijssel.CSFRD_params["d"] == 4.7
         
         # Check that it inherits correctly from MadauBase
-        assert isinstance(neijssel, MadauBase)
+        assert isinstance(neijssel, totest.MadauBase)
 
     def test_mean_metallicity(self):
         """Test the overridden mean_metallicity method"""
         model_dict = {"sigma": 0.5, "Z_max": 0.03}
-        neijssel = Neijssel19(model_dict)
+        neijssel = totest.Neijssel19(model_dict)
         
         # Test at specific redshifts
         z_values = np.array([0.0, 1.0, 2.0, 6.0])
@@ -615,7 +604,7 @@ class TestNeijssel19:
     def test_fsfr_with_lognormal(self):
         """Test the overridden fSFR method which uses a ln-normal distribution"""
         model_dict = {"sigma": 0.5, "Z_max": 0.3}
-        neijssel = Neijssel19(model_dict)
+        neijssel = totest.Neijssel19(model_dict)
         
         # Test with redshift array and metallicity bins
         z = np.array([0.0, 1.0])
@@ -628,7 +617,7 @@ class TestNeijssel19:
         
         # Test normalization with normalise=True
         model_dict = {"sigma": 0.5, "Z_max": 0.3, "normalise": True}
-        neijssel = Neijssel19(model_dict)
+        neijssel = totest.Neijssel19(model_dict)
         result = neijssel.fSFR(z, met_bins)
         expected = np.ones(len(z))
         np.testing.assert_allclose(np.sum(result, axis=1), expected)
@@ -639,7 +628,7 @@ class TestFujimoto24:
     def test_init_parameters(self):
         """Test that initialization sets the correct CSFRD parameters"""
         model_dict = {"sigma": 0.5, "Z_max": 0.03}
-        fujimoto = Fujimoto24(model_dict)
+        fujimoto = totest.Fujimoto24(model_dict)
         
         # Check that CSFRD_params were set correctly
         assert fujimoto.CSFRD_params["a"] == 0.010
@@ -648,7 +637,7 @@ class TestFujimoto24:
         assert fujimoto.CSFRD_params["d"] == 6.6
         
         # Check that it inherits correctly from MadauBase
-        assert isinstance(fujimoto, MadauBase)
+        assert isinstance(fujimoto, totest.MadauBase)
 
 class TestChruslinska21:
     """Tests for the Chruslinska21 SFH model with mocked data loading."""
@@ -680,8 +669,8 @@ class TestChruslinska21:
             return SFR_data * 1e6 * delta_T[:, np.newaxis] 
         
         # Patch the methods
-        monkeypatch.setattr(Chruslinska21, "_load_redshift_data", mock_load_redshift_data)
-        monkeypatch.setattr(Chruslinska21, "_load_raw_data", mock_load_raw_data)
+        monkeypatch.setattr(totest.Chruslinska21, "_load_redshift_data", mock_load_redshift_data)
+        monkeypatch.setattr(totest.Chruslinska21, "_load_raw_data", mock_load_raw_data)
         
         return {
             "FOH_bins": FOH_bins,
@@ -699,18 +688,18 @@ class TestChruslinska21:
             "Z_max": 0.03,
             "select_one_met": False
         }
-        return Chruslinska21(model_dict)
+        return totest.Chruslinska21(model_dict)
     
     def test_init_parameters(self):
         """Test that initialization validates required parameters."""
         # Test missing sub_model
         with pytest.raises(ValueError) as excinfo:
-            Chruslinska21({"Z_solar_scaling": "Asplund09", "Z_max": 0.03, "select_one_met": False})
+            totest.Chruslinska21({"Z_solar_scaling": "Asplund09", "Z_max": 0.03, "select_one_met": False})
         assert "Sub-model not given!" in str(excinfo.value)
         
         # Test missing Z_solar_scaling
         with pytest.raises(ValueError) as excinfo:
-            Chruslinska21({"sub_model": "test", "Z_max": 0.03, "select_one_met": False})
+            totest.Chruslinska21({"sub_model": "test", "Z_max": 0.03, "select_one_met": False})
         assert "Z_solar_scaling not given!" in str(excinfo.value)
         
     def test_foh_to_z_conversion(self, chruslinska_model):
@@ -730,21 +719,21 @@ class TestChruslinska21:
             "Z_max": 0.03,
             "select_one_met": False
         }
-        model = Chruslinska21(model_dict)
+        model = totest.Chruslinska21(model_dict)
         result = model._FOH_to_Z(FOH_test)
         expected = 10**(np.log10(0.017) + FOH_test - 8.83)
         np.testing.assert_allclose(result, expected)
         
         # Test GrevesseSauval98 scaling
         model_dict["Z_solar_scaling"] = "GrevesseSauval98"
-        model = Chruslinska21(model_dict)
+        model = totest.Chruslinska21(model_dict)
         result = model._FOH_to_Z(FOH_test)
         expected = 10**(np.log10(0.0201) + FOH_test - 8.93)
         np.testing.assert_allclose(result, expected)
         
         # Test Villante14 scaling
         model_dict["Z_solar_scaling"] = "Villante14"
-        model = Chruslinska21(model_dict)
+        model = totest.Chruslinska21(model_dict)
         result = model._FOH_to_Z(FOH_test)
         expected = 10**(np.log10(0.019) + FOH_test - 8.85)
         np.testing.assert_allclose(result, expected)
@@ -752,7 +741,7 @@ class TestChruslinska21:
         # Test invalid scaling
         model_dict["Z_solar_scaling"] = "InvalidScaling"
         with pytest.raises(ValueError) as excinfo:
-            model = Chruslinska21(model_dict)
+            model = totest.Chruslinska21(model_dict)
         expected_str = ("Invalid Z_solar_scaling 'InvalidScaling'. "
                         "Valid options: ['Asplund09', 'AndersGrevesse89', "
                         "'GrevesseSauval98', 'Villante14']")
@@ -837,31 +826,31 @@ class TestZavala21:
         """Test that initialization validates and sets parameters correctly."""
         # Test missing sub_model
         with pytest.raises(ValueError) as excinfo:
-            Zavala21({"Z_max": 0.03, "sigma": 0.5})
+            totest.Zavala21({"Z_max": 0.03, "sigma": 0.5})
         assert "Sub-model not given!" in str(excinfo.value)
         
         # Test valid initialization with min model
         model_dict = {"sub_model": "min", "Z_max": 0.03, "sigma": 0.5}
-        zavala_min = Zavala21(model_dict)
+        zavala_min = totest.Zavala21(model_dict)
         assert zavala_min.sub_model == "min"
         assert zavala_min.Z_max == 0.03
         assert zavala_min.sigma == 0.5
         
         # Test valid initialization with max model
         model_dict = {"sub_model": "max", "Z_max": 0.03, "sigma": 0.5}
-        zavala_max = Zavala21(model_dict)
+        zavala_max = totest.Zavala21(model_dict)
         assert zavala_max.sub_model == "max"
         
         # Test invalid sub_model
         model_dict = {"sub_model": "invalid", "Z_max": 0.03, "sigma": 0.5}
         with pytest.raises(ValueError) as excinfo:
-            zavala_invalid = Zavala21(model_dict)
+            zavala_invalid = totest.Zavala21(model_dict)
         assert "Invalid sub-model!" in str(excinfo.value)
     
     def test_csfrd_min_model(self, mock_zavala_data):
         """Test the CSFRD method with min sub-model."""
         model_dict = {"sub_model": "min", "Z_max": 0.03, "sigma": 0.5}
-        zavala = Zavala21(model_dict)
+        zavala = totest.Zavala21(model_dict)
         
         # Test at specific redshifts
         z_values = np.array([0.0, 2.0, 4.0, 6.0])
@@ -874,7 +863,7 @@ class TestZavala21:
     def test_csfrd_max_model(self, mock_zavala_data):
         """Test the CSFRD method with max sub-model."""
         model_dict = {"sub_model": "max", "Z_max": 0.03, "sigma": 0.5}
-        zavala = Zavala21(model_dict)
+        zavala = totest.Zavala21(model_dict)
         
         # Test at specific redshifts
         z_values = np.array([0.0, 2.0, 4.0, 6.0])
@@ -887,7 +876,7 @@ class TestZavala21:
     def test_fsfr_calculation(self, mock_zavala_data):
         """Test the fSFR method which is inherited from MadauBase."""
         model_dict = {"sub_model": "min", "Z_max": 0.03, "sigma": 0.5}
-        zavala = Zavala21(model_dict)
+        zavala = totest.Zavala21(model_dict)
         
         # Test with redshift array and metallicity bins
         z = np.array([0.0, 2.0])
@@ -911,23 +900,23 @@ class TestGetSFHModel:
         """Test that get_SFH_model returns the correct instance for each model."""
         # Test for MadauDickinson14
         model_dict = {"SFR": "Madau+Dickinson14", "sigma": 0.5, "Z_max": 0.03}
-        model = get_SFH_model(model_dict)
-        assert isinstance(model, MadauDickinson14)
+        model = totest.get_SFH_model(model_dict)
+        assert isinstance(model, totest.MadauDickinson14)
         
         # Test for MadauFragos17
         model_dict = {"SFR": "Madau+Fragos17", "sigma": 0.5, "Z_max": 0.03}
-        model = get_SFH_model(model_dict)
-        assert isinstance(model, MadauFragos17)
+        model = totest.get_SFH_model(model_dict)
+        assert isinstance(model, totest.MadauFragos17)
         
         # Test for Neijssel19
         model_dict = {"SFR": "Neijssel+19", "sigma": 0.5, "Z_max": 0.03}
-        model = get_SFH_model(model_dict)
-        assert isinstance(model, Neijssel19)
+        model = totest.get_SFH_model(model_dict)
+        assert isinstance(model, totest.Neijssel19)
         
         # Test for Fujimoto24
         model_dict = {"SFR": "Fujimoto+24", "sigma": 0.5, "Z_max": 0.03}
-        model = get_SFH_model(model_dict)
-        assert isinstance(model, Fujimoto24)
+        model = totest.get_SFH_model(model_dict)
+        assert isinstance(model, totest.Fujimoto24)
     
     def test_illustris_tng_model(self, monkeypatch):
         """Test that get_SFH_model returns IllustrisTNG instance."""
@@ -942,12 +931,13 @@ class TestGetSFHModel:
             }
         
         # Patch the data loading method
-        monkeypatch.setattr(IllustrisTNG, "_get_illustrisTNG_data", mock_get_data)
+        monkeypatch.setattr(totest.IllustrisTNG,
+                            "_get_illustrisTNG_data", mock_get_data)
         
         # Test the model creation
         model_dict = {"SFR": "IllustrisTNG", "Z_max": 0.03}
-        model = get_SFH_model(model_dict)
-        assert isinstance(model, IllustrisTNG)
+        model = totest.get_SFH_model(model_dict)
+        assert isinstance(model, totest.IllustrisTNG)
     
     def test_chruslinska_model(self, monkeypatch):
         """Test that get_SFH_model returns Chruslinska21 instance."""
@@ -971,9 +961,9 @@ class TestGetSFHModel:
             return np.ones((3, 10)) * 1e6
         
         # Patch the methods
-        monkeypatch.setattr(Chruslinska21, "_load_chruslinska_data", mock_load_data)
-        monkeypatch.setattr(Chruslinska21, "_load_redshift_data", mock_load_redshift)
-        monkeypatch.setattr(Chruslinska21, "_load_raw_data", mock_load_raw)
+        monkeypatch.setattr(totest.Chruslinska21, "_load_chruslinska_data", mock_load_data)
+        monkeypatch.setattr(totest.Chruslinska21, "_load_redshift_data", mock_load_redshift)
+        monkeypatch.setattr(totest.Chruslinska21, "_load_raw_data", mock_load_raw)
         
         # Test the model creation
         model_dict = {
@@ -982,8 +972,8 @@ class TestGetSFHModel:
             "Z_solar_scaling": "Asplund09",
             "Z_max": 0.03
         }
-        model = get_SFH_model(model_dict)
-        assert isinstance(model, Chruslinska21)
+        model = totest.get_SFH_model(model_dict)
+        assert isinstance(model, totest.Chruslinska21)
     
     def test_zavala_model(self, monkeypatch):
         """Test that get_SFH_model returns Zavala21 instance."""
@@ -997,7 +987,7 @@ class TestGetSFHModel:
                 self.SFR_data = np.array([0.2, 0.16, 0.12])
         
         # Patch the data loading method
-        monkeypatch.setattr(Zavala21, "_load_zavala_data", mock_load_data)
+        monkeypatch.setattr(totest.Zavala21, "_load_zavala_data", mock_load_data)
         
         # Test for min model
         model_dict = {
@@ -1006,8 +996,8 @@ class TestGetSFHModel:
             "sigma": 0.5,
             "Z_max": 0.03
         }
-        model = get_SFH_model(model_dict)
-        assert isinstance(model, Zavala21)
+        model = totest.get_SFH_model(model_dict)
+        assert isinstance(model, totest.Zavala21)
         assert model.sub_model == "min"
         
         # Test for max model
@@ -1017,8 +1007,8 @@ class TestGetSFHModel:
             "sigma": 0.5,
             "Z_max": 0.03
         }
-        model = get_SFH_model(model_dict)
-        assert isinstance(model, Zavala21)
+        model = totest.get_SFH_model(model_dict)
+        assert isinstance(model, totest.Zavala21)
         assert model.sub_model == "max"
     
     def test_invalid_model(self):
@@ -1026,7 +1016,7 @@ class TestGetSFHModel:
         
         model_dict = {"SFR": "InvalidModel"}
         with pytest.raises(ValueError) as excinfo:
-            model = get_SFH_model(model_dict)
+            model = totest.get_SFH_model(model_dict)
         assert "Invalid SFR!" in str(excinfo.value)
 
 class TestSFR_per_met_at_z:
