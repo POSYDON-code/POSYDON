@@ -112,17 +112,3 @@ The `SyntheticPopulation` object contains a collection of `BinaryPopulation` obj
     :maxdepth: 1
 
     pop_syn/synthetic_population
-
-----
-
-Debugging POSYDON population synthesis models
-=============================================
-
-POSYDON provides a set of tools to debug population synthesis models. The following guide will walk you through the debugging tools that are available in POSYDON.
-
-.. toctree::
-    :maxdepth: 1
-
-    pop_syn/pop_syn_debug
-
-
