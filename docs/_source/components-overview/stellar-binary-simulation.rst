@@ -112,3 +112,15 @@ The `SyntheticPopulation` object contains a collection of `BinaryPopulation` obj
     :maxdepth: 1
 
     pop_syn/synthetic_population
+
+
+The Star Formation History
+---------------------------
+
+The star formation history is a key component in population synthesis, since it 
+determined the amount of stars that are formed at each moment in time.
+
+.. toctree::
+    :maxdepth: 1
+
+    pop_syn/star_formation_history
