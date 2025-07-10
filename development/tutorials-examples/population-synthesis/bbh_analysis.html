@@ -147,9 +147,8 @@
 <p>We will load one of the population files to build our merging binaries selection.</p>
 <div class="admonition warning">
 <p class="admonition-title fa fa-exclamation-circle">No indices?</p>
-<p>It might be that the population you generated does not contain any merging BBHs, they’re rare after all!</p>
-<p>You can download an example population, which contains 10,000 binaries at each of the 8 metallicities.</p>
-<p><code class="docutils literal notranslate"><span class="pre">get-posydon-data</span> <span class="pre">tutorial_population</span></code></p>
+<p>It might be that the population you generated does not contain any merging BBHs, they’re rare after all. You can download an example population, which contains 10,000 binaries at each of the 8 metallicities.</p>
+<p><code class="docutils literal notranslate"><span class="pre">get-posydon-data</span> <span class="pre">v2_tutorial_populations</span></code></p>
 <p>This automatically downloads the tutorial populations from <a class="reference external" href="https://zenodo.org/communities/posydon">Zenodo</a> into <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON_DATA/tutorial_populations</span></code></p>
 </div>
 <div class="nbinput nblast docutils container">
@@ -215,6 +214,8 @@
 <span class="c1"># Change the path to the data you want to use</span>
 <span class="c1"># or the path to the tutorial data: # $PATH_TO_POSYDON_DATA/tutorial_populations/</span>
 <span class="n">data_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;PATH/TO/TUTORIAL/DATA/&#39;</span>
+<span class="c1"># change to PATH_TO_POSYDON_DATA/tutorial_populations/ for the tutorial data</span>
+<span class="c1"># and add &quot;from posydon.config import PATH_TO_POSYDON_DATA&quot; to the imports above</span>
 
 <span class="c1"># Let&#39;s load one of the populations</span>
 <span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">data_path</span><span class="o">+</span><span class="s1">&#39;1e-01_Zsun_population.h5&#39;</span><span class="p">)</span>
@@ -266,12 +267,12 @@
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;File: </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">, Number of systems: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="c1"># set overwrite to False to add to the file</span>
-    <span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">,</span> <span class="n">data_path</span><span class="o">+</span><span class="s1">&#39;BBH_contact.h5&#39;</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">,</span> <span class="s1">&#39;BBH_contact.h5&#39;</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <p>If your population did not contain any BBH mergers, all the “Number of Systems” will be 0, and you won’t be able to open the file in the next cell.</p>
-<p>If you ran the population with the tutorial populations, you should have a total of 636 merging BBHs.</p>
+<p>If you ran the population with the tutorial populations, you should have a total of 483 merging BBHs.</p>
 <p>We can confirm the number of BBH mergers by adding up the values above. Alternatively, we can open the new file, BBH_contact.h5, and use <code class="docutils literal notranslate"><span class="pre">Population.number_of_systems</span></code> to get the total number of binaries in the file.</p>
 <p>Additionally, you now see that the <code class="docutils literal notranslate"><span class="pre">mass_per_metallicity</span></code> property contains information about all the metallicities in the file.</p>
 <p>You can even combine multiple runs at the same metallicity together, if you like. This will combine their simulated mass.</p>
@@ -280,7 +281,7 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
-<span class="n">BBH_pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">data_path</span><span class="o">+</span><span class="s1">&#39;BBH_contact.h5&#39;</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">BBH_pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;BBH_contact.h5&#39;</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">BBH_pop</span><span class="o">.</span><span class="n">number_of_systems</span><span class="p">)</span>
 
 <span class="n">BBH_pop</span><span class="o">.</span><span class="n">mass_per_metallicity</span>

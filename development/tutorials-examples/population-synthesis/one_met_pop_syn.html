@@ -129,15 +129,6 @@
   <section id="Explore-the-assumption-of-star-formation-history-and-DCO-compute-rates-at-one-single-metallicity-📖">
 <h1>Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖<a class="headerlink" href="#Explore-the-assumption-of-star-formation-history-and-DCO-compute-rates-at-one-single-metallicity-📖" title="Link to this heading"></a></h1>
 <p>If you haven’t done so yet, export the path POSYDON environment variables. For example:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON=/Users/simone/Google Drive/github/POSYDON-public/
-<span class="o">%</span><span class="k">env</span> PATH_TO_POSYDON_DATA=/Volumes/T7/
-</pre></div>
-</div>
-</div>
 <section id="Creating-the-Synthetic-Population-DataFrame">
 <h2>Creating the Synthetic Population DataFrame<a class="headerlink" href="#Creating-the-Synthetic-Population-DataFrame" title="Link to this heading"></a></h2>
 <p>We will use the same BBH population as in the <code class="docutils literal notranslate"><span class="pre">Stellar</span> <span class="pre">Transient</span> <span class="pre">Populations</span></code> tutorial. Instead of computing the distributions and rates at all metallicities, we will just focus on one metallicity, <span class="math notranslate nohighlight">\(Z_\odot\)</span>, and integrate the star formation history around solar metallicity, say <span class="math notranslate nohighlight">\([0.5Z_\odot,2Z_\odot]\)</span>. Let’s extract the merging BBH population from the <span class="math notranslate nohighlight">\(Z_\odot\)</span> population synthesis model. In this sample there are only a few systems; to increase the statistics we suggest you
