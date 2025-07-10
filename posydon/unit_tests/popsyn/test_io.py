@@ -216,7 +216,7 @@ class TestFunctions:
     @fixture
     def history_df(self):
         data = {
-            'state': ['RLOF'],
+            'state': ['disrupted'],
             'time': [1.23],
             'S1_mass': [10.0],
             'S2_spin': [0.3],
@@ -227,15 +227,15 @@ class TestFunctions:
     @fixture
     def oneline_df(self):
         data = {
-            'state_i': ['evolving', 'collapsed'],
-            'state_f': ['collapsed', 'remnant'],
+            'state_i': ['detached', 'detached'],
+            'state_f': ['contact', 'merged'],
             'mass_i': [1.4, 2.1],
             'mass_f': [1.3, 2.0],
             'extra_col_i': [5, 6],
             'extra_col_f': [7, 8],
             'S1_spin_i': [0.5, 0.6],
             'S1_spin_f': [0.7, 0.8],
-            'S1_SN_type': ['type1', 'type2'],
+            'S1_SN_type': ['CCSN', 'NaN'],
             'S2_mass_i': [5.0, 6.0],
             'S2_mass_f': [7.0, 8.0],
             'S2_kick': [123.0, 456.0],
