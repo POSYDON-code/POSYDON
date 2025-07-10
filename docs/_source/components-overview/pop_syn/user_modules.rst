@@ -9,4 +9,4 @@ First, the class defining your new step needs to be constructed. This class ough
 
 Second, the binary :samp:`flow` needs to be adjusted so POSYDON's population synthesis code knows to direct the relevant binaries to the newly constructed step. We have an example file there which demonstrates how to modify the :ref:`flow chart <flow-chart>`.
 
-For a complete example of how to implement a new, user module, we include a tutorial describing the process :ref:`Custom POSYDON steps and flow chart <custom_step_and_flow>`.
+For a complete example of how to implement a new, user module, we include a tutorial describing the process :ref:`/tutorials-examples/population-synthesis/custom_step_and_flow.ipynb`.
