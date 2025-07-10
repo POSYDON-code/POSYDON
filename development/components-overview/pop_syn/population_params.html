@@ -1230,9 +1230,11 @@ It also contains which sampling distributions to use for the initial conditions 
 <div class="line">Minimum secondary mass (in solar masses).</div>
 <div class="line">Is required to be smaller than the minimum primary mass.</div>
 <div class="line">limits: 0-270</div>
+<div class="line">DR2 HMS-HMS grid has a minimum M2 mass of 0.5.</div>
+<div class="line">We always check if q&gt;=0.05 and M2&gt;=secondary_mass_min are satisfied in the initial sampling.</div>
 </div>
 </td>
-<td><p><code class="docutils literal notranslate"><span class="pre">0.35</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">secondary_mass_max</span></code></p></td>
 <td><div class="line-block">
