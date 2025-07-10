@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import posydon.popsyn.selection_effects as selection_effects
 from posydon.config import PATH_TO_POSYDON_DATA
 import os
 from tqdm import tqdm
@@ -64,7 +63,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     columns_pre_post  = ['orbital_period', 'eccentricity', 'S1_spin', 'S2_spin']
     columns = []
     oneline_columns = ['metallicity', 'S1_m_disk_radiated', 'S2_m_disk_radiated']
-   
+    
     if S1_S2 == 'S1':
         indices_selection = oneline_chunk.index[oneline_chunk['S1_m_disk_radiated'] > 0.0].to_numpy()
         oneline_chunk = oneline_chunk.drop(columns=['S2_m_disk_radiated'])
@@ -74,16 +73,16 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     else:
         raise ValueError('S1_S2 must be either S1 or S2')
     # no events in this chunk
-    if len(indices_selection) == 0:
-        return pd.DataFrame()
+    if len(indices_selection) == 0: 
+        return pd.DataFrame() # TODO
     # filter out the events that are not relevant for the LGRB formation
-    selection = history_chunk.loc[indices_selection]    
+    selection = history_chunk[history_chunk['binary_index'].isin(indices_selection)]
     if S1_S2 == 'S1':
         S_mask = (selection['S1_state'] == 'BH') & (selection['S1_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
-    elif S1_S2 == 'S2':
+    elif S1_S2 == 'S2': #TODO
         S_mask = (selection['S2_state'] == 'BH') & (selection['S2_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
     
-    GRB_df_synthetic = pd.DataFrame(index=indices_selection)
+    GRB_df_synthetic = pd.DataFrame(index=indices_selection) # TODO
     # Pre and post SN data
     post_SN_hist = selection[S_mask]
     pre_mask = S_mask.shift(-1, fill_value=False)
@@ -92,12 +91,12 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     if S1_S2 == 'S1':
         columns_pre_post.append('S1_mass')
         columns.append('S2_mass')
-    elif S1_S2 == 'S2':
+    elif S1_S2 == 'S2': #TODO
         columns_pre_post.append('S2_mass')
         columns.append('S1_mass')
         
     
-    for col in columns_pre_post:
+    for col in columns_pre_post: #TODO
         GRB_df_synthetic[col+'_preSN'] = pre_SN_hist[col].values
         GRB_df_synthetic[col+'_postSN'] = post_SN_hist[col].values
         
@@ -109,7 +108,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     for col in oneline_chunk.columns:
         GRB_df_synthetic[col] = oneline_chunk.loc[indices_selection][col].values
     
-    if any(formation_channels_chunk != None):
+    if formation_channels_chunk is not None: #TODO
         formation_channels_chunk = formation_channels_chunk.loc[indices_selection]
         if S1_S2 == 'S1':
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC1').str[0].apply(lambda x: x+'_CC1')
@@ -117,7 +116,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC2').str[0].apply(lambda x: x+'_CC2')
     
     # calculate the time!
-    GRB_df_synthetic['time'] = post_SN_hist['time'].values * 1e-6 # convert to Myr
+    GRB_df_synthetic['time'] = post_SN_hist['time'].values * 1e-6 # convert to Myr #TODO
         
     return GRB_df_synthetic
 
@@ -260,9 +259,9 @@ def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
     These have to be present and a valid value. If not, the function will raise an error!        
     
     '''
-    available_sensitiveies = ['O3actual_H1L1V1', 'O4low_H1L1V1', 'O4high_H1L1V1', 'design_H1L1V1']
-    if sensitivity not in available_sensitiveies:
-        raise ValueError(f'Unknown sensitivity {sensitivity}. Available sensitivities are {available_sensitiveies}')
+    available_sensitivities = ['O3actual_H1L1V1', 'O4low_H1L1V1', 'O4high_H1L1V1', 'design_H1L1V1']
+    if sensitivity not in available_sensitivities:
+        raise ValueError(f'Unknown sensitivity {sensitivity}. Available sensitivities are {available_sensitivities}')
     else:
         sel_eff = selection_effects.KNNmodel(grid_path=PATH_TO_PDET_GRID,
                                                       sensitivity_key=sensitivity)

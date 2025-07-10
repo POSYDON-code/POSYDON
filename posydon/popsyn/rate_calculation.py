@@ -1,4 +1,4 @@
-__author__ = [
+__authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
 ]
@@ -14,7 +14,7 @@ from scipy.interpolate import CubicSpline
 from astropy import units as u
 
 
-DEFAULT_SFH_MODEL = {
+DEFAULT_MODEL = { 
     "delta_t": 100,  # Myr
     "SFR": "IllustrisTNG",
     "sigma_SFR": None,
@@ -36,13 +36,13 @@ def get_shell_comoving_volume(z_hor_i, z_hor_f, sensitivity="infinite"):
     z_hor_f : double
         Cosmological redshift. Upper bound of the integration.
     sensitivity : string
-        hoose which GW detector sensitivity you want to use. At the moment
+        choose which GW detector sensitivity you want to use. At the moment
         only 'infinite' is available, i.e. p_det = 1.
 
     Returns
     -------
     double
-        Retruns the comoving volume between the two shells z_hor_i
+        Returns the comoving volume between the two shells z_hor_i
         and z_hor_f in Gpc^3.
 
     """
@@ -205,7 +205,7 @@ def get_redshift_bin_centers(delta_t):
     # compute the redshift
     z_birth = []
     for i in range(n_redshift_bin_centers + 1):
-        # z_at_value is from astopy.cosmology
+        # z_at_value is from astropy.cosmology
         z_birth.append(z_at_value(cosmology.age, t_birth[i] * u.Gyr))
     z_birth = np.array(z_birth)
 
