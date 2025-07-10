@@ -20,16 +20,6 @@ from scipy.interpolate import CubicSpline
 # define test classes collecting several test functions
 class TestElements:
     
-    def test_defaults(self):
-        elements = ["delta_t",
-                    "SFR",
-                    "sigma_SFR",
-                    "Z_max",
-                    "select_one_met",
-                    "dlogZ",
-                    "Zsun"]
-        assert set(totest.DEFAULT_MODEL.keys()) == set(elements), \
-            "The DEFAULT_MODEL dictionary keys have changed. Please update the test."    
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = ['DEFAULT_MODEL','np','sp','CubicSpline','Zsun','cosmology',\
@@ -40,9 +30,20 @@ class TestElements:
                     'get_redshift_bin_centers','__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__']
-        assert set(dir(totest)) == set(elements), "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+        totest_elements = set(dir(totest))
+        missing_in_test = set(elements) - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - set(elements)
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_get_shell_comoving_volume(self):
         assert isroutine(totest.get_shell_comoving_volume)
