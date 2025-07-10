@@ -145,9 +145,9 @@
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Downloading POSYDON data &quot;</span>
                                                  <span class="s2">&quot;from Zenodo&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;dataset&#39;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name of the dataset to download (default: v1)&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name of the dataset to download (default: DR2)&quot;</span><span class="p">,</span>
                         <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">,</span>
-                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;v1&#39;</span><span class="p">)</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;DR2&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--listedsets&#39;</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;list the datasets: &#39;complete&#39; shows the full &quot;</span>
                              <span class="s2">&quot;dataset able to run POSYDON, &#39;individual&#39; lists &quot;</span>
@@ -241,13 +241,12 @@
 
 <div class="viewcode-block" id="download_one_dataset">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.data_download.download_one_dataset">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;v1_for_v2.0.0-pre1&#39;</span><span class="p">,</span> <span class="n">MD5_check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_one_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;DR2_1Zsun&#39;</span><span class="p">,</span> <span class="n">MD5_check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Download a data set from Zenodo if they do not exist.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        dataset : string (default: &#39;v1_for_v2.0.0-pre1&#39;)</span>
+<span class="sd">        dataset : string (default: &#39;DR2_1Zsun&#39;)</span>
 <span class="sd">            Name of the data set to be in COMPLETE_SETS or ZENODO_COLLECTION.</span>
 <span class="sd">        MD5_check : boolean (default: True)</span>
 <span class="sd">            Use the MD5 check to make sure data is not corrupted.</span>
@@ -321,12 +320,12 @@
 
 <div class="viewcode-block" id="data_download">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.data_download.data_download">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">data_download</span><span class="p">(</span><span class="n">set_name</span><span class="o">=</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="n">MD5_check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">data_download</span><span class="p">(</span><span class="n">set_name</span><span class="o">=</span><span class="s1">&#39;DR2&#39;</span><span class="p">,</span> <span class="n">MD5_check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Download data files from Zenodo if they do not exist.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        set_name : string (default: &#39;v1&#39;)</span>
+<span class="sd">        set_name : string (default: &#39;DR2&#39;)</span>
 <span class="sd">            Name of the data set to be in COMPLETE_SETS or ZENODO_COLLECTION.</span>
 <span class="sd">        MD5_check : boolean (default: True)</span>
 <span class="sd">            Use the MD5 check to make sure data is not corrupted.</span>

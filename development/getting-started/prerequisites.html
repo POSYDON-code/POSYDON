@@ -128,7 +128,6 @@
 <ul class="simple">
 <li><p>Linux (Ubuntu 20.04 and newer, CentOS 7, etc.)</p></li>
 <li><p>macOS (10.14 and newer)</p></li>
-<li><p>Windows 10</p></li>
 </ul>
 <p>(Note: Adapt and expand the list based on the actual compatibility of POSYDON)</p>
 </section>
@@ -136,14 +135,20 @@
 <h2>Software Dependencies<a class="headerlink" href="#software-dependencies" title="Link to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p>Python 3.11</p></li>
-<li><p>[List other software dependencies here, if any.]</p></li>
+<li><p>More dependencies are defined in our setup file and should be automatically applied during the installation. To allow you having different versions of the packages we require we strongly encourage to use a dedicated conda environment for POSYDON.</p></li>
 </ol>
 <p>(Note: Expand on any specific versions or configurations, if necessary.)</p>
 </section>
 <section id="hardware-requirements">
 <h2>Hardware Requirements<a class="headerlink" href="#hardware-requirements" title="Link to this heading"></a></h2>
 <p><strong>Storage</strong>:</p>
-<p>In order to run a population synthesis model with POSYDON, you must ensure that you have approximately <strong>40GB</strong> of free storage space. This is crucial for downloading the lite MESA simulation library, interpolation objects, and other auxiliary files used by the code.</p>
+<p>In order to run a population synthesis model with POSYDON, you must ensure that you have enough free storage space. It depends on the dataset how much free space you need:</p>
+<ul class="simple">
+<li><p>DR1: approximately <strong>40GB</strong></p></li>
+<li><p>DR2: approximately <strong>140GB</strong> (the default in the <a class="reference internal" href="installation-guide.html#installation-guide"><span class="std std-ref">installation</span></a>)</p></li>
+<li><p>one of the eight metallicities in DR2: approximately <strong>20GB</strong></p></li>
+</ul>
+<p>This is crucial for downloading the lite MESA simulation library, interpolation objects, and other auxiliary files used by the code.</p>
 <p>Memory:</p>
 <ul class="simple">
 <li><p>Minimum: 8GB RAM</p></li>
