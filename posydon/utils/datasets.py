@@ -165,3 +165,16 @@ COMPLETE_SETS['v2_0.1Zsun'] = ['auxiliary', 'v2_grids_0.1Zsun']
 COMPLETE_SETS['v2_0.01Zsun'] = ['auxiliary', 'v2_grids_0.01Zsun']
 COMPLETE_SETS['v2_1e-3Zsun'] = ['auxiliary', 'v2_grids_1e-3Zsun']
 COMPLETE_SETS['v2_1e-4Zsun'] = ['auxiliary', 'v2_grids_1e-4Zsun']
+
+
+ZENODO_COLLECTION['v2_tutorial_populations'] = {
+    'data': "https://zenodo.org/records/15708476/files/POSYDON_tutorial_populations.tar.gz",
+    'description': "The POSYDON v2 tutorial population data. It contains "\
+                   + "example binary populations that can be used in the "\
+                   + "tutorials of the code. It contians a 10.000 binary "\
+                   + "population at each of the DR2 grid metallicities.",
+    'md5': "d66d181bbd74d3cd30b4360729034566",
+    'title': "POSYDON v2.0 tutorial population data",
+    'url': "https://zenodo.org/records/15708476",
+}
+COMPLETE_SETS['v2_tutorial_populations'] = ['v2_tutorial_populations']
