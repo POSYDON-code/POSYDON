@@ -3,8 +3,8 @@
 The Binary Population Object
 ============================
 
-The BinaryPopulation class is the main object for handling the evolution of
-binary populations in POSYDON. `posydon-popsyn` and `PopulationRunner` build upon
+The ``BinaryPopulation`` class is the main object for handling the evolution of
+binary populations in POSYDON. ``posydon-popsyn`` and ``PopulationRunner`` build upon
 it to provide a more user-friendly interface for simulating populations.
 
 However, its features are useful if you want to adapt part of the population synthesis,
@@ -14,8 +14,8 @@ for example, to test a specific population of binaries with custom parameters.
 The initialisation of the BinaryPopulation object
 -------------------------------------------------
 
-To create a BinaryPopulation object, you need to provide a set of parameters that define the population's characteristics. 
-The easiest way is to load in the parameters from the default population `ini`` file.
+To create a ``BinaryPopulation`` object, you need to provide a set of parameters that define the population's characteristics. 
+The easiest way is to load in the parameters from the default population ``ini`` file.
 
 .. code-block:: python
 
@@ -27,7 +27,7 @@ The easiest way is to load in the parameters from the default population `ini`` 
   shutil.copyfile(path_to_params, './population_params.ini')
 
 
-Here's an example of how to initialise a BinaryPopulation object:
+Here's an example of how to initialise a ``BinaryPopulation`` object:
 
 .. code-block:: python
 
@@ -43,11 +43,11 @@ Here's an example of how to initialise a BinaryPopulation object:
   print(population.number_of_binaries)
 
 
-This code will create a BinaryPopulation object with the parameters defined in the `population_params.ini` file and print the number of binaries in the population.
+This code will create a ``BinaryPopulation`` object with the parameters defined in the ``population_params.ini`` file and print the number of binaries in the population.
 You can adapt the ``ini_kwargs`` dictionary to change the parameters of the population, such as the number of binaries and the metallicity.
 
 
-You can also skip the read in from the ini file and create the BinaryPopulation object directly. 
+You can also skip the read in from the ini file and create the ``BinaryPopulation`` object directly. 
 This performs the same task as the previous example, but automatically.
 
 .. code-block:: python
@@ -92,10 +92,10 @@ On initialisation, the BinaryPopulation class will initialise the following attr
    * - ``find_failed``
      - Method reference to manager's find_failed method for identifying failed binary evolutions
 
-During the initialisation, the BinaryPopulation creates a PopulationManager and SImulationPropeteries isntance
+During the initialisation, the ``BinaryPopulation`` creates a ``PopulationManager`` and ``SimulationProperties`` instance.
 
 Several variables are only set when running with MPI or job arrays, which are used for parallel processing of the population synthesis.
-These will not be used in a standard run of the BinaryPopulation class, but are set when using the `posydon-popsyn` or `PopulationRunner` classes.
+These will not be used in a standard run of the ``BinaryPopulation`` class, but are set when using the ``posydon-popsyn`` or ``PopulationRunner`` classes.
 
 .. list-table:: Conditional Attributes (MPI/Job Array)
    :widths: 30 70
@@ -117,7 +117,7 @@ These will not be used in a standard run of the BinaryPopulation class, but are 
 Evolving the population
 ------------------------
 
-With the population parameters defined, you can evolve the population using the `evolve` method.
+With the population parameters defined, you can evolve the population using the ``evolve`` method.
 This method will 
 
 1. Sample the initial system parameters (single or binary systems).
@@ -131,7 +131,7 @@ Here's an example of how to evolve the population:
 
 
 
-Additional kwargs can be passed to the `evolve` method to control the evolution process, such as:
+Additional ``kwargs`` can be passed to the ``evolve`` method to control the evolution process, such as:
 
 .. list-table:: Additional evolve kwargs
    :widths: 30 50 20
@@ -175,7 +175,7 @@ same folder, with different batch indicators for each process: ``{dump_rate}_evo
 .. note::
 
     The merging of different processes is different from the merging of batches within a single process!
-    We recommend running this with the `PopulationRunner` class, which will handle 
+    We recommend running this with the ``PopulationRunner`` class, which will handle 
     the batch writing and merging the output of multiple processes automatically into a single HDF5 file.
 
 When evolving a population, you can read the starting conditions from an HDF5 file
@@ -188,8 +188,8 @@ Accessing the evolved population
 
 Depending on the initialisation parameters, the evolved population can be accessed in different ways.
 
-1. If not written to file with ``breakdown_to_df=True``, the population is stored in memory as a list of BinaryStar objects.
-   You can access the individual binaries using the `manager` attribute:
+1. If not written to file with ``breakdown_to_df=True``, the population is stored in memory as a list of ``BinaryStar`` objects.
+   You can access the individual binaries using the ``manager`` attribute:
 
   .. code-block:: python
     first_binary = population.manager.binaries[0]
@@ -217,7 +217,7 @@ Depending on the initialisation parameters, the evolved population can be access
 BinaryGenerator class
 ---------------------
 
-The BinaryGenerator class is a helper class for generating binary systems based on the population parameters.
+The ``BinaryGenerator`` class is a helper class for generating binary systems based on the population parameters.
 It can be used to create a population of binaries with specific characteristics, such as mass ratios,
 metallicity, and initial conditions.
 Please see the :class:`BinaryGenerator <posydon.popsyn.binarypopulation.BinaryGenerator>` documentation for more details on how to use this class.
