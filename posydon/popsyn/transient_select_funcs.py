@@ -75,15 +75,15 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
         raise ValueError('S1_S2 must be either S1 or S2')
     # no events in this chunk
     if len(indices_selection) == 0: 
-        return pd.DataFrame()
+        return pd.DataFrame() # TODO
     # filter out the events that are not relevant for the LGRB formation
     selection = history_chunk[history_chunk['binary_index'].isin(indices_selection)]
     if S1_S2 == 'S1':
         S_mask = (selection['S1_state'] == 'BH') & (selection['S1_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
-    elif S1_S2 == 'S2':
+    elif S1_S2 == 'S2': #TODO
         S_mask = (selection['S2_state'] == 'BH') & (selection['S2_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
     
-    GRB_df_synthetic = pd.DataFrame(index=indices_selection)
+    GRB_df_synthetic = pd.DataFrame(index=indices_selection) # TODO
     # Pre and post SN data
     post_SN_hist = selection[S_mask]
     pre_mask = S_mask.shift(-1, fill_value=False)
@@ -92,12 +92,12 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     if S1_S2 == 'S1':
         columns_pre_post.append('S1_mass')
         columns.append('S2_mass')
-    elif S1_S2 == 'S2':
+    elif S1_S2 == 'S2': #TODO
         columns_pre_post.append('S2_mass')
         columns.append('S1_mass')
         
     
-    for col in columns_pre_post:
+    for col in columns_pre_post: #TODO
         GRB_df_synthetic[col+'_preSN'] = pre_SN_hist[col].values
         GRB_df_synthetic[col+'_postSN'] = post_SN_hist[col].values
         
@@ -109,7 +109,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     for col in oneline_chunk.columns:
         GRB_df_synthetic[col] = oneline_chunk.loc[indices_selection][col].values
     
-    if formation_channels_chunk is not None:
+    if formation_channels_chunk is not None: #TODO
         formation_channels_chunk = formation_channels_chunk.loc[indices_selection]
         if S1_S2 == 'S1':
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC1').str[0].apply(lambda x: x+'_CC1')
@@ -117,7 +117,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC2').str[0].apply(lambda x: x+'_CC2')
     
     # calculate the time!
-    GRB_df_synthetic['time'] = post_SN_hist['time'].values * 1e-6 # convert to Myr
+    GRB_df_synthetic['time'] = post_SN_hist['time'].values * 1e-6 # convert to Myr #TODO
         
     return GRB_df_synthetic
 
