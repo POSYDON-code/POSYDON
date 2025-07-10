@@ -28,9 +28,20 @@ class TestElements:
                     'np','truncnorm','rejection_sampler',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__']
-        assert set(dir(totest)) == set(elements), "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+        totest_elements = set(dir(totest))
+        missing_in_test = set(elements) - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - set(elements)
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_generate_independent_samples(self):
         assert isroutine(totest.generate_independent_samples)
