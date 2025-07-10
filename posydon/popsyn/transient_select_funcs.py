@@ -1,5 +1,4 @@
 import numpy as np
-import numpy as np
 import pandas as pd
 from posydon.config import PATH_TO_POSYDON_DATA
 import os
