@@ -43,9 +43,9 @@ Here's an example of how to initialise a ``BinaryPopulation`` object:
   print(population.number_of_binaries)
 
 
+
 This code will create a ``BinaryPopulation`` object with the parameters defined in the ``population_params.ini`` file and print the number of binaries in the population.
 You can adapt the ``ini_kwargs`` dictionary to change the parameters of the population, such as the number of binaries and the metallicity.
-
 
 You can also skip the read in from the ini file and create the ``BinaryPopulation`` object directly. 
 This performs the same task as the previous example, but automatically.
@@ -59,7 +59,7 @@ This performs the same task as the previous example, but automatically.
   print(population.number_of_binaries)
 
 
-On initialisation, the BinaryPopulation class will initialise the following attributes:
+On initialisation, the ``BinaryPopulation`` class will initialise the following attributes:
 
 .. list-table:: Core Attributes
    :widths: 30 70
@@ -188,7 +188,7 @@ Accessing the evolved population
 
 Depending on the initialisation parameters, the evolved population can be accessed in different ways.
 
-1. If not written to file with ``breakdown_to_df=True``, the population is stored in memory as a list of ``BinaryStar`` objects.
+1. If not written to file with ``breakdown_to_df=False``, the population is stored in memory as a list of ``BinaryStar`` objects.
    You can access the individual binaries using the ``manager`` attribute:
 
   .. code-block:: python
