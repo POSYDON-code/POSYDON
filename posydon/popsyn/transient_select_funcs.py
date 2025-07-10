@@ -1,6 +1,6 @@
 import numpy as np
+import numpy as np
 import pandas as pd
-import posydon.popsyn.selection_effects as selection_effects
 from posydon.config import PATH_TO_POSYDON_DATA
 import os
 from tqdm import tqdm
