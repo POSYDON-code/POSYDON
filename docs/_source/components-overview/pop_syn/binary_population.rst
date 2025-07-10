@@ -17,32 +17,31 @@ The initialisation of the BinaryPopulation object
 To create a BinaryPopulation object, you need to provide a set of parameters that define the population's characteristics. 
 The easiest way is to load in the parameters from the default population `ini`` file.
 
-```python
+.. code-block:: python
 
-import os
-import shutil
-from posydon.config import PATH_TO_POSYDON
+  import os
+  import shutil
+  from posydon.config import PATH_TO_POSYDON
 
-path_to_params = os.path.join(PATH_TO_POSYDON, "posydon/popsyn/population_params_default.ini")
-shutil.copyfile(path_to_params, './population_params.ini')
+  path_to_params = os.path.join(PATH_TO_POSYDON, "posydon/popsyn/population_params_default.ini")
+  shutil.copyfile(path_to_params, './population_params.ini')
 
-```
 
 Here's an example of how to initialise a BinaryPopulation object:
 
-```python
+.. code-block:: python
 
-from posydon.popsyn.binarypopulation import BinaryPopulation
-from posydon.popsyn.io import binarypop_kwargs_from_ini
+  from posydon.popsyn.binarypopulation import BinaryPopulation
+  from posydon.popsyn.io import binarypop_kwargs_from_ini
 
-# Load the parameters from the ini file
-ini_kwargs = binarypop_kwargs_from_ini('./population_params.ini')
+  # Load the parameters from the ini file
+  ini_kwargs = binarypop_kwargs_from_ini('./population_params.ini')
 
-# Create the BinaryPopulation object
-population = BinaryPopulation(**ini_kwargs)
+  # Create the BinaryPopulation object
+  population = BinaryPopulation(**ini_kwargs)
 
-print(population.number_of_binaries)
-```
+  print(population.number_of_binaries)
+
 
 This code will create a BinaryPopulation object with the parameters defined in the `population_params.ini` file and print the number of binaries in the population.
 You can adapt the ``ini_kwargs`` dictionary to change the parameters of the population, such as the number of binaries and the metallicity.
@@ -51,14 +50,14 @@ You can adapt the ``ini_kwargs`` dictionary to change the parameters of the popu
 You can also skip the read in from the ini file and create the BinaryPopulation object directly. 
 This performs the same task as the previous example, but automatically.
 
-```python
+.. code-block:: python
 
-from posydon.popsyn.binarypopulation import BinaryPopulation
+  from posydon.popsyn.binarypopulation import BinaryPopulation
 
-population = BinaryPopulation.from_ini('./population_params.ini')
+  population = BinaryPopulation.from_ini('./population_params.ini')
 
-print(population.number_of_binaries)
-```
+  print(population.number_of_binaries)
+
 
 On initialisation, the BinaryPopulation class will initialise the following attributes:
 
@@ -126,11 +125,11 @@ This method will
 
 Here's an example of how to evolve the population:
 
-```python
+.. code-block:: python
 
-population.evolve()
+  population.evolve()
 
-```
+
 
 Additional kwargs can be passed to the `evolve` method to control the evolution process, such as:
 
@@ -192,29 +191,27 @@ Depending on the initialisation parameters, the evolved population can be access
 1. If not written to file with ``breakdown_to_df=True``, the population is stored in memory as a list of BinaryStar objects.
    You can access the individual binaries using the `manager` attribute:
 
-   ```python
-   first_binary = population.manager.binaries[0]
-   print(first_binary)
-   ```
+  .. code-block:: python
+    first_binary = population.manager.binaries[0]
+    print(first_binary)
 
    Additionally you can show turn the binary into a history DataFrame or create a oneline summary DataFrame:
 
-   ```python
-   history = population.to_df()
-   print(history)
+  .. code-block:: python
+    history = population.to_df()
+    print(history)
 
-   oneline = population.to_oneline_df()
-   print(oneline)
-   ```
+    oneline = population.to_oneline_df()
+    print(oneline)
 
 2. If ``breakdown_to_df=True``, the population is removed from memory and written to the population file.
    You can access the population with the normal ``Population`` class.
    Make sure the file name has ``.h5`` extension, as this is required for the Population class to read the file correctly.
 
-   ```python
+   .. code-block:: python
     from posydon.popsyn.synthetic_population import Population
     population = Population('./population.h5')
-    ```
+
 
 
 BinaryGenerator class
