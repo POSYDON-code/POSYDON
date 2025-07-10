@@ -64,7 +64,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     columns_pre_post  = ['orbital_period', 'eccentricity', 'S1_spin', 'S2_spin']
     columns = []
     oneline_columns = ['metallicity', 'S1_m_disk_radiated', 'S2_m_disk_radiated']
-   
+    
     if S1_S2 == 'S1':
         indices_selection = oneline_chunk.index[oneline_chunk['S1_m_disk_radiated'] > 0.0].to_numpy()
         oneline_chunk = oneline_chunk.drop(columns=['S2_m_disk_radiated'])
@@ -74,10 +74,10 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     else:
         raise ValueError('S1_S2 must be either S1 or S2')
     # no events in this chunk
-    if len(indices_selection) == 0:
+    if len(indices_selection) == 0: 
         return pd.DataFrame()
     # filter out the events that are not relevant for the LGRB formation
-    selection = history_chunk.loc[indices_selection]    
+    selection = history_chunk[history_chunk['binary_index'].isin(indices_selection)]
     if S1_S2 == 'S1':
         S_mask = (selection['S1_state'] == 'BH') & (selection['S1_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
     elif S1_S2 == 'S2':

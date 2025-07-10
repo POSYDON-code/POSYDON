@@ -66,6 +66,35 @@ class TestElements:
 class TestFunctions:
     
     @fixture
+    def history_chunk(self):
+        return pd.DataFrame({
+            'binary_index': [10, 10, 10],
+            'S1_state': ['MS', 'HG', 'BH'],
+            'S2_state': ['MS', 'HG', 'BH'],
+            'step_names': ['step_RLO', 'step_RLO', 'step_SN'],
+            'orbital_period': [1.0, 1.1, 1.2],
+            'eccentricity': [0.1, 0.15, 0.2],
+            'S1_spin': [0.3, 0.35, 0.4],
+            'S2_spin': [0.5, 0.55, 0.6],
+            'S1_mass': [10.0, 9.5, 9.0],
+            'S2_mass': [8.0, 7.5, 7.0],
+            'time': [1.0e6, 2.0e6, 3.0e6]})
+
+    @fixture
+    def oneline_chunk(self):
+        return pd.DataFrame({
+            'metallicity': [0.02],
+            'S1_m_disk_radiated': [0.5],
+            'S2_m_disk_radiated': [0.0],
+        }, index=[10])  # index = binary_index
+
+    @fixture
+    def formation_channels_chunk(self):
+        return pd.DataFrame({
+            'channel': ['foo_CC1','bar_CC2']
+        }, index=[10,11])
+
+    @fixture
     def array(self):
         return np.array([1.0,2.0,3.0])
     
@@ -77,11 +106,39 @@ class TestFunctions:
     def wrong_array(self):
         return np.array(['1.0','2.0','3.0'])
     
-    def test_GRB_selection(self):
+    def test_GRB_selection(self,history_chunk,oneline_chunk,
+                           formation_channels_chunk):
+        # missing argument
+        with raises(TypeError,match="missing 2 required positional arguments"):
+            totest.GRB_selection()
         # bad input
-        # examples
-        pass 
-    
+        with raises(TypeError,match='string indices must be integers'):
+            totest.GRB_selection("1.1", "1.2")
+        with raises(AttributeError,match="'float' object has no attribute 'index'"):
+            totest.GRB_selection(1.1, 1.2)
+        with raises(ValueError,match='S1_S2 must be either S1 or S2'):
+            totest.GRB_selection(history_chunk, oneline_chunk,
+                                 S1_S2='test')
+        # example with S1
+        df = totest.GRB_selection(history_chunk, oneline_chunk,
+                           formation_channels_chunk, S1_S2='S1')
+        assert not df.empty
+        assert df.index[0] == 10
+        assert 'S1_mass_preSN' in df.columns
+        assert 'S1_mass_postSN' in df.columns
+        assert df['time'].iloc[0] == 3.0  # 3 Myr = 3e6 years * 1e-6
+        assert df['channel'].iloc[0] == 'foo_CC1'
+        # example with S2
+        oneline_chunk = oneline_chunk.copy()
+        oneline_chunk['S1_m_disk_radiated'] = [0.0]
+        oneline_chunk['S2_m_disk_radiated'] = [0.5]
+        df = totest.GRB_selection(history_chunk, oneline_chunk,
+                           formation_channels_chunk, S1_S2='S2')
+        assert not df.empty
+        assert 'S2_mass_postSN' in df.columns
+        assert 'metallicity' in df.columns
+        assert 'channel' in df.columns        
+        
     def test_chi_eff(self,array,nan_array,wrong_array):
         # missing argument
         with raises(TypeError,match="missing 6 required positional arguments"):
@@ -134,6 +191,7 @@ class TestFunctions:
         # bad input
         # examples
         pass
+    
     def test_DCO_detectability(self):
         # bad input
         # examples
