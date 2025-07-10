@@ -101,13 +101,13 @@ ZENODO_COLLECTION['DR2_grids_1Zsun'] = {
     'title': "POSYDON DR2 dataset at Zsun",
     'url': "https://zenodo.org/records/15194708",
 }
-ZENODO_COLLECTION['v2_grids_0.45Zsun'] = {
+ZENODO_COLLECTION['DR2_grids_0.45Zsun'] = {
     'data': "https://zenodo.org/records/15194708/files/POSYDON_data_v2_grids_0.45Zsun.tar.gz",
     'description': "The POSYDON v2 dataset at 0.45 solar metallicity. It "\
                    + "contains single-HMS, single-HeMS, HMS-HMS, HMS-HMS_RLO,"\
                    + " CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO all at 0.45 solar metallicity.",
     'md5': "b2dc618a8399084c9c239b6c9af67bd7",
-    'title': "POSYDON v2.0 dataset at 0.45 Zsun",
+    'title': "POSYDON DR2 dataset at 0.45 Zsun",
     'url': "https://zenodo.org/records/15194708",
 }
 ZENODO_COLLECTION['DR2_grids_0.2Zsun'] = {
