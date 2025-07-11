@@ -23,6 +23,7 @@ __authors__ = [
     "Philipp Moura Srivastava <philipp.msrivastava@gmail.com>",
     "Devina Misra <devina.misra@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
@@ -145,13 +146,15 @@ class BinaryStar:
         # Set the initial binary properties
         for item in BINARYPROPERTIES:
             if item == 'V_sys':
-                setattr(self, item, binary_kwargs.pop(item, [0,0,0]))
+                setattr(self, item, binary_kwargs.pop(item, np.array([0.0,
+                                                                      0.0,
+                                                                      0.0])))
             elif item == 'mass_transfer_case':
                 setattr(self, item, binary_kwargs.pop(item, 'None'))
             elif item == 'nearest_neighbour_distance':
-                setattr(self, item, binary_kwargs.pop(item, ['None',
-                                                             'None',
-                                                             'None']))
+                setattr(self, item, binary_kwargs.pop(item, [0.0,
+                                                             0.0,
+                                                             0.0]))
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
@@ -230,26 +233,25 @@ class BinaryStar:
 
     def run_step(self):
         """Evolve the binary through one evolutionary step."""
-        try:
-            total_state = (self.star_1.state, self.star_2.state, self.state,
-                           self.event)
-            next_step_name = self.properties.flow.get(total_state)
+        
+        total_state = (self.star_1.state, self.star_2.state, self.state, self.event)
+        if total_state in UNDEFINED_STATES:
+            raise FlowError(f"Binary failed with a known undefined state in the flow:\n{total_state}")
 
             if next_step_name is None:
                 raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
                 self.event = 'END'
 
-            next_step = getattr(self.properties, next_step_name, None)
-            if next_step is None:
-                raise ValueError(
-                    "Next step name '{}' does not correspond to a function in "
-                    "SimulationProperties.".format(next_step_name))
+        next_step = getattr(self.properties, next_step_name, None)
+        if next_step is None:
+            raise ValueError("Next step name '{}' does not correspond to a function in "
+                             "SimulationProperties.".format(next_step_name))
 
-            self.properties.pre_step(self, next_step_name)
-            next_step(self)
-        finally:
-            self.append_state()
-            self.properties.post_step(self, next_step_name)
+        self.properties.pre_step(self, next_step_name)
+        next_step(self)
+        
+        self.append_state()
+        self.properties.post_step(self, next_step_name)
 
     def append_state(self):
         """Update the history of the binaries' properties."""
@@ -389,6 +391,7 @@ class BinaryStar:
             # If a binary fails, usually history cols have diff lengths.
             # This should append NAN to create even columns.
             all_equal_length_cols = len(set(col_lengths)) == 1
+
             if not all_equal_length_cols:
                 for col in data_to_save:
                     col.extend([np.nan] * abs(max_col_length - len(col)))
@@ -929,3 +932,39 @@ class BinaryStar:
             binary.star_2.profile = run.final_profile2
             
         return binary
+    
+    def initial_condition_message(self, ini_params=None):
+        """Generate a message with the initial conditions.
+
+        Parameters
+        ----------
+       
+        ini_params : None or iterable of str
+            If None take the initial conditions from the binary, otherwise add
+            each item of it to the message.
+
+        Returns
+        -------
+        string
+            The message with the binary initial conditions.
+        """
+    
+        if ini_params is None:
+            ini_params = ["\nFailed Binary Initial Conditions:\n",
+                    f"S1 mass: {self.star_1.mass_history[0]} \n",
+                    f"S2 mass: {self.star_2.mass_history[0]} \n",
+                    f"S1 state: {self.star_1.state_history[0]} \n",
+                    f"S2 state: {self.star_2.state_history[0]}\n",
+                    f"orbital period: {self.orbital_period_history[0] } \n",
+                    f"eccentricity: {self.eccentricity_history[0]} \n",
+                    f"binary state: {self.state_history[0] }\n",
+                    f"binary event: {self.state_history[0] }\n",
+                    f"S1 natal kick array: {self.star_1.natal_kick_array }\n",
+                    f"S2 natal kick array: {self.star_2.natal_kick_array}\n"]
+            
+        message = ""
+        for i in ini_params:
+            message += i 
+
+        return message
+

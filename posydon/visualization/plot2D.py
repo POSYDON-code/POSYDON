@@ -14,6 +14,7 @@ __authors__ = [
 ]
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from posydon.utils.gridutils import add_field
 from posydon.utils.constants import Zsun
@@ -506,9 +507,9 @@ class plot2D(object):
                     for i in range(len(self.x_var[selection])):
                         if not isinstance(self.x_var_oRLO[selection][i],
                                           float):
-                            if (not any(np.isnan(
+                            if (not any(pd.isna(
                                 self.x_var_oRLO[selection][i]))
-                                    and not any(np.isnan(
+                                    and not any(pd.isna(
                                         self.y_var_oRLO[selection][i]))):
                                 plt.plot(
                                     self.x_var[selection][i],
@@ -562,8 +563,8 @@ class plot2D(object):
                             if not isinstance(self.x_var_oRLO[selection][i],
                                               float):
                                 if not any(
-                                    np.isnan(self.x_var_oRLO[selection][i])
-                                ) and not any(np.isnan(
+                                    pd.isna(self.x_var_oRLO[selection][i])
+                                ) and not any(pd.isna(
                                         self.y_var_oRLO[selection][i])):
                                     plt.plot(
                                         self.x_var[selection][i],
@@ -793,11 +794,11 @@ class plot2D(object):
         # fix max min color bar
         if self.z_var is not None:
             if self.zmin is None:
-                not_nan = np.invert(np.isnan(self.z_var))
+                not_nan = pd.notna(self.z_var)
                 self.zmin = min(self.z_var[not_nan])
 
             if self.zmax is None:
-                not_nan = np.invert(np.isnan(self.z_var))
+                not_nan = pd.notna(self.z_var)
                 self.zmax = max(self.z_var[not_nan])
 
     def get_x_var(self):

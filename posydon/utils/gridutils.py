@@ -25,7 +25,8 @@ __authors__ = [
 
 
 def join_lists(A, B):
-    """Make a joint list of A and B without repetitions and keeping the order.
+    """Make a joint list of A and B without elements already in A and keeping
+    the order.
 
     Parameters
     ----------
@@ -141,7 +142,7 @@ def add_field(a, descr):
 
     """
     if a.dtype.fields is None:
-        raise ValueError("`A' must be a structured numpy array")
+        raise ValueError("'a' must be a structured numpy array")
     b = np.empty(a.shape, dtype=a.dtype.descr + descr)
     for name in a.dtype.names:
         b[name] = a[name]
@@ -452,6 +453,8 @@ def convert_output_to_table(
                 values["M_2f(Msun)"] = binary_history["star_2_mass"].iloc[-1]
                 values["Porb_f(d)"] = binary_history["period_days"].iloc[-1]
                 values["tmerge(Gyr)"] = tmerge
+            else:
+                max_lg_mtransfer_rate = -99
 
             if max_lg_mtransfer_rate < LG_MTRANSFER_RATE_THRESHOLD:
                 values["result"] = "no_interaction"

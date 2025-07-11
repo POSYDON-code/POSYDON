@@ -107,6 +107,10 @@ def get_mass_transfer_flag(binary_history, history1, history2,
         The history file of MESA for star1.
     history2 : np.array
         The history file of MESA for star2.
+    start_at_RLO : bool (default: False)
+        Specify, whether the evolution is aimed to start at the first RLO.
+    mesa_flag : str or None (default: None)
+        Termination flag 1 (end condition).
 
     Returns
     -------
@@ -188,9 +192,11 @@ def check_state_from_history(history, mass, model_index=-1):
 
     Parameters
     ----------
-    history: np.array
-        MESA history of the star
-    model_index: int
+    history : np.array
+        MESA history of the star.
+    mass : np.array
+        Mass history of the star.
+    model_index : int (default: -1)
         Index of the model in history for which the state will be computed.
         By default it is the end of the evolution (last model).
 
@@ -235,6 +241,7 @@ def get_flags_from_MESA_run(MESA_log_path, binary_history=None,
         flag_mass_transfer: describes the mass transfer (e.g., case A, case B).
         final_state_1, final_state_2: describe the final evolutionary
             state of the two stars. None if history star is not provided.
+
     """
     if newTF1=='':
         flag_out = get_flag_from_MESA_output(MESA_log_path)

@@ -80,6 +80,20 @@ STAR_STATES_HE_RICH_EVOLVABLE = list(set(STAR_STATES_HE_RICH)
 # the step_CO_HeMS
 STAR_STATES_HE_RICH_EVOLVABLE.extend(['H-rich_non_burning'])
 
+# core collapse
+STAR_STATES_CC = [
+    'H-rich_Central_C_depletion',
+    'H-rich_Central_He_depleted',
+    'stripped_He_Central_He_depleted',
+    'stripped_He_Central_C_depletion',
+    # catch runs with gamma center limit which map to WD
+    'stripped_He_non_burning',
+    'H-rich_non_burning',
+    'H-rich_Shell_H_burning',
+    'accreted_He_Shell_H_burning',
+    'accreted_He_non_burning'
+    ]
+
 BINARY_STATES_ALL = [
     'initially_single_star',
     'detached',
@@ -90,6 +104,8 @@ BINARY_STATES_ALL = [
     'merged',
     'initial_RLOF'
 ]
+
+BINARY_STATES_CC = BINARY_STATES_ALL.copy()
 
 BINARY_EVENTS_ALL = [
     None,
@@ -113,6 +129,15 @@ BINARY_EVENTS_ALL = [
     'oMerging2'
 ]
 
+BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
+[BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
+
+## a list of known total binary states that can occur, 
+## but are not in the flow chart and will not be added to POSYDON
+UNDEFINED_STATES = []
+for s1 in STAR_STATES_CO:
+    for b in ['disrupted', 'detached']:
+        UNDEFINED_STATES.append((s1, 'H-rich_Core_H_burning', b, 'CC2'))
 
 # dynamically construct the flow chart
 POSYDON_FLOW_CHART = {}

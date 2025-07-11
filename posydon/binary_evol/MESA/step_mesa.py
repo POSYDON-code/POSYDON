@@ -111,7 +111,9 @@ POSYDON_TO_MESA = {
         'lambda_CE_10cent': 'lambda_CE_10cent',
         'lambda_CE_30cent': 'lambda_CE_30cent',
         'lambda_CE_pure_He_star_10cent': 'lambda_CE_pure_He_star_10cent',
-        'profile': True
+        'profile': True,
+        'total_mass_h1': 'total_mass_h1',
+        'total_mass_he4': 'total_mass_he4'
     }
 }
 
@@ -210,8 +212,8 @@ class MesaGridStep:
                     interpolation_path
                     + os.path.split(grid_name)[1].replace('h5', 'pkl'))
             else:
-                interpolation_filename = (interpolation_path
-                                          + interpolation_filename)
+                interpolation_filename = os.path.join(interpolation_path,
+                                                      interpolation_filename)
 
             self.load_Interp(interpolation_filename)
 
@@ -231,6 +233,24 @@ class MesaGridStep:
         self.stop_var_name = stop_var_name
         self.stop_value = stop_value
         self.stop_interpolate = stop_interpolate
+        self._find_boundaries()
+
+    def _find_boundaries(self):
+        """Infer the grid boundaries (min/max of masses and orbital period)."""
+        def initial_values_min_max(parameter_name):
+            # get the request column from the initial values
+            initial = self._psyTrackInterp.grid.initial_values[parameter_name]
+            # get the final values - NaN for ignored/failed runs
+            final = self._psyTrackInterp.grid.final_values[parameter_name]
+
+            # only use runs for which both initial and final value is defined
+            initial_values_to_use = initial[np.isfinite(initial + final)]
+
+            return np.min(initial_values_to_use), np.max(initial_values_to_use)
+
+        self.m1_min, self.m1_max = initial_values_min_max('star_1_mass')
+        self.m2_min, self.m2_max = initial_values_min_max('star_2_mass')
+        self.p_min, self.p_max = initial_values_min_max('period_days')
 
     def load_psyTrackInterp(self, grid_name):
         """Load the interpolator that has been trained on the grid."""
@@ -276,26 +296,24 @@ class MesaGridStep:
         """
         if self.interpolation_method == 'nearest_neighbour':
             self.closest_binary, self.nearest_neighbour_distance, \
-                self.termination_flags = self._psyTrackInterp.evaluate(
-                    self.binary)
+                self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
             if self.closest_binary.binary_history is None:
                 return
             key = POSYDON_TO_MESA['binary']['time']
             max_MESA_sim_time = self.closest_binary.binary_history[key][-1]
 
         elif self.interpolation_method in self.supported_interp_methods:
-            self.final_values, self.classes = self._Interp.evaluate(
-                self.binary)
+            self.final_values, self.classes = self._Interp.evaluate(self.binary)
 
-            max_MESA_sim_time = self.final_values[
-                                        POSYDON_TO_MESA['binary']['time']]
+            max_MESA_sim_time = self.final_values[POSYDON_TO_MESA['binary']['time']]
         else:
-            raise ValueError("unknown interpolation method: {}".
-                             format(self.interpolation_method))
+            raise ValueError("unknown interpolation method: {}".format(self.interpolation_method))
+        
         return max_MESA_sim_time
 
     def __call__(self, binary):
         """Evolve a binary using the MESA step."""
+
         if not isinstance(binary, BinaryStar):
             raise ValueError("Must be an instance of BinaryStar")
         if not hasattr(self, 'step'):
@@ -311,16 +329,14 @@ class MesaGridStep:
             binary.state = 'initial_RLOF'
             return
 
-        binary_start_time = binary.time
         step_will_exceed_max_time = (binary.time+max_MESA_sim_time
-                                     > binary.properties.max_simulation_time)
+                                    > binary.properties.max_simulation_time)
         if (step_will_exceed_max_time
                 and self.stop_method == 'stop_at_max_time'):
             # self.step(binary, interp_method='nearest_neighbour')
             if self.interpolation_method != 'nearest_neighbour':
                 self.closest_binary, self.nearest_neighbour_distance, \
-                    self.termination_flags = self._psyTrackInterp.evaluate(
-                                 self.binary)
+                    self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
 
             if self.track_interpolation:
                 self.flush_history = False
@@ -368,6 +384,10 @@ class MesaGridStep:
             binary.event = 'MaxTime_exceeded'
         elif binary.time == binary.properties.max_simulation_time:
             binary.event = 'maxtime'
+
+        if self.verbose:
+            print(f"End of step MESA (grid={self.grid_type}):\n", binary)
+
         return
 
     def step(self, binary, interp_method=None):
@@ -1185,7 +1205,6 @@ class MesaGridStep:
             Description of returned object.
 
         """
-
         # Error handling
         if v_before == "None" or v_after == "None":
             return "None"
@@ -1210,7 +1229,6 @@ class MS_MS_step(MesaGridStep):
                          grid_name=grid_name,
                          *args, **kwargs)
         # special stuff for my step goes here
-        # If nothing to do, no init necessary
 
         # load grid boundaries
         self.m1_min = min(self._psyTrackInterp.grid.initial_values['star_1_mass'])

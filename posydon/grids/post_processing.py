@@ -107,8 +107,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
         MESA grid in PSyGrid format.
     index : None, touple or int
         If None, loop over all indicies otherwise provide a range, e.g. [10,20]
-        or a index, e.g. 42.
-    star_2_CO : bool
+        or a single index, e.g. 42.
+    star_2_CO : bool (default: True)
         If 'False' star 2 is not a compact object.
     MODELS : list of dict
         List of supported core collapse model assumptions.
@@ -144,12 +144,6 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
             for quantity in CC_quantities:
                 EXTRA_COLUMNS[f'S{star}_{MODEL_NAME}_{quantity}'] = []
 
-    # remove star 2 columns in case of single star grid
-    if single_star:
-        for key in list(EXTRA_COLUMNS.keys()):
-            if 'S2' in key:
-                del EXTRA_COLUMNS[key]
-
     # loop over all gird, index or range
     if index is None:
         indicies = range(len(grid.MESA_dirs))
@@ -162,6 +156,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
             raise ValueError('Index range should have dim=2!')
         indicies = range(index[0], index[1])
         MESA_dirs = grid.MESA_dirs[index[0]:index[1]]
+    else:
+        raise TypeError('The argument `index` should be None, an integer, or '
+                        'a list of two integers.')
 
     for i in tqdm(indicies):
 
@@ -402,10 +399,16 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
             else:
                 assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1)
 
+        # add MT history column by combining TF1 and TF2
+        if not single_star:
+            combined_TF12 = combine_TF12([IC], [TF2])
+            mt_history = DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12'][combined_TF12[0]][3]
+            EXTRA_COLUMNS['mt_history'].append(mt_history)
+
         # check dataset completeness
         n_control = len(EXTRA_COLUMNS['S1_state'])
         for key in EXTRA_COLUMNS.keys():
-            if n_control != len(EXTRA_COLUMNS[key]):
+            if n_control != len(EXTRA_COLUMNS[key]): # pragma: no cover
                 raise ValueError(
                     '%s has not the correct dimension! Error occoured after '
                     'collapsing binary index=%s' % (key, i))
@@ -429,9 +432,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, MODELS=MODELS,
 
     return MESA_dirs, EXTRA_COLUMNS
 
-
-def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
-                                  verbose=False):
+def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
+                                  EXTRA_COLUMNS):
     """Append post processed quantity to a grid.
 
     This function appends the quantities computed in post_process_grid to any
@@ -442,7 +444,7 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS,
     ----------
     grid : PSyGrid
         MESA grid in PSyGrid format.
-    MESA_dirs: list
+    MESA_dirs_EXTRA_COLUMNS: list
         List containing the path to each run corresponding to the post
         processed values. This is used to ensure one to one mapping when
         appending the extra columns back to a grid.

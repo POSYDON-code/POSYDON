@@ -27,7 +27,7 @@ STEP 2.2: check failure rate
 
 STEP 3: calculate extra values
 ['grid_low_res_combined','grid_random_1','grid_low_res_combined_rerun1']
---> do post processing on the ORIGINAL grid and append back on the LITE gird
+--> do post processing on the ORIGINAL grid and append back on the LITE grid
 the post processed quantities
 
 STEP 3.1: plot extra values
@@ -41,19 +41,20 @@ STEP 3.2: check rates of compact object types
 STEP 4: train interpolators
 ['grid_low_res_combined_rerun1'] --> train the interpolators
 
-STEP 4.1: plot interpolator accuracy and confusion matricies
+STEP 4.1: plot interpolator accuracy and confusion matrices
 ['grid_random_1']
 --> loop over all plot types
 
 STEP 5: train profile interpolators
-uses gird and initial-final interpolators to train the profile interpolators
+uses grid and initial-final interpolators to train the profile interpolators
 
-STEP 9: export dataset
+STEP F: export dataset
 
 STEP RERUN: rerun grid with a fix
 grid_low_res_combined.rerun(index=logic) --> grid_low_res_rerun_1/grid.csv
                                          --> grid_random_1_rerun_1/grid.csv
--- run gird fix and do next post processing
+-- run grid fix and do next post processing
+
 '''
 
 __authors__ = [
@@ -79,8 +80,8 @@ from posydon.grids.psygrid import (PSyGrid,
                                    EXTRA_COLS_DS_EXCLUDE)
 from posydon.grids.post_processing import (post_process_grid,
                                            add_post_processed_quantities)
-from posydon.grids.MODELS import MODELS
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.grids.SN_MODELS import SN_MODELS
+from posydon.config import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 from posydon.utils.posydonwarning import (Pwarn,print_stats)
 from posydon.interpolation.IF_interpolation import IFInterpolator
@@ -169,7 +170,7 @@ def create_grid_slice(i, path_to_csv_file, verbose=False, overwrite_psygrid=True
         raise ValueError(f'pure_compression = {pure_compression} not '
                          f'supported! (compression={compression})')
     
-    if ('CO' in grid_type) and ('RLO' in compression):
+    if 'RLO' in compression:
         start_at_RLO = True
     else:
         start_at_RLO = False
@@ -224,11 +225,11 @@ def combine_grid_slices(i, path_to_csv_file, verbose=False):
                        f'{i}>{len(df.keys())-1}.')
     # get values from csv file
     grid_combined_key = df.keys()[i]
-    gird_names = df[grid_combined_key].dropna().to_list()
+    grid_names = df[grid_combined_key].dropna().to_list()
     if verbose:
-        print(f'Combinining: {gird_names}')
+        print(f'Combinining: {grid_names}')
         print(f'into: {grid_combined_key}')
-    join_grids(gird_names, grid_combined_key, verbose=verbose)
+    join_grids(grid_names, grid_combined_key, verbose=verbose)
 
 
 def calculate_extra_values(i, path_to_csv_file, verbose=False):
@@ -296,8 +297,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     
     # load processed grid and append values
     grid = PSyGrid(processed_grid_path)
-    add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
-                                  EXTRA_COLUMNS, verbose=verbose)
+    add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS)
     if verbose:
         print(f'Added processed quantities to grid: {processed_grid_path}')
     grid.close()
@@ -374,21 +374,21 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                                    key != "model_number" and
                                    (type(grid.final_values[key][0]) != np.str_)
                                    and any(~np.isnan(grid.final_values[key]))
-                                   and "MODEL" not in key)]
+                                   and "SN_MODEL" not in key)]
     
 
     out_nan_keys = [key for key in grid.final_values.dtype.names if (
                              key != "model_number" and
                             (type(grid.final_values[key][0]) != np.str_)
                             and all(np.isnan(grid.final_values[key]))
-                            and "MODEL" not in key)]
+                            and "SN_MODEL" not in key)]
     
     # define all string keys in final values
     c_keys = ['interpolation_class', 'S1_state', 'S2_state', 'mt_history']
-    for MODEL_NAME in MODELS.keys():
+    for SN_MODEL_NAME in SN_MODELS.keys():
         for i in range(1,3):
-            c_keys.append(f'S{i}_{MODEL_NAME}_SN_type')
-            c_keys.append(f'S{i}_{MODEL_NAME}_CO_type')
+            c_keys.append(f'S{i}_{SN_MODEL_NAME}_SN_type')
+            c_keys.append(f'S{i}_{SN_MODEL_NAME}_CO_type')
     
     # specify the interpolation methods
     interpolators = [
@@ -408,25 +408,25 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     # TODO: we need to train core collapse for secondary star as well
     # to catch reverse mass transfer cases where the secondary undergoes
     # core collapse first
-    for MODEL_NAME in MODELS.keys():
+    for SN_MODEL_NAME in SN_MODELS.keys():
         for i in range(1,2): #TODO: range(1,3):
             out_keys = [key for key in grid.final_values.dtype.names if (
                                    key != "model_number" and
                                    (type(grid.final_values[key][0]) != np.str_)
                                    and any(~np.isnan(grid.final_values[key]))
-                                   and f"S{i}_{MODEL_NAME}" in key)]
+                                   and f"S{i}_{SN_MODEL_NAME}" in key)]
             
             out_nan_keys = [key for key in grid.final_values.dtype.names if (
                                 key != "model_number" 
                                 and (type(grid.final_values[key][0]) != np.str_)
                                 and all(np.isnan(grid.final_values[key]))
-                                and f"S{i}_{MODEL_NAME}" in key)]
+                                and f"S{i}_{SN_MODEL_NAME}" in key)]
             
             # get interpolations classes dynamically
             interp_method = []
             interp_classes = []
             for CO_interpolation_class in ["BH", "NS", "WD", "BH_reverse_MT"]:
-                if CO_interpolation_class in grid.final_values[f'S{i}_{MODEL_NAME}_CO_interpolation_class']:
+                if CO_interpolation_class in grid.final_values[f'S{i}_{SN_MODEL_NAME}_CO_interpolation_class']:
                     interp_method.append(method)
                     interp_classes.append(CO_interpolation_class)
 
@@ -437,10 +437,10 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                     "out_keys": out_keys,
                     "out_nan_keys": out_nan_keys,
                     "class_method": "kNN",
-                    "c_keys": [f'S{i}_{MODEL_NAME}_CO_interpolation_class', 
-                               f'S{i}_{MODEL_NAME}_CO_type',
-                               f'S{i}_{MODEL_NAME}_SN_type'],
-                    "c_key": f'S{i}_{MODEL_NAME}_CO_interpolation_class'
+                    "c_keys": [f'S{i}_{SN_MODEL_NAME}_CO_interpolation_class', 
+                               f'S{i}_{SN_MODEL_NAME}_CO_type',
+                               f'S{i}_{SN_MODEL_NAME}_SN_type'],
+                    "c_key": f'S{i}_{SN_MODEL_NAME}_CO_interpolation_class'
                 },   
             )
     
@@ -1171,12 +1171,20 @@ def plot_grid(i, path_to_csv_file, verbose=False):
                 else:
                     Pwarn(f'{set_name} not in PRE_SET_PLOTS',
                           "UnsupportedModelWarning")
-            elif '_MODEL' in quantity_to_plot:
-                short_quantity = quantity_to_plot.split('_MODEL')[-1]
-                short_quantity = short_quantity[short_quantity.find('_')+1:]
+            elif '_SN_MODEL' in quantity_to_plot:
+                short_quantity = ""
+                for SN_MODEL_NAME in SN_MODELS.keys():
+                    if SN_MODEL_NAME+'_' in quantity_to_plot:
+                        short_quantity = quantity_to_plot.split(
+                                          SN_MODEL_NAME+'_')[-1]
+                if short_quantity == "":
+                    Pwarn(f'{quantity_to_plot} not recognized use '
+                          'SN_MODEL_DEFAULT_mass instead',
+                          "ReplaceValueWarning")
+                    short_quantity = "mass"
                 model_name = quantity_to_plot.split('_'+short_quantity)[0]
-                set_name = quantity_to_plot.split('_MODEL')[0] +\
-                           '_MODEL_DEFAULT_' + short_quantity
+                set_name = quantity_to_plot.split('_SN_MODEL')[0] +\
+                           '_SN_MODEL_DEFAULT_' + short_quantity
                 if set_name in PRE_SET_PLOTS:
                     plot_attributes['plot_dir_name'] = os.path.join(model_name,
                                                                 short_quantity)
@@ -1395,12 +1403,12 @@ def do_check(i, path_to_csv_file, verbose=False):
             print(f'Failure rate: {failure_rate_in_percent}% in {grid_path}')
         elif check_to_do=='CO_type':
             for quantity in grid.final_values.dtype.names:
-                if (('S1_MODEL' in quantity) and ('CO_type' in quantity)):
+                if (('S1_SN_MODEL' in quantity) and ('CO_type' in quantity)):
                     count = Counter(grid.final_values[quantity])
                     print(f'{quantity}: {count} in {grid_path}')
         elif check_to_do=='SN_type':
             for quantity in grid.final_values.dtype.names:
-                if (('S1_MODEL' in quantity) and ('SN_type' in quantity)):
+                if (('S1_SN_MODEL' in quantity) and ('SN_type' in quantity)):
                     count = Counter(grid.final_values[quantity])
                     print(f'{quantity}: {count} in {grid_path}')
             #TODO: add more checks
@@ -1411,12 +1419,12 @@ def do_check(i, path_to_csv_file, verbose=False):
 
 if __name__ == '__main__':
 
-    # read commond line arguments
+    # read command line arguments
     n_args = len(sys.argv)
     
-    if n_args > 1: # path to girds
+    if n_args > 1: # path to grids
         if str(sys.argv[1])=='--help':
-            print('Programm to run a pipeline step')
+            print('Program to run a pipeline step')
             print('syntax: posydon-run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE'
                   ' [SLURM_I] [VERBOSE]')
             print('PATH_TO_GRIDS: path to the root directory with the grids')
@@ -1458,7 +1466,7 @@ if __name__ == '__main__':
         Pwarn('No verbose flag given, use True', "ReplaceValueWarning")
         VERBOSE = True
 
-    # chose grid slice given the slurm jobarray index
+    # choose grid slice given the slurm jobarray index
 
     # offset the start of each job
     # NOTE: this prevents job arrays starting at the same time to read
@@ -1482,7 +1490,7 @@ if __name__ == '__main__':
     if STEP=='step_5': # train profile interpolators
         train_profile_interpolators(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
 
-    if STEP=='step_9': # export dataset
+    if STEP=='step_F': # export dataset
         export_dataset(SLURM_I, PATH_TO_CSV_FILE, verbose=VERBOSE)
 
     if STEP=='rerun': # export rerun

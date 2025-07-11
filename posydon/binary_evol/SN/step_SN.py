@@ -35,7 +35,8 @@ import scipy as sp
 import copy
 import pandas as pd
 
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA, data_download
+from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.data_download import data_download
 import posydon.utils.constants as const
 from posydon.utils.common_functions import (is_number, CO_radius,
     orbital_period_from_separation, inspiral_timescale_from_separation,
@@ -59,7 +60,7 @@ from posydon.utils.common_functions import set_binary_to_failed
 
 from pandas import read_csv
 from sklearn import neighbors
-from scipy.interpolate import interp1d
+from posydon.utils.interpolators import interp1d
 
 import json
 
@@ -95,6 +96,8 @@ MODEL = {
     # other
     "verbose": False,
 }
+# add core collapse physics
+SN_MODEL.update(DEFAULT_SN_MODEL)
 
 
 class StepSN(object):
@@ -254,10 +257,10 @@ class StepSN(object):
         # read kwargs to initialize the class
         if kwargs:
             for key in kwargs:
-                if key not in MODEL:
+                if key not in SN_MODEL:
                     raise ValueError(key + " is not a valid parameter name!")
-            for varname in MODEL:
-                default_value = MODEL[varname]
+            for varname in SN_MODEL:
+                default_value = SN_MODEL[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
             for varname in MODEL:
@@ -340,7 +343,7 @@ class StepSN(object):
                     filename = os.path.join(self.path_to_Patton_datasets,
                                             file_name)
                     if not os.path.exists(filename):
-                        data_download()
+                        data_download(set_name='auxiliary')
 
                     # Reading the dataset
                     data = np.loadtxt(filename, skiprows=6, dtype='str')
@@ -451,6 +454,9 @@ class StepSN(object):
         elif state1 in STAR_STATES_C_DEPLETION and state2 in STAR_STATES_CO:
             binary.event = "CC1"
 
+        if self.verbose:
+            print(f"End of step SN:\n", binary)
+
     def check(self):
         """Check the internal integrity and the values of the parameters."""
         if self.kick_distribution is None:
@@ -506,6 +512,7 @@ class StepSN(object):
         # explode
         if state in STAR_STATES_CC:
 
+            SN_type = ""
             # if no profile is avaiable but interpolation quantities are,
             # use those, else continue with or without profile.
             if self.use_interp_values:
@@ -679,11 +686,15 @@ class StepSN(object):
                     star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
-                elif self.use_core_masses:
+                elif self.use_core_masses or SN_type == "ECSN":
                     # If the profile is not available the star spin
                     # is used to get the compact object spin
                     star.mass = m_grav
                     if m_grav >= self.max_NS_mass:
+                        if SN_type == "ECSN":
+                            Pwarn("An ECSN should not form a black hole: "
+                                  f"m_grav={m_grav}.",
+                                  "InappropriateValueWarning")
                         # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
                         # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
 
@@ -791,10 +802,16 @@ class StepSN(object):
                             max_neutrino_mass_loss=self.max_neutrino_mass_loss,
                             verbose=self.verbose
                         )
-                        star.mass = final_BH[0]
+                        # set post-collapse properties/information to store
+                        for i in final_BH.keys():
+                            setattr(star, i, final_BH[i])
+                        # set specific properties manually
+                        star.mass = final_BH['M_BH_total']
+                        star.spin = final_BH['a_BH_total']
+
                         if m_grav != star.mass and self.verbose:
                             print("The star formed a disk during the collapse "
-                                  "and lost", round(final_BH[0] - m_rembar, 2),
+                                  "and lost", round(final_BH['M_BH_total'] - m_rembar, 2),
                                   "M_sun.")
                         star.spin = final_BH[1]
                         star.m_disk_accreted = final_BH[2]
@@ -812,9 +829,13 @@ class StepSN(object):
                     star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
-                elif self.use_core_masses:
+                elif self.use_core_masses or SN_type == "ECSN":
                     star.mass = m_grav
                     if m_grav >= self.max_NS_mass:
+                        if SN_type == "ECSN":
+                            Pwarn("An ECSN should not form a black hole: "
+                                  f"m_grav={m_grav}.",
+                                  "InappropriateValueWarning")
                         # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
                         # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
 
@@ -928,6 +949,55 @@ class StepSN(object):
                     else:
                         m_PISN = m_He_core
 
+                    # delta_PPI -> -inf if Z -> 0
+                    # limit mass loss to Z = 1e-4 for Z below it.
+                    # 1e-4 is the lowest metallicity in the Hendriks et al. 2023
+                    if star.metallicity < 1e-4:
+                        Z = 1e-4
+                    else:
+                        Z = star.metallicity
+                    # Hendriks et al. 2023 Equation 6
+                    # 10.1093/mnras/stad2857
+                    delta_M_PPI = (
+                        (0.0006 * np.log10(Z * const.Zsun) + 0.0054)
+                        * (m_CO_core - delta_M_CO_shift - 34.8)**3
+                        - 0.0013 * (m_CO_core - delta_M_CO_shift - 34.8)**2
+                        + delta_M_PPI_extra_ML
+                    )
+                    if self.verbose:
+                        print(f"delta_M_PPI: {delta_M_PPI} Msun")
+                else:
+                    delta_M_PPI = 0.0
+                    
+                if delta_M_PPI <= 0.0:
+                    # no PPI -> use CCSN prescription
+                    if self.conserve_hydrogen_envelope:
+                        m_PISN = m_star
+                    else:
+                        m_PISN = m_He_core
+                else:
+                    # PPI occurs 
+                    if self.conserve_hydrogen_PPI:
+                        m_PISN = m_star - delta_M_PPI
+                    else:
+                        m_PISN = m_He_core - delta_M_PPI
+                    
+                    if m_PISN < 0.0:
+                        m_PISN = np.nan
+                    else:
+                        PISN_star = copy.deepcopy(star)
+                        PISN_star.mass = m_PISN
+                        if PISN_star.he_core_mass > m_PISN:
+                            PISN_star.he_core_mass = m_PISN
+                        if PISN_star.co_core_mass > m_PISN:
+                            PISN_star.co_core_mass = m_PISN
+                        m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
+                    
+                        if m_rembar < 10:
+                            m_PISN = np.nan
+                        else:
+                            m_PISN = m_rembar
+
             elif is_number(self.PISN) and m_He_core > self.PISN:
                 m_PISN = self.PISN
 
@@ -942,7 +1012,7 @@ class StepSN(object):
                 print("")
                 print("The star did NOT lose any mass because of "
                       "PPIN or PISN.")
-            elif not np.isnan(m_PISN):
+            elif not pd.isna(m_PISN):
                 print("")
                 print(
                     "The star with initial mass {:2.2f}".format(m_He_core),
@@ -1120,7 +1190,7 @@ class StepSN(object):
                 "There is no information in the evolutionary history"
                 "about STAR_STATES_CC."
             )
-        if m_core is None or np.isnan(m_core):
+        if m_core is None or pd.isna(m_core):
             # This should not happen
             raise ValueError("The CO core mass is not correct! CO core = {}".
                              format(m_core))
@@ -2125,7 +2195,7 @@ class Sukhbold16_corecollapse(object):
             filename = os.path.join(path_engine_dataset,
                                     "results_" + self.engine + "_table.csv")
             if not os.path.exists(filename):
-                data_download()
+                data_download(set_name='auxiliary')
 
             Engine_data = read_csv(filename)
 
@@ -2315,34 +2385,20 @@ class Couch20_corecollapse(object):
                     + " ..."
                 )
 
-
             # Check if interpolation files exist
-            filename = os.path.join(path_to_Couch_datasets,
-                                    'explDatsSTIR2.json')
+            filename = os.path.join(path_to_Couch_datasets, 'explDatsSTIR2.json')
             if not os.path.exists(filename):
-                data_download()
+                data_download(set_name='auxiliary')
 
             Couch_data_file = open(filename)
-            # Couch_data = json.loads(Couch_data_file)
             Couch_data = json.load(Couch_data_file)
             Couch_data_file.close()
             Couch_data = Couch_data[turbulence_strength]
-            # breakpoint()
-            # #names = ['MZAMS',['rmax','texp','Eexp']]
-            # my_names = ['MZAMS','Eexp']
-            # my_formats = ['f8','f8']
-            # dtype = dict(names = my_names, formats= my_formats)
-            # #dt = np.dtype()
-            # #Couch_data_ar = np.array(list(Couch_data.items()), dtype=dtype)
-            #
-            # #Couch_data_ar = np.array(Couch_data[turbulence_strength])
-            # #Couch_data_ar = [np.array(Couch_data[MZAMS])
-            #                   for MZAMS in Couch_data]
-            # #Couch_data_ar = np.array([(MZAMS,rest["Eexp"]) for (MZAMS,rest)
-            #                            in Couch_data.items()], dtype=dtype)
+            
             Couch_MZAMS = []
             Couch_Eexp = []
             Couch_state = []
+
             for MZAMS, rest in Couch_data.items():
                 Couch_MZAMS.append(float(MZAMS))
                 Couch_Eexp.append(rest["Eexp"])
@@ -2350,49 +2406,14 @@ class Couch20_corecollapse(object):
                     Couch_state.append(int(14))     # BH
                 else:
                     Couch_state.append(int(13))     # NS
-            # Couch_MZAMS = np.array(Couch_MZAMS, dtype=dict(
-            #     names=my_names[0], formats=my_formats[0]))
-            # Couch_Eexp = np.array(Couch_Eexp,dtype=dict(
-            #     names=my_names[1], formats= my_formats[1]))
-            # Couch_data_ar = np.array()
-            # breakpoint()
-            # print(Couch_data)
 
-            # we need Sukhbold data for  their cores
-            Sukhbold_data = read_csv(
-                # path_to_Sukhbold_datasets + "results_N20_table.csv"
-                path_to_Couch_datasets + "Sukhbold_Mzams_He_c_core.csv",
-                usecols=[0, 1])
+            # we need Sukhbold data for their cores
+            Sukhbold_data = read_csv(path_to_Couch_datasets + "Sukhbold_Mzams_He_c_core.csv",
+                                    usecols=[0, 1])
 
             MZAMS = Sukhbold_data["Mzams"]
             He_core_mass = Sukhbold_data["He_c_mass"]
-            self.MZAMS_He_core_mass_Sukhbold_interpolator = interp1d(
-                MZAMS, He_core_mass)
-            # def MZAMS_He_core_mass_Sukhbold_interpolator(MZams):
-            #     return Sukhbold_data[Sukhbold_data["Mzams"]==MZams][
-            #         "He_c_mass"]
-
-            # # Classifier to assign the He core mass of Sukhbold
-            # # as a function of the MZAMS
-            # # taking the first nearest neighbor
-            # n_neighbors = 1
-            # self.stellar_ZAMS_classifier = neighbors.KNeighborsClassifier(
-            #     n_neighbors, weights="distance"
-            # )
-            # self.stellar_ZAMS_classifier.fit(
-            #     np.array(Sukhbold_data["Mzams"]).reshape(
-            #         (len(Sukhbold_data["Mzams"]), 1)
-            #     ),
-            #     Sukhbold_data["He_c_mass"],
-            # )
-            # MZAMS = np.array(
-            #     Sukhbold_data["Mzams"]
-            # )
-            # He_c_mass = np.array(
-            #     Sukhbold_data["He_c_mass"]
-            # )
-            # self.MZAMS_He_core_mass_Sukhbold_interpolator = interp1d(MZAMS,
-            #       He_c_mass)
+            self.MZAMS_He_core_mass_Sukhbold_interpolator = interp1d(MZAMS, He_core_mass)
 
             Couch_He_c_mass = self.MZAMS_He_core_mass_Sukhbold_interpolator(
                 Couch_MZAMS)
@@ -2408,70 +2429,9 @@ class Couch20_corecollapse(object):
                 n_neighbors, weights="distance"
             )
             self.stellar_type_classifier.fit(
-                np.array(Couch_He_c_mass).reshape(
-                    (len(Couch_He_c_mass), 1)
-                ),
+                np.array(Couch_He_c_mass).reshape((len(Couch_He_c_mass), 1)),
                 np.array(Couch_state),
             )
-
-            '''
-            breakpoint()
-
-            print("Training the remnant mass interpolator ...")
-
-            # Interpolator to compute the remnant mass
-            # as a function of the He core mass pre-supernova
-            # and the stellar type of the remnant.
-            NS_rem_mass = np.array(
-                Engine_data[Engine_data["stellar_state"] == 13]["Rem_mass"]
-            )
-            NS_He_prog = np.array(
-                Engine_data[Engine_data["stellar_state"] == 13]["He_c_mass"]
-            )
-            self.mass_NS_interpolator = interp1d(NS_He_prog, NS_rem_mass)
-
-            BH_rem_mass = np.array(
-                Engine_data[Engine_data["stellar_state"] == 14]["Rem_mass"]
-            )
-            BH_He_prog = np.array(
-                Engine_data[Engine_data["stellar_state"] == 14]["He_c_mass"]
-            )
-            self.mass_BH_interpolator = interp1d(BH_He_prog, BH_rem_mass)
-
-            if verbose:
-                print("Done ...\n")
-
-            # Gets the neutron-star mass in terms of the He core mass
-            # if a succesful explotion is predicted
-            def extrapolate1d_NS(value, interpolator):
-                x = interpolator.x
-
-                if (value >= np.min(x)) and (value <= np.max(x)):
-                    result = interpolator(value)
-                elif value < np.min(x):
-                    result = interpolator(np.min(x))
-                elif value > np.max(x):
-                    result = interpolator(np.max(x))
-
-                return result
-
-            # Gets the black-hole mass in terms of the He core mass
-            # if a unsuccesful explotion is predicted
-            def extrapolate1d_BH(value, interpolator):
-                x = interpolator.x
-
-                if (value >= np.min(x)) and (value <= np.max(x)):
-                    result = interpolator(value)
-                elif value < np.min(x):
-                    result = interpolator(np.min(x))
-                elif value > np.max(x):
-                    result = value
-
-                return result
-
-            self.extrapolate_NS = extrapolate1d_NS
-            self.extrapolate_BH = extrapolate1d_BH
-            '''
 
         else:
             raise ValueError(

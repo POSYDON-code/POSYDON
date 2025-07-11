@@ -122,19 +122,25 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
         Dimensionless spin of the initial BH.
     J_initial_BH : float
         Angular momentum of the initial BH in g*cm^2/s.
-    angular_frequency_i : array floats
+    angular_frequency_i : ndarray of floats
         Shell's angular frequencies in s^-1 collapsing onto the
         initially-formed BH.
-    enclosed_mass_i : array floats
+    enclosed_mass_i : ndarray of floats
         Shell's enclosed masses in g collapsing onto the initially formed BH.
-    radius_i : array floats
+    radius_i : ndarray of floats
         Shell's radii in cm collapsing onto the initially formed BH.
-    density_i : array floats
+    density_i : ndarray of floats
         Shell's densities in g/cm^3 collapsing onto the initially formed BH.
-    dm_i : array floats
+    dm_i : ndarray of floats
         Shell's masses in g collapsing onto the initially formed BH.
-    dm_i : array floats
+    dr_i : ndarray of floats
         Shell's width in cm collapsing onto the initially formed BH.
+    he3_i : ndarray of floats
+        Shell's Helium 3 fraction.
+    he4_i : ndarray of floats
+        Shell's Helium 4 fraction.
+    max_he_mass_ejected_SN : float
+        Maxium Helium in SN ejecta.
 
     """
     if neutrino_mass_loss < 0.:
@@ -149,6 +155,20 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
             'while neutrino_mass_loss = {:2.2f} Msun'.format(
                 neutrino_mass_loss), 'was passed!')
 
+    if not (hasattr(star, 'profile') and isinstance(star.profile, np.ndarray)
+            and ('mass' in star.profile.dtype.names)
+            and ('radius' in star.profile.dtype.names)
+            and ('logRho' in star.profile.dtype.names)
+            and ('omega' in star.profile.dtype.names)):
+        Pwarn("The stellar profile does not contain enough information to "
+              "collapse the star and determine the remnant properties.",
+              'InappropriateValueWarning')
+        # estimate still initial BH mass
+        mass_initial_BH = mass_central_BH - neutrino_mass_loss
+        return [mass_initial_BH, np.nan, np.nan, np.array([]), np.array([]),
+                np.array([]), np.array([]), np.array([]), np.array([]),
+                np.array([]), np.array([]), np.nan]
+
     # load units and convert to CGS units
     G = const.standard_cgrav
     c = const.clight
@@ -158,16 +178,17 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
     neutrino_mass_loss *= Mo
 
     # read star quantities
-    enclosed_mass_all = star.profile['mass'][::-1]*Mo  # cell outer total mass
-    radius_all = star.profile['radius'][::-1] * Ro  # cell outer radius
-    density_all = 10**(star.profile['logRho'][::-1])  # cell density
-    angular_frequency_all = star.profile['omega'][::-1]  # cell angular freq.
+    enclosed_mass_all = star.profile['mass'][::-1] * Mo # cell outer total mass
+    radius_all = star.profile['radius'][::-1] * Ro      # cell outer radius
+    density_all = 10**(star.profile['logRho'][::-1])    # cell density
+    angular_frequency_all = star.profile['omega'][::-1] # cell angular freq.
     if 'he4' in star.profile.dtype.names:
-        # he3_all = star.profile['he3'][::-1]  # he4 mass fraction
-        he4_all = star.profile['he4'][::-1]  # he4 mass fraction
-        he3_all = np.zeros(len(enclosed_mass_all))  # ENHANCEMENT support he3
+        he4_all = star.profile['he4'][::-1]             # he4 mass fraction
     else:
         he4_all = np.zeros(len(enclosed_mass_all))
+    if 'he3' in star.profile.dtype.names:
+        he3_all = star.profile['he3'][::-1]             # he3 mass fraction
+    else:
         he3_all = np.zeros(len(enclosed_mass_all))
 
     # cut the ejected layers of the profile due to the SN event:
@@ -341,46 +362,56 @@ def do_core_collapse_BH(star,
 
     Returns
     -------
-    M_BH_total : float
-        Mass of the final BH in M_sun.
-    a_BH_total : float
-        Dimensionless spin of the final BH.
-    M_BH_array : array floats
-        BH mass evelution in g.
-    a_BH_array : array floats
-        Dimensionless spin evolution.
-
-    J_accreted_array : array floats
-        Angular momentum accreted from a given shell by the BH in CGS units.
-    J_total_array : array floats
-        Total angular momentum in accreted shells plus BH's initial angular
-        momentum in CGS units.
-    J_disk_shell_array : array floats
-        Angular momentum accreted from the shell's part collapsing to form a
-        disk in CGS units.
-    radiation_eff_array : array floats
-        Fraction of accretion disk radiated away, this is one minus accretion
-        efficiency.
-    r_isco_array : array floats
-        Radius of the innermost stable circular orbit in cm.
-    j_isco_array : array floats
-        Specific angular momentum at the innermost stable circular orbit in
-        CGS.
-    M_direct_collapse_array : array floats
-        Cumulative mass accreted through direct collapse in g.
-    M_disk_array : array floats
-        Cumulative mass accreted thorugh the disk in g.
-    dm_direct_array : array floats
-        Shell's mass accreted through direct collapse in g.
-    dm_disk_array : array floats
-        Shell's mass accreted thorugh the disk in g.
-    j_shell_array : array floats
-        Shell's specific angular momentum in CGS.
-    M_total_array : array floats
-        Cumulative mass of shells and initial BH in g.
-    a_star_array : array floats
-        Dimensionless spin parameter of the star.
-
+    core_collapse_results : dict
+        A dictionary containing the following keys:
+        'M_BH_total' : float
+            The mass of the final BH in M_sun.
+        'a_BH_total' : float
+            The dimensionless spin of the final BH.
+        'm_disk_accreted' : float
+            The mass of the disk accreted by the BH in M_sun.
+        'm_disk_radiated' : float
+            The mass of the disk radiated away in M_sun.
+        'BZ_jet_power_total' : float
+            The total Blandford-Znajek jet power in erg/s.
+            
+        # Additional keys that are not used in the current implementation:
+        # 'BZ_jet_power_array' : np.array(BZ_jet_power_array),
+        #       Blandford-Znajek jet power at each shell collapse in erg/s
+        # 'M_BH_array' : np.array(M_BH_array)
+        #       BH mass evolution in g
+        # 'a_BH_array': np.array(a_BH_array)
+        #       Dimensionless spin evolution
+        # 'J_accreted_array': np.array(J_accreted_array)
+        #       Angular momentum accreted from a given shell by the BH in CGS units.
+        # 'J_total_array': np.array(J_total_array)
+        #       Total angular momentum in accreted shells + BH's initial J
+        # 'J_disk_shell_array': np.array(J_disk_shell_array)
+        #       Angular momentum accreted from the shell's part collapsing to form a
+        #       disk in CGS units.
+        # 'radiation_eff_array': np.array(radiation_eff_array)
+        #       Fraction of accretion disk radiated away, this is one minus accretion
+        #       efficiency.
+        # 'r_isco_array': np.array(r_isco_array)
+        #       Radius of the innermost stable circular orbit in cm.
+        # 'j_isco_array': np.array(j_isco_array)
+        #       Specific angular momentum at ISCO (prograde orbits) in CGS.
+        # 'M_direct_collapse_array': np.array(M_direct_collapse_array)
+        #       Cumulative mass accreted through direct collapse in g.
+        # 'M_disk_array': np.array(M_disk_array)
+        #       Cumulative mass accreted through the disk in g.
+        # 'dm_direct_array': np.array(dm_direct_array)
+        #       Mass in shell with j < j_isco (direct collapse) in g
+        # 'dm_disk_array': np.array(dm_disk_array)
+        #       Mass in shell with j > j_isco (forms a disk) in g
+        # 'j_shell_array': np.array(j_shell_array)
+        #       Shell's specific angular momentum in CGS
+        # 'M_total_array': np.array(M_total_array)
+        #       Integrated mass (shells + initial BH) in g
+        # 'a_star_array': np.array(a_star_array)
+        #       Star's spin parameter
+        # 'max_he_mass_ejected': max_he_mass_ejected
+        #       Max He mass that can be ejected during the disk formation
     """
     # convert to CGS units
     G = const.standard_cgrav
@@ -452,7 +483,8 @@ def do_core_collapse_BH(star,
     j_shell_array = [j_shells[0]]  # shell's specific angular momentum
     a_star_array = [a_BH]  # star's spin parameter
     J_disk_shell_array = [0.]  # angular momentum of the shell's disk
-
+    BZ_jet_power_array = [0.]
+    BZ_jet_power_total = 0.
     # compute BH properties as each shell collapses
     for i, value in enumerate(dm):
 
@@ -573,6 +605,16 @@ def do_core_collapse_BH(star,
             raise ValueError(
                 "We got a={:.5g} from shell {} containing {:.5g} M_sun".format(
                     a_BH, i, dm_shell / Mo))
+               
+        # calculate the potential BZ jet power at this moment of the collapse
+        # We assume full efficiency for the magnetic flux and a BH spin
+        # dependence of a^2 for the BH spin efficiency.
+        # just an energy total per collapse step.
+        BZ_power = BZ_jet_power(M_dot=dm_disk,
+                     eta_phi=1,
+                     eta_a=a_BH**2)
+        BZ_jet_power_array.append(BZ_power)
+        BZ_jet_power_total += BZ_power
 
         # Append all quantities to the arrays
         J_accreted_array.append(J_BH)
@@ -639,3 +681,36 @@ def do_core_collapse_BH(star,
         # np.array(a_star_array),
         # max_he_mass_ejected,
     ]
+
+
+def BZ_jet_power(M_dot, eta_phi, eta_a):
+    """Compute the Blandford-Znajek jet power.
+
+    This function computes the Blandford-Znajek jet power given the mass
+    accretion, the efficiency factor for the magnetic flux, and the
+    efficiency factor for the BH spin.
+    This is based on the decomposition of the jet power in terms of the
+    magnetic flux and the BH spin, see Gottlieb et al. (2023, 2024).
+    We do not assume any disk state in this calculation, i.e. 
+    magnetically arrested disk (MAD), Neutrino dominated accretion flow (NDAF),
+    or advection dominated accretion flow (ADAF).
+    However, the functions for eta_phi and eta_a can be dependent on the disk 
+    type. Moreover, the efficiency factors are not constant and 
+    can change with the magnetic field and BH spin.
+
+    Parameters
+    ----------
+    M_dot : float
+        Mass accretion rate in g.
+    eta_phi : float
+        Efficiency factor for the magnetic flux.
+    eta_a : float
+        Efficiency factor for the BH spin.
+    
+    Returns
+    -------
+    P_jet : float
+        Blandford-Znajek jet power in erg.
+    """
+    P_jet = M_dot * const.clight**2 * eta_phi * eta_a # erg
+    return P_jet
