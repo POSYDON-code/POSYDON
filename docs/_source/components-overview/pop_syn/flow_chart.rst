@@ -8,7 +8,7 @@ important building blocks of POSYDON, such that it is featured in the
 center of the POSYDON logo. The ``flow_chart`` object maps the evolution of a 
 ``BinaryStar`` object to its corresponding evolutionary step.
 
-To use the ``flow_chart`` object, import it using:
+To use the ``flow_chart`` object, import it with:
 
 .. code-block:: python
 
@@ -152,7 +152,7 @@ providing a desired metallicity to evolve our binary with:
 
 At this point, we would be ready to simulate our binary at solar metallicity, 
 however, let's modify the flow first. The ``population_params.ini`` loads the 
-default POSYDON flow chart by default. You can access it via 
+default POSYDON flow chart by default. You can access it with: 
 
 .. code-block:: python
 
@@ -190,7 +190,7 @@ the HMS-HMS, detached ZAMS state (which is often the first step of
 evolution that a binary will go through). Normally, this state is 
 mapped to ``step_HMS_HMS`` (as in the ``EXAMPLE_ITEM`` above), 
 which will be evolved using the MESA grids. Let's set this to map 
-to ``step_detached`` instead. You can do that like this:
+to ``step_detached`` instead:
 
 .. code-block:: python
 
