@@ -836,7 +836,7 @@ Saving Output
 -------------
 
 You can decide on your own output parameters for the population file.
-The data is split in two different tables: the ``history`` table and the ``oneline`` table.
+The data are split in two different tables: the ``history`` table and the ``oneline`` table.
 
 The ``history`` table contains values that change throughout the evolution of the system, 
 while the ``oneline`` table contains values that are constant throughout the evolution of the system or only occur once.
