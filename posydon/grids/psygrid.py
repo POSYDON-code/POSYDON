@@ -213,6 +213,7 @@ from posydon.grids.downsampling import TrackDownsampler
 from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
 from posydon.utils.ignorereason import IgnoreReason
 from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
+from posydon.utils.posydonerror import POSYDONError, GridError
 
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
@@ -266,7 +267,7 @@ DEFAULT_STAR_HISTORY_COLS = [
     "radius_conv_reg_fortides",
     "lambda_CE_1cent", "lambda_CE_10cent", "lambda_CE_30cent",
     "co_core_mass", "co_core_radius", "lambda_CE_pure_He_star_10cent",
-    "log_L_div_Ledd"
+    "log_L_div_Ledd", "total_mass_h1", "total_mass_he4"
 ]
 
 DEFAULT_SINGLE_HISTORY_COLS = (["model_number", "star_age", "star_mass"]
@@ -326,7 +327,7 @@ EXTRA_COLS_DS_EXCLUDE = [
     't_sync_conv_1', 't_sync_conv_2', 't_sync_rad_1', 't_sync_rad_2',
     'thickness_conv_reg_fortides', 'trap_radius', 'x_mass_fraction_H',
     'xfer_fraction', 'y_mass_fraction_He', 'z_mass_fraction_metals',
-    'log_L_div_Ledd'
+    'log_L_div_Ledd', 'total_mass_h1', 'total_mass_he4'
 ]
 
 
@@ -372,9 +373,9 @@ class PSyGrid:
 
         Parameters
         ----------
-        verbose : bool
+        verbose : bool (default: False)
             If `True`, the objects reports by printing to standard output.
-        path : str or None
+        path : str or None (default: None)
             If not None, it is the path of the HDF5 file to be loaded.
 
         """
@@ -397,6 +398,7 @@ class PSyGrid:
         self.eeps = None
 
     def _make_compression_args(self):
+        """Convert compression information from the config."""
         if "compression" not in self.config:
             self.compression_args = {}
             return
@@ -421,6 +423,15 @@ class PSyGrid:
         self.compression_args = compression_args
 
     def _discover_eeps(self, path):
+        """Search for EEP files and remember found ones.
+
+        Parameters
+        ----------
+        path : str
+            It is the path of the base directory to start the search for EEP
+            files.
+
+        """
         self.eeps = {}
         for extension in EEP_FILE_EXTENSIONS:
             searchfor = os.path.join(path, "*" + extension)
@@ -433,17 +444,32 @@ class PSyGrid:
             self.eeps = None
 
     def _say(self, something):
+        """Print text if verbose is True.
+
+        Parameters
+        ----------
+        something : str
+            The printed text.
+
+        """
         if self.verbose:
             print(something, flush=True)
 
     def generate_config(self, **grid_kwargs):
-        """Store the grid's configuration in a ConfigFile object."""
+        """Store the grid's configuration in a ConfigFile object.
+
+        Parameters
+        ----------
+        **grid_kwargs : dict
+            Keyword arguments to overwrite default GRIDPROPERTIES.
+
+        """
         self.config = ConfigFile()
 
         for key in grid_kwargs:
             if key not in GRIDPROPERTIES:
-                raise ValueError("`{}` is not a valid parameter name.".
-                                 format(key))
+                raise KeyError("`{}` is not a valid parameter name.".
+                               format(key))
 
         new_dict = {}
         for varname in GRIDPROPERTIES:
@@ -461,19 +487,22 @@ class PSyGrid:
         ----------
         MESA_grid_path : str
             The path of the top directory where the input grid is located.
-        psygrid_path : str
+        psygrid_path : str or None (default: None)
             The path of the HDF5 file to be created (or overwritten). If not
             provided, it is assumed that it was defined during initialization.
-        overwrite : bool
+        overwrite : bool (default: False)
             Whether to overwrite the HDF5 file if it already exists.
-        slim : bool
+        slim : bool (default: False)
             If `True`, only the metadata and initial/final values are stored.
-        warn : str
+        warn : str (default: 'end')
             How warnings are handled. If "normal", then warnings are shown when
             they occur. If "end", they are collected and shown at the end. If
             "suppress", then warnings are not shown at all.
+        fmt : str (default: 'posydon')
+            Format specifier. Linked to data-types, filename conventions, etc.
+            passed to GridReader
         **grid_kwargs : dict
-            Configuration of the new grid, passed as ddditional arguments.
+            Configuration of the new grid, passed as additional arguments.
 
         """
         self._reset()
@@ -485,7 +514,7 @@ class PSyGrid:
             self.filepath = psygrid_path
 
         if self.filepath is None:
-            ValueError("The path of the HDF5 file was not defined.")
+            raise ValueError("The path of the HDF5 file was not defined.")
 
         # Create the output directory if it doesn't exist
         dirpath = os.path.dirname(self.filepath)
@@ -499,7 +528,8 @@ class PSyGrid:
 
         # if already exists, am I allowed to overwrite?
         if not overwrite and os.path.exists(self.filepath):
-            raise Exception("File {} already exists.".format(self.filepath))
+            raise FileExistsError("File {} already exists.".format(
+                                  self.filepath))
 
         # open the HDF5 file and transcribe the grid
         driver_args = {} if "%d" not in self.filepath else {
@@ -518,7 +548,6 @@ class PSyGrid:
                     else:
                         # for consistency
                         assert warn == "end"
-                    
 
         self.load()
 
@@ -529,10 +558,13 @@ class PSyGrid:
         ----------
         MESA_path : str
             The path of the directory with the MESA runs.
-        overwrite : bool
-            Whether existing HDF5 file can be overwritten.
-        slim : bool
+        hdf5 : h5py.File object
+            Object containing an open hdf5 file.
+        slim : bool (default: False)
             Whether to include runs' history/profile data in the HDF5 file.
+        fmt : str (default: 'posydon')
+            Format specifier. Linked to data-types, filename conventions, etc.
+            passed to GridReader
 
         """
         outpath = self.filepath
@@ -548,8 +580,8 @@ class PSyGrid:
             if binary_grid:
                 Pwarn("Selected EEPs, switching to single-star grid.",
                       "ReplaceValueWarning")
-                self.config["binary"] = True
-                binary_grid = True
+                self.config["binary"] = False
+                binary_grid = False
             self._discover_eeps(eep)
 
         # prepare for loss-less compression
@@ -561,7 +593,7 @@ class PSyGrid:
 
         # Determine expected number of runs (may not be as many in the end)
         N_runs = len(grid.runs)
-        if not self.config['max_number_of_runs'] is None:
+        if not self.config['max_number_of_runs'] is None: # pragma: no cover
             N_runs = min(N_runs, self.config['max_number_of_runs'])
 
         # Decide on the columns to be included
@@ -576,7 +608,7 @@ class PSyGrid:
                 if isinstance(inconfig, tuple):
                     return list(inconfig)
                 return join_lists(defaults, inconfig)
-            raise Exception("{} setting not recognized.".format(key_in_config))
+            raise ValueError("{} setting not recognized.".format(key_in_config))
 
         if binary_grid:
             H1_DEFAULTS = DEFAULT_STAR_HISTORY_COLS
@@ -601,8 +633,8 @@ class PSyGrid:
         all_history_columns = grid.infer_history_columns(
             BH_columns, H1_columns, H2_columns)
         if len(all_history_columns) == 0:
-            raise Exception("PSyGrid object cannot be created: "
-                            "No history data in all runs.")
+            raise FileNotFoundError("PSyGrid object cannot be created: "
+                                    "No history data in all runs.")
 
         self._say("Preparing initial/final_values arrays.")
         initial_value_columns = all_history_columns.copy()
@@ -652,7 +684,7 @@ class PSyGrid:
             self._say('Processing {}'.format(run.path))
 
             # Restrict number of runs if limit is set inside config
-            if self.config['max_number_of_runs'] is not None:
+            if self.config['max_number_of_runs'] is not None: # pragma: no cover
                 if run_index == self.config['max_number_of_runs']:
                     self._say("Maximum number of runs reached.")
                     break
@@ -701,7 +733,7 @@ class PSyGrid:
                     h = history1
                 elif starID == "S2_":
                     h = history2
-                else:
+                else: # pragma: no cover
                     h = None
                 i_He_depl = -1
                 for col in EXTRA_STAR_COLS_AT_HE_DEPLETION:
@@ -720,7 +752,7 @@ class PSyGrid:
                 # read the model numbers and ages from the histories
                 colname = "model_number"
                 if history1 is not None:
-                    if colname in H1_columns:
+                    if ((H1_columns is not None) and (colname in H1_columns)):
                         history1_mod = np.int_(history1[colname].copy())
                     else:
                         history1_mod = read_MESA_data_file(run.history1_path,
@@ -729,18 +761,21 @@ class PSyGrid:
                             history1_mod = np.int_(history1_mod[colname])
                     if history1_mod is not None:
                         len_diff = len(history1)-len(history1_mod)
-                        if len_diff<0: #shorten history1_mod
+                        if len_diff<0:
+                            #shorten history1_mod
                             history1_mod = history1_mod[:len_diff]
                             Pwarn("Reduce mod in {}\n".format(run.history1_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend history1_mod
+                        elif len_diff>0:
+                            #extend history1_mod
                             add_mod = np.full(len_diff,history1_mod[-1])
                             history1_mod = np.concatenate((history1_mod, add_mod))
                             Pwarn("Expand mod in {}\n".format(run.history1_path),
                                   "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_history1"
-                    if "star_age" in H1_columns:
+                    if ((H1_columns is not None) and
+                        ("star_age" in H1_columns)):
                         history1_age = history1["star_age"].copy()
                     else:
                         history1_age = read_MESA_data_file(run.history1_path,
@@ -749,11 +784,13 @@ class PSyGrid:
                             history1_age = history1_age["star_age"]
                     if history1_age is not None:
                         len_diff = len(history1)-len(history1_age)
-                        if len_diff<0: #shorten history1_age
+                        if len_diff<0:
+                            #shorten history1_age
                             history1_age = history1_age[:len_diff]
                             Pwarn("Reduce age in {}\n".format(run.history1_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend history1_age
+                        elif len_diff>0:
+                            #extend history1_age
                             add_age = np.full(len_diff,history1_age[-1])
                             history1_age = np.concatenate((history1_age, add_age))
                             Pwarn("Expand age in {}\n".format(run.history1_path),
@@ -765,7 +802,7 @@ class PSyGrid:
                     history1_age = None
 
                 if history2 is not None:
-                    if colname in H2_columns:
+                    if ((H2_columns is not None) and (colname in H2_columns)):
                         history2_mod = np.int_(history2[colname].copy())
                     else:
                         history2_mod = read_MESA_data_file(run.history2_path,
@@ -774,18 +811,21 @@ class PSyGrid:
                             history2_mod = np.int_(history2_mod[colname])
                     if history2_mod is not None:
                         len_diff = len(history2)-len(history2_mod)
-                        if len_diff<0: #shorten history2_mod
+                        if len_diff<0:
+                            #shorten history2_mod
                             history2_mod = history2_mod[:len_diff]
                             Pwarn("Reduce mod in {}\n".format(run.history2_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend history2_mod
+                        elif len_diff>0:
+                            #extend history2_mod
                             add_mod = np.full(len_diff,history2_mod[-1])
                             history2_mod = np.concatenate((history2_mod, add_mod))
                             Pwarn("Expand mod in {}\n".format(run.history2_path),
                                   "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_history2"
-                    if "star_age" in H2_columns:
+                    if ((H2_columns is not None) and
+                        ("star_age" in H2_columns)):
                         history2_age = history2["star_age"].copy()
                     else:
                         history2_age = read_MESA_data_file(run.history2_path,
@@ -794,11 +834,13 @@ class PSyGrid:
                             history2_age = history2_age["star_age"]
                     if history2_age is not None:
                         len_diff = len(history2)-len(history2_age)
-                        if len_diff<0: #shorten history2_age
+                        if len_diff<0:
+                            #shorten history2_age
                             history2_age = history2_age[:len_diff]
                             Pwarn("Reduce age in {}\n".format(run.history2_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend history2_age
+                        elif len_diff>0:
+                            #extend history2_age
                             add_age = np.full(len_diff,history2_age[-1])
                             history2_age = np.concatenate((history2_age, add_age))
                             Pwarn("Expand age in {}\n".format(run.history2_path),
@@ -810,7 +852,7 @@ class PSyGrid:
                     history2_age = None
 
                 if binary_history is not None:
-                    if colname in BH_columns:
+                    if ((BH_columns is not None) and (colname in BH_columns)):
                         binary_history_mod = np.int_(binary_history[colname].copy())
                     else:
                         binary_history_mod = read_MESA_data_file(
@@ -819,18 +861,20 @@ class PSyGrid:
                             binary_history_mod = np.int_(binary_history_mod[colname])
                     if binary_history_mod is not None:
                         len_diff = len(binary_history)-len(binary_history_mod)
-                        if len_diff<0: #shorten binary_history_mod
+                        if len_diff<0:
+                            #shorten binary_history_mod
                             binary_history_mod = binary_history_mod[:len_diff]
                             Pwarn("Reduce mod in {}\n".format(run.binary_history_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend binary_history_mod
+                        elif len_diff>0:
+                            #extend binary_history_mod
                             add_mod = np.full(len_diff,binary_history_mod[-1])
                             binary_history_mod = np.concatenate((binary_history_mod, add_mod))
                             Pwarn("Expand mod in {}\n".format(run.binary_history_path),
                                   "ReplaceValueWarning")
                     else:
                         ignore.reason = "corrupted_binary_history"
-                    if "age" in BH_columns:
+                    if ((BH_columns is not None) and ("age" in BH_columns)):
                         binary_history_age = binary_history["age"].copy()
                     else:
                         binary_history_age = read_MESA_data_file(
@@ -839,11 +883,13 @@ class PSyGrid:
                             binary_history_age = binary_history_age["age"]
                     if binary_history_age is not None:
                         len_diff = len(binary_history)-len(binary_history_age)
-                        if len_diff<0: #shorten binary_history_age
+                        if len_diff<0:
+                            #shorten binary_history_age
                             binary_history_age = binary_history_age[:len_diff]
                             Pwarn("Reduce age in {}\n".format(run.binary_history_path),
                                   "ReplaceValueWarning")
-                        elif len_diff>0: #entend binary_history_age
+                        elif len_diff>0:
+                            #extend binary_history_age
                             add_age = np.full(len_diff,binary_history_age[-1])
                             binary_history_age = np.concatenate((binary_history_age, add_age))
                             Pwarn("Expand age in {}\n".format(run.binary_history_path),
@@ -909,9 +955,8 @@ class PSyGrid:
                     kept = keep_after_RLO(binary_history, history1, history2)
                     if kept is None:
                         ignore.reason = "ignored_no_RLO"
-                        if self.verbose:
-                            self._say("Ignored MESA run because of no RLO"
-                                      " in: {}\n".format(run.path))
+                        self._say("Ignored MESA run because of no RLO in:"
+                                  " {}\n".format(run.path))
                         if not initial_RLO_fix:
                             # TODO: we may want to keep these systems for
                             # allowing rerun grids to inform the old grids that
@@ -940,38 +985,26 @@ class PSyGrid:
                         ignore.reason = "ignored_no_final_profile"
                         continue
 
-            if binary_history is not None:
-                if binary_history.shape == ():  # if history is only one line
-                    initial_BH = binary_history.copy()
-                    final_BH = binary_history.copy()
-                else:
-                    # disentagle arrays with `copy` because the LHSs may change
-                    initial_BH = binary_history[0].copy()
-                    final_BH = binary_history[-1].copy()
+            if ((binary_history is not None) and (binary_history.shape != ())):
+                # disentagle arrays with `copy` because the LHSs may change
+                initial_BH = binary_history[0].copy()
+                final_BH = binary_history[-1].copy()
             else:
                 initial_BH = None
                 final_BH = None
 
-            if history1 is not None:
-                if history1.shape == ():  # if history is only one line
-                    initial_H1 = history1.copy()
-                    final_H1 = history1.copy()
-                else:
-                    # disentagle arrays with `copy` because the LHSs may change
-                    initial_H1 = history1[0].copy()
-                    final_H1 = history1[-1].copy()
+            if ((history1 is not None) and (history1.shape != ())):
+                # disentagle arrays with `copy` because the LHSs may change
+                initial_H1 = history1[0].copy()
+                final_H1 = history1[-1].copy()
             else:
                 initial_H1 = None
                 final_H1 = None
 
-            if history2 is not None:
-                if history2.shape == ():  # if history is only one line
-                    initial_H2 = history2.copy()
-                    final_H2 = history2.copy()
-                else:
-                    # disentagle arrays with `copy` because the LHSs may change
-                    initial_H2 = history2[0].copy()
-                    final_H2 = history2[-1].copy()
+            if ((history2 is not None) and (history2.shape != ())):
+                # disentagle arrays with `copy` because the LHSs may change
+                initial_H2 = history2[0].copy()
+                final_H2 = history2[-1].copy()
             else:
                 initial_H2 = None
                 final_H2 = None
@@ -991,12 +1024,14 @@ class PSyGrid:
                     initial_BH["star_1_mass"] = init_mass_1
                 else:
                     can_compute_new_separation = False
+                    ignore.reason = "corrupted_binary_history"
 
                 if "star_2_mass" in dtype_initial_values.names:
                     init_mass_2 = bh_header["initial_acc_mass"]
                     initial_BH["star_2_mass"] = init_mass_2
                 else:
                     can_compute_new_separation = False
+                    ignore.reason = "corrupted_binary_history"
 
                 if "period_days" in dtype_initial_values.names:
                     init_period = bh_header["initial_period_days"]
@@ -1018,6 +1053,8 @@ class PSyGrid:
                 if "S1_star_mass" in dtype_initial_values.names:
                     init_mass_1 = h1_header["initial_m"]
                     initial_H1["star_mass"] = init_mass_1
+                else:
+                    ignore.reason = "corrupted_history1"
 
             # get some initial values from the `LOGS1/history.data` header
             addX = "X" in dtype_initial_values.names
@@ -1123,7 +1160,7 @@ class PSyGrid:
                 for colname, value in grid_point.items():
                     if colname in self.initial_values.dtype.names:
                         self.initial_values[i][colname] = value
-                if np.isnan(self.initial_values[i]["Z"]):
+                if pd.isna(self.initial_values[i]["Z"]):
                     # try to get metallicity from directory name
                     params_from_path = initial_values_from_dirname(run.path)
                     if (len(params_from_path)==4) or\
@@ -1190,9 +1227,9 @@ class PSyGrid:
             # check that new MESA path is added at run_index
             lenMESA_dirs = len(self.MESA_dirs)
             if lenMESA_dirs!=run_index:
-                Pwarn("Non synchronous indexing: " +\
-                      "run_index={} != ".format(run_index) +\
-                      "length(MESA_dirs)={}".format(lenMESA_dirs),
+                Pwarn("Non synchronous indexing: "\
+                      +"run_index={} != ".format(run_index)\
+                      +"length(MESA_dirs)={}".format(lenMESA_dirs),
                       "InappropriateValueWarning")
 
         #general fix for termination_flag in case of initial RLO in binaries
@@ -1270,7 +1307,7 @@ class PSyGrid:
             #only use included runs with a valid index
             if run_included_at[i]>=0:
                 #check for index range
-                if run_included_at[i]>=run_index:
+                if run_included_at[i]>=run_index: # pragma no cover
                     Pwarn("run {} has a run_index out of ".format(i) +
                         "range: {}>={}".format(run_included_at[i], run_index),
                            "InappropriateValueWarning")
@@ -1280,14 +1317,14 @@ class PSyGrid:
                     if colname in self.initial_values.dtype.names:
                         value = self.initial_values[i][colname]
                         new_initial_values[run_included_at[i]][colname] = value
-                    else:
+                    else: # pragma no cover
                         new_initial_values[run_included_at[i]][colname] = np.nan
                 #copy final values or fill with nan if not existing in original
                 for colname in dtype_final_values.names:
                     if colname in self.final_values.dtype.names:
                         value = self.final_values[i][colname]
                         new_final_values[run_included_at[i]][colname] = value
-                    else:
+                    else: # pragma no cover
                         new_final_values[run_included_at[i]][colname] = np.nan
         #replace old initial/final value array
         self.initial_values = np.copy(new_initial_values)
@@ -1310,7 +1347,22 @@ class PSyGrid:
             **compression_args)
 
     def add_column(self, colname, array, where="final_values", overwrite=True):
-        """Add a new numerical column in the final values array."""
+        """Add a new numerical column in the final values array.
+
+        Parameters
+        ----------
+        colname : str
+            Name of the new column.
+        array : ndarray like
+            Data of the new column.
+        where : str (default: 'final_values')
+            Name of the element to add the column to. Currently only
+            'final_values' allowed.
+        overwrite : bool (default: True)
+            Flag, whether an existing column should be replaced or an error
+            should be raised.
+
+        """
         if not isinstance(array, np.ndarray):
             arr = np.asarray(array)
         else:
@@ -1322,12 +1374,16 @@ class PSyGrid:
         if len(self) != len(arr):
             raise ValueError("`array` has {} elements but the grid has {} runs"
                              .format(len(arr), len(self)))
+
+        if not isinstance(self.final_values, np.ndarray):
+            raise TypeError("The final values have to be a ndarray.")
+
         if colname in self.final_values.dtype.names:
             if overwrite:
                 self.final_values[colname] = arr
             else:
-                raise Exception("Column `{}` already exists in final values.".
-                                format(colname))
+                raise POSYDONError("Column `{}` already exists in final "
+                                   "values.".format(colname))
         else:
             self.final_values = add_field(self.final_values,
                                           [(colname, arr.dtype.descr[0][1])])
@@ -1337,6 +1393,9 @@ class PSyGrid:
 
     def update_final_values(self):
         """Update the final values in the HDF5 file."""
+        if not isinstance(self.final_values, np.ndarray):
+            raise TypeError("The final values have to be a ndarray.")
+
         self._reload_hdf5_file(writeable=True)
         new_dtype = []
         for dtype in self.final_values.dtype.descr:
@@ -1345,16 +1404,25 @@ class PSyGrid:
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_dtype.append(dtype)
-            if dtype[1] == np.dtype('O'):
-                print(dtype[0])
         final_values = self.final_values.astype(new_dtype)
-        del self.hdf5["/grid/final_values"]
+        if "/grid/final_values" in self.hdf5: # may delete old dataset
+            del self.hdf5["/grid/final_values"]
         self.hdf5.create_dataset("/grid/final_values", data=final_values,
                                  **self.compression_args)
-        # self.hdf5["/grid/final_values"] = final_values
         self._reload_hdf5_file(writeable=False)
 
     def _reload_hdf5_file(self, writeable=False):
+        """Close and reopen the hdf5 file.
+
+        Parameters
+        ----------
+        writeable : bool (default: False)
+            Flag, whether to open the hdf5 file in write mode or read only.
+
+        """
+        if self.filepath is None:
+            raise ValueError("The path of the HDF5 file was not defined.")
+
         driver_args = {} if "%d" not in self.filepath else {
             "driver": "family", "memb_size": HDF5_MEMBER_SIZE}
         self.close()
@@ -1366,7 +1434,7 @@ class PSyGrid:
 
         Parameters
         ----------
-        filepath : str
+        filepath : str or None (default: None)
             Location of the HDF5 file to be loaded. If not provided, assume
             it was defined during the initialization (argument: `filepath`).
 
@@ -1425,7 +1493,7 @@ class PSyGrid:
                                    format(index))
                 if index >= n_expected:
                     raise KeyError("More runs than MESA dirs? Gaps?")
-                if included[index]:
+                if included[index]: # pragma: no cover
                     raise KeyError("Duplicate key {}?".format(key))
                 included[index] = True
 
@@ -1441,11 +1509,19 @@ class PSyGrid:
     def close(self):
         """Close the HDF5 file if open."""
         if hasattr(self, "hdf5") and self.hdf5 is not None:
-            self.hdf5.close()
+            if isinstance(self.hdf5, h5py.File):
+                self.hdf5.close()
             self.hdf5 = None
 
     def __str__(self):
-        """Return the status of the PSyGrid."""
+        """Return the status of the PSyGrid.
+
+        Returns
+        -------
+        str
+            Representation of the PSyGrid.
+
+        """
         ret = "PSyGrid instance:\n"
 
         if self.filepath is None:
@@ -1540,14 +1616,35 @@ class PSyGrid:
 
         return ret
 
-    def __getitem__(self, idx):
-        """Return a PSyRunView instance for the run with index `idx`."""
-        if idx not in self:
-            raise KeyError("Index {} out of bounds.".format(idx))
-        return PSyRunView(self, idx)
+    def __getitem__(self, index):
+        """Return a PSyRunView instance for the run with index `index`.
+
+        Parameters
+        ----------
+        index: int
+            Index of a run in the PSyGrid.
+
+        Returns
+        -------
+        PSyRunView object
+            Representation of the requested run.
+
+        """
+        if not np.issubdtype(type(index), int):
+            raise TypeError("Index {} is not of type int".format(index))
+        if index not in self:
+            raise IndexError("Index {} out of bounds.".format(index))
+        return PSyRunView(self, index)
 
     def get_pandas_initial_final(self):
-        """Convert the initial/final values into a single Pandas dataframe."""
+        """Convert the initial/final values into a single Pandas dataframe.
+
+        Returns
+        -------
+        Pandas data frame
+            Containing the initial and final values.
+
+        """
         df = pd.DataFrame()
         for key in self.initial_values.dtype.names:
             new_col_name = "initial_" + key
@@ -1559,15 +1656,38 @@ class PSyGrid:
         return df
 
     def __len__(self):
-        """Return the number of runs in the grid."""
+        """Return the number of runs in the grid.
+
+        Returns
+        -------
+        int
+            Number of runs.
+
+        """
         return self.n_runs
 
     def __contains__(self, index):
-        """Return True if run with index `index` is in the grid."""
+        """Return True if run with index `index` is in the grid.
+
+        Returns
+        -------
+        bool
+            True if a run with the index is part of the PSyGrid otherwise False.
+
+        """
+        if not np.issubdtype(type(index), int):
+            raise TypeError("Index {} is not of type int".format(index))
         return 0 <= index < self.n_runs
 
     def __iter__(self):
-        """Allow iteration of runs (`for` loops, lists, sets)."""
+        """Allow iteration of runs (`for` loops, lists, sets).
+
+        Returns
+        -------
+        PSyGridIterator
+            Iterator object of the PSyGrid.
+
+        """
         return PSyGridIterator(self)
 
     def __del__(self):
@@ -1576,8 +1696,7 @@ class PSyGrid:
         self.close()
 
     def rerun(self, path_to_file='./', runs_to_rerun=None,
-                         termination_flags=None, new_mesa_flag=None,
-                         flags_to_check=None):
+              termination_flags=None, new_mesa_flag=None, flags_to_check=None):
         """Create a CSV file with the PSyGrid initial values to rerun.
 
         This methods allows you to create a CSV file with the psygrid initial
@@ -1585,20 +1704,20 @@ class PSyGrid:
 
         Parameters
         ----------
-        path_to_file : str
+        path_to_file : str (default: './')
             The path to the directory where the new `grid.csv` file will be
             saved. If the directory does not exist it will be created.
-        runs_to_rerun : list of integers
+        runs_to_rerun : list of integers or None (default: None)
             Array containing the indecies of the psygrid runs you want to rerun
             e.g., runs_to_rerun = [2,3]
-        termination_flags : str or list of str
+        termination_flags : str or list of str or None (default: None)
             The runs with this termination flag will be rerun.
             e.g. termination_flags='max_number_retries'
-        new_mesa_flag : dict
+        new_mesa_flag : dict or None (default: None)
             Dictionary of flags with their value to add as extra columns to the
             `grid.csv`. The user can specify any arbitrary amount of flags.
             e.g. new_mesa_flag = {'varcontrol_target': 0.01}
-        flags_to_check : str or list of str
+        flags_to_check : str or list of str or None (default: None)
             The key(s) of flags to check the termination_flags against.
             e.g. check_flags = 'termination_flag_1'
 
@@ -1680,7 +1799,7 @@ class PSyGrid:
                 if 'new_Z' in MESA_dir_name:
                     column_names['new_Z'] = 'Z'
             else:
-                raise Exception("No MESA dirs of previous runs in the grid.")
+                raise GridError("No MESA dirs of previous runs in the grid.")
         # getting the initial data set
         NDIG = 10 # rounding matches initial point rounding
         runs_data = {}
@@ -1695,6 +1814,9 @@ class PSyGrid:
             n_runs = 0
         # add new_mesa_flag
         if new_mesa_flag is not None:
+            if not isinstance(new_mesa_flag, dict):
+                raise TypeError("'new_mesa_flag' should be a dictionary or "
+                                "None")
             for key in new_mesa_flag.keys():
                 runs_data[key] = [new_mesa_flag[key]]*n_runs
         runs_data_frame = pd.DataFrame(runs_data)
@@ -1718,49 +1840,49 @@ class PSyGrid:
         y_var_str : str
             String of the initial value to plot on the y axis. Allowed strings
             are `psygrid.initial_values.dtype.names`.
-        z_var_str : str
+        z_var_str : str or None (default: None)
             String of the initial value to plot on the z axis (displayed as
             a color). Allowed strings are
             `psygrid.final_values.dtype.names`, `psygrid.history1.dtype.names`,
             `psygrid.binary_history.dtype.names`.
-        termination_flag : str
+        termination_flag : str (default: 'termination_flag_1')
             Termination flag to display, allowed values are:
             "termination_flag_1", "termination_flag_2", "termination_flag_3",
             "termination_flag_4", "all".
-        grid_3D : bool
+        grid_3D : bool or None (default: None)
             If `True`, the psygrid object is a 3D grid and needs to be sliced.
-        slice_3D_var_str : str
+        slice_3D_var_str : str or None (default: None)
             Variable along which the 3D space will be sliced. Allowed values
             are `psygrid.initial_values.dtype.names`.
-        slice_3D_var_range : tuple or a list of tuples
+        slice_3D_var_range : tuple or a list of tuples or None (default: None)
             Range between which you want to slice the variable slice_3D_var_str
             e.g., `(2.5,3.)`. In case of a list of tuples, one will get a large
             plot with one subplot for each tuple in the list.
-        grid_4D : bool
+        grid_4D : bool or None (default: None)
             If `True`, the psygrid object is a 4D grid and needs to be sliced.
-        slice_4D_var_str : str
+        slice_4D_var_str : str or None (default: None)
             Variable along which the 4D space will be sliced. Allowed values
             are `psygrid.initial_values.dtype.names`.
-        slice_4D_var_range : tuple or a list of tuples
+        slice_4D_var_range : tuple or a list of tuples or None (default: None)
             Range between which you want to slice the variable slice_4D_var_str
             e.g., `(2.5,3.)`. In case of a list of tuples, one will get a large
             plot with one subplot for each tuple in the list.
-        extra_grid : object or array of objects
+        extra_grid : object or array of objects or None (default: None)
             If subset of the grid was rerun a or an extention was added, one
             can overlay the new psygrid by passing it here.
-        slice_at_RLO : bool
+        slice_at_RLO : bool (default: False)
             If `True`, the object plots the tracks until onset of Roche Lobe
             overflow.
-        MARKERS_COLORS_LEGENDS : dict
+        MARKERS_COLORS_LEGENDS : dict or None (default: None)
             Each termination flag is associated with a marker shape, size,
             color and label (cf. `MARKERS_COLORS_LEGENDS` in
             `plot_defaults.py`).
-        max_cols : int
+        max_cols : int (default: 3)
             Defines the maximum number of columns of subplots. Default: 3
-        legend_pos : SubplotSpec (int or tuple)
+        legend_pos : SubplotSpec: int or tuple (default: (3,3))
             Defines which subplots won't contain an axis but are used to
             display the legend there. Default: (3, 3)
-        verbose : bool
+        verbose : bool (default: False)
             If `True`, the object reports by printing to standard output.
         **kwargs : dict
             Dictionary containing extra visualisation options (cf.
@@ -1803,14 +1925,14 @@ class PSyGrid:
             String or list of stringvalues to plot on the y axis. Allowed
             strings are the one in `psygrid.history.dtype.names` where
             "history" needs to be chosen accordingly.
-        z_var_str : str
+        z_var_str : str or None (default: None)
             String of values to plot on the z axis (displayed with a color).
             Allowed strings are the one in `psygrid.history.dtype.names` where
             "history" needs to be chosen accordingly.
-        history : str
+        history : str (default: 'binary_history')
             The x, y, z variables are read from either: "binary_history",
             "history1", "history2".
-        verbose : bool
+        verbose : bool (default: False)
             If `True`, the object reports by printing to standard output.
         **kwargs : dict
             Dictionary containing extra visualisation options
@@ -1824,7 +1946,7 @@ class PSyGrid:
         elif isinstance(idx, int):
             runs = [self[idx]]
         else:
-            raise ValueError('Invalid idx = {}!'.format(idx))
+            raise TypeError('Invalid idx = {}!'.format(idx))
 
         plot = plot1D(run=runs,
                       x_var_str=x_var_str,
@@ -1844,12 +1966,12 @@ class PSyGrid:
         ----------
         idx : int or list of int
             Index or indices of runs to plot.
-        history : str
+        history : str (default: 'history1')
             Which history is going to be used. The options are:
             "binary_history", "history1", or "history2".
-        states : bool
+        states : bool (default: False)
             If true the HR diagram shows the stellar state with a color map.
-        verbose : bool
+        verbose : bool (default: False)
             If `True`, the object reports by printing to standard output.
         **kwargs : dict
             Dictionary containing extra visualisation options
@@ -1863,7 +1985,7 @@ class PSyGrid:
         elif isinstance(idx, int):
             runs = [self[idx]]
         else:
-            raise ValueError('Invalid idx = {}!'.format(idx))
+            raise TypeError('Invalid idx = {}!'.format(idx))
 
         if states:
             from posydon.binary_evol.singlestar import SingleStar
@@ -1886,7 +2008,21 @@ class PSyGrid:
         plot()
 
     def __eq__(self, other, verbose=True):
-        """Check the equality (in terms of the data) of two PSyGrid objects."""
+        """Check the equality (in terms of the data) of two PSyGrid objects.
+
+        Parameters
+        ----------
+        other : PSyGrid
+            PSyGrid to compare to.
+        verbose : bool (default: False)
+            If `True`, the object reports by printing to standard output.
+
+        Returns
+        -------
+        bool
+            True if all checks passed otherwise False.
+
+        """
         def say(msg):
             if verbose:
                 print("COMPARISON:", msg)
@@ -1898,6 +2034,7 @@ class PSyGrid:
         if len(self) != len(other):
             say("The grids do not contain the same number of runs ({} != {})".
                 format(len(self), len(other)))
+            return False
 
         for prop in PROPERTIES_TO_BE_CONSISTENT:
             val1, val2 = self.config[prop], other.config[prop]
@@ -1917,8 +2054,6 @@ class PSyGrid:
             arr1, arr2 = getattr(self, tablename), getattr(other, tablename)
             columns1, columns2 = arr1.dtype.names, arr2.dtype.names
 
-            if np.all(arr1 == arr2):
-                continue
             if len(columns1) != len(columns2):
                 say("Number of columns in `{}` do not match ({} != {})".
                     format(tablename, len(columns1), len(columns2)))
@@ -1934,10 +2069,11 @@ class PSyGrid:
                 if len(data1) != len(data2):
                     say("Column `{}` in `{}` not of same length.".
                         format(colname, tablename))
+                    return False
                 if np.any(data1 != data2):
                     for val1, val2 in zip(data1, data2):
-                        if ((val1 == val2) or (val1 is None and val2 is None)
-                                or (np.isnan(val1) and np.isnan(val2))):
+                        if ((val1 == val2) or (pd.isna(val1)
+                                               and pd.isna(val2))):
                             continue
                         say("Column `{}` in `{}` is not the same ({} != {}).".
                             format(colname, tablename, val1, val2))
@@ -1954,9 +2090,10 @@ class PSyGrid:
                     say("Table `{}` for run `{}` missing in {} grid.".
                         format(tablename, i, which))
                     return False
-                if np.all(arr1 != arr2):
+                if np.any(arr1 != arr2):
                     say("Table `{}` for run `{}` is not the same.".
                         format(tablename, i))
+                    return False
 
         return True
 
@@ -1965,12 +2102,25 @@ class PSyGridIterator:
     """Class for iterating runs (i.e., PSyRunView instances) in a PSyGrid."""
 
     def __init__(self, grid):
-        """Initialize by pointing to the PSyGrid object."""
+        """Initialize by pointing to the PSyGrid object.
+
+        Parameters
+        ----------
+        grid : PSyGrid
+            PSyGrid to iterate over.
+
+        """
         self._grid = grid
         self._index = 0
 
     def __next__(self):
-        """Return current run and move to the next."""
+        """Return current run and move to the next.
+
+        Returns
+        -------
+            Current run.
+
+        """
         if self._index >= len(self._grid):
             raise StopIteration
         item = self._grid[self._index]
@@ -1996,15 +2146,43 @@ class PSyRunView:
     """
 
     def __init__(self, psygrid, run_index):
-        """Initialize by linking to a PSyGrid object and setting run index."""
+        """Initialize by linking to a PSyGrid object and setting run index.
+
+        Parameters
+        ----------
+        psygrid : PSyGrid
+            PSyGrid to iterate over.
+        run_index : int
+            Index of the viewed run.
+
+        """
         self.psygrid = psygrid
         self.index = run_index
 
     def _hdf5_key(self):
+        """Return the name of the group in the hdf5 file.
+
+        Returns
+        -------
+        str
+            The name of the hdf5 group.
+
+        """
         return "/grid/run{}".format(self.index)
 
     def __getitem__(self, key):
-        """Get a table for a specific run using its name as in ["name"]."""
+        """Get a table for a specific run using its name as in ["name"].
+
+        Parameters
+        ----------
+        key : str
+            Name of the dataset inside the hdf5 group.
+
+        Returns
+        -------
+            Content of the dataset.
+
+        """
         if key not in VALID_KEYS:
             raise KeyError("Key {} not in list of valid keys.".format(key))
 
@@ -2015,22 +2193,41 @@ class PSyRunView:
 
         hdf5 = self.psygrid.hdf5
         if hdf5 is None:
-            raise Exception("The HDF5 file is not open.")
+            raise IOError("The HDF5 file is not open.")
         fullkey = self._hdf5_key() + "/" + key
         try:
             return hdf5[fullkey][()]
         except KeyError:
             if key in VALID_KEYS:  # key is valid, so the data is just missing
                 return None
-            raise KeyError("There is no key '{}' in '{}'".
-                           format(fullkey, self.psygrid.filepath))
+            else: # pragma: no cover
+                raise KeyError("There is no key '{}' in '{}'".
+                               format(fullkey, self.psygrid.filepath))
 
     def __getattr__(self, key):
-        """Enable the ability of using `.table1` instead of ["table1"]."""
+        """Enable the ability of using `.table1` instead of ["table1"].
+
+        Parameters
+        ----------
+        key : str
+            Name of the dataset inside the hdf5 group.
+
+        Returns
+        -------
+            Content of the dataset.
+
+        """
         return self[key]
 
     def __str__(self):
-        """Return a summary of the PSyRunView in a string."""
+        """Return a summary of the PSyRunView in a string.
+
+        Returns
+        -------
+        str
+            Representation of the Runview.
+
+        """
         return "View of the run {} in the file '{}' at key '{}'".format(
             self.index, self.psygrid.filepath, self._hdf5_key())
 
@@ -2070,7 +2267,7 @@ def downsample_history(bh, h1, h2, params):
                 number_of_rows = len(history_table)
             else:
                 if len(history_table) != number_of_rows:
-                    raise Exception("Unequal numbers of rows in histories.")
+                    raise IndexError("Unequal numbers of rows in histories.")
 
             for column_name in history_table.dtype.names:
                 if column_name not in exclude:
@@ -2160,7 +2357,22 @@ ALL_PROPERTIES = (list(PROPERTIES_ALLOWED.keys()) + PROPERTIES_TO_BE_CONSISTENT
 
 def join_grids(input_paths, output_path,
                compression="gzip9", description="joined", verbose=True):
-    """Join two or more PSyGrid HDF5 files into one."""
+    """Join two or more PSyGrid HDF5 files into one.
+
+    Parameters
+    ----------
+    input_paths : str or list of str
+        The path to the grid files to be joined.
+    output_path : str
+        Path of the new grid file with the joined gird.
+    compression : str (default: 'gzip9')
+        Compression details.
+    description : str (default: 'joined')
+        Desciption of the new joined gird.
+    verbose : bool (default: True)
+        If `True`, the objects reports by printing to standard output.
+
+    """
     def say(something):
         if verbose:
             print(something)
@@ -2190,12 +2402,12 @@ def join_grids(input_paths, output_path,
             for prop in PROPERTIES_TO_BE_CONSISTENT:
                 newvalue, curvalue = newconfig[prop], curconfig[prop]
                 if newvalue != curvalue:
-                    raise Exception("Inconsistent value for `{}`: {} != {}".
-                                    format(prop, curvalue, newvalue))
+                    raise ValueError("Inconsistent value for `{}`: {} != {}".
+                                     format(prop, curvalue, newvalue))
             if initial_dtype != grid.initial_values.dtype:
-                raise Exception("Initial values dtype's do not match.")
+                raise TypeError("Initial values dtype's do not match.")
             if final_dtype != grid.final_values.dtype:
-                raise Exception("Final values dtype's do not match.")
+                raise TypeError("Final values dtype's do not match.")
         grids.append(grid)
 
     say("Finalizing grid properties...")
@@ -2225,13 +2437,13 @@ def join_grids(input_paths, output_path,
             if params_from_path in initial_params:
                 n_substitutions += 1
 
-            initial_params[params_from_path] = (grid_index, run_index)
-
             if (grid[run_index].final_values["termination_flag_1"]
                     == "ignored_no_RLO"):
                 if params_from_path in initial_params:
                     del initial_params[params_from_path]
                 n_ignored_noRLO += 1
+            else:
+                initial_params[params_from_path] = (grid_index, run_index)
 
     say("    {} substitutions detected.".format(n_substitutions))
     if newconfig["start_at_RLO"]:

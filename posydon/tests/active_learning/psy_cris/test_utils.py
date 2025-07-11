@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 import pandas as pd
 import os
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 
 from posydon.active_learning.psy_cris.utils import (
     parse_inifile,

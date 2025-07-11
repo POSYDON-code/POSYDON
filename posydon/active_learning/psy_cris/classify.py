@@ -376,7 +376,7 @@ class Classifier:
         which is useful for finding good or bad values.
 
         """
-        bool_row_index_where_nan = np.isnan(trans_probs.T[0])
+        bool_row_index_where_nan = pd.isna(trans_probs.T[0])
         # where_nan = np.where(bool_row_index_where_nan)[0]
         where_not_nan = np.where(~bool_row_index_where_nan)[0]
         # how_many_rows = len(trans_probs.T[0])
