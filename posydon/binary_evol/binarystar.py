@@ -202,7 +202,6 @@ class BinaryStar:
             self.properties = properties
         else:
             self.properties = SimulationProperties()
-        
 
     def evolve(self):
         """Evolve a binary from start to finish."""

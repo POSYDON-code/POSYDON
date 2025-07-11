@@ -347,6 +347,7 @@ class MesaGridStep:
                                       track_interpolation=True)
         else:
             self.step(binary, interp_method=self.interpolation_method)
+
         if (self.stop_method == 'stop_at_max_time'
                 and binary.time >= binary.properties.max_simulation_time):
 
@@ -1342,14 +1343,6 @@ class CO_HMS_RLO_step(MesaGridStep):
                          grid_name=grid_name,
                          *args, **kwargs)
 
-        # load grid boundaries
-        self.m1_min = min(self._psyTrackInterp.grid.initial_values['star_1_mass'])
-        self.m1_max = max(self._psyTrackInterp.grid.initial_values['star_1_mass'])
-        self.m2_min = min(self._psyTrackInterp.grid.initial_values['star_2_mass'])
-        self.m2_max = max(self._psyTrackInterp.grid.initial_values['star_2_mass'])
-        self.p_min = min(self._psyTrackInterp.grid.initial_values['period_days'])
-        self.p_max = max(self._psyTrackInterp.grid.initial_values['period_days'])
-
     def __call__(self, binary):
         """Evolve a binary using the MESA step."""
         # grid set up assume CO is star_2
@@ -1450,8 +1443,6 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return
 
-class CO_HeMS_RLO_step(MesaGridStep):
-    """Class for performing the MESA step for a CO-HeMS_RLO binary."""
 
 class CO_HeMS_RLO_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HeMS_RLO binary."""
@@ -1581,14 +1572,6 @@ class CO_HeMS_step(MesaGridStep):
         super().__init__(metallicity=metallicity,
                          grid_name=grid_name,
                          *args, **kwargs)
-
-        # load grid boundaries
-        self.m1_min = min(self._psyTrackInterp.grid.initial_values['star_1_mass'])
-        self.m1_max = max(self._psyTrackInterp.grid.initial_values['star_1_mass'])
-        self.m2_min = min(self._psyTrackInterp.grid.initial_values['star_2_mass'])
-        self.m2_max = max(self._psyTrackInterp.grid.initial_values['star_2_mass'])
-        self.p_min = min(self._psyTrackInterp.grid.initial_values['period_days'])
-        self.p_max = max(self._psyTrackInterp.grid.initial_values['period_days'])
 
     def __call__(self, binary):
         """Apply the CO_HeMS step to a BinaryStar object."""

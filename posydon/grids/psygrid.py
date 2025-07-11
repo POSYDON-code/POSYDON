@@ -1404,8 +1404,6 @@ class PSyGrid:
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
             new_dtype.append(dtype)
-            if dtype[1] == np.dtype('O'):
-                print(dtype[0])
         final_values = self.final_values.astype(new_dtype)
         if "/grid/final_values" in self.hdf5: # may delete old dataset
             del self.hdf5["/grid/final_values"]

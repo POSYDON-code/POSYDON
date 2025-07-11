@@ -80,12 +80,6 @@ STAR_STATES_H_RICH = [
     'accreted_He_non_burning'
 ]
 
-'''
-STAR_STATES_CO = ['BH',
-                  'NS',
-                  'WD',
-                  ]
-'''
 
 DEFAULT_TRANSLATION = {
     "time": "time",
