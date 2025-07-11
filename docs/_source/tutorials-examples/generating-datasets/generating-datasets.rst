@@ -17,7 +17,7 @@ Dive into our Jupyter Notebook that will show you how to create a MESA PSyGrid d
     
     just_step_1
 
-To learn more about the PSyGrid object or the Processing Pipeline API ini file, check out the [API Documentation](api.rst).
+To learn more about the :ref:`PSyGrid object <mesa-grids-api>` or the Processing Pipeline API ini file, check out the :ref:`API Documentation <processing-pipeline>`.
 
 
 II. The Full POSYDON Processing Pipeline Experience 
@@ -29,7 +29,7 @@ From A to Z, this tutorial shows you how to process, concatenate, down sample, p
 
     run_full_pipeline
 
-Congratulations! You've now mastered the POSYDON Processing Pipeline. To learn more about the PSyGrid object or the Processing Pipeline API ini file, check out the [API Documentation](api.rst) and the indepth components overview.
+Congratulations! You've now mastered the POSYDON Processing Pipeline.
 
 
 .. _plot_1d:
@@ -80,10 +80,3 @@ Learn how to export single star PSyGrid datasets. This is an advanced tutorial b
 .. toctree::
 
     processing_single_hms
-
-
-Support & Feedback
-------------------
-
-Facing challenges or have queries? Make sure to check our [FAQ](link-to-FAQ) or visit the [contact-information.rst](contact-information.rst) page.
-
