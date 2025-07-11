@@ -103,7 +103,9 @@ to start by inheriting POSYDON's default flow chart and only
 modify certain state to step mappings that are of interest. 
 There are a few ways to do this, one of which is covered in the tutorial on
 :ref:`/tutorials-examples/population-synthesis/custom_step_and_flow.ipynb`, 
-which also shows how customize an evolution step.
+which also shows how customize an evolution step. For an example of how you might 
+write your own importable ``flow_chart`` via :ref:`/components-overview/pop_syn/user_modules.rst`, check out 
+``posydon/user_modules/my_flow_chart_example.py``.
 
 However, as a brief example and alternative way to adjust the flow chart, 
 let's say we wanted to evolve a single binary with a modified flow. As in 
