@@ -77,7 +77,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">User Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pop_syn_debug.html">Debugging POSYDON population synthesis models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="star_formation_history.html">Star Formation History</a></li>
 </ul>
 </li>
 </ul>
@@ -127,8 +127,10 @@
              
   <section id="user-modules">
 <span id="id1"></span><h1>User Modules<a class="headerlink" href="#user-modules" title="Link to this heading"></a></h1>
-<p>To allow users to add code easily within the POSYDON namespace without modifying the code core we added a directory called <code class="samp docutils literal notranslate"><span class="pre">user_modules</span></code>. There users can put their own code and simply import it as any other function within the posydon namespace.</p>
-<p>Additionally, we have an example file there which demonstrates how to modify the <a class="reference internal" href="flow_chart.html#flow-chart"><span class="std std-ref">flow chart</span></a>.</p>
+<p>To allow users to add code easily within the POSYDON namespace without modifying the code core, we added a directory called <code class="samp docutils literal notranslate"><span class="pre">user_modules</span></code>. Users can put their own code there and simply import it as any other function within the POSYDON namespace. This feature is designed for users who would like to implement their own common envelope or supernova prescription. Implementing your own module requires essentially two steps:</p>
+<p>First, the class defining your new step needs to be constructed. This class ought to have an <code class="samp docutils literal notranslate"><span class="pre">__init__</span></code> method that takes in <code class="samp docutils literal notranslate"><span class="pre">verbose</span></code> as an argument and a <code class="samp docutils literal notranslate"><span class="pre">__call__</span></code> method that takes in a <code class="samp docutils literal notranslate"><span class="pre">BinaryStar</span></code> object as an argument. The physics describing the new step will be included in the <code class="samp docutils literal notranslate"><span class="pre">call</span></code> method within which the binary’s parameters will be altered according to your prescription. Be sure to adjust the binary <code class="samp docutils literal notranslate"><span class="pre">state</span></code> and <code class="samp docutils literal notranslate"><span class="pre">event</span></code> so the flow knows how to handle your output binaries.</p>
+<p>Second, the binary <code class="docutils literal notranslate"><span class="pre">flow</span></code> needs to be adjusted so POSYDON’s population synthesis code knows to direct the relevant binaries to the newly constructed step. This can be done by creating a custom user module, similar to how it is done for a custom step. Read our <a class="reference internal" href="flow_chart.html#flow-chart"><span class="std std-ref">flow chart</span></a> documentation to understand what this object is and how you can create your own.</p>
+<p>For a complete example of how to implement a new user module, we include a tutorial describing the process: <a class="reference internal" href="../../tutorials-examples/population-synthesis/custom_step_and_flow.html"><span class="std std-ref">Custom POSYDON steps and flow chart</span></a>.</p>
 </section>
 
 

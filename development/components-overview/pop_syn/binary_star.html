@@ -77,7 +77,7 @@
 <li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pop_syn_debug.html">Debugging POSYDON population synthesis models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="star_formation_history.html">Star Formation History</a></li>
 </ul>
 </li>
 </ul>
@@ -423,7 +423,7 @@ These can be requested and will be stored in the output oneline (See the
 <section id="mass-transfer-case">
 <h3>Mass Transfer case<a class="headerlink" href="#mass-transfer-case" title="Link to this heading"></a></h3>
 <p>The mass transfer cases are stored in <cite>mt_history_GRIDTYPE</cite> and are defined
-according to the following table: TODO: add the table below</p>
+according to the following table:</p>
 <table class="docutils align-default" id="id5">
 <caption><span class="caption-text">Mass transfer cases</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
 <colgroup>
@@ -437,11 +437,74 @@ according to the following table: TODO: add the table below</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>The binary is not Roche Lobe overflowing.</p></td>
+<td><p>The binary is not Roche lobe overflowing.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Stable</span> <span class="pre">contact</span> <span class="pre">phase</span></code></p></td>
+<td><p>Simultaneous Roche lobe overflow from both stars, with
+stable mass transfer between them.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">MS</span></code></p></td>
+<td><p>The binary last experienced stable RLOF during the
+main sequence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">postMS</span></code></p></td>
+<td><p>The binary last experienced stable RLOF during the
+post-main sequence.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">stripped</span> <span class="pre">He</span> <span class="pre">star</span></code></p></td>
+<td><p>The binary last experienced stable RLOF after the primary
+has become a stripped He star.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">while</span> <span class="pre">non</span> <span class="pre">burning</span></code></p></td>
+<td><p>The binary last experienced stable RLOF during a
+non-burning phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Unstable</span> <span class="pre">contact</span> <span class="pre">phase</span></code></p></td>
+<td><p>Simultaneous roche lobe overflow from both stars, with
+unstable mass transfer between them.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Unstable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">MS</span></code></p></td>
+<td><p>The binary experienced unstable RLOF during the
+main sequence.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Unstable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">postMS</span></code></p></td>
+<td><p>The binary experienced unstable RLOF during the
+post-main sequence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Unstable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">stripped</span> <span class="pre">He</span> <span class="pre">star</span></code></p></td>
+<td><p>The binary experienced unstable RLOF after the primary
+has become a stripped He star.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">while</span> <span class="pre">non</span> <span class="pre">burning</span></code></p></td>
+<td><p>The binary experienced unstable RLOF during a
+non-burning phase.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">while</span> <span class="pre">non</span> <span class="pre">burning</span></code></p></td>
+<td><p>The binary experienced unstable RLOF during a
+non-burning phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Initial</span> <span class="pre">RLOF</span></code></p></td>
+<td><p>The binary experienced RLOF at the start of its
+evolution step.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">RLOF</span></code></p></td>
+<td><p>The binary never experienced RLOF during its
+evolution step.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Initial</span> <span class="pre">RLOF</span></code></p></td>
+<td><p>The binary experienced RLOF at the start of its
+evolution step.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Stable</span> <span class="pre">reverse</span> <span class="pre">mass-transfer</span> <span class="pre">phase</span></code></p></td>
+<td><p>The initially less massive companion experienced
+stable RLOF.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Unstable</span> <span class="pre">reverse</span> <span class="pre">mass-transfer</span> <span class="pre">phase</span></code></p></td>
+<td><p>The initially less massive companion experienced
+unstable RLOF.</p></td>
 </tr>
 </tbody>
 </table>
-<p>TODO: update properties</p>
 </section>
 <section id="basic-example">
 <h3>Basic example<a class="headerlink" href="#basic-example" title="Link to this heading"></a></h3>
