@@ -211,7 +211,7 @@ Mass Transfer case
 ~~~~~~~~~~~~~~~~~~
 
 The mass transfer cases are stored in `mt_history_GRIDTYPE` and are defined 
-according to the following table: TODO: add the table below
+according to the following table: 
 
 .. list-table:: Mass transfer cases
   :header-rows: 1
@@ -269,10 +269,6 @@ according to the following table: TODO: add the table below
   * - ``Unstable reverse mass-transfer phase``
     - The initially less massive companion experienced 
       unstable RLOF.
-
-
-
-TODO: update properties
 
 
 Basic example
