@@ -102,6 +102,11 @@ class UnsupportedModelWarning(POSYDONWarning):
     """Warnings related to selecting a model that is not supported."""
     def __init__(self, message=''):
         super().__init__(message)
+        
+class SFHModelWarning(POSYDONWarning):
+    """Warnings related to the SFH model."""
+    def __init__(self, message=''):
+        super().__init__(message)
 
 
 # All POSYDON warnings subclasses should be defined beforehand
@@ -176,9 +181,16 @@ def _apply_POSYDON_filter(warning=dict(message="No warning"), registry=None):
         -------
         warning or None in case it got filtered out.
     """
+    # Check registry and warning
     if registry is None:
         global _POSYDON_WARNINGS_REGISTRY
+        if not isinstance(_POSYDON_WARNINGS_REGISTRY, dict): # pragma: no cover
+            raise TypeError("_POSYDON_WARNINGS_REGISTRY is corrupt and can't "
+                            "be used for the registry, hence registry can't be"
+                            " None.")
         registry = _POSYDON_WARNINGS_REGISTRY
+    elif not isinstance(registry, dict):
+        raise TypeError("registry must be a dictionary or None.")
     if not isinstance(warning, dict):
         raise TypeError("warning must be a dictionary.")
     # Get stack level
@@ -195,7 +207,7 @@ def _apply_POSYDON_filter(warning=dict(message="No warning"), registry=None):
     # Get filename and lineno from frame at stacklevel
     try:
         frame = sys._getframe(stacklevel)
-    except:
+    except: # pragma: no cover
         g = sys.__dict__
         filename = "sys"
         lineno = 1
@@ -206,12 +218,8 @@ def _apply_POSYDON_filter(warning=dict(message="No warning"), registry=None):
     # Get module
     if isinstance(g, dict):
         module = g.get('__name__', "posydonwarnings")
-    else:
+    else: # pragma: no cover
         module = "posydonwarnings"
-    # Check registry
-    if not isinstance(registry, dict):
-        print("Reset registry, old was:", registry)
-        registry = {}
     # Set key for registry:
     # We do not use the warnings text, to allow it to contain detailed
     # information, while still identifying warnings with same origin
@@ -221,7 +229,7 @@ def _apply_POSYDON_filter(warning=dict(message="No warning"), registry=None):
     if not isinstance(text, str):
         raise TypeError("message must be a string.")
     # Search the filters:
-    # Here we still uses the python filters
+    # Here we still use the python filters
     for item in warnings.filters:
         action, msg, cat, mod, ln = item
         if ((msg is None or msg.match(text)) and
@@ -374,7 +382,10 @@ class _Caught_POSYDON_Warnings:
                 (len(self.caught_warnings)>0)):
                 # If there are recorded warnings issue them and empty the list
                 for w in self.caught_warnings:
-                    w["stacklevel"] += 2
+                    if "stacklevel" in w:
+                        w["stacklevel"] += 2
+                    else:
+                        w["stacklevel"] = 2
                     if self.filter_first:
                         warnings.warn(**w)
                     else:
@@ -401,7 +412,7 @@ class _Caught_POSYDON_Warnings:
         if len(self.caught_warnings)>0:
             # If there are recorded warnings issue them.
             self.catch_warnings = False
-            print("There are still recorded warnings:")
+            print("There are still recorded warnings:", file=sys.stderr)
             for w in self.caught_warnings:
                 w["stacklevel"] = 2
                 if self.filter_first:

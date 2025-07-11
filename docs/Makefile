@@ -227,11 +227,16 @@ pseudoxml: checkautodoc
 
 .PHONY: apidoc
 apidoc:
-#old:	sphinx-apidoc -o api/ ../posydon --no-toc --separate --no-headings --force
 #	remove old files
 	rm -f ./_source/api_reference/*.rst
-#	generate posydon reference (ignore config.py file)
-	sphinx-apidoc --module-first --templatedir=_source/sphinx-apidoc-templates -d 2 --force --no-toc -o ./_source/api_reference ../posydon ../posydon/config.py
+#	generate posydon reference (ignore config.py and tests file)
+	sphinx-apidoc --module-first \
+				  --templatedir=_source/sphinx-apidoc-templates \
+				  -d 2 \
+				  --force \
+				  --no-toc \
+				  -o ./_source/api_reference ../posydon \
+				  ../posydon/config.py ../posydon/unit_tests ../posydon/tests
 #	create "_tmp/executables" directory if not existing
 	mkdir -p _tmp/executables
 #	copy script files from "bin" directory to "_tmp/executables", on the fly replace "-" with "_" and add extension ".py"

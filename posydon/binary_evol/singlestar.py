@@ -21,7 +21,7 @@ __authors__ = [
 import numpy as np
 import pandas as pd
 from posydon.utils.common_functions import check_state_of_star
-from posydon.grids.MODELS import MODELS
+from posydon.grids.SN_MODELS import SN_MODELS
 
 
 
@@ -52,8 +52,8 @@ STARPROPERTIES = [
     'center_c12',
     'center_n14',
     'center_o16',
-    'surface_h1',
     # Mass fractions at the surface
+    'surface_h1',
     'surface_he4',
     'surface_c12',
     'surface_n14',
@@ -94,6 +94,8 @@ STARPROPERTIES = [
     'profile',  # the profile of the star, including extended information of
                 # its internal structure, for a specific timestep, usually for
                 # the end of the previous step including MESA psygrid.
+    'total_mass_h1',   # total mass of Hydrogen throughout the star
+    'total_mass_he4',  # total mass of Helium throughout the star
 ]
 
 # attributes read from single-star grid runs
@@ -178,9 +180,9 @@ class SingleStar:
                 setattr(self, quantity, None)
 
         # core collapse quantities
-        for MODEL_NAME in MODELS.keys():
-            if not hasattr(self, MODEL_NAME):
-                setattr(self, MODEL_NAME, None)
+        for SN_MODEL_NAME in SN_MODELS.keys():
+            if not hasattr(self, SN_MODEL_NAME):
+                setattr(self, SN_MODEL_NAME, None)
 
     def append_state(self):
         """Append the new version of the star to the end of the star state."""

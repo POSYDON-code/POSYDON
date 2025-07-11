@@ -10,7 +10,7 @@ Van den Heuvel diagrams with POSYDON
    To use the visualization functionalities, install the optional visualization modules `pip install .[vis]`
 
 
-`VHdiagram` provides a visual representation of individual POSYDON binaries, offering a more intuitive sense of their properties. This tutorial uses the 'population.h5' dataset as an example. TODO: this need to be tested on a v2.0.0 dataset.
+`VHdiagram` provides a visual representation of individual POSYDON binaries, offering a more intuitive sense of their properties. This tutorial uses the 'population.h5' dataset as an example. You can use the population in the `Stellar Transient Populations` tutorial. 
 
 Visualizing a Specific Binary
 -----------------------------
@@ -75,7 +75,7 @@ Advanced Visualization Techniques
 Visualizing Multiple Binaries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `VDdiagramm_m` module allows multiple binary visualizations to be arranged horizontally in a single plot:
+The `VHdiagramm_m` class allows multiple binary visualizations to be arranged horizontally in a single plot:
 
 .. code-block:: python
 
@@ -84,8 +84,7 @@ The `VDdiagramm_m` module allows multiple binary visualizations to be arranged h
     from posydon.visualization.VH_diagram.PresenterMode import PresenterMode
 
     VHD = VHdiagramm_m('./data/population.h5',
-                    index=cnt[:,0],
-                    frequency=parse_df.get_frequencies(),
+                    index=[19627,19628,19629,19630],
                     hierarchy=False,
                     presentMode=PresenterMode.DIAGRAM,
                     displayMode=DisplayMode.INLINE_B)
@@ -104,8 +103,7 @@ This visualization style aggregates identical steps into a tree plot where nodes
     from posydon.visualization.VH_diagram.PresenterMode import PresenterMode
 
     VHD = VHdiagramm_m('./data/population.h5',
-                    index=cnt[:,0],
-                    frequency=parse_df.get_frequencies(),
+                    index=[19627,19628,19629,19630],
                     hierarchy=True,
                     presentMode=PresenterMode.DIAGRAM,
                     displayMode=DisplayMode.INLINE_B)
