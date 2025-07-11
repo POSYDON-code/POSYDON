@@ -109,7 +109,7 @@ class TestFunctions:
                         match="unknown dataset, use -l to show defined sets"):
                 totest._parse_commandline()
             # example
-            self.commandline_args = totest.argparse.Namespace(dataset='v1',\
+            self.commandline_args = totest.argparse.Namespace(dataset='DR1',\
              listedsets=None, nomd5check=False, verbose=False)
             assert totest._parse_commandline() == self.commandline_args
 
@@ -187,7 +187,7 @@ class TestFunctions:
             with raises(NotADirectoryError, match="PATH_TO_POSYDON_DATA does "\
                                                   +"not refer to a valid "\
                                                   +"directory."):
-                totest.download_one_dataset(dataset='v1_for_v2.0.0-pre1')
+                totest.download_one_dataset(dataset='DR1_for_v2.0.0-pre1')
         # bad input
         with monkeypatch.context() as mp:
             mock_ZENODO_COLLECTION = {'Test': {'data' : "./", 'md5': "Unit"}}
@@ -326,7 +326,7 @@ class TestFunctions:
                 for v in [True, False]:
                     self.list_printed = None
                     self.commandline_args = totest.argparse.Namespace(\
-                     dataset='v1', listedsets=l, nomd5check=False, verbose=v)
+                     dataset='DR1', listedsets=l, nomd5check=False, verbose=v)
                     totest._get_posydon_data()
                     assert self.list_printed['individual_sets']\
                            == (l == 'individual')
@@ -334,7 +334,7 @@ class TestFunctions:
             # examples
             for n in [True, False]:
                 for v in [True, False]:
-                    for d in ['v1', 'v2']:
+                    for d in ['DR1', 'DR2']:
                         self.downloaded = None
                         self.commandline_args = totest.argparse.Namespace(\
                          dataset=d, listedsets=None, nomd5check=n, verbose=v)
