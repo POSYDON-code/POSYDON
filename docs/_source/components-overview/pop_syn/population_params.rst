@@ -35,7 +35,7 @@ SimulationProperties
 After the environment variables, the next part of the ``population_params.ini`` file
 contains how systems will move through the simulation steps [Flow Chart](flow_chart.rst) and the parameters for each step.
 
-These parameters are read in and used to create a :class:`~posydon.binary_evol.simulationproperties.SimulationProperties`` object.
+These parameters are read in and used to create a :class:`~posydon.binary_evol.simulationproperties.SimulationProperties` object.
 
 It allows for the addition of hooks before and after each step, and the evolution of a system (see :ref:`Custom Hooks <custom-hooks>`).
 The ``SimulationProperties`` can be manually read and loaded in.
@@ -633,9 +633,7 @@ for to sample :class:`~posydon.binary_evol.binarystar.BinaryStar` objects from,
 such as the masses and orbital parameters.
 Moreover, it contains the parameters for metallicity and the practicality of running populations.
 This includes, the number of binaries, the metallicity, how often to save the population to file. 
-
-When reading the binary population arguments from a ``population_params.ini`` file, the
- :class:`~posydon.binary_evol.simulationproperties.SimulationProperties` are read in automatically.
+When reading the binary population arguments from a ``population_params.ini`` file, the :class:`~posydon.binary_evol.simulationproperties.SimulationProperties` are read in automatically.
 
 .. code-block:: python
 
@@ -840,7 +838,7 @@ Saving Output
 -------------
 
 You can decide on your own output parameters for the population file.
-The data is split in two different tables: the ``history`` table and the ``oneline`` table.
+The data are split in two different tables: the ``history`` table and the ``oneline`` table.
 
 The ``history`` table contains values that change throughout the evolution of the system, 
 while the ``oneline`` table contains values that are constant throughout the evolution of the system or only occur once.
