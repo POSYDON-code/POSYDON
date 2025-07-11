@@ -211,7 +211,7 @@ Mass Transfer case
 ~~~~~~~~~~~~~~~~~~
 
 The mass transfer cases are stored in `mt_history_GRIDTYPE` and are defined 
-according to the following table: TODO: add the table below
+according to the following table: 
 
 .. list-table:: Mass transfer cases
   :header-rows: 1
@@ -220,10 +220,55 @@ according to the following table: TODO: add the table below
   * - Case
     - Description
   * - ``None``
-    - The binary is not Roche Lobe overflowing.
-
-
-TODO: update properties
+    - The binary is not Roche lobe overflowing.
+  * - ``Stable contact phase``
+    - Simultaneous Roche lobe overflow from both stars, with 
+      stable mass transfer between them.
+  * - ``Last stable RLOF during MS``
+    - The binary last experienced stable RLOF during the 
+      main sequence.
+  * - ``Last stable RLOF during postMS``
+    - The binary last experienced stable RLOF during the 
+      post-main sequence.
+  * - ``Last stable RLOF during stripped He star``
+    - The binary last experienced stable RLOF after the primary 
+      has become a stripped He star.
+  * - ``Last stable RLOF while non burning``
+    - The binary last experienced stable RLOF during a 
+      non-burning phase.
+  * - ``Unstable contact phase``
+    - Simultaneous roche lobe overflow from both stars, with 
+      unstable mass transfer between them.
+  * - ``Unstable RLOF during MS``
+    - The binary experienced unstable RLOF during the 
+      main sequence.
+  * - ``Unstable RLOF during postMS``
+    - The binary experienced unstable RLOF during the 
+      post-main sequence.
+  * - ``Unstable RLOF during stripped He star``
+    - The binary experienced unstable RLOF after the primary 
+      has become a stripped He star.
+  * - ``Last stable RLOF while non burning``
+    - The binary experienced unstable RLOF during a 
+      non-burning phase.
+  * - ``Last stable RLOF while non burning``
+    - The binary experienced unstable RLOF during a 
+      non-burning phase.
+  * - ``Initial RLOF``
+    - The binary experienced RLOF at the start of its 
+      evolution step.
+  * - ``no RLOF``
+    - The binary never experienced RLOF during its 
+      evolution step.
+  * - ``Initial RLOF``
+    - The binary experienced RLOF at the start of its 
+      evolution step.
+  * - ``Stable reverse mass-transfer phase``
+    - The initially less massive companion experienced 
+      stable RLOF.
+  * - ``Unstable reverse mass-transfer phase``
+    - The initially less massive companion experienced 
+      unstable RLOF.
 
 
 Basic example

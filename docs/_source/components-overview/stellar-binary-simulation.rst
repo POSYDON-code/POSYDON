@@ -113,16 +113,14 @@ The `SyntheticPopulation` object contains a collection of `BinaryPopulation` obj
 
     pop_syn/synthetic_population
 
-----
 
-Debugging POSYDON population synthesis models
-=============================================
+The Star Formation History
+---------------------------
 
-POSYDON provides a set of tools to debug population synthesis models. The following guide will walk you through the debugging tools that are available in POSYDON.
+The star formation history is a key component in population synthesis, since it 
+determined the amount of stars that are formed at each moment in time.
 
 .. toctree::
     :maxdepth: 1
 
-    pop_syn/pop_syn_debug
-
-
+    pop_syn/star_formation_history

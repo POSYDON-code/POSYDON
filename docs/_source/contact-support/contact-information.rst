@@ -30,6 +30,7 @@ Need help or have questions?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Common questions and issues can be found in the following sections:
+
 - `Github Discussions <https://github.com/POSYDON-code/POSYDON/discussions>`_.
 - :ref:`installation <installation-issues>` for installation-related queries.
 - :ref:`code usage <code-usage>` for some common code usage questions.
