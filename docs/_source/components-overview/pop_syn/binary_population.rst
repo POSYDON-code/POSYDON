@@ -11,7 +11,7 @@ However, its features are useful if you want to adapt part of the population syn
 for example, to test a specific population of binaries with custom parameters.
 
 
-The initialisation of the BinaryPopulation object
+The initialization of the BinaryPopulation object
 -------------------------------------------------
 
 To create a ``BinaryPopulation`` object, you need to provide a set of parameters that define the population's characteristics. 
@@ -27,7 +27,7 @@ The easiest way is to load in the parameters from the default population ``ini``
   shutil.copyfile(path_to_params, './population_params.ini')
 
 
-Here's an example of how to initialise a ``BinaryPopulation`` object:
+Here's an example of how to initialize a ``BinaryPopulation`` object:
 
 .. code-block:: python
 
@@ -59,7 +59,7 @@ This performs the same task as the previous example, but automatically.
   print(population.number_of_binaries)
 
 
-On initialisation, the ``BinaryPopulation`` class will initialise the following attributes:
+On initialization, the ``BinaryPopulation`` class will initialize the following attributes:
 
 .. list-table:: Core Attributes
    :widths: 30 70
@@ -92,7 +92,7 @@ On initialisation, the ``BinaryPopulation`` class will initialise the following 
    * - ``find_failed``
      - Method reference to manager's find_failed method for identifying failed binary evolutions
 
-During the initialisation, the ``BinaryPopulation`` creates a ``PopulationManager`` and ``SimulationProperties`` instance.
+During the initialization, the ``BinaryPopulation`` creates a ``PopulationManager`` and ``SimulationProperties`` instance.
 
 Several variables are only set when running with MPI or job arrays, which are used for parallel processing of the population synthesis.
 These will not be used in a standard run of the ``BinaryPopulation`` class, but are set when using the ``posydon-popsyn`` or ``PopulationRunner`` classes.
@@ -186,7 +186,7 @@ See :ref:`pop-params-guide` for more details about the population parameters fil
 Accessing the evolved population
 ---------------------------------
 
-Depending on the initialisation parameters, the evolved population can be accessed in different ways.
+Depending on the initialization parameters, the evolved population can be accessed in different ways.
 
 1. If not written to file with ``breakdown_to_df=False``, the population is stored in memory as a list of ``BinaryStar`` objects.
    You can access the individual binaries using the ``manager`` attribute:
