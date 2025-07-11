@@ -17,7 +17,7 @@ Dive into our Jupyter Notebook that will show you how to create a MESA PSyGrid d
     
     just_step_1
 
-To learn more about the :ref:`PSyGrid object <mesa-grids-api>` or the Processing Pipeline API ini file, check out the :ref:`API Documentation <processing-pipeline>`.
+To learn more about the PSyGrid object or the Processing Pipeline API ini file, check out the :ref:`API Documentation <processing-pipeline>`.
 
 
 II. The Full POSYDON Processing Pipeline Experience 
