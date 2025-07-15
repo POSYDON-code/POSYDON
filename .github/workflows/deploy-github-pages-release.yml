@@ -6,7 +6,7 @@ on:
 
 jobs:
   build_v1:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
     
@@ -14,9 +14,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        fetch-depth: 1
         fetch-tags: true
         path: 'POSYDON'
+        ref: ${{ github.ref }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -124,8 +125,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
+        fetch-depth: 1
         fetch-tags: true
         path: 'POSYDON'
+        ref: ${{ github.ref }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
