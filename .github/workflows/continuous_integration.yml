@@ -40,10 +40,12 @@ jobs:
                          posydon/unit_tests/popsyn/test_rate_calculation.py \
                          posydon/unit_tests/popsyn/test_independent_sample.py \
                          posydon/unit_tests/popsyn/test_io.py \
+                         posydon/unit_tests/popsyn/test_transient_select_funcs.py \
                          posydon/unit_tests/popsyn/test_star_formation_history.py \
                          --cov=posydon.popsyn.defaults \
                          --cov=posydon.popsyn.rate_calculation \
                          --cov=posydon.popsyn.independent_sample \
                          --cov=posydon.popsyn.io \
+                         --cov=posydon.popsyn.transient_select_funcs \
                          --cov=posydon.popsyn.test_star_formation_history \
                          --cov-branch --cov-report term-missing --cov-fail-under=100 
