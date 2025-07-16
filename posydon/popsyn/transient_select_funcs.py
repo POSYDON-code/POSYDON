@@ -111,7 +111,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
         formation_channels_chunk = formation_channels_chunk.loc[indices_selection]
         if S1_S2 == 'S1':
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC1').str[0].apply(lambda x: x+'_CC1')
-        elif S1_S2 == 'S2':
+        else:
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC2').str[0].apply(lambda x: x+'_CC2')
     
     # calculate the time!
