@@ -74,12 +74,12 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
         raise ValueError('S1_S2 must be either S1 or S2')
     # no events in this chunk
     if len(indices_selection) == 0: 
-        return pd.DataFrame() # TODO
+        return pd.DataFrame()
     # filter out the events that are not relevant for the LGRB formation
     selection = history_chunk[history_chunk['binary_index'].isin(indices_selection)]
     if S1_S2 == 'S1':
         S_mask = (selection['S1_state'] == 'BH') & (selection['S1_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
-    elif S1_S2 == 'S2': #TODO
+    else:
         S_mask = (selection['S2_state'] == 'BH') & (selection['S2_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
     
     GRB_df_synthetic = pd.DataFrame(index=indices_selection) # TODO
