@@ -91,10 +91,9 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     if S1_S2 == 'S1':
         columns_pre_post.append('S1_mass')
         columns.append('S2_mass')
-    elif S1_S2 == 'S2': #TODO
+    else:
         columns_pre_post.append('S2_mass')
         columns.append('S1_mass')
-        
     
     for col in columns_pre_post: #TODO
         GRB_df_synthetic[col+'_preSN'] = pre_SN_hist[col].values
