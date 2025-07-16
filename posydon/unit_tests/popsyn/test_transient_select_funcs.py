@@ -86,8 +86,8 @@ class TestFunctions:
             'metallicity': [0.02],
             'S1_m_disk_radiated': [0.5],
             'S2_m_disk_radiated': [0.0],
-        }, index=[10])  # index = binary_index
-
+        }, index=[10])
+    
     @fixture
     def formation_channels_chunk(self):
         return pd.DataFrame({
@@ -117,10 +117,10 @@ class TestFunctions:
         with raises(AttributeError,match="'float' object has no attribute 'index'"):
             totest.GRB_selection(1.1, 1.2)
         with raises(ValueError,match='S1_S2 must be either S1 or S2'):
-            totest.GRB_selection(history_chunk, oneline_chunk,
+            totest.GRB_selection(history_chunk, oneline_chunk.copy(),
                                  S1_S2='test')
         # example with S1
-        df = totest.GRB_selection(history_chunk, oneline_chunk,
+        df = totest.GRB_selection(history_chunk, oneline_chunk.copy(),
                            formation_channels_chunk, S1_S2='S1')
         assert not df.empty
         assert df.index[0] == 10
@@ -128,16 +128,26 @@ class TestFunctions:
         assert 'S1_mass_postSN' in df.columns
         assert df['time'].iloc[0] == 3.0  # 3 Myr = 3e6 years * 1e-6
         assert df['channel'].iloc[0] == 'foo_CC1'
+        # example with no formation channels
+        df = totest.GRB_selection(history_chunk, oneline_chunk.copy(),
+                           formation_channels_chunk=None, S1_S2='S1')
+        assert not df.empty
+        assert 'channel' not in df.columns 
         # example with S2
-        oneline_chunk = oneline_chunk.copy()
-        oneline_chunk['S1_m_disk_radiated'] = [0.0]
-        oneline_chunk['S2_m_disk_radiated'] = [0.5]
-        df = totest.GRB_selection(history_chunk, oneline_chunk,
+        chunk = oneline_chunk.copy()
+        chunk['S1_m_disk_radiated'] = [0.0]
+        chunk['S2_m_disk_radiated'] = [0.5]
+        df = totest.GRB_selection(history_chunk, chunk,
                            formation_channels_chunk, S1_S2='S2')
         assert not df.empty
         assert 'S2_mass_postSN' in df.columns
         assert 'metallicity' in df.columns
-        assert 'channel' in df.columns        
+        assert 'channel' in df.columns      
+        # example with no disk radiation
+        chunk = oneline_chunk.copy()
+        chunk['S1_m_disk_radiated'] = [0.0]
+        df = totest.GRB_selection(history_chunk, chunk, formation_channels_chunk=None,S1_S2='S1')
+        assert df.empty
         
     def test_chi_eff(self,array,nan_array,wrong_array):
         # missing argument
@@ -188,12 +198,21 @@ class TestFunctions:
                                      np.array([m2])) == q
             
     def test_BBH_selection_function(self):
+        # missing argument
+        
         # bad input
+        
         # examples
         pass
     
     def test_DCO_detectability(self):
+        # missing argument
+        
         # bad input
+#         with raises(ValueError,match='Unknown sensitivity sens_example'):
+#             totest.DCO_detectability("sens_example")
+        
         # examples
+        
         pass
         
