@@ -93,6 +93,38 @@ class TestFunctions:
         return pd.DataFrame({
             'channel': ['foo_CC1','bar_CC2']
         }, index=[10,11])
+    
+    @fixture
+    def history_BBH(self):
+        return pd.DataFrame({
+            'event': ['MID', 'END', 'END'],
+            'time': [1e6, 5e6, 6e6],
+            'S1_state': ['BH', 'BH', 'BH'],
+            'S2_state': ['BH', 'BH', 'BH'],
+            'step_names': ['step_SN', 'step_SN', 'step_SN'],
+            'state': ['detached', 'detached', 'detached'],
+            'S1_mass': [30, 35, 40],
+            'S2_mass': [20, 25, 30],
+            'S1_spin': [0.5, 0.6, 0.7],
+            'S2_spin': [0.4, 0.3, 0.2],
+            'orbital_period': [0.5, 0.6, 0.7],
+            'eccentricity': [0.1, 0.2, 0.3],
+        }, index=[0,1,2])
+
+    @fixture
+    def oneline_BBH(self):
+        return pd.DataFrame({
+            'metallicity': [0.01, 0.02, 0.03],
+            'S1_spin_orbit_tilt_second_SN': [0.1, 0.2, 0.3],
+            'S2_spin_orbit_tilt_second_SN': [0.4, 0.5, 0.6],
+        }, index=[0,1,2])
+
+    @fixture
+    def formation_channels_BBH(self):
+        return pd.DataFrame({
+            'channel': ['foo', 'bar', 'baz'],
+        }, index=[0,1,2])
+
 
     @fixture
     def array(self):
@@ -197,13 +229,29 @@ class TestFunctions:
             assert totest.mass_ratio(np.array([m1]),
                                      np.array([m2])) == q
             
-    def test_BBH_selection_function(self):
+    def test_BBH_selection_function(self, history_BBH, oneline_BBH,
+                                   formation_channels_BBH):
         # missing argument
-        
+        with raises(TypeError,match="missing 2 required positional arguments"):
+            totest.BBH_selection_function()
         # bad input
-        
-        # examples
-        pass
+        with raises(AttributeError,match="'float' object has no attribute 'index'"):
+            totest.BBH_selection_function(1.1, 1.2)
+        # example without formation channels 
+        df = totest.BBH_selection_function(history_BBH, oneline_BBH)
+        assert not df.empty
+        assert all(col in df.columns for col in [
+            'time', 't_inspiral', 'metallicity', 'S1_state', 'S2_state',
+            'S1_mass', 'S2_mass', 'S1_spin', 'S2_spin',
+            'S1_spin_orbit_tilt_at_merger', 'S2_spin_orbit_tilt_at_merger',
+            'orbital_period', 'chirp_mass', 'mass_ratio', 'chi_eff', 'eccentricity'
+        ])
+        assert (df.index == oneline_BBH.index).all()
+        assert df['t_inspiral'].iloc[1] == 0.0
+        # example with formation channels 
+        df = totest.BBH_selection_function(history_BBH, oneline_BBH, formation_channels_BBH)
+        assert 'channel' in df.columns
+        assert (df['channel'] == formation_channels_BBH['channel']).all()
     
     def test_DCO_detectability(self):
         # missing argument
