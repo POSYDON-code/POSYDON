@@ -61,7 +61,7 @@ jobs:
         # make the output folder
         output_folder=$GITHUB_WORKSPACE/_build/
         echo "Output folder: $output_folder"
-        mkdir $output_folder
+        mkdir -p $output_folder
         
         # move to the repository folder
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
@@ -170,7 +170,7 @@ jobs:
         # make the output folder
         output_folder=$GITHUB_WORKSPACE/_build/
         echo "Output folder: $output_folder"
-        mkdir $output_folder
+        mkdir -p $output_folder
 
         # move to the repository folder
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON

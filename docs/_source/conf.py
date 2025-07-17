@@ -61,6 +61,8 @@ def get_github_tags():
 
 github_tags = get_github_tags()
 
+print("github_tags: ", github_tags)
+
 # 2.0.0-dev needs to be removed from the list and replaced with development
 github_tags.remove('2.0.0-dev')
 
