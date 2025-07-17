@@ -298,6 +298,58 @@ class TestDetached_step(unittest.TestCase):
             "final sepertation with tides only and a non-rotating donor should be lower than including winds too that widen the orbit too.",
         )
 
+    def test_log_total_angular_momentum_edge_cases(self):
+        """Test the handling of edge cases in log_total_angular_momentum calculation."""
+        method = "minimize"
+        step = detached_step(
+            path=PATH_TO_DATA,
+            matching_method=method,
+            verbose=False
+        )
+        
+        # Test case with zero angular momentum
+        PROPERTIES_STAR_ZERO = {
+            "mass": 60.0,
+            "log_R": 1.0,
+            "mdot": -(10.0**(-5)),
+            "state": "H-rich_Core_H_burning",
+            "center_he4": 0.48,
+            "center_h1": 0.5,
+            "total_moment_of_inertia": 0.0,  # This will result in zero angular momentum
+            "log_total_angular_momentum": -98.99,
+            "he_core_mass": 0.0,
+            "surface_he4": 0.28,
+            "surface_h1": 0.7,
+        }
+        
+        # Create a binary system
+        binary = BinaryStar(
+            star_1=SingleStar(**PROPERTIES_STAR_ZERO),
+            star_2=SingleStar(**PROPERTIES_STAR_ZERO),
+            time=0.0,
+            orbital_period=100.0,
+            separation=100.0,
+            state="detached",
+            eccentricity=0.0,
+            event="None"
+        )
+        binary.properties = SimulationProperties()
+        binary.properties.max_simulation_time = 1e6
+        
+        # This should now run without raising the RuntimeWarning
+        try:
+            step(binary)
+            test_passed = True
+        except Exception as e:
+            test_passed = False
+            print(f"Test failed with error: {str(e)}")
+            
+        self.assertTrue(test_passed, "The step should handle zero angular momentum without warnings")
+        
+        # Verify the log_total_angular_momentum is set to our sentinel value for zero/negative cases
+        self.assertEqual(binary.star_1.log_total_angular_momentum, -98.99,
+                        "Zero angular momentum should result in log_total_angular_momentum = -98.99")
+
     # the following tests are out because they need more EEPS MIST models around their mass. If included they should work.
     """
     def test_matching2_root(self):

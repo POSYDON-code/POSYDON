@@ -1685,14 +1685,20 @@ class detached_step:
                             current = getattr(obj, key)
                             history = [current] * len(t[:-1])
                         else:
-                            current = np.log10(
-                                (interp1d_pri["omega"][-1] / const.secyer)
-                                * (interp1d_pri[self.translate["total_moment_of_inertia"]](
-                                        t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)))
-                            history = np.log10(
-                                (interp1d_pri["omega"][:-1] / const.secyer)
-                                * (interp1d_pri[self.translate["total_moment_of_inertia"]](
-                                        t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)))
+                            # Calculate the angular momentum
+                            ang_momentum = (interp1d_pri["omega"][-1] / const.secyer) * (
+                                interp1d_pri[self.translate["total_moment_of_inertia"]](
+                                    t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2))
+                            # Handle zero or negative values
+                            current = np.log10(ang_momentum) if ang_momentum > 0 else -98.99
+                            
+                            # Calculate history values with the same safety check
+                            history_momentum = (interp1d_pri["omega"][:-1] / const.secyer) * (
+                                interp1d_pri[self.translate["total_moment_of_inertia"]](
+                                    t[:-1] - t_offset_pri) * (const.msol * const.rsol**2))
+                            history = np.where(history_momentum > 0, 
+                                             np.log10(history_momentum), 
+                                             -98.99)
                             
                     elif (key in ["spin"] and obj == secondary):
                         current = (const.clight
