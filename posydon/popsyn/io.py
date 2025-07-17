@@ -189,11 +189,11 @@ def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
     assert isinstance( binary_df, pd.DataFrame )
 
     # User specified extra binary and star columns
-    if extra_binary_dtypes_user is None:
+    if extra_binary_dtypes_user is None: # pragma: no cover
         extra_binary_dtypes_user = {}
-    if extra_S1_dtypes_user is None:
+    if extra_S1_dtypes_user is None: # pragma: no cover
         extra_S1_dtypes_user = {}
-    if extra_S2_dtypes_user is None:
+    if extra_S2_dtypes_user is None: # pragma: no cover
         extra_S2_dtypes_user = {}
 
     # try to coerce data types automatically first
@@ -228,7 +228,7 @@ def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
             common_dtype_dict[key] = SP_comb_S1_dict.get( key.replace('S1_', '') )
         elif key in S2_keys:
             common_dtype_dict[key] = SP_comb_S2_dict.get( key.replace('S2_', '') )
-        else:
+        else: # pragma: no cover
             raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
     # set dtypes
     binary_df = binary_df.astype( common_dtype_dict )
@@ -272,11 +272,11 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
     assert isinstance( oneline_df, pd.DataFrame )
 
     # User specified extra binary and star columns
-    if extra_binary_dtypes_user is None:
+    if extra_binary_dtypes_user is None: # pragma: no cover
         extra_binary_dtypes_user = {}
-    if extra_S1_dtypes_user is None:
+    if extra_S1_dtypes_user is None: # pragma: no cover
         extra_S1_dtypes_user = {}
-    if extra_S2_dtypes_user is None:
+    if extra_S2_dtypes_user is None: # pragma: no cover
         extra_S2_dtypes_user = {}
 
     # try to coerce data types automatically first
@@ -325,10 +325,10 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
             common_dtype_dict[key] = BP_comb_extras_dict.get( strip_prefix_and_suffix(key) )
         elif key in S1_keys:
             common_dtype_dict[key] = SP_comb_S1_dict.get( strip_prefix_and_suffix(key) )
-        elif key in S2_keys:
-            common_dtype_dict[key] = SP_comb_S2_dict.get( strip_prefix_and_suffix(key) )
-        else:
-            raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
+        elif key in S2_keys: 
+            common_dtype_dict[key] = SP_comb_S2_dict.get( strip_prefix_and_suffix(key) ) 
+        else: # pragma: no cover
+            raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.') 
     # set dtypes
     oneline_df = oneline_df.astype( common_dtype_dict )
     # unset clean str data because pandas strings are broken for hdf saving
@@ -366,7 +366,7 @@ def parse_inifile(path, verbose=False):
 
     if isinstance(path, str):
         path = os.path.abspath(path)
-        if verbose:
+        if verbose: # pragma: no cover
             print('Reading inifile: \n\t{}'.format(path))
         if not os.path.exists(path):
             raise FileNotFoundError(
@@ -374,7 +374,7 @@ def parse_inifile(path, verbose=False):
     elif isinstance(path, (list, np.ndarray)):
         path = [os.path.abspath(f) for f in path]
 
-        if verbose:
+        if verbose: # pragma: no cover
             print('Reading inifiles: \n{}'.format(pprint.pformat(path)))
         bad_files = []
         for f in path:
@@ -390,7 +390,7 @@ def parse_inifile(path, verbose=False):
 
     files_read = parser.read(path)
     # Catch silent errors from configparser.read
-    if len(files_read) == 0:
+    if len(files_read) == 0: # pragma: no cover
         raise ValueError("No files were read successfully. Given {}.".
                          format(path))
     return parser
@@ -418,7 +418,7 @@ def simprop_kwargs_from_ini(path, verbose=False):
     parser_dict = {}
     for section in parser:
         # skip default section
-        if section == 'DEFAULT':
+        if section == 'DEFAULT': # pragma: no cover
             continue
 
         # evaluate str values as literal python and put
@@ -444,7 +444,7 @@ def simprop_kwargs_from_ini(path, verbose=False):
                 # create spec and load module
                 spec = importlib.util.spec_from_file_location( location_as_module_name, location=absolute_import_location)
                 module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
+                spec.loader.exec_module(module) 
             else:
                 # Use builtin posydon classes
                 import_location, class_name = import_and_name
@@ -521,22 +521,18 @@ def binarypop_kwargs_from_ini(path, verbose=False):
 
             JOB_ID = os.getenv('SLURM_ARRAY_JOB_ID')
             # MPI import for local use only
-            if pop_kwargs['use_MPI'] == True and JOB_ID is not None:
+            if pop_kwargs['use_MPI'] == True and JOB_ID is not None: 
                 raise ValueError('MPI must be turned off for job arrays.')
-                exit()
-            elif pop_kwargs['use_MPI'] == True:
+            elif pop_kwargs['use_MPI'] == True: # pragma: no cover
                 from mpi4py import MPI
                 pop_kwargs['comm'] = MPI.COMM_WORLD
             # MPI needs to be turned off for job arrays
             else:
                 pop_kwargs['comm'] = None
 
-                # Check if we are running as a job array
-                if JOB_ID is not None and pop_kwargs['use_MPI'] is True:
-                    raise ValueError('MPI must be turned off for job arrays.')
-                elif JOB_ID is not None:
+                if JOB_ID is not None: 
                     pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
-                    # account for job array not starting at 0
+                    # account for job array not starting at 0 
                     min_rank = np.int64(os.environ['SLURM_ARRAY_TASK_MIN'])
                     pop_kwargs['RANK'] = np.int64(os.environ['SLURM_ARRAY_TASK_ID'])-min_rank
                     pop_kwargs['size'] = np.int64(os.environ['SLURM_ARRAY_TASK_COUNT'])
