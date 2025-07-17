@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import posydon.popsyn.selection_effects as selection_effects
 from posydon.config import PATH_TO_POSYDON_DATA
 import os
 from tqdm import tqdm
@@ -289,7 +290,7 @@ def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
         data_slice['z'] = z_events_chunk.iloc[:,i]
         mask = pd.notna(data_slice['z']).to_numpy()
         if np.sum(mask) == 0:
-            detectable_weights[mask, i] = 0.0
+            detectable_weights[:, i] = 0.0
         else:
             detectable_weights[mask, i] = detectable_weights[mask, i] * sel_eff.predict_pdet(data_slice[mask])
         
