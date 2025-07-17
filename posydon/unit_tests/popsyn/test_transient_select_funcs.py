@@ -16,6 +16,7 @@ PATH_TO_POSYDON_DATA = totest.PATH_TO_POSYDON_DATA
 # module you like to test
 from pytest import fixture, raises, warns, approx
 from inspect import isroutine, isclass
+import posydon.popsyn.selection_effects as selection_effects
 from posydon.utils.posydonwarning import ReplaceValueWarning
 import warnings
 warnings.simplefilter("always")
@@ -29,7 +30,7 @@ class TestElements:
                     '__builtins__', '__cached__', '__doc__', \
                     '__file__','__loader__', '__name__', '__package__', '__spec__', \
                     'np', 'pd', 'PATH_TO_POSYDON_DATA', \
-                    'os', 'tqdm', 'warnings', 'Pwarn',]
+                    'os', 'tqdm', 'warnings', 'Pwarn','selection_effects']
         totest_elements = set(dir(totest))
         missing_in_test = set(elements) - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -62,7 +63,7 @@ class TestElements:
 
     def test_instance_DCO_detectability(self):
         assert isroutine(totest.DCO_detectability)
-
+        
 class TestFunctions:
     
     @fixture
@@ -125,7 +126,6 @@ class TestFunctions:
             'channel': ['foo', 'bar', 'baz'],
         }, index=[0,1,2])
 
-
     @fixture
     def array(self):
         return np.array([1.0,2.0,3.0])
@@ -138,6 +138,39 @@ class TestFunctions:
     def wrong_array(self):
         return np.array(['1.0','2.0','3.0'])
     
+    @fixture
+    def transient_pop_chunk(self):
+        return pd.DataFrame({
+            'S1_mass': [30, 35],
+            'S2_mass': [25, 30],
+            'S1_spin': [0.1, 0.2],
+            'S2_spin': [0.1, 0.2],
+            'S1_spin_orbit_tilt_at_merger': [0.5, 0.6],
+            'S2_spin_orbit_tilt_at_merger': [0.4, 0.5],
+            'q': [0.83, 0.86],
+            'chi_eff': [0.1, 0.2]})
+
+    @fixture
+    def z_events_chunk(self):
+        return pd.DataFrame({
+            'event_1': [0.1, np.nan],
+            'event_2': [0.2, 0.3]})
+
+    @fixture
+    def z_events_chunk_with_nan(self):
+        return pd.DataFrame({
+            'event_1': [1.0, np.nan],   
+            'event_2': [np.nan, np.nan] 
+        }, index=[0,1])
+
+    @fixture
+    def z_weights_chunk(self):
+        return pd.DataFrame({
+            'event_1': [1.0, 1.0],
+            'event_2': [1.0, 1.0]
+        }, index=[0, 1])
+    
+
     def test_GRB_selection(self,history_chunk,oneline_chunk,
                            formation_channels_chunk):
         # missing argument
@@ -253,14 +286,51 @@ class TestFunctions:
         assert 'channel' in df.columns
         assert (df['channel'] == formation_channels_BBH['channel']).all()
     
-    def test_DCO_detectability(self):
+    def test_DCO_detectability(self,
+                               transient_pop_chunk,
+                               z_events_chunk, 
+                               z_events_chunk_with_nan,
+                               z_weights_chunk,
+                               monkeypatch):
+        class FakeKNNmodel:
+            def __init__(self, grid_path, sensitivity_key):
+                pass
+            def predict_pdet(self, df):
+                # Return a fixed probability (e.g., 0.5) for each row in df
+                return np.full(len(df), 0.5)
+
+        monkeypatch.setattr('posydon.popsyn.selection_effects.KNNmodel',
+                            FakeKNNmodel)
+
         # missing argument
-        
+        with raises(TypeError,match="missing 4 required positional arguments"):
+            totest.DCO_detectability()
         # bad input
-#         with raises(ValueError,match='Unknown sensitivity sens_example'):
-#             totest.DCO_detectability("sens_example")
-        
-        # examples
-        
-        pass
-        
+        with raises(ValueError,match='Unknown sensitivity sens_example'):
+            totest.DCO_detectability("sens_example",
+                                     transient_pop_chunk,
+                                     z_events_chunk,
+                                     z_weights_chunk)
+        # example: basic functionality    
+        out = totest.DCO_detectability('O3actual_H1L1V1', transient_pop_chunk, 
+                                z_events_chunk, z_weights_chunk)
+        assert isinstance(out, pd.DataFrame)
+        assert out.shape == z_weights_chunk.shape
+        assert (out.values <= 1.0).all()
+        # example: missing q
+        transient = transient_pop_chunk.drop(columns=['q'])
+        out = totest.DCO_detectability('O3actual_H1L1V1', transient, 
+                                z_events_chunk, z_weights_chunk)
+        assert not out.empty
+        # example: missing chi_eff
+        transient = transient_pop_chunk.drop(columns=['chi_eff'])
+        out = totest.DCO_detectability('O3actual_H1L1V1', transient, 
+                                z_events_chunk, z_weights_chunk)
+        assert not out.empty
+        assert (out.values <= 1.0).all()
+        # example: masking for nans in z_events_chunk
+        out = totest.DCO_detectability('O3actual_H1L1V1',
+                                       transient_pop_chunk,
+                                       z_events_chunk_with_nan,
+                                       z_weights_chunk)
+        assert (out['event_2'] == 0.0).all()
