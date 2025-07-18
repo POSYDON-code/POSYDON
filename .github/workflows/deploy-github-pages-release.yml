@@ -1,8 +1,8 @@
 name: Website Deploy on Release
 
 on:
-  release:
-    types: [published]
+  pull_request:
+    branches: [main]
 
 jobs:
   build_v1:
@@ -14,7 +14,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 1
+        fetch-depth: 0
         fetch-tags: true
         path: 'POSYDON'
         ref: ${{ github.ref }}
@@ -125,7 +125,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 1
+        fetch-depth: 0
         fetch-tags: true
         path: 'POSYDON'
         ref: ${{ github.ref }}
