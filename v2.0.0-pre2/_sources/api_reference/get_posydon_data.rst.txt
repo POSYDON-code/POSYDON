@@ -3,5 +3,5 @@ get\_posydon\_data
 
 .. automodule:: get_posydon_data
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

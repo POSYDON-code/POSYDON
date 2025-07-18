@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>posydon.grids &mdash; posydon 2.0.0-pre1 documentation</title>
+  <title>posydon.grids &mdash; posydon v2.0.0-dev documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=4893b70a"></script>
+      <script src="../_static/documentation_options.js?v=f4b7fd8b"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -238,7 +238,7 @@ t_new, X_new = TD.downsample(max_err=0.001)</p>
 </dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.grids.downsampling.TrackDownsampler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.downsampling.</span></span><span class="sig-name descname"><span class="pre">TrackDownsampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">independent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/downsampling.html#TrackDownsampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.downsampling.TrackDownsampler" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.downsampling.</span></span><span class="sig-name descname"><span class="pre">TrackDownsampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">independent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/downsampling.html#TrackDownsampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.downsampling.TrackDownsampler" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class performing downsampling of multi-dimensional paths.</p>
 <p>Get, reduce and rescale data.</p>
@@ -314,7 +314,7 @@ wildcard characters to incorporate multiple folders. E.g.,</p>
 part) are substituted. See <cite>psygrid</cite> module docstring for more information.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.grids.io.GridReader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.io.</span></span><span class="sig-name descname"><span class="pre">GridReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'posydon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_maxlines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/io.html#GridReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.io.GridReader" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.io.</span></span><span class="sig-name descname"><span class="pre">GridReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'posydon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_maxlines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/io.html#GridReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.io.GridReader" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class for quick reading of MESA grid files.</p>
 <p>Initialize object and immediately load the grid file structure.</p>
@@ -363,7 +363,7 @@ If 0, nothing will be printed.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.grids.io.RunReader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.io.</span></span><span class="sig-name descname"><span class="pre">RunReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'posydon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_maxlines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/io.html#RunReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.io.RunReader" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.io.</span></span><span class="sig-name descname"><span class="pre">RunReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'posydon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_maxlines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/io.html#RunReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.io.RunReader" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class for reading MESA output files of an individual run.</p>
 <p>Initialize object and immediately read the data.</p>
@@ -690,7 +690,7 @@ myhistory1.star_mass + myhistory1.star_mass</p>
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGrid">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">PSyGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">PSyGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGrid" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class handling a grid of MESA runs encoded in HDF5 format.</p>
 <p>Initialize the PSyGrid, and if <cite>filename</cite> is provided, open it.</p>
@@ -888,7 +888,7 @@ e.g. check_flags = ‘termination_flag_1’</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.grids.psygrid.PSyGridIterator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">PSyGridIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGridIterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGridIterator" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">PSyGridIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyGridIterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyGridIterator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class for iterating runs (i.e., PSyRunView instances) in a PSyGrid.</p>
 <p>Initialize by pointing to the PSyGrid object.</p>
@@ -896,7 +896,7 @@ e.g. check_flags = ‘termination_flag_1’</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.grids.psygrid.PSyRunView">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">PSyRunView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psygrid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyRunView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyRunView" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.grids.psygrid.</span></span><span class="sig-name descname"><span class="pre">PSyRunView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psygrid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/grids/psygrid.html#PSyRunView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.grids.psygrid.PSyRunView" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Access runs in HDF5 grid without opening all data.</p>
 <p class="rubric">Example</p>
@@ -1198,7 +1198,7 @@ nearest initial RLO run.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
   </div>
 
    
@@ -1208,41 +1208,7 @@ nearest initial RLO run.</p></li>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      Version: 2.0.0-pre1
-      <span class="fa fa-caret-down"></span>
-    </span>
-    <div class="rst-other-versions">
-        
-        <dl>
-            <dt> v1 versions</dt>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.0/index.html">1.0.0</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.4/index.html">1.0.4</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0.5</a></dd>
-            
-        </dL>
-        
-        
-        <dl>
-            <dt> v2 versions</dt>
-            
-            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
-            
-        </dL>
-        
-    </div>
-  </div><script>
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>posydon_setup_pipeline &mdash; posydon 2.0.0-pre1 documentation</title>
+  <title>posydon_setup_pipeline &mdash; posydon v2.0.0-dev documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=4893b70a"></script>
+      <script src="../_static/documentation_options.js?v=f4b7fd8b"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -150,7 +150,7 @@
 <span id="posydon-setup-pipeline"></span><h1>posydon_setup_pipeline<a class="headerlink" href="#module-posydon_setup_pipeline" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon_setup_pipeline.PostProcessingPipeline">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon_setup_pipeline.</span></span><span class="sig-name descname"><span class="pre">PostProcessingPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_inifile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_setup_pipeline.html#PostProcessingPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_setup_pipeline.PostProcessingPipeline" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon_setup_pipeline.</span></span><span class="sig-name descname"><span class="pre">PostProcessingPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_inifile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_setup_pipeline.html#PostProcessingPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_setup_pipeline.PostProcessingPipeline" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class to handle the post-processing pipeline.</p>
 <p>Initialize a pipeline</p>
@@ -174,7 +174,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="posydon_setup_pipeline.PostProcessingPipeline.parse_setup_params">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_setup_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_setup_pipeline.html#PostProcessingPipeline.parse_setup_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_setup_pipeline.PostProcessingPipeline.parse_setup_params" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_setup_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_setup_pipeline.html#PostProcessingPipeline.parse_setup_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_setup_pipeline.PostProcessingPipeline.parse_setup_params" title="Link to this definition"></a></dt>
 <dd><p>Parse inifile for running post-processing pipelines.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -322,7 +322,7 @@ It requires MAILTYPE to be set, too.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
   </div>
 
    
@@ -332,41 +332,7 @@ It requires MAILTYPE to be set, too.</p></li>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      Version: 2.0.0-pre1
-      <span class="fa fa-caret-down"></span>
-    </span>
-    <div class="rst-other-versions">
-        
-        <dl>
-            <dt> v1 versions</dt>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.0/index.html">1.0.0</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.4/index.html">1.0.4</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0.5</a></dd>
-            
-        </dL>
-        
-        
-        <dl>
-            <dt> v2 versions</dt>
-            
-            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
-            
-        </dL>
-        
-    </div>
-  </div><script>
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

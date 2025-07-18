@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>posydon.interpolation &mdash; posydon 2.0.0-pre1 documentation</title>
+  <title>posydon.interpolation &mdash; posydon v2.0.0-dev documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=4893b70a"></script>
+      <script src="../_static/documentation_options.js?v=f4b7fd8b"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -353,7 +353,7 @@ interpolation, classification = interp.evaluate(binary)</p>
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">BaseIFInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_nan_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kNN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">BaseIFInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_nan_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kNN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class handling the initial-final interpolation for POSYDON.</p>
 <p>Initialize the BaseIFInterpolation.</p>
@@ -537,7 +537,7 @@ for training the interpolator.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Classifier">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Classifier</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Classifier" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Classifier</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Classifier" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class used as a shell parent class for all classifiers.</p>
 <p>Initialize the Classifier.</p>
@@ -601,7 +601,7 @@ for training the interpolator.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.IFInterpolator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">IFInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#IFInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.IFInterpolator" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">IFInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#IFInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.IFInterpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class handling initial-final interpolation.</p>
 <p>Class handling initial-final interpolation with support to interpolate
@@ -692,7 +692,7 @@ which an output vector will be approximated.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Interpolator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Interpolator</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Interpolator" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Interpolator</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Interpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class used as a shell parent class for all Interpolators.</p>
 <p>Initialize the Interpolator.</p>
@@ -739,7 +739,7 @@ which an output vector will be approximated.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.KNNClassifier">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">KNNClassifier</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#KNNClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.KNNClassifier" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">KNNClassifier</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#KNNClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.KNNClassifier" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.interpolation.IF_interpolation.Classifier" title="posydon.interpolation.IF_interpolation.Classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Classifier</span></code></a></p>
 <p>Class implementing K - Nearest Neighbors classifier.</p>
 <p>Initialize the Classifier.</p>
@@ -804,7 +804,7 @@ which an output vector will be approximated.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.LinInterpolator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">LinInterpolator</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#LinInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.LinInterpolator" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">LinInterpolator</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#LinInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.LinInterpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.interpolation.IF_interpolation.Interpolator" title="posydon.interpolation.IF_interpolation.Interpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interpolator</span></code></a></p>
 <p>Class implementing Linear Interpolation.</p>
 <p>Initialize the Interpolator.</p>
@@ -844,7 +844,7 @@ which an output vector will be approximated.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MC_Interpolator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">MC_Interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MC_Interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MC_Interpolator" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">MC_Interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MC_Interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MC_Interpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class implementing class-wise interpolation.</p>
 <p>Initialize the class-wise interpolation.</p>
@@ -898,7 +898,7 @@ which an output vector will be approximated.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MatrixScaler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">MatrixScaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MatrixScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MatrixScaler" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">MatrixScaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MatrixScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MatrixScaler" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class used to scale input and output space.</p>
 <p>Initialize the Scaler with desired scalings.</p>
@@ -918,7 +918,7 @@ which an output vector will be approximated.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.NNInterpolator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">NNInterpolator</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#NNInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.NNInterpolator" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">NNInterpolator</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#NNInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.NNInterpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.interpolation.IF_interpolation.Interpolator" title="posydon.interpolation.IF_interpolation.Interpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interpolator</span></code></a></p>
 <p>Class implementing Nearest Neighbor interpolation.</p>
 <p>Initialize the Interpolator.</p>
@@ -958,7 +958,7 @@ which an output vector will be approximated.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Scaler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Scaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Scaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Scaler" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Scaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Scaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Scaler" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Scaler.denormalize">
@@ -1311,7 +1311,7 @@ find_constraints_to_apply function</p></li>
 <p>Module for scaling data before and after interpolation.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.data_scaling.DataScaler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.data_scaling.</span></span><span class="sig-name descname"><span class="pre">DataScaler</span></span><a class="reference internal" href="../_modules/posydon/interpolation/data_scaling.html#DataScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.data_scaling.DataScaler" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.data_scaling.</span></span><span class="sig-name descname"><span class="pre">DataScaler</span></span><a class="reference internal" href="../_modules/posydon/interpolation/data_scaling.html#DataScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.data_scaling.DataScaler" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Data Normalization class.</p>
 <p>This class provides normalizing tools for float 1D arrays. Features can be
@@ -1333,7 +1333,7 @@ values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – expects a 1D array and finds norm values of columns</p></li>
+<li><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – expects a 1D array and finds norm values of columns</p></li>
 <li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Scaling method. Possible values: ‘min_max’, ‘max_abs’, ‘standarize’
 and their log versions ‘log_min_max’, ‘neg_log_min_max’,
 ‘log_max_abs’, ‘log_standarize’, ‘neg_log_standarize’.</p></li>
@@ -1354,7 +1354,7 @@ min(x_transf) = lower, max(x_transf) = upper</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – expects a 1D array and finds norm values of columns</p></li>
+<li><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – expects a 1D array and finds norm values of columns</p></li>
 <li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – scaling method. Possible values: ‘min_max’, ‘max_abs’, ‘standarize’
 and the log versions ‘log_min_max’, ‘log_max_abs’, ‘log_standarize’</p></li>
 <li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – lower range value of x_t after (<a href="#id13"><span class="problematic" id="id14">log_</span></a>)min_max scaling</p></li>
@@ -1365,7 +1365,7 @@ and the log versions ‘log_min_max’, ‘log_max_abs’, ‘log_standarize’<
 <dd class="field-even"><p>transformed version of x</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1376,13 +1376,13 @@ and the log versions ‘log_min_max’, ‘log_max_abs’, ‘log_standarize’<
 <dd><p>Revert the scaling using the stored transform parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x_t</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – expects a 1D array to unnormalize given the fitted transform.</p>
+<dd class="field-odd"><p><strong>x_t</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – expects a 1D array to unnormalize given the fitted transform.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>denormalized x using the stored parameters.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1397,13 +1397,13 @@ normalization. In this case, the transformed x will have
 min(x_transf) = lower, max(x_transf) = upper</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – values to normalize</p>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – values to normalize</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>transformed version of x</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1417,7 +1417,7 @@ min(x_transf) = lower, max(x_transf) = upper</p>
 <p>Reference: Dotter, Aaron (2016), AJSS, 222, 1.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.eep.EEP">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.eep.</span></span><span class="sig-name descname"><span class="pre">EEP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EEP_NAMES</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ZAMShi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EEP_INTERVAL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/eep.html#EEP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.eep.EEP" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.eep.</span></span><span class="sig-name descname"><span class="pre">EEP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EEP_NAMES</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ZAMShi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EEP_INTERVAL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/eep.html#EEP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.eep.EEP" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Convert a MESA history file to Equivalent Evolutionary Phase track.</p>
 <p>Load an MESA history file and construct the EEP instance.</p>
@@ -1429,7 +1429,7 @@ min(x_transf) = lower, max(x_transf) = upper</p>
 <p>Definition of the psyTackInterp class.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">GRIDInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">GRIDInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class to interpolate between single star MESA tracks.</p>
 <dl class="py attribute">
@@ -1572,7 +1572,7 @@ to restore and array will be performed.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.interpolation.psyTrackInterp">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">psyTrackInterp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_in_q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#psyTrackInterp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.psyTrackInterp" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">psyTrackInterp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_in_q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#psyTrackInterp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.psyTrackInterp" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Perform track interpolation for POSYDON.</p>
 <p>Initialize the psyTrackInterp class.</p>
@@ -1667,7 +1667,7 @@ default is false</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
   </div>
 
    
@@ -1677,41 +1677,7 @@ default is false</p></li>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      Version: 2.0.0-pre1
-      <span class="fa fa-caret-down"></span>
-    </span>
-    <div class="rst-other-versions">
-        
-        <dl>
-            <dt> v1 versions</dt>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.0/index.html">1.0.0</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.4/index.html">1.0.4</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0.5</a></dd>
-            
-        </dL>
-        
-        
-        <dl>
-            <dt> v2 versions</dt>
-            
-            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
-            
-        </dL>
-        
-    </div>
-  </div><script>
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

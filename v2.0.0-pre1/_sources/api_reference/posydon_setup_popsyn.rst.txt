@@ -3,5 +3,5 @@ posydon\_setup\_popsyn
 
 .. automodule:: posydon_setup_popsyn
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

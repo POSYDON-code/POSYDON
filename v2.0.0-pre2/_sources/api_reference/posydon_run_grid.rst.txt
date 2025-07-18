@@ -3,5 +3,5 @@ posydon\_run\_grid
 
 .. automodule:: posydon_run_grid
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

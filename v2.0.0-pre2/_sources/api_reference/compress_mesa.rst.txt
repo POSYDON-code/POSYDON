@@ -3,5 +3,5 @@ compress\_mesa
 
 .. automodule:: compress_mesa
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

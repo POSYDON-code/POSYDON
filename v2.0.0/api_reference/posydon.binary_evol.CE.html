@@ -1,0 +1,626 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.CE &mdash; posydon 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=51b770b3"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="posydon.binary_evol.DT" href="posydon.binary_evol.DT.html" />
+    <link rel="prev" title="posydon.binary_evol" href="posydon.binary_evol.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="posydon.html">posydon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="posydon.active_learning.html">posydon.active_learning</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="posydon.binary_evol.html">posydon.binary_evol</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">posydon.binary_evol.CE</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-posydon.binary_evol.CE.step_CEE">posydon.binary_evol.CE.step_CEE</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.html">posydon.binary_evol.DT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.MESA.html">posydon.binary_evol.MESA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.SN.html">posydon.binary_evol.SN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol.binarystar">posydon.binary_evol.binarystar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol.flow_chart">posydon.binary_evol.flow_chart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol.simulationproperties">posydon.binary_evol.simulationproperties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol.singlestar">posydon.binary_evol.singlestar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol.step_end">posydon.binary_evol.step_end</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.grids.html">posydon.grids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.interpolation.html">posydon.interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.popsyn.html">posydon.popsyn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.user_modules.html">posydon.user_modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.utils.html">posydon.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.html">posydon.visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="posydon.html">posydon</a></li>
+          <li class="breadcrumb-item"><a href="posydon.binary_evol.html">posydon.binary_evol</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.CE</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/posydon.binary_evol.CE.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-posydon.binary_evol.CE">
+<span id="posydon-binary-evol-ce"></span><h1>posydon.binary_evol.CE<a class="headerlink" href="#module-posydon.binary_evol.CE" title="Link to this heading"></a></h1>
+<section id="module-posydon.binary_evol.CE.step_CEE">
+<span id="posydon-binary-evol-ce-step-cee"></span><h2>posydon.binary_evol.CE.step_CEE<a class="headerlink" href="#module-posydon.binary_evol.CE.step_CEE" title="Link to this heading"></a></h2>
+<p>Common envelope evolution step.</p>
+<p>Calculates the evolution of a star in a BinaryStar object. It uses
+the alpha-perscription and caclulates how much the orbit has to shrink in
+order to expel its envelope. If in that separation, one of the star fills its
+RL, then the system is considered a merger. Else the common envelope is lost
+and we are left with a binary system with the core of the donor star (which
+initiated the unstable CEE) and the core of the copmanion. For now it works
+with the donor star being either a type of H_giant (with a He core) or
+He_giant (with a CO core) and the companion star being either a MS or compact
+object star, not contribyting to the CE.</p>
+<p>If profiles exist we are able to calculate on the spot the lambda parameter
+for the donor star, else we use the default values</p>
+<dl class="field-list simple">
+<dt class="field-odd">param binary<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">type binary<span class="colon">:</span></dt>
+<dd class="field-even"><p>BinaryStar (An object of class BinaryStar defined in POSYDON)</p>
+</dd>
+<dt class="field-odd">param verbose<span class="colon">:</span></dt>
+<dd class="field-odd"><p>In case we want information about the CEE  (the default is False).</p>
+</dd>
+<dt class="field-even">type verbose<span class="colon">:</span></dt>
+<dd class="field-even"><p>Boolean</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.CE.step_CEE.</span></span><span class="sig-name descname"><span class="pre">StepCEE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prescription</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['prescription']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_efficiency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['common_envelope_efficiency']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_lambda_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['common_envelope_lambda_default']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_option_for_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['common_envelope_option_for_lambda']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_option_for_HG_star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['common_envelope_option_for_HG_star']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_option_after_succ_CEE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['common_envelope_option_after_succ_CEE']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_alpha_thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['common_envelope_alpha_thermal']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_definition_H_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['core_definition_H_fraction']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_definition_He_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['core_definition_He_fraction']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CEE_tolerance_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['CEE_tolerance_err']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_loss_during_CEE_merged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['mass_loss_during_CEE_merged']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['verbose']</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Compute supernova final remnant mass, fallback fraction &amp; stellar state.</p>
+<p>This consider the nearest neighboor of the He core mass of the star,
+previous to the collapse. Considering a set of data for which the He core
+mass of the compact object projenitos previous the collapse, the final
+remnant mass and final stellar state of the compact object is known.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, the messages will be prited in the console.</p>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>prescription</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – <p>Prescription to use for computing the prediction of common enevelope
+evolution. Available options are:</p>
+<ul class="simple">
+<li><p>’alpha-lambda’ : Considers the the alpha-lambda prescription
+described in <a class="reference internal" href="#r14721dbd4c56-1" id="id1">[1]</a> and <a class="reference internal" href="#r14721dbd4c56-2" id="id2">[2]</a> to predict the outcome of the common
+envelope evolution. If the profile of the donor star is available
+then it is used to compute the value of lambda.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r14721dbd4c56-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Webbink, R. F. (1984). Double white dwarfs as progenitors of R
+Coronae Borealis stars and Type I supernovae. The Astrophysical
+Journal, 277, 355-360.</p>
+</div>
+<div class="citation" id="r14721dbd4c56-2" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>De Kool, M. (1990). Common envelope evolution and double cores of
+planetary nebulae. The Astrophysical Journal, 358, 189-195.</p>
+</div>
+</div>
+<p>Initialize a StepCEE instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_binary_upon_ejection">
+<span class="sig-name descname"><span class="pre">CEE_adjust_binary_upon_ejection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">donor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc1_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc1_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">donor_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc2_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc2_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double_CE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separation_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbital_period_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_option_after_succ_CEE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_definition_H_fraction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_definition_He_fraction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE.CEE_adjust_binary_upon_ejection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_binary_upon_ejection" title="Link to this definition"></a></dt>
+<dd><p>Update the binary and component stars upon exiting a CEE.</p>
+<p>The binary’s parameters (orbital period, separation, state, etc.) are
+updated along with the donor’s (and in the case of a double CE the
+companion’s) parameters as well. Note that certain parameters are set
+to np.nan if they are undetermined after the CE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>binary</strong> (<em>BinaryStar object</em>) – The binary system</p></li>
+<li><p><strong>donor</strong> (<em>SingleStar object</em>) – The donor star</p></li>
+<li><p><strong>mc1_f</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Final core mass of the donor (in Msun)</p></li>
+<li><p><strong>rc1_f</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Final core radius of the donor (in Rsun)</p></li>
+<li><p><strong>donor_type</strong> (<em>string</em>) – Descriptor for the stellar type of the donor’s core</p></li>
+<li><p><strong>comp_star</strong> (<em>SingleStar object</em>) – The companion star</p></li>
+<li><p><strong>mc2_f</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Final core mass of the companion (in Msun)</p></li>
+<li><p><strong>rc2_f</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Final core radius of the companion (in Rsun)</p></li>
+<li><p><strong>comp_type</strong> (<em>string</em>) – Descriptor for the stellar type of the companion or it’s core</p></li>
+<li><p><strong>double_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether the CEE is a double CE or not</p></li>
+<li><p><strong>separation_f</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Final binary separation upon exiting the CEE (in Rsun)</p></li>
+<li><p><strong>orbital_period_f</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Final orbital period upon exiting the CEE (in days)</p></li>
+<li><p><strong>common_envelope_option_after_succ_CEE</strong> (<em>string</em>) – Which type of post-common envelope evolution is used to remove
+the final layers around the core</p></li>
+<li><p><strong>core_definition_H_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The fractional abundance of H defining the He core (0.3, 0.1, or
+0.01)</p></li>
+<li><p><strong>core_definition_He_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The fractional abundance of He defining the CO core (typically 0.1)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_binary_upon_merger">
+<span class="sig-name descname"><span class="pre">CEE_adjust_binary_upon_merger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">donor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">donor_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mejected_donor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mejected_comp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE.CEE_adjust_binary_upon_merger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_binary_upon_merger" title="Link to this definition"></a></dt>
+<dd><p>Update the binary and component stars upon merging within a CEE.</p>
+<p>The binary’s state and event are updated along with the donor and
+companion star masses and radii corresponding to a merger event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>binary</strong> (<em>BinaryStar object</em>) – The binary system</p></li>
+<li><p><strong>donor</strong> (<em>SingleStar object</em>) – The donor star</p></li>
+<li><p><strong>comp_star</strong> (<em>SingleStar object</em>) – The companion star</p></li>
+<li><p><strong>m1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Mass of the donor upon entering a CE (in Msun)</p></li>
+<li><p><strong>m2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Mass of the companion upon entering a CE (in Msun)</p></li>
+<li><p><strong>donor_type</strong> (<em>string</em>) – Descriptor for the stellar type of the donor’s core</p></li>
+<li><p><strong>comp_type</strong> (<em>string</em>) – Descriptor for the stellar type of the companion or it’s core</p></li>
+<li><p><strong>Mejected_donor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – How much mass is ejected from the donor upon merger (in Msun)</p></li>
+<li><p><strong>Mejected_comp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – How much mass is ejected from the companion upon merger (in Msun)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_mass_loss_during_CEE_merged">
+<span class="sig-name descname"><span class="pre">CEE_adjust_mass_loss_during_CEE_merged</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">donor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separation_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_CE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double_CE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE.CEE_adjust_mass_loss_during_CEE_merged"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_mass_loss_during_CEE_merged" title="Link to this definition"></a></dt>
+<dd><p>Calculate the amount of mass lost during a stellar merger in a CEE</p>
+<p>From the stellar profiles the mass ejected until merger is calculated.
+Note that this function only returns non-zero mass-loss values if a
+profile is available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>donor</strong> (<em>SingleStar object</em>) – The donor star</p></li>
+<li><p><strong>m1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial mass of the donor (in Msun)</p></li>
+<li><p><strong>mc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial core mass of the donor (in Msun)</p></li>
+<li><p><strong>rc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial core radius of the donor (in Rsun)</p></li>
+<li><p><strong>comp_star</strong> (<em>SingleStar object</em>) – The companion star</p></li>
+<li><p><strong>m2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial mass of the companion (in Msun)</p></li>
+<li><p><strong>mc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial core mass of the companion (in Msun)</p></li>
+<li><p><strong>rc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial core radius of the companion (in Rsun)</p></li>
+<li><p><strong>separation_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial separation of the binary (in cm)</p></li>
+<li><p><strong>alpha_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Common envelope efficiency parameter (unitless)</p></li>
+<li><p><strong>radius1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial radius of the donor (in Rsun)</p></li>
+<li><p><strong>radius2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial radius of the companion (in Rsun)</p></li>
+<li><p><strong>double_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether the CEE is a double CE or not</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Mejected_donor</strong> (<em>float</em>) – Mass ejected from the donor (in Msun)</p></li>
+<li><p><strong>Mejected_comp</strong> (<em>float</em>) – Mass ejected from the companion (in Msun)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_post_CE_core_masses">
+<span class="sig-name descname"><span class="pre">CEE_adjust_post_CE_core_masses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">donor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">donor_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double_CE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE.CEE_adjust_post_CE_core_masses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_adjust_post_CE_core_masses" title="Link to this definition"></a></dt>
+<dd><p>Calculate the post-common-envelope core masses and radii.</p>
+<p>It determines the post-CE parameters based on the core properties.
+Note that these parameters may be updated in a subsequent step
+depending on assumptions about whether and how the final layers
+of the CE are removed from the cores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>donor</strong> (<em>SingleStar object</em>) – The donor star</p></li>
+<li><p><strong>mc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core mass of the donor after the fast CE phase (in Msun)</p></li>
+<li><p><strong>rc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core radius of the donor after the fast CE phase (in Rsun)</p></li>
+<li><p><strong>donor_type</strong> (<em>string</em>) – String dictating whether the donor has a ‘He_core’ or ‘CO_core’</p></li>
+<li><p><strong>comp_star</strong> (<em>SingleStar object</em>) – The companion star</p></li>
+<li><p><strong>mc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core mass of the companion after the fast CE phase (in Msun)</p></li>
+<li><p><strong>rc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core radius of the companion after the fast CE phase (in Rsun)</p></li>
+<li><p><strong>comp_type</strong> (<em>string</em>) – String dictating whether the companion has a ‘He_core’, ‘CO_core’,
+or ‘not_giant_companion’ (e.g. a compact object or MS star).</p></li>
+<li><p><strong>double_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we have a double CE situation.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>m1c_f</strong> (<em>float</em>) – Donor mass after the complete CE (in Msun)</p></li>
+<li><p><strong>r1c_f</strong> (<em>float</em>) – Donor radius after the complete CE (in Rsun)</p></li>
+<li><p><strong>m2c_f</strong> (<em>float</em>) – Companion mass after the complete CE (in Msun)</p></li>
+<li><p><strong>r2c_f</strong> (<em>float</em>) – Companion radius after the complete CE (in Rsun)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE.CEE_one_phase_variable_core_definition">
+<span class="sig-name descname"><span class="pre">CEE_one_phase_variable_core_definition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">donor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separation_postCEE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE.CEE_one_phase_variable_core_definition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_one_phase_variable_core_definition" title="Link to this definition"></a></dt>
+<dd><p>Calculate the post-common-envelope parameters upon exiting a CEE.</p>
+<p>This prescription assumes the he_core_mass/radius (or
+co_core_mass/radius for CEE of stripped_He*) are not further stripped
+beyond the core defined given by the core_definition_H/He_fraction.
+Hence, there are no changes on the orbit after successful ejection.
+Instead it is assumed that the defined core will become the remaining
+stripped object with core abundances at its surface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>donor</strong> (<em>SingleStar object</em>) – The donor star</p></li>
+<li><p><strong>mc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core mass of the donor after the fast CE phase (in Msun)</p></li>
+<li><p><strong>rc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core radius of the donor after the fast CE phase (in Rsun)</p></li>
+<li><p><strong>comp_star</strong> (<em>SingleStar object</em>) – The companion star</p></li>
+<li><p><strong>mc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core mass of the companion after the fast CE phase (in Msun)</p></li>
+<li><p><strong>rc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core radius of the companion after the fast CE phase (in Rsun)</p></li>
+<li><p><strong>separation_postCEE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Binary’s separation after the fast CE phase (in cm)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>m1c_f</strong> (<em>float</em>) – Donor mass after the complete CE (in Msun)</p></li>
+<li><p><strong>r1c_f</strong> (<em>float</em>) – Donor radius after the complete CE (in Rsun)</p></li>
+<li><p><strong>m2c_f</strong> (<em>float</em>) – Companion mass after the complete CE (in Msun)</p></li>
+<li><p><strong>r2c_f</strong> (<em>float</em>) – Companion radius after the complete CE (in Rsun)</p></li>
+<li><p><strong>separation_f</strong> (<em>float</em>) – Binary’s final separation upon exiting the CE (in Rsun)</p></li>
+<li><p><strong>orbital_period_f</strong> (<em>float</em>) – Binary’s final orbital period upon exiting the CE (in days)</p></li>
+<li><p><strong>merger</strong> (<em>bool</em>) – Whether the binary merged in the CE</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE.CEE_simple_alpha_prescription">
+<span class="sig-name descname"><span class="pre">CEE_simple_alpha_prescription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">donor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda1_CE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">donor_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda2_CE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double_CE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_option_after_succ_CEE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['common_envelope_option_after_succ_CEE']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_definition_H_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['core_definition_H_fraction']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_definition_He_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['core_definition_He_fraction']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_loss_during_CEE_merged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MODEL['mass_loss_during_CEE_merged']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE.CEE_simple_alpha_prescription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_simple_alpha_prescription" title="Link to this definition"></a></dt>
+<dd><p>Apply the alpha-lambda common-envelope prescription.</p>
+<p>It uses energetics to calculate the shrinakge of the orbit
+(and possible merger) of the two components, as well as upadate
+their new masses, during a common-envelope phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>binary</strong> (<em>BinaryStar object</em>) – Instance of the binary to evolve.</p></li>
+<li><p><strong>donor</strong> (<em>SingleStar object</em>) – The donor star</p></li>
+<li><p><strong>comp_star</strong> (<em>SingleStar object</em>) – The companion star</p></li>
+<li><p><strong>lambda1_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Lambda previously calculated for the donor’s envelope
+binding energy.</p></li>
+<li><p><strong>mc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – core mass of the donor</p></li>
+<li><p><strong>rc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – core radius of the donor</p></li>
+<li><p><strong>donor_type</strong> (<em>string</em>) – String dictating whether the donor has a H-envelope or He-envelope</p></li>
+<li><p><strong>lambda2_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Lambda previously calculated for the companion’s envelope
+binding energy.</p></li>
+<li><p><strong>mc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – core mass of the companion</p></li>
+<li><p><strong>rc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – core radius of the companion</p></li>
+<li><p><strong>comp_type</strong> (<em>string</em>) – String dictating whether the companion has a
+H-envelope or He-envelope.</p></li>
+<li><p><strong>double_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we have a double CE situation.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE.</p></li>
+<li><p><strong>common_envelope_option_after_succ_CEE</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – <p>Options are:</p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>”one_phase_variable_core_definition”</dt><dd><p>he_core_mass/radius (or co_core_mass/radius for CEE of
+stripped_He*) are replaced according to the new core boundary
+used for CEE (based on core_definition_H/He_fraction) but no
+other change in period after succesful ejection at
+alpha-lambda prescription.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>”two_phases_stableMT”</dt><dd><p>he_core_mass/radius (or co_core_mass/radius for CEE of
+stripped_He*) staying as preCEE and after succesful ejection at
+alpha-lambda prescription, we assume an instantaneous stableMT
+phase (non-conservative, with mass lost from accretor) from the
+donor (or from donor and simultaneously the accretor at
+double_CE), taking away the extra “core” mass as defined by the
+core boundary used for CEE (based on
+core_definition_H/He_fraction).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>”two_phases_windloss”</dt><dd><p>he_core_mass/radius (or co_core_mass/radius for CEE of
+stripped_He*) staying as preCEE and after succesful ejection
+at alpha-lambda prescription, we assume a instantaneous
+windloss phase from the donor (or from donor and simultaneously
+the accretor at double_CE), taking away the extra “core” mass
+as defined by the core boundary used for CEE (based on
+core_definition_H/He_fraction).</p>
+</dd>
+</dl>
+</li>
+</ol>
+</p></li>
+<li><p><strong>core_definition_H_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The value of the H abundance to define the envelope-core boundary
+in He_cores.</p></li>
+<li><p><strong>core_definition_He_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The value of the He abundance to define the envelope-core boundary
+in CO_cores.</p></li>
+<li><p><strong>mass_loss_during_CEE_merged</strong> (<em>Boolean</em>) – <p>If False, then no mass loss from this step for a merged CEE
+If True, then we remove mass according to the alpha-lambda prescription</p>
+<blockquote>
+<div><p>assuming a final separation where the inner core(s) RLOF starts, and the same lambda(s)</p>
+</div></blockquote>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE.CEE_two_phases_stableMT">
+<span class="sig-name descname"><span class="pre">CEE_two_phases_stableMT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">donor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">donor_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double_CE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separation_postCEE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE.CEE_two_phases_stableMT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_two_phases_stableMT" title="Link to this definition"></a></dt>
+<dd><p>Calculate the post-common-envelope parameters upon exiting a CEE.</p>
+<p>This prescription assumes the he_core_mass/radius (or
+co_core_mass/radius for CEE of stripped_He*) becomes the value
+determined by MESA pre CEE. It stripes the envelope between the core
+defined by the core_definition_H/He_fraction and the MESA core by
+assuming an instantaneous stable MT phase (non-conservative, with mass
+lost from the accretor) after the successful ejection of the outer
+envelope part lost during the fast CE phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>donor</strong> (<em>SingleStar object</em>) – The donor star</p></li>
+<li><p><strong>mc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core mass of the donor after the fast CE phase (in Msun)</p></li>
+<li><p><strong>rc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core radius of the donor after the fast CE phase (in Rsun)</p></li>
+<li><p><strong>comp_star</strong> (<em>SingleStar object</em>) – The companion star</p></li>
+<li><p><strong>mc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core mass of the companion after the fast CE phase (in Msun)</p></li>
+<li><p><strong>rc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core radius of the companion after the fast CE phase (in Rsun)</p></li>
+<li><p><strong>separation_postCEE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Binary’s separation after the fast CE phase (in cm)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>m1c_f</strong> (<em>float</em>) – Donor mass after the complete CE (in Msun)</p></li>
+<li><p><strong>r1c_f</strong> (<em>float</em>) – Donor radius after the complete CE (in Rsun)</p></li>
+<li><p><strong>m2c_f</strong> (<em>float</em>) – Companion mass after the complete CE (in Msun)</p></li>
+<li><p><strong>r2c_f</strong> (<em>float</em>) – Companion radius after the complete CE (in Rsun)</p></li>
+<li><p><strong>separation_f</strong> (<em>float</em>) – Binary’s final separation upon exiting the CE (in Rsun)</p></li>
+<li><p><strong>orbital_period_f</strong> (<em>float</em>) – Binary’s final orbital period upon exiting the CE (in days)</p></li>
+<li><p><strong>merger</strong> (<em>bool</em>) – Whether the binary merged in the CE</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE.CEE_two_phases_windloss">
+<span class="sig-name descname"><span class="pre">CEE_two_phases_windloss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">donor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc1_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">donor_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc2_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double_CE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separation_postCEE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE.CEE_two_phases_windloss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE.CEE_two_phases_windloss" title="Link to this definition"></a></dt>
+<dd><p>Calculate the post-common-envelope parameters upon exiting a CEE.</p>
+<p>This prescription assumes the he_core_mass/radius (or
+co_core_mass/radius for CEE of stripped_He*) becomes the value
+determined by MESA pre CEE. It stripes the envelope between the core
+defined by the core_definition_H/He_fraction and the MESA core by
+assuming an instantaneous wind loss phase from the donor (or both
+components in case of a double CE) after the successful ejection of the
+outer envelope part lost during the fast CE phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>donor</strong> (<em>SingleStar object</em>) – The donor star</p></li>
+<li><p><strong>mc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core mass of the donor after the fast CE phase (in Msun)</p></li>
+<li><p><strong>rc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core radius of the donor after the fast CE phase (in Rsun)</p></li>
+<li><p><strong>comp_star</strong> (<em>SingleStar object</em>) – The companion star</p></li>
+<li><p><strong>mc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core mass of the companion after the fast CE phase (in Msun)</p></li>
+<li><p><strong>rc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Core radius of the companion after the fast CE phase (in Rsun)</p></li>
+<li><p><strong>separation_postCEE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Binary’s separation after the fast CE phase (in cm)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>m1c_f</strong> (<em>float</em>) – Donor mass after the complete CE (in Msun)</p></li>
+<li><p><strong>r1c_f</strong> (<em>float</em>) – Donor radius after the complete CE (in Rsun)</p></li>
+<li><p><strong>m2c_f</strong> (<em>float</em>) – Companion mass after the complete CE (in Msun)</p></li>
+<li><p><strong>r2c_f</strong> (<em>float</em>) – Companion radius after the complete CE (in Rsun)</p></li>
+<li><p><strong>separation_f</strong> (<em>float</em>) – Binary’s final separation upon exiting the CE (in Rsun)</p></li>
+<li><p><strong>orbital_period_f</strong> (<em>float</em>) – Binary’s final orbital period upon exiting the CE (in days)</p></li>
+<li><p><strong>merger</strong> (<em>bool</em>) – Whether the binary merged in the CE</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE.calculate_lambda_CE">
+<span class="sig-name descname"><span class="pre">calculate_lambda_CE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">donor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE.calculate_lambda_CE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE.calculate_lambda_CE" title="Link to this definition"></a></dt>
+<dd><p>Calculate lambda_CE from an assumed constant value or from profile.</p>
+<p>If lambda_CE is calculated from donor’s profile, we also pass a more
+accurate calculation of the donor core mass for the purposes of CEE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>donor</strong> (<em>instance</em><em> of </em><a class="reference internal" href="posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar" title="posydon.binary_evol.singlestar.SingleStar"><em>SingleStar</em></a>) – The donor star to calculate pre-CE quantities.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE  (the default is False).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>lambda_CE</strong> (<em>float</em>) – lambda_CE calculated either as an assumed constant value or
+calculated from profile</p></li>
+<li><p><strong>mc1_i</strong> (<em>float</em>) – If lambda_CE is calculated from donor’s profile, we also pass a
+more accurate calculation of the donor core mass for the purposes
+of CEE.</p></li>
+<li><p><strong>rc1_i</strong> (<em>float</em>) – The radius of the donor’s core</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="posydon.binary_evol.html" class="btn btn-neutral float-left" title="posydon.binary_evol" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="posydon.binary_evol.DT.html" class="btn btn-neutral float-right" title="posydon.binary_evol.DT" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0/index.html">2.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,439 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Star Formation History &mdash; posydon 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=51b770b3"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="posydon" href="../../api_reference/posydon.html" />
+    <link rel="prev" title="Synthetic Populations" href="synthetic_population.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="single_star.html">The SingleStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_star.html">The BinaryStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSYDON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow_chart.html">The Flow Chart Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Star Formation History</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+      <li class="breadcrumb-item active">Star Formation History</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/pop_syn/star_formation_history.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="star-formation-history">
+<span id="id1"></span><h1>Star Formation History<a class="headerlink" href="#star-formation-history" title="Link to this heading"></a></h1>
+<p>The star formation history is a key component in population synthesis, since it
+determined the amount of stars that are formed at each moment in time.
+POSYDON implements two methods for the consideration of the star formation history:</p>
+<p>1. As part of the initial sampling, where a star formation history is used to
+determine the number of stars that are formed at each time step. This is especially
+useful for simulations of “living” stars in a cluster or galaxy, where the star formation
+history can be continuous, instead of a burst. Together with a maximum age, it
+provides a way to generate a realistic distribution of stars in a specific environment.</p>
+<p>2. During post-processing step, where the star formation history is used to distribute
+transient events, “instantaneous” events, such as supernovae, that cover a
+large metallicity range. In this case, the star formation history is used to place
+the events at different birth times across cosmic time. This approach is described
+in <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2024arXiv241102376A/abstract">Andrews et al. 2025</a></p>
+<p>On this page, we will describe the star formation histories in more detail and how they are used in POSYDON.</p>
+<p>In general, the cosmic star formation rate density and metallicity evolution are
+considered independently, although some star formation histories may include
+metallicity evolution as well, such as the IllustrisTNG model.</p>
+<p>When calculating the cosmic_weights of events in the
+<a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights" title="posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_cosmic_weights()</span></code></a> function, a star formation history model has to be provided.
+This model is given as a dictionary to the function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SFH_model</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;SFR&quot;</span><span class="p">:</span> <span class="s2">&quot;IllustrisTNG&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In the example above, we used the “IllustrisTNG” model (similar to in the tutorial), which is a star formation history model that includes metallicity evolution,
+but other models are available.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To use a star formation history model, the population needs to be created with
+a burst star formation in the population synthesis.</p>
+</div>
+<section id="cosmic-star-formation-rate-densities">
+<h2>Cosmic star formation rate densities<a class="headerlink" href="#cosmic-star-formation-rate-densities" title="Link to this heading"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Please make sure you use the correct IMF with the correct SFH model.
+If these are mismatched, an artificial offset can be introduced to the rates,
+due to the different weightings of the stars in the IMF.</p>
+</div>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Cosmic Star Formation Rate Densities</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 12.5%" />
+<col style="width: 37.5%" />
+<col style="width: 12.5%" />
+<col style="width: 37.5%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Reference</p></th>
+<th class="head"><p>IMF assumption</p></th>
+<th class="head"><p>Additional required parameters</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Madau+Dickinson14</span></code></p></td>
+<td><p><a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M">Madau &amp; Dickinson (2014)</a></p></td>
+<td><p>Salpeter</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sigma</span></code> (float; string) the standard deviation of the log-normal distribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Madau+Fragos17</span></code></p></td>
+<td><p><a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M/">Madau &amp; Fragos (2017)</a></p></td>
+<td><p>Kroupa 2001</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sigma</span></code> (float; string) the standard deviation of the log-normal distribution.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Fujimoto+24</span></code></p></td>
+<td><p><a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2024ApJS..275...36F">Fujimoto et al. (2024)</a></p></td>
+<td><p>Kroupa 2001</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sigma</span></code> (float; string) the standard deviation of the log-normal distribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Neijssel+19</span></code></p></td>
+<td><p><a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2019MNRAS.490.3740N">Neijssel et al. (2019)</a></p></td>
+<td><p>Kroupa 2001</p></td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sigma</span></code> (float; string) the standard deviation of the log-normal distribution.</div>
+<div class="line">Note that this models uses a log10 scaling instead of a natural logarithm scaling for the metallicity, which</div>
+<div class="line">affects the conversion of <code class="docutils literal notranslate"><span class="pre">sigma</span></code>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IllustrisTNG</span></code></p></td>
+<td><p><a class="reference external" href="https://www.tng-project.org/">IllustrisTNG</a></p></td>
+<td><p>Kroupa 2001</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Chruslinska+21</span></code></p></td>
+<td><p><a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2021MNRAS.508.4994C">Chruslinska et al. (2021)</a></p></td>
+<td><p>Kroupa 2001</p></td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sub_model</span></code> (string) the sub-model to use, any of the available model names.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">Z_solar_scaling</span></code> (string) what solar metallicity to use, <code class="docutils literal notranslate"><span class="pre">&quot;Asplund09&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;AndersGrevesse89&quot;</span></code>,</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&quot;GrevesseSauval98&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;Villante14&quot;</span></code>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Zavala+21</span></code></p></td>
+<td><p><a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2021ApJ...909..165Z/">Zavala et al. (2021)</a></p></td>
+<td><p>Chabrier 2003</p></td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sigma</span></code> (float; string) the standard deviation of the log-normal distribution.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">sub_model</span></code> (string) the sub-model to use, <code class="docutils literal notranslate"><span class="pre">&quot;min&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>. For the minimum or maximum</div>
+<div class="line">star formation rate density, respectively.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="metallicity-evolution">
+<h2>Metallicity evolution<a class="headerlink" href="#metallicity-evolution" title="Link to this heading"></a></h2>
+<p>The cosmic star formation rate density (CSFRD) is combined with a metallicity evolution model to
+distribute metallicity specific events across cosmic time. However, the majority of
+CSFRD models do not include a metallicity evolution. We, therefore, add the <code class="docutils literal notranslate"><span class="pre">Madau+Fragos17</span></code>
+option as the default.</p>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Metallicity Evolution</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Madau+Fragos17</span></code></p></td>
+<td><p>Uses the metallicity evolution from <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M/">Madau &amp; Fragos (2017)</a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Neijssel+19</span></code></p></td>
+<td><p>Uses the metallicity evolution from <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2019MNRAS.490.3740N">Neijssel et al. (2019)</a>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The metallicity distribution is given as a dictionary to the
+<a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights" title="posydon.popsyn.synthetic_population.TransientPopulation.calculate_cosmic_weights"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_cosmic_weights()</span></code></a> function, similar to the star formation
+history model. Additionally, specific options can be provided to the function:</p>
+<table class="docutils align-default" id="id6">
+<caption><span class="caption-text">General options for the metallicity distribution</span><a class="headerlink" href="#id6" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">normalise</span></code></p></td>
+<td><div class="line-block">
+<div class="line">This makes sure that the metallicity distribution is normalised to 1, in the metallicity range.</div>
+<div class="line">If <code class="docutils literal notranslate"><span class="pre">Z_min</span></code> and/or <code class="docutils literal notranslate"><span class="pre">Z_max</span></code> are provided, the distribution will be normalised within that range.</div>
+<div class="line">Otherwise, the lower edge of the lowest bin and the upper edge of the highest bin will be used as boundaries.</div>
+<div class="line">This ensures the full CSFRD is used.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Z_min</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The minimum metallicity to consider in the distribution (in absolute units).</div>
+<div class="line">If not provided, the lowest bin edge of the metallicity distribution will be used.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Z_max</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The maximum metallicity to consider in the distribution (in absolute units).</div>
+<div class="line">If not provided, the highest bin edge of the metallicity distribution will be used.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">Z_min</span></code> and <code class="docutils literal notranslate"><span class="pre">Z_max</span></code>, the boundaries can be placed inside the considered metallicity bins.
+This removes any contribution from the bins (and part of bins) outside the range.</p>
+</div>
+</section>
+<section id="summary-of-sfh-model-options">
+<h2>Summary of SFH MODEL options<a class="headerlink" href="#summary-of-sfh-model-options" title="Link to this heading"></a></h2>
+<table class="docutils align-default" id="id7">
+<caption><span class="caption-text">Summary of SFH MODEL options</span><a class="headerlink" href="#id7" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SFR</span></code></p></td>
+<td><p>The name of the star formation rate density model to use. See the table above for available models.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sigma</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The standard deviation of the metallicity distribution, if applicable.</div>
+<div class="line">This is a float or string, where the string can be a name of a model</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">Bavera+20</span></code> (sigma=0.5) or <code class="docutils literal notranslate"><span class="pre">Neijssel+19</span></code> (sigma=0.39).</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Z_min</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The minimum metallicity to consider in the distribution (in absolute units).</div>
+<div class="line">Default = None. If not provided, the lowest bin edge of the metallicity distribution will be used.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Z_max</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The maximum metallicity to consider in the distribution (in absolute units).</div>
+<div class="line">Default = None. If not provided, the highest bin edge of the metallicity distribution will be used.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">normalise</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Whether to normalise the distribution to 1, in the metallicity range.</div>
+<div class="line">Default = False.</div>
+<div class="line">If <code class="docutils literal notranslate"><span class="pre">Z_min</span></code> and/or <code class="docutils literal notranslate"><span class="pre">Z_max</span></code> are provided, the distribution will be normalised within that range.</div>
+<div class="line">Otherwise, the lower edge of the lowest bin and the upper edge of the highest bin will be used as boundaries.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Depending on the specific SFR models, additional parameters may be required. See the
+documentation of the specific model for more details.</p>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SFH_model</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;SFR&quot;</span><span class="p">:</span> <span class="s2">&quot;Madau+Dickinson14&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="mf">0.39</span><span class="p">,</span>
+    <span class="s2">&quot;Z_min&quot;</span><span class="p">:</span> <span class="mf">1e-11</span><span class="p">,</span>
+    <span class="s2">&quot;Z_max&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s2">&quot;normalise&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="synthetic_population.html" class="btn btn-neutral float-left" title="Synthetic Populations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../api_reference/posydon.html" class="btn btn-neutral float-right" title="posydon" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v1 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.0/index.html">1.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.4/index.html">1.0.4</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0.5</a></dd>
+            
+        </dL>
+        
+        
+        <dl>
+            <dt> v2 versions</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0/index.html">2.0.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
+            
+        </dL>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

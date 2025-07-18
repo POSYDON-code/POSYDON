@@ -3,8 +3,8 @@ posydon.utils
 
 .. automodule:: posydon.utils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 
@@ -13,69 +13,69 @@ posydon.utils.common\_functions
 
 .. automodule:: posydon.utils.common_functions
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 posydon.utils.configfile
 ------------------------
 
 .. automodule:: posydon.utils.configfile
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 posydon.utils.constants
 -----------------------
 
 .. automodule:: posydon.utils.constants
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 posydon.utils.data\_download
 ----------------------------
 
 .. automodule:: posydon.utils.data_download
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 posydon.utils.gridutils
 -----------------------
 
 .. automodule:: posydon.utils.gridutils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 posydon.utils.ignorereason
 --------------------------
 
 .. automodule:: posydon.utils.ignorereason
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 posydon.utils.limits\_thresholds
 --------------------------------
 
 .. automodule:: posydon.utils.limits_thresholds
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 posydon.utils.posydonerror
 --------------------------
 
 .. automodule:: posydon.utils.posydonerror
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 posydon.utils.posydonwarning
 ----------------------------
 
 .. automodule:: posydon.utils.posydonwarning
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

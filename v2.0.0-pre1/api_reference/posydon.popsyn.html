@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>posydon.popsyn &mdash; posydon 2.0.0-pre1 documentation</title>
+  <title>posydon.popsyn &mdash; posydon v2.0.0-dev documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=4893b70a"></script>
+      <script src="../_static/documentation_options.js?v=f4b7fd8b"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -304,7 +304,7 @@ a) One-liner for creating a BinaryPopulation from an inifile:</p>
 <p>&gt; BinaryPopulation.from_ini(‘&lt;PATH_TO_POSYDON&gt;’             ‘/posydon/popsyn/population_params_default.ini’)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">BinaryGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">generate_independent_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RNG</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">BinaryGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">generate_independent_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RNG</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Generate binaries to be included in a BinaryPopulation.</p>
 <p>Initialize the BinaryGenerator instance.</p>
@@ -353,7 +353,7 @@ a) One-liner for creating a BinaryPopulation from an inifile:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">BinaryPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">BinaryPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Handle a binary star population.</p>
 <p>Initialize the binary population object.</p>
@@ -407,7 +407,7 @@ removing the binary instance from memory.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation.from_ini">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.from_ini" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation.from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation.from_ini" title="Link to this definition"></a></dt>
 <dd><p>Create a BinaryPopulation instance from an inifile.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -441,7 +441,7 @@ removing the binary instance from memory.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">PopulationManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">PopulationManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Manage a population of binaries.</p>
 <p>Initialize a PopulationManager instance.</p>
@@ -1057,7 +1057,7 @@ read_samples_from_file</p></li>
 <p>Anticipates data as Pandas dataframe with series [‘m1’, ‘q’, ‘z’, ‘chieff’]</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.selection_effects.KNNmodel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.selection_effects.</span></span><span class="sig-name descname"><span class="pre">KNNmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitivity_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/selection_effects.html#KNNmodel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.selection_effects.KNNmodel" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.selection_effects.</span></span><span class="sig-name descname"><span class="pre">KNNmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitivity_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/selection_effects.html#KNNmodel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.selection_effects.KNNmodel" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>K-nearest neighbor model that instantiates based on detection probability grid</p>
 <p>When instantiating, must supply path to the grid, and key that represents
@@ -1085,7 +1085,7 @@ GW network and sensitivity.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="posydon.popsyn.selection_effects.KNNmodel.normalize">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/selection_effects.html#KNNmodel.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.selection_effects.KNNmodel.normalize" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/selection_effects.html#KNNmodel.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.selection_effects.KNNmodel.normalize" title="Link to this definition"></a></dt>
 <dd><p>normalizes data on range [a,b]</p>
 </dd></dl>
 
@@ -1293,7 +1293,7 @@ final state of each binary system.</p>
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.DFInterface">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">DFInterface</span></span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#DFInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.DFInterface" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">DFInterface</span></span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#DFInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.DFInterface" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class to handle the interface between the population file and the History and Oneline classes.</p>
 <dl class="py method">
@@ -1397,7 +1397,7 @@ final state of each binary system.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.History">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">History</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#History"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.History" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">History</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#History"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.History" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.synthetic_population.DFInterface" title="posydon.popsyn.synthetic_population.DFInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFInterface</span></code></a></p>
 <p>A class to handle the history dataframe of a population file.</p>
 <p>This class provides methods to handle the history dataframe of a population file.
@@ -1548,7 +1548,7 @@ It is only possible to query on the index or string columns.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.Oneline">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">Oneline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#Oneline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.Oneline" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">Oneline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#Oneline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.Oneline" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.synthetic_population.DFInterface" title="posydon.popsyn.synthetic_population.DFInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFInterface</span></code></a></p>
 <p>A class to handle the oneline dataframe of a population file.</p>
 <p>The <cite>Oneline</cite> class provides methods to manipulate and retrieve data from the oneline dataframe of a population file.</p>
@@ -1697,7 +1697,7 @@ It is only possible to query on the index or string columns.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.Population">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">Population</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ini_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#Population"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.Population" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">Population</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ini_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#Population"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.Population" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.synthetic_population.PopulationIO" title="posydon.popsyn.synthetic_population.PopulationIO"><code class="xref py py-class docutils literal notranslate"><span class="pre">PopulationIO</span></code></a></p>
 <p>A class to handle population files.</p>
 <p>This class provides methods to handle population files. It includes methods to read and write population files,
@@ -1919,7 +1919,7 @@ You can specify the fraction of binaries in the population using the <cite>f_bin
 
 <dl class="py property">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.Population.columns">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">columns</span></span><a class="headerlink" href="#posydon.popsyn.synthetic_population.Population.columns" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">columns</span></span><a class="headerlink" href="#posydon.popsyn.synthetic_population.Population.columns" title="Link to this definition"></a></dt>
 <dd><p>Returns a dictionary containing the column names of the history and oneline dataframes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2022,7 +2022,7 @@ based on the current length of data in the file that is being appended to.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">formation_channels</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">formation_channels</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
 <dd><p>Retrieves the formation channels from the population file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2045,7 +2045,7 @@ based on the current length of data in the file that is being appended to.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.PopulationIO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">PopulationIO</span></span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#PopulationIO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.PopulationIO" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">PopulationIO</span></span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#PopulationIO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.PopulationIO" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class to handle the input/output of population files.</p>
 <p>This class provides methods to load and save population files in HDF5 format.
@@ -2076,7 +2076,7 @@ It also includes methods to load and save metadata and ini parameters.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.PopulationRunner">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">PopulationRunner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#PopulationRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.PopulationRunner" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">PopulationRunner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#PopulationRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.PopulationRunner" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class to handle the evolution of binary populations.</p>
 <dl class="py attribute">
@@ -2172,7 +2172,7 @@ each population, it merges them using the <cite>merge_parallel_runs</cite> metho
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.Rates">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">Rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transient_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFH_identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#Rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.Rates" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">Rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transient_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SFH_identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#Rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.Rates" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.synthetic_population.TransientPopulation" title="posydon.popsyn.synthetic_population.TransientPopulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransientPopulation</span></code></a></p>
 <p>Class representing rates of a transient population.</p>
 <dl class="py attribute">
@@ -2361,7 +2361,7 @@ the location ‘/transients/{transient_name}/rates/observable/{observable_name}�
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id1">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centers_metallicity_bins</span></span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centers_metallicity_bins</span></span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
 <dd><p>Return the centers of the metallicity bins.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2376,7 +2376,7 @@ to the center of each metallicity bin.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id2">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centers_redshift_bins</span></span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centers_redshift_bins</span></span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
 <dd><p>Compute redshift bin centers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2392,7 +2392,7 @@ redshift corresponding to center of these bins.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id3">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges_metallicity_bins</span></span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges_metallicity_bins</span></span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
 <dd><p>Return the edges of the metallicity bins.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2407,7 +2407,7 @@ were binned in log-space.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id4">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges_redshift_bins</span></span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edges_redshift_bins</span></span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
 <dd><p>Compute redshift bin edges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2423,7 +2423,7 @@ redshift corresponding to edges of these bins.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id5">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">intrinsic_rate_density</span></span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">intrinsic_rate_density</span></span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
 <dd><p>Return the intrinsic rate density of the transient population at the specified SFH_identifier and transient_name.</p>
 <p>The data is read from the HDF5 file at ‘/transients/{transient_name}/rates/{SFH_identifier}/intrinsic_rate_density’.</p>
 <dl class="field-list simple">
@@ -2458,7 +2458,7 @@ It loads the observable population from ‘/transients/{transient_name}/rates/ob
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id6">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observable_population_names</span></span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observable_population_names</span></span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
 <dd><p>Return the names of the observable populations in the associated file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2531,7 +2531,7 @@ The key specifies which rates dataframe to select, and must be one of [‘weight
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id7">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
 <dd><p>Retrieves the weights from the HDFStore.</p>
 <p>The rows are indexed by the binary index of the events, while to columns are indexed by the redshift of the birth bins.</p>
 <dl class="field-list simple">
@@ -2546,7 +2546,7 @@ The key specifies which rates dataframe to select, and must be one of [‘weight
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id8">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z_birth</span></span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z_birth</span></span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
 <dd><p>Retrieves the ‘birth’ data from the HDFStore.</p>
 <p>The ‘birth’ DataFrame contains the redshift and age of the Universe of the birth bins with columns ‘z’ and ‘t’.</p>
 <dl class="field-list simple">
@@ -2561,7 +2561,7 @@ The key specifies which rates dataframe to select, and must be one of [‘weight
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id9">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z_events</span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z_events</span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
 <dd><p>Returns the ‘z_events’ data from the HDFStore.</p>
 <p>The ‘z_events’ data contains the redshifts at which the events occur.
 The rows of the returned DataFrame are indexed by the binary index of the events.
@@ -2580,7 +2580,7 @@ The columns of the returned DataFrame are indexed by the redshift of the birth b
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.TransientPopulation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">TransientPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transient_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#TransientPopulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.TransientPopulation" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">TransientPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transient_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#TransientPopulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.TransientPopulation" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><code class="xref py py-class docutils literal notranslate"><span class="pre">Population</span></code></a></p>
 <p>A class representing a population of transient events.</p>
 <p>This class allows you to calculate additional properties of the population,
@@ -2698,7 +2698,7 @@ These can be accessed using the Rates class.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id10">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">columns</span></span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">columns</span></span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
 <dd><p>Return the columns of the transient population.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2732,7 +2732,7 @@ of the entire population will be plotted.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>None</em>) – The metallicity value to select a specific population. If None, the delay time distribution of the entire population will be plotted.</p></li>
-<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.10.1)"><em>matplotlib.axes.Axes</em></a><em> or </em><em>None</em>) – The axes object to plot the distribution on. If None, a new figure and axes will be created.</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.10.3)"><em>matplotlib.axes.Axes</em></a><em> or </em><em>None</em>) – The axes object to plot the distribution on. If None, a new figure and axes will be created.</p></li>
 <li><p><strong>bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of bins to use for the histogram.</p></li>
 <li><p><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The color of the histogram.</p></li>
 </ul>
@@ -2776,7 +2776,7 @@ of the entire population will be plotted.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id11">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">population</span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">population</span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
 <dd><p>Returns the entire transient population as a pandas DataFrame.</p>
 <p>This method retrieves the transient population data from a file and returns it as a pandas DataFrame.
 Please note that if the transient population is too large, it may consume a significant amount of memory.</p>
@@ -2974,7 +2974,7 @@ The output dataframe contains the following columns:
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
   </div>
 
    
@@ -2984,41 +2984,7 @@ The output dataframe contains the following columns:
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      Version: 2.0.0-pre1
-      <span class="fa fa-caret-down"></span>
-    </span>
-    <div class="rst-other-versions">
-        
-        <dl>
-            <dt> v1 versions</dt>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.0/index.html">1.0.0</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.4/index.html">1.0.4</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0.5</a></dd>
-            
-        </dL>
-        
-        
-        <dl>
-            <dt> v2 versions</dt>
-            
-            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
-            
-        </dL>
-        
-    </div>
-  </div><script>
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

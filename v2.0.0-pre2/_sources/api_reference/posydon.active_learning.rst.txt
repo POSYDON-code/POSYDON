@@ -3,8 +3,8 @@ posydon.active\_learning
 
 .. automodule:: posydon.active_learning
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 .. toctree::

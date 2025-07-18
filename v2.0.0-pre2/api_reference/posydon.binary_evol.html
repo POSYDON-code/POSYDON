@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>posydon.binary_evol &mdash; posydon 2.0.0-pre2 documentation</title>
+  <title>posydon.binary_evol &mdash; posydon v2.0.0-dev documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=7f6b3d60"></script>
+      <script src="../_static/documentation_options.js?v=f4b7fd8b"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -192,7 +192,7 @@ stored in the history.</p>
 while their past history with <cite>binary.star_1.mass_history</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.binarystar.BinaryStar">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.binarystar.</span></span><span class="sig-name descname"><span class="pre">BinaryStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">binary_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/binarystar.html#BinaryStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.binarystar.BinaryStar" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.binarystar.</span></span><span class="sig-name descname"><span class="pre">BinaryStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">binary_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/binarystar.html#BinaryStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.binarystar.BinaryStar" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class containing the state and history of a stellar binary.</p>
 <p>Initialize a binary star.</p>
@@ -220,7 +220,7 @@ while their past history with <cite>binary.star_1.mass_history</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="posydon.binary_evol.binarystar.BinaryStar.from_df">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/binarystar.html#BinaryStar.from_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.binarystar.BinaryStar.from_df" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/binarystar.html#BinaryStar.from_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.binarystar.BinaryStar.from_df" title="Link to this definition"></a></dt>
 <dd><p>Convert a binary from a pandas DataFrame to BinaryStar instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -239,7 +239,7 @@ not in BINARYPROPERTIES.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="posydon.binary_evol.binarystar.BinaryStar.from_oneline_df">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_oneline_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oneline_df</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/binarystar.html#BinaryStar.from_oneline_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.binarystar.BinaryStar.from_oneline_df" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_oneline_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oneline_df</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/binarystar.html#BinaryStar.from_oneline_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.binarystar.BinaryStar.from_oneline_df" title="Link to this definition"></a></dt>
 <dd><p>Convert a oneline DataFrame into a BinaryStar.</p>
 <p>The oneline DataFrame is expected to have initial-final
 values from history and any individual values that don’t have
@@ -261,7 +261,7 @@ in BINARYPROPERTIES</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="posydon.binary_evol.binarystar.BinaryStar.from_run">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/binarystar.html#BinaryStar.from_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.binarystar.BinaryStar.from_run" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/binarystar.html#BinaryStar.from_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.binarystar.BinaryStar.from_run" title="Link to this definition"></a></dt>
 <dd><p>Create a BinaryStar object from a PSyGrid run.</p>
 </dd></dl>
 
@@ -426,7 +426,7 @@ oRLO1/oRLO2 -&gt; HMS-HMS RLO grid</p>
 <p>This class contains the simulation properties, e.g. flow, steps and <cite>max_time</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.simulationproperties.EvolveHooks">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">EvolveHooks</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#EvolveHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.EvolveHooks" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">EvolveHooks</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#EvolveHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.EvolveHooks" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Base class for hooking into binary evolution.</p>
 <p>Add any new output columns to the hooks constructor.
@@ -466,7 +466,7 @@ Example for extra binary columns:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.simulationproperties.PrintStepInfoHooks">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">PrintStepInfoHooks</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#PrintStepInfoHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.PrintStepInfoHooks" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">PrintStepInfoHooks</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#PrintStepInfoHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.PrintStepInfoHooks" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.binary_evol.simulationproperties.EvolveHooks" title="posydon.binary_evol.simulationproperties.EvolveHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvolveHooks</span></code></a></p>
 <p>Simple example for adding extra print info.</p>
 <p>Add any new output columns to the hooks constructor.
@@ -494,7 +494,7 @@ Example for extra binary columns:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.simulationproperties.SimulationProperties">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">SimulationProperties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#SimulationProperties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.SimulationProperties" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">SimulationProperties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#SimulationProperties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.SimulationProperties" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class describing the properties of a population synthesis simulation.</p>
 <p>Construct the simulation properties object.</p>
@@ -613,7 +613,7 @@ classes or extra functions (except for undefined next step errors).</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.simulationproperties.StepNamesHooks">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">StepNamesHooks</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#StepNamesHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.StepNamesHooks" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">StepNamesHooks</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#StepNamesHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.StepNamesHooks" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.binary_evol.simulationproperties.EvolveHooks" title="posydon.binary_evol.simulationproperties.EvolveHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvolveHooks</span></code></a></p>
 <p>Add history column ‘step_name’ to each binary.</p>
 <p>Name of evolutionary step as defined in SimulationProperties.</p>
@@ -657,7 +657,7 @@ Example for extra binary columns:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.simulationproperties.TimingHooks">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">TimingHooks</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#TimingHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.TimingHooks" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">TimingHooks</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#TimingHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.TimingHooks" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#posydon.binary_evol.simulationproperties.EvolveHooks" title="posydon.binary_evol.simulationproperties.EvolveHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvolveHooks</span></code></a></p>
 <p>Add history column ‘step_times’ (time taken by step) to each binary.</p>
 <p class="rubric">Example</p>
@@ -709,7 +709,7 @@ current parameter value of the star object is accessed as, e.g. <cite>star.mass<
 while his past history with <cite>star.mass_history</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.singlestar.SingleStar">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.singlestar.</span></span><span class="sig-name descname"><span class="pre">SingleStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/singlestar.html#SingleStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.singlestar.SingleStar" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.singlestar.</span></span><span class="sig-name descname"><span class="pre">SingleStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/singlestar.html#SingleStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.singlestar.SingleStar" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class describing a single star.</p>
 <p>Initialize the star.</p>
@@ -726,7 +726,7 @@ while his past history with <cite>star.mass_history</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="posydon.binary_evol.singlestar.SingleStar.from_run">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which_star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/singlestar.html#SingleStar.from_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.singlestar.SingleStar.from_run" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which_star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/singlestar.html#SingleStar.from_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.singlestar.SingleStar.from_run" title="Link to this definition"></a></dt>
 <dd><p>Create a SingleStar object from a single-star grid run.</p>
 </dd></dl>
 
@@ -817,7 +817,7 @@ method. Any scalar values can also be added.</p>
 <p>Class defining the default step at the end of evolution of a binary.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.step_end.step_end">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.step_end.</span></span><span class="sig-name descname"><span class="pre">step_end</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/step_end.html#step_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.step_end.step_end" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.step_end.</span></span><span class="sig-name descname"><span class="pre">step_end</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/step_end.html#step_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.step_end.step_end" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Default end step.</p>
 </dd></dl>
@@ -836,7 +836,7 @@ method. Any scalar values can also be added.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+    <p>&#169; Copyright 2024, Tassos Fragos.</p>
   </div>
 
    
@@ -846,41 +846,7 @@ method. Any scalar values can also be added.</p>
       </div>
     </section>
   </div>
-  
-<!-- Followed from
- https://www.codingwiththomas.com/blog/my-sphinx-best-practice-for-a-multiversion-documentation-in-different-languages -->
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      Version: 2.0.0-pre2
-      <span class="fa fa-caret-down"></span>
-    </span>
-    <div class="rst-other-versions">
-        
-        <dl>
-            <dt> v1 versions</dt>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.0/index.html">1.0.0</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.4/index.html">1.0.4</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0.5</a></dd>
-            
-        </dL>
-        
-        
-        <dl>
-            <dt> v2 versions</dt>
-            
-            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre1/index.html">2.0.0-pre1</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/v2.0.0-pre2/index.html">2.0.0-pre2</a></dd>
-            
-            <dd><a href="https://posydon.org/POSYDON/development/index.html">dev</a></dd>
-            
-        </dL>
-        
-    </div>
-  </div><script>
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
