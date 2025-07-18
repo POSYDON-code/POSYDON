@@ -120,7 +120,6 @@ base_url = 'https://posydon.org/POSYDON'
 # Versions to be shown in the version dropdown
 html_context = {
   'current_version' : current_version,
-
 }
 
 # get the list of versions
