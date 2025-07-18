@@ -1,8 +1,8 @@
 name: Website Deploy on Release
 
 on:
-  pull_request:
-    branches: [main]
+  release:
+    types: [published]
 
 jobs:
   build_v1:
