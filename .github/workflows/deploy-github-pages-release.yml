@@ -61,7 +61,7 @@ jobs:
         # make the output folder
         output_folder=$GITHUB_WORKSPACE/_build/
         echo "Output folder: $output_folder"
-        mkdir $output_folder
+        mkdir -p $output_folder
         
         # move to the repository folder
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
@@ -170,11 +170,19 @@ jobs:
         # make the output folder
         output_folder=$GITHUB_WORKSPACE/_build/
         echo "Output folder: $output_folder"
-        mkdir $output_folder
+        mkdir -p $output_folder
 
         # move to the repository folder
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
         cd $PATH_TO_POSYDON
+
+        # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF 
+        # THe _templates folder and versioning code.
+        # get the _templates folder and move it out of the POSYDON folder
+        cp -r $PATH_TO_POSYDON/docs/_source/_templates $GITHUB_WORKSPACE
+
+        # get the injection code from the release
+        injection_code=$(awk '/# INJECTION GRAB START/,/# INJECTION GRAB END/' "${PATH_TO_POSYDON}/docs/_source/conf.py")
 
         # get the available tags
         TAGS=$(git tag -l | sort -V | grep "v2" | grep -v "dev" | grep -v "pre")
@@ -189,6 +197,14 @@ jobs:
           git checkout -f $tag
           git clean -fdx
           python -m pip install .[doc,vis]
+
+            # copy the _templates folder and inject code only for specific tags
+            if [[ "$tag" == "v2.0.0-pre1" || "$tag" == "v2.0.0-pre2" || "$tag" == "v2.0.0" ]]; then
+              # copy the _templates folder to the docs folder
+              cp -r $GITHUB_WORKSPACE/_templates $PATH_TO_POSYDON/docs
+              # remove the injection code from the conf.py file
+              echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/conf.py"
+            fi
 
           # build the documentation
           cd docs
