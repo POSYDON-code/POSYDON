@@ -22,7 +22,7 @@ class TestElements:
     
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['DEFAULT_MODEL','np','sp','CubicSpline','Zsun','cosmology',\
+        elements = ['DEFAULT_SFH_MODEL','np','sp','CubicSpline','Zsun','cosmology',\
                     'const','z_at_value','u',\
                     'get_shell_comoving_volume', 'get_comoving_distance_from_redshift', \
                     'get_cosmic_time_from_redshift', 'redshift_from_cosmic_time_interpolator',\
