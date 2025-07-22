@@ -15,8 +15,6 @@ pd = totest.pd
 # module you like to test
 from pytest import fixture, raises, warns, approx
 from inspect import isroutine, isclass
-import posydon.popsyn.selection_effects as selection_effects
-from posydon.utils.posydonwarning import ReplaceValueWarning
 import warnings
 warnings.simplefilter("always")
 
@@ -24,7 +22,9 @@ warnings.simplefilter("always")
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['parameter_array', 
+        elements = ['parameter_array', 'DFInterface','History','Oneline',
+                    'Population','PopulationIO','PopulationRunner',
+                    'Rates','TransientPopulation',
                     '__authors__','__builtins__', '__cached__', '__doc__', 
                     '__file__','__loader__', '__name__', '__package__', '__spec__', 
                     'np', 'pd', 'tqdm', 'os', 'plt', 
@@ -56,196 +56,241 @@ class TestPopulationRunner:
     
     @fixture
     def fix(self):
-        return 
+#         return 
+        pass
 
     def test_evolve(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_merge_parallel_runs(self):
         # missing argument
         # bad input
         # examples
+        pass
         
 class TestDFInterface:
     
     @fixture
     def fix(self):
-        return 
+#         return 
+        pass
 
     def test_head(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_tail(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_select(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_get_repr(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_get_html_repr(self):
         # missing argument
         # bad input
         # examples
+        pass
         
 class TestHistory:
     
     @fixture
     def fix(self):
-        return 
+#         return 
+        pass
 
     def test_head(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_tail(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_select(self):
         # missing argument
         # bad input
         # examples
+        pass
         
 class TestOneline:
     
     @fixture
     def fix(self):
-        return 
+#         return 
+        pass
 
+        pass
     def test_head(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_tail(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_select(self):
         # missing argument
         # bad input
         # examples
+        pass
         
 class TestPopulation:
     
     @fixture
     def fix(self):
-        return 
+#         return 
 
+        pass
     def test_calculate_underlying_mass(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_export_selection(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_formation_channels(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_calculate_formation_channels(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_columns(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_create_transient_population(self):
         # missing argument
         # bad input
         # examples
+        pass
         
 class TestTransientPopulation:
     
     @fixture
     def fix(self):
-        return 
+#         return 
+        pass
 
     def test_population(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_columns(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_select(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_get_efficiency_over_metallicity(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_calculate_cosmic_weights(self):
         # missing argument
         # bad input
         # examples
+        pass
         
 class TestRates:
     
     @fixture
     def fix(self):
-        return 
+        # return 
+        pass
 
     def test_weights(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_z_birth(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_z_events(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_select_rate_slice(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_calculate_intrinsic_rate_density(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_calculate_observable_population(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_observable_population(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_observable_population_names(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_intrinsic_rate_density(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_edges_metallicity_bins(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_centers_metallicity_bins(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_edges_redshift_bins(self):
         # missing argument
         # bad input
         # examples
+        pass
     def test_centers_redshift_bins(self):
         # missing argument
         # bad input
-        # examples        
+        # examples    
+        pass
         
