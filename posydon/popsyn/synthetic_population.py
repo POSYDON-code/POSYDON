@@ -171,7 +171,7 @@ class PopulationRunner:
             if os.path.exists(pop.kwargs["temp_directory"]) and not overwrite:
                 raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.") 
             elif os.path.exists(pop.kwargs["temp_directory"]) and overwrite:
-                if self.verbose:
+                if self.verbose: # pragma: no cover
                     print(f"Removing {pop.kwargs['temp_directory']} directory...")
                 os.removedirs(pop.kwargs["temp_directory"])    
                 pop.evolve()
