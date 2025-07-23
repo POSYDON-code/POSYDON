@@ -17,6 +17,7 @@ from pytest import fixture, raises, warns, approx
 from inspect import isroutine, isclass
 import warnings
 warnings.simplefilter("always")
+import os
 
 # define test classes collecting several test functions
 class TestElements:
@@ -53,47 +54,7 @@ class TestElements:
                                       +"unit test."
 
 class TestPopulationRunner:
-    
-    @fixture
-    def binpop_ini(self, tmp_path):
-        ini_content = """
-        [BinaryPopulation_options]
-        use_MPI = False
-        metallicity = [0.02]
-        number_of_binaries = 1
-        temp_directory = 'tmp'
-
-        [BinaryStar_output]
-        extra_columns = {}
-        only_select_columns = []
-        scalar_names = []
-
-        [SingleStar_1_output]
-        include_S1 = True
-        only_select_columns = [
-            'state',
-            'mass',
-            'log_R']
-            
-        [SingleStar_2_output]
-        include_S2 = True
-        only_select_columns = [
-            'log_L',
-            'lg_mdot']
-
-        [flow]
-        import = ['builtins', 'int']
-
-        [extra_hooks]
-        import_1 = ['builtins', 'int']
-        absolute_import_1 = None
-        kwargs_1 = {}
-        """
-        file_path = os.path.join(tmp_path, "binpop_stars.ini")
-        with open(file_path, "w") as f:
-            f.write(ini_content)
-        return file_path
-    
+        
     def test_init(self):
         # missing argument
         with raises(TypeError,match="missing 1 required positional argument: 'path_to_ini'"):
@@ -102,13 +63,49 @@ class TestPopulationRunner:
         with raises(ValueError, match="You did not provide a valid path_to_ini!"):
             totest.PopulationRunner("test")
 
-    def test_evolve(self,binpop_ini):
-        # example: no overwrite
-        run = totest.PopulationRunner(binpop_ini)
+    def test_evolve(self,monkeypatch):
+        # mock dependencies
+        class DummyPop:
+            def __init__(self, **kwargs):
+                self.kwargs = kwargs
+                self.comm = None
+                self.metallicity = kwargs["metallicity"]
+            def evolve(self):
+                self.evolved = True
+            def combine_saved_files(self, *args):
+                self.combined = True
+        def dummy_kwargs(path):
+            return {
+                "metallicity": 0.1,
+                "temp_directory": "tmp_dir",
+                "verbose": False
+            }
+
+        monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs)
+        monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
+        monkeypatch.setattr(totest, "convert_metallicity_to_string", lambda x: "0.1")
+        run = totest.PopulationRunner("dummy.ini")
+
+        # overwrite=False, directory doesn't exist
+        monkeypatch.setattr(os.path, "exists", lambda path: False)
+        run = totest.PopulationRunner("dummy.ini")
+        run.merge_parallel_runs = lambda pop: setattr(pop, "merged", True)
         run.evolve()
-        # example: overwrite
-        run = totest.PopulationRunner(binpop_ini)
-        run.evolve()
+        assert run.binary_populations[0].evolved is True
+        assert run.binary_populations[0].merged is True
+
+        # overwrite=True, directory exists
+        monkeypatch.setattr(os.path, "exists", lambda path: True)
+        removed = {}
+        monkeypatch.setattr(os, "removedirs", lambda path: removed.setdefault("called", path))
+        run = totest.PopulationRunner("dummy.ini", verbose=True)
+        with raises(FileExistsError, match="tmp_dir"):
+            run.evolve(overwrite=False)
+        run.merge_parallel_runs = lambda pop: setattr(pop, "merged", True)
+        run.evolve(overwrite=True)
+        assert removed["called"] == "0.1_Zsun_tmp_dir"
+        assert run.binary_populations[0].evolved is True
+
     def test_merge_parallel_runs(self):
         # missing argument
         # bad input
