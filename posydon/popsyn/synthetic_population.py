@@ -178,7 +178,7 @@ class PopulationRunner:
             else:
                 pop.evolve()
                 
-            if pop.comm is None:
+            if pop.comm is None: # pragma: no cover
                 self.merge_parallel_runs(pop)
 
     def merge_parallel_runs(self, pop):
