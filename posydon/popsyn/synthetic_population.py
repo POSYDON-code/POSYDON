@@ -174,8 +174,10 @@ class PopulationRunner:
                 if self.verbose:
                     print(f"Removing {pop.kwargs['temp_directory']} directory...")
                 os.removedirs(pop.kwargs["temp_directory"])    
+                pop.evolve()
+            else:
+                pop.evolve()
                 
-            pop.evolve()
             if pop.comm is None:
                 self.merge_parallel_runs(pop)
 
