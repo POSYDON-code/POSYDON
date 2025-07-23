@@ -17,31 +17,6 @@ from pytest import fixture, raises, warns, approx
 from inspect import isroutine, isclass
 import warnings
 warnings.simplefilter("always")
-from posydon.utils.constants import Zsun
-from posydon.popsyn.io import binarypop_kwargs_from_ini
-from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
-from posydon.utils.common_functions import convert_metallicity_to_string
-from posydon.utils.posydonwarning import Pwarn
-from astropy.cosmology import Planck15 as cosmology
-from astropy import constants as const
-
-from posydon.popsyn.rate_calculation import (
-    get_shell_comoving_volume,
-    get_comoving_distance_from_redshift,
-    get_cosmic_time_from_redshift,
-    redshift_from_cosmic_time_interpolator,
-    DEFAULT_SFH_MODEL,
-    get_redshift_bin_edges,
-    get_redshift_bin_centers,
-)
-
-from posydon.popsyn.star_formation_history import SFR_per_met_at_z
-
-from posydon.popsyn.binarypopulation import (
-    BinaryPopulation,
-    HISTORY_MIN_ITEMSIZE,
-    ONELINE_MIN_ITEMSIZE,
-)
 
 # define test classes collecting several test functions
 class TestElements:
@@ -80,58 +55,7 @@ class TestElements:
 class TestPopulationRunner:
     
     @fixture
-    def simple_ini(self,tmp_path):
-        file_path = os.path.join(tmp_path, "test.ini")
-        with open(file_path, "w") as f:
-            f.write("[section]\nkey=value\n")
-        return file_path
-    
-    @fixture
-    def multi_ini(self,tmp_path):
-        file1 = os.path.join(tmp_path, "a.ini")
-        file2 = os.path.join(tmp_path, "b.ini")
-        with open(file1, "w") as f:
-            f.write("[section]\nkey1=value1\n")
-        with open(file2, "w") as f:
-            f.write("[section]\nkey2=value2\n")
-        return [file1, file2]
-
-    @fixture
-    def textfile(self,tmp_path):
-        file_path = os.path.join(tmp_path, "textfile.txt")
-        with open(file_path, "w") as f:
-            f.write("test")
-        return file_path
-    
-    @fixture
-    def sim_ini(self,tmp_path):
-        ini_content = """
-        [flow]
-        import = ['posydon.binary_evol.flow_chart', 'flow_chart']
-        absolute_import = None
-
-        [step_HMS_HMS]
-        import = ['posydon.binary_evol.MESA.step_mesa', 'MS_MS_step']
-        absolute_import = None
-        interpolation_method = 'linear3c_kNN'
-        save_initial_conditions = True
-        verbose = False
-
-        [extra_hooks]
-        import_1 = ['posydon.binary_evol.simulationproperties', 'TimingHooks']
-        absolute_import_1 = None
-        kwargs_1 = {}
-        import_2 = ['posydon.binary_evol.simulationproperties', 'StepNamesHooks']
-        absolute_import_2 = None
-        kwargs_2 = {}
-        """
-        file_path = os.path.join(tmp_path, "sim.ini")
-        with open(file_path, "w") as f:
-            f.write(ini_content)
-        return file_path
-    
-    @fixture
-    def binpop_ini_stars(self, tmp_path):
+    def binpop_ini(self, tmp_path):
         ini_content = """
         [BinaryPopulation_options]
         use_MPI = False
@@ -170,12 +94,21 @@ class TestPopulationRunner:
             f.write(ini_content)
         return file_path
     
-
-    def test_evolve(self):
+    def test_init(self):
         # missing argument
+        with raises(TypeError,match="missing 1 required positional argument: 'path_to_ini'"):
+            totest.PopulationRunner()
         # bad input
-        # examples
-        pass
+        with raises(ValueError, match="You did not provide a valid path_to_ini!"):
+            totest.PopulationRunner("test")
+
+    def test_evolve(self,binpop_ini):
+        # example: no overwrite
+        run = totest.PopulationRunner(binpop_ini)
+        run.evolve()
+        # example: overwrite
+        run = totest.PopulationRunner(binpop_ini)
+        run.evolve()
     def test_merge_parallel_runs(self):
         # missing argument
         # bad input
