@@ -33,7 +33,6 @@ __authors__ = [
 ]
 
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
 import os
 from matplotlib import pyplot as plt

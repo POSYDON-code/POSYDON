@@ -59,7 +59,9 @@ def get_IMF_pdf(kwargs):
         IMF_pdf = imf.pdf
     except AttributeError:
         # if not found, default to a flat distribution
-        IMF_pdf = lambda m1: np.ones_like(m1)
+        IMF_pdf = lambda m1: np.ones_like(m1) / (kwargs['primary_mass_max'] - kwargs['primary_mass_min'])
+        Pwarn(f"The primary_mass_scheme '{primary_mass_scheme}' is not recognized. "
+              "Using a flat mass distribution instead.", "UnsupportedModelWarning")
         
     return IMF_pdf
 
@@ -260,6 +262,8 @@ def get_mean_mass(params):
     else:
         q_max = np.min([params['secondary_mass_max']/params['primary_mass_max'],
                         1])
+    if q_min > q_max:
+        raise ValueError("q_min must be less than q_max")
     
     # binary integration
     # 

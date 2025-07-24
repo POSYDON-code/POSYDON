@@ -1,9 +1,16 @@
 from scipy.integrate import quad
 import numpy as np
 
-class flat_mass_ratio():
+class FlatMassRatio:
     
     def __init__(self, q_min=0.05, q_max=1):
+        if not (0 < q_min <= 1):
+            raise ValueError("q_min must be in (0, 1)")
+        if not (0 < q_max <= 1):
+            raise ValueError("q_max must be in (0, 1)")
+        if q_min >= q_max:
+            raise ValueError("q_min must be less than q_max")
+        
         self.q_min = q_min
         self.q_max = q_max
         self.norm = self._calculate_normalization()
@@ -44,9 +51,6 @@ class flat_mass_ratio():
         float
 
         """
-        if np.any(q < 0) or np.any(q > 1):
-            raise ValueError("Mass ratio must be between 0 and 1. "
-                             "Check mass ratio parameters.")
         return 1.0
     
     def pdf(self, q):
@@ -73,6 +77,10 @@ class Sana12Period():
     '''Sana H., et al., 2012, Science, 337, 444'''
     
     def __init__(self, p_min=0.35, p_max=6e3):
+        if p_min <= 0:
+            raise ValueError("p_min must be positive")
+        if p_max <= p_min:
+            raise ValueError("p_max must be greater than p_min")
         self.p_min = p_min
         self.p_max = p_max
         self.mbreak = 15
@@ -104,7 +112,7 @@ class Sana12Period():
         integral =  quad(self.sana12_period,
                          np.log10(self.p_min),
                          np.log10(self.p_max),
-                         args=(m1))[0]
+                         args=(m1,))[0]
         if integral == 0:
             raise ValueError("Normalization integral is zero. "
                              "Check period parameters.")
@@ -116,7 +124,7 @@ class Sana12Period():
         Parameters
         ----------
         logp : float or array
-            Period(s).
+            Log10 of period(s).
         m1 : float or array
             Mass value(s). Single value or an array of the same length as p.
 
@@ -126,7 +134,7 @@ class Sana12Period():
             Distribution value(s).
         """
         if np.any(m1 <= 0):
-            raise ValueError("Period and mass must be positive. "
+            raise ValueError("Mass must be positive. "
                              "Check parameters.")
 
         logp = np.asarray(logp)
@@ -206,19 +214,26 @@ class PowerLawPeriod():
     Parameters
     ----------
     pi : float
+    Parameters
+    ----------
+    pi : float
         Slope of the power law.
-    m_min : float
+    p_min : float
         Minimum period.
-    m_max : float
+    p_max : float
         Maximum period.
     
     '''
     
     def __init__(self, pi=-0.55, p_min=1.4, p_max=3e6):
+        if p_min <= 0:
+            raise ValueError("p_min must be positive")
+        if p_max <= p_min:
+            raise ValueError("p_max must be greater than p_min")
         self.pi = pi
         self.p_min = p_min
         self.p_max = p_max
-        
+
         self.norm = self._calculate_normalization()
         
         
@@ -253,8 +268,8 @@ class PowerLawPeriod():
 
         Parameters
         ----------
-        p : float or array
-            Period(s).
+        logp : float or array
+            Log10 of period(s).
 
         Returns
         -------
@@ -263,11 +278,10 @@ class PowerLawPeriod():
         """
         p = 10**np.asarray(logp)
 
-        if np.any(p < self.p_min) or np.any(p > self.p_max):
-            return np.zeros_like(p, dtype=float)
+        result = np.zeros_like(p, dtype=float)
+        valid = (p >= self.p_min) & (p <= self.p_max)
+        result[valid] = p[valid]**self.pi
 
-        result = p**self.pi
-        
         return result
         
     def pdf(self, p):
@@ -284,7 +298,7 @@ class PowerLawPeriod():
             Probability density at period p.
         """
         p = np.asarray(p)
-        valid = (p >= self.p_min) & (p <= self.p_max)
+        valid = (p > 0) & (p >= self.p_min) & (p <= self.p_max)
         pdf_values = np.zeros_like(p, dtype=float)
 
         logp = np.log10(p[valid])
