@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 import posydon.popsyn.IMFs as IMFs
 from scipy.integrate import quad
+import warnings
 
 class TestSalpeterIMF:
     @pytest.fixture
@@ -129,6 +130,19 @@ class TestSalpeterIMF:
     def test_repr_html(self, default_imf):
         html_str = default_imf._repr_html_()
         assert "<h3>Salpeter IMF</h3>" in html_str
+
+    def test_imf_outside_range_warning(self, default_imf):
+        """Test that imf method issues warning for masses outside range."""
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            # Call imf with masses outside the range to trigger the warning
+            # Use masses that are positive but outside the valid range
+            result = default_imf.imf([default_imf.m_max + 0.1])
+            # Verify warning was issued
+            assert len(w) == 1
+            assert "Mass values outside the range" in str(w[0].message)
+            # Verify the function still returns values (just with warning)
+            assert len(result) == 1
 
 class TestKroupa2001IMF:
     @pytest.fixture
@@ -373,4 +387,3 @@ class TestChabrierIMF:
     def test_repr_html(self, default_chabrier):
         html_str = default_chabrier._repr_html_()
         assert "<h3>Chabrier IMF</h3>" in html_str
-
