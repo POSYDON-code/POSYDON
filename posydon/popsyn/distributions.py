@@ -197,4 +197,98 @@ class Sana12Period():
                              * self.norm(m1[valid]))
         return pdf_values
 
+
+class PowerLawPeriod():
+    '''Power law period distribution with slope pi and boundaries m_min, m_max.
+    
+    Normalised in logP space to 1.
+    
+    Parameters
+    ----------
+    pi : float
+        Slope of the power law.
+    m_min : float
+        Minimum period.
+    m_max : float
+        Maximum period.
+    
+    '''
+    
+    def __init__(self, pi=-0.55, p_min=1.4, p_max=3e6):
+        self.pi = pi
+        self.p_min = p_min
+        self.p_max = p_max
         
+        self.norm = self._calculate_normalization()
+        
+        
+    def __repr__(self):
+        return f"PowerLawPeriod(pi={self.pi}, p_min={self.p_min}, p_max={self.p_max})"
+
+    def _repr_html_(self):
+        return (f"<h3>Power Law Period Distribution</h3>"
+                f"<p>pi = {self.pi}</p>"
+                f"<p>p_min = {self.p_min}</p>"
+                f"<p>p_max = {self.p_max}</p>")
+
+    def _calculate_normalization(self):
+        """Calculate the normalization constant for the power law period
+        distribution.
+
+        Returns
+        -------
+        float
+            The normalization constant ensuring the PDF integrates to 1.
+        """
+        integral = quad(self.power_law_period,
+                        np.log10(self.p_min),
+                        np.log10(self.p_max))[0]
+        if integral == 0:
+            raise ValueError("Normalization integral is zero. "
+                             "Check period parameters.")
+        return 1.0 / integral
+    
+    def power_law_period(self, logp):
+        """Compute the power law period distribution at given periods.
+
+        Parameters
+        ----------
+        p : float or array
+            Period(s).
+
+        Returns
+        -------
+        float or ndarray
+            Distribution value(s).
+        """
+        p = 10**np.asarray(logp)
+
+        if np.any(p < self.p_min) or np.any(p > self.p_max):
+            return np.zeros_like(p, dtype=float)
+
+        result = p**self.pi
+        
+        return result
+        
+    def pdf(self, p):
+        """Probability density function of the power law period distribution.
+
+        Parameters
+        ----------
+        p : float or array_like
+            Period(s).
+
+        Returns
+        -------
+        float or ndarray
+            Probability density at period p.
+        """
+        p = np.asarray(p)
+        valid = (p >= self.p_min) & (p <= self.p_max)
+        pdf_values = np.zeros_like(p, dtype=float)
+
+        logp = np.log10(p[valid])
+        pdf_values[valid] = (self.power_law_period(logp)
+                             * self.norm)
+        
+        return pdf_values

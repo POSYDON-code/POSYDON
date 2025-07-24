@@ -13,7 +13,9 @@ import numpy as np
 from posydon.popsyn import independent_sample
 from scipy.integrate import quad, nquad
 from posydon.utils.posydonwarning import Pwarn
-from posydon.popsyn.distributions import flat_mass_ratio, Sana12Period
+from posydon.popsyn.distributions import (flat_mass_ratio,
+                                          Sana12Period,
+                                          PowerLawPeriod)
 import posydon.popsyn.IMFs as IMFs
 
 def get_IMF_pdf(kwargs):
@@ -141,14 +143,49 @@ def get_binary_fraction_pdf(kwargs):
     
     return binary_fraction_pdf
     
+def get_period_pdf(kwargs):
+    '''get the period pdf function
+
+    Parameters
+    ----------
+    kwargs : dict
+        Dictionary containing the simulation parameters
+
+    Returns
+    -------
+    pdf : function
+        Function that returns the period PDF, which expects the following
+        parameters; P, m1
+    '''
+    if kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
+        period = Sana12Period(
+            p_min=kwargs['orbital_period_min'],
+            p_max=kwargs['orbital_period_max'],
+        )
+        period_pdf = lambda P, m1: period.pdf(P, m1)
+    elif kwargs['orbital_period_scheme'] == 'power_law':
+        period = PowerLawPeriod(
+            p_min=kwargs['orbital_period_min'],
+            p_max=kwargs['orbital_period_max'],
+            pi=kwargs['power_law_slope'],
+        )
+        period_pdf = lambda P, m1: period.pdf(P)
+    else:
+        raise ValueError("Orbital period scheme not recognized")
     
-def get_pdf(kwargs):
+    return period_pdf
+
+def get_pdf(kwargs, mass_pdf=False):
     """Function that build a PDF function given the simulation parameters
     
     Parameters
     ----------
     kwargs : dict
         Dictionary containing the simulation parameters
+    mass_pdf : bool, optional
+        If True, the PDF will return the mass distribution only.
+        If False, it will return the full PDF including mass ratio, binary fraction,
+        and period distributions. Default is False.
         
     Returns
     -------
@@ -159,20 +196,37 @@ def get_pdf(kwargs):
     IMF_pdf = get_IMF_pdf(kwargs)
     q_pdf = get_mass_ratio_pdf(kwargs)
     f_b_pdf = get_binary_fraction_pdf(kwargs)
+    period_pdf = get_period_pdf(kwargs)
     
-    pdf_function = lambda m1, q=0, binary=False: np.where(
-        np.asarray(binary),
-        # binaries
-        (f_b_pdf(np.asarray(binary))
-         * IMF_pdf(np.asarray(m1)) 
-         * q_pdf(np.asarray(q), np.asarray(m1))),
-        # single stars
-        (f_b_pdf(np.asarray(binary))
-        * IMF_pdf(np.asarray(m1)))
-    )
+    if mass_pdf:
+        pdf_function = lambda m1, q=0, P=0, binary=False: (
+            np.where(# binaries
+                     np.asarray(binary),
+                     (f_b_pdf(np.asarray(binary))
+                      * IMF_pdf(np.asarray(m1))
+                      * q_pdf(np.asarray(q), np.asarray(m1))),
+                     # single stars
+                     (f_b_pdf(np.asarray(binary))
+                      * IMF_pdf(np.asarray(m1)))
+                    )
+        )
+    else:
+        pdf_function = lambda m1, q=0, P=0, binary=False: (
+            np.where(
+                np.asarray(binary),
+                # binaries
+                (f_b_pdf(np.asarray(binary))
+                * IMF_pdf(np.asarray(m1)) 
+                * q_pdf(np.asarray(q), np.asarray(m1))
+                * period_pdf(np.asarray(P), np.asarray(m1))),
+                # single stars
+                (f_b_pdf(np.asarray(binary))
+                * IMF_pdf(np.asarray(m1)))
+            )
+        )
     return pdf_function
 
-def get_mean_mass(PDF, params):
+def get_mean_mass(params):
     '''Calculate the mean mass of the population
     
     Integrates the mass distribution to calculate the mean mass of 
@@ -180,8 +234,6 @@ def get_mean_mass(PDF, params):
     
     Parameters
     ----------
-    PDF : function
-        Probability density function
     params : dict
         Dictionary containing the MODEL parameters
     
@@ -190,6 +242,8 @@ def get_mean_mass(PDF, params):
     mean_mass : float
         Mean mass of the population
     '''
+    
+    PDF = get_pdf(params, mass_pdf=True)
     
     # integration bounds
     m1_min = params['primary_mass_min']
@@ -208,7 +262,8 @@ def get_mean_mass(PDF, params):
                         1])
     
     # binary integration
-    I_bin = nquad(lambda q, m: (m + m * q) * PDF(m, q, True),
+    # 
+    I_bin = nquad(lambda q, m: (m + m * q) * PDF(m, q, P=0, binary=True),
                   ranges=[(q_min, q_max),
                           (m1_min, m1_max)])[0]
 
@@ -233,12 +288,12 @@ def calculate_model_weights(pop_data,
         raise ValueError("No binaries simulated, but requested")
     
     # build the pdf functions
-    PDF_sim = get_pdf(simulation_parameters)
-    PDF_pop = get_pdf(population_parameters)
+    PDF_sim = get_pdf(simulation_parameters, mass_pdf=False)
+    PDF_pop = get_pdf(population_parameters, mass_pdf=False)
     
     # initial properties
-    mean_mass_sim = get_mean_mass(PDF_sim, simulation_parameters)
-    mean_mass_pop = get_mean_mass(PDF_pop, population_parameters)
+    mean_mass_sim = get_mean_mass(simulation_parameters)
+    mean_mass_pop = get_mean_mass(population_parameters)
         
     factor = (1/M_sim) * (mean_mass_sim / mean_mass_pop)
     
@@ -246,10 +301,12 @@ def calculate_model_weights(pop_data,
     binary_mask = pop_data['state_i'] != 'initially_single_star'
     weight_pop = PDF_pop(m1=pop_data['S1_mass_i'],
                          q=pop_data['S2_mass_i']/pop_data['S1_mass_i'],
+                         P=pop_data['orbital_period_i'],
                          binary=binary_mask)
 
     weight_sim = PDF_sim(m1=pop_data['S1_mass_i'],
                          q=pop_data['S2_mass_i']/pop_data['S1_mass_i'],
+                         P=pop_data['orbital_period_i'],
                          binary=binary_mask)
     
     return (weight_pop / weight_sim) * factor
