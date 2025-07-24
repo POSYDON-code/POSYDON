@@ -96,18 +96,3 @@ Repository = "https://github.com/POSYDON-code/POSYDON.git"
 Issues = "https://github.com/POSYDON-code/POSYDON/issues"
 Changelog = "https://github.com/POSYDON-code/POSYDON/releases"
 
-[tool.coverage.run]
-source = [
-    "posydon.config",
-    "posydon.utils",
-    "posydon.grids",
-    "posydon.popsyn.star_formation_history",
-    "posydon.popsyn.IMFs",
-    "posydon.popsyn.norm_pop",
-    "posydon.popsyn.distributions",
-]
-branch = true
-
-[tool.coverage.report]
-show_missing = true
-fail_under = 100
