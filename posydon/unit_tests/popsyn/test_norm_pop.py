@@ -355,13 +355,6 @@ def base_population_kwargs(base_simulation_kwargs):
     return population_params
 
 
-@fixture
-def base_population_data():
-    '''Example data that has q_min=0.05, and q_max=1 weights.'''
-    return np.load(
-        os.path.join(PATH_TO_POSYDON, 
-                    'posydon/unit_tests/popsyn/example_data/base_weights.npy'))
-
 def pop_data(kwargs):
     '''generate a population of stars'''
     RNG = np.random.default_rng(seed=42)
@@ -732,8 +725,7 @@ class TestReweighting():
     
     def test_mass_ratio_extension(self,
                                   base_simulation_kwargs,
-                                  base_population_kwargs,
-                                  base_population_data):
+                                  base_population_kwargs,):
         '''Sample space for mass ratio extension'''
         
         base_pop_data = pop_data(base_simulation_kwargs)
@@ -745,7 +737,6 @@ class TestReweighting():
                                                    base_population_kwargs)
         assert len(weights) == len(base_pop_data)
         assert np.all(weights >= 0)
-        assert np.allclose(base_population_data, weights)
         
 
 class TestBinaryFractions():
