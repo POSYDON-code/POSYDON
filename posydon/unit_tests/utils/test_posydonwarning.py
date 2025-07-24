@@ -474,6 +474,20 @@ class TestMissingFilesWarning:
         assert isinstance(MissingFilesWarning, totest.MissingFilesWarning)
         assert MissingFilesWarning.message == ''
 
+class TestValueWarning:
+    @fixture
+    def ValueWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.ValueWarning()
+
+    # test the ValueWarning class
+    def test_init(self, ValueWarning):
+        assert isroutine(ValueWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(ValueWarning, totest.ValueWarning)
+        assert ValueWarning.message == ''
+
 
 class TestOverwriteWarning:
     @fixture
