@@ -59,30 +59,6 @@ class IMFBase(ABC):
         pdf_values[valid] = self.imf(m[valid]) * self.norm
         return pdf_values
 
-    # # rejection sampling
-    # def sample(self, n, num_grid=10000, max_iter=100000):
-    #     # Estimate maximum pdf value over a grid
-    #     x_grid = np.linspace(self.m_min, self.m_max, num_grid)
-    #     f_max = np.max(self.pdf(x_grid))
-    #     samples = []
-    #     iterations = 0
-    #     while len(samples) < n and iterations < max_iter:
-    #         x_cand = np.random.uniform(self.m_min, self.m_max)
-    #         f_val = self.pdf(np.array([x_cand]))[0]
-    #         if np.random.uniform(0, f_max) < f_val:
-    #             samples.append(x_cand)
-    #         iterations += 1
-    #     if len(samples) < n:
-    #         raise RuntimeError("Rejection sampling failed to converge")
-    #     return np.array(samples)
-
-    # def sample_inverse(self, n, num_grid=10000):
-    #     x_grid = np.linspace(self.m_min, self.m_max, num_grid)
-    #     pdf_vals = self.pdf(x_grid)
-    #     cdf_vals = np.cumsum(pdf_vals)
-    #     cdf_vals /= cdf_vals[-1]  # normalize CDF to 1
-    #     u = np.random.uniform(0, 1, n)  # uniform samples in [0,1]
-    #     return np.interp(u, cdf_vals, x_grid)
 
     # This forces that the method is implemented in a sub-class
     @abstractmethod
