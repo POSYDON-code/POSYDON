@@ -7,6 +7,7 @@ __authors__ = [
 import numpy as np
 from scipy.integrate import quad
 from abc import ABC, abstractmethod
+from posydon.utils.posydonwarning import Pwarn
 
 class IMFBase(ABC):
     '''Base class for Initial Mass Functions (IMFs)'''
@@ -61,6 +62,9 @@ class IMFBase(ABC):
         """
         m = np.asarray(m)
         valid = (m >= self.m_min) & (m <= self.m_max)
+        if np.any(valid):
+            Pwarn("Some mass values outside the range [m_min, m_max] will return zero.", "ValueWarning")
+            
         pdf_values = np.zeros_like(m, dtype=float)
         pdf_values[valid] = self.imf(m[valid]) * self.norm
         return pdf_values
@@ -140,6 +144,8 @@ class Salpeter(IMFBase):
         m = np.asarray(m)
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
+        if np.any(m < self.m_min) or np.any(m > self.m_max):
+            Pwarn("Mass values outside the range [m_min, m_max] will return zero.", "ValueWarning")
         return m ** (-self.alpha)
 
 class Kroupa2001(IMFBase):
