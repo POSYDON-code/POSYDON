@@ -1,3 +1,9 @@
+"""Test norm_pop module for POSYDON."""
+
+__authors__ = [
+    "Max Briel <max.briel@gmail.com>"
+]
+
 import numpy as np
 import os
 import pandas as pd
@@ -31,7 +37,8 @@ class TestGetIMFPdf:
         pdf_func = norm_pop.get_IMF_pdf(kwargs)
         m_test = np.array([1, 10, 50])
         result = pdf_func(m_test)
-        assert np.allclose(result, np.ones_like(m_test))
+        expected = np.ones_like(m_test) / (kwargs['primary_mass_max'] - kwargs['primary_mass_min'])
+        assert np.allclose(result, expected)
     
     
     def test_valid_imf_returns_dummy_pdf(self, monkeypatch):
@@ -159,9 +166,89 @@ class TestGetBinaryFractionPdf:
         
         assert "Binary fraction scheme not recognized" in str(excinfo.value)
 
+class TestGetPeriodPdf:
+    def test_sana12_period_extended(self):
+        kwargs = {
+            'orbital_period_scheme': 'Sana+12_period_extended',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6000,
+        }
+        period_pdf_func = norm_pop.get_period_pdf(kwargs)
+        # Test that the function is callable and returns sensible values
+        result = period_pdf_func(10.0, 15.0)  # P=10 days, m1=15 Msun
+        assert isinstance(result, (float, np.ndarray))
+        assert np.all(result >= 0)
+    
+    def test_power_law_period(self):
+        kwargs = {
+            'orbital_period_scheme': 'power_law',
+            'orbital_period_min': 1.4,
+            'orbital_period_max': 3e6,
+            'power_law_slope': -0.55,
+        }
+        period_pdf_func = norm_pop.get_period_pdf(kwargs)
+        # Test that the function is callable and returns sensible values
+        result = period_pdf_func(100.0, 20.0)  # P=100 days, m1=20 Msun
+        assert isinstance(result, (float, np.ndarray))
+        assert np.all(result >= 0)
+    
+    def test_invalid_period_scheme(self):
+        kwargs = {
+            'orbital_period_scheme': 'invalid_scheme',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6000,
+        }
+        with pytest.raises(ValueError) as excinfo:
+            norm_pop.get_period_pdf(kwargs)
+        
+        assert "Orbital period scheme not recognized" in str(excinfo.value)
+
+class TestGetMeanMass:
+    def test_q_min_greater_than_q_max_error(self):
+        # Test the validation error when q_min > q_max
+        params = {
+            'primary_mass_scheme': 'NonExistentIMF',
+            'primary_mass_min': 1,
+            'primary_mass_max': 100,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'binary_fraction_scheme': 'const',
+            'binary_fraction_const': 0.5,
+            'orbital_period_scheme': 'Sana+12_period_extended',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6000,
+            'q_min': 0.8,  # Greater than q_max
+            'q_max': 0.2,
+        }
+        
+        with pytest.raises(ValueError) as excinfo:
+            norm_pop.get_mean_mass(params)
+        
+        assert "q_min must be less than q_max" in str(excinfo.value)
+    
+    def test_mean_mass_without_q_bounds(self):
+        # Test the branch where q_min and q_max are computed from secondary masses
+        params = {
+            'primary_mass_scheme': 'NonExistentIMF',
+            'primary_mass_min': 10,
+            'primary_mass_max': 20,
+            'secondary_mass_min': 5,
+            'secondary_mass_max': 15,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'binary_fraction_scheme': 'const',
+            'binary_fraction_const': 0.5,
+            'orbital_period_scheme': 'Sana+12_period_extended',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6000,
+        }
+        
+        # This should not raise an error and should return a valid mean mass
+        result = norm_pop.get_mean_mass(params)
+        assert isinstance(result, (float, np.floating))
+        assert result > 0
+
 class TestGetPdf:
     def test_single_star_pdf(self):
-        # Using fallback IMF (non-existent) -> IMF_pdf returns 1.
+        # Using fallback IMF (non-existent) -> IMF_pdf returns normalized value.
         kwargs = {
             'primary_mass_scheme': 'NonExistentIMF',
             'primary_mass_min': 1,
@@ -177,9 +264,11 @@ class TestGetPdf:
         }
         pdf_func = norm_pop.get_pdf(kwargs)
         m1_val = 10
-        # For non-binary, expected = (1 - f_b)*IMF_pdf = 0.5*1 = 0.5
+        # For non-binary, expected = (1 - f_b)*IMF_pdf = 0.5*(1/99) = 0.5/99
+        imf_val = 1.0 / (kwargs['primary_mass_max'] - kwargs['primary_mass_min'])
+        expected = 0.5 * imf_val
         result = pdf_func(m1_val, binary=False)
-        assert np.allclose(result, 0.5)
+        assert np.allclose(result, expected)
     
     def test_binary_pdf(self):
         # Using alternative mass ratio branch (q_min and q_max provided)
@@ -199,10 +288,12 @@ class TestGetPdf:
         }
         pdf_func = norm_pop.get_pdf(kwargs, mass_pdf=True)
         m1_val = 10
-        # For binary, expected = f_b*IMF_pdf*q_pdf = 0.3*1*1 = 0.3 
+        # For binary, expected = f_b*IMF_pdf*q_pdf = 0.3*(1/99)*1 = 0.3/99
         # for valid q (e.g. 0.5)
+        imf_val = 1.0 / (kwargs['primary_mass_max'] - kwargs['primary_mass_min'])
+        expected = 0.3 * imf_val * 1  # f_b * IMF_pdf * q_pdf
         result = pdf_func(m1_val, q=0.5, binary=True)
-        assert np.allclose(result, 0.3)
+        assert np.allclose(result, expected)
         # q=0 should return 0 from mass ratio pdf.
         result_invalid = pdf_func(m1_val, q=0, binary=True)
         assert np.all(result_invalid == 0)
@@ -845,5 +936,3 @@ class TestBinaryFractions():
         assert np.isclose(np.sum(selection),
                           np.sum(small_weights[mask2]),
                           atol=1e-3)
-
-

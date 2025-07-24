@@ -1,11 +1,6 @@
-"""Compute the underlying stellar population weight of each model for a given simulation."""
+"""Compute and normalize population synthesis models."""
 
 __authors__ = [
-    "Devina Misra <devina.misra@unige.ch>",
-    "Simone Bavera <Simone.Bavera@unige.ch>",
-    "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
-    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
-    "Dimitris Souropanis <dsouropanis@ia.forth.gr>",
     "Max Briel <max.briel@gmail.com>",
 ]
 
@@ -13,7 +8,7 @@ import numpy as np
 from posydon.popsyn import independent_sample
 from scipy.integrate import quad, nquad
 from posydon.utils.posydonwarning import Pwarn
-from posydon.popsyn.distributions import (flat_mass_ratio,
+from posydon.popsyn.distributions import (FlatMassRatio,
                                           Sana12Period,
                                           PowerLawPeriod)
 import posydon.popsyn.IMFs as IMFs
@@ -169,7 +164,7 @@ def get_period_pdf(kwargs):
         period = PowerLawPeriod(
             p_min=kwargs['orbital_period_min'],
             p_max=kwargs['orbital_period_max'],
-            pi=kwargs['power_law_slope'],
+            slope=kwargs['power_law_slope'],
         )
         period_pdf = lambda P, m1: period.pdf(P)
     else:

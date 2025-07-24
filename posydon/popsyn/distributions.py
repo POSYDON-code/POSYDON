@@ -1,3 +1,8 @@
+"""Period and mass ratio distributions module for POSYDON."""
+
+__authors__ = [
+    "Max Briel <max.briel@gmail.com>"
+]
 from scipy.integrate import quad
 import numpy as np
 

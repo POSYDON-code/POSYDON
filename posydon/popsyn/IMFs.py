@@ -1,3 +1,9 @@
+"""Initial Mass Functions (IMFs) module for POSYDON."""
+
+__authors__ = [
+    "Max Briel <max.briel@gmail.com>"
+]
+
 import numpy as np
 from scipy.integrate import quad
 from abc import ABC, abstractmethod
