@@ -2,8 +2,45 @@ from scipy.integrate import quad
 import numpy as np
 
 class FlatMassRatio:
+    """Flat mass ratio distribution for binary star systems.
     
+    A uniform distribution for mass ratios q = m2/m1 within specified bounds.
+    This distribution assigns equal probability to all mass ratios within the
+    given range [q_min, q_max].
+    
+    Parameters
+    ----------
+    q_min : float, optional
+        Minimum mass ratio (default: 0.05). Must be in (0, 1].
+    q_max : float, optional
+        Maximum mass ratio (default: 1.0). Must be in (0, 1].
+        
+    Raises
+    ------
+    ValueError
+        If q_min or q_max are not in (0, 1], or if q_min >= q_max.
+        
+    Examples
+    --------
+    >>> dist = FlatMassRatio(q_min=0.1, q_max=0.8)
+    >>> pdf_value = dist.pdf(0.5)
+    """
+
     def __init__(self, q_min=0.05, q_max=1):
+        """Initialize the flat mass ratio distribution.
+        
+        Parameters
+        ----------
+        q_min : float, optional
+            Minimum mass ratio (default: 0.05). Must be in (0, 1].
+        q_max : float, optional
+            Maximum mass ratio (default: 1.0). Must be in (0, 1].
+            
+        Raises
+        ------
+        ValueError
+            If q_min or q_max are not in (0, 1], or if q_min >= q_max.
+        """
         if not (0 < q_min <= 1):
             raise ValueError("q_min must be in (0, 1)")
         if not (0 < q_max <= 1):
@@ -16,9 +53,23 @@ class FlatMassRatio:
         self.norm = self._calculate_normalization()
         
     def __repr__(self):
+        """Return string representation of the distribution.
+        
+        Returns
+        -------
+        str
+            String representation showing the distribution parameters.
+        """
         return f"FlatMassRatio(q_min={self.q_min}, q_max={self.q_max})"
     
     def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks.
+        
+        Returns
+        -------
+        str
+            HTML string for rich display in notebooks.
+        """
         return (f"<h3>Flat Mass Ratio Distribution</h3>"
                 f"<p>q_min = {self.q_min}</p>"
                 f"<p>q_max = {self.q_max}</p>")
@@ -49,7 +100,7 @@ class FlatMassRatio:
         Returns
         -------
         float
-
+            Distribution value (always 1.0 for flat distribution).
         """
         return 1.0
     
@@ -64,7 +115,7 @@ class FlatMassRatio:
         Returns
         -------
         float or ndarray
-            Probability density at mass ratio m.
+            Probability density at mass ratio q.
         """
         q = np.asarray(q)
         valid = (q >= self.q_min) & (q <= self.q_max)
@@ -74,9 +125,52 @@ class FlatMassRatio:
     
 
 class Sana12Period():
-    '''Sana H., et al., 2012, Science, 337, 444'''
+    """Period distribution from Sana et al. (2012).
+    
+    Orbital period distribution for massive binary stars based on the
+    observational study by Sana H., et al., 2012, Science, 337, 444.
+    The distribution has different behaviors for low-mass (≤15 M☉) and 
+    high-mass (>15 M☉) primary stars.
+    
+    For low-mass primaries: flat distribution in log period
+    For high-mass primaries: power law with slope -0.55 and a break at log P = 0.15
+    
+    Parameters
+    ----------
+    p_min : float, optional
+        Minimum period in days (default: 0.35).
+    p_max : float, optional
+        Maximum period in days (default: 6000).
+        
+    Attributes
+    ----------
+    mbreak : float
+        Mass break at 15 M☉ separating low and high mass regimes.
+    slope : float
+        Power law slope for high-mass regime (-0.55).
+        
+    References
+    ----------
+    Sana H., et al., 2012, Science, 337, 444
+    Bavera S., et al., 2021, A&A, 647, A153
+    (https://ui.adsabs.harvard.edu/abs/2021A%26A...647A.153B/abstract)
+    """
     
     def __init__(self, p_min=0.35, p_max=6e3):
+        """Initialize the Sana12 period distribution.
+        
+        Parameters
+        ----------
+        p_min : float, optional
+            Minimum period in days (default: 0.35).
+        p_max : float, optional
+            Maximum period in days (default: 6000).
+            
+        Raises
+        ------
+        ValueError
+            If p_min is not positive or p_max <= p_min.
+        """
         if p_min <= 0:
             raise ValueError("p_min must be positive")
         if p_max <= p_min:
@@ -91,11 +185,14 @@ class Sana12Period():
         self.norm = lambda m1: np.where(m1 <= self.mbreak,
                                         self.low_mass_norm,
                                         self.high_mass_norm)
+        self.slope = 0.55
         
     def __repr__(self):
+        """Return string representation of the distribution."""
         return f"Sana12Period(p_min={self.p_min}, p_max={self.p_max})"
     
     def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
         return (f"<h3>Sana12 Period Distribution</h3>"
                 f"<p>p_min = {self.p_min}</p>"
                 f"<p>p_max = {self.p_max}</p>")
@@ -151,18 +248,17 @@ class Sana12Period():
         result[mask1] = 1
 
         mask2 = m1 > self.mbreak
-        pi = 0.55
-        beta = 1 - pi
-        A = np.log10(10**0.15)**(-pi) * (np.log10(10**0.15) - np.log10(self.p_min))
+        beta = 1 - self.slope
+        A = np.log10(10**0.15)**(-self.slope) * (np.log10(10**0.15) - np.log10(self.p_min))
         B = 1./beta * (np.log10(self.p_max)**beta - np.log10(10**0.15)**beta)
         C = 1./(A + B)
         logp_valid = logp[mask2]
         result[mask2] = np.where(
             (np.log10(self.p_min) <= logp_valid) & (logp_valid < 0.15),
-            C * 0.15**(-pi),
+            C * 0.15**(-self.slope),
             np.where(
                 (0.15 <= logp_valid) & (logp_valid <= np.log10(self.p_max)),
-                C * logp_valid**(-pi),
+                C * logp_valid**(-self.slope),
                 0
             )
         )
@@ -213,10 +309,7 @@ class PowerLawPeriod():
     
     Parameters
     ----------
-    pi : float
-    Parameters
-    ----------
-    pi : float
+    slope : float
         Slope of the power law.
     p_min : float
         Minimum period.
@@ -225,24 +318,53 @@ class PowerLawPeriod():
     
     '''
     
-    def __init__(self, pi=-0.55, p_min=1.4, p_max=3e6):
+    def __init__(self, slope=-0.55, p_min=1.4, p_max=3e6):
+        """Initialize the power law period distribution.
+        
+        Parameters
+        ----------
+        slope : float, optional
+            Power law slope (default: -0.55).
+        p_min : float, optional
+            Minimum period in days (default: 1.4).
+        p_max : float, optional
+            Maximum period in days (default: 3e6).
+            
+        Raises
+        ------
+        ValueError
+            If p_min is not positive or p_max <= p_min.
+        """
         if p_min <= 0:
             raise ValueError("p_min must be positive")
         if p_max <= p_min:
             raise ValueError("p_max must be greater than p_min")
-        self.pi = pi
+        self.slope = slope
         self.p_min = p_min
         self.p_max = p_max
 
         self.norm = self._calculate_normalization()
-        
-        
+
     def __repr__(self):
-        return f"PowerLawPeriod(pi={self.pi}, p_min={self.p_min}, p_max={self.p_max})"
+        """Return string representation of the distribution.
+        
+        Returns
+        -------
+        str
+            String representation showing the distribution parameters.
+        """
+        return f"PowerLawPeriod(slope={self.slope}, p_min={self.p_min}, p_max={self.p_max})"
 
     def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks.
+        
+        Returns
+        -------
+        str
+            HTML string for rich display in notebooks.
+        """
         return (f"<h3>Power Law Period Distribution</h3>"
-                f"<p>pi = {self.pi}</p>"
+                f"<p>slope = {self.slope}</p>"
                 f"<p>p_min = {self.p_min}</p>"
                 f"<p>p_max = {self.p_max}</p>")
 
@@ -280,7 +402,7 @@ class PowerLawPeriod():
 
         result = np.zeros_like(p, dtype=float)
         valid = (p >= self.p_min) & (p <= self.p_max)
-        result[valid] = p[valid]**self.pi
+        result[valid] = p[valid]**self.slope
 
         return result
         
