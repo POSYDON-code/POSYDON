@@ -855,7 +855,7 @@ class BinaryStar:
         return 'BinaryStar(' + s + ')'
 
     @staticmethod
-    def from_run(run, history=False, profiles=False):
+    def from_run(run, history=False, profiles=False):  # pragma: no cover
         """Create a BinaryStar object from a PSyGrid run."""
         binary = BinaryStar()
 
@@ -1003,4 +1003,3 @@ class BinaryStar:
             message += i 
 
         return message
-
