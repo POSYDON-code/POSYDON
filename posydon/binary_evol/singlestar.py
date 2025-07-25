@@ -379,7 +379,7 @@ class SingleStar:
         return s[:-1]
 
     @staticmethod
-    def from_run(run, history=False, profile=False, which_star=None):
+    def from_run(run, history=False, profile=False, which_star=None):  # pragma: no cover
         """Create a SingleStar object from a single-star grid run."""
         star = SingleStar()
         star_history = run.history1
