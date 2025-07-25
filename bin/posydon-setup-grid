@@ -199,6 +199,10 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                 mesa_inlists['star1_controls_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist1"))
                 mesa_inlists['star1_job_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist1"))
 
+            if os.path.isfile(os.path.join(inlists_location, "binary", "inlist2")):
+                mesa_inlists['star2_controls_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist2"))
+                mesa_inlists['star2_job_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist2"))
+
             # check for star formation parameters
             if os.path.isdir(os.path.join(inlists_location, "star1_formation")):
                 # We are making star1 so we can unset the zams file we were going to use for star1
