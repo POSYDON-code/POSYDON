@@ -2538,7 +2538,6 @@ class Rates(TransientPopulation):
                 np.nansum(weights[mask]) / normalisation[i - 1]
             )
 
-
         with pd.HDFStore(self.filename, mode="a") as store:
             store.put(self.base_path + "intrinsic_rate_density", intrinsic_rate_density)
 
