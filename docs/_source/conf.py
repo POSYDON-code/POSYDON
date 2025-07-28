@@ -59,38 +59,10 @@ def get_github_tags():
         print(f"Error getting tags from github: {e}")
         return []
 
-def group_per_major_minor(tags):
-    '''Group the tags by major and minor version
-    Parameters
-    ----------
-    tags : list of str
-        A list of tags to group
-        
-    Returns
-    -------
-    dict
-        A dictionary with the major and minor version as keys and a list of tags as values
-    '''
-    
-    grouped_tags = {}
-    for tag in tags:
-        # Split the tag into major and minor version
-        parts = tag.split('.')
-        if len(parts) < 2:
-            continue
-        major_minor = f"{parts[0]}.{parts[1]}"
-
-        if major_minor not in grouped_tags:
-            grouped_tags[major_minor] = []
-        grouped_tags[major_minor].append(tag)
-        
-    return grouped_tags
-
 github_tags = get_github_tags()
 
 # 2.0.0-dev needs to be removed from the list and replaced with development
-if '2.0.0-dev' in github_tags:
-    github_tags.remove('2.0.0-dev')
+github_tags.remove('2.0.0-dev')
 
 # get a clean current version
 # some old versions require the dirty tag to be removed, because files need
@@ -105,36 +77,24 @@ elif 'dirty' in posydon_version and posydon_version.split('+')[0] in old_tags:
     posydon_version = posydon_version.split('+')[0]
 else:
     current_version = posydon_version
-    
-# latest per minor version
-group_tags = group_per_major_minor(github_tags)
-# remove pre-release tags
-for k, v in group_tags.items():
-    group_tags[k] = list(set([i.split('-')[0] for i in v]))
-# get the latest tag per minor version
-latest_tags = {k: sorted(v)[-1] for k, v in group_tags.items()}
-    
+
 # absolute path to the documentation
 base_url = 'https://posydon.org/POSYDON'
+
+# get the list of versions
+url_list = [f'{base_url}/v{tag}' for tag in github_tags]
+v1_versions = [[tag, url] for tag, url in zip(github_tags, url_list) if tag.startswith('1.')]
+v2_versions = [[tag, url] for tag, url in zip(github_tags, url_list) if tag.startswith('2.')]
+ 
+# add development version
+v2_versions.append(['dev', f'{base_url}/development'])
 
 # Versions to be shown in the version dropdown
 html_context = {
   'current_version' : current_version,
+  'v1_versions' : v1_versions,
+  'v2_versions' : v2_versions,
 }
-
-# get the list of versions
-publish_tags = {tag: f'{base_url}/v{version}' for tag, version in latest_tags.items()}
-main_versions = sorted(set([tag.split('.')[0] for tag in publish_tags.keys()]))
-
-main_version_dicts = {}
-for main_version in reversed(main_versions):
-    main_version_dicts[f'v{main_version}'] = [[tag, url] for tag, url in publish_tags.items() if tag.startswith(main_version)]
-
-html_context = {
-    'current_version': current_version,
-    'main_versions_dicts': main_version_dicts,
-}
-print(html_context)
 
 # The short X.Y version.
 version = posydon_version
