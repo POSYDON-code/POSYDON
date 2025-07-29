@@ -131,7 +131,8 @@ class TestPopulationRunner:
 
         monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs)
         monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
-        monkeypatch.setattr(totest, "convert_metallicity_to_string", lambda x: str(tmp_path / "0.1"))
+        monkeypatch.setattr(totest, "convert_metallicity_to_string", 
+                            lambda x: str(os.path.join(tmp_path, "0.1")))
         # 1) File exists case: should raise FileExistsError
         pop = DummyPop(metallicity=0.1, temp_directory=str(tmp_path))
         output_file = os.path.join(tmp_path,"0.1_Zsun_population.h5")
@@ -179,59 +180,175 @@ class TestPopulationRunner:
              
 class TestDFInterface:
     
-    @fixture
-    def fix(self):
-#         return 
-        pass
+    def test_head_tail_select(self, tmp_path):
+        # Setup test HDF5 file
+        data = pd.DataFrame({
+            "index": np.repeat(np.arange(5), 2),
+            "time": np.random.rand(10),
+            "value": np.random.rand(10)
+        })
+        hdf_path = os.path.join(tmp_path,"test.h5")
+        data.to_hdf(hdf_path, key="history", format="table", index=False)
 
-    def test_head(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_tail(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_select(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_get_repr(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_get_html_repr(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
+        dfi = totest.DFInterface()
+        dfi.filename = str(hdf_path)
+        dfi.chunksize = 3
+
+        head = dfi.head("history", n=3)
+        tail = dfi.tail("history", n=2)
+        subset = dfi.select("history", columns=["time"])
+
+        assert len(head) == 3
+        assert len(tail) == 2
+        assert "time" in subset.columns
+        assert subset.shape[1] == 1
+
+    def test_repr_methods(self, tmp_path):
+        df = pd.DataFrame({"index": range(10), "x": np.random.rand(10)})
+        path = os.path.join(tmp_path, "test_repr.h5")
+        df.to_hdf(path, key="history", format="table", index=False)
+
+        dfi = totest.DFInterface()
+        dfi.filename = str(path)
+
+        s = dfi.get_repr("history")
+        html = dfi.get_html_repr("history")
+
+        assert isinstance(s, str)
+        assert "x" in s
+        assert isinstance(html, str)
+        assert "<table" in html
         
 class TestHistory:
     
-    @fixture
-    def fix(self):
-#         return 
-        pass
+    def test_init(self, tmp_path):
+        with raises(FileNotFoundError, match="does not exist!"):
+            totest.History("nonexistent_file.h5")
+            
+        df = pd.DataFrame({
+            "binary_index": np.repeat(np.arange(3), 2),
+            "a": np.random.rand(6),
+        })
+        file_path = os.path.join(tmp_path, "test_history.h5")
+        df.set_index("binary_index", inplace=True)
+        df.to_hdf(file_path, key="history", format="table")
 
-    def test_head(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_tail(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_select(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
+        hist = totest.History(str(file_path), verbose=True, chunksize=2)
+
+        assert hist.filename == str(file_path)
+        assert hist.lengths is not None
+        assert hist.columns == ["a"]
+        assert hist.number_of_systems == 3
+        assert isinstance(hist.indices, np.ndarray)
+
+    def test_getitem_and_len(self, tmp_path):
+        df = pd.DataFrame({
+            "binary_index": np.repeat(np.arange(3), 2),
+            "a": np.random.rand(6),
+        })
+        file_path = os.path.join(tmp_path, "test_getitem.h5")
+        df.set_index("binary_index", inplace=True)
+        df.to_hdf(file_path, key="history", format="table")
+        
+        lengths_df = pd.DataFrame({'lengths': [2, 2, 2]}, index=[0, 1, 2])
+        lengths_df.to_hdf(file_path, key="history_lengths")
+
+        hist = totest.History(str(file_path))
+        
+        # adding history_lengths
+        assert hist.lengths.equals(lengths_df)
+
+        # __len__
+        assert len(hist) == 6
+        
+        # __getitem__ with "none" slice indices
+        out_startnone = hist[:3]
+        out_stopnone = hist[2:]
+        assert not out_startnone.empty
+        assert all(i in out_startnone.index for i in range(3))
+        assert not out_stopnone.empty
+        assert all(i>=2 for i in out_stopnone.index)
+
+        # __getitem__ with int
+        out = hist[0]
+        assert isinstance(out, pd.DataFrame)
+
+        # __getitem__ with list of int
+        out = hist[[0, 1]]
+        assert isinstance(out, pd.DataFrame)
+        out_none = hist[[]]
+        assert isinstance(out_none,pd.DataFrame)
+        assert out_none.empty
+
+        # __getitem__ with numpy array of int
+        out = hist[np.array([0, 1])]
+        assert isinstance(out, pd.DataFrame)
+        out_none = hist[np.array([], dtype=int)]
+        assert isinstance(out_none,pd.DataFrame)
+        assert out_none.empty
+
+        # __getitem__ with bool array
+        full_data = pd.read_hdf(file_path, key="history")
+        mask = full_data["a"] > -1
+        empty_mask = np.array([],dtype=bool)
+        out = hist[mask.to_numpy()] 
+        out_none = hist[empty_mask]
+        assert not out.empty
+        assert (out["a"] > -1).all()
+        assert isinstance(out_none,pd.DataFrame)
+        assert out_none.empty
+
+        # __getitem__ with str column
+        out = hist["a"]
+        assert "a" in out.columns
+
+        # __getitem__ with list of str columns
+        out = hist[["a"]]
+        assert "a" in out.columns
+
+        # Invalid column
+        with raises(ValueError, match="is not a valid column name"):
+            hist["bad_column"]
+
+        # Invalid list of column names
+        with raises(ValueError, match="Not all columns in"):
+            hist[["a", "bad"]]
+
+        # Invalid type
+        with raises(ValueError, match="Invalid key type"):
+            hist[None]
+
+    def test_slice(self, tmp_path):
+        df = pd.DataFrame({
+            "index": np.repeat(np.arange(5), 2),
+            "val": np.random.rand(10)
+        })
+        path = os.path.join(tmp_path, "test_slice.h5")
+        df.to_hdf(path, key="history", format="table", index=False)
+        hist = totest.History(str(path))
+        sliced = hist[1:3]
+        assert isinstance(sliced, pd.DataFrame)
+
+    def test_head_tail_repr(self, tmp_path):
+        df = pd.DataFrame({
+            "index": np.repeat(np.arange(5), 2),
+            "val": np.random.rand(10)
+        })
+        path = os.path.join(tmp_path, "test_repr2.h5")
+        df.to_hdf(path, key="history", format="table", index=False)
+        hist = totest.History(str(path))
+
+        head = hist.head(n=3)
+        tail = hist.tail(n=2)
+        rep = repr(hist)
+        html = hist._repr_html_()
+
+        assert isinstance(head, pd.DataFrame)
+        assert isinstance(tail, pd.DataFrame)
+        assert isinstance(rep, str)
+        assert isinstance(html, str)
+        assert "val" in rep
+        assert "<table" in html
         
 class TestOneline:
     
