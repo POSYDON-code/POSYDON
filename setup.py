@@ -3,8 +3,10 @@
 from __future__ import print_function
 import glob
 import sys
-import versioneer
 import os.path
+sys.path.insert(0, os.path.dirname(__file__))
+
+import versioneer
 
 cmdclass = {}
 
