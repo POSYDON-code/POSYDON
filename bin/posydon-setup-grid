@@ -389,8 +389,16 @@ def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.
     Returns:
         inlists
     """
-    if 'zams_filename' not in mesa_inlists.keys():
-        mesa_inlists['zams_filename'] = None
+    # To make it backwards compatible
+    if 'zams_filename' in mesa_inlists.keys():
+        mesa_inlists['zams_filename_1'] = mesa_inlists['zams_filename']
+        mesa_inlists['zams_filename_2'] = mesa_inlists['zams_filename']
+
+    if 'zams_filename_1' not in mesa_inlists.keys():
+        mesa_inlists['zams_filename_1'] = None
+
+    if 'zams_filename_2' not in mesa_inlists.keys():
+        mesa_inlists['zams_filename_2'] = None
 
     if 'single_star_grid' not in mesa_inlists.keys():
         mesa_inlists['single_star_grid'] = False
