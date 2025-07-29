@@ -6,7 +6,7 @@ on:
 
 jobs:
   build_v1:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
     
@@ -17,6 +17,7 @@ jobs:
         fetch-depth: 0
         fetch-tags: true
         path: 'POSYDON'
+        ref: ${{ github.ref }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -60,7 +61,7 @@ jobs:
         # make the output folder
         output_folder=$GITHUB_WORKSPACE/_build/
         echo "Output folder: $output_folder"
-        mkdir $output_folder
+        mkdir -p $output_folder
         
         # move to the repository folder
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
@@ -124,8 +125,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
+        fetch-depth: 0
         fetch-tags: true
         path: 'POSYDON'
+        #ref: ${{ github.ref }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -167,7 +170,7 @@ jobs:
         # make the output folder
         output_folder=$GITHUB_WORKSPACE/_build/
         echo "Output folder: $output_folder"
-        mkdir $output_folder
+        mkdir -p $output_folder
 
         # move to the repository folder
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
@@ -182,7 +185,7 @@ jobs:
         injection_code=$(awk '/# INJECTION GRAB START/,/# INJECTION GRAB END/' "${PATH_TO_POSYDON}/docs/_source/conf.py")
 
         # get the available tags
-        TAGS=$(git tag -l | sort -V | grep "v2" | grep -v "dev")
+        TAGS=$(git tag -l | sort -V | grep "v2" | grep -v "dev" )
 
         echo "v2 filtered tags:"
         echo $TAGS
@@ -198,9 +201,16 @@ jobs:
             # copy the _templates folder and inject code only for specific tags
             if [[ "$tag" == "v2.0.0-pre1" || "$tag" == "v2.0.0-pre2" ]]; then
               # copy the _templates folder to the docs folder
-              cp -r $GITHUB_WORKSPACE/_templates $PATH_TO_POSYDON/docs
-              # remove the injection code from the conf.py file
-              echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/conf.py"
+              cp -r $GITHUB_WORKSPACE/_templates $PATH_TO_POSYDON/docs/_source
+              # add the injection code from the conf.py file
+              echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/_source/conf.py"
+            elif [[ "$tag" == "v2.0.0" ]]; then
+              # copy the _templates folder to the docs folder
+              cp -r $GITHUB_WORKSPACE/_templates $PATH_TO_POSYDON/docs/_source
+              # remove the old injection code from the conf.py file
+              sed -i '/# INJECTION GRAB START/,/# INJECTION GRAB END/d' "${PATH_TO_POSYDON}/docs/_source/conf.py"
+              # add the new injection code to the conf.py file
+              echo "${injection_code}" >> "${PATH_TO_POSYDON}/docs/_source/conf.py"
             fi
 
           # build the documentation
