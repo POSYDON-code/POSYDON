@@ -840,15 +840,15 @@ class detached_step:
                         current = getattr(obj, key)
                         history = [current] * len(t[:-1])
                     else:
-                        current = np.log10(
-                            (interp1d["omega"][-1] / const.secyer)
-                            * (interp1d[self.translate["total_moment_of_inertia"]](
-                                    t[-1] - t_offset).item() * (const.msol * const.rsol**2)))
+                        tot_j = (interp1d["omega"][-1] / const.secyer) \
+                                  * (interp1d[self.translate["total_moment_of_inertia"]]( \
+                                    t[-1] - t_offset).item() * (const.msol * const.rsol**2))
+                        current = np.log10(tot_j) if tot_j > 0.0 else -99
                     
-                        history = np.log10(
-                            (interp1d["omega"][:-1] / const.secyer)
-                            * (interp1d[self.translate["total_moment_of_inertia"]](
-                                    t[:-1] - t_offset) * (const.msol * const.rsol**2)))
+                        tot_j_hist = (interp1d["omega"][:-1] / const.secyer) \
+                                       * (interp1d[self.translate["total_moment_of_inertia"]]( \
+                                       t[:-1] - t_offset) * (const.msol * const.rsol**2))
+                        history = np.where(tot_j_hist > 0, np.log10(tot_j_hist), -99)
                     
                 elif (key in ["spin"] and obj != binary):
                     if obj.co:
