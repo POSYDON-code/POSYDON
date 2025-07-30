@@ -82,6 +82,11 @@ Anaconda (Recommended)
         get-posydon-data
 
     You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the one of your choice.
+    If you have the disk space and want to download the full DR2 dataset, you can use the following command:
+
+    .. code-block:: bash
+
+        get-posydon-data DR2
 
     Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
 

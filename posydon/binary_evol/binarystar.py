@@ -234,13 +234,11 @@ class BinaryStar:
             if max_n_steps is not None:
                 if n_steps > max_n_steps:
                     raise RuntimeError("Exceeded maximum number of steps ({})".format(max_n_steps))
-
         signal.alarm(0)     # turning off alarm
         self.properties.post_evolve(self)
 
     def run_step(self):
         """Evolve the binary through one evolutionary step."""
-
         total_state = (self.star_1.state, self.star_2.state, self.state, self.event)
         if total_state in UNDEFINED_STATES:
             raise FlowError(f"Binary failed with a known undefined state in the flow:\n{total_state}")

@@ -40,7 +40,6 @@ from posydon.binary_evol.DT.track_match import TrackMatcher
 from posydon.binary_evol.DT.key_library import (DEFAULT_TRANSLATION,
                                                 DEFAULT_TRANSLATED_KEYS)
 
-
 def event(terminal, direction=0):
     """Return a helper function to set attributes for solve_ivp events."""
     def dec(f):
@@ -48,6 +47,158 @@ def event(terminal, direction=0):
         f.direction = direction
         return f
     return dec
+
+DEFAULT_TRANSLATION = {
+    "time": "time",
+    "orbital_period": "porb",
+    "eccentricity": "ecc",
+    "separation": "sep",
+    "state": None,
+    "event": None,
+    "rl_relative_overflow_1": "rl_relative_overflow_1",
+    "rl_relative_overflow_2": "rl_relative_overflow_2",
+    "lg_mtransfer_rate": "lg_mtransfer_rate",
+    "V_sys": None,
+    "mass": "mass",
+    "log_R": "log_R",
+    "R": "R",
+    "lg_mdot": "mdot",
+    "log_L": "log_L",
+    "lg_wind_mdot": "mdot",
+    "lg_system_mdot": "lg_mdot",
+    "he_core_mass": "he_core_mass",
+    "he_core_radius": "he_core_radius",
+    "c_core_mass": "c_core_mass",
+    "c_core_radius": "c_core_radius",
+    "o_core_mass": "o_core_mass",
+    "o_core_radius": "o_core_radius",
+    "center_h1": "center_h1",
+    "center_he4": "center_he4",
+    "center_c12": "center_c12",
+    "center_o16": "center_o16",
+    "center_n14": "center_n14",
+    "surface_h1": "surface_h1",
+    "surface_he4": "surface_he4",
+    "surface_c12": "surface_c12",
+    "surface_n14": "surface_n14",
+    "surface_o16": "surface_o16",
+    "center_gamma": "center_gamma",
+    "log_LH": "log_LH",
+    "log_LHe": "log_LHe",
+    "log_LZ": "log_LZ",
+    "log_Lnuc": "log_Lnuc",
+    "c12_c12": "c12_c12",
+    "avg_c_in_c_core": "avg_c_in_c_core",
+    "surf_avg_omega_div_omega_crit": "surf_avg_omega_div_omega_crit",
+    "surf_avg_omega": "omega",
+    "total_moment_of_inertia": "inertia",
+    "log_total_angular_momentum": "log_total_angular_momentum",
+    "profile": None,
+    "metallicity": None,
+    "spin": "spin_parameter",
+    "conv_env_top_mass": "conv_env_top_mass",
+    "conv_env_bot_mass": "conv_env_bot_mass",
+    "conv_env_top_radius": "conv_env_top_radius",
+    "conv_env_bot_radius": "conv_env_bot_radius",
+    "conv_env_turnover_time_g": "conv_env_turnover_time_g",
+    "conv_env_turnover_time_l_b": "conv_env_turnover_time_l_b",
+    "conv_env_turnover_time_l_t": "conv_env_turnover_time_l_t",
+    "envelope_binding_energy": "envelope_binding_energy",
+    "mass_conv_reg_fortides": "mass_conv_reg_fortides",
+    "thickness_conv_reg_fortides": "thickness_conv_reg_fortides",
+    "radius_conv_reg_fortides": "radius_conv_reg_fortides",
+    "lambda_CE_1cent": "lambda_CE_1cent",
+    "lambda_CE_10cent": "lambda_CE_10cent",
+    "lambda_CE_30cent": "lambda_CE_30cent",
+    "co_core_mass": "co_core_mass",
+    "co_core_radius": "co_core_radius",
+    "lambda_CE_pure_He_star_10cent": "lambda_CE_pure_He_star_10cent",
+    "trap_radius": "trap_radius",
+    "acc_radius": "acc_radius",
+    "t_sync_rad_1": "t_sync_rad_1",
+    "t_sync_conv_1": "t_sync_conv_1",
+    "t_sync_rad_2": "t_sync_rad_2",
+    "t_sync_conv_2": "t_sync_conv_2",
+    "mass_transfer_case": None,
+    "nearest_neighbour_distance": None,
+    "total_mass_h1": "total_mass_h1",
+    "total_mass_he4": "total_mass_he4",
+}
+
+
+DEFAULT_TRANSLATED_KEYS = (
+    'age',
+    'mass',
+    'mdot',
+    'inertia',
+    'conv_mx1_top_r',
+    'conv_mx1_bot_r',
+    'surface_h1',
+    'center_h1',
+    'mass_conv_reg_fortides',
+    'thickness_conv_reg_fortides',
+    'radius_conv_reg_fortides',
+    'log_Teff',
+    'surface_he3',
+    'surface_he4',
+    'center_he4',
+    'avg_c_in_c_core',
+    'log_LH',
+    'log_LHe',
+    'log_LZ',
+    'log_Lnuc',
+    'c12_c12',
+    'center_c12',
+    'he_core_mass',
+    'log_L',
+    'log_R',
+    'c_core_mass',
+    'o_core_mass',
+    'co_core_mass',
+    'c_core_radius',
+    'o_core_radius',
+    'co_core_radius',
+    'spin_parameter',
+    'log_total_angular_momentum',
+    'center_n14',
+    'center_o16',
+    'surface_n14',
+    'surface_o16',
+    'conv_env_top_mass',
+    'conv_env_bot_mass',
+    'conv_env_top_radius',
+    'conv_env_bot_radius',
+    'conv_env_turnover_time_g',
+    'conv_env_turnover_time_l_b',
+    'conv_env_turnover_time_l_t',
+    'envelope_binding_energy',
+    'lambda_CE_1cent',
+    'lambda_CE_10cent',
+    'lambda_CE_30cent',
+    'lambda_CE_pure_He_star_10cent',
+    'center_gamma',
+    'total_mass_h1',
+    'total_mass_he4'
+)
+
+
+DEFAULT_PROFILE_KEYS = (
+    'radius',
+    'mass',
+    'logRho',
+    'energy',
+    'x_mass_fraction_H',
+    'y_mass_fraction_He',
+    'z_mass_fraction_metals',
+    'neutral_fraction_H',
+    'neutral_fraction_He',
+    'avg_charge_He'
+)
+
+MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
+
+
+
 
 class detached_step:
     """
@@ -211,6 +362,7 @@ class detached_step:
             list_for_matching_HeStar=None
     ):
         """Initialize the step. See class documentation for details."""
+        self.metallicity = convert_metallicity_to_string(metallicity)
         self.dt = dt
         self.n_o_steps_history = n_o_steps_history
         self.do_wind_loss = do_wind_loss
@@ -323,7 +475,6 @@ class detached_step:
             or self.ev_rlo2(binary.time, [binary.separation, binary.eccentricity], primary, secondary) >= 0):
             binary.state = "initial_RLOF"
             return
-
         else:
             if not (max_time - binary.time > 0.0):
                 raise ValueError("max_time is lower than the current time. "
@@ -333,7 +484,6 @@ class detached_step:
             with np.errstate(all="ignore"):
 
                 t_before_ODEsolution = time.time()
-
                 try:
                     res = solve_ivp(self.diffeq, 
                                     events=[self.ev_rlo1, self.ev_rlo2, 
@@ -391,7 +541,6 @@ class detached_step:
 
             ## CHECK IF THE BINARY IS IN RLO
             if res.t_events[0] or res.t_events[1]:
-
                 if self.RLO_orbit_at_orbit_with_same_am:
                     # final circular orbit conserves angular momentum
                     # compared to the eccentric orbit
@@ -1121,6 +1270,7 @@ class detached_step:
                     print("kT_conv_sec is", kT_conv_sec, ", set to 0.")
                     print("kT_conv_pri is", kT_conv_pri, ", set to 0.")
             # this is the 1/timescale of all d/dt calculted below in yr^-1
+
             if verbose and verbose != 1:
                 print(
                     "Equilibrium tides in deep convective envelope",
@@ -1610,4 +1760,3 @@ class detached_step:
         result = [da, de, dOmega_sec, dOmega_pri]
 
         return result
-    

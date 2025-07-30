@@ -321,7 +321,6 @@ class MesaGridStep:
         
         if self.flip_stars_before_step:
             flip_stars(binary)
-
         max_MESA_sim_time = self.get_final_MESA_step_time()
 
         if max_MESA_sim_time is None:

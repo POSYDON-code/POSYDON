@@ -333,9 +333,7 @@ for b in BINARY_STATES_ALL:
     for s in ['massless_remnant']:
         for e in BINARY_EVENTS_ALL:
             POSYDON_FLOW_CHART[(s, s, b, e)] = 'step_end'
-
-
-
+            
 def flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     """Generate the flow chart.
 
