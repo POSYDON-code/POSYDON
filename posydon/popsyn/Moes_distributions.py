@@ -44,7 +44,7 @@ class Moe_17_PsandQs():
         Parameters
         ----------
         x : ndarray of floats
-            Values of integration variable.
+           1D array of values of the integration variable.
         f : ndarray of floats
             1D array of function values at given x, therefore this needs to have the same shape as x.
         p : int (default: 5)
