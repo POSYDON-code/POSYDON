@@ -181,7 +181,7 @@ class Moe_17_PsandQs():
                 # Eqn. 9
                 if(mylogP < 5.0):
                     gl_1p2 = -0.5
-                if(mylogP > 5.0):
+                if(mylogP >= 5.0):
                     gl_1p2 = -0.5 - 0.3 * (mylogP-5.0)
                 # Power-law slope gamma_largeq for M1 = 3.5 Msun and various P;
                 # Eqn. 10
