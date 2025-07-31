@@ -7,18 +7,24 @@ __authors__ = [
 
 
 import numpy as np
+import warnings
+import sys
+
+# Convert UserWarning to an error
+warnings.simplefilter("error", RuntimeWarning)
 
 eps = 1.0e-16
 
 SCALING_OPTIONS = [
+    "none",
     "min_max",
     "max_abs",
-    "standardize",
-    "log_min_max",
-    "neg_log_min_max",
-    "log_max_abs",
-    "log_standardize",
-    "neg_log_standardize"
+    # "standardize",
+    "log_min_max", # has
+    # "neg_log_min_max", # has
+    "log_max_abs", # has
+    # "log_standardize", # has
+    # "neg_log_standardize" # has
 ]
 
 class DataScaler:
@@ -84,24 +90,24 @@ class DataScaler:
         elif method == 'log_min_max':
             assert upper > lower, "upper must be greater than lower"
             self.lower, self.upper = lower, upper
-            self.params = [np.log10(np.nanmin(x, axis=0)), np.log10(np.nanmax(x, axis=0))]
+            self.params = [self.log(np.nanmin(x, axis=0)), self.log(np.nanmax(x, axis=0))]
 
         elif method == 'neg_log_min_max':
             assert upper > lower, "upper must be greater than lower"
             self.lower, self.upper = lower, upper
-            self.params = [np.log10(np.nanmin(-x, axis=0)),
-                           np.log10(np.nanmax(-x, axis=0))]
+            self.params = [self.log(np.nanmin(-x, axis=0)),
+                           self.log(np.nanmax(-x, axis=0))]
         elif method == 'max_abs':
             self.params = [np.nanmax(np.abs(x), axis=0)]
         elif method == 'log_max_abs':
-            self.params = [np.nanmax(np.abs(np.log10(x)), axis=0)]
+            self.params = [np.nanmax(np.abs(self.log(x)), axis=0)]
         elif method == 'standardize':
             self.params = [np.nanmean(x, axis=0), np.nanstd(x, axis=0)]
         elif method == 'log_standardize':
             # log will be computed in transform again
-            self.params = [np.nanmean(np.log10(x), axis=0), np.nanstd(np.log10(x), axis=0)]
+            self.params = [np.nanmean(self.log(x), axis=0), np.nanstd(self.log(x), axis=0)]
         elif method == 'neg_log_standardize':    # log(-x)
-            self.params = [np.nanmean(np.log10(-x), axis=0), np.nanstd(np.log10(-x), axis=0)]
+            self.params = [np.nanmean(self.log(-x), axis=0), np.nanstd(self.log(-x), axis=0)]
         elif method == 'log':
             self.params = []
         elif method == 'none':  # no transformation
@@ -137,26 +143,26 @@ class DataScaler:
             x_t = ((x - self.params[0]) / (self.params[1] - self.params[0])
                    * (self.upper - self.lower) + self.lower)
         elif self.method == 'log_min_max':
-            x_t = ((np.log10(x) - self.params[0])
+            x_t = ((self.log(x) - self.params[0])
                    / (self.params[1] - self.params[0])
                    * (self.upper - self.lower) + self.lower)
         elif self.method == 'neg_log_min_max':
-            x_t = ((np.log10(-x) - self.params[0])
+            x_t = ((self.log(-x) - self.params[0])
                    / (self.params[1] - self.params[0])
                    * (self.upper - self.lower) + self.lower)
         elif self.method == 'max_abs':
             x_t = x / self.params[0]
         elif self.method == 'log_max_abs':
-            x_t = np.log10(x) / self.params[0]
+            x_t = self.log(x) / self.params[0]
         elif self.method == 'standardize':
             x_t = (x - self.params[0]) / self.params[1]
         elif self.method == 'log_standardize':
             # log will be computed in transform again
-            x_t = (np.log10(x) - self.params[0]) / self.params[1]
+            x_t = (self.log(x) - self.params[0]) / self.params[1]
         elif self.method == 'neg_log_standardize':
-            x_t = (np.log10(-x) - self.params[0]) / self.params[1]
+            x_t = (self.log(-x) - self.params[0]) / self.params[1]
         elif self.method == 'log':
-            x_t = np.log10(x)
+            x_t = self.log(x)
         else:  # no transformation
             x_t = x
 
@@ -214,24 +220,38 @@ class DataScaler:
                  / (self.upper - self.lower)
                  * (self.params[1] - self.params[0]) + self.params[0])
         elif self.method == 'log_min_max':
-            x = 10 ** ((x_t - self.lower) / (self.upper - self.lower)
+            x = self.unlog((x_t - self.lower) / (self.upper - self.lower)
                        * (self.params[1] - self.params[0]) + self.params[0])
         elif self.method == 'neg_log_min_max':
-            x = -10 ** ((x_t - self.lower) / (self.upper - self.lower)
+            x = -self.unlog((x_t - self.lower) / (self.upper - self.lower)
                         * (self.params[1] - self.params[0]) + self.params[0])
         elif self.method == 'max_abs':
             x = x_t * self.params[0]
         elif self.method == 'log_max_abs':
-            x = 10 ** (x_t * self.params[0])
+            x = self.unlog(x_t * self.params[0])
         elif self.method == 'standarize':
             x = x_t * self.params[1] + self.params[0]
         elif self.method == 'log_standarize':
-            x = 10 ** (x_t * self.params[1] + self.params[0])
+            x = self.unlog(x_t * self.params[1] + self.params[0])
         elif self.method == 'neg_log_standarize':
-            x = -10 ** (x_t * self.params[1] + self.params[0])
+            x = -self.unlog(x_t * self.params[1] + self.params[0])
         elif self.method == 'log':
-            x = 10 ** x_t
+            x = self.unlog(x_t)
         else:  # no transformation
             x = x_t
 
         return x
+
+    def log(self, x):
+        logged = None
+        try:
+            logged = np.log10(x + eps)
+        except RuntimeWarning:
+            print(self.method)
+            print(x, np.isinf(x).any(), np.isnan(x).any(), (x < 0).any(), np.nanmin(x))
+            # sys.exit()
+
+        return logged
+    
+    def unlog(self, x):
+        return (10 ** x) - eps

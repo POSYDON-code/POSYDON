@@ -50,6 +50,14 @@ import numpy as np
 from posydon.utils.common_functions import (stefan_boltzmann_law,
                                             orbital_separation_from_period)
 
+CLASSIFICATION_KEYS = [
+    "S<*>_state",
+    "mt_hist",
+    "S<*>_MOD<n>_SN_type",
+    "S<*>_MOD<n>_CO_type"
+]
+
+N_MODELS = 11 # how many super nova models are there?
 
 # toggle this flag to enable/disable constraints (used for debugging)
 INTERPOLATION_CONSTRAINTS_ON = True
@@ -511,3 +519,63 @@ def sanitize_interpolated_quantities(fvalues, constraints, verbose=False):
                                         constraint["constraint"])
 
     return sanitized
+
+
+def mt_constraint(classes):
+
+    interpolation_class = classes["interpolation_class"]
+
+    if interpolation_class == "initial_MT":
+        classes["mt_hist"] == "ini_RLO"
+    elif interpolation_class == "no_MT":
+        classes["mt_hist"] = "no_RLO"
+    elif interpolation_class == "stable_MT":
+        pass
+    elif interpolation_class == "unstable_MT":
+        pass
+    elif interpolation_class == "stable_reverse_MT":
+        pass
+
+
+CLASS_CONSTRAINTS = {
+    "S<*>_state": None,
+    "mt_hist": mt_constraint,
+    "S<*>_MOD<n>_SN_type": None,
+    "S<*>_MOD<n>_CO_type": None
+}
+
+def apply_class_constraint(key_name, classes):
+
+    if key_name not in classes.keys():
+        return
+    else:
+        CLASS_CONSTRAINTS[key_name](classes)
+
+def sanitize_classes(classes, ):
+
+    assert(type(classes) == dict)
+
+    if "interpolation_class" not in classes.keys():
+        raise ValueError(
+            "Interpolation class must be present as a classified quantity to enforce classification constraints!"
+        )
+
+    for key in CLASSIFICATION_KEYS:
+        if "<*>" in key:
+
+            for star in range(2):
+                key_name = key.replace("<*>", f"{star}")
+
+                if "MOD<n>" in key_name:
+
+                    for model in range(N_MODELS):
+                        key_name = key_name.replace("<n>", f"{model}")
+
+                        apply_class_constraint(key_name, classes)
+
+                else:
+                    apply_class_constraint(key_name, classes)
+        else:
+
+            apply_class_constraint(key, classes)
+    
