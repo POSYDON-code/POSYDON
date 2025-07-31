@@ -633,6 +633,7 @@ for to sample :class:`~posydon.binary_evol.binarystar.BinaryStar` objects from,
 such as the masses and orbital parameters.
 Moreover, it contains the parameters for metallicity and the practicality of running populations.
 This includes, the number of binaries, the metallicity, how often to save the population to file. 
+
 When reading the binary population arguments from a ``population_params.ini`` file, the :class:`~posydon.binary_evol.simulationproperties.SimulationProperties` are read in automatically.
 
 .. code-block:: python

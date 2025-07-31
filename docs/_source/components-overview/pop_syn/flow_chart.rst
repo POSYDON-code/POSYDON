@@ -208,6 +208,3 @@ the ``flow_chart`` that is stored in our simulation properties:
 
 Now, if you proceed to simulate binary star evolution, your flow chart 
 will be used in place of POSYDON's default.
-
-
-

@@ -146,6 +146,11 @@ class BinaryStar:
         self.star_1 = star_1 if star_1 is not None else SingleStar()
         self.star_2 = star_2 if star_2 is not None else SingleStar()
 
+        # Stars now exist
+        self.companion_1_exists = True
+        self.companion_2_exists = True
+        self.non_existent_companion = 0
+
         # Set the initial binary properties
         for item in BINARYPROPERTIES:
             if item == 'V_sys':
@@ -217,11 +222,11 @@ class BinaryStar:
 
         max_n_steps = self.properties.max_n_steps_per_binary
         n_steps = 0
-    
+
         while (self.event != 'END' and self.event != 'FAILED'
                 and self.event not in self.properties.end_events
                 and self.state not in self.properties.end_states):
-            
+
             signal.alarm(MAXIMUM_STEP_TIME)
             self.run_step()
 
@@ -229,13 +234,11 @@ class BinaryStar:
             if max_n_steps is not None:
                 if n_steps > max_n_steps:
                     raise RuntimeError("Exceeded maximum number of steps ({})".format(max_n_steps))
-        
         signal.alarm(0)     # turning off alarm
         self.properties.post_evolve(self)
 
     def run_step(self):
         """Evolve the binary through one evolutionary step."""
-        
         total_state = (self.star_1.state, self.star_2.state, self.state, self.event)
         if total_state in UNDEFINED_STATES:
             raise FlowError(f"Binary failed with a known undefined state in the flow:\n{total_state}")
@@ -274,6 +277,43 @@ class BinaryStar:
     def switch_star(self):
         """Switch stars."""
         self.star_1, self.star_2 = self.star_2, self.star_1
+
+    def check_who_exists(self):
+        """
+            Check and store which binary components exist (are not 
+        massless remnants). This sets additional class attributes 
+
+            self.non_existent_companion with the following values:
+               -1 if neither star exists
+                0 if both stars exist
+                1 if Star 2 exists, Star 1 is a massless remnant
+                2 if Star 1 exists, Star 2 is a massless remnant
+        
+        and
+
+            self.companion_1_exists = True if Star 1 exists (is not 
+                                      None or a massless remnant)
+
+            self.companion_2_exists = True if Star 2 exists (is not 
+                                      None or a massless remnant)
+
+        """
+            
+        self.companion_1_exists = (self.star_1 is not None
+                            and self.star_1.state != "massless_remnant")
+        self.companion_2_exists = (self.star_2 is not None
+                            and self.star_2.state != "massless_remnant")
+
+        if self.companion_1_exists:
+            if self.companion_2_exists:             # both stars exist
+                self.non_existent_companion = 0
+            else:                                   # only star 1 exists
+                self.non_existent_companion = 2
+        else:
+            if self.companion_2_exists:             # only star 2 exists
+                self.non_existent_companion = 1
+            else:
+                self.non_existent_companion = -1    # no stars exist
 
     def restore(self, i=0):
         """Restore the BinaryStar() object to its i-th state, keeping the binary history before the i-th state.
@@ -364,10 +404,61 @@ class BinaryStar:
         pandas DataFrame
 
         """
+
+        def equalize_columns(data_to_save, all_keys, properties_dtypes,
+                             max_col_length):
+            """Iterate through data_to_save to append null values.
+            
+            Parameters
+            -----------
+            data_to_save : list[str]
+                Columns to save to the final dataframe
+            all_keys : list[str]
+                All available keys to store.
+           properties_dtypes : dict
+               Types of all available keys
+           max_col_length: int
+               The maximum length of columns.  
+            """
+            for i, col in enumerate(data_to_save):
+
+                dkey = all_keys[i]
+                dtype = properties_dtypes.get(dkey, '')
+
+                # check type of data and determine what to fill data column with
+                if dtype == 'string':
+                    filler_value = ''
+                elif dtype == 'float64':
+                    filler_value = np.nan
+                # array-like data
+                elif dtype == 'object':
+                    # get the max length that data elements have
+                    ele_lengths = [len(x) for x in col]
+                    max_ele_length = np.max(ele_lengths)
+                    sub_dtype = OBJECT_FIXED_SUB_DTYPES.get(dkey, '')
+
+                    # array of strings
+                    if sub_dtype == 'string':
+                        filler_value = np.array([''] * max_ele_length)
+                    # array of float64's
+                    elif sub_dtype == 'float64':
+                        filler_value = np.array([np.nan] * max_ele_length)
+                    # default to array of NoneTypes
+                    else:
+                        filler_value = np.array([None] * max_ele_length)
+                        
+                # defaulting to NoneType value (gets converted to np.nan below)
+                else:
+                    filler_value = None
+
+                # extend data column with determined filler values
+                col.extend([filler_value] * abs(max_col_length - len(col)))
+
+
         extra_binary_cols_dict = kwargs.get('extra_columns', {})
         extra_columns = list(extra_binary_cols_dict.keys())
 
-        # dictionary mapping binary properties (plus extras) to their dtypes
+        # Dictionary mapping binary properties (plus extras) to their dtypes
         properties_dtypes = {**BINARYPROPERTIES_DTYPES, **extra_binary_cols_dict}
 
         all_keys = (["binary_index"]
@@ -384,7 +475,6 @@ class BinaryStar:
                             + [key+'_history' for key in user_keys_to_save]
                             + extra_columns)
 
-
         try:
             data_to_save = [getattr(self, key) for key in keys_to_save[1:]]
             col_lengths = [len(x) for x in data_to_save]
@@ -395,42 +485,9 @@ class BinaryStar:
 
             # If a binary fails, usually history cols have diff lengths.
             # This should append NAN to create even columns.
-            all_equal_length_cols = len(set(col_lengths)) == 1
-
-            if not all_equal_length_cols:
-                for i, col in enumerate(data_to_save):
-
-                    dkey = all_keys[i]
-                    dtype = properties_dtypes.get(dkey, '')
-
-                    # check type of data and determine what to fill data column with
-                    if dtype == 'string':
-                        filler_value = ''
-                    elif dtype == 'float64':
-                        filler_value = np.nan
-                    # array-like data
-                    elif dtype == 'object':
-                        # get the max length that data elements have
-                        ele_lengths = [len(x) for x in col]
-                        max_ele_length = np.max(ele_lengths)
-                        sub_dtype = OBJECT_FIXED_SUB_DTYPES.get(dkey, '')
-
-                        # array of strings
-                        if sub_dtype == 'string':
-                            filler_value = np.array([''] * max_ele_length)
-                        # array of float64's
-                        elif sub_dtype == 'float64':
-                            filler_value = np.array([np.nan] * max_ele_length)
-                        # default to array of NoneTypes
-                        else:
-                            filler_value = np.array([None] * max_ele_length)
-                            
-                    # defaulting to NoneType value (gets converted to np.nan below)
-                    else:
-                        filler_value = None
-
-                    # extend data column with determined filler values
-                    col.extend([filler_value] * abs(max_col_length - len(col)))
+            if len(set(col_lengths)) != 1:
+                equalize_columns(data_to_save, all_keys, properties_dtypes, 
+                                 max_col_length)
 
             where_none = np.array([[True if var is None else False
                                     for var in column]
