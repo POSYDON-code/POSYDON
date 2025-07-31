@@ -379,7 +379,9 @@ class StepSN(object):
 
     def __repr__(self):
         """Get the string representation of the class and any parameters."""
-        return "SN step (kick distribution: {})".format(self.kick_distribution)
+        return "StepSN:\n" + \
+            "\n".join([f"{key} = {getattr(self, key)}" for key in SN_MODEL])
+
 
     def _reset_other_star_properties(self, star):
         """Reset the properties of the star that is not being collapsed."""
