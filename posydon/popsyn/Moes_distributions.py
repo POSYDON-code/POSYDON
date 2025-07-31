@@ -46,7 +46,7 @@ class Moe_17_PsandQs():
         x : ndarray of floats
             Values of integration variable.
         f : ndarray of floats
-            Function values at x, therefore need to have the same shape as x.
+            1D array of function values at given x, therefore this needs to have the same shape as x.
         p : int (default: 5)
             Chunk size. Too small and too high values may suffer from numerical
             uncertainties.
