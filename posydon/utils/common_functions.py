@@ -1430,7 +1430,7 @@ def infer_star_state(star_mass=None, surface_h1=None,
         return STATE_UNDETERMINED
 
     rich_in = ("H-rich" if surface_h1 > THRESHOLD_HE_NAKED_ABUNDANCE
-               else ("accreted_He" if round(surface_h1, 10)<round(center_h1,10)
+               else ("accreted_He" if round(surface_h1, 10) < round(center_h1,10)
                else "stripped_He"))
     burning_H = (log_LH > LOG10_BURNING_THRESHOLD
                  and log_LH - log_Lnuc > REL_LOG10_BURNING_THRESHOLD)
