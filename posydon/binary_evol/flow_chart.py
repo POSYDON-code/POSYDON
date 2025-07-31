@@ -13,8 +13,8 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Zepei Xing <Zepei.Xing@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
-
 
 STAR_STATES_ALL = [
     'WD',
@@ -96,6 +96,20 @@ STAR_STATES_CC = [
     'accreted_He_non_burning'
     ]
 
+# states to ID an HMS star (Xcore > 0.01)
+# TODO: build these from the other lists to (hopefully) 
+#       ensure consistency
+STAR_STATES_FOR_HMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                ("Core_H_burning" in st)]
+
+# states to ID a postMS star (Xcore < 0.01, Xsurf > 0.01)
+STAR_STATES_FOR_postMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                   (("Core_H_burning" not in st) & ("stripped_He" not in st))]
+
+# states to ID an He star (Xcore < 0.01, Xsurf < 0.01)
+STAR_STATES_FOR_Hestar_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                   ("stripped_He" in st)]
+
 BINARY_STATES_ALL = [
     'initially_single_star',
     'detached',
@@ -128,13 +142,16 @@ BINARY_EVENTS_ALL = [
     'MaxTime_exceeded',
     'maxtime',
     'oMerging1',
-    'oMerging2'
+    'oMerging2',
+    'Match1',
+    'Match2',
+    'Match12'
 ]
 
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
 [BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
 
-## a list of known total binary states that can occur, 
+## a list of known total binary states that can occur,
 ## but are not in the flow chart and will not be added to POSYDON
 UNDEFINED_STATES = []
 for s1 in STAR_STATES_CO:
@@ -161,7 +178,7 @@ for b in BINARY_STATES_ZAMS:
             POSYDON_FLOW_CHART[(s1, s2, b, 'redirect_from_ZAMS')] = 'step_detached'
 
 
-# stripped_He star on a detached binary another H- or stripped_He star
+# stripped_He star in a detached binary another H- or stripped_He star
 # This will be the outcome of a CE.
 for s1 in STAR_STATES_NORMALSTAR:
     for s2 in STAR_STATES_NORMALSTAR:
@@ -169,7 +186,7 @@ for s1 in STAR_STATES_NORMALSTAR:
         POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_detached'
 
 
-# H-rich star on a detached binary with a compact object
+# H-rich star in a detached binary with a compact object
 for s1 in STAR_STATES_H_RICH:
     for s2 in STAR_STATES_CO:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_detached'
@@ -182,20 +199,20 @@ for s1 in STAR_STATES_H_RICH_EVOLVABLE:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HMS_RLO'
         POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HMS_RLO'
 
-# H-rich star on a detached binary with a compact object
+# H-rich star in a detached binary with a compact object
 # that fall outside the grid and has been returned by step_CO_HMS_RLO
 for s1 in STAR_STATES_H_RICH:
     for s2 in STAR_STATES_CO:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', "redirect_from_CO_HMS_RLO")] = 'step_detached'
         POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect_from_CO_HMS_RLO")] = 'step_detached'
 
-# stripped_He star on a detached binary with a compact object
+# stripped_He star in a detached binary with a compact object
 for s1 in STAR_STATES_HE_RICH_EVOLVABLE:
     for s2 in STAR_STATES_CO:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_CO_HeMS'
         POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_CO_HeMS'
 
-# stripped_He star on a detached binary with a compact object
+# stripped_He star in a detached binary with a compact object
 # that fall outside the grid and has been returned by step_CO_HeMS
 for s1 in STAR_STATES_HE_RICH:
     for s2 in STAR_STATES_CO:
@@ -223,7 +240,6 @@ for s1 in STAR_STATES_HE_RICH:
         POSYDON_FLOW_CHART[(s2, s1, 'RLO2', "oRLO2")] = 'step_merged'
 
 # Binaries that go to common envelope
-
 for s1 in STAR_STATES_NORMALSTAR:
     for s2 in STAR_STATES_ALL:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oCE1')] = 'step_CE'
@@ -242,7 +258,7 @@ for b in BINARY_STATES_CC:
             POSYDON_FLOW_CHART[(s1, s2, b, 'CC1')] = 'step_SN'
             POSYDON_FLOW_CHART[(s2, s1, b, 'CC2')] = 'step_SN'
 
-# Double compact objects. These can either be send to the orbital evolution
+# Double compact objects. These can either be sent to the orbital evolution
 # due to GR step, or end the evolution by setting the 'step_dco' to end
 for s1 in STAR_STATES_CO:
     for s2 in STAR_STATES_CO:
@@ -273,7 +289,8 @@ for b in ['disrupted']:
             for e in BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_disrupted'
                 POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_disrupted'
-# if we have two compcat objects in a disrupted binary, we stop the evolution.
+
+# if we have two compact objects in a disrupted binary, we stop the evolution.
 for b in ['disrupted']:
     for s1 in STAR_STATES_CO:
         for s2 in STAR_STATES_CO:
@@ -316,9 +333,7 @@ for b in BINARY_STATES_ALL:
     for s in ['massless_remnant']:
         for e in BINARY_EVENTS_ALL:
             POSYDON_FLOW_CHART[(s, s, b, e)] = 'step_end'
-
-
-
+            
 def flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     """Generate the flow chart.
 
