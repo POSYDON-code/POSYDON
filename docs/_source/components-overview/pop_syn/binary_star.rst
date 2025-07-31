@@ -270,7 +270,6 @@ according to the following table:
     - The initially less massive companion experienced 
       unstable RLOF.
 
-
 Basic example
 ~~~~~~~~~~~~~
 
