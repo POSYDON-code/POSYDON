@@ -65,7 +65,7 @@ class Moe_17_PsandQs():
             x : ndarray of floats
                 1D array of values of the integration variable.
             f : ndarray of floats
-                Function values at x, therefore need to have the same shape as
+                1D array of function values at given x values, therefore this needs to have the same shape as
                 x.
 
             Returns
