@@ -102,7 +102,7 @@ class Moe_17_PsandQs():
         n_M1 : int (Default: 101)
             Number of supporting points in the primary's mass.
         n_logP : int (Default: 158)
-            Number of supporting points in the logarythmic period.
+            Number of supporting points in the logarithmic period.
         n_q : int (Default: 91)
             Number of supporting points in the mass ratio.
         n_e : int (Default: 100)
