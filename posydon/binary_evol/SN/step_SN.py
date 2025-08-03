@@ -1973,7 +1973,7 @@ class StepSN(object):
         Two kick prescriptions are provided below, both of which are 
         based on the mass of ejecta lost during the supernova. 
         
-        Each is named with the prefix "ejecta_mass" followed by the name of 
+        Each model is named with the prefix "ejecta_mass" followed by the name of 
         the first author of the respective kick prescription.
 
         References
@@ -1989,7 +1989,8 @@ class StepSN(object):
 
         -------------------------------------------------------------------------------------
 
-        Log-normal kicks are based on Disberg P., Mandel I., 2025, arXiv e-prints, p. arXiv:2505.22102v1
+        Another kick prescription has been added which draws kicks from a log-normal distribution, 
+        based on Disberg P., Mandel I., 2025, arXiv e-prints, p. arXiv:2505.22102v1
 
 
         """
