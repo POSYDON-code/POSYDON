@@ -512,6 +512,8 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``'NS_one_minus_fallback_BH_one'``
       * ``'one'``
       * ``'zero'``
+      * ``'asym_ej'``
+      * ``'linear'``
     - ``'one_over_mass'``
 
   * - ``sigma_kick_CCSN_NS``

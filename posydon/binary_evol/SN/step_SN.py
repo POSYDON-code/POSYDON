@@ -1968,13 +1968,11 @@ class StepSN(object):
 
         -------------------------------------------------------------------------------------
 
-        Natal kicks based on the mass of the ejected envelope during SN.
+        The following natal kick prescriptions are based on the mass of the 
+        ejected envelope during the supernova explosion:
 
-        Two kick prescriptions are provided below, both of which are 
-        based on the mass of ejecta lost during the supernova. 
-        
-        Each model is named with the prefix "ejecta_mass" followed by the name of 
-        the first author of the respective kick prescription.
+        "asym_ej" - reference [1]
+        "linear" - reference [2]
 
         References
         ----------
@@ -1989,7 +1987,7 @@ class StepSN(object):
 
         -------------------------------------------------------------------------------------
 
-        Another kick prescription has been added which draws kicks from a log-normal distribution, 
+        The "log_normal" precription draws kicks from a log-normal distribution, 
         based on Disberg P., Mandel I., 2025, arXiv e-prints, p. arXiv:2505.22102v1
 
 
@@ -2010,7 +2008,7 @@ class StepSN(object):
             else:
                 norm = 1.0
 
-        elif self.kick_normalisation == 'ejecta_mass_Janka17':
+        elif self.kick_normalisation == 'asym_ej':
            
             f_kin = 0.1         # Fraction of SN explosion energy that is kinetic energy of the gas
             beta = 0.1          # Fraction of ejecta mass that is neutrino heated
@@ -2022,7 +2020,7 @@ class StepSN(object):
 
             Vkick_ej = 211*(f_kin*beta*epsilon)**(1/2)*(alpha_ej/0.1)*(M_ej/0.1)*(M_NS/1.5)**(-1)
         
-        elif self.kick_normalisation == 'ejecta_mass_Richards+23':
+        elif self.kick_normalisation == 'linear':
             
             M_ej = star.co_core_mass_history[-1]-star.mass        # Ejecta mass
             M_rem = star.mass                                     # Neutron star mass
@@ -2048,7 +2046,7 @@ class StepSN(object):
         if sigma is not None:
             # f_fb = self.compute_m_rembar(star, None)[1]
 
-            if self.kick_normalisation in ['ejecta_mass_Janka17', 'ejecta_mass_Richards+23']:
+            if self.kick_normalisation in ['asym_ej', 'linear']:
                 Vkick = Vkick_ej
             elif self.kick_normalisation == 'log_normal':
                 Vkick = norm * sp.stats.lognorm.rvs(s=0.68, scale=np.exp(5.60), size=1)[0]
