@@ -10,7 +10,9 @@ from scipy.integrate import quad, nquad
 from posydon.utils.posydonwarning import Pwarn
 from posydon.popsyn.distributions import (FlatMassRatio,
                                           Sana12Period,
-                                          PowerLawPeriod)
+                                          PowerLawPeriod,
+                                          LogUniform)
+from posydon.utils.common_functions import orbital_separation_from_period
 import posydon.popsyn.IMFs as IMFs
 
 def get_IMF_pdf(kwargs):
@@ -154,21 +156,37 @@ def get_period_pdf(kwargs):
         Function that returns the period PDF, which expects the following
         parameters; P, m1
     '''
-    if kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
-        period = Sana12Period(
-            p_min=kwargs['orbital_period_min'],
-            p_max=kwargs['orbital_period_max'],
-        )
-        period_pdf = lambda P, m1: period.pdf(P, m1)
-    elif kwargs['orbital_period_scheme'] == 'power_law':
-        period = PowerLawPeriod(
-            p_min=kwargs['orbital_period_min'],
-            p_max=kwargs['orbital_period_max'],
-            slope=kwargs['power_law_slope'],
-        )
-        period_pdf = lambda P, m1: period.pdf(P)
+    if (kwargs['orbital_scheme'] == 'period'):
+        if kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
+            period = Sana12Period(
+                p_min=kwargs['orbital_period_min'],
+                p_max=kwargs['orbital_period_max'],
+            )
+            period_pdf = lambda P, m1, q: period.pdf(P, m1)
+        elif kwargs['orbital_period_scheme'] == 'power_law':
+            period = PowerLawPeriod(
+                p_min=kwargs['orbital_period_min'],
+                p_max=kwargs['orbital_period_max'],
+                slope=kwargs['power_law_slope'],
+            )
+            period_pdf = lambda P, m1, q: period.pdf(P)
+        else:
+            raise ValueError("Orbital period scheme not recognized")
+    elif (kwargs['orbital_scheme'] == 'separation'):
+        if kwargs['orbital_separation_scheme'] == 'log_uniform':
+            separation_log_uniform = LogUniform(
+                min=kwargs['orbital_separation_min'],
+                max=kwargs['orbital_separation_max'],
+            )
+            period_pdf = lambda P, m1, q: separation_log_uniform.pdf(
+                orbital_separation_from_period(P, m1, q*m1)
+            )
+        else:
+            raise ValueError("Orbital separation scheme not recognized")
     else:
-        raise ValueError("Orbital period scheme not recognized")
+        raise ValueError("Orbital scheme not recognized. "
+                         "Please specify either 'period' or 'separation' "
+                         "and a valid scheme for that orbital scheme.")
     
     return period_pdf
 
@@ -215,7 +233,7 @@ def get_pdf(kwargs, mass_pdf=False):
                 (f_b_pdf(np.asarray(binary))
                 * IMF_pdf(np.asarray(m1)) 
                 * q_pdf(np.asarray(q), np.asarray(m1))
-                * period_pdf(np.asarray(P), np.asarray(m1))),
+                * period_pdf(np.asarray(P), np.asarray(m1), np.asarray(q))),
                 # single stars
                 (f_b_pdf(np.asarray(binary))
                 * IMF_pdf(np.asarray(m1)))
