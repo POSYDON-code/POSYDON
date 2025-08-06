@@ -1890,6 +1890,8 @@ class TransientPopulation(Population):
         ----------
         model_weights_identifier : str
             Identifier for the model weights.
+        simulation_parameters : dict, optional
+            Dictionary containing the simulation parameters. If None, the simulation parameters in the file will be used.
         population_parameters : dict, optional
             Dictionary containing the population parameters. If None, the default population parameters will be used.
         
@@ -1898,7 +1900,8 @@ class TransientPopulation(Population):
             population_parameters = {'number_of_binaries': 1000000,
                                     'binary_fraction_scheme':'const',
                                     'binary_fraction_const':0.7,
-                                    'star_formation': 'burst', 'max_simulation_time': 13800000000.0,
+                                    'star_formation': 'burst',
+                                    'max_simulation_time': 13800000000.0,
                                     'primary_mass_scheme':'Kroupa2001',
                                     'primary_mass_min':0.01,
                                     'primary_mass_max': 200,
