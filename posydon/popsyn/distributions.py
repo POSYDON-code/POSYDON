@@ -433,3 +433,66 @@ class PowerLawPeriod():
                              * self.norm)
         
         return pdf_values
+
+
+class LogUniform():
+    """Log-uniform distribution between specified minimum and maximum values.
+    """
+
+    def __init__(self, min=5.0, max=1e5):
+        """
+        Initialize the log-uniform distribution.
+
+        Parameters
+        ----------
+        min : float, optional
+            Minimum value
+        max : float, optional
+            Maximum value
+
+        Raises
+        ------
+        ValueError
+            If min is not positive or max <= min.
+        """
+        if min <= 0:
+            raise ValueError("min must be positive")
+        if max <= min:
+            raise ValueError("max must be greater than min")
+        self.min = min
+        self.max = max
+
+        self.norm = self._calculate_normalization()
+
+    def _calculate_normalization(self):
+        """
+        Calculate the normalization constant for the log-uniform distribution.
+
+        Returns
+        -------
+        float
+            The normalization constant ensuring the PDF integrates to 1.
+        """
+        return 1.0 / (np.log10(self.max) - np.log10(self.min))
+
+    def pdf(self, x):
+        """
+        Probability density function of the log-uniform distribution.
+
+        Parameters
+        ----------
+        x : float or array_like
+            Value(s) to evaluate the PDF at.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density at x.
+        """
+        x = np.asarray(x)
+        valid = (x > 0) & (x >= self.min) & (x <= self.max)
+        pdf_values = np.zeros_like(x, dtype=float)
+
+        pdf_values[valid] = self.norm
+
+        return pdf_values

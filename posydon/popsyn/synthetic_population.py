@@ -926,7 +926,10 @@ class PopulationIO:
             # write ini parameters to file
             tmp_df = pd.DataFrame()
             for c in parameter_array:
-                tmp_df[c] = [self.ini_params[c]]
+                try:
+                    tmp_df[c] = [self.ini_params[c]]
+                except KeyError:
+                    print("Missing ini parameter:", c)
             store.put("ini_parameters", tmp_df)
 
     def _load_ini_params(self, filename):
@@ -945,7 +948,11 @@ class PopulationIO:
             tmp_df = store["ini_parameters"]
             self.ini_params = {}
             for c in parameter_array:
-                self.ini_params[c] = tmp_df[c][0]
+                try:
+                    self.ini_params[c] = tmp_df[c][0]
+                except KeyError:
+                    print("Missing ini parameter:", c)
+
 
 
 ##########################
@@ -1883,7 +1890,7 @@ class TransientPopulation(Population):
             columns=columns,
         )
 
-    def calculate_model_weights(self, model_weights_identifier, simulation_parameters=None, population_parameters=None):
+    def calculate_model_weights(self, model_weights_identifier, population_parameters=None, simulation_parameters=None):
         """Calculate the model weights of the transient population based on the provided model parameters.
         
         This method calculates the model weights of each event in the transient population based on the provided model parameters.
@@ -1919,8 +1926,14 @@ class TransientPopulation(Population):
         
         if simulation_parameters is None:
             simulation_parameters = self.ini_params
-            
-        
+        else:
+            # check for different parameters
+            for key in simulation_parameters.keys():
+                if key not in self.ini_params:
+                    Pwarn((f"Parameter {key} not found in the population"
+                            " parameters! Make sure this is intended"), 
+                          "POSYDONWarning")
+
         if self.verbose:
             print("Simulation parameters:")
             print(simulation_parameters)
