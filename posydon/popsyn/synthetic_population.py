@@ -1880,7 +1880,7 @@ class TransientPopulation(Population):
             columns=columns,
         )
 
-    def calculate_model_weights(self, model_weights_identifier, population_parameters=None):
+    def calculate_model_weights(self, model_weights_identifier, simulation_parameters=None, population_parameters=None):
         """Calculate the model weights of the transient population based on the provided model parameters.
         
         This method calculates the model weights of each event in the transient population based on the provided model parameters.
@@ -1911,7 +1911,9 @@ class TransientPopulation(Population):
                                     'orbital_period_max':6e3,
                                     'eccentricity_scheme':'zero',}
         
-        simulation_parameters = self.ini_params
+        if simulation_parameters is None:
+            simulation_parameters = self.ini_params
+            
         
         if self.verbose:
             print("Simulation parameters:")
