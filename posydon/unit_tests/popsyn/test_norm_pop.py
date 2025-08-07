@@ -198,6 +198,18 @@ class TestGetPeriodPdf:
         result2 = period_pdf_func(100.0, 20.0, 1.0)
         assert isinstance(result2, (float, np.ndarray))
         assert np.all(result2 >= 0)
+        
+    def test_log_uniform_separation(self):
+        kwargs = {
+            'orbital_scheme': 'separation',
+            'orbital_separation_scheme': 'log_uniform',
+            'orbital_separation_min': 1.0,
+            'orbital_separation_max': 1000.0,
+        }
+        separation_pdf_func = norm_pop.get_period_pdf(kwargs)
+        result = separation_pdf_func(10.0, 15.0, 0.8)  # a=10 Rsun, m1=15 Msun
+        assert isinstance(result, (float, np.ndarray))
+        assert np.all(result >= 0)
     
     def test_invalid_period_scheme(self):
         kwargs = {
@@ -210,6 +222,25 @@ class TestGetPeriodPdf:
             norm_pop.get_period_pdf(kwargs)
         
         assert "Orbital period scheme not recognized" in str(excinfo.value)
+        
+        kwargs = {
+            'orbital_scheme' : 'invalid_scheme',
+        }
+        
+        with pytest.raises(ValueError) as excinfo:
+            norm_pop.get_period_pdf(kwargs)
+        
+        assert "Orbital scheme not recognized" in str(excinfo.value)
+        
+        kwargs = {
+            'orbital_scheme': 'separation',
+            'orbital_separation_scheme': 'invalid_scheme',
+        }
+        with pytest.raises(ValueError) as excinfo:
+            norm_pop.get_period_pdf(kwargs)
+        
+        assert "Orbital separation scheme not recognized" in str(excinfo.value)
+
 
 class TestGetMeanMass:
     def test_q_min_greater_than_q_max_error(self):

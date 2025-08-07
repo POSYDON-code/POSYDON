@@ -7,7 +7,10 @@ used in population synthesis: FlatMassRatio, Sana12Period, and PowerLawPeriod.
 import pytest
 import numpy as np
 from scipy.integrate import quad
-from posydon.popsyn.distributions import FlatMassRatio, Sana12Period, PowerLawPeriod
+from posydon.popsyn.distributions import (FlatMassRatio, 
+                                          Sana12Period,
+                                          PowerLawPeriod,
+                                          LogUniform)
 
 
 class TestFlatMassRatio:
@@ -572,3 +575,46 @@ class TestDistributionComparisons:
         # Verify parameters are set correctly
         for param, value in test_params.items():
             assert getattr(dist_custom, param) == value
+
+
+class TestLogUniform:
+    """Test class for LogUniform distribution."""
+    
+    @pytest.fixture
+    def default_log_uniform(self):
+        """Fixture for default LogUniform instance."""
+        return LogUniform()
+    
+    def test_initialization_default(self, default_log_uniform):
+        """Test default initialization of LogUniform."""
+        assert default_log_uniform.min == 5.0
+        assert default_log_uniform.max == 1e5
+        assert hasattr(default_log_uniform, 'norm')
+        assert default_log_uniform.norm > 0
+        
+    def test_initialization_custom(self):
+        """Test custom initialization of LogUniform."""
+        log_uniform = LogUniform(min=10.0, max=1000.0)
+        assert log_uniform.min == 10.0
+        assert log_uniform.max == 1000.0
+        assert hasattr(log_uniform, 'norm')
+        assert log_uniform.norm > 0
+        # Verify normalization
+        norm = 1.0 / (np.log10(log_uniform.max) - np.log10(log_uniform.min))
+        np.testing.assert_allclose(log_uniform.norm, norm)
+        
+    def test_initialization_invalid_parameters(self):
+        """Test that initialization raises ValueError for invalid parameters."""
+        # Test min <= 0
+        with pytest.raises(ValueError, match="min must be positive"):
+            LogUniform(min=0.0, max=1000.0)
+        
+        with pytest.raises(ValueError, match="min must be positive"):
+            LogUniform(min=-1.0, max=1000.0)
+        
+        # Test max <= min
+        with pytest.raises(ValueError, match="max must be greater than min"):
+            LogUniform(min=1000.0, max=100.0)
+        
+        with pytest.raises(ValueError, match="max must be greater than min"):
+            LogUniform(min=100.0, max=100.0)
