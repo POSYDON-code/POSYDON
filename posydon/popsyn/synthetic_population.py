@@ -2007,7 +2007,7 @@ class TransientPopulation(Population):
         
         return model_weights
 
-    def calculate_cosmic_weights(self, SFH_identifier, model_weights=None, MODEL_in=None):
+    def calculate_cosmic_weights(self, SFH_identifier, model_weights, MODEL_in=None):
         """
         Calculate the cosmic weights of the transient population.
 
@@ -2021,6 +2021,8 @@ class TransientPopulation(Population):
         ----------
         SFH_identifier : str
             Identifier for the star formation history.
+        model_weights : str
+            Identifier for the model weights to be used in the calculation.
         MODEL_in : dict, optional
             Dictionary containing the model parameters. If not provided, the default model parameters will be used.
 
@@ -2310,11 +2312,24 @@ class TransientPopulation(Population):
             if self.verbose:
                 print("MODEL written to population file!")
 
-    def efficiency(self, model_weights_identifier=None, channels=False):
-        """
-        Retrieve the efficiency of events per Msun for each solar metallicity.
+    def efficiency(self, model_weights_identifier, channels=False):
+        """Retrieve the efficiency of events per Msun for each solar metallicity.
         
         This method retrieves the efficiency of events per Msun for each solar metallicity value in the transient population.
+        
+        Parameters
+        ----------
+        model_weights_identifier : str
+            Identifier for the model weights to be used for calculating efficiency.
+        channels : bool, optional
+            If True, the efficiency will be calculated for each formation channel.
+            Default is False.
+            
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the efficiency of events per Msun for each solar metallicity.
+        
         """
         
         efficiency = pd.DataFrame(index=self.mass_per_metallicity.index, columns=['total'])
