@@ -162,14 +162,14 @@ def get_period_pdf(kwargs):
                 p_min=kwargs['orbital_period_min'],
                 p_max=kwargs['orbital_period_max'],
             )
-            period_pdf = lambda P, m1, q: period.pdf(P, m1)
+            period_pdf = lambda P, m1, q=None: period.pdf(P, m1)
         elif kwargs['orbital_period_scheme'] == 'power_law':
             period = PowerLawPeriod(
                 p_min=kwargs['orbital_period_min'],
                 p_max=kwargs['orbital_period_max'],
                 slope=kwargs['power_law_slope'],
             )
-            period_pdf = lambda P, m1, q: period.pdf(P)
+            period_pdf = lambda P, m1=None, q=None: period.pdf(P)
         else:
             raise ValueError("Orbital period scheme not recognized")
     elif (kwargs['orbital_scheme'] == 'separation'):

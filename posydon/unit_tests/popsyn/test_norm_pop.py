@@ -171,6 +171,7 @@ class TestGetBinaryFractionPdf:
 class TestGetPeriodPdf:
     def test_sana12_period_extended(self):
         kwargs = {
+            'orbital_scheme': 'period',
             'orbital_period_scheme': 'Sana+12_period_extended',
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
@@ -183,6 +184,7 @@ class TestGetPeriodPdf:
     
     def test_power_law_period(self):
         kwargs = {
+            'orbital_scheme': 'period',
             'orbital_period_scheme': 'power_law',
             'orbital_period_min': 1.4,
             'orbital_period_max': 3e6,
@@ -193,9 +195,13 @@ class TestGetPeriodPdf:
         result = period_pdf_func(100.0, 20.0)  # P=100 days, m1=20 Msun
         assert isinstance(result, (float, np.ndarray))
         assert np.all(result >= 0)
+        result2 = period_pdf_func(100.0, 20.0, 1.0)
+        assert isinstance(result2, (float, np.ndarray))
+        assert np.all(result2 >= 0)
     
     def test_invalid_period_scheme(self):
         kwargs = {
+            'orbital_scheme': 'period',
             'orbital_period_scheme': 'invalid_scheme',
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
@@ -215,6 +221,7 @@ class TestGetMeanMass:
             'secondary_mass_scheme': 'flat_mass_ratio',
             'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.5,
+            'orbital_scheme': 'period',
             'orbital_period_scheme': 'Sana+12_period_extended',
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
@@ -238,6 +245,7 @@ class TestGetMeanMass:
             'secondary_mass_scheme': 'flat_mass_ratio',
             'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.5,
+            'orbital_scheme': 'period',
             'orbital_period_scheme': 'Sana+12_period_extended',
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
@@ -260,6 +268,7 @@ class TestGetPdf:
             'secondary_mass_max': 100,
             'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.5,
+            'orbital_scheme': 'period',
             'orbital_period_scheme': 'Sana+12_period_extended',
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
@@ -283,6 +292,7 @@ class TestGetPdf:
             'q_max': 1,
             'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.3,
+            'orbital_scheme': 'period',
             'orbital_period_scheme': 'Sana+12_period_extended',
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
@@ -313,6 +323,7 @@ class TestGetPdf:
             'secondary_mass_max': 100,
             'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.7,
+            'orbital_scheme': 'period',
             'orbital_period_scheme': 'Sana+12_period_extended',
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
