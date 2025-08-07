@@ -2184,12 +2184,14 @@ class TransientPopulation(Population):
                 )
         return rates
 
-    def plot_efficiency_over_metallicity(self, model_weight_identifier=None, channels=False, **kwargs):
+    def plot_efficiency_over_metallicity(self, model_weight_identifier, channels=False, **kwargs):
         """
         Plot the efficiency over metallicity.
 
         Parameters
         ----------
+        model_weight_identifier : str
+            Identifier for the model weights to be used for calculating efficiency.
         channel : bool, optional
             If True, plot the subchannels. Default is False.
         """
