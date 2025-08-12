@@ -226,6 +226,9 @@ If you're interested in building the POSYDON documentation locally:
 
         pip install ".[doc]"
 
+    .. warning::
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install `pandoc` separately through brew with `brew install pandoc`.
+
 2. **Compile the Documentation**:
 
     Once you have the required modules installed, you can build the documentation using Sphinx:
@@ -235,27 +238,9 @@ If you're interested in building the POSYDON documentation locally:
         cd docs
         make html
 
-3. **Install Pandoc via Anaconda**
-
-    .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install `pandoc` through brew with `brew install pandoc`.
-
-    .. code-block:: bash
-
-        conda install pandoc
-
-4. **Make the documentation**:
-
-    After installing `pandoc`, you can make the documentation using Sphinx:
-
-    .. code-block:: bash
-
-        cd docs
-        make html
-
     This command will generate the HTML documentation in the `_build/html` directory within the `docs` folder.
 
-4. **Open the Compiled Documentation**:
+3. **Open the Compiled Documentation**:
 
     After successfully building the documentation, you can view it in your preferred browser. Navigate to the build directory and open the `index.html`:
 
