@@ -14,7 +14,7 @@ A clear and concise description of what the problem is. Ex. My binary fails when
 A clear and concise description of what the feature needs to do and what characteristics it needs to satisfy.
 
 **Describe alternatives you have considered**
-A clear and concise description of any alternative solutions or features you've considered. POSYDON is built quite flexibly. Have you made sure that there isn't already a workaround available?
+A clear and concise description of any alternative solutions or features you've considered. POSYDON is built quite flexibly. Have you made sure that there isn't already a workaround available? Have you checked out GitHub Discussions page to make sure your problem is not already addressed there?
 
 **Provide a description of the component of POSYDON involved**
 Does this feature relate to running grids, post-processing grids, plotting, running populations, or something else?
