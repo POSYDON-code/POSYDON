@@ -12,7 +12,8 @@ You can access our grids of MESA simulations using the ``PSyGrid`` module. To lo
 
     from posydon.grids.psygrid import PSyGrid
     PATH_TO_POSYDON_DATA = '/YOUR/POSYDON_DATA/PATH'
-    mygrid = PSyGrid(filepath=f'{PATH_TO_POSYDON_DATA}/POSYDON_data/HMS-HMS/1e+00_Zsun.h5')
+    grid_path = f'{PATH_TO_POSYDON_DATA}/POSYDON_data/HMS-HMS/1e+00_Zsun.h5'
+    mygrid = PSyGrid(filepath=grid_path)
 
 Grid contents
 -------------
