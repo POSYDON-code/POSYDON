@@ -893,7 +893,7 @@ class MesaGridStep:
                         current = getattr(star, 'spin')
                         key_p = 'star_%d_mass' % (k+1)
                         # calculate new spin based on masses
-                        spin = cf.spin_stable_mass_transfer(current, prev_mass[k] , fv[key_p])
+                        spin = cf.spin_stable_mass_transfer(current, prev_mass[k], fv[key_p])
                         setattr(star, key, spin)
                         
                     elif key == 'log_R':
