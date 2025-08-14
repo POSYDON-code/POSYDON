@@ -14,6 +14,7 @@ from posydon.popsyn.distributions import (FlatMassRatio,
                                           LogUniform)
 from posydon.utils.common_functions import orbital_separation_from_period
 import posydon.popsyn.IMFs as IMFs
+from posydon.utils import constants as const
 
 def get_IMF_pdf(kwargs):
     '''get the IMF pdf function
@@ -178,9 +179,12 @@ def get_period_pdf(kwargs):
                 min=kwargs['orbital_separation_min'],
                 max=kwargs['orbital_separation_max'],
             )
+            da_dP = lambda m1, q, P: (((const.standard_cgrav 
+                     * (m1 * const.Msun + (m1*q)*const.Msun))**(1.0/3.0))
+                        / (3*np.pi)) * ((P * const.day2sec)/(2*np.pi))**(-1.0/3.0)
             period_pdf = lambda P, m1, q: separation_log_uniform.pdf(
                 orbital_separation_from_period(P, m1, q*m1)
-            )
+            ) * da_dP(m1, q, P)
         else:
             raise ValueError("Orbital separation scheme not recognized")
     else:
