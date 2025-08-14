@@ -366,9 +366,9 @@ class TestGetPdf:
         result = pdf_func(m1_val, binary=False)
         assert np.allclose(result, 0.15)
 
-####
+###############################
 # Test the reweighting function
-#### 
+###############################
 
 
 @fixture
