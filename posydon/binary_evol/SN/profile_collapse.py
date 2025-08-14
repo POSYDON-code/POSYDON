@@ -18,11 +18,13 @@ __authors__ = [
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Devina Misra <devina.misra@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Max Briel <max.briel@unige.ch>",
 ]
 
 
 __credits__ = [
     'Aldo Batta <aldobatta@gmail.com>',
+    'Chris Garling <txa5ge@virginia.edu>',
 ]
 
 def get_ejecta_element_mass_at_collapse(star, compact_object_mass, verbose):
