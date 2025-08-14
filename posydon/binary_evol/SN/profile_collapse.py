@@ -266,11 +266,10 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
     #        = iint 2pi Omega(r) r^4 sin^3(t) rho(r) dt dr
     #        = 2pi int_0^pi sin^3(t) dt int_0^M_core Omega(r) r^4 rho(r) dr
     #        =: 2pi * temp1 * temp2
-    def f_temp1(t):
-        return np.sin(t)**3
-
-    temp1 = integrate.quad(f_temp1, 0, np.pi)[0]
-
+    
+    # Analytic integral of int_0^pi sin^3(t) dt is 4/3
+    temp1 = 4 / 3
+    
     # f_nu_AM is a rescaling the J_initial_BH. This account for the
     # angular momentum lost thorugh neutrinos, which under the assumption
     # of efficient AM transport is really low.
@@ -548,15 +547,11 @@ def do_core_collapse_BH(star,
             #   = 4 pi Omega_r rho_r int_0^pi/2 sin^3(t) dt int_r-dr^r r^4 dr
             #   = 4 pi Omega_r rho_r temp1 temp2
 
-            def f_temp1(x):
-                return np.sin(x)**3
+            # Analytic integral of int_0^pi/2 sin^3(t) dt is 2/3
+            temp1 = 2 / 3
 
-            temp1 = integrate.quad(f_temp1, 0, np.pi / 2)[0]
-
-            def f_temp2(x):
-                return x**4
-
-            temp2 = integrate.quad(f_temp2, r_shell - dr_shell, r_shell)[0]
+            # Analytic integral of int_r-dr^r r^4 dr is r^5/5 - (r-dr)^5/5
+            temp2 = r_shell**5 / 5 - (r_shell - dr_shell)**5 / 5
 
             # angular momentum of entire shell: J_shell=J_direct
             J_direct = 4 * np.pi * (Omega_shell * rho_shell) * temp1 * temp2
@@ -588,15 +583,11 @@ def do_core_collapse_BH(star,
             # eq. 9 of Batta & Ramirez-Ruiz (2019) for theta<theta_disk
             # J_shell = J_direct + J_disk
 
-            def f_temp1(x):
-                return np.sin(x)**3
+            # Analytic integral of int_0^theta sin^3(t) dt is 4 / 3 * (2 + cos(theta)) * sin(theta/2)^4
+            temp1 = 4 / 3 * (2 + np.cos(theta_disk)) * np.sin(theta_disk/2)**4
 
-            temp1 = integrate.quad(f_temp1, 0, theta_disk)[0]
-
-            def f_temp2(x):
-                return x**4
-
-            temp2 = integrate.quad(f_temp2, r_shell - dr_shell, r_shell)[0]
+            # Analytic integral of int_r-dr^r r^4 dr is r^5/5 - (r-dr)^5/5
+            temp2 = r_shell**5 / 5 - (r_shell - dr_shell)**5 / 5
 
             J_direct = 4 * np.pi * (Omega_shell * rho_shell) * temp1 * temp2
 
