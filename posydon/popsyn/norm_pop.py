@@ -6,7 +6,7 @@ __authors__ = [
 
 import numpy as np
 from posydon.popsyn import independent_sample
-from scipy.integrate import quad, nquad
+from scipy.integrate import quad, nquad, dblquad
 from posydon.utils.posydonwarning import Pwarn
 from posydon.popsyn.distributions import (FlatMassRatio,
                                           Sana12Period,
@@ -179,12 +179,14 @@ def get_period_pdf(kwargs):
                 min=kwargs['orbital_separation_min'],
                 max=kwargs['orbital_separation_max'],
             )
-            da_dP = lambda m1, q, P: (((const.standard_cgrav 
-                     * (m1 * const.Msun + (m1*q)*const.Msun))**(1.0/3.0))
-                        / (3*np.pi)) * ((P * const.day2sec)/(2*np.pi))**(-1.0/3.0)
+            # Since the outer function is set in PDF(P) and inner as P(a), 
+            # we need to do a change of variables.
+            # PDF(P) = PDF(a) * |da/dP|
+            # da/dP = (2/3) * (a/P)
+            # PDF(P) = (2/3) * log_uniform(log_a)
             period_pdf = lambda P, m1, q: separation_log_uniform.pdf(
                 orbital_separation_from_period(P, m1, q*m1)
-            ) * da_dP(m1, q, P)
+            ) * 2./3.
         else:
             raise ValueError("Orbital separation scheme not recognized")
     else:
@@ -284,13 +286,17 @@ def get_mean_mass(params):
     
     # binary integration
     # 
-    I_bin = nquad(lambda q, m: (m + m * q) * PDF(m, q, P=0, binary=True),
-                  ranges=[(q_min, q_max),
-                          (m1_min, m1_max)])[0]
+    I_bin = dblquad(lambda q, m: (m + m * q) * PDF(m, q, P=0, binary=True),
+                    m1_min, m1_max,
+                    q_min, q_max
+                    )[0]
+    
+    # nquad(lambda q, m: (m + m * q) * PDF(m, q, P=0, binary=True),
+    #               ranges=[(q_min, q_max),
+    #                       (m1_min, m1_max)])[0]
 
     # single star integration
-    I_single = nquad(lambda m: m * PDF(m, False),
-                     ranges=[(m1_min, m1_max)])[0]
+    I_single = quad(lambda m: m * PDF(m, False), m1_min, m1_max)[0]
     
     mean_mass = I_bin + I_single
     return mean_mass
