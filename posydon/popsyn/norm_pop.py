@@ -279,7 +279,6 @@ def get_mean_mass(params):
         raise ValueError("q_min must be less than q_max")
     
     # binary integration
-    # 
     I_bin = nquad(lambda q, m: (m + m * q) * PDF(m, q, P=0, binary=True),
                   ranges=[(q_min, q_max),
                           (m1_min, m1_max)])[0]
