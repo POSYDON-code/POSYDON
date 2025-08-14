@@ -843,6 +843,7 @@ class MesaGridStep:
         stars = [binary.star_1, binary.star_2]
         stars_CO = [star_1_CO, star_2_CO]
         fv = self.final_values
+        prev_mass = [getattr(star, 'mass') for star in stars]
 
         for key in BINARYPROPERTIES:
             if POSYDON_TO_MESA['binary'][key] is None:
@@ -882,7 +883,7 @@ class MesaGridStep:
                     else:
                         key_p = 'S%d_' % (k+1)+POSYDON_TO_MESA['star'][key]
                         setattr(star, key, fv[key_p])
-                else:
+                else: # star is a compact object
                     if POSYDON_TO_MESA['star'][key] is None:
                         setattr(star, key, None)
                     elif key == 'mass':
@@ -890,7 +891,11 @@ class MesaGridStep:
                         setattr(star, key, fv[key_p])
                     elif key == 'spin':
                         current = getattr(star, 'spin')
-                        setattr(star, key, current)
+                        key_p = 'star_%d_mass' % (k+1)
+                        # calculate new spin based on masses
+                        spin = cf.spin_stable_mass_transfer(current, prev_mass[k] , fv[key_p])
+                        setattr(star, key, spin)
+                        
                     elif key == 'log_R':
                         mass = fv['star_%d_mass' % (k+1)]
                         st = infer_star_state(star_mass=mass, star_CO=True)
