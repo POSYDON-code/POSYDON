@@ -171,12 +171,14 @@ class PopulationRunner:
             if os.path.exists(pop.kwargs["temp_directory"]) and not overwrite:
                 raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.") 
             elif os.path.exists(pop.kwargs["temp_directory"]) and overwrite:
-                if self.verbose:
+                if self.verbose: # pragma: no cover
                     print(f"Removing {pop.kwargs['temp_directory']} directory...")
                 os.removedirs(pop.kwargs["temp_directory"])    
+                pop.evolve()
+            else:
+                pop.evolve()
                 
-            pop.evolve()
-            if pop.comm is None:
+            if pop.comm is None: # pragma: no cover
                 self.merge_parallel_runs(pop)
 
     def merge_parallel_runs(self, pop):
@@ -1752,7 +1754,7 @@ class Population(PopulationIO):
         )
         return synth_pop
 
-    def plot_binary_evolution(self, index):
+    def plot_binary_evolution(self, index): # pragma: no cover
         """Plot the binary evolution of a system
 
         This method is not currently implemented.
@@ -2160,7 +2162,7 @@ class TransientPopulation(Population):
                 )
         return rates
 
-    def plot_efficiency_over_metallicity(self, **kwargs):
+    def plot_efficiency_over_metallicity(self, **kwargs): # pragma: no cover
         """
         Plot the efficiency over metallicity.
 
@@ -2179,7 +2181,7 @@ class TransientPopulation(Population):
 
     def plot_delay_time_distribution(
         self, metallicity=None, ax=None, bins=100, color="black"
-    ):
+    ):  # pragma: no cover
         """
         Plot the delay time distribution of the transient population.
 
@@ -2241,7 +2243,7 @@ class TransientPopulation(Population):
         ax.set_xlabel("Time [yr]")
         ax.set_ylabel("Number of events/Msun/yr")
 
-    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
+    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):  # pragma: no cover
         """
         Plot the transients over the grid slice.
 
@@ -2663,7 +2665,7 @@ class Rates(TransientPopulation):
 
     def plot_hist_properties(
         self, prop, intrinsic=True, observable=None, bins=50, channel=None, **kwargs
-    ):
+    ): # pragma: no cover
         """Plot a histogram of a given property available in the transient population.
 
         This method plots a histogram of a given property available in the transient population.
@@ -2743,7 +2745,7 @@ class Rates(TransientPopulation):
             # plot the histogram using plot_pop.plot_hist_properties
             plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
 
-    def plot_intrinsic_rate(self, channels=False, **kwargs):
+    def plot_intrinsic_rate(self, channels=False, **kwargs): # pragma: no cover
         """Plot the intrinsic rate density of the transient population."""
 
         plot_pop.plot_rate_density(self.intrinsic_rate_density, channels=channels, **kwargs)
