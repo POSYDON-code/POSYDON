@@ -1755,6 +1755,8 @@ class TrackMatcher:
 
         # determine star states for matching
         primary, secondary, only_CO = self.determine_star_states(binary)
+        print(primary.mass)
+        print(secondary.mass)
         if only_CO:
             return (None, None, None), (None, None, None), only_CO
 
@@ -1777,6 +1779,7 @@ class TrackMatcher:
         all_exist = binary.non_existent_companion == 0
         self.primary_not_normal = primary.co or has_non_existent
         self.primary_normal = not primary.co and all_exist
+        print(self.primary_not_normal)
 
         if self.primary_not_normal:
             # copy the secondary star except mass which is of the primary,
@@ -1902,7 +1905,7 @@ class TrackMatcher:
         s_He = np.array([s.state in STAR_STATES_FOR_Hestar_MATCHING for s in s_arr])
         s_massless = np.array([s.state == "massless_remnant" for s in s_arr])
         s_valid = s_H | s_He | s_CO | s_massless    # states considered here
-        s_htrack = s_H & ~(s_CO)                    # only true if h rich and not a CO
+        s_htrack = s_H & ~(s_CO)   # only true if h rich and not a CO
 
         # check if star states are recognizable
         if any(~s_valid):
@@ -1968,6 +1971,7 @@ class TrackMatcher:
             if secondary.co:
                 only_CO = True
                 return primary, secondary, only_CO
+            print(secondary.mass)
 
         # star 2 is a massless remnant, only star 1 exists
         elif binary.non_existent_companion == 2:

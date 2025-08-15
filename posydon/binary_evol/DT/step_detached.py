@@ -305,7 +305,6 @@ class detached_step:
 
         # match stars to single star models for detached evolution
         primary, secondary, only_CO = self.track_matcher.do_matching(binary, "step_detached")
-        
         if only_CO:
             if self.verbose:
                 print("Binary system only contains compact objects."
@@ -372,7 +371,8 @@ class detached_step:
             secondary.state = check_state_of_star(secondary, star_CO=False)
             for timestep in range(-len(t[:-1]), 0):
                 secondary.state_history[timestep] = check_state_of_star(secondary, i=timestep, star_CO=False)
-
+            
+            
             if primary.state == "massless_remnant":
                 pass
             elif primary.co:
@@ -385,6 +385,7 @@ class detached_step:
                 primary.state = check_state_of_star(primary, star_CO=False)
                 for timestep in range(-len(t[:-1]), 0):
                     primary.state_history[timestep] = check_state_of_star(primary, i=timestep, star_CO=False)
+
 
             ## CHECK IF THE BINARY IS IN RLO
             if res.t_events[0] or res.t_events[1]:
@@ -444,6 +445,7 @@ class detached_step:
 
             ## CHECK IF STARS WILL UNDERGO CC
             elif res.t_events[2]:
+                print('HERE')
                 # reached t_max of track. End of life (possible collapse) of secondary
                 if secondary == binary.star_1:
                     binary.event = "CC1"
@@ -470,6 +472,7 @@ class detached_step:
                             "step, but do not have the same mass")
 
             elif res.t_events[3]:
+                print("HERE2")
                 # reached t_max of track. End of life (possible collapse) of primary
                 if secondary == binary.star_1:
                     binary.event = "CC2"
