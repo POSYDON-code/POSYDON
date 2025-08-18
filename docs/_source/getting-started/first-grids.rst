@@ -96,16 +96,15 @@ single MESA run:
 Plot a `PSyGrid` object
 -----------------------
 
-Beside getting the values itself there are plotting functionalities available
-to display the content of a :samp:`PSyGrid` object. There are three main 
-plotting functionalities:
+There are three main plotting functionalities available
+to display the content of a :samp:`PSyGrid` object:
 
-- :samp:`plot`: This creates a one dimensional plot from the :samp:`PSyGrid`.
+- :samp:`plot`: This creates a one-dimensional plot from the :samp:`PSyGrid`.
   An example can be found in the :ref:`tutorials <plot_1d>`. The code details
   are available in the
   :py:func:`PSyGrid.plot <posydon.grids.psygrid.PSyGrid.plot>` code and the
   :py:class:`visualization <posydon.visualization.plot1D>` library.
-- :samp:`plot2D`: This creates a two dimensional representation from the
+- :samp:`plot2D`: This creates a two-dimensional representation from the
   :samp:`PSyGrid`. Again, an example can be found in the
   :ref:`tutorials <plot_2d>`. The code details are available in the
   :py:func:`PSyGrid.plot <posydon.grids.psygrid.PSyGrid.plot2D>` code and the
