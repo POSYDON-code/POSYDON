@@ -1498,7 +1498,7 @@ class TrackMatcher:
         interp1d["m0"] = match_m0
 
         if star.co:
-            kvalue["mass"] = np.zeros_like(kvalue["mass"]) + secondary.mass
+            kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star.mass
             kvalue["R"] = np.zeros_like(kvalue["log_R"])
             kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
             interp1d["mass"] = PchipInterpolator(age, kvalue["mass"])
