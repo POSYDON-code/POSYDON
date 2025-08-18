@@ -1100,7 +1100,7 @@ class TrackMatcher:
                         print(f"We cannot use match_type={match_type} " \
                                 "since star is on the MS. Skipping...")
                     match_ok = False
-                    return None, None, False, match_ok
+                    return (None, None, False, match_ok), (None, None, None)
 
                 # if he star, try matching to H-rich grid
                 elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
@@ -1183,7 +1183,7 @@ class TrackMatcher:
             rescale_facs, bnds, scalers = scls_bnds
 
             if not match_ok:
-                return None, None, None, new_htrack, match_ok
+                return None, (new_htrack, None, None, None), None, match_ok
 
             # Get closest matching point along track single star grids. x0 
             # contains the corresponding initial guess for mass and age
