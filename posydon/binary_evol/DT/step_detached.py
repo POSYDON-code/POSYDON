@@ -351,7 +351,7 @@ class detached_step:
                                         secondary.omega0, primary.omega0],
                                     args=(primary, secondary),
                                     dense_output=True)
-            
+
             t_after_ODEsolution = time.time()
             
             if self.verbose:
@@ -372,7 +372,6 @@ class detached_step:
             secondary.state = check_state_of_star(secondary, star_CO=False)
             for timestep in range(-len(t[:-1]), 0):
                 secondary.state_history[timestep] = check_state_of_star(secondary, i=timestep, star_CO=False)
-            
             
             if primary.state == "massless_remnant":
                 pass
