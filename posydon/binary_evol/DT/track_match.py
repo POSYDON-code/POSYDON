@@ -1361,7 +1361,7 @@ class TrackMatcher:
         return match_vals, best_sol
 
 
-    def get_star_match_data(self, binary, star, 
+    def get_star_match_data(self, binary, star, secondary_htrack=None,
                             copy_prev_m0=None, copy_prev_t0=None):
         """
             Match a given component of a binary (i.e., a star) to a 
@@ -1421,11 +1421,17 @@ class TrackMatcher:
         # bad result
         if pd.isna(match_m0) or pd.isna(match_t0):
             return None, None, None
-
-        if star.htrack:
-            self.grid = self.grid_Hrich
+        
+        if secondary_htrack != None:
+            if secondary_htrack:
+                self.grid = self.grid_Hrich
+            else:
+                self.grid = self.grid_strippedHe
         else:
-            self.grid = self.grid_strippedHe
+            if star.htrack:
+                self.grid = self.grid_Hrich
+            else:
+                self.grid = self.grid_strippedHe
 
         # check if m0 is in the grid bounds
         outside_low = match_m0 < self.grid.grid_mass.min()
@@ -1755,8 +1761,6 @@ class TrackMatcher:
 
         # determine star states for matching
         primary, secondary, only_CO = self.determine_star_states(binary)
-        print(primary.mass)
-        print(secondary.mass)
         if only_CO:
             return (None, None, None), (None, None, None), only_CO
 
@@ -1779,14 +1783,14 @@ class TrackMatcher:
         all_exist = binary.non_existent_companion == 0
         self.primary_not_normal = primary.co or has_non_existent
         self.primary_normal = not primary.co and all_exist
-        print(self.primary_not_normal)
 
         if self.primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             self.get_star_match_data(binary, primary,
+                                     secondary_htrack=secondary.htrack,
                                      copy_prev_m0 = m0,
-                                     copy_prev_t0 = t0)
+                                     copy_prev_t0 = t0,)
         elif self.primary_normal:
             # match primary
             self.get_star_match_data(binary, primary)
@@ -1971,7 +1975,6 @@ class TrackMatcher:
             if secondary.co:
                 only_CO = True
                 return primary, secondary, only_CO
-            print(secondary.mass)
 
         # star 2 is a massless remnant, only star 1 exists
         elif binary.non_existent_companion == 2:
