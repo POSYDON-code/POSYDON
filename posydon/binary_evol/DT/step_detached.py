@@ -351,11 +351,8 @@ class detached_step:
                                         secondary.omega0, primary.omega0],
                                     args=(primary, secondary),
                                     dense_output=True)
-
+            
             t_after_ODEsolution = time.time()
-            print(primary.mass, secondary.mass)
-            print(primary.state, secondary.state)
-            print(binary.state)
             
             if self.verbose:
                 ivp_tspan = t_after_ODEsolution - t_before_ODEsolution
