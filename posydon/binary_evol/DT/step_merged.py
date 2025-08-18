@@ -547,10 +547,10 @@ class MergedStep(IsolatedStep):
         elif (s1 in STAR_STATES_NOT_CO
             and s2 in ["NS", "BH"]):
                 # TODO: potentially flag a Thorne-Zytkov object
-                massless_remnant = convert_star_to_massless_remnant(comp)
+                massless_remnant = convert_star_to_massless_remnant(star_base)
 
                 ## in this case, want CO companion object to stay the same, and base star to be assigned massless remnant
-                return massless_remnant, merged_star
+                return massless_remnant, comp
         else:
             raise ModelError(f"Combination of merging star states not expected: {s1} {s2}")
         # ad hoc spin of merged star to be used in the detached step
