@@ -86,7 +86,7 @@ class MergedStep(IsolatedStep):
     def __call__(self,binary):
 
         merged_star_properties = self.merged_star_properties
-        
+
         if self.verbose:
             print("Before Merger", binary.star_1.state, binary.star_2.state,
                   binary.state, binary.event)
@@ -117,7 +117,7 @@ class MergedStep(IsolatedStep):
                 raise ValueError("step_merged initiated for He stars but RLO not initiated")
         else:
             raise ValueError("step_merged initiated but binary is not in valid merging state!")
-        
+
         binary.event = None
 
         if self.verbose:

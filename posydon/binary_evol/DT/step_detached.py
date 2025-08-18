@@ -353,7 +353,7 @@ class detached_step:
                                     dense_output=True)
 
             t_after_ODEsolution = time.time()
-            
+
             if self.verbose:
                 ivp_tspan = t_after_ODEsolution - t_before_ODEsolution
                 print(f"\nODE solver duration: {ivp_tspan:.6g} sec")
@@ -372,7 +372,7 @@ class detached_step:
             secondary.state = check_state_of_star(secondary, star_CO=False)
             for timestep in range(-len(t[:-1]), 0):
                 secondary.state_history[timestep] = check_state_of_star(secondary, i=timestep, star_CO=False)
-            
+
             if primary.state == "massless_remnant":
                 pass
             elif primary.co:
