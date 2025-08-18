@@ -305,7 +305,7 @@ class detached_step:
 
         # match stars to single star models for detached evolution
         primary, secondary, only_CO = self.track_matcher.do_matching(binary, "step_detached")
-
+        
         if only_CO:
             if self.verbose:
                 print("Binary system only contains compact objects."
