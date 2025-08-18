@@ -1361,7 +1361,7 @@ class TrackMatcher:
         return match_vals, best_sol
 
 
-    def get_star_match_data(self, binary, star, 
+    def get_star_match_data(self, binary, star, secondary=None,
                             copy_prev_m0=None, copy_prev_t0=None):
         """
             Match a given component of a binary (i.e., a star) to a 
@@ -1407,6 +1407,9 @@ class TrackMatcher:
                 match_m0, match_t0 = star.mass, 0
             elif star.co:
                 match_m0, match_t0 = copy_prev_m0, copy_prev_t0
+                if secondary == None:
+                    raise ValueError("Secondary star must be provided "
+                                     "when matching a compact object.")
             else:
                 t_before_matching = time.time()
                 # matching to single star grids (getting mass, age of 
@@ -1421,11 +1424,17 @@ class TrackMatcher:
         # bad result
         if pd.isna(match_m0) or pd.isna(match_t0):
             return None, None, None
-
-        if star.htrack:
-            self.grid = self.grid_Hrich
+        
+        if star.co:
+            if secondary.htrack:
+                self.grid = self.grid_Hrich
+            else:
+                self.grid = self.grid_strippedHe
         else:
-            self.grid = self.grid_strippedHe
+            if star.htrack:
+                self.grid = self.grid_Hrich
+            else:
+                self.grid = self.grid_strippedHe
 
         # check if m0 is in the grid bounds
         outside_low = match_m0 < self.grid.grid_mass.min()
@@ -1782,6 +1791,7 @@ class TrackMatcher:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             self.get_star_match_data(binary, primary,
+                                     secondary,
                                      copy_prev_m0 = m0,
                                      copy_prev_t0 = t0)
         elif self.primary_normal:
@@ -1902,7 +1912,7 @@ class TrackMatcher:
         s_He = np.array([s.state in STAR_STATES_FOR_Hestar_MATCHING for s in s_arr])
         s_massless = np.array([s.state == "massless_remnant" for s in s_arr])
         s_valid = s_H | s_He | s_CO | s_massless    # states considered here
-        s_htrack = s_H & ~(s_CO)                    # only true if h rich and not a CO
+        s_htrack = s_H & ~(s_CO)   # only true if h rich and not a CO
 
         # check if star states are recognizable
         if any(~s_valid):
