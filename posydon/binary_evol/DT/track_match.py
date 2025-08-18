@@ -1346,7 +1346,7 @@ class TrackMatcher:
                            "\nOptimizer termination reason: "
                            f"{best_sol.message}") 
 
-            track_vals0 = (np.nan, np.nan)
+            match_vals = (np.nan, np.nan)
 
         # or else we found a solution
         else:
