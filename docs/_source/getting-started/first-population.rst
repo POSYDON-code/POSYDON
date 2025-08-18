@@ -30,13 +30,13 @@ Next, set the environmental variables so they reference the directory of your PO
     %env PATH_TO_POSYDON=/YOUR/POSYDON/PATH/
     %env PATH_TO_POSYDON_DATA=/YOUR/POSYDON_DATA/PATH/
 
-Next, we'll create our python script to read in the .ini file and generate a population:
+Next, create our python script to read in the .ini file and generate a population:
 
 .. code-block:: bash
 
     touch my_population.py
 
-Within this file, we'll start by loading up the necessary libraries and creating an instance of our class to handle populations:
+Within this file, load up the necessary libraries and create an instance of the `PopulationRunner` class to handle the population:
 
 .. code-block:: python
 
@@ -45,10 +45,10 @@ Within this file, we'll start by loading up the necessary libraries and creating
     poprun = PopulationRunner('$PATH_TO_POSYDON/posydon/popsyn/population_params_default.ini', verbose=True)
     poprun.evolve()
 
-Now, we can evolve our population:
+Evolve the population:
 
 .. code-block:: bash
 
     python my_population.py
 
-After our population has run, we can take a look at the output.
+After the population has finished running, you take a look at the output. More information on how to do this is available :ref:`here <synthetic_population>`_
