@@ -1420,7 +1420,7 @@ class TrackMatcher:
 
         # bad result
         if pd.isna(match_m0) or pd.isna(match_t0):
-            return None, None, None
+            return None, None
 
         if star.htrack:
             self.grid = self.grid_Hrich
