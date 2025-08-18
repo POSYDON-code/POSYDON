@@ -810,7 +810,7 @@ class TrackMatcher:
 
         # if optimizer failed for some reason set solution as NaN
         if not sol.success or sol.x[1] < 0:
-            match_vals = (np.nan, np.nan)
+            match_vals = np.array([np.nan, np.nan])
         else:
             match_vals = sol.x
 
@@ -1346,7 +1346,7 @@ class TrackMatcher:
                            "\nOptimizer termination reason: "
                            f"{best_sol.message}") 
 
-            match_vals = (np.nan, np.nan)
+            match_vals = np.array([np.nan, np.nan])
 
         # or else we found a solution
         else:
@@ -1592,7 +1592,7 @@ class TrackMatcher:
                     Pwarn("Setting (post-match) rotation rate to zero.", 
                           "InappropriateValueWarning")
 
-        if self.verbose and omega is not None:
+        if self.verbose and omega is not None and (omega_in_rad_per_yr != 0):
             print("pre-match omega [rad/yr] = ", omega * const.secyer)
             print("calculated omega [rad/yr] = ", omega_in_rad_per_yr)
             pcdiff = 100.0*(omega_in_rad_per_yr-omega * const.secyer) \
@@ -1805,7 +1805,7 @@ class TrackMatcher:
                             f"{binary.companion_2_exists}")
 
 
-        if secondary.interp1d is None or primary.interp1d is None:
+        if not hasattr(secondary, 'interp1d') or not hasattr(primary, 'interp1d'):
             failed_state = binary.state
             set_binary_to_failed(binary)
             raise MatchingError("Grid matching failed for " 
