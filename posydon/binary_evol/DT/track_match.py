@@ -1915,7 +1915,7 @@ class TrackMatcher:
         if binary.non_existent_companion == 0: # both stars exist, detached step of a binary
 
             # states match, either both H stars or both He stars
-            if (all(s_valid) and (all(s_htrack) or all(~s_htrack))):
+            if (all(s_valid) and (all(s_htrack) or all(~s_htrack)) and not any(s_CO)):
                 primary = s_arr[0]
                 primary.co = s_CO[0]
                 primary.htrack = s_htrack[0]
