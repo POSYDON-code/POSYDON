@@ -1361,7 +1361,7 @@ class TrackMatcher:
         return match_vals, best_sol
 
 
-    def get_star_match_data(self, binary, star, secondary=None,
+    def get_star_match_data(self, binary, star, secondary_htrack=None,
                             copy_prev_m0=None, copy_prev_t0=None):
         """
             Match a given component of a binary (i.e., a star) to a 
@@ -1407,8 +1407,8 @@ class TrackMatcher:
                 match_m0, match_t0 = star.mass, 0
             elif star.co:
                 match_m0, match_t0 = copy_prev_m0, copy_prev_t0
-                if secondary == None:
-                    raise ValueError("Secondary star must be provided "
+                if secondary_htrack == None:
+                    raise ValueError("Secondary htrack must be provided "
                                      "when matching a compact object.")
             else:
                 t_before_matching = time.time()
@@ -1426,7 +1426,7 @@ class TrackMatcher:
             return None, None, None
         
         if star.co:
-            if secondary.htrack:
+            if secondary_htrack:
                 self.grid = self.grid_Hrich
             else:
                 self.grid = self.grid_strippedHe
@@ -1791,7 +1791,7 @@ class TrackMatcher:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             self.get_star_match_data(binary, primary,
-                                     secondary,
+                                     secondary.htrack,
                                      copy_prev_m0 = m0,
                                      copy_prev_t0 = t0)
         elif self.primary_normal:
