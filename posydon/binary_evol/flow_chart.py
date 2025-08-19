@@ -109,6 +109,7 @@ STAR_STATES_FOR_postMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
 # states to ID an He star (Xcore < 0.01, Xsurf < 0.01)
 STAR_STATES_FOR_Hestar_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
                                    ("stripped_He" in st)]
+STAR_STATES_FOR_Hestar_MATCHING.extend(['accreted_He_Core_He_burning'])
 
 BINARY_STATES_ALL = [
     'initially_single_star',
