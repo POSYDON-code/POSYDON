@@ -4,7 +4,8 @@
 __authors__ = [
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
-    "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>"
+    "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 
