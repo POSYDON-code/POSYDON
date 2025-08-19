@@ -23,7 +23,8 @@ __authors__ = [
     "Philipp Moura Srivastava <philipp.msrivastava@gmail.com>",
     "Devina Misra <devina.misra@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
+    "Seth Gossage <seth.gossage@northwestern.edu>",
+    "Max Briel <max.briel@gmail.com>"
 ]
 
 
