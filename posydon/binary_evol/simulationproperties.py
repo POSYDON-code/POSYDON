@@ -109,7 +109,7 @@ class SimulationProperties:
             if isinstance(step_func, MesaGridStep):
                 step_func.close()
             elif isinstance(step_func, detached_step):
-                for grid_interpolator in [step_func.grid_Hrich, step_func.grid_strippedHe]:
+                for grid_interpolator in [step_func.track_matcher.grid_Hrich, step_func.track_matcher.grid_strippedHe]:
                     grid_interpolator.close()
 
     def pre_evolve(self, binary):
