@@ -10,7 +10,7 @@ import pprint
 import numpy as np
 import pandas as pd
 
-from posydon.binary_evol.simulationproperties import SimulationProperties
+#from posydon.binary_evol.simulationproperties import SimulationProperties
 
 
 """
@@ -569,9 +569,9 @@ def binarypop_kwargs_from_ini(path, verbose=False):
                 pop_kwargs['S2_kwargs'] = S2_kwargs
 
     # finally get the population properties
-    sim_prop_kwargs = simprop_kwargs_from_ini(path)
-    pop_kwargs['population_properties'] = SimulationProperties(
-        **sim_prop_kwargs)
+    #sim_prop_kwargs = simprop_kwargs_from_ini(path)
+    #pop_kwargs['population_properties'] = SimulationProperties(
+    #    **sim_prop_kwargs)
 
     return pop_kwargs
 

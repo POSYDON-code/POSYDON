@@ -16,6 +16,7 @@ __authors__ = [
 
 import time
 from posydon.utils.constants import age_of_universe
+from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.posydonwarning import Pwarn
 <<<<<<< HEAD
 
@@ -461,3 +462,12 @@ class PrintStepInfoHooks(EvolveHooks):
         """Report at the end of the evolution of each binary."""
         print("End evol for binary {}".format(binary.index), end='\n'*2)
         return binary
+    
+def init_sim(initialization_file):
+
+    sim_kwargs = simprop_kwargs_from_ini(initialization_file)
+    sim_props = SimulationProperties(**sim_kwargs)
+    # Load the steps and required data
+    sim_props.load_steps(verbose=True)
+
+    return sim_props
