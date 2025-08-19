@@ -1362,7 +1362,7 @@ class TrackMatcher:
         return match_vals, best_sol
 
 
-    def get_star_match_data(self, binary, star, secondary_htrack=None,
+    def get_star_match_data(self, binary, star,
                             copy_prev_m0=None, copy_prev_t0=None):
         """
             Match a given component of a binary (i.e., a star) to a 
@@ -1408,9 +1408,6 @@ class TrackMatcher:
                 match_m0, match_t0 = star.mass, 0
             elif star.co:
                 match_m0, match_t0 = copy_prev_m0, copy_prev_t0
-                if secondary_htrack == None:
-                    raise ValueError("Secondary htrack must be provided "
-                                     "when matching a compact object.")
             else:
                 t_before_matching = time.time()
                 # matching to single star grids (getting mass, age of 
@@ -1426,16 +1423,10 @@ class TrackMatcher:
         if pd.isna(match_m0) or pd.isna(match_t0):
             return None, None, None
         
-        if star.co:
-            if secondary_htrack:
-                self.grid = self.grid_Hrich
-            else:
-                self.grid = self.grid_strippedHe
+        if star.htrack:
+            self.grid = self.grid_Hrich
         else:
-            if star.htrack:
-                self.grid = self.grid_Hrich
-            else:
-                self.grid = self.grid_strippedHe
+            self.grid = self.grid_strippedHe
 
         # check if m0 is in the grid bounds
         outside_low = match_m0 < self.grid.grid_mass.min()
@@ -1792,7 +1783,6 @@ class TrackMatcher:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             self.get_star_match_data(binary, primary,
-                                     secondary.htrack,
                                      copy_prev_m0 = m0,
                                      copy_prev_t0 = t0)
         elif self.primary_normal:
@@ -1950,7 +1940,7 @@ class TrackMatcher:
 
                 primary = s_arr[CO_mask].item()
                 primary.co = s_CO[CO_mask].item()
-                primary.htrack = s_htrack[CO_mask].item()
+                primary.htrack = s_htrack[~CO_mask].item()
 
                 secondary = s_arr[~CO_mask].item()
                 secondary.co = s_CO[~CO_mask].item()
@@ -1971,7 +1961,7 @@ class TrackMatcher:
             # massless remnant
             primary = s_arr[0]
             primary.co = True
-            primary.htrack = False
+            primary.htrack = s_htrack[1]
 
             secondary = s_arr[1]
             secondary.htrack = s_htrack[1]
@@ -1984,7 +1974,7 @@ class TrackMatcher:
         elif binary.non_existent_companion == 2:
             primary = s_arr[1]
             primary.co = True
-            primary.htrack = False
+            primary.htrack = s_htrack[0]
 
             secondary = s_arr[0]
             secondary.htrack = s_htrack[0]
