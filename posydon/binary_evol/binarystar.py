@@ -238,7 +238,8 @@ class BinaryStar:
                     
         finally:
             signal.alarm(0)     # turning off alarm
-            self.properties.post_evolve(self)
+            
+        self.properties.post_evolve(self)
 
     def run_step(self):
         """Evolve the binary through one evolutionary step."""
