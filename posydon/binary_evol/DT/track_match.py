@@ -811,7 +811,7 @@ class TrackMatcher:
 
         # if optimizer failed for some reason set solution as NaN
         if not sol.success or sol.x[1] < 0:
-            match_vals = (np.nan, np.nan)
+            match_vals = np.array([np.nan, np.nan])
         else:
             match_vals = sol.x
 
@@ -1101,7 +1101,7 @@ class TrackMatcher:
                         print(f"We cannot use match_type={match_type} " \
                                 "since star is on the MS. Skipping...")
                     match_ok = False
-                    return None, None, False, match_ok
+                    return (None, None, False, match_ok), (None, None, None)
 
                 # if he star, try matching to H-rich grid
                 elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
@@ -1184,7 +1184,7 @@ class TrackMatcher:
             rescale_facs, bnds, scalers = scls_bnds
 
             if not match_ok:
-                return None, None, None, new_htrack, match_ok
+                return None, (new_htrack, None, None, None), None, match_ok
 
             # Get closest matching point along track single star grids. x0 
             # contains the corresponding initial guess for mass and age
@@ -1347,7 +1347,7 @@ class TrackMatcher:
                            "\nOptimizer termination reason: "
                            f"{best_sol.message}") 
 
-            track_vals0 = (np.nan, np.nan)
+            match_vals = np.array([np.nan, np.nan])
 
         # or else we found a solution
         else:
@@ -1421,8 +1421,8 @@ class TrackMatcher:
 
         # bad result
         if pd.isna(match_m0) or pd.isna(match_t0):
-            return None, None, None
-        
+            return None, None
+
         if star.htrack:
             self.grid = self.grid_Hrich
         else:
@@ -1593,7 +1593,7 @@ class TrackMatcher:
                     Pwarn("Setting (post-match) rotation rate to zero.", 
                           "InappropriateValueWarning")
 
-        if self.verbose and omega is not None:
+        if self.verbose and omega is not None and (omega_in_rad_per_yr != 0):
             print("pre-match omega [rad/yr] = ", omega * const.secyer)
             print("calculated omega [rad/yr] = ", omega_in_rad_per_yr)
             pcdiff = 100.0*(omega_in_rad_per_yr-omega * const.secyer) \
@@ -1806,7 +1806,7 @@ class TrackMatcher:
                             f"{binary.companion_2_exists}")
 
 
-        if secondary.interp1d is None or primary.interp1d is None:
+        if not hasattr(secondary, 'interp1d') or not hasattr(primary, 'interp1d'):
             failed_state = binary.state
             set_binary_to_failed(binary)
             raise MatchingError("Grid matching failed for " 
