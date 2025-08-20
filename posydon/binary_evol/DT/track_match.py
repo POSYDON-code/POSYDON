@@ -1101,7 +1101,9 @@ class TrackMatcher:
                         print(f"We cannot use match_type={match_type} " \
                                 "since star is on the MS. Skipping...")
                     match_ok = False
-                    return (None, None, False, match_ok), (None, None, None)
+                    match_attrs = (None, None, new_htrack, match_ok)
+                    scls_bnds = (None, None, None)
+                    return match_attrs, scls_bnds
 
                 # if he star, try matching to H-rich grid
                 elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
