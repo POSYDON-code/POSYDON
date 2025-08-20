@@ -1249,7 +1249,7 @@ class TrackMatcher:
             try:
                 # Minimize sq, Euclidean dist. w/ Newton's method (TNC)
                 sol = minimize(square_difference, x0, args=fnc_args,
-                                method=method, bounds=bounds)
+                                method=method, bounds=bounds, tol=1e-6)
             
                 # guard against NaN solutions, ensuring they will fail
                 sol.fun = 1e99 if np.isnan(sol.fun) else sol.fun
