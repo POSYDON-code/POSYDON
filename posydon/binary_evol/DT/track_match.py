@@ -348,9 +348,9 @@ class TrackMatcher:
 
         # min/max ranges of ages for each grid
         t_min_H = 0.0
-        t_max_H = np.max(self.grid_Hrich.grid_age)
+        t_max_H = None
         t_min_He = 0.0
-        t_max_He = np.max(self.grid_strippedHe.grid_age)
+        t_max_He = None
 
         # Stellar parameter matching metrics
         # ========================================
@@ -1252,7 +1252,7 @@ class TrackMatcher:
             try:
                 # Minimize sq, Euclidean dist. w/ Newton's method (TNC)
                 sol = minimize(square_difference, x0, args=fnc_args,
-                                method=method, bounds=bounds, tol=1e-6)
+                                method=method, bounds=bounds)
             
                 # guard against NaN solutions, ensuring they will fail
                 sol.fun = 1e99 if np.isnan(sol.fun) else sol.fun
