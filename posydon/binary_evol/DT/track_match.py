@@ -1186,7 +1186,8 @@ class TrackMatcher:
             rescale_facs, bnds, scalers = scls_bnds
 
             if not match_ok:
-                return None, (new_htrack, None, None, None), None, match_ok
+                fnc_args = (new_htrack, None, None, None)
+                return None, fnc_args, None, match_ok
 
             # Get closest matching point along track single star grids. x0 
             # contains the corresponding initial guess for mass and age
