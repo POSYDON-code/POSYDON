@@ -1421,6 +1421,7 @@ class TrackMatcher:
 
         # bad result
         if pd.isna(match_m0) or pd.isna(match_t0):
+            star.interp1d = None
             return None, None
 
         if star.htrack:
@@ -1806,7 +1807,7 @@ class TrackMatcher:
                             f"{binary.companion_2_exists}")
 
 
-        if not hasattr(secondary, 'interp1d') or not hasattr(primary, 'interp1d'):
+        if (secondary.interp1d == None) or (primary.interp1d == None):
             failed_state = binary.state
             set_binary_to_failed(binary)
             raise MatchingError("Grid matching failed for " 
