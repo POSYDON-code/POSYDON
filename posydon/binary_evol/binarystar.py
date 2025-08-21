@@ -23,7 +23,8 @@ __authors__ = [
     "Philipp Moura Srivastava <philipp.msrivastava@gmail.com>",
     "Devina Misra <devina.misra@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
+    "Seth Gossage <seth.gossage@northwestern.edu>",
+    "Max Briel <max.briel@gmail.com>"
 ]
 
 
@@ -223,18 +224,22 @@ class BinaryStar:
         max_n_steps = self.properties.max_n_steps_per_binary
         n_steps = 0
 
-        while (self.event != 'END' and self.event != 'FAILED'
+        try:
+            while (self.event != 'END' and self.event != 'FAILED'
                 and self.event not in self.properties.end_events
                 and self.state not in self.properties.end_states):
 
-            signal.alarm(MAXIMUM_STEP_TIME)
-            self.run_step()
+                signal.alarm(MAXIMUM_STEP_TIME)
+                self.run_step()
 
-            n_steps += 1
-            if max_n_steps is not None:
-                if n_steps > max_n_steps:
-                    raise RuntimeError("Exceeded maximum number of steps ({})".format(max_n_steps))
-        signal.alarm(0)     # turning off alarm
+                n_steps += 1
+                if max_n_steps is not None:
+                    if n_steps > max_n_steps:
+                        raise RuntimeError("Exceeded maximum number of steps ({})".format(max_n_steps))
+                    
+        finally:
+            signal.alarm(0)     # turning off alarm
+            
         self.properties.post_evolve(self)
 
     def run_step(self):
