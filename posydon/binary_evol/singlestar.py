@@ -311,8 +311,14 @@ class SingleStar:
         # store extra values in the star object without a history
 
         # these quantities are updated in step_SN.py
-        if not hasattr(self, 'natal_kick_array'):
-            self.natal_kick_array = [None] * 4
+        if not hasattr(self, 'natal_kick_velocity'):
+            self.natal_kick_velocity = None
+        if not hasattr(self, 'natal_kick_azimuthal_angle'):
+            self.natal_kick_azimuthal_angle = None
+        if not hasattr(self, 'natal_kick_polar_angle'):
+            self.natal_kick_polar_angle = None
+        if not hasattr(self, 'natal_kick_mean_anomaly'):
+            self.natal_kick_mean_anomaly = None
         if not hasattr(self, 'spin_orbit_tilt_first_SN'):
             self.spin_orbit_tilt_first_SN = None
         if not hasattr(self, 'spin_orbit_tilt_second_SN'):
@@ -531,8 +537,15 @@ class SingleStar:
 
         for name in scalar_names:
             if hasattr(self, name):
+                # Handle legacy natal_kick_array for backward compatibility
                 if name == 'natal_kick_array':
-                    natal_kick_array = getattr(self, name)
+                    # Create array from individual properties
+                    natal_kick_array = [
+                        getattr(self, 'natal_kick_velocity', None),
+                        getattr(self, 'natal_kick_azimuthal_angle', None),
+                        getattr(self, 'natal_kick_polar_angle', None),
+                        getattr(self, 'natal_kick_mean_anomaly', None)
+                    ]
                     for i in range(4):
                         col_name = prefix+name+'_{}'.format(int(i))
                         oneline_df[col_name] = [natal_kick_array[i]]

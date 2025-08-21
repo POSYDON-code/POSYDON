@@ -859,17 +859,26 @@ class BinaryStar:
         assert len(set(hist_lengths)) == 1
         history_length = set(hist_lengths).pop()
 
+        # Handle backward compatibility for natal_kick_array
         if any(['S1_natal_kick_array' in name for name in oneline_df.columns]):
             natalkick_names = ['S1_natal_kick_array_{}'.format(i)
                                for i in range(4)]
-            star1_params['natal_kick_array'] = \
-                oneline_df[natalkick_names].values
+            natal_kick_values = oneline_df[natalkick_names].values[0]
+            # Set individual natal kick properties
+            star1_params['natal_kick_velocity'] = natal_kick_values[0]
+            star1_params['natal_kick_azimuthal_angle'] = natal_kick_values[1]
+            star1_params['natal_kick_polar_angle'] = natal_kick_values[2]
+            star1_params['natal_kick_mean_anomaly'] = natal_kick_values[3]
 
         if any(['S2_natal_kick_array' in name for name in oneline_df.columns]):
             natalkick_names = ['S2_natal_kick_array_{}'.format(i)
                                for i in range(4)]
-            star2_params['natal_kick_array'] = \
-                oneline_df[natalkick_names].values
+            natal_kick_values = oneline_df[natalkick_names].values[0]
+            # Set individual natal kick properties
+            star2_params['natal_kick_velocity'] = natal_kick_values[0]
+            star2_params['natal_kick_azimuthal_angle'] = natal_kick_values[1]
+            star2_params['natal_kick_polar_angle'] = natal_kick_values[2]
+            star2_params['natal_kick_mean_anomaly'] = natal_kick_values[3]
 
         if ('binary_index' in oneline_df.index.name
                 and not kwargs.get('index', None)):
@@ -1109,8 +1118,14 @@ class BinaryStar:
                     f"eccentricity: {self.eccentricity_history[0]} \n",
                     f"binary state: {self.state_history[0] }\n",
                     f"binary event: {self.state_history[0] }\n",
-                    f"S1 natal kick array: {self.star_1.natal_kick_array }\n",
-                    f"S2 natal kick array: {self.star_2.natal_kick_array}\n"]
+                    f"S1 natal kick velocity: {self.star_1.natal_kick_velocity}\n",
+                    f"S1 natal kick azimuthal angle: {self.star_1.natal_kick_azimuthal_angle}\n",
+                    f"S1 natal kick polar angle: {self.star_1.natal_kick_polar_angle}\n",
+                    f"S1 natal kick mean anomaly: {self.star_1.natal_kick_mean_anomaly}\n",
+                    f"S2 natal kick velocity: {self.star_2.natal_kick_velocity}\n",
+                    f"S2 natal kick azimuthal angle: {self.star_2.natal_kick_azimuthal_angle}\n",
+                    f"S2 natal kick polar angle: {self.star_2.natal_kick_polar_angle}\n",
+                    f"S2 natal kick mean anomaly: {self.star_2.natal_kick_mean_anomaly}\n"]
 
         message = ""
         for i in ini_params:

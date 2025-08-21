@@ -142,6 +142,12 @@ EXTRA_STAR_COLUMNS_DTYPES = {
 }
 
 SCALAR_NAMES_DTYPES = {
+    # Individual natal kick properties (new)
+    'natal_kick_velocity': 'float64',
+    'natal_kick_azimuthal_angle': 'float64',
+    'natal_kick_polar_angle': 'float64',
+    'natal_kick_mean_anomaly': 'float64',
+    # Legacy natal kick array components (for backward compatibility)
     'natal_kick_array_0': 'float64',
     'natal_kick_array_1': 'float64',
     'natal_kick_array_2': 'float64',
