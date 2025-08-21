@@ -99,7 +99,7 @@ BINARYPROPERTIES = [
     't_sync_conv_1',
     't_sync_rad_2',
     't_sync_conv_2',
-    'nearest_neighbour_distance',   # the distance of system from its nearest
+    #'nearest_neighbour_distance',   # the distance of system from its nearest
                                     # neighbour of MESA binary system  in case
                                     # of interpolation during the the end of
                                     # the previous step including MESA psygrid.
@@ -672,8 +672,8 @@ class BinaryStar:
         """Convert binary into a single row DataFrame."""
         if history:
             bin_kwargs = kwargs.copy()
-            bin_kwargs['include_S1'] = False
-            bin_kwargs['include_S2'] = False
+            bin_kwargs['include_S1'] = True
+            bin_kwargs['include_S2'] = True
             output_df = self.to_df(**bin_kwargs)
             initial_final_data = output_df.values[[0, -1], :]  # first/last row
             col_names = list(output_df.columns)
