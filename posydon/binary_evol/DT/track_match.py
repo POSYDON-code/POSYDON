@@ -8,7 +8,8 @@ __authors__ = [
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Camille Liotine <cliotine@u.northwestern.edu>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
+    "Seth Gossage <seth.gossage@northwestern.edu>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 import os
@@ -347,9 +348,9 @@ class TrackMatcher:
 
         # min/max ranges of ages for each grid
         t_min_H = 0.0
-        t_max_H = np.max(self.grid_Hrich.grid_age)
+        t_max_H = None
         t_min_He = 0.0
-        t_max_He = np.max(self.grid_strippedHe.grid_age)
+        t_max_He = None
 
         # Stellar parameter matching metrics
         # ========================================
@@ -810,7 +811,7 @@ class TrackMatcher:
 
         # if optimizer failed for some reason set solution as NaN
         if not sol.success or sol.x[1] < 0:
-            match_vals = (np.nan, np.nan)
+            match_vals = np.array([np.nan, np.nan])
         else:
             match_vals = sol.x
 
@@ -1100,7 +1101,9 @@ class TrackMatcher:
                         print(f"We cannot use match_type={match_type} " \
                                 "since star is on the MS. Skipping...")
                     match_ok = False
-                    return None, None, False, match_ok
+                    match_attrs = (None, None, new_htrack, match_ok)
+                    scls_bnds = (None, None, None)
+                    return match_attrs, scls_bnds
 
                 # if he star, try matching to H-rich grid
                 elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
@@ -1183,7 +1186,8 @@ class TrackMatcher:
             rescale_facs, bnds, scalers = scls_bnds
 
             if not match_ok:
-                return None, None, None, new_htrack, match_ok
+                fnc_args = (new_htrack, None, None, None)
+                return None, fnc_args, None, match_ok
 
             # Get closest matching point along track single star grids. x0 
             # contains the corresponding initial guess for mass and age
@@ -1346,7 +1350,7 @@ class TrackMatcher:
                            "\nOptimizer termination reason: "
                            f"{best_sol.message}") 
 
-            track_vals0 = (np.nan, np.nan)
+            match_vals = np.array([np.nan, np.nan])
 
         # or else we found a solution
         else:
@@ -1361,7 +1365,7 @@ class TrackMatcher:
         return match_vals, best_sol
 
 
-    def get_star_match_data(self, binary, star, 
+    def get_star_match_data(self, binary, star,
                             copy_prev_m0=None, copy_prev_t0=None):
         """
             Match a given component of a binary (i.e., a star) to a 
@@ -1420,7 +1424,8 @@ class TrackMatcher:
 
         # bad result
         if pd.isna(match_m0) or pd.isna(match_t0):
-            return None, None, None
+            star.interp1d = None
+            return None, None
 
         if star.htrack:
             self.grid = self.grid_Hrich
@@ -1592,7 +1597,7 @@ class TrackMatcher:
                     Pwarn("Setting (post-match) rotation rate to zero.", 
                           "InappropriateValueWarning")
 
-        if self.verbose and omega is not None:
+        if self.verbose and omega is not None and (omega_in_rad_per_yr != 0):
             print("pre-match omega [rad/yr] = ", omega * const.secyer)
             print("calculated omega [rad/yr] = ", omega_in_rad_per_yr)
             pcdiff = 100.0*(omega_in_rad_per_yr-omega * const.secyer) \
@@ -1805,7 +1810,7 @@ class TrackMatcher:
                             f"{binary.companion_2_exists}")
 
 
-        if secondary.interp1d is None or primary.interp1d is None:
+        if (secondary.interp1d == None) or (primary.interp1d == None):
             failed_state = binary.state
             set_binary_to_failed(binary)
             raise MatchingError("Grid matching failed for " 
@@ -1902,7 +1907,7 @@ class TrackMatcher:
         s_He = np.array([s.state in STAR_STATES_FOR_Hestar_MATCHING for s in s_arr])
         s_massless = np.array([s.state == "massless_remnant" for s in s_arr])
         s_valid = s_H | s_He | s_CO | s_massless    # states considered here
-        s_htrack = s_H & ~(s_CO)                    # only true if h rich and not a CO
+        s_htrack = s_H & ~(s_CO)   # only true if h rich and not a CO
 
         # check if star states are recognizable
         if any(~s_valid):
@@ -1913,8 +1918,9 @@ class TrackMatcher:
 
         if binary.non_existent_companion == 0: # both stars exist, detached step of a binary
 
-            # states match, either both H stars or both He stars
-            if (all(s_valid) and (all(s_htrack) or all(~s_htrack))):
+            # states match, either both H stars or both He stars and not any COs
+            # prevents He+CO going into here.
+            if (all(s_valid) and (all(s_htrack) or all(~s_htrack)) and not (any(s_CO))):
                 primary = s_arr[0]
                 primary.co = s_CO[0]
                 primary.htrack = s_htrack[0]
@@ -1939,7 +1945,7 @@ class TrackMatcher:
 
                 primary = s_arr[CO_mask].item()
                 primary.co = s_CO[CO_mask].item()
-                primary.htrack = s_htrack[CO_mask].item()
+                primary.htrack = s_htrack[~CO_mask].item()
 
                 secondary = s_arr[~CO_mask].item()
                 secondary.co = s_CO[~CO_mask].item()
@@ -1960,7 +1966,7 @@ class TrackMatcher:
             # massless remnant
             primary = s_arr[0]
             primary.co = True
-            primary.htrack = False
+            primary.htrack = s_htrack[1]
 
             secondary = s_arr[1]
             secondary.htrack = s_htrack[1]
@@ -1973,7 +1979,7 @@ class TrackMatcher:
         elif binary.non_existent_companion == 2:
             primary = s_arr[1]
             primary.co = True
-            primary.htrack = False
+            primary.htrack = s_htrack[0]
 
             secondary = s_arr[0]
             secondary.htrack = s_htrack[0]
