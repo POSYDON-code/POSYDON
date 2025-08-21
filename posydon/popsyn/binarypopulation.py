@@ -361,6 +361,10 @@ class BinaryPopulation:
                 if not self.kwargs.get("warnings_verbose", False):
                     cpw.reset_cache()
 
+                # append the binary to the PopulationManager, allowing 
+                # e.g., to_df() calls (otherwise the manager has an empty 
+                # self.binaries array)
+                self.manager.append(binary)
         
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)
