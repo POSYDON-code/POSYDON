@@ -498,12 +498,12 @@ class MesaGridStep:
                     history_of_attribute = current + cb_bh[key_p][:-1]
                     getattr(binary, key_h).extend(history_of_attribute)
             elif key == 'nearest_neighbour_distance':
-                NN_d = self.nearest_neighbour_distance
-                setattr(binary, key, NN_d)
+                NN_dist = self.nearest_neighbour_distance
+                setattr(binary, key, NN_dist)
                 if self.save_initial_conditions:
-                    getattr(binary, key_h).append(NN_d)
+                    getattr(binary, key_h).append(NN_dist)
                 if track_interpolation:
-                    getattr(binary, key_h).extend([NN_d]*length_hist)
+                    getattr(binary, key_h).extend([NN_dist]*length_hist)
             elif key in ['eccentricity', 'V_sys']:
                 v_key = getattr(binary, key_h)[-1]
                 setattr(binary, key, v_key)
@@ -853,7 +853,8 @@ class MesaGridStep:
                 current = getattr(self.binary, key)
                 setattr(self.binary, key, current + fv[key_p])
             elif key == 'nearest_neighbour_distance':
-                setattr(self.binary, key, ['None', 'None', 'None'])
+                #setattr(self.binary, key, ['None', 'None', 'None'])
+                setattr(self.binary, key, [np.nan, np.nan, np.nan])
             elif key in ['eccentricity', 'V_sys']:
                 current = getattr(self.binary, key + '_history')[-1]
                 setattr(self.binary, key, current)
