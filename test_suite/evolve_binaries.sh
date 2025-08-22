@@ -9,9 +9,7 @@ BRANCH=${1:-main}
 REPO_URL="https://github.com/POSYDON-code/POSYDON"
 
 WORK_DIR="POSYDON_$BRANCH"
-FULL_PATH=$(realpath "$WORK_DIR")
 
-CLONE_DIR="$FULL_PATH/POSYDON"
 
 # Remove existing directory if it exists
 if [ -d "$WORK_DIR" ]; then
@@ -22,6 +20,9 @@ fi
 echo "📁 Creating working directory: $WORK_DIR"
 # Create the working directory
 mkdir -p "$WORK_DIR"
+
+FULL_PATH="$(realpath "$WORK_DIR")"
+CLONE_DIR="$FULL_PATH/POSYDON"
 
 echo "📋 Copying script_data folder"
 # copy the script_data folder
