@@ -63,6 +63,6 @@ pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/  /'
 
 echo "🚀 Running evolve_binaries.py"
 # # Run the Python script and capture output (stdout and stderr)
-python script_data/evolve_binaries.py > $FULL_PATH/evolve_binaries_$BRANCH.out 2>&1
+python script_data/1Zsun_binaries_suite.py > $FULL_PATH/evolve_binaries_$BRANCH.out 2>&1
 
 echo -e "✅ Script completed. Output saved to \n$FULL_PATH/evolve_binaries_$BRANCH.out"

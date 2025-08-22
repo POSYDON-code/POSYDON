@@ -24,7 +24,7 @@ columns_to_show = ['step_names', 'state', 'event', 'S1_state', 'S1_mass', 'S2_st
 
 def load_inlist(verbose):
 
-    sim_kwargs = simprop_kwargs_from_ini('script_data/population_params_default.ini', verbose=verbose)
+    sim_kwargs = simprop_kwargs_from_ini('script_data/1Zsun_binaries_params.ini', verbose=verbose)
     metallicity = {'metallicity':1, 'verbose':verbose}
 
     sim_kwargs['step_HMS_HMS'][1].update(metallicity)
