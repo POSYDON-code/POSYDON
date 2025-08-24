@@ -694,8 +694,8 @@ class BinaryStar:
         """Convert binary into a single row DataFrame."""
         if history:
             bin_kwargs = kwargs.copy()
-            bin_kwargs['include_S1'] = False #True
-            bin_kwargs['include_S2'] = False #True
+            bin_kwargs['include_S1'] = False
+            bin_kwargs['include_S2'] = False
             output_df = self.to_df(**bin_kwargs)
             initial_final_data = output_df.values[[0, -1], :]  # first/last row
             col_names = list(output_df.columns)
