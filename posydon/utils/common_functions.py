@@ -95,6 +95,24 @@ def is_number(s):
         return True
     except ValueError:
         return False
+    
+def zero_negative_values(arr):
+    """
+        Set negative values in the array to zero.
+
+        Parameters
+        ----------
+        arr : np.ndarray
+            The input array to process.
+
+        Returns
+        -------
+        np.ndarray
+            The processed array with negative values set to zero.
+    """
+    arr = np.array(arr)
+    arr[arr < 0] = 0.0
+    return arr
 
 
 def stefan_boltzmann_law(L, R):

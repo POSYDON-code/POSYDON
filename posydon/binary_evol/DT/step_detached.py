@@ -27,7 +27,8 @@ from posydon.utils.common_functions import (bondi_hoyle,
                                             orbital_period_from_separation,
                                             roche_lobe_radius,
                                             check_state_of_star,
-                                            set_binary_to_failed)
+                                            set_binary_to_failed,
+                                            zero_negative_values)
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, 
                                             STAR_STATES_H_RICH_EVOLVABLE,
                                             STAR_STATES_HE_RICH_EVOLVABLE)
@@ -304,7 +305,7 @@ class detached_step:
         all_step_names = getattr(binary_sim_prop, "all_step_names")
 
         # match stars to single star models for detached evolution
-        primary, secondary, only_CO = self.track_matcher.do_matching(binary, "step_detached")
+        primary, secondary, only_CO = self.track_matcher.do_matching(binary, binary.step_names[-1])
         
         if only_CO:
             if self.verbose:
@@ -795,7 +796,10 @@ class detached_step:
 
                         current = (interp1d["omega"][-1] / const.secyer / omega_crit_current)
                         history = (interp1d["omega"][:-1] / const.secyer / omega_crit_hist)
-                        
+
+                        # ensure positive rotation values
+                        current = zero_negative_values([current])[0]
+                        history = zero_negative_values(history)
 
                 elif (key in ["surf_avg_omega"] and obj != binary):
                     if obj.co:
@@ -804,6 +808,9 @@ class detached_step:
                     else:
                         current = interp1d["omega"][-1] / const.secyer
                         history = interp1d["omega"][:-1] / const.secyer
+
+                        current = zero_negative_values([current])[0]
+                        history = zero_negative_values(history)
                         
                 elif ("rl_relative_overflow_" in key and obj == binary):
                     s = binary.star_1 if "_1" in key[-2:] else binary.star_2
@@ -823,6 +830,9 @@ class detached_step:
                 elif key in ["separation", "orbital_period", "eccentricity", "time"]:
                     current = interp1d[self.translate[key]][-1].item()
                     history = interp1d[self.translate[key]][:-1]
+
+                    current = zero_negative_values([current])[0]
+                    history = zero_negative_values(history)
                     
                 elif (key in ["total_moment_of_inertia"] and obj != binary):
                     if obj.co:
@@ -849,6 +859,9 @@ class detached_step:
                                        * (interp1d[self.translate["total_moment_of_inertia"]]( \
                                        t[:-1] - t_offset) * (const.msol * const.rsol**2))
                         history = np.where(tot_j_hist > 0, np.log10(tot_j_hist), -99)
+
+                        current = zero_negative_values([current])[0]
+                        history = zero_negative_values(history)
                     
                 elif (key in ["spin"] and obj != binary):
                     if obj.co:
