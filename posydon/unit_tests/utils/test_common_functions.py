@@ -110,7 +110,8 @@ class TestElements:
                     'roche_lobe_radius', 'check_for_RLO', 'rotate',\
                     'rzams', 'separation_evol_wind_loss',\
                     'set_binary_to_failed', 'spin_stable_mass_transfer',\
-                    'stefan_boltzmann_law'}
+                    'stefan_boltzmann_law',
+                    'zero_negative_values'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
