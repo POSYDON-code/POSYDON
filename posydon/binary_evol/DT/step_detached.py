@@ -31,7 +31,8 @@ from posydon.utils.common_functions import (bondi_hoyle,
                                             zero_negative_values)
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, 
                                             STAR_STATES_H_RICH_EVOLVABLE,
-                                            STAR_STATES_HE_RICH_EVOLVABLE)
+                                            STAR_STATES_HE_RICH_EVOLVABLE,
+                                            UNDEFINED_STATES)
 import posydon.utils.constants as const
 from posydon.utils.posydonerror import (NumericalError, POSYDONError, 
                                         FlowError, ClassificationError)
@@ -305,7 +306,15 @@ class detached_step:
         all_step_names = getattr(binary_sim_prop, "all_step_names")
 
         # match stars to single star models for detached evolution
-        primary, secondary, only_CO = self.track_matcher.do_matching(binary, binary.step_names[-1])
+        total_state = (binary.star_1.state, binary.star_2.state, binary.state, binary.event)
+        if total_state in UNDEFINED_STATES:
+            raise FlowError(f"Binary failed with a known undefined state in the flow:\n{total_state}")
+
+        next_step_name = binary.properties.flow.get(total_state)
+        if next_step_name is None:
+            raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
+
+        primary, secondary, only_CO = self.track_matcher.do_matching(binary, next_step_name)
         
         if only_CO:
             if self.verbose:
