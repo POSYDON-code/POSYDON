@@ -456,6 +456,14 @@ class TestOneline:
         with raises(ValueError, match="elements in list are not integers"):
             one[[1.1, 2.2]]
         
+class TestPopulationIO:
+    
+    def test_load_metadata(self):
+        # missing argument
+        # bad input
+        # examples
+        pass
+    
 class TestPopulation:
     
     @fixture
