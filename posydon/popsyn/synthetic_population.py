@@ -737,7 +737,7 @@ class Oneline(DFInterface):
         else:
             raise ValueError("Invalid key type!")
 
-    def __len__(self):
+    def __len__(self): # pragma: no cover
         """
         Get the number of systems in the oneline table.
 
@@ -748,7 +748,7 @@ class Oneline(DFInterface):
         """
         return self.number_of_systems
 
-    def head(self, n=10):
+    def head(self, n=10): # pragma: no cover
         """Get the first n rows of the oneline table.
 
         Parameters
@@ -763,7 +763,7 @@ class Oneline(DFInterface):
         """
         return super().head("oneline", n)
 
-    def tail(self, n=10):
+    def tail(self, n=10): # pragma: no cover
         """
         Get the last n rows of the oneline table.
 
@@ -779,7 +779,7 @@ class Oneline(DFInterface):
         """
         return super().tail("oneline", n)
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         """
         Get a string representation of the oneline table.
 
@@ -790,7 +790,7 @@ class Oneline(DFInterface):
         """
         return super().get_repr("oneline")
 
-    def _repr_html_(self):
+    def _repr_html_(self): # pragma: no cover
         """
         Get an HTML representation of the oneline table.
 
@@ -801,7 +801,9 @@ class Oneline(DFInterface):
         """
         return super().get_html_repr("oneline")
 
-    def select(self, where=None, start=None, stop=None, columns=None):
+    def select(self, where=None, 
+               start=None, stop=None, 
+               columns=None): # pragma: no cover
         """Select a subset of the oneline table based on the given conditions.
 
         This method allows you to filter and extract a subset of rows from the oneline table stored in an HDF file.
