@@ -352,27 +352,109 @@ class TestHistory:
         
 class TestOneline:
     
-    @fixture
-    def fix(self):
-#         return 
-        pass
+    def test_init(self, tmp_path):
+        with raises(FileNotFoundError, match="does not exist!"):
+            totest.Oneline("nonexistent_file.h5")
+        
+        df = pd.DataFrame({
+            "index": np.arange(5),
+            "a": np.random.rand(5),
+            "b": np.random.rand(5),
+        })
+        file_path = os.path.join(tmp_path, "test_oneline.h5")
+        df.set_index("index", inplace=True)
+        df.to_hdf(file_path, key="oneline", format="table")
 
-        pass
-    def test_head(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_tail(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_select(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
+        one = totest.Oneline(str(file_path), verbose=True, chunksize=2)
+
+        assert one.filename == str(file_path)
+        assert one.columns == ["a", "b"]
+        assert one.number_of_systems == 5
+        assert isinstance(one.indices, np.ndarray)
+
+    def test_getitem_variants(self, tmp_path):
+        df = pd.DataFrame({
+            "index": np.arange(6),
+            "a": np.random.rand(6),
+            "b": np.random.rand(6),
+        })
+        file_path = os.path.join(tmp_path, "test_getitem_oneline.h5")
+        df.set_index("index", inplace=True)
+        df.to_hdf(file_path, key="oneline", format="table")
+
+        one = totest.Oneline(str(file_path))
+
+        # slice with start/stop
+        out = one[1:4]
+        assert isinstance(out, pd.DataFrame)
+        assert all(i in out.index for i in range(1, 4))
+
+        # start=None
+        out = one[:3]
+        assert isinstance(out, pd.DataFrame)
+        assert all(i in out.index for i in range(3))
+
+        # stop=None
+        out = one[3:]
+        assert isinstance(out, pd.DataFrame)
+        assert all(i >= 3 for i in out.index)
+
+        # int
+        out = one[2]
+        assert isinstance(out, pd.DataFrame)
+        assert 2 in out.index
+
+        # list of int
+        out = one[[1, 3, 5]]
+        assert set(out.index) == {1, 3, 5}
+
+        # numpy array of int
+        out = one[np.array([0, 2, 4])]
+        assert set(out.index) == {0, 2, 4}
+
+        # numpy array of bool
+        mask = np.array([True, False, True, False, True, False])
+        out = one[mask]
+        assert set(out.index) == {0, 2, 4}
+
+        # pandas DataFrame mask of bool
+        mask_df = pd.DataFrame({"mask": [True, False, True, False, True, False]})
+        out = one[mask_df]
+        assert set(out.index) == {0, 2, 4}
+
+        # str column
+        out = one["a"]
+        assert list(out.columns) == ["a"]
+
+        # list of str columns
+        out = one[["a", "b"]]
+        assert list(out.columns) == ["a", "b"]
+
+        # invalid column
+        with raises(ValueError, match="is not a valid column"):
+            one["bad"]
+
+        # invalid list of str columns
+        with raises(ValueError, match="Not all columns in"):
+            one[["a", "bad"]]
+
+        # invalid type
+        with raises(ValueError, match="Invalid key type"):
+            one[None]
+
+    def test_invalid_float_list(self, tmp_path):
+        df = pd.DataFrame({
+            "index": np.arange(3),
+            "val": np.random.rand(3)
+        })
+        file_path = os.path.join(tmp_path, "test_invalid_float_list.h5")
+        df.set_index("index", inplace=True)
+        df.to_hdf(file_path, key="oneline", format="table")
+
+        one = totest.Oneline(str(file_path))
+
+        with raises(ValueError, match="elements in list are not integers"):
+            one[[1.1, 2.2]]
         
 class TestPopulation:
     
