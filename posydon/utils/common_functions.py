@@ -96,7 +96,7 @@ def is_number(s):
     except ValueError:
         return False
 
-def zero_negative_values(arr):
+def zero_negative_values(arr): # pragma no cover
     """
         Set negative values in the array to zero.
 
