@@ -807,8 +807,8 @@ class detached_step:
                         history = (interp1d["omega"][:-1] / const.secyer / omega_crit_hist)
 
                         # ensure positive rotation values
-                        current = zero_negative_values([current])[0]
-                        history = zero_negative_values(history)
+                        current = zero_negative_values([current], key)[0]
+                        history = zero_negative_values(history, key)
 
                 elif (key in ["surf_avg_omega"] and obj != binary):
                     if obj.co:
@@ -818,8 +818,8 @@ class detached_step:
                         current = interp1d["omega"][-1] / const.secyer
                         history = interp1d["omega"][:-1] / const.secyer
 
-                        current = zero_negative_values([current])[0]
-                        history = zero_negative_values(history)
+                        current = zero_negative_values([current], key)[0]
+                        history = zero_negative_values(history, key)
                         
                 elif ("rl_relative_overflow_" in key and obj == binary):
                     s = binary.star_1 if "_1" in key[-2:] else binary.star_2
@@ -840,8 +840,8 @@ class detached_step:
                     current = interp1d[self.translate[key]][-1].item()
                     history = interp1d[self.translate[key]][:-1]
 
-                    current = zero_negative_values([current])[0]
-                    history = zero_negative_values(history)
+                    current = zero_negative_values([current], key)[0]
+                    history = zero_negative_values(history, key)
                     
                 elif (key in ["total_moment_of_inertia"] and obj != binary):
                     if obj.co:
@@ -869,8 +869,8 @@ class detached_step:
                                        t[:-1] - t_offset) * (const.msol * const.rsol**2))
                         history = np.where(tot_j_hist > 0, np.log10(tot_j_hist), -99)
 
-                        current = zero_negative_values([current])[0]
-                        history = zero_negative_values(history)
+                        current = zero_negative_values([current], key)[0]
+                        history = zero_negative_values(history, key)
                     
                 elif (key in ["spin"] and obj != binary):
                     if obj.co:
