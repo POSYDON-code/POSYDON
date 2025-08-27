@@ -94,7 +94,7 @@ def is_number(s):
     except ValueError:
         return False
 
-def zero_negative_values(arr): # pragma no cover
+def zero_negative_values(arr, key): # pragma no cover
     """
         Set negative values in the array to zero.
 
@@ -102,6 +102,8 @@ def zero_negative_values(arr): # pragma no cover
         ----------
         arr : np.ndarray
             The input array to process.
+        key : string
+            The name of the array column
 
         Returns
         -------
@@ -109,6 +111,10 @@ def zero_negative_values(arr): # pragma no cover
             The processed array with negative values set to zero.
     """
     arr = np.array(arr)
+
+    if np.any(arr < 0):
+        raise ReplaceValueWarning("A " + key + " value is negative. Setting to zero.")
+        
     arr[arr < 0] = 0.0
     return arr
 
