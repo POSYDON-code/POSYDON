@@ -37,7 +37,7 @@ class TestElements:
                     '__loader__', '__name__', '__package__', '__spec__',\
                     '_apply_POSYDON_filter', '_get_POSYDONWarning_class',\
                     '_issue_warn', 'copy', 'get_stats', 'print_stats', 'sys',\
-                    'warnings', 'no_src_code_format'}
+                    'warnings', 'nosrc_code_format'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
