@@ -32,7 +32,8 @@ from posydon.utils.common_functions import (bondi_hoyle,
                                             roche_lobe_radius,
                                             check_state_of_star,
                                             convert_metallicity_to_string,
-                                            set_binary_to_failed)
+                                            set_binary_to_failed,
+                                            zero_negative_values)
 from posydon.utils.interpolators import PchipInterpolator2
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, 
                                             STAR_STATES_CO, 
@@ -1583,6 +1584,10 @@ class detached_step:
 
                         current = (interp1d_sec["omega"][-1] / const.secyer / omega_crit_current_sec)
                         history = (interp1d_sec["omega"][:-1] / const.secyer / omega_crit_hist_sec)
+
+                        # ensure positive rotation values
+                        current = zero_negative_values([current])[0]
+                        history = zero_negative_values(history)
                         
                     elif (key in ["surf_avg_omega_div_omega_crit"] and obj == primary):
                         if primary.co:
@@ -1600,10 +1605,16 @@ class detached_step:
 
                             current = (interp1d_pri["omega"][-1] / const.secyer / omega_crit_current_pri)
                             history = (interp1d_pri["omega"][:-1] / const.secyer / omega_crit_hist_pri)
+
+                            current = zero_negative_values([current])[0]
+                            history = zero_negative_values(history)
                             
                     elif (key in ["surf_avg_omega"] and obj == secondary):
                         current = interp1d_sec["omega"][-1] / const.secyer
                         history = interp1d_sec["omega"][:-1] / const.secyer
+
+                        current = zero_negative_values([current])[0]
+                        history = zero_negative_values(history)
 
                     elif (key in ["surf_avg_omega"] and obj == primary):
                         if primary.co:
@@ -1612,6 +1623,9 @@ class detached_step:
                         else:
                             current = interp1d_pri["omega"][-1] / const.secyer
                             history = interp1d_pri["omega"][:-1] / const.secyer
+
+                            current = zero_negative_values([current])[0]
+                            history = zero_negative_values(history)
 
                     elif (key in ["rl_relative_overflow_1"] and obj == binary):
                         if binary.star_1.state in ("BH", "NS", "WD","massless_remnant"):
@@ -1643,11 +1657,17 @@ class detached_step:
                         current = interp1d_sec[self.translate[key]][-1].item()
                         history = interp1d_sec[self.translate[key]][:-1]
 
+                        current = zero_negative_values([current])[0]
+                        history = zero_negative_values(history)
+
                     elif (key in ["total_moment_of_inertia"] and obj == secondary):
                         current = interp1d_sec[self.translate[key]](
                             t[-1] - t_offset_sec).item() * (const.msol * const.rsol**2)
                         history = interp1d_sec[self.translate[key]](
                             t[:-1] - t_offset_sec) * (const.msol * const.rsol**2)
+                        
+                        current = zero_negative_values([current])[0]
+                        history = zero_negative_values(history)
                         
                     elif (key in ["total_moment_of_inertia"] and obj == primary):
                         if primary.co:
@@ -1658,6 +1678,9 @@ class detached_step:
                                 t[-1] - t_offset_pri).item() * (const.msol * const.rsol**2)
                             history = interp1d_pri[self.translate[key]](
                                 t[:-1] - t_offset_pri) * (const.msol * const.rsol**2)
+                            
+                            current = zero_negative_values([current])[0]
+                            history = zero_negative_values(history)
                             
                     elif (key in ["log_total_angular_momentum"] and obj == secondary):
 
