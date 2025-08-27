@@ -115,8 +115,9 @@ def zero_negative_values(arr, key): # pragma no cover
     arr = np.array(arr)
 
     if np.any(arr < 0):
-        raise ReplaceValueWarning("A " + key + " value is negative. Setting to zero.")
-        
+        Pwarn("A " + key + " value is negative. Setting to zero.", 
+              "ReplaceValueWarning")
+
     arr[arr < 0] = 0.0
     return arr
 
