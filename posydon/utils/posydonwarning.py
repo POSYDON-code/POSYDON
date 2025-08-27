@@ -30,7 +30,8 @@ caught warnings after it is copy to be returned:
 __authors__ = [
     "Monica Gallegos-Garcia <monicagallegosgarcia@u.northwestern.edu>",
     "Camille Liotine <cliotine@u.northwestern.edu>",
-    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",   
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"   
 ]
 
 
