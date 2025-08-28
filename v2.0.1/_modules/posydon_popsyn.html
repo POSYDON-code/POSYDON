@@ -1,0 +1,1244 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon_popsyn &mdash; posydon 2.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon_popsyn</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon_popsyn</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># script to setup a population run with one or multiple metallicities</span>
+<span class="c1">#</span>
+<span class="c1"># 1. Reads the args input file</span>
+<span class="c1"># 2. Determine the number of metallicities</span>
+<span class="c1"># 3. Create a submit file for each metallicity</span>
+<span class="c1"># 4. Create script to merge job array runs into a single population file </span>
+<span class="c1"># 5. Create a file to submit all the metallicities</span>
+<span class="c1"># 6. Including the dependencies</span>
+<span class="c1"># Author: Max Briel</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">binarypop_kwargs_from_ini</span><span class="p">,</span>
+    <span class="n">simprop_kwargs_from_ini</span><span class="p">,</span>
+    <span class="n">create_run_script_text</span><span class="p">,</span>
+    <span class="n">create_merge_script_text</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_metallicity_to_string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.SN_MODELS</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_SN_MODEL_NAME</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<div class="viewcode-block" id="create_run_script">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.create_run_script">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_run_script</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates a run script for the population synthesis run.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ini_file : str</span>
+<span class="sd">        Path to the .ini file containing population synthesis parameters.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+   
+    <span class="n">filename</span> <span class="o">=</span><span class="sa">f</span><span class="s1">&#39;run_metallicity.py&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">create_run_script_text</span><span class="p">(</span><span class="n">ini_file</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="create_merge_script">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.create_merge_script">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_merge_script</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates a merge script for the population synthesis run.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ini_file : str</span>
+<span class="sd">        Path to the .ini file containing population synthesis parameters.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;merge_metallicity.py&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">create_merge_script_text</span><span class="p">(</span><span class="n">ini_file</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="create_slurm_submit">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.create_slurm_submit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_slurm_submit</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span>
+                        <span class="n">job_array_length</span><span class="p">,</span>
+                        <span class="n">partition</span><span class="p">,</span>
+                        <span class="n">email</span><span class="p">,</span>
+                        <span class="n">walltime</span><span class="p">,</span>
+                        <span class="n">account</span><span class="p">,</span>
+                        <span class="n">mem_per_cpu</span><span class="p">,</span>
+                        <span class="n">path_to_posydon</span><span class="p">,</span>
+                        <span class="n">path_to_posydon_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates the slurm submit script for population synthesis job arrays.</span>
+<span class="sd">    </span>
+<span class="sd">    Creates a SLURM submission script file named </span>
+<span class="sd">    &quot;{str_met}_Zsun_slurm_array.slurm&quot; where str_met is the metallicity </span>
+<span class="sd">    converted to string format.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metallicity : float</span>
+<span class="sd">        The metallicity in solar units (e.g., 0.02 for Z=0.02)</span>
+<span class="sd">    job_array_length : int</span>
+<span class="sd">        The length of the job array (number of jobs)</span>
+<span class="sd">    partition : str, optional</span>
+<span class="sd">        SLURM partition to submit the job to</span>
+<span class="sd">    email : str, optional</span>
+<span class="sd">        Email address for job notifications</span>
+<span class="sd">    walltime : str</span>
+<span class="sd">        Time limit for the job in SLURM format (e.g., &quot;24:00:00&quot;)</span>
+<span class="sd">    account : str, optional</span>
+<span class="sd">        SLURM account to charge the job to</span>
+<span class="sd">    mem_per_cpu : str</span>
+<span class="sd">        Memory per CPU allocation (e.g., &quot;4G&quot;)</span>
+<span class="sd">    path_to_posydon : str</span>
+<span class="sd">        Path to the POSYDON installation</span>
+<span class="sd">    path_to_posydon_data : str</span>
+<span class="sd">        Path to the POSYDON_DATA directory</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+    <span class="c1"># 0 already included in job_array_length</span>
+    <span class="n">job_array_length</span> <span class="o">=</span> <span class="n">job_array_length</span><span class="o">-</span><span class="mi">1</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;#!/bin/bash</span>
+<span class="s1">#SBATCH --array=0-</span><span class="si">{</span><span class="n">job_array_length</span><span class="si">}</span>
+<span class="s1">#SBATCH --job-name=</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_popsyn</span>
+<span class="s1">#SBATCH --output=./</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs/popsyn_%A_%a.out</span>
+<span class="s1">#SBATCH --time=</span><span class="si">{</span><span class="n">walltime</span><span class="si">}</span>
+<span class="s1">#SBATCH --mem-per-cpu=</span><span class="si">{</span><span class="n">mem_per_cpu</span><span class="si">}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">account</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;#SBATCH --account=</span><span class="si">{</span><span class="n">account</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">if</span> <span class="n">partition</span><span class="o">!=</span><span class="kc">None</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;#SBATCH --partition=</span><span class="si">{</span><span class="n">partition</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+        
+    <span class="k">if</span> <span class="n">email</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span> <span class="o">+</span> \
+        <span class="sa">f</span><span class="s1">&#39;&#39;&#39;#SBATCH --mail-type=FAIL</span>
+<span class="s1">#SBATCH --mail-user=</span><span class="si">{</span><span class="n">email</span><span class="si">}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span> <span class="o">+</span> \
+    <span class="sa">f</span><span class="s1">&#39;&#39;&#39;export PATH_TO_POSYDON=</span><span class="si">{</span><span class="n">path_to_posydon</span><span class="si">}</span>
+<span class="s1">export PATH_TO_POSYDON_DATA=</span><span class="si">{</span><span class="n">path_to_posydon_data</span><span class="si">}</span>
+<span class="s1">srun python ./run_metallicity.py </span><span class="si">{</span><span class="n">metallicity</span><span class="si">}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s2">_Zsun_slurm_array.slurm&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_slurm_merge">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.create_slurm_merge">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_slurm_merge</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span>
+                       <span class="n">partition</span><span class="p">,</span>
+                       <span class="n">email</span><span class="p">,</span>
+                       <span class="n">merge_walltime</span><span class="p">,</span>
+                       <span class="n">account</span><span class="p">,</span>
+                       <span class="n">mem_per_cpu</span><span class="p">,</span>
+                       <span class="n">path_to_posydon</span><span class="p">,</span>
+                       <span class="n">path_to_posydon_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates the slurm submit script for merging population synthesis results.</span>
+<span class="sd">    </span>
+<span class="sd">    Creates a SLURM submission script file named </span>
+<span class="sd">    &quot;{str_met}_Zsun_merge_popsyn.slurm&quot; where str_met is the metallicity </span>
+<span class="sd">    converted to string format.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metallicity : float</span>
+<span class="sd">        The metallicity in solar units (e.g., 0.02 for Z=0.02)</span>
+<span class="sd">    partition : str, optional</span>
+<span class="sd">        SLURM partition to submit the job to</span>
+<span class="sd">    email : str, optional</span>
+<span class="sd">        Email address for job notifications</span>
+<span class="sd">    merge_walltime : str</span>
+<span class="sd">        Time limit for the merge job in SLURM format (e.g., &quot;12:00:00&quot;)</span>
+<span class="sd">    account : str, optional</span>
+<span class="sd">        SLURM account to charge the job to</span>
+<span class="sd">    mem_per_cpu : str</span>
+<span class="sd">        Memory per CPU allocation (e.g., &quot;4G&quot;)</span>
+<span class="sd">    path_to_posydon : str</span>
+<span class="sd">        Path to the POSYDON installation</span>
+<span class="sd">    path_to_posydon_data : str</span>
+<span class="sd">        Path to the POSYDON_DATA directory</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+    
+    <span class="c1"># set walltime for merge script on debug-cpu</span>
+    <span class="k">if</span> <span class="n">partition</span><span class="o">==</span><span class="s1">&#39;debug-cpu&#39;</span><span class="p">:</span>
+        <span class="n">merge_walltime</span><span class="o">=</span><span class="s1">&#39;00:14:00&#39;</span>
+
+    <span class="c1"># add required parameters</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;#!/bin/bash</span>
+<span class="s1">#SBATCH --job-name=</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_merge</span>
+<span class="s1">#SBATCH --output=./</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs/popsyn_merge.out</span>
+<span class="s1">#SBATCH --mem-per-cpu=</span><span class="si">{</span><span class="n">mem_per_cpu</span><span class="si">}</span>
+<span class="s1">#SBATCH --time=</span><span class="si">{</span><span class="n">merge_walltime</span><span class="si">}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+    <span class="c1"># add account if provided</span>
+    <span class="k">if</span> <span class="n">account</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;#SBATCH --account=</span><span class="si">{</span><span class="n">account</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+    <span class="c1"># add partition if provided</span>
+    <span class="k">if</span> <span class="n">partition</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;#SBATCH --partition=</span><span class="si">{</span><span class="n">partition</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+        
+    <span class="c1"># add email if provided</span>
+    <span class="k">if</span> <span class="n">email</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span> <span class="o">+</span> \
+        <span class="sa">f</span><span class="s1">&#39;&#39;&#39;#SBATCH --mail-type=FAIL</span>
+<span class="s1">#SBATCH --mail-user=</span><span class="si">{</span><span class="n">email</span><span class="si">}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span> <span class="o">+</span> \
+        <span class="sa">f</span><span class="s1">&#39;&#39;&#39;export PATH_TO_POSYDON=</span><span class="si">{</span><span class="n">path_to_posydon</span><span class="si">}</span>
+<span class="s1">export PATH_TO_POSYDON_DATA=</span><span class="si">{</span><span class="n">path_to_posydon_data</span><span class="si">}</span>
+<span class="s1">srun python ./merge_metallicity.py </span><span class="si">{</span><span class="n">metallicity</span><span class="si">}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_merge_popsyn.slurm&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_SN_MODEL_validity">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.check_SN_MODEL_validity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_SN_MODEL_validity</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">verbose_on_fail</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Checks if the step_SN model is valid for this script</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ini_file : str</span>
+<span class="sd">        the path to the ini file</span>
+<span class="sd">    verbose_on_fail : bool (default: True)</span>
+<span class="sd">        if `True` rerun the model selection with verbose mode if this failed</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the model is valid or use_interp_values=False, False otherwise    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">simprop_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+    <span class="n">step_SN_MODEL</span> <span class="o">=</span> <span class="n">simprop_kwargs</span><span class="p">[</span><span class="s1">&#39;step_SN&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># always allow the use of non-interpolation values</span>
+    <span class="k">if</span> <span class="n">step_SN_MODEL</span><span class="p">[</span><span class="s1">&#39;use_interp_values&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="c1"># step_SN MODEL check</span>
+    <span class="n">SN_MODEL_NAME_SEL</span> <span class="o">=</span> <span class="n">get_SN_MODEL_NAME</span><span class="p">(</span><span class="n">step_SN_MODEL</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">SN_MODEL_NAME_SEL</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose_on_fail</span><span class="p">:</span>
+            <span class="n">get_SN_MODEL_NAME</span><span class="p">(</span><span class="n">step_SN_MODEL</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="setup_popsyn_function">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.setup_popsyn_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_popsyn_function</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Function to setup the population synthesis run</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        the arguments passed to the function</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ini_file</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;File </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">ini_file</span><span class="si">}</span><span class="s1"> not found&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_SN_MODEL_validity</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ini_file</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The step_SN MODEL is not valid for this script. &quot;</span>
+                         <span class="s2">&quot;Please check the MODEL in the ini file&quot;</span><span class="p">)</span>
+
+    <span class="n">synpop_params</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ini_file</span><span class="p">)</span>
+    <span class="n">metallicities</span> <span class="o">=</span> <span class="n">synpop_params</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">synpop_params</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">job_array</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The number of binaries is less than the job array&quot;</span>
+                         <span class="s2">&quot; length. Please increase the number of binaries or&quot;</span>
+                         <span class="s2">&quot; decrease the job array length&quot;</span><span class="p">)</span>
+
+    <span class="n">create_run_script</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ini_file</span><span class="p">)</span>
+    <span class="n">create_merge_script</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ini_file</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Created run script&quot;</span><span class="p">)</span> 
+    <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">metallicities</span><span class="p">:</span>
+        <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">create_slurm_submit</span><span class="p">(</span><span class="n">met</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">job_array</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">partition</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+                            <span class="n">args</span><span class="o">.</span><span class="n">walltime</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">account</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">mem_per_cpu</span><span class="p">,</span>
+                            <span class="n">PATH_TO_POSYDON</span><span class="p">,</span> 
+                            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SLURM script created&quot;</span><span class="p">)</span>
+        <span class="n">create_slurm_merge</span><span class="p">(</span><span class="n">met</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">partition</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+                           <span class="n">args</span><span class="o">.</span><span class="n">merge_walltime</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">account</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">mem_per_cpu</span><span class="p">,</span>
+                           <span class="n">PATH_TO_POSYDON</span><span class="p">,</span>
+                           <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">))</span>
+
+    <span class="c1"># create submission script for all SLURM </span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;slurm_submit.sh&#39;</span>
+    
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#!/bin/bash</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">metallicities</span><span class="p">:</span>
+            <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;array=$(sbatch --parsable &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s2">_Zsun_slurm_array.slurm)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;echo &#39;&quot;</span><span class="o">+</span><span class="n">str_met</span><span class="o">+</span><span class="s2">&quot; job array submitted as &#39;$</span><span class="si">{array}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;merge=$(sbatch --parsable --dependency=afterok:$</span><span class="si">{array}</span><span class="s2"> &quot;</span>
+                       <span class="s2">&quot;--kill-on-invalid-dep=yes &quot;</span>
+                       <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_merge_popsyn.slurm)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;echo &#39;&quot;</span><span class="o">+</span><span class="n">str_met</span><span class="o">+</span><span class="s2">&quot; merge job submitted as &#39;$</span><span class="si">{merge}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>    </div>
+
+            
+
+<div class="viewcode-block" id="clear_previous_lines">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.clear_previous_lines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clear_previous_lines</span><span class="p">(</span><span class="n">num_lines</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear the specified number of previous lines in the terminal.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    num_lines : int</span>
+<span class="sd">        Number of lines to clear</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ANSI escape code to move cursor up one line</span>
+    <span class="n">UP</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[1A&#39;</span>
+    <span class="c1"># ANSI escape code to clear line</span>
+    <span class="n">CLEAR</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[K&#39;</span>
+    
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_lines</span><span class="p">):</span>
+        <span class="c1"># Move up and clear line</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">UP</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">CLEAR</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="check_population_files">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.check_population_files">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_population_files</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if all merged population files exist.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the folder where the population run is located</span>
+<span class="sd">    metallicities : list of floats</span>
+<span class="sd">        List of metallicities to check in solar units</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if all files exist, False otherwise</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary with metallicity as key and existence status as value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;POPULATION FILES CHECK ....................</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MET</span><span class="se">\t\t</span><span class="s2">POP_FILE&quot;</span><span class="p">)</span>
+    
+    <span class="n">all_exist</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">status_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">metallicities</span><span class="p">:</span>
+        <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+        <span class="n">merged_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_population.h5&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">merged_file</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="s2">NO</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+            <span class="n">all_exist</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">status_dict</span><span class="p">[</span><span class="n">met</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s2"> </span><span class="se">\t\t</span><span class="s2">OK&quot;</span><span class="p">)</span>
+            <span class="n">status_dict</span><span class="p">[</span><span class="n">met</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_exist</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31mPOPULATION FILES CHECK ....................ERROR</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">clear_previous_lines</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">metallicities</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[32mPOPULATION FILES CHECK ....................OK</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">all_exist</span><span class="p">,</span> <span class="n">status_dict</span></div>
+
+
+<div class="viewcode-block" id="check_binary_counts">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.check_binary_counts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_binary_counts</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">,</span> <span class="n">expected_count</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if each population file has the expected number of binaries.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the folder where the population run is located</span>
+<span class="sd">    metallicities : list of floats</span>
+<span class="sd">        List of metallicities to check in solar units</span>
+<span class="sd">    expected_count : int</span>
+<span class="sd">        Expected number of binaries per file</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if all counts match, False otherwise</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary with metallicity as key and binary count as value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;BINARY COUNT CHECK     ....................</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MET</span><span class="se">\t\t</span><span class="s2">EXPECTED</span><span class="se">\t</span><span class="s2">FOUND</span><span class="se">\t</span><span class="s2">STATUS&quot;</span><span class="p">)</span>
+    
+    <span class="n">all_match</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">counts_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">metallicities</span><span class="p">:</span>
+        <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+        <span class="n">merged_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_population.h5&#39;</span><span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">merged_file</span><span class="p">)</span>
+            <span class="n">num_binaries</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">number_of_systems</span>
+            <span class="n">counts_dict</span><span class="p">[</span><span class="n">met</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_binaries</span>
+            
+            <span class="k">if</span> <span class="n">num_binaries</span> <span class="o">!=</span> <span class="n">expected_count</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_count</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">num_binaries</span><span class="si">}</span><span class="s2">&quot;</span>
+                      <span class="s2">&quot;</span><span class="se">\t\033</span><span class="s2">[31mMISMATCH</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+                <span class="n">all_match</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_count</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">num_binaries</span><span class="si">}</span><span class="s2">&quot;</span>
+                      <span class="s2">&quot;</span><span class="se">\t\033</span><span class="s2">[32mOK</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_count</span><span class="si">}</span><span class="se">\t\t</span><span class="s2">-</span><span class="se">\t\033</span><span class="s2">[31mERROR: &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+            <span class="n">all_match</span> <span class="o">=</span> <span class="kc">False</span>
+    
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_match</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31mBINARY COUNT CHECK     ....................ERROR</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">clear_previous_lines</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">metallicities</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[32mBINARY COUNT CHECK     ....................OK</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">all_match</span><span class="p">,</span> <span class="n">counts_dict</span></div>
+
+
+<div class="viewcode-block" id="check_batches">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.check_batches">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_batches</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">metallicity</span><span class="p">,</span> <span class="n">batch_folder_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check batch files for a specific metallicity when the population file </span>
+<span class="sd">    is missing.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the folder where the population run is located</span>
+<span class="sd">    metallicity : float</span>
+<span class="sd">        Metallicity to check</span>
+<span class="sd">    batch_folder_name : str</span>
+<span class="sd">        Name of the folder containing batch files</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary with batch information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+    
+    <span class="c1"># Step 1: Find and parse the SLURM script to get expected batch count</span>
+    <span class="n">slurm_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_slurm_array.slurm&#39;</span><span class="p">)</span>
+    <span class="n">expected_batch_count</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">slurm_script</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">slurm_script</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#SBATCH --array=&#39;</span><span class="p">):</span>
+                    <span class="n">array_range</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="s1">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">array_range</span><span class="p">:</span>
+                        <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">array_range</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">))</span>
+                        <span class="n">expected_batch_count</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="k">break</span>
+    
+    <span class="c1"># Step 2: Check the batch folder</span>
+    <span class="n">batch_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_</span><span class="si">{</span><span class="n">batch_folder_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">batch_folder</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="s2">-</span><span class="se">\t</span><span class="s2">-</span><span class="se">\t\033</span><span class="s2">[31mNO BATCH DIR</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;folder_missing&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;expected_count&quot;</span><span class="p">:</span> <span class="n">expected_batch_count</span><span class="p">,</span>
+            <span class="s2">&quot;found_count&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    
+    <span class="c1"># Step 3: Count batch files</span>
+    <span class="n">batch_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">batch_folder</span><span class="p">,</span> <span class="s1">&#39;evolution.combined.*&#39;</span><span class="p">))</span>
+    <span class="n">actual_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_files</span><span class="p">)</span>
+    <span class="c1"># Step 4: Compare and report</span>
+    <span class="n">missing_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">expected_batch_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="s2">?</span><span class="se">\t</span><span class="si">{</span><span class="n">actual_count</span><span class="si">}</span><span class="se">\t\033</span><span class="s2">[33mUNKNOWN</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;unknown_expected_count&quot;</span>
+    <span class="k">elif</span> <span class="n">actual_count</span> <span class="o">&lt;</span> <span class="n">expected_batch_count</span><span class="p">:</span>
+        <span class="n">missing_count</span> <span class="o">=</span> <span class="n">expected_batch_count</span> <span class="o">-</span> <span class="n">actual_count</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_batch_count</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">actual_count</span><span class="si">}</span><span class="s2">&quot;</span>
+              <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\033</span><span class="s2">[31m</span><span class="si">{</span><span class="n">missing_count</span><span class="si">}</span><span class="s2"> MISSING</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Attempt to find which specific batch files are missing</span>
+        <span class="n">found_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">batch_file</span> <span class="ow">in</span> <span class="n">batch_files</span><span class="p">:</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">batch_file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;evolution.combined&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+                <span class="n">idx_str</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">found_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idx_str</span><span class="p">))</span>
+        
+        <span class="n">missing_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">expected_batch_count</span><span class="p">))</span> <span class="o">-</span> <span class="n">found_indices</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Missing batches: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sample</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">))[:</span><span class="mi">10</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Missing batches include: </span><span class="si">{</span><span class="n">sample</span><span class="si">}</span><span class="s2"> and &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)</span><span class="o">-</span><span class="mi">10</span><span class="si">}</span><span class="s2"> more&quot;</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;incomplete&quot;</span>
+    <span class="k">elif</span> <span class="n">actual_count</span> <span class="o">==</span> <span class="n">expected_batch_count</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_batch_count</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">actual_count</span><span class="si">}</span><span class="s2">&quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\033</span><span class="s2">[32mCOMPLETE</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;complete&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">extra_count</span> <span class="o">=</span> <span class="n">actual_count</span> <span class="o">-</span> <span class="n">expected_batch_count</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_batch_count</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">actual_count</span><span class="si">}</span><span class="s2">&quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\033</span><span class="s2">[33m</span><span class="si">{</span><span class="n">extra_count</span><span class="si">}</span><span class="s2"> EXTRA</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;extra_files&quot;</span>
+        
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Get the jobID</span>
+        <span class="n">jobIDs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span>
+                                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs/popsyn_*.out&#39;</span><span class="p">))</span>
+        <span class="n">jobIDs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">job</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobIDs</span><span class="p">]</span>
+        
+        <span class="n">jobIDs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">jobIDs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">jobIDs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please select a job ID to use: &quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">jobIDs</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                
+            <span class="n">selected_job_idx</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">while</span> <span class="n">selected_job_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Enter the index to the job ID: &quot;</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">jobIDs</span><span class="p">):</span>
+                        <span class="n">selected_job_idx</span> <span class="o">=</span> <span class="n">idx</span>
+                        <span class="n">jobID</span> <span class="o">=</span> <span class="n">jobIDs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>  <span class="c1"># Filter to only the selected job ID</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid selection. Please try again.&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please enter a valid number.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">jobID</span> <span class="o">=</span> <span class="n">jobIDs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">READING THE LOGS OF </span><span class="si">{</span><span class="n">jobID</span><span class="si">}</span><span class="s2"> ....&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reasons for missing files:&quot;</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">missing_indices</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs/popsyn_</span><span class="si">{</span><span class="n">jobID</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">.out&#39;</span><span class="p">),</span> 
+                <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">lines</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="n">last_3_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]]</span>
+                        <span class="k">if</span> <span class="s2">&quot;DUE TO TIME LIMIT&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">last_3_lines</span><span class="p">):</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="sa">F</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">: Wall time exceeded&quot;</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s2">_logs/popsyn_</span><span class="si">{</span><span class="n">jobID</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">.out:&quot;</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">last_3_lines</span><span class="p">):</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">: &quot;</span>
+                              <span class="s2">&quot;File contains {len(lines)} line(s):&quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="s2">&quot;DUE TO TIME LIMIT&quot;</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Wall time exceeded&quot;</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s2">_logs/popsyn_</span><span class="si">{</span><span class="n">jobID</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">.out:&quot;</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">: &lt;empty file&gt;&quot;</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
+        <span class="s2">&quot;expected_count&quot;</span><span class="p">:</span> <span class="n">expected_batch_count</span><span class="p">,</span>
+        <span class="s2">&quot;found_count&quot;</span><span class="p">:</span> <span class="n">actual_count</span><span class="p">,</span>
+        <span class="s2">&quot;metallicity&quot;</span><span class="p">:</span> <span class="n">metallicity</span><span class="p">,</span>
+        <span class="s2">&quot;batch_folder&quot;</span><span class="p">:</span> <span class="n">batch_folder</span><span class="p">,</span>
+        <span class="s2">&quot;missing_indices&quot;</span><span class="p">:</span> <span class="n">missing_indices</span> <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;incomplete&quot;</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="generate_rescue_script">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.generate_rescue_script">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_rescue_script</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">batch_status</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a script to resubmit failed runs.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments passed to the CLI</span>
+<span class="sd">    batch_status : dict</span>
+<span class="sd">        Dictionary with batch status information</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Path to the generated rescue script</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating rescue script for failed runs...&quot;</span><span class="p">)</span>
+    
+    <span class="n">run_folder</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">run_folder</span>
+    <span class="c1"># open the current slurm array script</span>
+    <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">batch_status</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">])</span>
+    <span class="n">slurm_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_slurm_array.slurm&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># get the parameters from the current script</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">slurm_script</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    
+    <span class="c1"># get the job array length</span>
+    <span class="n">job_array_length</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">account</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#SBATCH --array=&#39;</span><span class="p">):</span>
+            <span class="n">array_range</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s1">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">array_range</span><span class="p">:</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">array_range</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">))</span>
+                <span class="n">job_array_length</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --job-name=&quot;</span><span class="p">):</span>
+            <span class="n">job_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --time=&quot;</span><span class="p">):</span>
+            <span class="n">walltime</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">walltime</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">walltime</span> <span class="o">=</span> <span class="n">walltime</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">walltime</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">walltime</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mem-per-cpu=&quot;</span><span class="p">):</span>
+            <span class="n">mem_per_cpu</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">mem_per_cpu</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">mem_per_cpu</span> <span class="o">=</span> <span class="n">mem_per_cpu</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mem_per_cpu</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">mem_per_cpu</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --partition=&quot;</span><span class="p">):</span>
+            <span class="n">partition</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">partition</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">partition</span> <span class="o">=</span> <span class="n">partition</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">partition</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">partition</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --account=&quot;</span><span class="p">):</span>
+            <span class="n">account</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">account</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">account</span> <span class="o">=</span> <span class="n">account</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">account</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">account</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-user=&quot;</span><span class="p">):</span>
+            <span class="n">email</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">email</span> <span class="o">=</span> <span class="n">email</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">email</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-type=&quot;</span><span class="p">):</span>
+            <span class="n">mail_type</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --output=&quot;</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;export PATH_TO_POSYDON=&quot;</span><span class="p">):</span>
+            <span class="n">path_to_posydon</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;export PATH_TO_POSYDON_DATA=&quot;</span><span class="p">):</span>
+            <span class="n">path_to_posydon_data</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        
+    <span class="c1"># Extract missing indices from batch_status</span>
+    <span class="n">missing_indices</span> <span class="o">=</span> <span class="n">batch_status</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;missing_indices&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    
+    <span class="c1"># Format job array string for SBATCH</span>
+    <span class="k">if</span> <span class="n">missing_indices</span><span class="p">:</span>
+        <span class="n">job_array_str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No missing indices found in batch status.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;Cannot generate rescue script.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;Please run the check function to resubmit the merge jobs.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;posydon-popsyn check &lt;run_folder&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># create a new slurm script</span>
+    <span class="n">rescue_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_rescue.slurm&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">rescue_script</span><span class="p">):</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">rescue_script</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+        
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rescue_script</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;#!/bin/bash</span>
+<span class="s1">#SBATCH --array=</span><span class="si">{</span><span class="n">job_array_str</span><span class="si">}</span>
+<span class="s1">#SBATCH --job-name=</span><span class="si">{</span><span class="n">job_name</span><span class="si">}</span><span class="s1">_rescue</span>
+<span class="s1">#SBATCH --output=./</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs/rescue_%A_%a.out</span>
+<span class="s1">#SBATCH --time=</span><span class="si">{</span><span class="n">walltime</span><span class="si">}</span>
+<span class="s1">#SBATCH --mem-per-cpu=</span><span class="si">{</span><span class="n">mem_per_cpu</span><span class="si">}</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">account</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;#SBATCH --account=</span><span class="si">{</span><span class="n">account</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">partition</span><span class="o">!=</span><span class="kc">None</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;#SBATCH --partition=</span><span class="si">{</span><span class="n">partition</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">email</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;#SBATCH --mail-type=</span><span class="si">{</span><span class="n">mail_type</span><span class="si">}</span>
+<span class="s1">#SBATCH --mail-user=</span><span class="si">{</span><span class="n">email</span><span class="si">}</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;export PATH_TO_POSYDON=</span><span class="si">{</span><span class="n">path_to_posydon</span><span class="si">}</span>
+<span class="s1">export PATH_TO_POSYDON_DATA=</span><span class="si">{</span><span class="n">path_to_posydon_data</span><span class="si">}</span>
+
+<span class="s1">export SLURM_ARRAY_TASK_COUNT=</span><span class="si">{</span><span class="n">job_array_length</span><span class="si">}</span>
+<span class="s1">export SLURM_ARRAY_TASK_MIN=0</span>
+
+<span class="s1">srun python ./run_metallicity.py </span><span class="si">{</span><span class="n">batch_status</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span><span class="si">}</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rescue script generated: </span><span class="si">{</span><span class="n">rescue_script</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rescue_script</span></div>
+
+
+<div class="viewcode-block" id="get_ini_file">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.get_ini_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ini_file</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Find and select the INI file for the population synthesis run.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        Command line arguments that needs to containing the run_folder path.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Path to the selected INI file.</span>
+<span class="sd">        </span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        If no INI file is found in the run folder.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="c1"># Find and select the INI file</span>
+    <span class="n">ini_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span> <span class="s1">&#39;*.ini&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ini_files</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;No INI file found in the run folder.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Handle multiple INI files</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ini_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Multiple INI files found:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ini_files</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter the index of the INI file you want to use: &quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">selected_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">selected_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ini_files</span><span class="p">)):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid index; using the first INI file.&quot;</span><span class="p">)</span>
+                <span class="n">selected_ini</span> <span class="o">=</span> <span class="n">ini_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">selected_ini</span> <span class="o">=</span> <span class="n">ini_files</span><span class="p">[</span><span class="n">selected_index</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid input; using the first INI file.&quot;</span><span class="p">)</span>
+            <span class="n">selected_ini</span> <span class="o">=</span> <span class="n">ini_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">selected_ini</span> <span class="o">=</span> <span class="n">ini_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">selected_ini</span></div>
+
+    
+<div class="viewcode-block" id="get_binary_params">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.get_binary_params">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_binary_params</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Read the binary population parameters from the INI file</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ini_file : str</span>
+<span class="sd">        The path to the INI file</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        The number of metallicities</span>
+<span class="sd">    int</span>
+<span class="sd">        The number of binaries</span>
+<span class="sd">    list of floats</span>
+<span class="sd">        The list of metallicities in solar units</span>
+<span class="sd">    dict</span>
+<span class="sd">        The dictionary of population synthesis parameters from the INI file</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Read the population synthesis parameters</span>
+    <span class="n">synpop_params</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+    <span class="n">metallicities</span> <span class="o">=</span> <span class="n">synpop_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metallicity&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">num_metallicities</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">metallicities</span><span class="p">)</span>
+    <span class="n">number_of_binaries</span> <span class="o">=</span> <span class="n">synpop_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num_metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">,</span> <span class="n">synpop_params</span></div>
+
+
+<div class="viewcode-block" id="check_popsyn_function">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.check_popsyn_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_popsyn_function</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to check the status of a population run.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments passed to the function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking the status of the population run in </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">ini_file</span> <span class="o">=</span> <span class="n">get_ini_file</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Using INI file:</span><span class="se">\n</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">num_metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span><span class="p">,</span>\
+        <span class="n">metallicities</span><span class="p">,</span> <span class="n">synpop_params</span><span class="o">=</span>  <span class="n">get_binary_params</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;REQUESTED PARAMETERS&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# metallicities: </span><span class="si">{</span><span class="n">num_metallicities</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# binaries:      </span><span class="si">{</span><span class="n">number_of_binaries</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Checking the status of the population run&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+    
+    <span class="c1"># Check if all population files exist</span>
+    <span class="n">files_exist</span><span class="p">,</span> <span class="n">file_status</span> <span class="o">=</span> <span class="n">check_population_files</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span>
+                                                      <span class="n">metallicities</span><span class="p">)</span>
+    
+    <span class="c1"># Check binary counts for existing files</span>
+    <span class="k">if</span> <span class="n">files_exist</span><span class="p">:</span>
+        <span class="n">counts_match</span><span class="p">,</span> <span class="n">binary_counts</span> <span class="o">=</span> <span class="n">check_binary_counts</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span>
+                                                          <span class="n">metallicities</span><span class="p">,</span>
+                                                          <span class="n">number_of_binaries</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">files_exist</span> <span class="ow">and</span> <span class="n">counts_match</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\033</span><span class="s2">[32mAll checks passed successfully.</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\033</span><span class="s2">[31mOne or more checks failed.</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We will attempt to rescue the failed runs.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+    
+    <span class="c1">#For files that don&#39;t exist, check batches</span>
+    <span class="n">batch_status</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">missing_files</span> <span class="o">=</span> <span class="p">{</span><span class="n">met</span><span class="p">:</span> <span class="n">status</span> <span class="k">for</span> <span class="n">met</span><span class="p">,</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">file_status</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">status</span><span class="p">}</span>
+    
+    <span class="k">if</span> <span class="n">missing_files</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Checking batch files for missing populations:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">missing_files</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+            <span class="n">batch_status</span><span class="p">[</span><span class="n">met</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_batches</span><span class="p">(</span>
+                                <span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span>
+                                <span class="n">met</span><span class="p">,</span>
+                                <span class="n">synpop_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;temp_directory&#39;</span><span class="p">,</span> <span class="s1">&#39;batches&#39;</span><span class="p">)</span>
+                                <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+    
+        <span class="n">batch_error</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">status</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;complete&quot;</span>
+            <span class="k">for</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">batch_status</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="c1"># If no missing files, then we can resubmit the merge script</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">batch_error</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">All batch files are complete.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please resubmit the merge jobs to generate the population files.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Would you like to resubmit the merge jobs?&quot;</span><span class="p">)</span>
+            <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter &#39;yes&#39;  or &#39;y&#39; to resubmit the merge jobs: &quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;yes&#39;</span> <span class="ow">or</span> <span class="n">choice</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">missing_files</span><span class="p">:</span>
+                    <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+                    
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;sbatch </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_merge_popsyn.slurm&#39;</span>
+                    <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Merge jobs resubmitted.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Merge jobs not resubmitted.&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">One or more batch files are incomplete.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;We need to resubmit some of the batch jobs.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;Please use the following command to create and</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;submit a rescue script:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;posydon-popsyn rescue </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;You can add additional arguments to the command, such as </span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;--email, --partition, etc.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;This will generate resubmission scripts that you can review</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="o">+</span> <span class="s2">&quot;and run to resubmit failed jobs.&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="rescue_popsyn_function">
+<a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.rescue_popsyn_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rescue_popsyn_function</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to rescue a failed population run.</span>
+<span class="sd">    </span>
+<span class="sd">    Creates resubmission scripts for failed batch jobs.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments passed to the function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># 1. Check status of the run</span>
+    <span class="n">ini_file</span> <span class="o">=</span> <span class="n">get_ini_file</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Using INI file:</span><span class="se">\n</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">num_metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span><span class="p">,</span>\
+        <span class="n">metallicities</span><span class="p">,</span> <span class="n">synpop_params</span><span class="o">=</span>  <span class="n">get_binary_params</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;REQUESTED PARAMETERS&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# metallicities: </span><span class="si">{</span><span class="n">num_metallicities</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# binaries:      </span><span class="si">{</span><span class="n">number_of_binaries</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Checking the status of the population run&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+        
+    <span class="c1"># Check if all population files exist</span>
+    <span class="n">files_exist</span><span class="p">,</span> <span class="n">file_status</span> <span class="o">=</span> <span class="n">check_population_files</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span>
+                                                      <span class="n">metallicities</span><span class="p">)</span>
+    
+    <span class="c1"># Check binary counts for existing files</span>
+    <span class="k">if</span> <span class="n">files_exist</span><span class="p">:</span>
+        <span class="n">counts_match</span><span class="p">,</span> <span class="n">binary_counts</span> <span class="o">=</span> <span class="n">check_binary_counts</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span>
+                                                          <span class="n">metallicities</span><span class="p">,</span>
+                                                          <span class="n">number_of_binaries</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">files_exist</span> <span class="ow">and</span> <span class="n">counts_match</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\033</span><span class="s2">[32mAll checks passed successfully.</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\033</span><span class="s2">[31mOne or more checks failed.</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We will attempt to rescue the failed runs.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+    
+    <span class="c1">#For files that don&#39;t exist, check batches</span>
+    <span class="n">batch_status</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">missing_files</span> <span class="o">=</span> <span class="p">{</span><span class="n">met</span><span class="p">:</span> <span class="n">status</span> <span class="k">for</span> <span class="n">met</span><span class="p">,</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">file_status</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">status</span><span class="p">}</span>
+    
+    <span class="k">if</span> <span class="n">missing_files</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Checking batch files for missing populations:&quot;</span><span class="p">)</span>
+        <span class="n">rescue_scripts</span> <span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">missing_files</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+            <span class="n">batch_status</span><span class="p">[</span><span class="n">met</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_batches</span><span class="p">(</span>
+                                <span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span>
+                                <span class="n">met</span><span class="p">,</span>
+                                <span class="n">synpop_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;temp_directory&#39;</span><span class="p">,</span> <span class="s1">&#39;batches&#39;</span><span class="p">)</span>
+                                <span class="p">)</span>
+           
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">GENERATING A RESCUE SCRIPT ....................&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Generate a rescue script</span>
+            <span class="n">rescue_scripts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">generate_rescue_script</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">batch_status</span><span class="p">[</span><span class="n">met</span><span class="p">])</span>
+            <span class="p">)</span>
+        
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+            
+        <span class="c1"># Generate a resubmit_slurm.sh script</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GENERATING A RESUBMIT SCRIPT ....................</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">resubmit_sh_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span> <span class="s1">&#39;resubmit_slurm.sh&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">resubmit_sh_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#!/bin/bash</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">rescue_scripts</span><span class="p">:</span>
+                <span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
+                <span class="n">met</span> <span class="o">=</span> <span class="n">script</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;resubmit=$(sbatch --parsable </span><span class="si">{</span><span class="n">script</span><span class="si">}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;echo &#39;Rescue script submitted as &#39;$</span><span class="si">{resubmit}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>                
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;merge=$(sbatch --parsable &quot;</span>
+                        <span class="s2">&quot;--dependency=afterok:$</span><span class="si">{resubmit}</span><span class="s2"> &quot;</span>
+                        <span class="s2">&quot;--kill-on-invalid-dep=yes &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">met</span><span class="si">}</span><span class="s2">_Zsun_merge_popsyn.slurm)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;echo &#39;Merge job submitted as &#39;$</span><span class="si">{merge}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rescue scripts ready to be resubmitted by &#39;sh </span><span class="si">{</span><span class="n">resubmit_sh_file</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Would you like to submit the rescue scripts?&quot;</span><span class="p">)</span>
+        <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter &#39;yes&#39; or &#39;y&#39; to submit the rescue scripts: &quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;yes&#39;</span> <span class="ow">or</span> <span class="n">choice</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;sh </span><span class="si">{</span><span class="n">resubmit_sh_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rescue scripts submitted.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please submit the rescue scripts using the following command:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sh resubmit_slurm.sh&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1">#################</span>
+<span class="c1"># MAIN FUNCTION</span>
+<span class="c1">#################</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s1">&#39;posydon-popsyn&#39;</span><span class="p">,</span> 
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;POSYDON population synthesis command line tool&#39;</span><span class="p">)</span>
+    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;subcommands&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;command&#39;</span><span class="p">)</span>
+    <span class="n">subparsers</span><span class="o">.</span><span class="n">required</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="c1"># setup a run subcommand</span>
+    <span class="n">setup_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;setup&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;setup a population run&#39;</span><span class="p">)</span>
+    <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;ini_file&#39;</span><span class="p">,</span> 
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;a population ini file for which you want to setup a population run&#39;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="s1">&#39;--job_array&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the number of job in the job array you want to run&#39;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> 
+        <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--email&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;an email for the slurm scripts&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--partition&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;what cluster partition you want to run the script on&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--walltime&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the walltime for the population synthesis in SLURM format&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;23:00:00&#39;</span><span class="p">)</span>    
+    <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--merge_walltime&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the walltime for the merge script in SLURM format&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;12:00:00&#39;</span><span class="p">)</span>
+    <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--mem_per_cpu&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the memory per cpu per job array in SLURM format&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;7G&#39;</span><span class="p">)</span>
+    <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--account&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the account you would like to use&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">setup_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">setup_popsyn_function</span><span class="p">)</span>
+    
+    <span class="c1"># Check the run subcommand</span>
+    <span class="n">check_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s1">&#39;check&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;check the status of a population run&#39;</span><span class="p">)</span>
+    <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;run_folder&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the folder where the population run is located&#39;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">check_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">check_popsyn_function</span><span class="p">)</span>
+    
+    <span class="c1"># Rescue the run subcommand</span>
+    <span class="n">rescue_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s1">&#39;rescue&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;rescue a failed population run&#39;</span><span class="p">)</span>
+    <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;run_folder&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the folder where the population run is located&#39;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="s1">&#39;--job_array&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the number of job in the job array you want to run&#39;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--email&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;an email for the slurm scripts&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--partition&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;what cluster partition you want to run the script on&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--walltime&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the walltime you would like to use in SLURM format&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--merge_walltime&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the walltime you would like to use for the merge script in SLURM format&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--mem_per_cpu&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the memory per cpu you would like to use in SLURM format&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--account&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the account you would like to use&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">rescue_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">rescue_popsyn_function</span><span class="p">)</span>
+    
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.1
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.1/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

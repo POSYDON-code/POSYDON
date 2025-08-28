@@ -1,0 +1,231 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Common Installation Issues &mdash; posydon 2.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Code Usage Questions" href="code-questions.html" />
+    <link rel="prev" title="Contact Information" href="../contact-support/contact-information.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Common Installation Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-tips">Troubleshooting Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#still-facing-issues">Still Facing Issues?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Common Installation Issues</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/troubleshooting-faqs/installation-issues.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="common-installation-issues">
+<span id="installation-issues"></span><h1>Common Installation Issues<a class="headerlink" href="#common-installation-issues" title="Link to this heading"></a></h1>
+<p>From time to time, users might encounter issues during the installation of POSYDON. This page aims to address common installation problems and offer solutions. If your problem isn’t covered here, please <a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues">report the issue</a> so we can assist you and possibly update this page for the benefit of others.</p>
+<ol class="arabic simple">
+<li><p><strong>Slow `conda` solving:</strong></p></li>
+</ol>
+<p><cite>conda</cite> can be very slow and sometimes gets stuck on “Verifying transaction” or “Executing transaction”, especially when installing packages on a cluster.
+It creates many small files, which can be difficult for HPC clusters to handle.
+One way to speed up the installation is to use the <cite>mamba</cite> package manager, which is a drop-in replacement for <cite>conda</cite> but is much faster (<a class="reference external" href="https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community">click here for more details</a>).
+Please proceed at your own discretion, as this has not been fully vetted. Alternatively, you can install the <cite>libmamba</cite> solver to speed up the solving process for new installations in a <cite>conda</cite> environment.
+To install the <cite>libmamba</cite> solver, run the following command in your <cite>conda</cite> environment of choice or <cite>base</cite> <cite>conda</cite> environment:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">conda</span> <span class="pre">install</span> <span class="pre">conda-libmamba-solver</span>
+<span class="pre">`</span></code></p>
+<p>This will install the <cite>libmamba</cite> solver, which is a drop-in replacement for the default <cite>conda</cite> solver.
+This should speed up solving the environment and installing packages but is not guaranteed to work in all cases.</p>
+<ol class="arabic" start="2">
+<li><dl>
+<dt><strong>Failed Dependencies</strong>:</dt><dd><ul class="simple">
+<li><p><strong>Description</strong>: Sometimes, certain dependencies might fail to install or conflict with pre-existing ones.</p></li>
+<li><p><strong>Solution</strong>: Try installing the failed dependencies separately using <code class="docutils literal notranslate"><span class="pre">pip</span></code> or <code class="docutils literal notranslate"><span class="pre">conda</span></code> before installing POSYDON. If using <code class="docutils literal notranslate"><span class="pre">conda</span></code>, consider creating a fresh environment specifically for POSYDON. Additionally, some of the package versions are only available on <code class="docutils literal notranslate"><span class="pre">conda-forge</span></code>. Please ensure that <code class="docutils literal notranslate"><span class="pre">conda-forge</span></code> has been added to conda as a channel using the command <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">config</span> <span class="pre">--add</span> <span class="pre">channels</span> <span class="pre">conda-forge</span></code>.</p></li>
+</ul>
+<p>We try our best to keep the dependencies updated and compatible. However, if you encounter issues, please let us know!</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Failed to Set Environment Variables</strong>:</dt><dd><ul class="simple">
+<li><p><strong>Description</strong>: After installation, you might forget to set the <code class="docutils literal notranslate"><span class="pre">PATH_TO_POSYDON</span></code> and <code class="docutils literal notranslate"><span class="pre">PATH_TO_POSYDON_DATA</span></code> environment variables.</p></li>
+<li><p><strong>Solution</strong>: Refer back to the <a class="reference internal" href="../getting-started/installation-guide.html#installation-guide"><span class="std std-ref">installation guide</span></a> to ensure all post-installation steps are followed.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Insufficient Storage Space</strong>:</dt><dd><ul class="simple">
+<li><p><strong>Description</strong>: POSYDON requires around 140GB of free storage space for the down-sampled MESA simulation library and related files.</p></li>
+<li><p><strong>Solution</strong>: Ensure you have enough space on your installation drive. Delete unnecessary files or consider using a larger storage solution.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+<section id="troubleshooting-tips">
+<h2>Troubleshooting Tips<a class="headerlink" href="#troubleshooting-tips" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Check Error Messages</strong>: Always read the error messages during the installation. They often provide hints or exact reasons for the failure.</p></li>
+<li><p><strong>Use a Virtual Environment</strong>: Installing POSYDON in a virtual environment (e.g., via <code class="docutils literal notranslate"><span class="pre">conda</span></code> or <code class="docutils literal notranslate"><span class="pre">venv</span></code>) can prevent conflicts with system-wide packages.</p></li>
+<li><p><strong>Update Your Package Managers</strong>: Ensure that both <code class="docutils literal notranslate"><span class="pre">pip</span></code> and <code class="docutils literal notranslate"><span class="pre">conda</span></code> (if you use them) are updated to their latest versions.</p></li>
+<li><p><strong>System Compatibility</strong>: Double-check the compatibility of POSYDON with your operating system and Python version.</p></li>
+<li><p><strong>Check Online Forums</strong>: Platforms like Stack Overflow often have threads related to common Python package installation issues.</p></li>
+</ol>
+</section>
+<section id="still-facing-issues">
+<h2>Still Facing Issues?<a class="headerlink" href="#still-facing-issues" title="Link to this heading"></a></h2>
+<p>If you’ve tried the solutions above and are still encountering problems, please <a class="reference internal" href="../contact-support/contact-information.html#contact-info"><span class="std std-ref">contact us</span></a> with as much detail as possible. We’re here to help!</p>
+<p>Thank you for your patience, and we appreciate your interest in POSYDON!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../contact-support/contact-information.html" class="btn btn-neutral float-left" title="Contact Information" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="code-questions.html" class="btn btn-neutral float-right" title="Code Usage Questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.1
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.1/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
