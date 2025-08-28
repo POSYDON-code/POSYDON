@@ -60,7 +60,7 @@ respectively. To get a tuple of all the available values use
     mygrid.final_values.dtype.names
 
 You can access the initial value of any physical grid property ``var_name`` (which is a ``str`` corresponding to one of the available data columns above) with 
-:samp:`mygrid.initial_values[{PHYS}]`. It will return a numpy array with the 
+:samp:`mygrid.initial_values[{var_name}]`. Doing this will return a ``numpy`` array with the 
 values of this property for all the runs. 
 Note that these physical properties of the binaries in the grid are different 
 from the grid configuration properties listed above. 
