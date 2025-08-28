@@ -50,7 +50,7 @@ You can get a list of the :ref:`grid configuration properties <tab_grid_properti
 You can access the value of any grid configuration property "PROPERTY" with 
 :samp:`mygrid.config[{PROPERTY}]`. Viewing this information can be useful if you are curious about how the grid was run and which options were included when postprocessing the grid (this is an advanced topic that you can read more about :ref:`here </components-overview/post_processing/pipeline.rst>`).
 
-Next, you can look at the initial and final values of the runs. All the values
+To maintain a relatively low data storage footprint, the PSyGrid object does not store all of the raw MESA stellar evolution data, but you can use it to look at the initial (first time step) and final (last time step) values and downsampled histories of the MESA simulations. All the initial and final simulation values
 are available at :samp:`mygrid.initial_values` and :samp:`mygrid.final_values`,
 respectively. To get a tuple of all the available values use
 
