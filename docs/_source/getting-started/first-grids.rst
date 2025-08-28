@@ -1,6 +1,6 @@
 .. _first-grids:
 
-Looking at our POSYDON grids
+Quick Start: Examining the MESA Grids
 ============================
 
 Installation and Data Download
