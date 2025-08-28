@@ -17,7 +17,7 @@ Additionally, POSYDON requires data to be downloaded from Zenodo. For our simple
 
     get-posydon-data DR2_1Zsun
 
-Loading a grid
+Loading a MESA grid
 --------------
 
 You can access our grids of MESA simulations using the ``PSyGrid`` module. To load a grid, first import the module, instantiate a new ``PSyGrid`` object, and pass the argument ``filepath`` to open a grid. In this example we load the HMS-HMS grid at solar metallicity:
