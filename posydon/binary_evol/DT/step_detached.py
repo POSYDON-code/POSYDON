@@ -752,8 +752,13 @@ class detached_step:
         mass_interp_pri = primary.interp1d[self.translate["mass"]]
 
         secondary.interp1d["sep"] = sep_interp
-        secondary.interp1d["ecc"] = ecc_interp    
+        secondary.interp1d["ecc"] = ecc_interp
+        secondary.interp1d["time"] = t    
         secondary.interp1d["omega"] = omega_interp_sec
+
+        primary.interp1d["sep"] = sep_interp
+        primary.interp1d["ecc"] = ecc_interp
+        primary.interp1d["time"] = t            
         primary.interp1d["omega"] = omega_interp_pri
 
         secondary.interp1d["porb"] = orbital_period_from_separation(
@@ -762,8 +767,6 @@ class detached_step:
         primary.interp1d["porb"] = orbital_period_from_separation(
             sep_interp, mass_interp_pri(t - primary.t_offset),
             mass_interp_sec(t - secondary.t_offset))
-
-        secondary.interp1d["time"] = t
 
         for obj, prop in zip([secondary, primary, binary], 
                                 [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
