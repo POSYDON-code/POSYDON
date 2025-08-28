@@ -197,7 +197,7 @@ def get_period_pdf(kwargs):
     return period_pdf
 
 def get_pdf(kwargs, mass_pdf=False):
-    """Function that build a PDF function given the simulation parameters
+    """Function that builds a PDF function given the simulation parameters
     
     Parameters
     ----------
