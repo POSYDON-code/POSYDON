@@ -850,6 +850,9 @@ class detached_step:
 
                         history = interp1d[self.translate[key]](
                             t[:-1] - t_offset) * (const.msol * const.rsol**2)
+                        
+                        current = zero_negative_values([current], key)[0]
+                        history = zero_negative_values(history, key)
                     
                 elif (key in ["log_total_angular_momentum"] and obj != binary):
                     if obj.co:
