@@ -48,7 +48,7 @@ You can get a list of the :ref:`grid configuration properties <tab_grid_properti
     mygrid.config.keys()
 
 You can access the value of any grid configuration property "PROPERTY" with 
-:samp:`mygrid.config[{PROPERTY}]`.
+:samp:`mygrid.config[{PROPERTY}]`. Viewing this information can be useful if you are curious about how the grid was run and which options were included when postprocessing the grid (this is an advanced topic that you can read more about :ref:`here </components-overview/post_processing/pipeline.rst>`).
 
 Next, you can look at the initial and final values of the runs. All the values
 are available at :samp:`mygrid.initial_values` and :samp:`mygrid.final_values`,
