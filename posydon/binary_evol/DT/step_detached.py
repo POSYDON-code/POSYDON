@@ -308,8 +308,7 @@ class detached_step:
         # get the next step's name to display for match recording in data frame
         # (in the event that the total_state is not in the flow, this will be None,
         #  and the binary will be set to fail in BinaryStar().run_step()).
-        total_state = (binary.star_1.state, binary.star_2.state, binary.state, binary.event)
-        next_step_name = binary.properties.flow.get(total_state)
+        next_step_name = binary.get_next_step_name()
         
         # match stars to single star models for detached evolution
         primary, secondary, only_CO = self.track_matcher.do_matching(binary, next_step_name)
