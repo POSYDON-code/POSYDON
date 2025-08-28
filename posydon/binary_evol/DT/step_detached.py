@@ -305,15 +305,13 @@ class detached_step:
         binary_sim_prop = getattr(binary, "properties")
         all_step_names = getattr(binary_sim_prop, "all_step_names")
 
-        # match stars to single star models for detached evolution
+        # get the next step's name to display for match recording in data frame
+        # (in the event that the total_state is not in the flow, this will be None,
+        #  and the binary will be set to fail in BinaryStar().run_step()).
         total_state = (binary.star_1.state, binary.star_2.state, binary.state, binary.event)
-        if total_state in UNDEFINED_STATES:
-            raise FlowError(f"Binary failed with a known undefined state in the flow:\n{total_state}")
-
         next_step_name = binary.properties.flow.get(total_state)
-        if next_step_name is None:
-            raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
-
+        
+        # match stars to single star models for detached evolution
         primary, secondary, only_CO = self.track_matcher.do_matching(binary, next_step_name)
         
         if only_CO:
