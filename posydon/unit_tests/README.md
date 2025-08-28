@@ -126,7 +126,7 @@ Usually, pytest will catch all warnings and print them at the end of all tests. 
 
 In more complex cases, the function the test acts on will call other functions. Here it can be useful to replace inner functions with `monkeypatch`.
 
-Some functions may require input generated from other functions, here it can be useful to call the other function within a try and return in case it fails. In this way the test of the other function will fail only and not be hidden in a different test. *I recommend therefore to first write a unit test for the functions which do not need other functions.*
+Some functions may require input generated from other functions, here it can be useful to call the other function within a `try` and return in case it fails. In this way the test of the other function will fail only and not be hidden in a different test. *I recommend therefore to first write a unit test for the functions which do not need other functions.*
 
 ### Check that it can fail
 
