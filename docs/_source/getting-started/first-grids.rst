@@ -6,7 +6,7 @@ Looking at our POSYDON grids
 Installation and Data Download
 ------------------------------
 
-First, make sure POSYDON has been installed on a conda environment. If you have not yet completed this step, please take a look at our installation guide `here <installation-guide>`_.
+First, make sure POSYDON has been installed in a ``conda`` environment. If you have not yet completed this step, please take a look at our installation guide `here <installation-guide>`_.
 
 Additionally, POSYDON requires data to be downloaded from Zenodo. For our simple population, we will run 100 binaries at solar metallicity, so we only need the file with our grids at 1 Z☉. This file is 10 GB, so please make sure you have enough disk space available. If you have downloaded all of DR2, using the command ``get-posydon-data DR2``, then you should be good to go. If not, then for now, you only need to download the 1 Z☉ grids using the command:
 
