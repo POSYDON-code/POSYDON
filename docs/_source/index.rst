@@ -50,6 +50,8 @@ How is this Documentation Structured?
 
    getting-started/prerequisites
    getting-started/installation-guide
+   getting-started/first-grids
+   getting-started/first-population
 
 .. toctree::
    :maxdepth: 1

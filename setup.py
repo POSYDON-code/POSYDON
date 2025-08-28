@@ -104,7 +104,7 @@ extras_require = {
     ],
     # for experimental visualization features, e.g. VDH diagrams
     "vis": ["PyQt5 >= 5.15.9, <= 5.15.11"],
-    # for profile macjhine learning features, e.g. profile interpolation
+    # for profile machine learning features, e.g. profile interpolation
     "ml": ["tensorflow >= 2.13.0"],
     # for running population synthesis on HPC facilities
     "hpc": ["mpi4py >= 3.0.3"],
