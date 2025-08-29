@@ -44,8 +44,7 @@ from posydon.binary_evol.simulationproperties import SimulationProperties
 
 from posydon.popsyn.star_formation_history import get_formation_times
 
-from posydon.popsyn.independent_sample import (generate_independent_samples,
-                                               binary_fraction_value)
+from posydon.popsyn.independent_sample import generate_independent_samples
 from posydon.popsyn.sample_from_file import (get_samples_from_file,
                                              get_kick_samples_from_file)
 from posydon.popsyn.defaults import default_kwargs
@@ -874,7 +873,6 @@ class BinaryGenerator:
         self.kwargs = kwargs.copy()
         self.sampler = sampler
         self.star_formation = kwargs.get('star_formation', 'burst')
-        self.binary_fraction_generator =  binary_fraction_value
 
     def reset_rng(self):
         """Reset the RNG with the stored entropy."""
@@ -899,7 +897,7 @@ class BinaryGenerator:
         return binary
 
     def draw_initial_samples(self, orbital_scheme='separation', **kwargs):
-        """Generate all random varibles."""
+        """Generate all random variables."""
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
         # a, e, M_1, M_2, P
@@ -917,9 +915,6 @@ class BinaryGenerator:
         N_binaries = len(orbital_period)
         formation_times = get_formation_times(N_binaries, **kwargs)
 
-        #Get the binary_fraction
-        binary_fraction = self.binary_fraction_generator(m1=m1, **kwargs)
-
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
         
@@ -933,11 +928,14 @@ class BinaryGenerator:
                 number_of_binaries = 1
             kick1 = np.array(number_of_binaries*[[None, None, None, None]])
             kick2 = np.array(number_of_binaries*[[None, None, None, None]])
-        
+
+        # Checking m2 to see if the system is a binary or initially single
+        is_binary = ~np.isnan(m2)
+
         # output
         output_dict = {
             'binary_index': indices,
-            'binary_fraction': binary_fraction,
+            'is_binary': is_binary,
             'time': formation_times,
             'separation': separation,
             'eccentricity': eccentricity,
@@ -970,7 +968,8 @@ class BinaryGenerator:
         output = self.draw_initial_samples(**sampler_kwargs)
 
         default_index = output['binary_index'].item()
-        binary_fraction = output['binary_fraction']
+
+        is_binary = output['is_binary'].item()
 
         formation_time = output['time'].item()
         m1 = output['S1_mass'].item()
@@ -990,8 +989,17 @@ class BinaryGenerator:
             raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
         X = 1. - Z - Y
         kick1 = output['S1_natal_kick_array'][0]
+        
+        star1_params = dict(
+                mass=m1,
+                state="H-rich_Core_H_burning",
+                metallicity=Z,
+                center_h1=X,
+                center_he4=Y,
+                natal_kick_array=kick1,
+            )
 
-        if self.RNG.uniform() < binary_fraction:
+        if is_binary:
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
             eccentricity = output['eccentricity'].item()
@@ -1008,14 +1016,7 @@ class BinaryGenerator:
                 eccentricity=eccentricity,
                 history_verbose=self.kwargs.get("history_verbose", False)
             )
-            star1_params = dict(
-                mass=m1,
-                state="H-rich_Core_H_burning",
-                metallicity=Z,
-                center_h1=X,
-                center_he4=Y,
-                natal_kick_array=kick1,
-            )
+
             star2_params = dict(
                 mass=m2,
                 state="H-rich_Core_H_burning",
@@ -1039,14 +1040,6 @@ class BinaryGenerator:
                 orbital_period=orbital_period,
                 eccentricity=eccentricity,
                 history_verbose=self.kwargs.get("history_verbose", False)
-            )
-            star1_params = dict(
-                mass=m1,
-                state="H-rich_Core_H_burning",
-                metallicity=Z,
-                center_h1=X,
-                center_he4=Y,
-                natal_kick_array=kick1,
             )
             star2_params = properties_massless_remnant()
 

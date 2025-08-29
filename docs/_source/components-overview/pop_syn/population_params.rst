@@ -512,6 +512,9 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``'NS_one_minus_fallback_BH_one'``
       * ``'one'``
       * ``'zero'``
+      * ``'asym_ej'``
+      * ``'linear'``
+      * ``'log_normal'``
     - ``'one_over_mass'``
 
   * - ``sigma_kick_CCSN_NS``
@@ -761,7 +764,8 @@ It also contains which sampling distributions to use for the initial conditions 
     - | Options:
     
       * ``'flat_mass_ratio'``: flat mass ratio distribution
-      * ``'q=1'``: mass ratio of 1. Ignores ``secondary_mass_min/max`` and sets the secondary mass to the primary mass. 
+      * ``'q=1'``: mass ratio of 1. Ignores ``secondary_mass_min/max`` and sets the secondary mass to the primary mass.
+      * ``'Moe2017'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``orbital_period_scheme`` and ``eccentricity_scheme`` to be ignored)
     - ``'flat_mass_ratio'``
 
   * - ``secondary_mass_min``
@@ -790,6 +794,7 @@ It also contains which sampling distributions to use for the initial conditions 
       | Options:
     
       * ``Sana+12_period_extended``: `Sana et al. 2012 <https://ui.adsabs.harvard.edu/abs/2012Sci...337..444S/abstract>`_
+      * ``'Moe2017'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``secondary_mass_scheme`` and ``eccentricity_scheme`` to be ignored)
     - ``'Sana+12_period_extended'``
 
   * - ``orbital_period_min``
@@ -831,6 +836,7 @@ It also contains which sampling distributions to use for the initial conditions 
       * ``'zero'`` : zero eccentricity
       * ``'thermal'``: thermal distribution
       * ``'uniform'``: uniform distribution
+      * ``'Moe2017'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``secondary_mass_scheme`` and ``orbital_period_scheme`` to be ignored)
     
     - ``'zero'``
 
