@@ -244,15 +244,15 @@ class BinaryStar:
 
     def run_step(self):
         """Evolve the binary through one evolutionary step."""
-        total_state = (self.star_1.state, self.star_2.state, self.state, self.event)
+        total_state = self.get_total_state()
         if total_state in UNDEFINED_STATES:
             raise FlowError(f"Binary failed with a known undefined state in the flow:\n{total_state}")
 
-        next_step_name = self.properties.flow.get(total_state)
+        next_step_name = self.get_next_step_name()
         if next_step_name is None:
             raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
 
-        next_step = getattr(self.properties, next_step_name, None)
+        next_step = self.get_next_step()
         if next_step is None:
             raise ValueError("Next step name '{}' does not correspond to a function in "
                              "SimulationProperties.".format(next_step_name))
@@ -262,6 +262,18 @@ class BinaryStar:
         
         self.append_state()
         self.properties.post_step(self, next_step_name)
+    
+    def get_total_state(self):
+        """Return the total state of the binary (star1.state, star2.state, binary.state, binary.event)."""
+        return (self.star_1.state, self.star_2.state, self.state, self.event)
+    
+    def get_next_step_name(self):
+        """Return the name of the next step based on the current total state."""
+        return self.properties.flow.get(self.get_total_state())
+    
+    def get_next_step(self):
+        """Get the next step class object based on the current total state."""
+        return getattr(self.properties, self.get_next_step_name(), None)
 
     def append_state(self):
         """Update the history of the binaries' properties."""
