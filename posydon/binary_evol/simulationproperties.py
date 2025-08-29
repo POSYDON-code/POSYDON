@@ -15,6 +15,8 @@ __authors__ = [
 
 import time
 from posydon.utils.constants import age_of_universe
+from posydon.popsyn.io import simprop_kwargs_from_ini
+from posydon.utils.posydonwarning import Pwarn
 
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
@@ -77,7 +79,7 @@ class SimulationProperties:
                 self.all_step_names.append(key)
         self.steps_loaded = False
 
-    def load_steps(self, verbose=False):
+    def load_steps(self, metallicity=None, verbose=False):
         """Instantiate step classes and set as instance attributes.
 
         Parameters
@@ -85,14 +87,31 @@ class SimulationProperties:
         verbose: bool
             Print extra information.
 
+        metallicity: float
+            A metallicity (Z) may be provided to automatically assign
+            to steps as they are loaded. Should be one of e.g., 2.0, 1.0, 
+            4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to 
+            metallicities available in your POSYDON_DATA grids.
+
         Returns
         -------
         None
         """
         if verbose:
             print('STEP NAME'.ljust(20) + 'STEP FUNCTION'.ljust(25) + 'KWARGS')
+            if metallicity is None:
+                Pwarn("Steps were not assigned a metallicity. Defaulting to Z = 1.0 (solar).", 
+                      "MissingValueWarning")
+                metallicity = 1.0
+
+        # these steps and the flow do not require a metallicity
+        ignore_for_met = ["flow", "step_CE", "step_SN","step_dco", "step_end"]
+
+        # for every other step, give it a metallicity and load each step
         for name, tup in self.kwargs.items():
             if isinstance(tup, tuple):
+                if name not in ignore_for_met and isinstance(metallicity, float):
+                    tup[1].update({'metallicity':metallicity})
                 if verbose:
                     print(name, tup, end='\n')
                 step_func, kwargs = tup
@@ -336,3 +355,12 @@ class PrintStepInfoHooks(EvolveHooks):
         """Report at the end of the evolution of each binary."""
         print("End evol for binary {}".format(binary.index), end='\n'*2)
         return binary
+    
+def init_sim(initialization_file):
+
+    sim_kwargs = simprop_kwargs_from_ini(initialization_file)
+    sim_props = SimulationProperties(**sim_kwargs)
+    # Load the steps and required data
+    sim_props.load_steps(verbose=True)
+
+    return sim_props
