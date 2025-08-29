@@ -2610,8 +2610,9 @@ def diffeq(
         if verbose and verbose != 1:
             print("magnetic_braking_mode = ", magnetic_braking_mode)
             print("dOmega_mb = ", dOmega_mb_sec, dOmega_mb_pri)
-            dOmega_sec = dOmega_sec + dOmega_mb_sec
-            dOmega_pri = dOmega_pri + dOmega_mb_pri
+            
+        dOmega_sec = dOmega_sec + dOmega_mb_sec
+        dOmega_pri = dOmega_pri + dOmega_mb_pri
 
     if do_stellar_evolution_and_spin_from_winds:
         # Due to the secondary's own evolution, we have:
