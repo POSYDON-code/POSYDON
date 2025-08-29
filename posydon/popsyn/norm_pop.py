@@ -331,5 +331,8 @@ def calculate_model_weights(pop_data,
                          q=pop_data['S2_mass_i']/pop_data['S1_mass_i'],
                          P=pop_data['orbital_period_i'],
                          binary=binary_mask)
-    
-    return (weight_pop / weight_sim) * factor
+
+    output = (weight_pop / weight_sim) * factor
+    output[np.isnan(output)] = 0.0
+    output[np.isinf(output)] = 0.0
+    return output
