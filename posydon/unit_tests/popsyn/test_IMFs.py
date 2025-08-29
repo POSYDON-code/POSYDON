@@ -151,7 +151,7 @@ class TestSalpeterIMF:
             result = default_imf.imf([default_imf.m_max + 0.1])
             # Verify warning was issued
             assert len(w) == 1
-            assert "Mass values outside the range" in str(w[0].message)
+            assert "Some mass values outside the range" in str(w[0].message)
             # Verify the function still returns values (just with warning)
             assert len(result) == 1
 
