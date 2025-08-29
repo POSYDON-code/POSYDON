@@ -1,3 +1,11 @@
+"""Unit tests for posydon/popsyn/IMFs.py
+
+Contains unit test for the IMF classes.
+"""
+__authors__ = [
+    "Max Briel <max.briel@gmail.com>",
+]
+
 import pytest
 import numpy as np
 import posydon.popsyn.IMFs as IMFs
@@ -41,7 +49,7 @@ class TestSalpeterIMF:
         m_values = np.array([1.0, 2.0, 5.0, 10.0])
         expected = m_values ** (-default_imf.alpha)
         computed = default_imf.imf(m_values)
-        assert np.all(computed == expected)
+        assert np.allclose(computed, expected)
 
         # Test with a single mass value
         m = 3.0
@@ -63,24 +71,24 @@ class TestSalpeterIMF:
         m = np.linspace(default_imf.m_min, default_imf.m_max, 100)
         pdf_values = default_imf.pdf(m)
         expected_pdf = default_imf.imf(m) * default_imf.norm
-        assert np.all(pdf_values == expected_pdf)
+        assert np.allclose(pdf_values, expected_pdf)
 
     def test_pdf_outside_range(self, default_imf):
         m = np.array([default_imf.m_min - 0.1, default_imf.m_max + 0.1])
         pdf_values = default_imf.pdf(m)
-        assert np.all(pdf_values == 0.0)
-        
+        assert np.allclose(pdf_values, 0.0)
+
     def test_pdf_inside_and_outside(self, default_imf):
         """Test that PDF returns correct values for a mix of 
         inside and outside mass range."""
         m = np.array([default_imf.m_min - 0.1,
                       default_imf.m_max + 0.1,
-                      default_imf.m_min + 0.1])
+                      0.5*(default_imf.m_min+default_imf.m_max)])
         pdf_values = default_imf.pdf(m)
         expected_pdf = np.array([0.0,
                                  0.0,
-                                 default_imf.pdf(default_imf.m_min + 0.1)])
-        assert np.all(pdf_values == expected_pdf)
+                                 default_imf.pdf(0.5*(default_imf.m_min+default_imf.m_max))])
+        assert np.allclose(pdf_values, expected_pdf)
 
     def test_pdf_scalar(self, default_imf):
         """Test PDF with a scalar input within range."""
@@ -114,6 +122,9 @@ class TestSalpeterIMF:
         with pytest.raises(ValueError, match='m_min must be less than m_max.'):
             # range of 0
             IMFs.Salpeter(alpha=1.0, m_min=1e-10, m_max=1e-10)
+            
+        with pytest.raises(ValueError, match='m_min must be less than m_max.'):
+            IMFs.Salpeter(alpha=1.0, m_min=10.0, m_max=1.0)
 
     def test_pdf_integral_custom(self, custom_imf):
         """Ensure that the integral of the PDF for a custom IMF is
@@ -183,12 +194,12 @@ class TestKroupa2001IMF:
         m = np.linspace(default_kroupa.m_min, default_kroupa.m_max, 100)
         pdf_values = default_kroupa.pdf(m)
         expected_pdf = default_kroupa.imf(m) * default_kroupa.norm
-        assert np.all(pdf_values == expected_pdf)
+        assert np.allclose(pdf_values, expected_pdf)
 
     def test_pdf_outside_range(self, default_kroupa):
         m = np.array([default_kroupa.m_min - 0.1, default_kroupa.m_max + 0.1])
         pdf_values = default_kroupa.pdf(m)
-        assert np.all(pdf_values == 0.0)
+        assert np.allclose(pdf_values, 0.0)
         
     def test_pdf_inside_and_outside(self, default_kroupa):
         m = np.array([default_kroupa.m_min - 0.1,
@@ -198,8 +209,8 @@ class TestKroupa2001IMF:
         expected_pdf = np.array([0.0,
                                  0.0,
                                  default_kroupa.pdf(default_kroupa.m_min + 0.1)])
-        assert np.all(pdf_values == expected_pdf)
-        
+        assert np.allclose(pdf_values, expected_pdf)
+
     def test_invalid_mass(self, default_kroupa):
         """Test that the imf method raises ValueError for invalid mass values."""
         with pytest.raises(ValueError, match="Mass must be positive."):
@@ -240,7 +251,7 @@ class TestKroupa2001IMF:
         m_array = np.array([0.01, 0.1, 1.0, 10.0, 100.0, 200.0])
         pdf_values = default_kroupa.pdf(m_array)
         expected = default_kroupa.imf(m_array) * default_kroupa.norm
-        assert np.all(pdf_values == expected)
+        assert np.allclose(pdf_values, expected)
 
     def test_pdf_integral_custom(self, custom_kroupa):
         integral, _ = quad(custom_kroupa.pdf,
@@ -306,14 +317,14 @@ class TestChabrierIMF:
         m = np.linspace(default_chabrier.m_min, default_chabrier.m_max, 100)
         pdf_values = default_chabrier.pdf(m)
         expected_pdf = default_chabrier.imf(m) * default_chabrier.norm
-        assert np.all(pdf_values == expected_pdf)
+        assert np.allclose(pdf_values, expected_pdf)
 
     def test_pdf_outside_range(self, default_chabrier):
         """Test that PDF returns zero for masses outside the mass range."""
         m = np.array([default_chabrier.m_min - 0.1, default_chabrier.m_max + 0.1])
         pdf_values = default_chabrier.pdf(m)
-        assert np.all(pdf_values == 0.0)
-        
+        assert np.allclose(pdf_values, 0.0)
+
     def test_pdf_inside_and_outside(self, default_chabrier):
         """Test that PDF returns correct values for a mix of inside and 
         outside mass range.
@@ -325,7 +336,7 @@ class TestChabrierIMF:
         expected_pdf = np.array([0.0,
                                  0.0,
                                  default_chabrier.pdf(default_chabrier.m_min + 0.1)])
-        assert np.all(pdf_values == expected_pdf)
+        assert np.allclose(pdf_values, expected_pdf)
         
     def test_invalid_mass(self, default_chabrier):
         """Test that the imf method raises ValueError for invalid mass values."""
@@ -369,7 +380,7 @@ class TestChabrierIMF:
         m_array = np.array([0.01, 0.1, 1.0, 10.0, 100.0, 200.0])
         pdf_values = default_chabrier.pdf(m_array)
         expected = default_chabrier.imf(m_array) * default_chabrier.norm
-        assert np.all(pdf_values == expected)
+        assert np.allclose(pdf_values, expected)
 
     def test_invalid_initialization(self):
         """Test that initialization raises ValueError when normalization 

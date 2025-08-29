@@ -2334,7 +2334,7 @@ class TransientPopulation(Population):
         
         efficiency = pd.DataFrame(index=self.mass_per_metallicity.index, columns=['total'])
         model_weights = self.model_weights(model_weights_identifier).to_numpy().flatten()
-        for i, metallicity, in enumerate(self.mass_per_metallicity.index):
+        for i, metallicity in enumerate(self.mass_per_metallicity.index):
             mask = self.population['metallicity'] == metallicity
             efficiency.loc[metallicity, 'total'] = np.sum(model_weights[mask])
             
