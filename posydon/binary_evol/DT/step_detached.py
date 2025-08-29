@@ -43,7 +43,7 @@ from posydon.binary_evol.DT.key_library import (DEFAULT_TRANSLATION,
 def event(terminal, direction=0):
     """Return a helper function to set attributes for solve_ivp events."""
     def dec(f):
-        f.terminal = True
+        f.terminal = terminal
         f.direction = direction
         return f
     return dec
