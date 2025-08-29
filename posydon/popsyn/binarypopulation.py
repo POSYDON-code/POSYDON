@@ -221,6 +221,8 @@ class BinaryPopulation:
             removing the binary instance from memory.
         tqdm : bool, False
             Show tqdm progress bar during evolution.
+        optimize_ram : bool, False
+            If True, dump binary data during evolve to save RAM.
 
         Returns
         -------
@@ -230,6 +232,7 @@ class BinaryPopulation:
         kw = {**self.kwargs, **kwargs}
         tqdm_bool = kw.get('tqdm', False)
         breakdown_to_df_bool = kw.get('breakdown_to_df', True)
+        optimize_ram = kw.get('optimize_ram', False)
         from_hdf_bool = kw.get('from_hdf', False)
 
         if self.JOB_ID is None and self.comm is None:   # do regular evolution
@@ -238,6 +241,7 @@ class BinaryPopulation:
             params = {'indices':indices,
                       'tqdm':tqdm_bool,
                       'breakdown_to_df':breakdown_to_df_bool,
+                      'optimize_ram':optimize_ram,
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
 
@@ -253,6 +257,7 @@ class BinaryPopulation:
             params = {'indices':batch_indices,
                       'tqdm':mpi_tqdm_bool,
                       'breakdown_to_df':breakdown_to_df_bool,
+                      'optimize_ram':optimize_ram,
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
             self._safe_evolve(**self.kwargs)
@@ -279,8 +284,6 @@ class BinaryPopulation:
                             else indices)
         breakdown_to_df = kwargs.get('breakdown_to_df', True)
         optimize_ram = kwargs.get("optimize_ram", True)
-        self.kwargs['optimize_ram'] = optimize_ram
-
         ram_per_cpu = kwargs.get("ram_per_cpu", None)
 
         if optimize_ram:
@@ -360,7 +363,6 @@ class BinaryPopulation:
                 # context
                 if not self.kwargs.get("warnings_verbose", False):
                     cpw.reset_cache()
-
         
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)

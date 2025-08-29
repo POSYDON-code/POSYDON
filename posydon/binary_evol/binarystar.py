@@ -468,6 +468,23 @@ class BinaryStar:
             # Lose the V_sys list
             bin_df = bin_df.drop(['V_sys'], axis=1)
 
+        # Add 3 columns for nearest_neighbour_distance
+        if 'nearest_neighbour_distance' in column_names:
+            NN_dist_x = np.zeros(len(bin_df))
+            NN_dist_y = np.zeros(len(bin_df))
+            NN_dist_z = np.zeros(len(bin_df))
+            for i in range(len(bin_df)):
+                NN_dist_x[i] = bin_df.iloc[i]['nearest_neighbour_distance'][0]
+                NN_dist_y[i] = bin_df.iloc[i]['nearest_neighbour_distance'][1]
+                NN_dist_z[i] = bin_df.iloc[i]['nearest_neighbour_distance'][2]
+
+            bin_df['NN_dist_x'] = copy.deepcopy(NN_dist_x)
+            bin_df['NN_dist_y'] = copy.deepcopy(NN_dist_y)
+            bin_df['NN_dist_z'] = copy.deepcopy(NN_dist_z)
+
+            # Lose the nearest_neighbour_distance list
+            bin_df = bin_df.drop(['nearest_neighbour_distance'], axis=1)
+
         frames = [bin_df]
         if kwargs.get('include_S1', True):
             # we are hard coding the prefix
