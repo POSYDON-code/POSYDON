@@ -27,6 +27,24 @@ class IMFBase(ABC):
         self.m_min = m_min
         self.m_max = m_max
         self.norm = self._calculate_normalization()
+        
+    def _check_valid(self, array):
+        """Checks if input array falls within m_min and m_max of the IMF.
+        
+        Parameters
+        -----------
+        array : numpy.ndarray floats
+            The input array to check for validity.
+
+        Returns
+        -------
+        numpy.ndarray
+            array of booleans indicating if each element is valid.
+        """
+        valid = (array >= self.m_min) & (array <= self.m_max)
+        if np.any(~valid):
+            Pwarn("Some mass values outside the range [m_min, m_max] will return zero.", "ValueWarning")
+        return valid
 
     def _calculate_normalization(self):
         """Calculate the normalization constant for the IMF.
@@ -61,9 +79,7 @@ class IMFBase(ABC):
             assigned a value of zero.
         """
         m = np.asarray(m)
-        valid = (m >= self.m_min) & (m <= self.m_max)
-        if np.any(valid):
-            Pwarn("Some mass values outside the range [m_min, m_max] will return zero.", "ValueWarning")
+        valid = self._check_valid(m)
             
         pdf_values = np.zeros_like(m, dtype=float)
         pdf_values[valid] = self.imf(m[valid]) * self.norm
@@ -144,8 +160,7 @@ class Salpeter(IMFBase):
         m = np.asarray(m)
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
-        if np.any(m < self.m_min) or np.any(m > self.m_max):
-            Pwarn("Mass values outside the range [m_min, m_max] will return zero.", "ValueWarning")
+        valid = self._check_valid(m)
         return m ** (-self.alpha)
 
 class Kroupa2001(IMFBase):
@@ -241,6 +256,7 @@ class Kroupa2001(IMFBase):
         m = np.asarray(m)
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
+        self._check_valid(m)
         
         mask1 = m < self.m1break
         mask2 = (m >= self.m1break) & (m < self.m2break)
@@ -329,6 +345,7 @@ class Chabrier2003(IMFBase):
         m = np.asarray(m)
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
+        self._check_valid(m)
         # Calculate common terms for the lognormal function
         sqrt_2pi_sigma = np.sqrt(2 * np.pi) * self.sigma
         
