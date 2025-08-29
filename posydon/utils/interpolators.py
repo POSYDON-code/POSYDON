@@ -95,6 +95,7 @@ class interp1d:
             Interpolated y-values.
 
         """
+
         x_n = np.array(x_new)
         if self.kind == 'linear':
             y_interp = np.array(np.interp(x=x_n, xp=self.x, fp=self.y,
@@ -133,6 +134,11 @@ class PchipInterpolator2:
         self.interpolator = PchipInterpolator(*args, **kwargs)
         self.positive = positive
 
+        # potential offset (for example, we've matched a MESA sim to another
+        # but need to offset the matched track's age to fast forward to current
+        # age in the evolution)
+        self.offset = 0.0
+
     def __call__(self, *args, **kwargs):
         """Use the interpolator.
 
@@ -147,6 +153,14 @@ class PchipInterpolator2:
             Interpolated values.
 
         """
+
+        # offset x (the offset is 0 unless otherwise set)
+        args = list(args)
+        #for i in range(len(args)):
+        #    args[i] -= self.offset
+        args[0] -= self.offset
+        args = tuple(args)
+
         result = self.interpolator(*args, **kwargs)
         if self.positive:
             result = np.maximum(result, 0.0)
