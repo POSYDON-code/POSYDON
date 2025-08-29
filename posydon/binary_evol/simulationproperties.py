@@ -213,8 +213,10 @@ class SimulationProperties:
                       "MissingValueWarning")
                 metallicity = 1.0
 
+        # these steps and the flow do not require a metallicity
         ignore_for_met = ["flow", "step_CE", "step_SN","step_dco", "step_end"]
 
+        # for every other step, give it a metallicity and load each step
         for name, tup in self.kwargs.items():
             if isinstance(tup, tuple):
                 if name not in ignore_for_met and isinstance(metallicity, float):
