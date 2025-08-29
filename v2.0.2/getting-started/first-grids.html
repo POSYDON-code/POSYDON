@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Start: Examining the MESA Grids &mdash; posydon 2.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=c2377ec0"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quick Start: Your First Population" href="first-population.html" />
+    <link rel="prev" title="Installation Guide" href="installation-guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start: Examining the MESA Grids</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-and-data-download">Installation and Data Download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-a-mesa-grid">Loading a MESA grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grid-contents">Grid contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plot-a-psygrid-object">Plot a <cite>PSyGrid</cite> object</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Quick Start: Examining the MESA Grids</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/getting-started/first-grids.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="quick-start-examining-the-mesa-grids">
+<span id="first-grids"></span><h1>Quick Start: Examining the MESA Grids<a class="headerlink" href="#quick-start-examining-the-mesa-grids" title="Link to this heading"></a></h1>
+<section id="installation-and-data-download">
+<h2>Installation and Data Download<a class="headerlink" href="#installation-and-data-download" title="Link to this heading"></a></h2>
+<p>First, make sure POSYDON has been installed in a <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment. If you have not yet completed this step, please take a look at our installation guide <a class="reference external" href="installation-guide">here</a>.</p>
+<p>Additionally, POSYDON requires data to be downloaded from Zenodo. For our simple population, we will run 100 binaries at solar metallicity, so we only need the 1 Z☉ dataset, which can be downloaded using the <code class="docutils literal notranslate"><span class="pre">get-posydon-data</span></code> command in a terminal as follows:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This dataset is 10 GB, so please make sure you have enough disk space available. If you have downloaded the full DR2 dataset using the command <code class="docutils literal notranslate"><span class="pre">get-posydon-data</span> <span class="pre">DR2</span></code> or simply <code class="docutils literal notranslate"><span class="pre">get-posydon-data</span></code>, then you should already have the 1 Z☉ dataset and you can skip this step.</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>get-posydon-data<span class="w"> </span>DR2_1Zsun
+</pre></div>
+</div>
+</section>
+<section id="loading-a-mesa-grid">
+<h2>Loading a MESA grid<a class="headerlink" href="#loading-a-mesa-grid" title="Link to this heading"></a></h2>
+<p>You can access our grids of MESA simulations using the <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> module (for an overview of this module, see <a class="reference internal" href="../components-overview/post_processing/psygrid.html"><span class="std std-ref">here</span></a>). We will run through some simple commands to orient ourselves with the <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> object below.</p>
+<p>To load a MESA grid, first import the module, instantiate a new <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> object, and pass the argument <code class="docutils literal notranslate"><span class="pre">filepath</span></code> to open a grid. In this example we load the HMS-HMS grid at solar metallicity:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
+<span class="n">PATH_TO_POSYDON_DATA</span> <span class="o">=</span> <span class="s1">&#39;/YOUR/POSYDON_DATA/PATH&#39;</span>
+<span class="n">grid_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="si">}</span><span class="s1">/POSYDON_data/HMS-HMS/1e+00_Zsun.h5&#39;</span>
+<span class="n">mygrid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">grid_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="grid-contents">
+<h2>Grid contents<a class="headerlink" href="#grid-contents" title="Link to this heading"></a></h2>
+<p>You can check the contents of the <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> object with a print command:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mygrid</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will provide a summary of grid metadata including how many runs are in the grid and what information is stored about them.</p>
+<p>You can get a list of the <a class="reference internal" href="../components-overview/post_processing/psygrid.html#tab-grid-properties"><span class="std std-ref">grid configuration properties</span></a> available for your <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can access the value of any grid configuration property “PROPERTY” with
+<code class="samp docutils literal notranslate"><span class="pre">mygrid.config[</span><em><span class="pre">PROPERTY</span></em><span class="pre">]</span></code>. Viewing this information can be useful if you are curious about how the grid was run and which options were included when postprocessing the grid (this is an advanced topic that you can read more about <a class="reference internal" href="../components-overview/post_processing/pipeline.html"><span class="std std-ref">here</span></a>).</p>
+<p>To maintain a relatively low data storage footprint, the PSyGrid object does not store all of the raw MESA stellar evolution data, but you can use it to look at the initial (first time step) and final (last time step) values and downsampled histories of the MESA simulations. All the initial and final simulation values
+are available at <code class="samp docutils literal notranslate"><span class="pre">mygrid.initial_values</span></code> and <code class="samp docutils literal notranslate"><span class="pre">mygrid.final_values</span></code>,
+respectively. To get a tuple of all the available column names use</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">initial_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+<span class="n">mygrid</span><span class="o">.</span><span class="n">final_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+</pre></div>
+</div>
+<p>You can access the initial value of any physical grid property <code class="docutils literal notranslate"><span class="pre">var_name</span></code> (which is a <code class="docutils literal notranslate"><span class="pre">str</span></code> corresponding to one of the available data columns above) with
+<code class="samp docutils literal notranslate"><span class="pre">mygrid.initial_values[</span><em><span class="pre">var_name</span></em><span class="pre">]</span></code>. Doing this will return a <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array with the
+initial values of this property for all the MESA runs in this grid.
+Note that these physical properties of the binaries in the grid are different
+from the grid configuration properties listed above and are the actual data outputs of the MESA simulations.</p>
+<p>As an example, you can find the initial mass of the primary star (<code class="docutils literal notranslate"><span class="pre">star_1_mass</span></code>) in one of the grid’s MESA binary star simulations with</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the example, we used an arbitrary index <cite>2</cite> to select a binary, but the indices run from <code class="samp docutils literal notranslate"><span class="pre">0</span></code> to
+<code class="samp docutils literal notranslate"><span class="pre">len(mygrid)-1</span></code>.</p>
+</div>
+<p>You can also retrieve individual runs (binaries) by index using <code class="samp docutils literal notranslate"><span class="pre">mygrid[</span><em><span class="pre">i</span></em><span class="pre">]</span></code>. This will return a
+<code class="samp docutils literal notranslate"><span class="pre">PSyRunView</span></code> object which contains data pertaining to that particular run of index
+<code class="samp docutils literal notranslate"><span class="pre">i</span></code>. The <code class="samp docutils literal notranslate"><span class="pre">PSyRunView</span></code> object contains seven components:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text"><code class="samp docutils literal notranslate"><span class="pre">PSyRunView</span></code> object components</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Component</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>‘initial_values’</p></td>
+<td><p>all initial (i.e., at the first time step of the MESA simulation) values of the run</p></td>
+</tr>
+<tr class="row-odd"><td><p>‘final_values’</p></td>
+<td><p>all final (i.e., at the final time step of the MESA simulation) values of the run. (This also includes termination flags, which you can read more about <a class="reference internal" href="../tutorials-examples/generating-datasets/plot_2D.html"><span class="std std-ref">here</span></a>.)</p></td>
+</tr>
+<tr class="row-even"><td><p>‘binary_history’</p></td>
+<td><p>the downsampled binary star evolution data</p></td>
+</tr>
+<tr class="row-odd"><td><p>‘history1’</p></td>
+<td><p>the downsampled evolution data of star 1</p></td>
+</tr>
+<tr class="row-even"><td><p>‘history2’</p></td>
+<td><p>the downsampled evolution data of star 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>‘final_profile1’</p></td>
+<td><p>the profile (properties vs. mass or radius) of star 1 at the final timestep</p></td>
+</tr>
+<tr class="row-even"><td><p>‘final_profile2’</p></td>
+<td><p>the profile of star 2 at the final timestep</p></td>
+</tr>
+</tbody>
+</table>
+<p>Again, you can check for the valid column names of the individual runs with
+<code class="samp docutils literal notranslate"><span class="pre">dtype.names</span></code>, e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">myrun</span> <span class="o">=</span> <span class="n">mygrid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">myrun</span><span class="p">[</span><span class="s1">&#39;binary_history&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+</pre></div>
+</div>
+<p>Before, we retrieved the initial mass of star 1 in the binary indexed at ` 2` by
+slicing the list <code class="samp docutils literal notranslate"><span class="pre">mygrid.initial_values</span></code> and the selecting the value at index <cite>2</cite>.
+You can get the same value from the list of initial values associated with a
+single MESA run using the <cite>PSyRunView</cite> object via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;initial_values&#39;</span><span class="p">][</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-a-psygrid-object">
+<h2>Plot a <cite>PSyGrid</cite> object<a class="headerlink" href="#plot-a-psygrid-object" title="Link to this heading"></a></h2>
+<p>There are three main plotting functionalities available
+to display the content of a <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object:</p>
+<ul class="simple">
+<li><p><code class="samp docutils literal notranslate"><span class="pre">plot</span></code>: This creates a one-dimensional plot from the <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code>.
+An example can be found in the <a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html#plot-1d"><span class="std std-ref">tutorials</span></a>. The code details
+are available in the
+<a class="reference internal" href="../api_reference/posydon.grids.html#posydon.grids.psygrid.PSyGrid.plot" title="posydon.grids.psygrid.PSyGrid.plot"><code class="xref py py-func docutils literal notranslate"><span class="pre">PSyGrid.plot</span></code></a> code and the
+<a class="reference internal" href="../api_reference/posydon.visualization.html#module-posydon.visualization.plot1D" title="posydon.visualization.plot1D"><code class="xref py py-class docutils literal notranslate"><span class="pre">visualization</span></code></a> library.</p></li>
+<li><p><code class="samp docutils literal notranslate"><span class="pre">plot2D</span></code>: This creates a two-dimensional representation from the
+<code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code>. Again, an example can be found in the
+<a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html#plot-2d"><span class="std std-ref">tutorials</span></a>. The code details are available in the
+<a class="reference internal" href="../api_reference/posydon.grids.html#posydon.grids.psygrid.PSyGrid.plot2D" title="posydon.grids.psygrid.PSyGrid.plot2D"><code class="xref py py-func docutils literal notranslate"><span class="pre">PSyGrid.plot</span></code></a> code and the
+<a class="reference internal" href="../api_reference/posydon.visualization.html#module-posydon.visualization.plot2D" title="posydon.visualization.plot2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">visualization</span></code></a> library.</p></li>
+<li><p><code class="samp docutils literal notranslate"><span class="pre">HR</span></code>: This is similar to <code class="samp docutils literal notranslate"><span class="pre">plot</span></code> but specialized for producing
+Hertzsprung–Russell diagrams.</p></li>
+</ul>
+<p>More in-depth documentation about the <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> module and its full functionality is available <a class="reference internal" href="../components-overview/post_processing/psygrid.html#psygrid"><span class="std std-ref">here</span></a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation-guide.html" class="btn btn-neutral float-left" title="Installation Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="first-population.html" class="btn btn-neutral float-right" title="Quick Start: Your First Population" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.2/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

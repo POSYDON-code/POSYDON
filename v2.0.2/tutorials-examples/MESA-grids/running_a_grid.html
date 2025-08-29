@@ -1,0 +1,470 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Running a real POSYDON MESA HMS-HMS grid &mdash; posydon 2.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=c2377ec0"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Running Single Stars with POSYDON" href="running_single_hms.html" />
+    <link rel="prev" title="Run one binary on your laptop for debugging" href="laptop.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="running-grids.html">Architecting MESA Simulation Grids with POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="1_hms_hms.html">Run your first MESA HMS-HMS binary simulation with POSYDON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laptop.html">Run one binary on your laptop for debugging</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Running a real POSYDON MESA HMS-HMS grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="running_single_hms.html">Running Single Stars with POSYDON</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+      <li class="breadcrumb-item active">Running a real POSYDON MESA HMS-HMS grid</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/MESA-grids/running_a_grid.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Running-a-real-POSYDON-MESA-HMS-HMS-grid">
+<h1>Running a real POSYDON MESA HMS-HMS grid<a class="headerlink" href="#Running-a-real-POSYDON-MESA-HMS-HMS-grid" title="Link to this heading"></a></h1>
+<p>It is now time to become a POSYDON MESA architect. In this notebook, we will run a real HMS-HMS grid. We will run a downsampled version (100 models) of the HMS-HMS, 0.1Zsun, q=0.7 grid slice, using the same <code class="docutils literal notranslate"><span class="pre">HMS-HMS.ini</span></code> file as in the <a class="reference internal" href="1_hms_hms.html"><span class="doc">first notebook</span></a>, where we ran one binary.</p>
+<section id="Creating-the-Initialization-File-to-Submit-the-MESA-Grid">
+<h2>Creating the Initialization File to Submit the MESA Grid<a class="headerlink" href="#Creating-the-Initialization-File-to-Submit-the-MESA-Grid" title="Link to this heading"></a></h2>
+<p>Let’s copy some code used in <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON/grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts/parameter_space_v2/create_csv.ipynb</span></code> to create the <code class="docutils literal notranslate"><span class="pre">grid_test.csv</span></code> file and edit it to run a downsampled version of the grid.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">log_range</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span><span class="n">x_max</span><span class="p">,</span><span class="n">x_n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x_min</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x_max</span><span class="p">),</span> <span class="n">x_n</span><span class="p">)</span>
+
+<span class="c1"># digit rounding pick 10 to be sure we resolve 10^-4Zsun</span>
+<span class="n">NDIG</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">Zsun</span> <span class="o">=</span> <span class="mf">0.0142</span>
+<span class="n">m1_min</span> <span class="o">=</span> <span class="mf">5.5</span>
+<span class="n">m1_max</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">m1_n</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">m1</span> <span class="o">=</span> <span class="n">log_range</span><span class="p">(</span><span class="n">m1_min</span><span class="p">,</span><span class="n">m1_max</span><span class="p">,</span><span class="n">m1_n</span><span class="p">)</span>
+<span class="n">q_n</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">]</span>
+<span class="n">p_min</span> <span class="o">=</span> <span class="mf">1.0e-1</span>
+<span class="n">p_max</span> <span class="o">=</span> <span class="mf">1.0e+4</span>
+<span class="n">p_n</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">log_range</span><span class="p">(</span><span class="n">p_min</span><span class="p">,</span><span class="n">p_max</span><span class="p">,</span><span class="n">p_n</span><span class="p">)</span>
+<span class="n">Z_n</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">met</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="o">*</span><span class="n">Zsun</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;total resolution  Z_n * m1_n * q_n * p_n=&#39;</span><span class="p">,</span> <span class="n">Z_n</span> <span class="o">*</span> <span class="n">m1_n</span> <span class="o">*</span> <span class="n">q_n</span> <span class="o">*</span> <span class="n">p_n</span><span class="p">)</span>
+
+<span class="c1"># save entire grid in a single file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./grid_test.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">&#39;initial_z&#39;</span><span class="p">,</span><span class="s1">&#39;Zbase&#39;</span><span class="p">,</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span><span class="s1">&#39;m2&#39;</span><span class="p">,</span><span class="s1">&#39;initial_period_in_days&#39;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">Z</span> <span class="ow">in</span> <span class="n">met</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m1_n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">q_n</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p_n</span><span class="p">):</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="nb">round</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span><span class="n">NDIG</span><span class="p">),</span><span class="nb">round</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span><span class="n">NDIG</span><span class="p">),</span><span class="nb">round</span><span class="p">(</span><span class="n">m1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">NDIG</span><span class="p">),</span><span class="nb">round</span><span class="p">(</span><span class="n">m1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">q</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">NDIG</span><span class="p">),</span><span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">NDIG</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+total resolution  Z_n * m1_n * q_n * p_n= 100
+</pre></div></div>
+</div>
+</section>
+<section id="Run-the-MESA-Grid-with-the-POSYDON-Submission-Script">
+<h2>Run the MESA Grid with the POSYDON Submission Script<a class="headerlink" href="#Run-the-MESA-Grid-with-the-POSYDON-Submission-Script" title="Link to this heading"></a></h2>
+<p>We are now ready to run the simulation, with the following commands in your terminal (Please remember to have the POSYDON and MESA variables being set before):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>posydon-setup-grid<span class="w"> </span>--grid-type<span class="w"> </span>fixed<span class="w"> </span>--inifile<span class="w"> </span>HMS-HMS.ini<span class="w"> </span>--submission-type<span class="w"> </span>slurm
+./run_grid.sh
+</pre></div>
+</div>
+<p>Sit back, relax, and wait for the grid to finish.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+binary
+cleanup.slurm
+column_lists
+grid_test.csv
+HMS-HMS.ini
+job_array_grid_submit.slurm
+mesa_cleanup.out
+mesa_grid.38800304_0.out
+mesa_grid.38800304_10.out
+mesa_grid.38800304_11.out
+mesa_grid.38800304_12.out
+mesa_grid.38800304_13.out
+mesa_grid.38800304_14.out
+mesa_grid.38800304_15.out
+mesa_grid.38800304_16.out
+mesa_grid.38800304_17.out
+mesa_grid.38800304_18.out
+mesa_grid.38800304_19.out
+mesa_grid.38800304_1.out
+mesa_grid.38800304_20.out
+mesa_grid.38800304_21.out
+mesa_grid.38800304_22.out
+mesa_grid.38800304_23.out
+mesa_grid.38800304_24.out
+mesa_grid.38800304_25.out
+mesa_grid.38800304_26.out
+mesa_grid.38800304_27.out
+mesa_grid.38800304_28.out
+mesa_grid.38800304_29.out
+mesa_grid.38800304_2.out
+mesa_grid.38800304_30.out
+mesa_grid.38800304_31.out
+mesa_grid.38800304_32.out
+mesa_grid.38800304_33.out
+mesa_grid.38800304_34.out
+mesa_grid.38800304_35.out
+mesa_grid.38800304_36.out
+mesa_grid.38800304_37.out
+mesa_grid.38800304_38.out
+mesa_grid.38800304_39.out
+mesa_grid.38800304_3.out
+mesa_grid.38800304_40.out
+mesa_grid.38800304_41.out
+mesa_grid.38800304_42.out
+mesa_grid.38800304_43.out
+mesa_grid.38800304_44.out
+mesa_grid.38800304_45.out
+mesa_grid.38800304_46.out
+mesa_grid.38800304_47.out
+mesa_grid.38800304_48.out
+mesa_grid.38800304_49.out
+mesa_grid.38800304_4.out
+mesa_grid.38800304_50.out
+mesa_grid.38800304_51.out
+mesa_grid.38800304_52.out
+mesa_grid.38800304_53.out
+mesa_grid.38800304_54.out
+mesa_grid.38800304_55.out
+mesa_grid.38800304_56.out
+mesa_grid.38800304_57.out
+mesa_grid.38800304_58.out
+mesa_grid.38800304_59.out
+mesa_grid.38800304_5.out
+mesa_grid.38800304_60.out
+mesa_grid.38800304_61.out
+mesa_grid.38800304_62.out
+mesa_grid.38800304_63.out
+mesa_grid.38800304_64.out
+mesa_grid.38800304_65.out
+mesa_grid.38800304_66.out
+mesa_grid.38800304_67.out
+mesa_grid.38800304_68.out
+mesa_grid.38800304_69.out
+mesa_grid.38800304_6.out
+mesa_grid.38800304_70.out
+mesa_grid.38800304_71.out
+mesa_grid.38800304_72.out
+mesa_grid.38800304_73.out
+mesa_grid.38800304_74.out
+mesa_grid.38800304_75.out
+mesa_grid.38800304_76.out
+mesa_grid.38800304_77.out
+mesa_grid.38800304_78.out
+mesa_grid.38800304_79.out
+mesa_grid.38800304_7.out
+mesa_grid.38800304_80.out
+mesa_grid.38800304_81.out
+mesa_grid.38800304_82.out
+mesa_grid.38800304_83.out
+mesa_grid.38800304_84.out
+mesa_grid.38800304_85.out
+mesa_grid.38800304_86.out
+mesa_grid.38800304_87.out
+mesa_grid.38800304_88.out
+mesa_grid.38800304_89.out
+mesa_grid.38800304_8.out
+mesa_grid.38800304_90.out
+mesa_grid.38800304_91.out
+mesa_grid.38800304_92.out
+mesa_grid.38800304_93.out
+mesa_grid.38800304_94.out
+mesa_grid.38800304_95.out
+mesa_grid.38800304_96.out
+mesa_grid.38800304_97.out
+mesa_grid.38800304_98.out
+mesa_grid.38800304_99.out
+mesa_grid.38800304_9.out
+mk
+run_grid.sh
+running_a_grid.ipynb
+star1
+star2
+Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_70
+Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_1.0000e+04_grid_index_79
+Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_1.2915e+00_grid_index_72
+Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_1.6681e+01_grid_index_74
+Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_2.1544e+02_grid_index_76
+Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_2.7826e+03_grid_index_78
+Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_3.5938e-01_grid_index_71
+Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_4.6416e+00_grid_index_73
+Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_5.9948e+01_grid_index_75
+Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_7.7426e+02_grid_index_77
+Zbase_0.0014_m1_13.3755_m2_9.3628_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_20
+Zbase_0.0014_m1_13.3755_m2_9.3628_initial_z_1.4200e-03_initial_period_in_days_1.0000e+04_grid_index_29
+Zbase_0.0014_m1_13.3755_m2_9.3628_initial_z_1.4200e-03_initial_period_in_days_1.2915e+00_grid_index_22
+Zbase_0.0014_m1_13.3755_m2_9.3628_initial_z_1.4200e-03_initial_period_in_days_1.6681e+01_grid_index_24
+Zbase_0.0014_m1_13.3755_m2_9.3628_initial_z_1.4200e-03_initial_period_in_days_2.1544e+02_grid_index_26
+Zbase_0.0014_m1_13.3755_m2_9.3628_initial_z_1.4200e-03_initial_period_in_days_2.7826e+03_grid_index_28
+Zbase_0.0014_m1_13.3755_m2_9.3628_initial_z_1.4200e-03_initial_period_in_days_3.5938e-01_grid_index_21
+Zbase_0.0014_m1_13.3755_m2_9.3628_initial_z_1.4200e-03_initial_period_in_days_4.6416e+00_grid_index_23
+Zbase_0.0014_m1_13.3755_m2_9.3628_initial_z_1.4200e-03_initial_period_in_days_5.9948e+01_grid_index_25
+Zbase_0.0014_m1_13.3755_m2_9.3628_initial_z_1.4200e-03_initial_period_in_days_7.7426e+02_grid_index_27
+Zbase_0.0014_m1_192.3748_m2_134.6623_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_80
+Zbase_0.0014_m1_192.3748_m2_134.6623_initial_z_1.4200e-03_initial_period_in_days_1.0000e+04_grid_index_89
+Zbase_0.0014_m1_192.3748_m2_134.6623_initial_z_1.4200e-03_initial_period_in_days_1.2915e+00_grid_index_82
+Zbase_0.0014_m1_192.3748_m2_134.6623_initial_z_1.4200e-03_initial_period_in_days_1.6681e+01_grid_index_84
+Zbase_0.0014_m1_192.3748_m2_134.6623_initial_z_1.4200e-03_initial_period_in_days_2.1544e+02_grid_index_86
+Zbase_0.0014_m1_192.3748_m2_134.6623_initial_z_1.4200e-03_initial_period_in_days_2.7826e+03_grid_index_88
+Zbase_0.0014_m1_192.3748_m2_134.6623_initial_z_1.4200e-03_initial_period_in_days_3.5938e-01_grid_index_81
+Zbase_0.0014_m1_192.3748_m2_134.6623_initial_z_1.4200e-03_initial_period_in_days_4.6416e+00_grid_index_83
+Zbase_0.0014_m1_192.3748_m2_134.6623_initial_z_1.4200e-03_initial_period_in_days_5.9948e+01_grid_index_85
+Zbase_0.0014_m1_192.3748_m2_134.6623_initial_z_1.4200e-03_initial_period_in_days_7.7426e+02_grid_index_87
+Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_30
+Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_1.0000e+04_grid_index_39
+Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_1.2915e+00_grid_index_32
+Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_1.6681e+01_grid_index_34
+Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_2.1544e+02_grid_index_36
+Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_2.7826e+03_grid_index_38
+Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_3.5938e-01_grid_index_31
+Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_4.6416e+00_grid_index_33
+Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_5.9948e+01_grid_index_35
+Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_7.7426e+02_grid_index_37
+Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_90
+Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_1.0000e+04_grid_index_99
+Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_1.2915e+00_grid_index_92
+Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_1.6681e+01_grid_index_94
+Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_2.1544e+02_grid_index_96
+Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_2.7826e+03_grid_index_98
+Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_3.5938e-01_grid_index_91
+Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_4.6416e+00_grid_index_93
+Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_5.9948e+01_grid_index_95
+Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_7.7426e+02_grid_index_97
+Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_40
+Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_1.0000e+04_grid_index_49
+Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_1.2915e+00_grid_index_42
+Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_1.6681e+01_grid_index_44
+Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_2.1544e+02_grid_index_46
+Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_2.7826e+03_grid_index_48
+Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_3.5938e-01_grid_index_41
+Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_4.6416e+00_grid_index_43
+Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_5.9948e+01_grid_index_45
+Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_7.7426e+02_grid_index_47
+Zbase_0.0014_m1_50.7258_m2_35.5080_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_50
+Zbase_0.0014_m1_50.7258_m2_35.5080_initial_z_1.4200e-03_initial_period_in_days_1.0000e+04_grid_index_59
+Zbase_0.0014_m1_50.7258_m2_35.5080_initial_z_1.4200e-03_initial_period_in_days_1.2915e+00_grid_index_52
+Zbase_0.0014_m1_50.7258_m2_35.5080_initial_z_1.4200e-03_initial_period_in_days_1.6681e+01_grid_index_54
+Zbase_0.0014_m1_50.7258_m2_35.5080_initial_z_1.4200e-03_initial_period_in_days_2.1544e+02_grid_index_56
+Zbase_0.0014_m1_50.7258_m2_35.5080_initial_z_1.4200e-03_initial_period_in_days_2.7826e+03_grid_index_58
+Zbase_0.0014_m1_50.7258_m2_35.5080_initial_z_1.4200e-03_initial_period_in_days_3.5938e-01_grid_index_51
+Zbase_0.0014_m1_50.7258_m2_35.5080_initial_z_1.4200e-03_initial_period_in_days_4.6416e+00_grid_index_53
+Zbase_0.0014_m1_50.7258_m2_35.5080_initial_z_1.4200e-03_initial_period_in_days_5.9948e+01_grid_index_55
+Zbase_0.0014_m1_50.7258_m2_35.5080_initial_z_1.4200e-03_initial_period_in_days_7.7426e+02_grid_index_57
+Zbase_0.0014_m1_5.5000_m2_3.8500_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_0
+Zbase_0.0014_m1_5.5000_m2_3.8500_initial_z_1.4200e-03_initial_period_in_days_1.0000e+04_grid_index_9
+Zbase_0.0014_m1_5.5000_m2_3.8500_initial_z_1.4200e-03_initial_period_in_days_1.2915e+00_grid_index_2
+Zbase_0.0014_m1_5.5000_m2_3.8500_initial_z_1.4200e-03_initial_period_in_days_1.6681e+01_grid_index_4
+Zbase_0.0014_m1_5.5000_m2_3.8500_initial_z_1.4200e-03_initial_period_in_days_2.1544e+02_grid_index_6
+Zbase_0.0014_m1_5.5000_m2_3.8500_initial_z_1.4200e-03_initial_period_in_days_2.7826e+03_grid_index_8
+Zbase_0.0014_m1_5.5000_m2_3.8500_initial_z_1.4200e-03_initial_period_in_days_3.5938e-01_grid_index_1
+Zbase_0.0014_m1_5.5000_m2_3.8500_initial_z_1.4200e-03_initial_period_in_days_4.6416e+00_grid_index_3
+Zbase_0.0014_m1_5.5000_m2_3.8500_initial_z_1.4200e-03_initial_period_in_days_5.9948e+01_grid_index_5
+Zbase_0.0014_m1_5.5000_m2_3.8500_initial_z_1.4200e-03_initial_period_in_days_7.7426e+02_grid_index_7
+Zbase_0.0014_m1_79.1046_m2_55.3732_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_60
+Zbase_0.0014_m1_79.1046_m2_55.3732_initial_z_1.4200e-03_initial_period_in_days_1.0000e+04_grid_index_69
+Zbase_0.0014_m1_79.1046_m2_55.3732_initial_z_1.4200e-03_initial_period_in_days_1.2915e+00_grid_index_62
+Zbase_0.0014_m1_79.1046_m2_55.3732_initial_z_1.4200e-03_initial_period_in_days_1.6681e+01_grid_index_64
+Zbase_0.0014_m1_79.1046_m2_55.3732_initial_z_1.4200e-03_initial_period_in_days_2.1544e+02_grid_index_66
+Zbase_0.0014_m1_79.1046_m2_55.3732_initial_z_1.4200e-03_initial_period_in_days_2.7826e+03_grid_index_68
+Zbase_0.0014_m1_79.1046_m2_55.3732_initial_z_1.4200e-03_initial_period_in_days_3.5938e-01_grid_index_61
+Zbase_0.0014_m1_79.1046_m2_55.3732_initial_z_1.4200e-03_initial_period_in_days_4.6416e+00_grid_index_63
+Zbase_0.0014_m1_79.1046_m2_55.3732_initial_z_1.4200e-03_initial_period_in_days_5.9948e+01_grid_index_65
+Zbase_0.0014_m1_79.1046_m2_55.3732_initial_z_1.4200e-03_initial_period_in_days_7.7426e+02_grid_index_67
+Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_10
+Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_1.0000e+04_grid_index_19
+Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_1.2915e+00_grid_index_12
+Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_1.6681e+01_grid_index_14
+Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_2.1544e+02_grid_index_16
+Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_2.7826e+03_grid_index_18
+Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_3.5938e-01_grid_index_11
+Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_4.6416e+00_grid_index_13
+Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_5.9948e+01_grid_index_15
+Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_7.7426e+02_grid_index_17
+</pre></div></div>
+</div>
+<p>Congratulations, you have run a MESA grid using POSYDON! You can now process the data using POSYDON’s built-in tools, or you can use your own tools to process the data.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="laptop.html" class="btn btn-neutral float-left" title="Run one binary on your laptop for debugging" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="running_single_hms.html" class="btn btn-neutral float-right" title="Running Single Stars with POSYDON" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.2/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
