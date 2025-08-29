@@ -374,19 +374,19 @@ class TestGetPdf:
 @fixture
 def base_simulation_kwargs():
     simulation_params = {'number_of_binaries': 100000,
-                        'primary_mass_scheme':'Kroupa2001',
-                        'binary_fraction_const':1.0,
-                        'binary_fraction_scheme':'const',
+                        'primary_mass_scheme': 'Kroupa2001',
+                        'binary_fraction_const': 1.0,
+                        'binary_fraction_scheme': 'const',
                         'primary_mass_min': 7,
                         'primary_mass_max': 140,
-                        'secondary_mass_scheme':'flat_mass_ratio',
-                        'secondary_mass_min':0.35,
-                        'secondary_mass_max':140,
-                        'orbital_scheme':'period',
-                        'orbital_period_scheme':'Sana+12_period_extended',
-                        'orbital_period_min':0.35,
-                        'orbital_period_max':6e3,
-                        'eccentricity_scheme':'zero',}
+                        'secondary_mass_scheme': 'flat_mass_ratio',
+                        'secondary_mass_min': 0.35,
+                        'secondary_mass_max': 140,
+                        'orbital_scheme': 'period',
+                        'orbital_period_scheme': 'Sana+12_period_extended',
+                        'orbital_period_min': 0.35,
+                        'orbital_period_max': 6e3,
+                        'eccentricity_scheme': 'zero',}
     return simulation_params
 
 @fixture
@@ -408,10 +408,9 @@ def pop_data(kwargs):
                                      'S1_mass_i',
                                      'S2_mass_i',])
     pop_data['state_i'] = 'detached'
-    f_b = kwargs['binary_fraction_const']
-    n_binaries = int(f_b * len(pop_data))
-    pop_data.loc[n_binaries:, 'S2_mass_i'] = 0
-    pop_data.loc[n_binaries:, 'state_i'] = 'initially_single_star'
+    mask = pd.isna(pop_data['S2_mass_i'])
+    pop_data['state_i'][mask] = 'initially_single_star'
+    pop_data['S2_mass_i'][mask] = 0
     return pop_data
 
 class TestReweighting():
@@ -449,7 +448,7 @@ class TestReweighting():
         
         mask = expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max
         selection = expanded_weights[mask]
-        assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
+        assert np.isclose(np.nansum(selection), np.nansum(small_weights), atol=1e-3)
         
     def test_population_larger_sample_space_binary(self, base_simulation_kwargs):
         base_simulation_kwargs['number_of_binaries'] =  100000
@@ -484,7 +483,7 @@ class TestReweighting():
         
         mask = expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max
         selection = expanded_weights[mask]
-        assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
+        assert np.isclose(np.nansum(selection), np.nansum(small_weights), atol=1e-3)
         
     def test_population_larger_sample_space_mixed(self, base_simulation_kwargs):
         base_simulation_kwargs['number_of_binaries'] =  100000
@@ -526,12 +525,13 @@ class TestReweighting():
         
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
-        base_simulation_kwargs['binary_fraction_const'] = 1
+        base_simulation_kwargs['binary_fraction_const'] = 1.
 
         small_sample_primary_mass_max = 20
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = small_sample_primary_mass_max
         small_sample = pop_data(base_simulation_kwargs)
+        
         
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['primary_mass_min'] = 7.
@@ -813,11 +813,10 @@ class TestBinaryFractions():
         assert len(expanded_weights)  == len(expanded_sample)
         
         # Check just single stars in the population.
-        mask = ((expanded_sample['S1_mass_i'] <= 20)
-                & (expanded_sample['state_i'] == 'initially_single_star'))
+        mask = (expanded_sample['state_i'] == 'initially_single_star')
         selection = expanded_weights[mask]
-        assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)    
-        
+        assert np.isclose(np.nansum(selection), np.nansum(small_weights), atol=1e-3)
+
     def test_single_star_population_error(self, base_simulation_kwargs):
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
