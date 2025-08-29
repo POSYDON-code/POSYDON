@@ -1479,15 +1479,15 @@ class TrackMatcher:
                 else:
                     interp1d[key] = PchipInterpolator2(age, kvalue[key])
 
-        interp1d["inertia"] = PchipInterpolator(
+        interp1d["inertia"] = PchipInterpolator2(
             age, kvalue["inertia"] / (const.msol * const.rsol**2))
-        interp1d["Idot"] = interp1d["inertia"].derivative()
+        interp1d["Idot"] = interp1d["inertia"].interpolator.derivative()
 
         interp1d["conv_env_turnover_time_l_b"] = PchipInterpolator2(
             age, kvalue['conv_env_turnover_time_l_b'] / const.secyer)
 
-        interp1d["L"] = PchipInterpolator(age, 10 ** kvalue["log_L"])
-        interp1d["R"] = PchipInterpolator(age, 10 ** kvalue["log_R"])
+        interp1d["L"] = PchipInterpolator2(age, 10 ** kvalue["log_L"])
+        interp1d["R"] = PchipInterpolator2(age, 10 ** kvalue["log_R"])
         interp1d["t_max"] = t_max
         interp1d["max_time"] = max_time
         interp1d["t0"] = match_t0
@@ -1497,10 +1497,10 @@ class TrackMatcher:
             kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star.mass
             kvalue["R"] = np.zeros_like(kvalue["log_R"])
             kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
-            interp1d["mass"] = PchipInterpolator(age, kvalue["mass"])
-            interp1d["R"] = PchipInterpolator(age, kvalue["R"])
-            interp1d["mdot"] = PchipInterpolator(age, kvalue["mdot"])
-            interp1d["Idot"] = PchipInterpolator(age, kvalue["mdot"])
+            interp1d["mass"] = PchipInterpolator2(age, kvalue["mass"])
+            interp1d["R"] = PchipInterpolator2(age, kvalue["R"])
+            interp1d["mdot"] = PchipInterpolator2(age, kvalue["mdot"])
+            interp1d["Idot"] = PchipInterpolator2(age, kvalue["mdot"])
 
         # update star with interp1d object built from matched values
         star.interp1d = interp1d
