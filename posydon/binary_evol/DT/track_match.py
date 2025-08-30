@@ -1479,9 +1479,12 @@ class TrackMatcher:
                 else:
                     interp1d[key] = PchipInterpolator2(age, kvalue[key])
 
-        interp1d["inertia"] = PchipInterpolator2(
-            age, kvalue["inertia"] / (const.msol * const.rsol**2))
-        interp1d["Idot"] = interp1d["inertia"].interpolator.derivative()
+        interp1d["inertia"] = PchipInterpolator2(age, 
+                                                kvalue["inertia"] / (const.msol * const.rsol**2))
+
+        interp1d["Idot"] = PchipInterpolator2(age, 
+                                              kvalue["inertia"] / (const.msol * const.rsol**2),
+                                              derivative=True)
 
         interp1d["conv_env_turnover_time_l_b"] = PchipInterpolator2(
             age, kvalue['conv_env_turnover_time_l_b'] / const.secyer)
