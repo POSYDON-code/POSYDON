@@ -587,9 +587,14 @@ class detached_step:
 
         """
 
+        print("DEBUG secondary.interp1d[mass](t): ", secondary.interp1d["mass"](t))
+        print("DEBUG primary.interp1d[mass](t): ", primary.interp1d["mass"](t))
+
         sep_interp, ecc_interp, omega_interp_sec, omega_interp_pri = res.sol(t)
         mass_interp_sec = secondary.interp1d[self.translate["mass"]]
         mass_interp_pri = primary.interp1d[self.translate["mass"]]
+        print("DEBUG mass_interp_sec(t): ", mass_interp_sec(t))
+        print("DEBUG mass_interp_pri(t): ", mass_interp_pri(t))
 
         secondary.interp1d["sep"] = sep_interp
         secondary.interp1d["ecc"] = ecc_interp    
@@ -597,11 +602,11 @@ class detached_step:
         primary.interp1d["omega"] = omega_interp_pri
 
         secondary.interp1d["porb"] = orbital_period_from_separation(
-            sep_interp, mass_interp_sec(t-secondary.t_offset),
-            mass_interp_pri(t-primary.t_offset))
+            sep_interp, mass_interp_sec(t),
+            mass_interp_pri(t))
         primary.interp1d["porb"] = orbital_period_from_separation(
-            sep_interp, mass_interp_pri(t-primary.t_offset),
-            mass_interp_sec(t-secondary.t_offset))
+            sep_interp, mass_interp_pri(t),
+            mass_interp_sec(t))
 
         secondary.interp1d["time"] = t
         primary.interp1d["time"] = t
