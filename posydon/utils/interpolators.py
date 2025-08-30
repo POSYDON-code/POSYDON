@@ -121,7 +121,7 @@ class interp1d:
 
 class PchipInterpolator2:
     """Interpolation class."""
-    def __init__(self, *args, positive=False, **kwargs):
+    def __init__(self, *args, positive=False, derivative=False, **kwargs):
         """Initialize the interpolator.
 
         Parameters
@@ -132,7 +132,16 @@ class PchipInterpolator2:
             Arguments passed to original PchipInterpolator init.
 
         """
-        self.interpolator = PchipInterpolator(*args, **kwargs)
+
+
+        # this will set whether or not the __call__ should return the y(x) or y'(x)
+        self.derivative = derivative
+
+        if self.derivative:
+            self.interpolator = PchipInterpolator(*args, **kwargs).derivative()
+        else:
+            self.interpolator = PchipInterpolator(*args, **kwargs)
+            
         self.positive = positive
 
         # potential offset (for example, we've matched a MESA sim to another
@@ -164,6 +173,7 @@ class PchipInterpolator2:
         args = tuple(args_copy)
 
         result = self.interpolator(*args, **kwargs)
+
         if self.positive:
             result = np.maximum(result, 0.0)
         return result
