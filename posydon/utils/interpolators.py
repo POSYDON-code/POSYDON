@@ -8,6 +8,7 @@ __authors__ = [
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator
+import copy
 
 
 class interp1d:
@@ -156,10 +157,11 @@ class PchipInterpolator2:
 
         # offset x (the offset is 0 unless otherwise set)
         args = list(args)
+        args_copy = copy.deepcopy(args)
         #for i in range(len(args)):
         #    args[i] -= self.offset
-        args[0] -= self.offset
-        args = tuple(args)
+        args_copy[0] -= self.offset
+        args = tuple(args_copy)
 
         result = self.interpolator(*args, **kwargs)
         if self.positive:
