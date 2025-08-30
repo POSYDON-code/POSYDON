@@ -597,11 +597,11 @@ class detached_step:
         primary.interp1d["omega"] = omega_interp_pri
 
         secondary.interp1d["porb"] = orbital_period_from_separation(
-            sep_interp, mass_interp_sec(t),
-            mass_interp_pri(t))
+            sep_interp, mass_interp_sec(t-secondary.t_offset),
+            mass_interp_pri(t-primary.t_offset))
         primary.interp1d["porb"] = orbital_period_from_separation(
-            sep_interp, mass_interp_pri(t),
-            mass_interp_sec(t))
+            sep_interp, mass_interp_pri(t-primary.t_offset),
+            mass_interp_sec(t-secondary.t_offset))
 
         secondary.interp1d["time"] = t
         primary.interp1d["time"] = t
@@ -1176,9 +1176,8 @@ class detached_step:
             k12 = (1 / (1 + q2)) * (mdot_1 / m1)
             k22 = mdot_1 / m1
             k32 = mdot_1 / (m1 + m2)
-            da_mt_pri = a * (
-                    2 * k12 - 2 * k22 + k32
-            )
+            da_mt_pri = a * (2 * k12 - 2 * k22 + k32)
+
             if self.verbose:
                 print("da_mt = ", da_mt_sec, da_mt_pri)
 
@@ -1752,4 +1751,4 @@ class detached_step:
             dOmega_sec = dOmega_mb_sec
             dOmega_pri = dOmega_mb_pri
 
-            return dOmega_sec, dOmega_pri
+            return 0, 0
