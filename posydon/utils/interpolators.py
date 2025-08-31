@@ -165,7 +165,7 @@ class PchipInterpolator2:
         """
 
         # offset x (the offset is 0 unless otherwise set)
-        args = list(args)
+        args = np.array(list(args))
         args_copy = copy.deepcopy(args)
         #for i in range(len(args)):
         #    args[i] -= self.offset
