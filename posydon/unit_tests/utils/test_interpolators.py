@@ -179,6 +179,8 @@ class TestPchipInterpolator2:
         assert PchipInterpolator2.positive == False
         assert PchipInterpolator2_True.positive == True
         assert PchipInterpolator2_False.positive == False
+        assert PchipInterpolator2.offset == 0.0
+        assert PchipInterpolator2.derivative == False
 
     def test_call(self, PchipInterpolator2, PchipInterpolator2_True,\
                   PchipInterpolator2_False):
