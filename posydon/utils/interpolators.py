@@ -3,6 +3,7 @@
 
 __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 

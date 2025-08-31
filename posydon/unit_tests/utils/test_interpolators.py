@@ -22,7 +22,7 @@ class TestElements:
         elements = {'PchipInterpolator', 'PchipInterpolator2', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
-                    'interp1d', 'np'}
+                    'interp1d', 'np', 'copy'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
