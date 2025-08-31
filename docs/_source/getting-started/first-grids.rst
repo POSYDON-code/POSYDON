@@ -1,7 +1,7 @@
 .. _first-grids:
 
 Quick Start: Examining the MESA Grids
-============================
+=====================================
 
 Installation and Data Download
 ------------------------------
@@ -18,7 +18,7 @@ Additionally, POSYDON requires data to be downloaded from Zenodo. For our simple
     get-posydon-data DR2_1Zsun
 
 Loading a MESA grid
---------------
+-------------------
 
 You can access our grids of MESA simulations using the ``PSyGrid`` module (for an overview of this module, see :ref:`here </components-overview/post_processing/psygrid.rst>`). We will run through some simple commands to orient ourselves with the ``PSyGrid`` object below. 
 

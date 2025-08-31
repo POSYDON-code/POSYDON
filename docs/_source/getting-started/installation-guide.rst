@@ -135,13 +135,13 @@ For users interested in the latest features and developments, you can install PO
 
         cd POSYDON
 
-    Install the software as an editable package using ``pip`:
+    Install the software as an editable package using ``pip``:
 
     .. code-block:: bash
 
         pip install -e .
 
-3. **Set Environment Variables*
+3. **Set Environment Variables**
 
     Next, export the required paths as environment variables. From the ``POSYDON`` directory that you just performed the installation in, 
     you can execute ``pwd`` if you are unsure of the path name. Please change the location names accordingly below to your installation 
