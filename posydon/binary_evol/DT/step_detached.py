@@ -260,9 +260,26 @@ class detached_step:
                                           list_for_matching_HeStar = list_for_matching_HeStar,
                                           list_for_matching_postMS = list_for_matching_postMS,
                                           record_matching = record_matching,
-                                          verbose = self.verbose,)
+                                          verbose = self.verbose)
+
+        # create evolution handler object
+        self.init_evo_kwargs() 
+        self.evo = detached_evolution(**self.evo_kwargs)
 
         return
+
+    def init_evo_kwargs(self):
+        """Store keyword args required to initialize detached evolution, based on step's kwargs."""
+        self.evo_kwargs = {
+            "primary": None,
+            "secondary": None,
+            "do_wind_loss": self.do_wind_loss,
+            "do_tides": self.do_tides,
+            "do_magnetic_braking": self.do_magnetic_braking,
+            "magnetic_braking_mode": self.magnetic_braking_mode,
+            "do_stellar_evolution_and_spin_from_winds": self.do_stellar_evolution_and_spin_from_winds,
+            "do_gravitational_radiation": self.do_gravitational_radiation
+        }
 
     def __repr__(self):
         """Return the name of evolution step."""
@@ -339,15 +356,6 @@ class detached_step:
         #primary.interp1d.x_offset = primary.t_offset
 
         max_time = secondary.interp1d["max_time"]
-
-        # create evolution handler object
-        self.evo = self.evolution_handler(primary, secondary,
-                                          self.do_wind_loss,
-                                          self.do_tides,
-                                          self.do_magnetic_braking,
-                                          self.magnetic_braking_mode,
-                                          self.do_stellar_evolution_and_spin_from_winds,
-                                          self.do_gravitational_radiation) 
 
         if (self.evo.ev_rlo1(binary.time, [binary.separation, binary.eccentricity], primary, secondary) >= 0
             or self.evo.ev_rlo2(binary.time, [binary.separation, binary.eccentricity], primary, secondary) >= 0):
@@ -760,412 +768,432 @@ class detached_step:
                 setattr(obj, key, current)
                 getattr(obj, key + "_history").extend(history)
 
-    class evolution_handler:
+class detached_evolution:
 
-        def __init__(self, primary, secondary, 
-                     do_wind_loss=True,
-                     do_tides=True,
-                     do_magnetic_braking=True,
-                     magnetic_braking_mode="RVJ83",
-                     do_stellar_evolution_and_spin_from_winds=True,
-                     do_gravitational_radiation=True,
-                     verbose=False):
+    def __init__(self, primary=None, secondary=None, 
+                    do_wind_loss=True,
+                    do_tides=True,
+                    do_magnetic_braking=True,
+                    magnetic_braking_mode="RVJ83",
+                    do_stellar_evolution_and_spin_from_winds=True,
+                    do_gravitational_radiation=True,
+                    verbose=False):
 
-            self.verbose = verbose
-            self.phys_keys = ["R", "L", "mass", "mdot", "inertia", "conv_mx1_top_r",
-                              "conv_mx1_bot_r", "surface_h1", "center_h1",
-                              "mass_conv_reg_fortides", "thickness_conv_reg_fortides",
-                              "radius_conv_reg_fortides", "Idot",
-                              "conv_env_turnover_time_l_b"]
-            
-            # initialize physical properties
-            # of stars...
-            self.primary = {k:primary.interp1d[k](0) for k in self.phys_keys}
-            self.secondary = {k:secondary.interp1d[k](0) for k in self.phys_keys}
-            self.primary['omega'] = np.nan
-            self.secondary['omega'] = np.nan
-            # also separation and eccentricity
-            self.a = np.nan
-            self.e = np.nan
-
-            # detached evolution options
-            self.do_wind_loss = do_wind_loss
-            self.do_tides = do_tides
-            self.do_gravitational_radiation = do_gravitational_radiation
-            self.do_magnetic_braking = do_magnetic_braking
-            self.magnetic_braking_mode = magnetic_braking_mode
-            self.do_stellar_evolution_and_spin_from_winds = do_stellar_evolution_and_spin_from_winds
-            self.verbose = False
-
-        # timing events for solve_ivp...
-        # detects secondary RLO
-        @event(True, 1)
-        def ev_rlo1(self, t, y, primary, secondary):
-            """
-                Difference between radius and Roche lobe at a given time. Used 
-            to check if there is RLOF mass transfer during the detached binary 
-            evolution interpolation. Calculated for the secondary.
-
-            Parameters
-            ----------
-            t : float
-                Time of the evolution, in years.
-
-            y : tuple(float)
-                [separation, eccentricity] at that time. Separation should be
-                in solar radii.
-
-            primary : SingleStar object
-                A single star object, representing the primary (more evolved) star 
-                in the binary and containing its properties.
-            
-            secondary : SingleStar object
-                A single star object, representing the secondary (less evolved) star 
-                in the binary and containing its properties.
-
-            Returns
-            -------
-            RL_diff : float
-                Difference between stellar radius and 95% of the Roche lobe 
-                radius in solar radii.
-
-            """
-            pri_mass = primary.interp1d["mass"](t)
-            sec_mass = secondary.interp1d["mass"](t)
-
-            sep = y[0]
-            ecc = y[1]
-            
-            RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
-            
-            # 95% filling of the RL is enough to assume beginning of RLO,
-            # as we do in CO-HMS_RLO grid
-            RL_diff = secondary.interp1d["R"](t) - 0.95*RL
-            return RL_diff
-
-        # detects primary RLO
-        @event(True, 1)
-        def ev_rlo2(self, t, y, primary, secondary):
-            """
-                Difference between radius and Roche lobe at a given time. Used 
-            to check if there is RLOF mass transfer during the detached binary 
-            evolution interpolation. Calculated for the primary.
-
-            Parameters
-            ----------
-            t : float
-                Time of the evolution, in years
-
-            y : tuple(float)
-                [separation, eccentricity] at that time. Separation should be
-                in solar radii.
-
-            primary : SingleStar object
-                A single star object, representing the primary (more evolved) star 
-                in the binary and containing its properties.
-            
-            secondary : SingleStar object
-                A single star object, representing the secondary (less evolved) star 
-                in the binary and containing its properties.
-
-            Returns
-            -------
-            RL_diff : float
-                Difference between stellar radius and 95% of the Roche lobe 
-                radius in solar radii.
-
-            """
-            pri_mass = primary.interp1d["mass"](t)
-            sec_mass = secondary.interp1d["mass"](t)
-            
-            sep = y[0]
-            ecc = y[1]
-            
-            RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
-            RL_diff = primary.interp1d["R"](t) - 0.95*RL
-
-            return RL_diff
-
-        # detects secondary RLO via relative difference btwn. R and R_RL
-        @event(True, 1)
-        def ev_rel_rlo1(self, t, y, primary, secondary):
-            """
-                Relative difference between radius and Roche lobe. Used to 
-            check if there is RLOF mass transfer during the detached binary 
-            evolution interpolation. Calculated for the secondary.
-
-            Parameters
-            ----------
-            t : float
-                Time of the evolution, in years.
-
-            y : tuple(float)
-                [separation, eccentricity] at that time. Separation should be
-                in solar radii.
-
-            primary : SingleStar object
-                A single star object, representing the primary (more evolved) star 
-                in the binary and containing its properties.
-            
-            secondary : SingleStar object
-                A single star object, representing the secondary (less evolved) star 
-                in the binary and containing its properties.
-
-            Returns
-            -------
-            RL_rel_diff : float
-                Relative difference between stellar radius and Roche lobe
-                radius.
-
-            """
-            pri_mass = primary.interp1d["mass"](t)
-            sec_mass = secondary.interp1d["mass"](t)
-            
-            sep = y[0]
-            ecc = y[1]
-            
-            RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
-            RL_rel_diff = (secondary.interp1d["R"](t) - RL) / RL
-            return RL_rel_diff
-
-        # detects primary RLO via relative difference btwn. R and R_RL
-        @event(True, 1)
-        def ev_rel_rlo2(self, t, y, primary, secondary):
-            """
-                Relative difference between radius and Roche lobe. Used to 
-            check if there is RLOF mass transfer during the detached binary 
-            evolution interpolation. Calculated for the primary.
-
-            Parameters
-            ----------
-            t : float
-                Time of the evolution, in years.
-
-            y : tuple(float)
-                [separation, eccentricity] at that time. Separation should be
-                in solar radii.
-
-            primary : SingleStar object
-                A single star object, representing the primary (more evolved) star 
-                in the binary and containing its properties.
-            
-            secondary : SingleStar object
-                A single star object, representing the secondary (less evolved) star 
-                in the binary and containing its properties.
-
-            Returns
-            -------
-            RL_rel_diff : float
-                Relative difference between stellar radius and Roche lobe
-                radius.
-            """
-            pri_mass = primary.interp1d["mass"](t)
-            sec_mass = secondary.interp1d["mass"](t)
-
-            sep = y[0]
-            ecc = y[1]
-            
-            RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
-            RL_rel_diff = (primary.interp1d["R"](t) - RL) / RL
-            return RL_rel_diff
-
-        # detects if the max age in track of secondary is reached
-        @event(True, -1)
-        def ev_max_time1(self, t, y, primary, secondary):
-            return secondary.t_max - t + secondary.t_offset
-
-        # detects if the max age in track of primary is reached
-        @event(True, -1)
-        def ev_max_time2(self, t, y, primary, secondary):
-            return primary.t_max - t + primary.t_offset
-
-        def update_props(self, t, y, primary, secondary):
-            """ Update properties of stars w/ current age during detached evolution."""
-
-            for k in self.phys_keys:
-                self.primary[k] = primary.interp1d[k](t)
-                self.secondary[k] = secondary.interp1d[k](t)
-
-            # update omega, a, e, based on current diffeq solution
-            y[0] = np.max([y[0], 0])  # We limit separation to non-negative values
-            self.a = y[0]
-            y[1] = np.max([y[1], 0])  # We limit eccentricity to non-negative values
-            self.e = y[1]
-            if self.e > 0 and self.e < 10.0 ** (-3):
-                # we force a negligible eccentricity to become 0
-                # for computational stability
-                self.e = 0.0
-                if self.verbose and self.verbose != 1:
-                    print("Negligible eccentricity became 0 for "
-                        "computational stability")
-            y[2] = np.max([y[2], 0])  # We limit omega spin to non-negative values
-            self.secondary['omega'] = y[2]  # in rad/yr
-            y[3] = np.max([y[3], 0])
-            self.primary['omega'] = y[3]
-
-
-        def __call__(self, t, y, primary, secondary):
-            """
-                Diff. equation describing the orbital evolution of a detached binary.
-
-            The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_
-            effects and magnetic braking [4]_, [5]_, [6]_, [7]_, [8]_. It also handles
-            the change of the secondary's stellar spin due to its change of moment of
-            intertia and due to mass-loss from its spinning surface. It is assumed that
-            the mass loss is fully non-conservative. Magnetic braking is fully applied
-            to secondary stars with mass less than 1.3 Msun and fully off for stars
-            with mass larger then 1.5 Msun. The effect of magnetic braking falls
-            linearly for stars with mass between 1.3 Msun and 1.5 Msun.
-
-            TODO: explain new features (e.g., double COs)
-
-            Parameters
-            ----------
-            t : float
-                The age of the system in years
-
-            y : list[float]
-                Contains the separation, eccentricity and angular velocity, in Rsolar,
-                dimensionless and rad/year units, respectively.
-
-            primary : SingleStar object
-                A single star object, representing the primary (more evolved) star 
-                in the binary and containing its properties.
-            
-            secondary : SingleStar object
-                A single star object, representing the secondary (less evolved) star 
-                in the binary and containing its properties.
-
-            Warns
-            -----
-            UnsupportedModelWarning
-                If an unsupported model or model is unspecified is determined from 
-                `magnetic_braking_mode`. In this case, magnetic braking will not 
-                be calculated during the detached step.
-
-            Returns
-            -------
-            result : list[float]
-                Contains the change of the separation, eccentricity and angular 
-                velocity, in Rsolar, dimensionless and rad/year units, respectively.
-
-            References
-            ----------
-            .. [1] Tauris, T. M., & van den Heuvel, E. 2006,
-                Compact stellar X-ray sources, 1, 623
-            .. [2] Hut, P. 1981, A&A, 99, 126
-            .. [3] Junker, W., & Schafer, G. 1992, MNRAS, 254, 146
-            .. [4] Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
-            .. [5] Matt et al. 2015, ApJ, 799, L23
-            .. [6] Garraffo et al. 2018, ApJ, 862, 90
-            .. [7] Van & Ivanova 2019, ApJ, 886, L31
-            .. [8] Gossage et al. 2021, ApJ, 912, 65
-
-            """
-            
-            # update star/orbital props w/ current time during integration
-            self.update_props(t, y, primary, secondary)
-                            
-            # initialize deltas for this timestep
-            da = 0.0
-            de = 0.0
-            dOmega_sec = 0.0
-            dOmega_pri = 0.0
-
-            #  Tidal forces affecting orbit and stellar spins
-            if self.do_tides:
-                da_tides, de_tides, domega2, domega1 = self.tides()
-                da += da_tides
-                de += de_tides
-                dOmega_sec += domega2
-                dOmega_pri += domega1
-
-            #  Gravitional radiation affecting the orbit
-            if self.do_gravitational_radiation:
-                da_gr, de_gr = self.gravitational_radiation()
-                da += da_gr
-                de += de_gr
-
-            #  Magnetic braking affecting stellar spins
-            if self.do_magnetic_braking:
-                domega2, domega1 = self.magnetic_braking()
-                dOmega_sec += domega2
-                dOmega_pri += domega1
-
-            #  Mass Loss affecting orbital separation
-            if self.do_wind_loss:
-                da_mt = self.sep_from_winds()
-                da += da_mt
-
-            # Mass loss affecting stellar spins
-            if self.do_stellar_evolution_and_spin_from_winds:
-                domega2, domega1 = self.spin_from_winds()
-                dOmega_sec += domega2
-                dOmega_pri += domega1
-
-            result = [da, de, dOmega_sec, dOmega_pri]
-
-            return result
+        self.verbose = verbose
+        self.phys_keys = ["R", "L", "mass", "mdot", "inertia", "conv_mx1_top_r",
+                            "conv_mx1_bot_r", "surface_h1", "center_h1",
+                            "mass_conv_reg_fortides", "thickness_conv_reg_fortides",
+                            "radius_conv_reg_fortides", "Idot",
+                            "conv_env_turnover_time_l_b"]
         
-        def spin_from_winds(self):
+        # initialize physical properties
+        # of stars...
+        if primary is not None:
+            self.primary = {k:primary.interp1d[k](0) for k in self.phys_keys}
+        else:
+            self.primary = {k:np.nan for k in self.phys_keys}
 
-            return default_spin_from_winds(self.a, self.e, self.primary, self.secondary, self.verbose)
+        if secondary is not None:
+            self.secondary = {k:secondary.interp1d[k](0) for k in self.phys_keys}
+        else:
+            self.secondary = {k:np.nan for k in self.phys_keys}
 
-        def sep_from_winds(self):
-            
-            return default_sep_from_winds(self.a, self.e, self.primary, self.secondary, self.verbose)
+        self.primary['omega'] = np.nan
+        self.secondary['omega'] = np.nan
 
-        def tides(self):
+        # also separation and eccentricity
+        self.a = np.nan
+        self.e = np.nan
 
-            return default_tides(self.a, self.e, self.primary, self.secondary, self.verbose)
+        # detached evolution options
+        self.do_wind_loss = do_wind_loss
+        self.do_tides = do_tides
+        self.do_gravitational_radiation = do_gravitational_radiation
+        self.do_magnetic_braking = do_magnetic_braking
+        self.magnetic_braking_mode = magnetic_braking_mode
+        self.do_stellar_evolution_and_spin_from_winds = do_stellar_evolution_and_spin_from_winds
+        self.verbose = False
 
-        def gravitational_radiation(self):
+    # timing events for solve_ivp...
+    # detects secondary RLO
+    @event(True, 1)
+    def ev_rlo1(self, t, y, primary, secondary):
+        """
+            Difference between radius and Roche lobe at a given time. Used 
+        to check if there is RLOF mass transfer during the detached binary 
+        evolution interpolation. Calculated for the secondary.
 
-            return default_gravrad(self.a, self.e, self.primary, self.secondary, self.verbose)
+        Parameters
+        ----------
+        t : float
+            Time of the evolution, in years.
 
-        def magnetic_braking(self):
-            # domega_mb / dt = torque_mb / I is calculated below.
-            # All results are in units of [yr^-2], i.e., the amount of change
-            # in Omega over 1 year.
+        y : tuple(float)
+            [separation, eccentricity] at that time. Separation should be
+            in solar radii.
 
-            if self.magnetic_braking_mode == "RVJ83":
-                dOmega_mb_sec, dOmega_mb_pri = RVJ83_braking(self.primary, self.secondary, 
-                                                             self.verbose)
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
 
-            elif self.magnetic_braking_mode == "M15":
+        Returns
+        -------
+        RL_diff : float
+            Difference between stellar radius and 95% of the Roche lobe 
+            radius in solar radii.
 
-                dOmega_mb_sec, dOmega_mb_pri = M15_braking(self.primary, self.secondary, 
-                                                           self.verbose)
+        """
+        pri_mass = primary.interp1d["mass"](t)
+        sec_mass = secondary.interp1d["mass"](t)
 
-            elif self.magnetic_braking_mode == "G18":
+        sep = y[0]
+        ecc = y[1]
+        
+        RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
+        
+        # 95% filling of the RL is enough to assume beginning of RLO,
+        # as we do in CO-HMS_RLO grid
+        RL_diff = secondary.interp1d["R"](t) - 0.95*RL
+        return RL_diff
 
-                dOmega_mb_sec, dOmega_mb_pri = G18_braking(self.primary, self.secondary, 
-                                                           self.verbose)
+    # detects primary RLO
+    @event(True, 1)
+    def ev_rlo2(self, t, y, primary, secondary):
+        """
+            Difference between radius and Roche lobe at a given time. Used 
+        to check if there is RLOF mass transfer during the detached binary 
+        evolution interpolation. Calculated for the primary.
 
-            elif self.magnetic_braking_mode == "CARB":
+        Parameters
+        ----------
+        t : float
+            Time of the evolution, in years
 
-                dOmega_mb_sec, dOmega_mb_pri = CARB_braking(self.primary, self.secondary, 
+        y : tuple(float)
+            [separation, eccentricity] at that time. Separation should be
+            in solar radii.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        Returns
+        -------
+        RL_diff : float
+            Difference between stellar radius and 95% of the Roche lobe 
+            radius in solar radii.
+
+        """
+        pri_mass = primary.interp1d["mass"](t)
+        sec_mass = secondary.interp1d["mass"](t)
+        
+        sep = y[0]
+        ecc = y[1]
+        
+        RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
+        RL_diff = primary.interp1d["R"](t) - 0.95*RL
+
+        return RL_diff
+
+    # detects secondary RLO via relative difference btwn. R and R_RL
+    @event(True, 1)
+    def ev_rel_rlo1(self, t, y, primary, secondary):
+        """
+            Relative difference between radius and Roche lobe. Used to 
+        check if there is RLOF mass transfer during the detached binary 
+        evolution interpolation. Calculated for the secondary.
+
+        Parameters
+        ----------
+        t : float
+            Time of the evolution, in years.
+
+        y : tuple(float)
+            [separation, eccentricity] at that time. Separation should be
+            in solar radii.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        Returns
+        -------
+        RL_rel_diff : float
+            Relative difference between stellar radius and Roche lobe
+            radius.
+
+        """
+        pri_mass = primary.interp1d["mass"](t)
+        sec_mass = secondary.interp1d["mass"](t)
+        
+        sep = y[0]
+        ecc = y[1]
+        
+        RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
+        RL_rel_diff = (secondary.interp1d["R"](t) - RL) / RL
+        return RL_rel_diff
+
+    # detects primary RLO via relative difference btwn. R and R_RL
+    @event(True, 1)
+    def ev_rel_rlo2(self, t, y, primary, secondary):
+        """
+            Relative difference between radius and Roche lobe. Used to 
+        check if there is RLOF mass transfer during the detached binary 
+        evolution interpolation. Calculated for the primary.
+
+        Parameters
+        ----------
+        t : float
+            Time of the evolution, in years.
+
+        y : tuple(float)
+            [separation, eccentricity] at that time. Separation should be
+            in solar radii.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        Returns
+        -------
+        RL_rel_diff : float
+            Relative difference between stellar radius and Roche lobe
+            radius.
+        """
+        pri_mass = primary.interp1d["mass"](t)
+        sec_mass = secondary.interp1d["mass"](t)
+
+        sep = y[0]
+        ecc = y[1]
+        
+        RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
+        RL_rel_diff = (primary.interp1d["R"](t) - RL) / RL
+        return RL_rel_diff
+
+    # detects if the max age in track of secondary is reached
+    @event(True, -1)
+    def ev_max_time1(self, t, y, primary, secondary):
+        return secondary.t_max - t + secondary.t_offset
+
+    # detects if the max age in track of primary is reached
+    @event(True, -1)
+    def ev_max_time2(self, t, y, primary, secondary):
+        return primary.t_max - t + primary.t_offset
+
+    def update_props(self, t, y, primary, secondary):
+        """ Update properties of stars w/ current age during detached evolution."""
+
+        for k in self.phys_keys:
+            self.primary[k] = primary.interp1d[k](t)
+            self.secondary[k] = secondary.interp1d[k](t)
+
+        # update omega, a, e, based on current diffeq solution
+        y[0] = np.max([y[0], 0])  # We limit separation to non-negative values
+        self.a = y[0]
+        y[1] = np.max([y[1], 0])  # We limit eccentricity to non-negative values
+        self.e = y[1]
+        if self.e > 0 and self.e < 10.0 ** (-3):
+            # we force a negligible eccentricity to become 0
+            # for computational stability
+            self.e = 0.0
+            if self.verbose and self.verbose != 1:
+                print("Negligible eccentricity became 0 for "
+                    "computational stability")
+        y[2] = np.max([y[2], 0])  # We limit omega spin to non-negative values
+        self.secondary['omega'] = y[2]  # in rad/yr
+        y[3] = np.max([y[3], 0])
+        self.primary['omega'] = y[3]
+
+
+    def __call__(self, t, y, primary, secondary):
+        """
+            Diff. equation describing the orbital evolution of a detached binary.
+
+        The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_
+        effects and magnetic braking [4]_, [5]_, [6]_, [7]_, [8]_. It also handles
+        the change of the secondary's stellar spin due to its change of moment of
+        intertia and due to mass-loss from its spinning surface. It is assumed that
+        the mass loss is fully non-conservative. Magnetic braking is fully applied
+        to secondary stars with mass less than 1.3 Msun and fully off for stars
+        with mass larger then 1.5 Msun. The effect of magnetic braking falls
+        linearly for stars with mass between 1.3 Msun and 1.5 Msun.
+
+        TODO: explain new features (e.g., double COs)
+
+        Parameters
+        ----------
+        t : float
+            The age of the system in years
+
+        y : list[float]
+            Contains the separation, eccentricity and angular velocity, in Rsolar,
+            dimensionless and rad/year units, respectively.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        Warns
+        -----
+        UnsupportedModelWarning
+            If an unsupported model or model is unspecified is determined from 
+            `magnetic_braking_mode`. In this case, magnetic braking will not 
+            be calculated during the detached step.
+
+        Returns
+        -------
+        result : list[float]
+            Contains the change of the separation, eccentricity and angular 
+            velocity, in Rsolar, dimensionless and rad/year units, respectively.
+
+        References
+        ----------
+        .. [1] Tauris, T. M., & van den Heuvel, E. 2006,
+            Compact stellar X-ray sources, 1, 623
+        .. [2] Hut, P. 1981, A&A, 99, 126
+        .. [3] Junker, W., & Schafer, G. 1992, MNRAS, 254, 146
+        .. [4] Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
+        .. [5] Matt et al. 2015, ApJ, 799, L23
+        .. [6] Garraffo et al. 2018, ApJ, 862, 90
+        .. [7] Van & Ivanova 2019, ApJ, 886, L31
+        .. [8] Gossage et al. 2021, ApJ, 912, 65
+
+        """
+        
+        # update star/orbital props w/ current time during integration
+        self.update_props(t, y, primary, secondary)
+                        
+        # initialize deltas for this timestep
+        self.da = 0.0
+        self.de = 0.0
+        self.dOmega_sec = 0.0
+        self.dOmega_pri = 0.0
+
+        #  Tidal forces affecting orbit and stellar spins
+        if self.do_tides:
+            self.tides()
+
+        #  Gravitional radiation affecting the orbit
+        if self.do_gravitational_radiation:
+            self.gravitational_radiation()
+
+        #  Magnetic braking affecting stellar spins
+        if self.do_magnetic_braking:
+            self.magnetic_braking()
+
+        #  Mass Loss affecting orbital separation
+        if self.do_wind_loss:
+            self.sep_from_winds()
+
+        # Mass loss affecting stellar spins
+        if self.do_stellar_evolution_and_spin_from_winds:
+            self.spin_from_winds()
+
+        result = [self.da, self.de, self.dOmega_sec, self.dOmega_pri]
+
+        return result
+    
+    def spin_from_winds(self):
+
+        dOmega_sec_winds, dOmega_pri_winds = default_spin_from_winds(self.a, 
+                                                                        self.e, 
+                                                                        self.primary, 
+                                                                        self.secondary, 
+                                                                        self.verbose)
+        # update spins
+        self.dOmega_sec += dOmega_sec_winds
+        self.dOmega_pri += dOmega_pri_winds
+
+    def sep_from_winds(self):
+        
+        da_winds = default_sep_from_winds(self.a, self.e, 
+                                            self.primary, self.secondary, 
+                                            self.verbose)
+        # update separation
+        self.da += da_winds
+
+    def tides(self):
+
+        da_tides, de_tides, dOmega_sec_tides, dOmega_pri_tides = default_tides(self.a, 
+                                                                                self.e, 
+                                                                                self.primary, 
+                                                                                self.secondary, 
+                                                                                self.verbose)
+        # update orbital params and spin
+        self.da += da_tides
+        self.de += de_tides
+        self.dOmega_sec += dOmega_sec_tides
+        self.dOmega_pri += dOmega_pri_tides
+
+    def gravitational_radiation(self):
+
+        da_gr, de_gr = default_gravrad(self.a, self.e, 
+                                        self.primary, self.secondary, 
+                                        self.verbose)
+        
+        # update orbital params
+        self.da += da_gr
+        self.de += de_gr
+
+    def magnetic_braking(self):
+        # domega_mb / dt = torque_mb / I is calculated below.
+        # All results are in units of [yr^-2], i.e., the amount of change
+        # in Omega over 1 year.
+
+        if self.magnetic_braking_mode == "RVJ83":
+            dOmega_mb_sec, dOmega_mb_pri = RVJ83_braking(self.primary, self.secondary, 
                                                             self.verbose)
 
-            else:
-                Pwarn("WARNING: Magnetic braking is not being calculated in the "
-                    "detached step. The given magnetic_braking_mode string ",
-                    f"'{self.magnetic_braking_mode}' does not match the available "
-                    "built-in cases. To enable magnetic braking, please set "
-                    "magnetc_braking_mode to one of the following strings: "
-                    "'RVJ83' for Rappaport, Verbunt, & Joss 1983"
-                    "'G18' for Garraffo et al. 2018"
-                    "'M15' for Matt et al. 2015"
-                    "'CARB' for Van & Ivanova 2019", "UnsupportedModelWarning")
+        elif self.magnetic_braking_mode == "M15":
 
-            if verbose and verbose != 1:
-                print("magnetic_braking_mode = ", magnetic_braking_mode)
-                print("dOmega_mb = ", dOmega_mb_sec, dOmega_mb_pri)
-                
-            dOmega_sec = dOmega_sec + dOmega_mb_sec
-            dOmega_pri = dOmega_pri + dOmega_mb_pri
+            dOmega_mb_sec, dOmega_mb_pri = M15_braking(self.primary, self.secondary, 
+                                                        self.verbose)        
 
-            dOmega_sec = dOmega_mb_sec
-            dOmega_pri = dOmega_mb_pri
+        elif self.magnetic_braking_mode == "G18":
 
-            return dOmega_sec, dOmega_pri
+            dOmega_mb_sec, dOmega_mb_pri = G18_braking(self.primary, self.secondary, 
+                                                        self.verbose)
+
+        elif self.magnetic_braking_mode == "CARB":
+
+            dOmega_mb_sec, dOmega_mb_pri = CARB_braking(self.primary, self.secondary, 
+                                                        self.verbose)
+
+        else:
+            Pwarn("WARNING: Magnetic braking is not being calculated in the "
+                "detached step. The given magnetic_braking_mode string ",
+                f"'{self.magnetic_braking_mode}' does not match the available "
+                "built-in cases. To enable magnetic braking, please set "
+                "magnetc_braking_mode to one of the following strings: "
+                "'RVJ83' for Rappaport, Verbunt, & Joss 1983"
+                "'G18' for Garraffo et al. 2018"
+                "'M15' for Matt et al. 2015"
+                "'CARB' for Van & Ivanova 2019", "UnsupportedModelWarning")
+
+        if self.verbose:
+            print("magnetic_braking_mode = ", self.magnetic_braking_mode)
+            print("dOmega_mb = ", dOmega_mb_sec, dOmega_mb_pri)
+        
+        # update spins
+        self.dOmega_sec += dOmega_mb_sec
+        self.dOmega_pri += dOmega_mb_pri
