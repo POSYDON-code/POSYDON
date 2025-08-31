@@ -44,7 +44,7 @@ from posydon.binary_evol.DT.key_library import (DEFAULT_TRANSLATION,
 from posydon.binary_evol.DT.tides.default_tides import default_tides
 from posydon.binary_evol.DT.winds.default_winds import (default_spin_from_winds,
                                                         default_sep_from_winds)
-from posydon.binary_evol.DT.gravitational_radiation.default_gravitational_radiation import default_gravitational_radiation
+from posydon.binary_evol.DT.gravitational_radiation.default_gravrad import default_gravrad
 from posydon.binary_evol.DT.magnetic_braking.prescriptions  import (RVJ83_braking,
                                                                     M15_braking,
                                                                     G18_braking,

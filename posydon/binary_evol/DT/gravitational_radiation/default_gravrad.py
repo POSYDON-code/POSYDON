@@ -1,6 +1,6 @@
 import posydon.utils.constants as const
 
-def default_gravitational_radiation(a, e, primary, secondary, verbose = False):
+def default_gravrad(a, e, primary, secondary, verbose = False):
 
     m1 = primary["mass"]
     m2 = secondary["mass"]
