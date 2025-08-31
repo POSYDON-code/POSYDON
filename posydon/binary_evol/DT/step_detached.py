@@ -41,6 +41,15 @@ from posydon.binary_evol.DT.track_match import TrackMatcher
 from posydon.binary_evol.DT.key_library import (DEFAULT_TRANSLATION,
                                                 DEFAULT_TRANSLATED_KEYS)
 
+from posydon.binary_evol.DT.tides.default_tides import default_tides
+from posydon.binary_evol.DT.winds.default_winds import (default_spin_from_winds,
+                                                        default_sep_from_winds)
+from posydon.binary_evol.DT.gravitational_radiation.default_gravitational_radiation import default_gravitational_radiation
+from posydon.binary_evol.DT.magnetic_braking.prescriptions  import (RVJ83_braking,
+                                                                    M15_braking,
+                                                                    G18_braking,
+                                                                    CARB_braking)
+
 def event(terminal, direction=0):
     """Return a helper function to set attributes for solve_ivp events."""
     def dec(f):
@@ -788,6 +797,8 @@ class detached_step:
             self.do_stellar_evolution_and_spin_from_winds = do_stellar_evolution_and_spin_from_winds
             self.verbose = False
 
+        # timing events for solve_ivp...
+        # detects secondary RLO
         @event(True, 1)
         def ev_rlo1(self, t, y, primary, secondary):
             """
@@ -832,6 +843,7 @@ class detached_step:
             RL_diff = secondary.interp1d["R"](t) - 0.95*RL
             return RL_diff
 
+        # detects primary RLO
         @event(True, 1)
         def ev_rlo2(self, t, y, primary, secondary):
             """
@@ -874,6 +886,7 @@ class detached_step:
 
             return RL_diff
 
+        # detects secondary RLO via relative difference btwn. R and R_RL
         @event(True, 1)
         def ev_rel_rlo1(self, t, y, primary, secondary):
             """
@@ -915,6 +928,7 @@ class detached_step:
             RL_rel_diff = (secondary.interp1d["R"](t) - RL) / RL
             return RL_rel_diff
 
+        # detects primary RLO via relative difference btwn. R and R_RL
         @event(True, 1)
         def ev_rel_rlo2(self, t, y, primary, secondary):
             """
@@ -955,17 +969,19 @@ class detached_step:
             RL_rel_diff = (primary.interp1d["R"](t) - RL) / RL
             return RL_rel_diff
 
+        # detects if the max age in track of secondary is reached
         @event(True, -1)
         def ev_max_time1(self, t, y, primary, secondary):
             return secondary.t_max - t + secondary.t_offset
 
+        # detects if the max age in track of primary is reached
         @event(True, -1)
         def ev_max_time2(self, t, y, primary, secondary):
             return primary.t_max - t + primary.t_offset
 
         def update_props(self, t, y, primary, secondary):
+            """ Update properties of stars w/ current age during detached evolution."""
 
-            # update properties of stars w/ current age during detached evolution
             for k in self.phys_keys:
                 self.primary[k] = primary.interp1d[k](t)
                 self.secondary[k] = secondary.interp1d[k](t)
@@ -1056,32 +1072,32 @@ class detached_step:
             dOmega_sec = 0.0
             dOmega_pri = 0.0
 
-            #  Mass Loss
-            if self.do_wind_loss:
-                da_mt = self.wind_loss_evo()
-                da += da_mt
-
-            #  Tidal forces
+            #  Tidal forces affecting orbit and stellar spins
             if self.do_tides:
-                da_tides, de_tides, domega2, domega1 = self.tidal_evo()
+                da_tides, de_tides, domega2, domega1 = self.tides()
                 da += da_tides
                 de += de_tides
                 dOmega_sec += domega2
                 dOmega_pri += domega1
 
-            #  Gravitional radiation
+            #  Gravitional radiation affecting the orbit
             if self.do_gravitational_radiation:
-                da_gr, de_gr = self.do_gravrad()
+                da_gr, de_gr = self.gravitational_radiation()
                 da += da_gr
                 de += de_gr
 
-            #  Magnetic braking
+            #  Magnetic braking affecting stellar spins
             if self.do_magnetic_braking:
                 domega2, domega1 = self.magnetic_braking()
                 dOmega_sec += domega2
                 dOmega_pri += domega1
 
-            # spin from winds
+            #  Mass Loss affecting orbital separation
+            if self.do_wind_loss:
+                da_mt = self.sep_from_winds()
+                da += da_mt
+
+            # Mass loss affecting stellar spins
             if self.do_stellar_evolution_and_spin_from_winds:
                 domega2, domega1 = self.spin_from_winds()
                 dOmega_sec += domega2
@@ -1093,642 +1109,43 @@ class detached_step:
         
         def spin_from_winds(self):
 
-            a = self.a
-            e = self.e
+            return default_spin_from_winds(self.a, self.e, self.primary, self.secondary, self.verbose)
 
-            R1 = self.primary["R"]
-            omega1 = self.primary["omega"]
-            MOI_1 = self.primary["inertia"]
-            mdot_1 = self.primary["mdot"]
-            Idot_1 = self.primary["Idot"]
+        def sep_from_winds(self):
+            
+            return default_sep_from_winds(self.a, self.e, self.primary, self.secondary, self.verbose)
 
-            R2 = self.secondary["R"]
-            omega2 = self.secondary["omega"]
-            MOI_2 = self.secondary["inertia"]
-            mdot_2 = self.secondary["mdot"]
-            Idot_2 = self.secondary["Idot"]
+        def tides(self):
 
-            # Due to the secondary's own evolution, we have:
-            # domega_spin/dt = d(Jspin/I)/dt = dJspin/dt * 1/I + Jspin*d(1/I)/dt.
-            # These are the two terms calculated below.
-            dOmega_spin_wind_sec = (
-                    2.0 / 3.0 * R2 ** 2 * omega2 * mdot_2 / MOI_2
-            )
-            # jshell*Mdot/I : specific angular momentum of a thin sperical shell
-            # * mdot  / moment of inertia
-            # Omega is in rad/yr here, and R, M in solar (Mdot solar/yr).
-            dOmega_deformation_sec = np.min(
-                [-omega2 * Idot_2 / MOI_2, 100]
-            )
-            # This is term of Jspin*d(1/I)/dt term of the domega_spin/dt. #
-            # We limit its increase due to contraction to 100 [(rad/yr)/yr]
-            # increase, otherwise the integrator will fail
-            # (usually when we have WD formation).
-            dOmega_spin_wind_pri = (
-                    2.0 / 3.0 * R1 ** 2 * omega1 * mdot_1 / MOI_1
-            )
-            # jshell*Mdot/I : specific angular momentum of a thin sperical shell
-            # * mdot  / moment of inertia
-            # Omega is in rad/yr here, and R, M in solar (Mdot solar/yr).
-            dOmega_deformation_pri = np.min(
-                [-omega1 * Idot_1 / MOI_1, 100]
-            )
-            if self.verbose:
-                print(
-                    "dOmega_spin_wind , dOmega_deformation = ",
-                    dOmega_spin_wind_sec,
-                    dOmega_deformation_sec,
-                    dOmega_spin_wind_pri,
-                    dOmega_deformation_pri,
-                )
-            dOmega_sec = dOmega_spin_wind_sec + dOmega_deformation_sec
-            dOmega_pri = dOmega_spin_wind_pri + dOmega_deformation_pri
+            return default_tides(self.a, self.e, self.primary, self.secondary, self.verbose)
 
-            if self.verbose:
-                print("a[Ro],e,Omega[rad/yr] have been =", a, e, omega2, omega1)
-                #print("da,de,dOmega (all) in 1yr is = ",
-                #    da, de, dOmega_sec, dOmega_pri)
+        def gravitational_radiation(self):
 
-            return dOmega_sec, dOmega_pri
-
-        def wind_loss_evo(self):
-            """This function calculates the change in orbital separation from 
-            wind loss.
-            """
-
-            a = self.a
-
-            m2 = self.secondary["mass"] # Msol
-            mdot_2 = self.secondary["mdot"] # Msol/yr
-
-            m1 = self.primary["mass"] # Msol
-            mdot_1 = self.primary["mdot"] # Msol/yr
-
-            q1 = m2 / m1
-            k11 = (1 / (1 + q1)) * (mdot_2 / m2)
-            k21 = mdot_2 / m2
-            k31 = mdot_2 / (m1 + m2)
-            # This is simplified to da_mt = -a * Mdot/(M+Macc), for only (negative)
-            # wind Mdot from star M.
-            da_mt_sec = a * (2 * k11 - 2 * k21 + k31)
-
-            q2 = m1 / m2
-            k12 = (1 / (1 + q2)) * (mdot_1 / m1)
-            k22 = mdot_1 / m1
-            k32 = mdot_1 / (m1 + m2)
-            da_mt_pri = a * (2 * k12 - 2 * k22 + k32)
-
-            if self.verbose:
-                print("da_mt = ", da_mt_sec, da_mt_pri)
-
-            da_mt_tot = da_mt_sec + da_mt_pri
-
-            return da_mt_tot
-        
-        def tidal_evo(self):
-
-            a = self.a
-            e = self.e
-
-            m1 = self.primary["mass"]
-            R1 = self.primary["R"]
-            m_env1 = self.primary["mass_conv_reg_fortides"]
-            dr_env1 = self.primary["thickness_conv_reg_fortides"]
-            rmid_env1 = self.primary["radius_conv_reg_fortides"]
-            omega1 = self.primary["omega"]
-            rtop_env1 = self.primary["conv_mx1_top_r"]
-            rbot_env1 = self.primary["conv_mx1_bot_r"]
-            Xsurf_1 = self.primary["surface_h1"]
-            L1 = self.primary["L"]
-            MOI_1 = self.primary["inertia"]
-
-            m2 = self.secondary["mass"]
-            R2 = self.secondary["R"]
-            m_env2 = self.secondary["mass_conv_reg_fortides"]
-            dr_env2 = self.secondary["thickness_conv_reg_fortides"]
-            rmid_env2 = self.secondary["radius_conv_reg_fortides"]
-            omega2 = self.secondary["omega"]
-            rtop_env2 = self.secondary["conv_mx1_top_r"]
-            rbot_env2 = self.secondary["conv_mx1_bot_r"]
-            Xsurf_2 = self.secondary["surface_h1"]
-            L2 = self.secondary["L"]
-            MOI_2 = self.secondary["inertia"]
-
-            q1 = m1/ m2
-            q2 = m2 / m1
-            # P_orb in years. From 3rd Kepler's law, transforming separation from
-            # Rsolar to AU, to avoid using constants
-            # TODO: we aleady have this function!
-            P_orb = np.sqrt((a / const.aursun) ** 3 / (m1 + m2))
-            n = 2.0 * const.pi / P_orb  # mean orbital ang. vel. in rad/year
-            f1 = (
-                    1
-                    + (31 / 2) * e ** 2
-                    + (255 / 8) * e ** 4
-                    + (185 / 16) * e ** 6
-                    + (25 / 64) * e ** 8
-            )
-            f2 = 1 + (15 / 2) * e ** 2 + (45 / 8) * e ** 4 + (5 / 16) * e ** 6
-            f3 = 1 + (15 / 4) * e ** 2 + (15 / 8) * e ** 4 + (5 / 64) * e ** 6
-            f4 = 1 + (3 / 2) * e ** 2 + (1 / 8) * e ** 4
-            f5 = 1 + 3 * e ** 2 + (3 / 8) * e ** 4
-
-            # equilibrium timecale
-            if ((pd.notna(m_env2) and m_env2 != 0.0)
-                    and (pd.notna(dr_env2) and dr_env2 != 0.0)
-                    and (pd.notna(rmid_env2) and rmid_env2 != 0.0)):
-                # eq. (31) of Hurley et al. 2002, generalized for convective layers
-                # not on surface too
-                tau_conv_2 = 0.431 * ((m_env2 * dr_env2 * rmid_env2
-                                        / (3 * L2)) ** (1.0 / 3.0))
-            else:
-                if self.verbose and self.verbose != 1:
-                    print("something wrong with M_env/DR_env/Renv_middle",
-                        m_env2, dr_env2, rmid_env2)
-                tau_conv_2 = 1.0e99
-            if ((pd.notna(m_env1) and m_env1 != 0.0)
-                    and (pd.notna(dr_env1) and dr_env1 != 0.0)
-                    and (pd.notna(rmid_env1) and rmid_env1 != 0.0)):
-                # eq. (31) of Hurley et al. 2002, generalized for convective layers
-                # not on surface too
-                tau_conv_1 = 0.431 * ((m_env1 * dr_env1 * rmid_env1
-                                        / (3 * L1)) ** (1.0/3.0))
-            else:
-                if self.verbose:
-                    print("something wrong with M_env/DR_env/Renv_middle",
-                        m_env1, dr_env1, rmid_env1)
-                tau_conv_1 = 1.0e99
-            P_spin_sec = 2 * np.pi / omega2
-            P_spin_pri = 2 * np.pi / omega1
-            P_tid_sec = np.abs(1 / (1 / P_orb - 1 / P_spin_sec))
-            P_tid_pri = np.abs(1 / (1 / P_orb - 1 / P_spin_pri))
-            f_conv_sec = np.min([1, (P_tid_sec / (2 * tau_conv_2)) ** 2])
-            f_conv_pri = np.min([1, (P_tid_pri / (2 * tau_conv_1)) ** 2])
-            F_tid = 1.  # not 50 as before
-            kT_conv_sec = (
-                    (2. / 21) * (f_conv_sec / tau_conv_2) * (m_env2 / m2)
-            )  # eq. (30) of Hurley et al. 2002
-            kT_conv_pri = (
-                    (2. / 21) * (f_conv_pri / tau_conv_1) * (m_env1 / m1)
-            )
-            if kT_conv_sec is None or not np.isfinite(kT_conv_sec):
-                kT_conv_sec = 0.0
-            if kT_conv_pri is None or not np.isfinite(kT_conv_pri):
-                kT_conv_pri = 0.0
-
-                if self.verbose:
-                    print("kT_conv_sec is", kT_conv_sec, ", set to 0.")
-                    print("kT_conv_pri is", kT_conv_pri, ", set to 0.")
-            # this is the 1/timescale of all d/dt calculted below in yr^-1
-
-            if self.verbose:
-                print(
-                    "Equilibrium tides in deep convective envelope",
-                    m_env2,
-                    dr_env2,
-                    rmid_env2,
-                    R2,
-                    m2,
-                    m_env1,
-                    dr_env1,
-                    rmid_env1,
-                    R1,
-                    m1
-                )
-                print("convective tiimescales and efficiencies",
-                    tau_conv_2, P_orb, P_spin_sec, P_tid_sec,
-                    f_conv_sec,
-                    F_tid,
-                    tau_conv_1, P_orb, P_spin_pri, P_tid_pri,
-                    f_conv_pri,
-                    F_tid,
-                    )
-
-            # dynamical timecale
-            F_tid = 1
-            # E2 = 1.592e-9*M**(2.84) # eq. (43) of Hurley et al. 2002. Deprecated
-            R_conv_sec = rtop_env2 - rbot_env2
-            R_conv_pri = rtop_env1 - rbot_env1  # convective core
-            # R_conv = conv_mx1_top_r  # convective core
-            if (R_conv_sec > R2 or R_conv_sec <= 0.0
-                    or rbot_env2 / R2 > 0.1):
-                # R_conv = 0.5*R
-                # if verbose:
-                #     print(
-                #         "R_conv of the convective core is not behaving well or "
-                #         "we are not calculating the convective core, we make it "
-                #         "equal to half of Rstar",
-                #         R_conv,
-                #         R,
-                #         conv_mx1_top_r,
-                #         conv_mx1_bot_r,
-                #     )
-                # we switch to Zahn+1975 calculation of E2
-                E21 = 1.592e-9 * m2 ** (2.84)
-            else:
-                if R2 <= 0:
-                    E21 = 0
-                elif Xsurf_2 > 0.4:
-                    E21 = 10.0 ** (-0.42) * (R_conv_sec / R2) ** (
-                        7.5
-                    )  # eq. (9) of Qin et al. 2018, 616, A28
-                elif Xsurf_2 <= 0.4:  # "HeStar":
-                    E21 = 10.0 ** (-0.93) * (R_conv_sec / R2) ** (
-                        6.7
-                    )  # eq. (9) of Qin et al. 2018, 616, A28
-                else:  # in principle we should not go here
-                    E21 = 1.592e-9 * m2 ** (
-                        2.84
-                    )  # eq. (43) of Hurley et al. 2002 from Zahn+1975 Depreciated
-            # kT = 1.9782e4 * np.sqrt(M * R**2 / a**5) * (1 + q)**(5. / 6) * E2
-            # eq. (42) of Hurley et al. 2002. Depreciated
-
-            if (R_conv_pri > R1 or R_conv_pri <= 0.0
-                    or rbot_env1 / R1 > 0.1):
-                E22 = 1.592e-9 * m1 ** (2.84)
-                if self.verbose:
-                    print(
-                        "R_conv of the convective core is not behaving well or we "
-                        "are not calculating the convective core, we switch to "
-                        "Zahn+1975 calculation of E2",
-                        R_conv_sec,
-                        R2,
-                        rtop_env2,
-                        rbot_env2,
-                        E21,
-                        R_conv_pri,
-                        R1,
-                        rtop_env1,
-                        rbot_env1,
-                        E22
-                    )
-            else:
-                if R1 <= 0:
-                    E22 = 0
-                elif Xsurf_1 > 0.4:
-                    E22 = 10.0 ** (-0.42) * (R_conv_pri / R1) ** (
-                        7.5
-                    )  # eq. (9) of Qin et al. 2018, 616, A28
-                elif Xsurf_1 <= 0.4:  # "HeStar":
-                    E22 = 10.0 ** (-0.93) * (R_conv_pri / R1) ** (
-                        6.7
-                    )  # eq. (9) of Qin et al. 2018, 616, A28
-                else:  # in principle we should not go here
-                    E22 = 1.592e-9 * m1 ** (
-                        2.84
-                    )
-            kT_rad_sec = (
-                np.sqrt(const.standard_cgrav * (m2 * const.msol)
-                        * (R2 * const.rsol)**2 / (a * const.rsol)**5)
-                * (1 + q1) ** (5.0 / 6)
-                * E21
-                * const.secyer)
-            kT_rad_pri = (
-                np.sqrt(const.standard_cgrav * (m1 * const.msol)
-                        * (R1 * const.rsol)**2 / (a * const.rsol)**5)
-                * (1 + q2) ** (5.0 / 6)
-                * E22
-                * const.secyer)
-            # this is the 1/timescale of all d/dt calculted below in yr^-1
-            if self.verbose:
-                print(
-                    "Dynamical tides in radiative envelope",
-                    rtop_env2,
-                    rbot_env2,
-                    R_conv_sec,
-                    E21,
-                    rtop_env1,
-                    rbot_env1,
-                    R_conv_pri,
-                    E22,
-                    F_tid
-                )
-            kT_sec = max(kT_conv_sec, kT_rad_sec)
-            kT_pri = max(kT_conv_pri, kT_rad_pri)
-            if self.verbose:
-                print("kT_conv/rad of tides is ", kT_conv_sec, kT_rad_sec,
-                    kT_conv_pri, kT_rad_pri, "in 1/yr, and we picked the ",
-                    kT_sec, kT_pri)
-
-            da_tides_sec = (
-                    -6
-                    * F_tid
-                    * kT_sec
-                    * q1
-                    * (1 + q1)
-                    * (R2 / a) ** 8
-                    * (a / (1 - e ** 2) ** (15 / 2))
-                    * (f1 - (1 - e ** 2) ** (3 / 2) * f2 * omega2 / n)
-            )  # eq. (9) of Hut 1981, 99, 126
-
-            da_tides_pri = (
-                    -6
-                    * F_tid
-                    * kT_pri
-                    * q2
-                    * (1 + q2)
-                    * (R1 / a) ** 8
-                    * (a / (1 - e ** 2) ** (15 / 2))
-                    * (f1 - (1 - e ** 2) ** (3 / 2) * f2 * omega1 / n)
-            )
-            de_tides_sec = (
-                    -27
-                    * F_tid
-                    * kT_sec
-                    * q1
-                    * (1 + q1)
-                    * (R2 / a) ** 8
-                    * (e / (1 - e ** 2) ** (13 / 2))
-                    * (f3 - (11 / 18) * (1 - e ** 2) ** (3 / 2) * f4 * omega2/n)
-            )  # eq. (10) of Hut 1981, 99, 126
-
-            de_tides_pri = (
-                    -27
-                    * F_tid
-                    * kT_pri
-                    * q2
-                    * (1 + q2)
-                    * (R1 / a) ** 8
-                    * (e / (1 - e ** 2) ** (13 / 2))
-                    * (f3 - (11 / 18) * (1 - e ** 2) ** (3 / 2) * f4 * omega1/n)
-            )
-
-            dOmega_tides_sec = (
-                    (3 * F_tid * kT_sec * q1 ** 2 * m2 * R2 ** 2 / MOI_2)
-                    * (R2 / a) ** 6
-                    * n
-                    / (1 - e ** 2) ** 6
-                    * (f2 - (1 - e ** 2) ** (3 / 2) * f5 * omega2 / n)
-            )  # eq. (11) of Hut 1981, 99, 126
-            dOmega_tides_pri = (
-                    (3 * F_tid * kT_pri * q2 ** 2 * m1 * R1 ** 2 / MOI_1)
-                    * (R1 / a) ** 6
-                    * n
-                    / (1 - e ** 2) ** 6
-                    * (f2 - (1 - e ** 2) ** (3 / 2) * f5 * omega1 / n)
-            )
-            if self.verbose:
-                print("da,de,dOmega_tides = ",
-                    da_tides_sec, de_tides_sec, dOmega_tides_sec,
-                    da_tides_pri, de_tides_pri, dOmega_tides_pri)
-                
-            da = da_tides_sec + da_tides_pri
-            de = de_tides_sec + de_tides_pri
-            dOmega_sec = dOmega_tides_sec
-            dOmega_pri = dOmega_tides_pri
-
-            return da, de, dOmega_sec, dOmega_pri
-
-        def do_gravrad(self):
-
-            a = self.a
-            e = self.e
-            m1 = self.primary["mass"]
-            m2 = self.secondary["mass"]
-
-            v = (m1 * m2 / (m1 + m2) ** 2)
-            da_gr = (
-                (-2 * const.clight / 15) * (v / ((1 - e ** 2) ** (9 / 2)))
-                * (const.standard_cgrav * (m1 + m2) * const.msol
-                / (a * const.rsol * const.clight ** 2)) ** 3
-                * ((96 + 292 * e ** 2 + 37 * e ** 4) * (1 - e ** 2)
-                - (1 / 28 * const.standard_cgrav * (m1 + m2) * const.msol
-                / (a * const.rsol * const.clight ** 2))
-                * ((14008 + 4707 * v)+(80124 + 21560 * v) * e ** 2
-                + (17325 + 10458) * e ** 4 - 0.5 * (5501 - 1036 * v) * e ** 6))
-                ) * const.secyer / const.rsol
-            # eq. (35) of Junker et al. 1992, 254, 146
-            de_gr = (
-                (-1 / 15) * ((v * const.clight ** 3) / (
-                    const.standard_cgrav * (m1 + m2) * const.msol))
-                * (const.standard_cgrav * (m1 + m2) * const.msol / (
-                    a * const.rsol * const.clight ** 2)) ** 4
-                * (e / (1 - e ** 2) ** (7 / 2))
-                * ((304 + 121 * e ** 2) * (1 - e ** 2)
-                - (1 / 56 * const.standard_cgrav * (m1 + m2) * const.msol
-                / (a * const.rsol * const.clight ** 2))
-                * (8 * (16705 + 4676 * v) + 12 * (9082 + 2807 * v) * e ** 2
-                - (25211 - 3388 * v) * e ** 4))
-                ) * const.secyer
-            # eq. (36) of Junker et al. 1992, 254, 146
-            if self.verbose:
-                print("da,de_gr = ", da_gr, de_gr)
-            da = da_gr
-            de = de_gr
-
-            return da, de
+            return default_gravitational_radiation(self.a, self.e, self.primary, self.secondary, self.verbose)
 
         def magnetic_braking(self):
             # domega_mb / dt = torque_mb / I is calculated below.
             # All results are in units of [yr^-2], i.e., the amount of change
             # in Omega over 1 year.
 
-            m1 = self.primary["mass"]
-            R1 = self.primary["R"]
-            omega1 = self.primary["omega"]
-            MOI_1 = self.primary["inertia"]
-            tau_conv_1 = self.primary["conv_env_turnover_time_l_b"]
-            mdot_1 = self.primary["mdot"]
-
-            m2 = self.secondary["mass"]
-            R2 = self.secondary["R"]
-            omega2 = self.secondary["omega"]
-            MOI_2 = self.secondary["inertia"]
-            tau_conv_2 = self.secondary["conv_env_turnover_time_l_b"]
-            mdot_2 = self.secondary["mdot"]
-
             if self.magnetic_braking_mode == "RVJ83":
-                # Torque from Rappaport, Verbunt, and Joss 1983, ApJ, 275, 713
-                # The torque is eq.36 of Rapport+1983, with γ = 4. Torque units
-                # converted from cgs units to [Msol], [Rsol], [yr] as all stellar
-                # parameters are given in units of [Msol], [Rsol], [yr] and so that
-                # dOmega_mb/dt is in units of [yr^-2].
-                dOmega_mb_sec = (
-                    -3.8e-30 * (const.rsol**2 / const.secyer)
-                    * m2
-                    * R2**4
-                    * omega2**3
-                    / MOI_2
-                    * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
-                )
-                dOmega_mb_pri = (
-                    -3.8e-30 * (const.rsol**2 / const.secyer)
-                    * m1
-                    * R1**4
-                    * omega1**3
-                    / MOI_1
-                    * np.clip((1.5 - m1) / (1.5 - 1.3), 0, 1)
-                )
-                # Converting units:
-                # The constant 3.8e-30 from Rappaport+1983 has units of [cm^-2 s]
-                # which need to be converted...
-                #
-                # -3.8e-30 [cm^-2 s] * (const.rsol**2/const.secyer) -> [Rsol^-2 yr]
-                # * M [Msol]
-                # * R ** 4 [Rsol^4]
-                # * Omega ** 3 [yr^-3]
-                # / I [Msol Rsol^2 ]
-                #
-                # Thus, dOmega/dt comes out to [yr^-2]
+                dOmega_mb_sec, dOmega_mb_pri = RVJ83_braking(self.primary, self.secondary, 
+                                                             self.verbose)
 
             elif self.magnetic_braking_mode == "M15":
 
-                # Torque prescription from Matt et al. 2015, ApJ, 799, L23
-                # Constants:
-                # [erg] or [g cm^2 s^-2] -> [Msol Rsol^2 yr^-2]
-                K = 1.4e30 * const.secyer**2 / (const.msol * const.rsol**2)
-                # m = 0.22
-                # p = 2.6
-                # Above constants were calibrated as in
-                # Gossage et al. 2021, ApJ, 912, 65
-
-                # TODO: I am not sure which constants are used from each reference
-
-                # Below, constants are otherwise as assumed as in
-                # Matt et al. 2015, ApJ, 799, L23
-                omega_sol = 2.6e-6 * const.secyer   # [s^-1] -> [yr^-1]
-                # solar rossby = 2
-                # solar convective turnover time = 12.9 days
-                # Rossby number saturation threshold = 0.14
-                chi = 2.0 / 0.14
-                tau_conv_sol = 12.9 / 365.25        # 12.9 [days] -> [yr]
-
-                Prot_pri = 2 * np.pi / omega1    # [yr]
-                Rossby_number_pri = Prot_pri / tau_conv_1
-                Prot_sec = 2 * np.pi / omega2    # [yr]
-                Rossby_number_sec = Prot_sec / tau_conv_2
-
-                # critical rotation rate in rad/yr
-                Omega_crit_pri = np.sqrt(
-                    const.standard_cgrav * m1 * const.msol
-                    / ((R1 * const.rsol) ** 3)) * const.secyer
-                Omega_crit_sec = np.sqrt(
-                    const.standard_cgrav * m2 * const.msol
-                    / ((R2 * const.rsol) ** 3)) * const.secyer
-
-                # omega/omega_c
-                wdivwc_pri = omega1 / Omega_crit_pri
-                wdivwc_sec = omega2 / Omega_crit_sec
-
-                gamma_pri = (1 + (wdivwc_pri / 0.072)**2)**0.5
-                T0_pri = K * R1**3.1 * m1**0.5 * gamma_pri**(-2 * 0.22)
-                gamma_sec = (1 + (wdivwc_sec / 0.072)**2)**0.5
-                T0_sec = K * R2**3.1 * m2**0.5 * gamma_sec**(-2 * 0.22)
-
-                if (Rossby_number_sec < 0.14):
-                    dOmega_mb_sec = (
-                        T0_sec * (chi**2.6) * (omega2 / omega_sol) / MOI_2
-                        * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
-                    )
-                else:
-                    dOmega_mb_sec = (
-                        T0_sec * ((tau_conv_2/tau_conv_sol)**2.6)
-                            * ((omega2/omega_sol)**(2.6 + 1)) / MOI_2
-                        * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
-                    )
-
-                if (Rossby_number_pri < 0.14):
-                    dOmega_mb_pri = (
-                        T0_pri * (chi**2.6) * (omega1 / 2.6e-6) / MOI_1
-                        * np.clip((1.5 - m1) / (1.5 - 1.3), 0, 1)
-                    )
-                else:
-                    dOmega_mb_pri = (
-                        T0_pri * ((tau_conv_1/tau_conv_sol)**2.6)
-                            * ((omega1/omega_sol)**(2.6 + 1)) / MOI_1
-                        * np.clip((1.5 - m1) / (1.5 - 1.3), 0, 1)
-                    )
+                dOmega_mb_sec, dOmega_mb_pri = M15_braking(self.primary, self.secondary, 
+                                                           self.verbose)
 
             elif self.magnetic_braking_mode == "G18":
 
-                # Torque prescription from Garraffo et al. 2018, ApJ, 862, 90
-                # a = 0.03
-                # b = 0.5
-                # [g cm^2] -> [Msol Rsol^2]
-                c = 3e41 / (const.msol * const.rsol**2)
-                # Above are as calibrated in Gossage et al. 2021, ApJ, 912, 65
-
-                Prot_pri = 2 * np.pi / omega1            # [yr]
-                Rossby_number_pri = Prot_pri / tau_conv_1
-                Prot_sec = 2 * np.pi / omega2            # [yr]
-                Rossby_number_sec = Prot_sec / tau_conv_2
-
-                n_pri = (0.03 / Rossby_number_pri) + 0.5 * Rossby_number_pri + 1.0
-                n_sec = (0.03 / Rossby_number_sec) + 0.5 * Rossby_number_sec + 1.0
-
-                Qn_pri = 4.05 * np.exp(-1.4 * n_pri)
-                Qn_sec = 4.05 * np.exp(-1.4 * n_sec)
-
-                dOmega_mb_sec = (
-                        c * omega2**3 * tau_conv_2 * Qn_sec / MOI_2
-                        * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
-                )
-
-                dOmega_mb_pri = (
-                        c * omega1**3 * tau_conv_1 * Qn_pri / MOI_1
-                        * np.clip((1.5 - m1) / (1.5 - 1.3), 0, 1)
-                )
+                dOmega_mb_sec, dOmega_mb_pri = G18_braking(self.primary, self.secondary, 
+                                                           self.verbose)
 
             elif self.magnetic_braking_mode == "CARB":
 
-                # Torque prescription from Van & Ivanova 2019, ApJ, 886, L31
-                # Based on files hosted on Zenodo:
-                #         https://zenodo.org/record/3647683#.Y_TfedLMKUk,
-                # with units converted from [cm], [g], [s] to [Rsol], [Msol], [yr]
-
-                # Constants as assumed in Van & Ivanova 2019, ApJ, 886, L31
-                omega_sol = 3e-6 * const.secyer         # [s^-1] -> [yr^-1]
-                tau_conv_sol = 2.8e6 / const.secyer     # [s] -> yr
-                K2 = 0.07**2
-
-                tau_ratio_sec = tau_conv_2 / tau_conv_sol
-                tau_ratio_pri = tau_conv_1 / tau_conv_sol
-                rot_ratio_sec = omega2 / omega_sol
-                rot_ratio_pri = omega1 / omega_sol
-
-                # below in units of [Rsol yr^-1]^2
-                v_esc2_sec = ((2 * const.standard_cgrav * m2 / R2)
-                            * (const.msol * const.secyer**2 / const.rsol**3))
-                v_esc2_pri = ((2 * const.standard_cgrav * m1 / R1)
-                            * (const.msol * const.secyer**2 / const.rsol**3))
-                v_mod2_sec = v_esc2_sec + (2 * omega2**2 * R2**2) / K2
-                v_mod2_pri = v_esc2_pri + (2 * omega1**2 * R1**2) / K2
-
-                # Van & Ivanova 2019, MNRAS 483, 5595 replace the magnetic field
-                # with Omega * tau_conv phenomenology. Thus, the ratios
-                # (rot_ratio_* and tau_ratio_*) inherently have units of Gauss
-                # [cm^-0.5 g^0.5 s^-1] that needs to be converted to [Rsol],
-                # [Msol], [yr]. VI2019 assume the solar magnetic field strength is
-                # on average 1 Gauss.
-                if (abs(mdot_2) > 0):
-                    R_alfven_div_R3_sec = (
-                        R2**4 * rot_ratio_sec**4 * tau_ratio_sec**4
-                        / (mdot_2**2 * v_mod2_sec)
-                        * (const.rsol**2 * const.secyer / const.msol**2))
-                else:
-                    R_alfven_div_R3_sec = 0.0
-
-                if (abs(mdot_1) > 0):
-                    R_alfven_div_R3_pri = (
-                        R1**4 * rot_ratio_pri**4 * tau_ratio_pri**4
-                        / (mdot_1**2 * v_mod2_pri)
-                        * (const.rsol**2 * const.secyer / const.msol**2))
-                else:
-                    R_alfven_div_R3_pri = 0.0
-
-                # Alfven radius in [Rsol]
-                R_alfven_sec = R2 * R_alfven_div_R3_sec**(1./3.)
-                R_alfven_pri = R1 * R_alfven_div_R3_pri**(1./3.)
-
-                dOmega_mb_sec = (
-                    (2./3.) * omega2 * mdot_2 * R_alfven_sec**2 / MOI_2
-                    * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
-                )
-
-                dOmega_mb_pri = (
-                    (2./3.) * omega1 * mdot_1 * R_alfven_pri**2 / MOI_1
-                    * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
-                )
+                dOmega_mb_sec, dOmega_mb_pri = CARB_braking(self.primary, self.secondary, 
+                                                            self.verbose)
 
             else:
                 Pwarn("WARNING: Magnetic braking is not being calculated in the "
@@ -1751,4 +1168,4 @@ class detached_step:
             dOmega_sec = dOmega_mb_sec
             dOmega_pri = dOmega_mb_pri
 
-            return 0, 0
+            return dOmega_sec, dOmega_pri
