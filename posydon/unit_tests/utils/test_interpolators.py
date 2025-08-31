@@ -166,10 +166,16 @@ class TestPchipInterpolator2:
         # initialize an instance of the class with defaults
         return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
                                          positive=False)
+    
+    @fixture
+    def PchipInterpolator2_Deriv(self):
+        # initialize an instance of the class with defaults
+        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
+                                         derivative=True)
 
     # test the PchipInterpolator2 class
     def test_init(self, PchipInterpolator2, PchipInterpolator2_True,\
-                  PchipInterpolator2_False):
+                  PchipInterpolator2_False, PchipInterpolator2_Deriv):
         assert isroutine(PchipInterpolator2.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
@@ -181,6 +187,8 @@ class TestPchipInterpolator2:
         assert PchipInterpolator2_False.positive == False
         assert PchipInterpolator2.offset == 0.0
         assert PchipInterpolator2.derivative == False
+        assert PchipInterpolator2_Deriv.derivative == True
+        assert type(PchipInterpolator2_Deriv.interpolator) == type(PchipInterpolator2.interpolator.derivative())
 
     def test_call(self, PchipInterpolator2, PchipInterpolator2_True,\
                   PchipInterpolator2_False):
