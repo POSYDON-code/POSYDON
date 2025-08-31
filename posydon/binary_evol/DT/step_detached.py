@@ -1121,7 +1121,7 @@ class detached_step:
 
         def gravitational_radiation(self):
 
-            return default_gravitational_radiation(self.a, self.e, self.primary, self.secondary, self.verbose)
+            return default_gravrad(self.a, self.e, self.primary, self.secondary, self.verbose)
 
         def magnetic_braking(self):
             # domega_mb / dt = torque_mb / I is calculated below.
