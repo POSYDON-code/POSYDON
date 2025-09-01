@@ -32,6 +32,8 @@ from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
     RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
 )
 from posydon.utils.interpolators import interp1d
+from posydon.binary_evol.flow_chart import (STAR_STATES_H_RICH,
+                                            STAR_STATES_HE_RICH)
 
 
 # Constants related to inferring star states
@@ -1994,26 +1996,6 @@ def calculate_core_boundary(donor_mass,
     """
     # the threshold of the elements that need to be high in the core
     core_element_high_fraction_definition = 0.1
-    # ENHANCEMENT: this list needs to be imported from e.g. flow_chart.py
-    STAR_STATES_H_RICH = [
-        "H-rich_Core_H_burning",
-        "H-rich_Shell_H_burning",
-        "H-rich_Core_He_burning",
-        "H-rich_Central_He_depleted",
-        "H-rich_Core_C_burning",
-        "H-rich_Central_C_depleted",
-        "H-rich_non_burning",
-        "accreted_He_Core_H_burning",
-        "accreted_He_non_burning"
-    ]
-    # ENHANCEMENT: this list needs to be imported from e.g. flow_chart.py
-    STAR_STATE_He = [
-        'accreted_He_Core_He_burning',
-        'stripped_He_Core_He_burning',
-        'stripped_He_Central_He_depleted',
-        'stripped_He_Central_C_depleted',
-        'stripped_He_non_burning'
-    ]
 
     if core_element_fraction_definition is not None:
         if ((donor_star_state in STAR_STATES_H_RICH)
@@ -2028,7 +2010,7 @@ def calculate_core_boundary(donor_mass,
                 element = np.add(profile['x_mass_fraction_H'],
                                  profile['y_mass_fraction_He'])
                 element_core = profile['z_mass_fraction_metals']
-        elif (donor_star_state in STAR_STATE_He
+        elif (donor_star_state in STAR_STATES_HE_RICH
               and 'x_mass_fraction_H' in profile.dtype.names
               and 'y_mass_fraction_He' in profile.dtype.names
               and 'z_mass_fraction_metals' in profile.dtype.names):
