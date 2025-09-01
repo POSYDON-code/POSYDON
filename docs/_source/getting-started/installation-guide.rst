@@ -80,20 +80,32 @@ Anaconda (Recommended)
 
     You can use POSYDON's built-in API command (the downloaded data will be downloaded to the directory specified by :code:`PATH_TO_POSYDON_DATA`):
 
+    .. warning::
+        Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for 
+        all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each 
+        metallicity requires about 10 GB of disk space, so to be safe, make sure you have at least 103 GB of disk 
+        space available.
+
     .. code-block:: bash
 
         get-posydon-data
 
-    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the one of your choice.
-    If you have the disk space and want to download the full DR2 dataset, you can use the following command:
+    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
+    If you would rather download something more minimal to run populations, you will need at least the auxillary data:
 
     .. code-block:: bash
 
-        get-posydon-data DR2
+        get-posydon-data auxillary
+
+    and at data for at least one metallicity (the examples and tutorials typically use solar):
+
+    .. code-block:: bash
+
+        get-posydon-data DR2_1Zsun
 
     Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
 
-.. _dev-version:
+.. _stable-version:
 
 GitHub (Stable Version)
 ----------------------------
@@ -162,20 +174,30 @@ For users interested in the latest features and developments, you can install PO
 
     You can use POSYDON's built-in API command (the downloaded data will be downloaded to the directory specified by :code:`PATH_TO_POSYDON_DATA`):
 
+    .. warning::
+        Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for 
+        all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each 
+        metallicity requires about 10 GB of disk space, so to be safe, make sure you have at least 103 GB of disk 
+        space available.
+
     .. code-block:: bash
 
         get-posydon-data
 
-    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the one of your choice.
-    If you have the disk space and want to download the full DR2 dataset, you can use the following command:
+    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
+    If you would rather download something more minimal to run populations, you will need at least the auxillary data:
 
     .. code-block:: bash
 
-        get-posydon-data DR2
+        get-posydon-data auxillary
+
+    and at data for at least one metallicity (the examples and tutorials typically use solar):
+
+    .. code-block:: bash
+
+        get-posydon-data DR2_1Zsun
 
     Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
-
-
 
 Installing Jupyter for Tutorials
 =================================
