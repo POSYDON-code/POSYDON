@@ -363,7 +363,9 @@ class BinaryPopulation:
                 # context
                 if not self.kwargs.get("warnings_verbose", False):
                     cpw.reset_cache()
-        
+
+
+            # remove binaries from manager.binaries and store data in DataFrames
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)
 
@@ -382,6 +384,7 @@ class BinaryPopulation:
                 self.manager.save(path, mode="w", **kw)
                 filenames.append(path)
 
+                # if optimize RAM, clear DataFrames or remove binaries
                 if(breakdown_to_df):
                     self.manager.clear_dfs()
                 else:
@@ -429,6 +432,7 @@ class BinaryPopulation:
             else:
                 self.manager.remove(self.manager.binaries.copy())
 
+        # save by either combining dump files if optimize_ram = True...
         if optimize_ram:
             # combining files
             if self.JOB_ID is None and self.comm is None:
@@ -441,6 +445,7 @@ class BinaryPopulation:
                                  f"evolution.combined.{self.rank}.h5"),
                     filenames, mode = "w")
 
+        # ...or just save the population to a single file (if breakdown_to_df = False)
         elif (not breakdown_to_df):
             if self.JOB_ID is None and self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
@@ -677,21 +682,26 @@ class PopulationManager:
             oneline = binary.to_oneline_df(**kwargs)
             self.oneline_dfs.append(oneline)
             self.remove(binary)
+
         except Exception as err:
             print("Error during breakdown of {0}:\n{1}".
                   format(str(binary), err))
 
     def to_df(self, selection_function=None, **kwargs):
         """Convert all binaries to dataframe."""
+        
         if len(self.binaries) == 0 and len(self.history_dfs) == 0:
             return
+        
         is_callable = callable(selection_function)
         holder = []
+        
         if len(self.binaries) > 0:
             for binary in self.binaries:
                 if not is_callable or (is_callable
                                        and selection_function(binary)):
                     holder.append(binary.to_df(**kwargs))
+        
         elif len(self.history_dfs) > 0:
             holder.extend(self.history_dfs)
 
