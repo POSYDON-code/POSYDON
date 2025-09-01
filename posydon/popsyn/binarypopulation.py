@@ -433,24 +433,24 @@ class BinaryPopulation:
             # combining files
             if self.JOB_ID is None and self.comm is None:
                 self.combine_saved_files(os.path.join(temp_directory,
-                                                      "evolution.combined"),
+                                                      "evolution.combined.h5"),
                                          filenames, mode = "w")
             else:
                 self.combine_saved_files(
                     os.path.join(temp_directory,
-                                 f"evolution.combined.{self.rank}"),
+                                 f"evolution.combined.{self.rank}.h5"),
                     filenames, mode = "w")
 
-        else:
+        elif (not breakdown_to_df):
             if self.JOB_ID is None and self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
-                                               "evolution.combined"),
+                                               "evolution.combined.h5"),
                                   mode='w',
                                   **kwargs)
             else:
                 self.manager.save(
                     os.path.join(temp_directory,
-                                 f"evolution.combined.{self.rank}"),
+                                 f"evolution.combined.{self.rank}.h5"),
                     mode='w', **kwargs)
 
     def save(self, save_path, **kwargs):
@@ -461,7 +461,7 @@ class BinaryPopulation:
 
         if self.JOB_ID is None and self.comm is None:
             if optimize_ram:
-                os.rename(os.path.join(temp_directory, "evolution.combined"),
+                os.rename(os.path.join(temp_directory, "evolution.combined.h5"),
                           save_path)
             else:
                 self.manager.save(save_path, mode=mode, **kwargs)
@@ -485,7 +485,7 @@ class BinaryPopulation:
     def make_temp_fname(self):
         """Get a valid filename for the temporary file."""
         temp_directory = self.kwargs['temp_directory']
-        return os.path.join(temp_directory, f"evolution.combined.{self.rank}")
+        return os.path.join(temp_directory, f"evolution.combined.{self.rank}.h5")
         # return os.path.join(dir_name, '.tmp{}_'.format(rank) + file_name)
 
     def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
@@ -653,8 +653,11 @@ class PopulationManager:
                 self.indices.remove(b.index)
 
         elif isinstance(binary, BinaryStar):
+            #print(self.binaries[-1] == binary)
+            #print(len(self.binaries))
             self.binaries.remove(binary)
             self.indices.remove(binary.index)
+            #print(len(self.binaries))
         else:
             raise ValueError('Must be BinaryStar or list of BinaryStars')
 
@@ -708,6 +711,7 @@ class PopulationManager:
                 if not is_callable or (is_callable
                                        and selection_function(binary)):
                     holder.append(binary.to_oneline_df(**kwargs))
+
         elif len(self.oneline_dfs) > 0:
             holder.extend(self.oneline_dfs)
 
@@ -828,17 +832,91 @@ class PopulationManager:
         -------
         None
         """
-        mode = kwargs.get('mode', 'a')
+
+        #history = pd.read_hdf(fname, key='history')
+        #history_cols = history.columns
+        #oneline = pd.read_hdf(fname, key='oneline') 
+        #oneline_cols = oneline.columns
+
+        #history_min_itemsize = {key: val for key, val in
+        #                        HISTORY_MIN_ITEMSIZE.items()
+        #                        if key in history_cols}
+        #oneline_min_itemsize = {key: val for key, val in
+        #                        ONELINE_MIN_ITEMSIZE.items()
+        #                        if key in oneline_cols}
+
+        self.metallicity = self.binary_generator.Z_div_Zsun
+
+        mode = kwargs.get('mode', 'w')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
 
         with pd.HDFStore(fname, mode=mode, complevel=complevel, complib=complib) as store:
+
+            simulated_mass = 0.0
+            simulated_mass_single = 0.0
+            simulated_mass_binaries = 0.0
+            number_of_systems=0
+
             history_df = self.to_df(**kwargs)
             store.append('history', history_df)
 
-            online_df = self.to_oneline_df(**kwargs)
-            store.append('oneline', online_df)
+            kwargs['S1_kwargs'] = {"only_select_columns": ["mass"]}
+            kwargs['S2_kwargs'] = {"only_select_columns": ["mass"]}
+            oneline_df = self.to_oneline_df(**kwargs)
+            #store.append('oneline', oneline_df)
+
+            try:
+
+                #store.append('history', history,
+                #                min_itemsize=history_min_itemsize)
+                
+                #oneline = pd.read_hdf(f, key='oneline')
+
+                # split weight between single and binary stars
+                mask = oneline_df["state_i"] == "initially_single_star"
+                filtered_data_single = oneline_df[mask]
+                filtered_data_binaries = oneline_df[~mask]
+
+                simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+                simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                simulated_mass = simulated_mass_single + simulated_mass_binaries
+
+                if 'metallicity' not in oneline_df.columns:
+                    met_df = pd.DataFrame(data={'metallicity': [self.metallicity] * len(oneline_df)}, index=oneline_df.index)
+                    oneline_df = pd.concat([oneline_df, met_df], axis=1)
+
+                number_of_systems += len(oneline_df)
+
+                store.append('oneline', oneline_df)
+                #store.append('oneline', oneline_df,
+                #                 min_itemsize=oneline_min_itemsize)
+
+            except Exception:
+                print(traceback.format_exc(), flush=True)
         
+            # store population metadata
+            tmp_df = pd.DataFrame()
+            for c in saved_ini_parameters:
+                tmp_df[c] = [self.kwargs[c]]
+            store.append('ini_parameters', tmp_df)
+            
+            tmp_df = pd.DataFrame(
+                index=[self.metallicity],
+                data={'simulated_mass': simulated_mass,
+                      'simulated_mass_single': simulated_mass_single,
+                      'simulated_mass_binaries': simulated_mass_binaries,
+                      'number_of_systems': number_of_systems})
+            tmp_df.index.name = 'metallicity'
+            store.append('mass_per_metallicity', tmp_df)
+
+
+            # store population metadata
+            tmp_df = pd.DataFrame()
+            for c in saved_ini_parameters:
+                tmp_df[c] = [self.kwargs[c]]
+            store.append('ini_parameters', tmp_df)
+
         return
 
 
@@ -878,6 +956,7 @@ class BinaryGenerator:
         self.sampler = sampler
         self.star_formation = kwargs.get('star_formation', 'burst')
         self.binary_fraction_generator =  binary_fraction_value
+        self.Z_div_Zsun = kwargs.get('metallicity', 1.)
 
     def reset_rng(self):
         """Reset the RNG with the stored entropy."""
@@ -986,6 +1065,8 @@ class BinaryGenerator:
                       0.01: 2.492e-01,
                       0.001: 2.49e-01,
                       0.0001: 2.49e-01}
+        
+        Z_div_Zsun = self.Z_div_Zsun
         Z = Z_div_Zsun*Zsun
         if Z_div_Zsun in zams_table.keys():
             Y = zams_table[Z_div_Zsun]
