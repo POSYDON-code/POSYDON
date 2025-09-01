@@ -1056,7 +1056,7 @@ class StepCEE(object):
         # don't sent it to the detached step after successful ejection, but
         # send the binary directly to the core collapse step to calculate the
         # explosion
-        if donor.state == 'stripped_He_Central_He_depleted':
+        if donor.state == 'stripped_He_Core_He_depleted':
             if donor == binary.star_1:
                 binary.event = 'CC1'
             elif donor == binary.star_2:

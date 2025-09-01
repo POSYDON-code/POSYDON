@@ -1741,15 +1741,15 @@ def calculate_Patton20_values_at_He_depl(star):
     co_core_mass_at_He_depletion = None
     avg_c_in_c_core_at_He_depletion = None
     if star.state_history is not None:
-        if ("H-rich_Central_He_depleted" in star.state_history):
+        if ("H-rich_Core_He_depleted" in star.state_history):
             i_He_depl = np.argmax(
-                np.array(star.state_history) == "H-rich_Central_He_depleted")
+                np.array(star.state_history) == "H-rich_Core_He_depleted")
             co_core_mass_at_He_depletion = star.co_core_mass_history[i_He_depl]
             avg_c_in_c_core_at_He_depletion = star.avg_c_in_c_core_history[
                 i_He_depl]
-        elif ("stripped_He_Central_He_depleted" in star.state_history):
+        elif ("stripped_He_Core_He_depleted" in star.state_history):
             i_He_depl = np.argmax(np.array(star.state_history)
-                                  == "stripped_He_Central_He_depleted")
+                                  == "stripped_He_Core_He_depleted")
             co_core_mass_at_He_depletion = star.co_core_mass_history[i_He_depl]
             avg_c_in_c_core_at_He_depletion = star.avg_c_in_c_core_history[
                 i_He_depl]

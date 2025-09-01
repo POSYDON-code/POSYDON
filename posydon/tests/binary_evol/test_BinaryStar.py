@@ -25,7 +25,7 @@ class TestSingleStar(unittest.TestCase):
         i = 42
 
         kwargs1 = {
-            'state': 'stripped_He_Central_C_depleted',
+            'state': 'stripped_He_Core_C_depleted',
             'metallicity': grid[i].initial_values['Z'],
             'mass': grid[i].history1['star_mass'][-1],
             'log_R': np.nan,
@@ -63,7 +63,7 @@ class TestSingleStar(unittest.TestCase):
         star_1 = SingleStar(**kwargs1)
 
         kwargs2 = {
-            'state': 'stripped_He_Central_C_depleted',
+            'state': 'stripped_He_Core_C_depleted',
             'metallicity': grid[i].initial_values['Z'],
             'mass': grid[i].initial_values['star_2_mass'],
             'log_R': np.nan,

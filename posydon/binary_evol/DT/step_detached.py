@@ -50,9 +50,9 @@ LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning",
 LIST_ACCEPTABLE_STATES_FOR_postMS = [
     "H-rich_Shell_H_burning",
     "H-rich_Core_He_burning",
-    "H-rich_Central_He_depleted",
+    "H-rich_Core_He_depleted",
     "H-rich_Core_C_burning",
-    "H-rich_Central_C_depleted",
+    "H-rich_Core_C_depleted",
     "H-rich_non_burning",
     "accreted_He_Shell_H_burning",
     "accreted_He_non_burning"]
@@ -61,8 +61,8 @@ LIST_ACCEPTABLE_STATES_FOR_HeStar = [
     'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
     'stripped_He_Shell_He_burning',     # includes stars burning C in core
-    'stripped_He_Central_He_depleted',  # includes stars burning C in core
-    'stripped_He_Central_C_depleted',
+    'stripped_He_Core_He_depleted',  # includes stars burning C in core
+    'stripped_He_Core_C_depleted',
     'stripped_He_non_burning'
     ]
 
@@ -70,10 +70,10 @@ STAR_STATES_H_RICH = [
     'H-rich_Core_H_burning',
     'H-rich_Core_He_burning',
     'H-rich_Shell_H_burning',
-    'H-rich_Central_He_depleted',
+    'H-rich_Core_He_depleted',
     'H-rich_Shell_He_burning',
     'H-rich_Core_C_burning',
-    'H-rich_Central_C_depleted',
+    'H-rich_Core_C_depleted',
     'H-rich_non_burning',
     'accreted_He_Core_H_burning',
     'accreted_He_Shell_H_burning',

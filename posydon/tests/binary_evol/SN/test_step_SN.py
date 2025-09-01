@@ -39,7 +39,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_CO / 0.7638113015667961,
                             'co_core_mass': M_CO ,
                             'he_core_mass': M_CO / 0.7638113015667961,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
             star = SingleStar(**star_prop)
@@ -67,7 +67,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_CO / 0.7638113015667961,
                             'co_core_mass': M_CO ,
                             'he_core_mass': M_CO / 0.7638113015667961,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
             star = SingleStar(**star_prop)
@@ -96,7 +96,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_CO / 0.7638113015667961,
                             'co_core_mass': M_CO ,
                             'he_core_mass': M_CO / 0.7638113015667961,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
             star = SingleStar(**star_prop)
@@ -128,7 +128,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_CO / 0.7638113015667961,
                             'co_core_mass': M_CO ,
                             'he_core_mass': M_CO / 0.7638113015667961,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
             star = SingleStar(**star_prop)
@@ -156,7 +156,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_CO / 0.7638113015667961,
                             'co_core_mass': M_CO ,
                             'he_core_mass': M_CO / 0.7638113015667961,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
             star = SingleStar(**star_prop)
@@ -185,7 +185,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_CO / 0.7638113015667961,
                             'co_core_mass': M_CO ,
                             'he_core_mass': M_CO / 0.7638113015667961,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
             star = SingleStar(**star_prop)
@@ -217,7 +217,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_CO / 0.7638113015667961,
                             'co_core_mass': M_CO ,
                             'he_core_mass': M_CO / 0.7638113015667961,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
             star = SingleStar(**star_prop)
@@ -244,7 +244,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_CO / 0.7638113015667961,
                             'co_core_mass': M_CO ,
                             'he_core_mass': M_CO / 0.7638113015667961,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
             star = SingleStar(**star_prop)
@@ -272,7 +272,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_CO / 0.7638113015667961,
                             'co_core_mass': M_CO ,
                             'he_core_mass': M_CO / 0.7638113015667961,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
             star = SingleStar(**star_prop)
@@ -303,7 +303,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_He,
                             'co_core_mass': M_He * 0.7638113015667961 ,
                             'he_core_mass': M_He ,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
 
@@ -337,7 +337,7 @@ class TestStepSN(unittest.TestCase):
             star_prop = {'mass': M_He,
                             'co_core_mass': M_He * 0.7638113015667961 ,
                             'he_core_mass': M_He ,
-                            'state':'stripped_He_Central_C_depleted',
+                            'state':'stripped_He_Core_C_depleted',
                             'profile':None ,
                             'spin': 0.0}
 
@@ -374,7 +374,7 @@ class TestStepSN(unittest.TestCase):
                 star_prop = {'mass':m_co / 0.7638113015667961,
                         'co_core_mass':m_co,
                         'he_core_mass':m_co / 0.7638113015667961,
-                        'state':'stripped_He_Central_C_depleted',
+                        'state':'stripped_He_Core_C_depleted',
                         'profile':None ,
                         'spin': 0.0}
 
@@ -438,7 +438,7 @@ class TestStepSN(unittest.TestCase):
                 star_prop = {'mass':m_co / 0.7638113015667961,
                         'co_core_mass':m_co,
                         'he_core_mass':m_co / 0.7638113015667961,
-                        'state':'stripped_He_Central_C_depleted',
+                        'state':'stripped_He_Core_C_depleted',
                         'profile':None ,
                         'spin': 0.0}
 
@@ -509,7 +509,7 @@ class TestStepSN(unittest.TestCase):
 
             properties_star1 = {"mass": 16.200984100257546, "state": "BH", "profile": None}
             properties_star2 = {"mass": 5.497560636139926,
-                                "state": "stripped_He_Central_C_depleted",
+                                "state": "stripped_He_Core_C_depleted",
                                 "profile": None,
                                 'he_core_mass': 5.497560636139926,
                                 'co_core_mass': 4.1990989449324205}

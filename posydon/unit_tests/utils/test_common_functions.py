@@ -1452,12 +1452,12 @@ class TestFunctions:
                  ("H-rich_Core_H_burning", totest.MT_CASE_A),\
                  ("H-rich_Core_He_burning", totest.MT_CASE_B),\
                  ("H-rich_Shell_H_burning", totest.MT_CASE_B),\
-                 ("H-rich_Central_He_depleted", totest.MT_CASE_C),\
-                 ("H-rich_Central_C_depleted", totest.MT_CASE_C),\
+                 ("H-rich_Core_He_depleted", totest.MT_CASE_C),\
+                 ("H-rich_Core_C_depleted", totest.MT_CASE_C),\
                  ("H-rich_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("stripped_He_Core_He_burning", totest.MT_CASE_BA),\
-                 ("stripped_He_Central_He_depleted", totest.MT_CASE_BB),\
-                 ("stripped_He_Central_C_depleted", totest.MT_CASE_BB),\
+                 ("stripped_He_Core_He_depleted", totest.MT_CASE_BB),\
+                 ("stripped_He_Core_C_depleted", totest.MT_CASE_BB),\
                  ("stripped_He_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("test_undetermined", totest.MT_CASE_UNDETERMINED)]
         for (ds, c) in tests:
@@ -1645,17 +1645,17 @@ class TestFunctions:
         star.co_core_mass_at_He_depletion = 0.5
         star.avg_c_in_c_core_at_He_depletion = 0.5
         for s in ["test", "H-rich_Core_H_burning", "H-rich_Core_He_burning",\
-                  "H-rich_Shell_H_burning", "H-rich_Central_C_depleted",\
+                  "H-rich_Shell_H_burning", "H-rich_Core_C_depleted",\
                   "H-rich_undetermined", "stripped_He_Core_He_burning",\
-                  "stripped_He_Central_C_depleted",\
+                  "stripped_He_Core_C_depleted",\
                   "stripped_He_undetermined"]:
             star.state_history = [s]
             totest.calculate_Patton20_values_at_He_depl(star)
             assert star.co_core_mass_at_He_depletion is None
             assert star.avg_c_in_c_core_at_He_depletion is None
         # examples: loop through star types with He depletion
-        tests = [("H-rich_Central_He_depleted", 0.1),\
-                 ("stripped_He_Central_He_depleted", 0.2)]
+        tests = [("H-rich_Core_He_depleted", 0.1),\
+                 ("stripped_He_Core_He_depleted", 0.2)]
         for (s, v) in tests:
             star.state_history = ["test", s, s]
             star.co_core_mass_history = [0.0, v, 1.0]
