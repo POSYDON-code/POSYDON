@@ -83,8 +83,7 @@ Anaconda (Recommended)
     .. warning::
         Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for 
         all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each 
-        metallicity requires about 10 GB of disk space, so to be safe, make sure you have at least 103 GB of disk 
-        space available.
+        metallicity requires about 10 GB of disk space. In total, the DR2  dataset requires 103 GB of disk space.
 
     .. code-block:: bash
 
@@ -177,8 +176,7 @@ For users interested in the latest features and developments, you can install PO
     .. warning::
         Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for 
         all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each 
-        metallicity requires about 10 GB of disk space, so to be safe, make sure you have at least 103 GB of disk 
-        space available.
+        metallicity requires about 10 GB of disk space. In total, the DR2  dataset requires 103 GB of disk space.
 
     .. code-block:: bash
 
