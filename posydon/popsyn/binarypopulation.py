@@ -653,11 +653,9 @@ class PopulationManager:
                 self.indices.remove(b.index)
 
         elif isinstance(binary, BinaryStar):
-            #print(self.binaries[-1] == binary)
-            #print(len(self.binaries))
             self.binaries.remove(binary)
             self.indices.remove(binary.index)
-            #print(len(self.binaries))
+
         else:
             raise ValueError('Must be BinaryStar or list of BinaryStars')
 
@@ -832,22 +830,10 @@ class PopulationManager:
         -------
         None
         """
-
-        #history = pd.read_hdf(fname, key='history')
-        #history_cols = history.columns
-        #oneline = pd.read_hdf(fname, key='oneline') 
-        #oneline_cols = oneline.columns
-
-        #history_min_itemsize = {key: val for key, val in
-        #                        HISTORY_MIN_ITEMSIZE.items()
-        #                        if key in history_cols}
-        #oneline_min_itemsize = {key: val for key, val in
-        #                        ONELINE_MIN_ITEMSIZE.items()
-        #                        if key in oneline_cols}
-
+        # needed for metadata
         self.metallicity = self.binary_generator.Z_div_Zsun
 
-        mode = kwargs.get('mode', 'w')
+        mode = kwargs.get('mode', 'a')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
 
@@ -864,14 +850,8 @@ class PopulationManager:
             kwargs['S1_kwargs'] = {"only_select_columns": ["mass"]}
             kwargs['S2_kwargs'] = {"only_select_columns": ["mass"]}
             oneline_df = self.to_oneline_df(**kwargs)
-            #store.append('oneline', oneline_df)
 
             try:
-
-                #store.append('history', history,
-                #                min_itemsize=history_min_itemsize)
-                
-                #oneline = pd.read_hdf(f, key='oneline')
 
                 # split weight between single and binary stars
                 mask = oneline_df["state_i"] == "initially_single_star"
@@ -889,17 +869,9 @@ class PopulationManager:
                 number_of_systems += len(oneline_df)
 
                 store.append('oneline', oneline_df)
-                #store.append('oneline', oneline_df,
-                #                 min_itemsize=oneline_min_itemsize)
 
             except Exception:
                 print(traceback.format_exc(), flush=True)
-        
-            # store population metadata
-            tmp_df = pd.DataFrame()
-            for c in saved_ini_parameters:
-                tmp_df[c] = [self.kwargs[c]]
-            store.append('ini_parameters', tmp_df)
             
             tmp_df = pd.DataFrame(
                 index=[self.metallicity],
@@ -909,7 +881,6 @@ class PopulationManager:
                       'number_of_systems': number_of_systems})
             tmp_df.index.name = 'metallicity'
             store.append('mass_per_metallicity', tmp_df)
-
 
             # store population metadata
             tmp_df = pd.DataFrame()
