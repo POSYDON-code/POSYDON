@@ -340,7 +340,7 @@ class TestValues:
 
     def test_value_BURNING_STATES(self):
         for v in ["Core_H_burning", "Core_He_burning", "Shell_H_burning",\
-                  "Central_He_depleted", "Central_C_depleted"]:
+                  "Core_He_depleted", "Core_C_depleted"]:
             # check required values
             assert v in totest.BURNING_STATES, "missing entry"
 
@@ -1398,10 +1398,10 @@ class TestFunctions:
                                     rich = "stripped_He"
                                 if ((cH1<=TCA) and (cHe4<=TCA) and\
                                     (cC12<=TCA)):
-                                    burn = "Central_C_depleted"
+                                    burn = "Core_C_depleted"
                                 elif ((cH1<=TCA) and (cHe4<=TCA) and\
                                       (cC12>TCA)):
-                                    burn = "Central_He_depleted"
+                                    burn = "Core_He_depleted"
                                 elif ((cH1>TCA) and (lgLH>LBT)):
                                     burn = "Core_H_burning"
                                 elif ((cH1>TCA) and (lgLH<=LBT)):

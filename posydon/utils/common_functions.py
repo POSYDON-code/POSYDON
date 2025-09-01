@@ -41,8 +41,8 @@ STATE_UNDETERMINED = "undetermined_evolutionary_state"
 
 # ALL POSSIBLE STAR STATES
 BURNING_STATES = ["Core_H_burning", "Core_He_burning",
-                  "Shell_H_burning", "Central_He_depleted",
-                  "Central_C_depleted"]
+                  "Shell_H_burning", "Core_He_depleted",
+                  "Core_C_depleted"]
 RICHNESS_STATES = ["H-rich", "stripped_He", "accreted_He"]
 COMPACT_OBJECTS = ["WD", "NS", "BH","massless_remnant"]
 
@@ -1182,12 +1182,12 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     else:                                           # undetermined in any star
         result = ["undefined", None, 'None']
 
-    if ("Central_C_depleted" in state1
-            or "Central_He_depleted" in state1
+    if ("Core_C_depleted" in state1
+            or "Core_He_depleted" in state1
             or (gamma1 is not None and gamma1 >= 10.0)):    # WD formation
         result[1] = "CC1"
-    elif ("Central_C_depleted" in state2
-          or "Central_He_depleted" in state2
+    elif ("Core_C_depleted" in state2
+          or "Core_He_depleted" in state2
           or (gamma2 is not None and gamma2 >= 10.0)):      # WD formation
         result[1] = "CC2"
 
@@ -1442,9 +1442,9 @@ def infer_star_state(star_mass=None, surface_h1=None,
 
     if not (H_in_core or He_in_core):   # H and He are depleted
         if not C_in_core:
-            burning = "Central_C_depleted"
+            burning = "Core_C_depleted"
         else:
-            burning = "Central_He_depleted"
+            burning = "Core_He_depleted"
         # from now on, either H or He in core
     elif H_in_core:                     # no matter what the He abundance is
         if burning_H:
@@ -1507,14 +1507,14 @@ def infer_mass_transfer_case(rl_relative_overflow,
         if ("Core_He_burning" in donor_state
                 or "Shell_H_burning" in donor_state):
             return MT_CASE_B
-        if ("Central_He_depleted" in donor_state
-                or "Central_C_depleted" in donor_state):
+        if ("Core_He_depleted" in donor_state
+                or "Core_C_depleted" in donor_state):
             return MT_CASE_C
     elif "stripped_He" in donor_state:
         if "Core_He_burning" in donor_state:
             return MT_CASE_BA
-        if ("Central_He_depleted" in donor_state
-                or "Central_C_depleted" in donor_state):
+        if ("Core_He_depleted" in donor_state
+                or "Core_C_depleted" in donor_state):
             return MT_CASE_BB
     return MT_CASE_UNDETERMINED
 
@@ -1711,7 +1711,7 @@ def get_i_He_depl(history):
                                      log_LHe=history['log_LHe'][i],
                                      log_Lnuc=history['log_Lnuc'][i],
                                      star_CO=False)
-            if "Central_He_depleted" in state:
+            if "Core_He_depleted" in state:
                 return i 
     return -1
 
