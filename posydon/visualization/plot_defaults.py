@@ -391,7 +391,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, 'tab:red', 'H-rich shell H burning'],
         'H-rich_Core_C_burning':
             ['s', 2, 'tab:pink', 'H-rich core C burning'],
-        'H-rich_Central_C_depletion':
+        'H-rich_Central_C_depleted':
             ['s', 2, 'tab:brown', 'H-rich central C depletion'],
         'H-rich_Core_He_burning':
             ['s', 2, 'tab:blue', 'H-rich core He burning'],
@@ -403,7 +403,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:green', 'stripped He-star shell He burning'],
         'stripped_He_Core_C_burning':
             ['o', 2, 'tab:pink', 'stripped He-star core C burning'],
-        'stripped_He_Central_C_depletion':
+        'stripped_He_Central_C_depleted':
             ['o', 2, 'tab:brown', 'stripped He-star C depletion'],
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],
@@ -433,11 +433,11 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, 'tab:red', 'H-rich shell H burning'],
         'H-rich_Core_C_burning':
             ['s', 2, 'tab:pink', 'H-rich core C burning'],
-        'H-rich_Central_C_depletion':
+        'H-rich_Central_C_depleted':
             ['s', 2, 'tab:brown', 'H-rich central C depletion'],
         'H-rich_Core_He_burning':
             ['s', 2, 'tab:blue', 'H-rich core He burning'],
-        'H-rich_Near_Central_C_depletion':
+        'H-rich_Near_Central_C_depleted':
             ['s', 2, 'tab:purple', 'H-rich near central C depletion'],
         'H-rich_Central_He_depleted':
             ['s', 2, 'tab:green', 'H-rich shell He burning'],
@@ -447,7 +447,7 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['o', 2, 'tab:green', 'stripped He-star shell He burning'],
         'stripped_He_Core_C_burning':
             ['o', 2, 'tab:pink', 'stripped He-star core C burning'],
-        'stripped_He_Central_C_depletion':
+        'stripped_He_Central_C_depleted':
             ['o', 2, 'tab:brown', 'stripped He-star C depletion'],
         'stripped_He_non_burning':
             ['o', 2, 'gray', 'stripped He-star non burning'],

@@ -51,7 +51,7 @@ from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massl
 from posydon.binary_evol.SN.profile_collapse import (do_core_collapse_BH,
                                         get_ejecta_element_mass_at_collapse)
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
-                                            STAR_STATES_C_DEPLETION)
+                                            STAR_STATES_C_depleted)
 
 from posydon.grids.SN_MODELS import get_SN_MODEL_NAME, DEFAULT_SN_MODEL
 from posydon.utils.posydonerror import ModelError
@@ -436,9 +436,9 @@ class StepSN(object):
                 binary.eccentricity,
             )
         # Cover the case where CC of the companion is immediately followed
-        elif state1 in STAR_STATES_CO and state2 in STAR_STATES_C_DEPLETION:
+        elif state1 in STAR_STATES_CO and state2 in STAR_STATES_C_depleted:
             binary.event = "CC2"
-        elif state1 in STAR_STATES_C_DEPLETION and state2 in STAR_STATES_CO:
+        elif state1 in STAR_STATES_C_depleted and state2 in STAR_STATES_CO:
             binary.event = "CC1"
 
         if self.verbose:

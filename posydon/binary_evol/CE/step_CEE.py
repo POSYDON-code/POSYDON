@@ -42,8 +42,11 @@ from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.config import PATH_TO_POSYDON
 from posydon.utils.common_functions import check_state_of_star
-from posydon.utils.common_functions import calculate_lambda_from_profile, calculate_Mejected_for_integrated_binding_energy
+from posydon.utils.common_functions import (calculate_lambda_from_profile, 
+                                            calculate_Mejected_for_integrated_binding_energy)
 from posydon.utils.posydonwarning import Pwarn
+from posydon.binary_evol.flow_chart import (STAR_STATES_POST_MS, 
+                                            STAR_STATES_POST_HeMS)
 
 
 MODEL = {"prescription": 'alpha-lambda',
@@ -82,27 +85,6 @@ MODEL = {"prescription": 'alpha-lambda',
 # "neutral_fraction_H", "neutral_fraction_He", and "avg_charge_He" as column
 # in the profile)
 # the mass fraction of an element which is used as threshold to define a core,
-
-
-STAR_STATE_POST_MS = [
-    "H-rich_Core_H_burning",
-    "H-rich_Shell_H_burning",
-    "H-rich_Core_He_burning",
-    "H-rich_Central_He_depleted",
-    "H-rich_Central_C_depletion",
-    "H-rich_non_burning",
-    "accreted_He_non_burning"
-]
-
-
-STAR_STATE_POST_HeMS = [
-    'accreted_He_Core_He_burning',
-    'stripped_He_Core_He_burning',
-    'stripped_He_Central_He_depleted',
-    'stripped_He_Central_C_depletion',
-    'stripped_He_non_burning'
-]
-
 
 class StepCEE(object):
     """Compute supernova final remnant mass, fallback fraction & stellar state.
@@ -283,13 +265,13 @@ class StepCEE(object):
         m1_i = donor.mass
         radius1 = 10. ** donor.log_R
 
-        if donor.state in STAR_STATE_POST_MS:       # "H_Giant":
+        if donor.state in STAR_STATES_POST_MS:       # "H_Giant":
             donor_type = 'He_core'
             core_element_fraction_definition = self.core_definition_H_fraction
             if core_element_fraction_definition not in [0.01, 0.1, 0.3]:
                 raise ValueError("He-core defintion should always be "
                                  "set to a H abundance of 1%, 10%, or 30%")
-        elif donor.state in STAR_STATE_POST_HeMS:   # "He_Giant":
+        elif donor.state in STAR_STATES_POST_HeMS:   # "He_Giant":
             donor_type = 'CO_core'
             core_element_fraction_definition = self.core_definition_He_fraction
             if core_element_fraction_definition != 0.1:

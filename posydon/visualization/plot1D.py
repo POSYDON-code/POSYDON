@@ -563,13 +563,13 @@ class plot1D(object):
                 # the code does not work plus the majority of stars do not have
                 # the points in the EEPs
                 # end = np.logical_or(self.star_states[j] ==
-                #                     'H-rich_Central_C_depletion',
+                #                     'H-rich_Central_C_depleted',
                 #                     self.star_states[j]
-                #                     == 'stripped_He_Central_C_depletion')
+                #                     == 'stripped_He_Central_C_depleted')
                 # end_x = self.history[j]["log_Teff"][end]
                 # end_y = self.history[j]["log_L"][end]
                 # ax.plot(end_x, end_y, marker='o', markersize=10,
-                #         color=convention['H-rich_Central_C_depletion'][2])
+                #         color=convention['H-rich_Central_C_depleted'][2])
                 if j == 0:
                     custom_lines = []
                     custom_legend = []

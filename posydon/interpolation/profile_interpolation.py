@@ -561,10 +561,10 @@ class Composition:
                              'stripped_He_Core_He_burning',
                              'stripped_He_Core_C_burning',
                              'stripped_He_Central_He_depleted',
-                             'stripped_He_Central_C_depletion',
+                             'stripped_He_Central_C_depleted',
                              'H-rich_non_burning',
                              'H-rich_Central_He_depleted',
-                             'H-rich_Central_C_depletion',
+                             'H-rich_Central_C_depleted',
                              'H-rich_Shell_H_burning',
                              'H-rich_Core_H_burning',
                              'H-rich_Core_He_burning',
@@ -616,9 +616,9 @@ class Composition:
         for state in ['stripped_He_Core_He_burning',
                       'stripped_He_Core_C_burning',
                       'stripped_He_Central_He_depleted',
-                      'stripped_He_Central_C_depletion',
+                      'stripped_He_Central_C_depleted',
                       'H-rich_Central_He_depleted',
-                      'H-rich_Central_C_depletion',
+                      'H-rich_Central_C_depleted',
                       'H-rich_Shell_H_burning',
                       'H-rich_Core_H_burning',
                       'H-rich_Core_He_burning',
@@ -671,7 +671,7 @@ class Composition:
                 
                         
                 elif state in ['H-rich_Central_He_depleted',
-                               'H-rich_Central_C_depletion']: # H profiles with 1 boundary point
+                               'H-rich_Central_C_depleted']: # H profiles with 1 boundary point
                     outs=3
                     # calculate the point in each H profile with the largest increase
                     hbound = (np.argmax(h_prof[:,1:]-h_prof[:,:-1],axis=1)+1)/200
@@ -685,7 +685,7 @@ class Composition:
                 elif state in ['stripped_He_Core_He_burning',
                              'stripped_He_Core_C_burning',
                              'stripped_He_Central_He_depleted',
-                             'stripped_He_Central_C_depletion']:
+                             'stripped_He_Central_C_depleted']:
                     outs=2
                     # calculate first and points in each profile with large increases
                     bounds,nonflat = calc_bevel_bounds(he_prof)
@@ -762,7 +762,7 @@ class Composition:
         
         # construct step-shaped profile - H and He profiles have symmetrical shapes
         elif star_state in ["H-rich_Central_He_depleted",
-                  "H-rich_Central_C_depletion"]:
+                  "H-rich_Central_C_depleted"]:
             # predicting profile shape parameters 
             b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]            
             H = np.ones(200)*center_H

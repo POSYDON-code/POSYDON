@@ -339,7 +339,7 @@ class TestValues:
 
     def test_value_BURNING_STATES(self):
         for v in ["Core_H_burning", "Core_He_burning", "Shell_H_burning",\
-                  "Central_He_depleted", "Central_C_depletion"]:
+                  "Central_He_depleted", "Central_C_depleted"]:
             # check required values
             assert v in totest.BURNING_STATES, "missing entry"
 
@@ -1397,7 +1397,7 @@ class TestFunctions:
                                     rich = "stripped_He"
                                 if ((cH1<=TCA) and (cHe4<=TCA) and\
                                     (cC12<=TCA)):
-                                    burn = "Central_C_depletion"
+                                    burn = "Central_C_depleted"
                                 elif ((cH1<=TCA) and (cHe4<=TCA) and\
                                       (cC12>TCA)):
                                     burn = "Central_He_depleted"
@@ -1452,11 +1452,11 @@ class TestFunctions:
                  ("H-rich_Core_He_burning", totest.MT_CASE_B),\
                  ("H-rich_Shell_H_burning", totest.MT_CASE_B),\
                  ("H-rich_Central_He_depleted", totest.MT_CASE_C),\
-                 ("H-rich_Central_C_depletion", totest.MT_CASE_C),\
+                 ("H-rich_Central_C_depleted", totest.MT_CASE_C),\
                  ("H-rich_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("stripped_He_Core_He_burning", totest.MT_CASE_BA),\
                  ("stripped_He_Central_He_depleted", totest.MT_CASE_BB),\
-                 ("stripped_He_Central_C_depletion", totest.MT_CASE_BB),\
+                 ("stripped_He_Central_C_depleted", totest.MT_CASE_BB),\
                  ("stripped_He_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("test_undetermined", totest.MT_CASE_UNDETERMINED)]
         for (ds, c) in tests:
@@ -1644,9 +1644,9 @@ class TestFunctions:
         star.co_core_mass_at_He_depletion = 0.5
         star.avg_c_in_c_core_at_He_depletion = 0.5
         for s in ["test", "H-rich_Core_H_burning", "H-rich_Core_He_burning",\
-                  "H-rich_Shell_H_burning", "H-rich_Central_C_depletion",\
+                  "H-rich_Shell_H_burning", "H-rich_Central_C_depleted",\
                   "H-rich_undetermined", "stripped_He_Core_He_burning",\
-                  "stripped_He_Central_C_depletion",\
+                  "stripped_He_Central_C_depleted",\
                   "stripped_He_undetermined"]:
             star.state_history = [s]
             totest.calculate_Patton20_values_at_He_depl(star)
