@@ -97,7 +97,7 @@ Anaconda (Recommended)
 
         get-posydon-data auxillary
 
-    and at data for at least one metallicity (the examples and tutorials typically use solar):
+    and data for at least one metallicity (the examples and tutorials typically use solar):
 
     .. code-block:: bash
 
@@ -191,7 +191,7 @@ For users interested in the latest features and developments, you can install PO
 
         get-posydon-data auxillary
 
-    and at data for at least one metallicity (the examples and tutorials typically use solar):
+    and data for at least one metallicity (the examples and tutorials typically use solar):
 
     .. code-block:: bash
 
