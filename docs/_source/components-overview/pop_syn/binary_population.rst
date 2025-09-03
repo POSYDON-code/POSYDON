@@ -192,12 +192,14 @@ Depending on the initialization parameters, the evolved population can be access
    You can access the individual binaries using the ``manager`` attribute:
 
   .. code-block:: python
+
     first_binary = population.manager.binaries[0]
     print(first_binary)
 
    Additionally you can show turn the binary into a history DataFrame or create a oneline summary DataFrame:
 
   .. code-block:: python
+
     history = population.to_df()
     print(history)
 
@@ -209,6 +211,7 @@ Depending on the initialization parameters, the evolved population can be access
    Make sure the file name has ``.h5`` extension, as this is required for the Population class to read the file correctly.
 
    .. code-block:: python
+    
     from posydon.popsyn.synthetic_population import Population
     population = Population('./population.h5')
 

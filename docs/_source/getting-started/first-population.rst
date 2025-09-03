@@ -1,7 +1,7 @@
 .. _first-population:
 
 Quick Start: Your First Population
-=============================
+==================================
 
 Installation and Data Download
 ------------------------------

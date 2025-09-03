@@ -47,7 +47,13 @@ Anaconda (Recommended)
         conda install -c posydon posydon
 
     .. note:: 
-        Please remember the current path (get it via :code:`pwd`) or the one you specified for the next step.
+        In the next step you will need to know where this package was installed. You can find it by running the following 
+        commands in Python:
+
+        .. code-block:: python
+
+            import posydon
+            print(posydon.__file__)
 
 .. _posydon-env:
 
@@ -57,51 +63,82 @@ Anaconda (Recommended)
 
     .. code-block:: bash
 
-        export PATH_TO_POSYDON=/path/to/your/posydon/installation
-        export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
+        conda env config vars set PATH_TO_POSYDON=/path/to/your/posydon/installation
+        conda env config vars set PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
-    The path for the data location is up to you, but keeping the data separate 
-    from the code is recommended for better organization.
+    The path for the data location is up to you, but keeping the data separate from the code is recommended for organization.
 
     .. note:: 
-        You can add these lines to your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
+        So that your new `conda` environment is loaded whenever you open a new terminal, you can add the following line to 
+        your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent:
+        
+        .. code-block:: bash
+            
+            conda activate posydon_env
 
 5. **Download the Dataset**
 
     You can use POSYDON's built-in API command (the downloaded data will be downloaded to the directory specified by :code:`PATH_TO_POSYDON_DATA`):
 
+    .. warning::
+        Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for 
+        all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each 
+        metallicity requires about 10 GB of disk space. In total, the DR2  dataset requires 103 GB of disk space.
+
     .. code-block:: bash
 
         get-posydon-data
 
-    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the one of your choice.
-    If you have the disk space and want to download the full DR2 dataset, you can use the following command:
+    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
+    If you would rather download something more minimal to run populations, you will need at least the auxillary data:
 
     .. code-block:: bash
 
-        get-posydon-data DR2
+        get-posydon-data auxillary
+
+    and data for at least one metallicity (the examples and tutorials typically use solar):
+
+    .. code-block:: bash
+
+        get-posydon-data DR2_1Zsun
 
     Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
 
-.. _dev-version:
+.. _stable-version:
 
-GitHub (Development Version)
+GitHub (Stable Version)
 ----------------------------
 
 For users interested in the latest features and developments, you can install POSYDON directly from its GitHub repository:
 
 1. **Clone the Repository**
 
-    In your terminal or command prompt (by default, the repository will be placed in the current directory, so navigate to your desired location before proceeding):
+    In your terminal or command prompt execute one of the following command to clone the repo with the ``https`` protocol:
+
+    .. warning:: 
+        By default, the repository will be placed in the current directory, so navigate to your desired location before proceeding.
 
     .. code-block:: bash
 
         git clone https://github.com/POSYDON-code/POSYDON.git
 
-2. **Install the Development Version**
+    For the ``ssh`` protocol:
+
+    .. code-block:: bash
+
+        git clone git@github.com:POSYDON-code/POSYDON.git
+
+    Or for the Github CLI:
+
+    .. code-block:: bash
+
+        gh repo clone POSYDON-code/POSYDON
+
+2. **Install the Stable Version**
 
     .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install `hdf5` and `pytables` through conda with `conda install hdf5 pytables`, before following the instructions below.
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install ``hdf5`` and ``pytables`` through ``conda``
+        with ``conda install hdf5 pytables``, before following the instructions below.
 
     Navigate to the cloned repository's directory:
 
@@ -109,16 +146,56 @@ For users interested in the latest features and developments, you can install PO
 
         cd POSYDON
 
-    Install the software as an editable package using `pip`:
+    Install the software as an editable package using ``pip``:
 
     .. code-block:: bash
 
         pip install -e .
 
-3. **Set Environment Variables and Download Data**
+3. **Set Environment Variables**
 
-    Refer back to the recommended installation steps, starting from :ref:`point 4 <posydon-env>`, to download the required dataset and set the necessary environment variables.
+    Next, export the required paths as environment variables. From the ``POSYDON`` directory that you just performed the installation in, 
+    you can execute ``pwd`` if you are unsure of the path name. Please change the location names accordingly below to your installation 
+    path:
 
+    .. code-block:: bash
+
+        export PATH_TO_POSYDON=/path/to/your/posydon/installation
+        export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
+
+    The path for the data location is up to you, but keeping the data separate 
+    from the code is recommended for organization.
+
+    .. note:: 
+        You can add these lines to your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
+
+4. **Download the Dataset**
+
+    You can use POSYDON's built-in API command (the downloaded data will be downloaded to the directory specified by :code:`PATH_TO_POSYDON_DATA`):
+
+    .. warning::
+        Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for 
+        all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each 
+        metallicity requires about 10 GB of disk space. In total, the DR2  dataset requires 103 GB of disk space.
+
+    .. code-block:: bash
+
+        get-posydon-data
+
+    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
+    If you would rather download something more minimal to run populations, you will need at least the auxillary data:
+
+    .. code-block:: bash
+
+        get-posydon-data auxillary
+
+    and data for at least one metallicity (the examples and tutorials typically use solar):
+
+    .. code-block:: bash
+
+        get-posydon-data DR2_1Zsun
+
+    Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
 
 Installing Jupyter for Tutorials
 =================================
@@ -143,7 +220,7 @@ Our tutorials are provided as Jupyter notebooks. If you want to run these notebo
 2. **Alternatively, via pip**
 
 
-    If you prefer using `pip`, you can also install Jupyter Lab or Notebook using the following commands:
+    If you prefer using ``pip``, you can also install Jupyter Lab or Notebook using the following commands:
 
     .. code-block:: bash
 
@@ -203,7 +280,9 @@ You do not need to have ``mpi4py`` installed if you are only running population 
 
 
 .. warning::
-    Users have reported issues when trying to install `mpi4py` via pip. If you encounter any issues, try installing `mpi4py` through Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from the community or developers, see the :ref:`contact us <contact_info>` page.
+    Users have reported issues when trying to install ``mpi4py`` via pip. If you encounter any issues, try installing ``mpi4py`` through 
+    Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from 
+    the community or developers, see the :ref:`contact us <contact_info>` page.
 
 
 Documentation Building
@@ -220,7 +299,8 @@ If you're interested in building the POSYDON documentation locally:
         pip install ".[doc]"
 
     .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install `pandoc` separately through brew with `brew install pandoc`.
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install ``pandoc`` separately through brew with 
+        ``brew install pandoc``.
 
 2. **Compile the Documentation**:
 
@@ -231,18 +311,18 @@ If you're interested in building the POSYDON documentation locally:
         cd docs
         make html
 
-    This command will generate the HTML documentation in the `_build/html` directory within the `docs` folder.
+    This command will generate the HTML documentation in the ``_build/html`` directory within the ``docs`` folder.
 
 3. **Open the Compiled Documentation**:
 
-    After successfully building the documentation, you can view it in your preferred browser. Navigate to the build directory and open the `index.html`:
+    After successfully building the documentation, you can view it in your preferred browser. Navigate to the build directory and open the ``index.html``:
 
     .. code-block:: bash
 
         open _build/html/index.html
 
     .. note::
-        The `open` command works on macOS. If you're using a different OS, you might need to open the `index.html` using your file manager or use a different command.
+        The ``open`` command works on macOS. If you're using a different OS, you might need to open the ``index.html`` using your file manager or use a different command.
 
 
 
@@ -253,7 +333,7 @@ For users who wish to utilize POSYDON's latest machine learning features.
 This is specifically used in the active learning module and profile interpolation.
 You do not require these dependencies if you are using the provided Initial-Final interpolators.
 
-1. **Navigate to your POSYDON directory** (where the `setup.py` is located) and run:
+1. **Navigate to your POSYDON directory** (where the ``setup.py`` is located) and run:
 
     .. code-block:: bash
 
