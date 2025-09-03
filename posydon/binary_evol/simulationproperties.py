@@ -10,6 +10,7 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Nam Tran <tranhn03@gmail.com>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
