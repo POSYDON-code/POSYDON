@@ -24,18 +24,18 @@ STAR_STATES_ALL = [
     'H-rich_Core_H_burning',
     'H-rich_Core_He_burning',
     'H-rich_Shell_H_burning',
-    'H-rich_Central_He_depleted',
+    'H-rich_Core_He_depleted',
     'H-rich_Shell_He_burning',
     'H-rich_Core_C_burning',
-    'H-rich_Central_C_depletion',
+    'H-rich_Core_C_depleted',
     'H-rich_non_burning',
     'accreted_He_Core_H_burning',
     'accreted_He_Shell_H_burning',
     'accreted_He_non_burning',
     'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
-    'stripped_He_Central_He_depleted',
-    'stripped_He_Central_C_depletion',
+    'stripped_He_Core_He_depleted',
+    'stripped_He_Core_C_depleted',
     'stripped_He_non_burning'
 ]
 
@@ -51,8 +51,8 @@ STAR_STATES_NORMALSTAR = STAR_STATES_ALL.copy()
 
 STAR_STATES_H_RICH = STAR_STATES_NORMALSTAR.copy()
 [STAR_STATES_H_RICH.remove(x) for x in ['stripped_He_Core_He_burning',
-                                        'stripped_He_Central_He_depleted',
-                                        'stripped_He_Central_C_depletion',
+                                        'stripped_He_Core_He_depleted',
+                                        'stripped_He_Core_C_depleted',
                                         'stripped_He_non_burning',
                                         'accreted_He_Core_He_burning']]
 
@@ -60,21 +60,40 @@ STAR_STATES_HE_RICH = STAR_STATES_NORMALSTAR.copy()
 [STAR_STATES_HE_RICH.remove(x) for x in ['H-rich_Core_H_burning',
                                          'H-rich_Core_He_burning',
                                          'H-rich_Shell_H_burning',
-                                         'H-rich_Central_He_depleted',
+                                         'H-rich_Core_He_depleted',
                                          'H-rich_Shell_He_burning',
                                          'H-rich_Core_C_burning',
-                                         'H-rich_Central_C_depletion',
+                                         'H-rich_Core_C_depleted',
                                          'accreted_He_Core_H_burning',
                                          'accreted_He_Shell_H_burning']]
 
-STAR_STATES_C_DEPLETION = [st for st in STAR_STATES_ALL if "C_depletion" in st]
+STAR_STATES_C_DEPLETED = [st for st in STAR_STATES_ALL if "C_depleted" in st]
+
+STAR_STATES_POST_MS = [
+    "H-rich_Core_H_burning",
+    "H-rich_Shell_H_burning",
+    "H-rich_Core_He_burning",
+    "H-rich_Core_He_depleted",
+    "H-rich_Core_C_depleted",
+    "H-rich_non_burning",
+    "accreted_He_non_burning"
+]
+
+
+STAR_STATES_POST_HeMS = [
+    'accreted_He_Core_He_burning',
+    'stripped_He_Core_He_burning',
+    'stripped_He_Core_He_depleted',
+    'stripped_He_Core_C_depleted',
+    'stripped_He_non_burning'
+]
 
 # these states can be evolved through MESA grids
 STAR_STATES_H_RICH_EVOLVABLE = list(set(STAR_STATES_H_RICH)
-                                    - set(STAR_STATES_C_DEPLETION))
+                                    - set(STAR_STATES_C_DEPLETED))
 
 STAR_STATES_HE_RICH_EVOLVABLE = list(set(STAR_STATES_HE_RICH)
-                                     - set(STAR_STATES_C_DEPLETION))
+                                     - set(STAR_STATES_C_DEPLETED))
 
 # CE ejection happens instantanously, so the star does not readjust before
 # we infer the state. If core_definition_H_fraction=0.1, then surface_h1=0.1,
@@ -84,10 +103,10 @@ STAR_STATES_HE_RICH_EVOLVABLE.extend(['H-rich_non_burning'])
 
 # core collapse
 STAR_STATES_CC = [
-    'H-rich_Central_C_depletion',
-    'H-rich_Central_He_depleted',
-    'stripped_He_Central_He_depleted',
-    'stripped_He_Central_C_depletion',
+    'H-rich_Core_C_depleted',
+    'H-rich_Core_He_depleted',
+    'stripped_He_Core_He_depleted',
+    'stripped_He_Core_C_depleted',
     # catch runs with gamma center limit which map to WD
     'stripped_He_non_burning',
     'H-rich_non_burning',

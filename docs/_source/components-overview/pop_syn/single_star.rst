@@ -165,13 +165,13 @@ We also have additional extra states for objects that are not stars.
     - The star is burning hydrogen in a shell.
   * - ``Core_He_burning``
     - The star is burning helium in its core.
-  * - ``Central_He_depleted``
+  * - ``Core_He_depleted``
     - The star has a helium depleted core.
   * - ``Shell_He_burning``
     - The star is burning helium in a shell.
   * - ``Core_C_burning``
     - The star is burning carbon in its core.
-  * - ``Central_C_depletion``
+  * - ``Core_C_depleted``
     - The star has a carbon depleted core.
 
 .. list-table:: Additional States
