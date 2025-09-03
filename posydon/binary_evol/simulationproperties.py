@@ -21,10 +21,6 @@ class NullStep:
     """An evolution step that does nothing but is used to initialize."""
     pass
 
-SIMULATIONSTEPS = ["step_HMS_HMS", "step_CO_HeMS", "step_CO_HMS_RLO", "step_CO_HeMS_RLO", 
-                   "step_detached", "step_disrupted", "step_merged", "step_initially_single", 
-                   "step_dco", "step_SN", "step_CE", "step_end"]
-
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
 
