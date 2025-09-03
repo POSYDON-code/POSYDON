@@ -15,28 +15,138 @@ __authors__ = [
 
 import time
 from posydon.utils.constants import age_of_universe
+from posydon.utils.posydonwarning import Pwarn
+
+class NullStep:
+    """An evolution step that does nothing but is used to initialize."""
+    pass
+
+SIMULATIONSTEPS = ["step_HMS_HMS", "step_CO_HeMS", "step_CO_HMS_RLO", "step_CO_HeMS_RLO", 
+                   "step_detached", "step_disrupted", "step_merged", "step_initially_single", 
+                   "step_dco", "step_SN", "step_CE", "step_end"]
 
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
 
-    def __init__(self, properties=None, **kwargs):
+    def __init__(self, flow=({}, {}), 
+                       step_HMS_HMS = (NullStep(), {}), 
+                       step_CO_HeMS = (NullStep(), {}), 
+                       step_CO_HMS_RLO = (NullStep(), {}), 
+                       step_CO_HeMS_RLO = (NullStep(), {}), 
+                       step_detached = (NullStep(), {}), 
+                       step_disrupted = (NullStep(), {}), 
+                       step_merged = (NullStep(), {}), 
+                       step_initially_single = (NullStep(), {}),
+                       step_dco = (NullStep(), {}),
+                       step_SN = (NullStep(), {}),
+                       step_CE = (NullStep(), {}),
+                       step_end = (NullStep(), {}),
+                       extra_hooks = [],
+                       verbose=False):
+
         """Construct the simulation properties object.
 
         Parameters
         ----------
-        properties : object
-            Simulation Properties class containing, e.g. flow, steps.
+        flow_chart : dict
+            A POSYDON flow_chart dictionary.
+
+        step_HMS_HMS : tuple
+            A tuple whose first element is a MesaGridStep class handling
+            HMS-HMS evolution, like MS_MS_step. The second element is a
+            dictionary of kwargs for that step.
+
+        step_CO_HeMS : tuple
+            A tuple whose first element is a MesaGridStep class handling
+            CO-HeMS evolution, like CO_HeMS_step. The second element is a
+            dictionary of kwargs for that step.
+
+        step_CO_HMS_RLO : tuple
+            A tuple whose first element is a MesaGridStep class handling
+            CO-HMS-RLO evolution, like CO_HMS_RLO_step. The second element is a
+            dictionary of kwargs for that step.
+
+        step_CO_HeMS_RLO : tuple
+            A tuple whose first element is a MesaGridStep class handling
+            CO-HeMS-RLO evolution, like CO_HeMS_RLO_step. The second element is a
+            dictionary of kwargs for that step.
+
+        step_detached : tuple
+            A tuple whose first element is a detached_step class handling detached
+            evolution. The second element is a dictionary of kwargs for that step.
+
+        step_disrupted : tuple
+            A tuple whose first element is a DisruptedStep class handling
+            disrupted evolution. The second element is a dictionary of kwargs for 
+            that step.
+
+        step_merged : tuple
+            A tuple whose first element is a MergedStep class handling
+            merged evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_initially_single : tuple
+            A tuple whose first element is a InitiallySingleStep class handling
+            initially single evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_dco : tuple
+            A tuple whose first element is a DoubleCO class handling
+            double CO evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_SN : tuple
+            A tuple whose first element is a StepSN class handling
+            supernova evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_CE : tuple
+            A tuple whose first element is a StepCEE class handling
+            common envelope evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_end : tuple
+            A tuple whose first element is a step_end class handling
+            the end of evolution. The second element is a dictionary of kwargs for
+            that step.
+
         extra_hooks : list of tuples
             Each tuple contains a hooks class and kwargs or the extra step name
-            ('extra_pre_evolve', 'extra_pre_step', 'extra_post_step',
+            (e.g., 'extra_pre_evolve', 'extra_pre_step', 'extra_post_step',
             'extra_post_evolve') and the corresponding function.
         """
-        self.kwargs = kwargs.copy()
-        # Check if binary_properties is passed
+        
+        # gather kwargs
+        self.kwargs = {"flow": flow}
+
+        step_kwargs = {"step_HMS_HMS": step_HMS_HMS,
+                       "step_CO_HeMS": step_CO_HeMS,
+                       "step_CO_HMS_RLO": step_CO_HMS_RLO,
+                       "step_CO_HeMS_RLO": step_CO_HeMS_RLO,
+                       "step_detached": step_detached,
+                       "step_disrupted": step_disrupted,
+                       "step_merged": step_merged,
+                       "step_initially_single": step_initially_single,
+                       "step_dco": step_dco,
+                       "step_SN": step_SN,
+                       "step_CE": step_CE,
+                       "step_end": step_end}
+
+        for key, step_tuple in step_kwargs.items():
+            
+            step_class, _ = step_tuple
+            if isinstance(step_class, NullStep):
+                if verbose: Pwarn(f"Step {key} not provided, skipping it.",
+                                  "POSYDONWarning")
+                continue   
+            else:
+                self.kwargs[key] = step_tuple
+
+        self.kwargs["extra_hooks"] = extra_hooks
 
         self.default_hooks = EvolveHooks()
         self.all_hooks_classes = [self.default_hooks]
-        for item in kwargs.get('extra_hooks', []):
+        for item in self.kwargs.get('extra_hooks', []):
             if isinstance(item, tuple):
                 if isinstance(item[0], type) and isinstance(item[1], dict):
                     cls, params = item
@@ -70,7 +180,7 @@ class SimulationProperties:
         
         # Set functions for evolution
         self.all_step_names = []  ## list of strings of all evolutionary steps
-        for key, val in kwargs.items():
+        for key, val in self.kwargs.items():
             if "step" not in key:   # skip loading steps
                 setattr(self, key, val)
             elif "step" in key:
