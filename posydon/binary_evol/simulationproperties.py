@@ -18,13 +18,10 @@ import time
 from posydon.utils.constants import age_of_universe
 from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.posydonwarning import Pwarn
-<<<<<<< HEAD
 
 class NullStep:
     """An evolution step that does nothing but is used to initialize."""
     pass
-=======
->>>>>>> 0eeec0fc (automated metallicity assignment on step load)
 
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
