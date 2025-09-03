@@ -220,6 +220,8 @@ class BinaryPopulation:
             removing the binary instance from memory.
         tqdm : bool, False
             Show tqdm progress bar during evolution.
+        optimize_ram : bool, False
+            If True, dump binary data during evolve to save RAM.
 
         Returns
         -------
@@ -229,6 +231,7 @@ class BinaryPopulation:
         kw = {**self.kwargs, **kwargs}
         tqdm_bool = kw.get('tqdm', False)
         breakdown_to_df_bool = kw.get('breakdown_to_df', True)
+        optimize_ram = kw.get('optimize_ram', False)
         from_hdf_bool = kw.get('from_hdf', False)
 
         if self.JOB_ID is None and self.comm is None:   # do regular evolution
@@ -237,6 +240,7 @@ class BinaryPopulation:
             params = {'indices':indices,
                       'tqdm':tqdm_bool,
                       'breakdown_to_df':breakdown_to_df_bool,
+                      'optimize_ram':optimize_ram,
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
 
@@ -252,6 +256,7 @@ class BinaryPopulation:
             params = {'indices':batch_indices,
                       'tqdm':mpi_tqdm_bool,
                       'breakdown_to_df':breakdown_to_df_bool,
+                      'optimize_ram':optimize_ram,
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
             self._safe_evolve(**self.kwargs)
@@ -278,8 +283,6 @@ class BinaryPopulation:
                             else indices)
         breakdown_to_df = kwargs.get('breakdown_to_df', True)
         optimize_ram = kwargs.get("optimize_ram", True)
-        self.kwargs['optimize_ram'] = optimize_ram
-
         ram_per_cpu = kwargs.get("ram_per_cpu", None)
 
         if optimize_ram:
@@ -360,7 +363,8 @@ class BinaryPopulation:
                 if not self.kwargs.get("warnings_verbose", False):
                     cpw.reset_cache()
 
-        
+
+            # remove binaries from manager.binaries and store data in DataFrames
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)
 
@@ -379,6 +383,7 @@ class BinaryPopulation:
                 self.manager.save(path, mode="w", **kw)
                 filenames.append(path)
 
+                # if optimize RAM, clear DataFrames or remove binaries
                 if(breakdown_to_df):
                     self.manager.clear_dfs()
                 else:
@@ -426,28 +431,30 @@ class BinaryPopulation:
             else:
                 self.manager.remove(self.manager.binaries.copy())
 
+        # save by either combining dump files if optimize_ram = True...
         if optimize_ram:
             # combining files
             if self.JOB_ID is None and self.comm is None:
                 self.combine_saved_files(os.path.join(temp_directory,
-                                                      "evolution.combined"),
+                                                      "evolution.combined.h5"),
                                          filenames, mode = "w")
             else:
                 self.combine_saved_files(
                     os.path.join(temp_directory,
-                                 f"evolution.combined.{self.rank}"),
+                                 f"evolution.combined.{self.rank}.h5"),
                     filenames, mode = "w")
 
-        else:
+        # ...or just save the population to a single file (if breakdown_to_df = False)
+        elif (not breakdown_to_df):
             if self.JOB_ID is None and self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
-                                               "evolution.combined"),
+                                               "evolution.combined.h5"),
                                   mode='w',
                                   **kwargs)
             else:
                 self.manager.save(
                     os.path.join(temp_directory,
-                                 f"evolution.combined.{self.rank}"),
+                                 f"evolution.combined.{self.rank}.h5"),
                     mode='w', **kwargs)
 
     def save(self, save_path, **kwargs):
@@ -458,7 +465,7 @@ class BinaryPopulation:
 
         if self.JOB_ID is None and self.comm is None:
             if optimize_ram:
-                os.rename(os.path.join(temp_directory, "evolution.combined"),
+                os.rename(os.path.join(temp_directory, "evolution.combined.h5"),
                           save_path)
             else:
                 self.manager.save(save_path, mode=mode, **kwargs)
@@ -482,7 +489,7 @@ class BinaryPopulation:
     def make_temp_fname(self):
         """Get a valid filename for the temporary file."""
         temp_directory = self.kwargs['temp_directory']
-        return os.path.join(temp_directory, f"evolution.combined.{self.rank}")
+        return os.path.join(temp_directory, f"evolution.combined.{self.rank}.h5")
         # return os.path.join(dir_name, '.tmp{}_'.format(rank) + file_name)
 
     def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
@@ -652,6 +659,7 @@ class PopulationManager:
         elif isinstance(binary, BinaryStar):
             self.binaries.remove(binary)
             self.indices.remove(binary.index)
+
         else:
             raise ValueError('Must be BinaryStar or list of BinaryStars')
 
@@ -673,21 +681,26 @@ class PopulationManager:
             oneline = binary.to_oneline_df(**kwargs)
             self.oneline_dfs.append(oneline)
             self.remove(binary)
+
         except Exception as err:
             print("Error during breakdown of {0}:\n{1}".
                   format(str(binary), err))
 
     def to_df(self, selection_function=None, **kwargs):
         """Convert all binaries to dataframe."""
+        
         if len(self.binaries) == 0 and len(self.history_dfs) == 0:
             return
+        
         is_callable = callable(selection_function)
         holder = []
+        
         if len(self.binaries) > 0:
             for binary in self.binaries:
                 if not is_callable or (is_callable
                                        and selection_function(binary)):
                     holder.append(binary.to_df(**kwargs))
+        
         elif len(self.history_dfs) > 0:
             holder.extend(self.history_dfs)
 
@@ -705,6 +718,7 @@ class PopulationManager:
                 if not is_callable or (is_callable
                                        and selection_function(binary)):
                     holder.append(binary.to_oneline_df(**kwargs))
+
         elif len(self.oneline_dfs) > 0:
             holder.extend(self.oneline_dfs)
 
@@ -825,17 +839,64 @@ class PopulationManager:
         -------
         None
         """
+        # needed for metadata
+        self.metallicity = self.binary_generator.Z_div_Zsun
+
         mode = kwargs.get('mode', 'a')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
 
         with pd.HDFStore(fname, mode=mode, complevel=complevel, complib=complib) as store:
+
+            simulated_mass = 0.0
+            simulated_mass_single = 0.0
+            simulated_mass_binaries = 0.0
+            number_of_systems=0
+
             history_df = self.to_df(**kwargs)
             store.append('history', history_df)
 
-            online_df = self.to_oneline_df(**kwargs)
-            store.append('oneline', online_df)
-        
+            kwargs['S1_kwargs'] = {"only_select_columns": ["mass"]}
+            kwargs['S2_kwargs'] = {"only_select_columns": ["mass"]}
+            oneline_df = self.to_oneline_df(**kwargs)
+
+            try:
+
+                # split weight between single and binary stars
+                mask = oneline_df["state_i"] == "initially_single_star"
+                filtered_data_single = oneline_df[mask]
+                filtered_data_binaries = oneline_df[~mask]
+
+                simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+                simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                simulated_mass = simulated_mass_single + simulated_mass_binaries
+
+                if 'metallicity' not in oneline_df.columns:
+                    met_df = pd.DataFrame(data={'metallicity': [self.metallicity] * len(oneline_df)}, index=oneline_df.index)
+                    oneline_df = pd.concat([oneline_df, met_df], axis=1)
+
+                number_of_systems += len(oneline_df)
+
+                store.append('oneline', oneline_df)
+
+            except Exception:
+                print(traceback.format_exc(), flush=True)
+            
+            tmp_df = pd.DataFrame(
+                index=[self.metallicity],
+                data={'simulated_mass': simulated_mass,
+                      'simulated_mass_single': simulated_mass_single,
+                      'simulated_mass_binaries': simulated_mass_binaries,
+                      'number_of_systems': number_of_systems})
+            tmp_df.index.name = 'metallicity'
+            store.append('mass_per_metallicity', tmp_df)
+
+            # store population metadata
+            tmp_df = pd.DataFrame()
+            for c in saved_ini_parameters:
+                tmp_df[c] = [self.kwargs[c]]
+            store.append('ini_parameters', tmp_df)
+
         return
 
 
@@ -874,6 +935,8 @@ class BinaryGenerator:
         self.kwargs = kwargs.copy()
         self.sampler = sampler
         self.star_formation = kwargs.get('star_formation', 'burst')
+        self.binary_fraction_generator =  binary_fraction_value
+        self.Z_div_Zsun = kwargs.get('metallicity', 1.)
 
     def reset_rng(self):
         """Reset the RNG with the stored entropy."""
@@ -983,6 +1046,8 @@ class BinaryGenerator:
                       0.01: 2.492e-01,
                       0.001: 2.49e-01,
                       0.0001: 2.49e-01}
+        
+        Z_div_Zsun = self.Z_div_Zsun
         Z = Z_div_Zsun*Zsun
         if Z_div_Zsun in zams_table.keys():
             Y = zams_table[Z_div_Zsun]

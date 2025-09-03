@@ -110,7 +110,8 @@ class TestElements:
                     'roche_lobe_radius', 'check_for_RLO', 'rotate',\
                     'rzams', 'separation_evol_wind_loss',\
                     'set_binary_to_failed', 'spin_stable_mass_transfer',\
-                    'stefan_boltzmann_law'}
+                    'stefan_boltzmann_law', 'STAR_STATES_H_RICH',\
+                    'STAR_STATES_HE_RICH'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -339,7 +340,7 @@ class TestValues:
 
     def test_value_BURNING_STATES(self):
         for v in ["Core_H_burning", "Core_He_burning", "Shell_H_burning",\
-                  "Central_He_depleted", "Central_C_depletion"]:
+                  "Core_He_depleted", "Core_C_depleted"]:
             # check required values
             assert v in totest.BURNING_STATES, "missing entry"
 
@@ -1397,10 +1398,10 @@ class TestFunctions:
                                     rich = "stripped_He"
                                 if ((cH1<=TCA) and (cHe4<=TCA) and\
                                     (cC12<=TCA)):
-                                    burn = "Central_C_depletion"
+                                    burn = "Core_C_depleted"
                                 elif ((cH1<=TCA) and (cHe4<=TCA) and\
                                       (cC12>TCA)):
-                                    burn = "Central_He_depleted"
+                                    burn = "Core_He_depleted"
                                 elif ((cH1>TCA) and (lgLH>LBT)):
                                     burn = "Core_H_burning"
                                 elif ((cH1>TCA) and (lgLH<=LBT)):
@@ -1451,12 +1452,12 @@ class TestFunctions:
                  ("H-rich_Core_H_burning", totest.MT_CASE_A),\
                  ("H-rich_Core_He_burning", totest.MT_CASE_B),\
                  ("H-rich_Shell_H_burning", totest.MT_CASE_B),\
-                 ("H-rich_Central_He_depleted", totest.MT_CASE_C),\
-                 ("H-rich_Central_C_depletion", totest.MT_CASE_C),\
+                 ("H-rich_Core_He_depleted", totest.MT_CASE_C),\
+                 ("H-rich_Core_C_depleted", totest.MT_CASE_C),\
                  ("H-rich_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("stripped_He_Core_He_burning", totest.MT_CASE_BA),\
-                 ("stripped_He_Central_He_depleted", totest.MT_CASE_BB),\
-                 ("stripped_He_Central_C_depletion", totest.MT_CASE_BB),\
+                 ("stripped_He_Core_He_depleted", totest.MT_CASE_BB),\
+                 ("stripped_He_Core_C_depleted", totest.MT_CASE_BB),\
                  ("stripped_He_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("test_undetermined", totest.MT_CASE_UNDETERMINED)]
         for (ds, c) in tests:
@@ -1644,17 +1645,17 @@ class TestFunctions:
         star.co_core_mass_at_He_depletion = 0.5
         star.avg_c_in_c_core_at_He_depletion = 0.5
         for s in ["test", "H-rich_Core_H_burning", "H-rich_Core_He_burning",\
-                  "H-rich_Shell_H_burning", "H-rich_Central_C_depletion",\
+                  "H-rich_Shell_H_burning", "H-rich_Core_C_depleted",\
                   "H-rich_undetermined", "stripped_He_Core_He_burning",\
-                  "stripped_He_Central_C_depletion",\
+                  "stripped_He_Core_C_depleted",\
                   "stripped_He_undetermined"]:
             star.state_history = [s]
             totest.calculate_Patton20_values_at_He_depl(star)
             assert star.co_core_mass_at_He_depletion is None
             assert star.avg_c_in_c_core_at_He_depletion is None
         # examples: loop through star types with He depletion
-        tests = [("H-rich_Central_He_depleted", 0.1),\
-                 ("stripped_He_Central_He_depleted", 0.2)]
+        tests = [("H-rich_Core_He_depleted", 0.1),\
+                 ("stripped_He_Core_He_depleted", 0.2)]
         for (s, v) in tests:
             star.state_history = ["test", s, s]
             star.co_core_mass_history = [0.0, v, 1.0]

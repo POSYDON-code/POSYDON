@@ -498,12 +498,12 @@ class MesaGridStep:
                     history_of_attribute = current + cb_bh[key_p][:-1]
                     getattr(binary, key_h).extend(history_of_attribute)
             elif key == 'nearest_neighbour_distance':
-                NN_d = self.nearest_neighbour_distance
-                setattr(binary, key, NN_d)
+                NN_dist = self.nearest_neighbour_distance
+                setattr(binary, key, NN_dist)
                 if self.save_initial_conditions:
-                    getattr(binary, key_h).append(NN_d)
+                    getattr(binary, key_h).append(NN_dist)
                 if track_interpolation:
-                    getattr(binary, key_h).extend([NN_d]*length_hist)
+                    getattr(binary, key_h).extend([NN_dist]*length_hist)
             elif key in ['eccentricity', 'V_sys']:
                 v_key = getattr(binary, key_h)[-1]
                 setattr(binary, key, v_key)
@@ -853,7 +853,7 @@ class MesaGridStep:
                 current = getattr(self.binary, key)
                 setattr(self.binary, key, current + fv[key_p])
             elif key == 'nearest_neighbour_distance':
-                setattr(self.binary, key, ['None', 'None', 'None'])
+                setattr(self.binary, key, [np.nan, np.nan, np.nan])
             elif key in ['eccentricity', 'V_sys']:
                 current = getattr(self.binary, key + '_history')[-1]
                 setattr(self.binary, key, current)
@@ -1319,11 +1319,11 @@ class MS_MS_step(MesaGridStep):
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                              'while the period is inside the grid.')
         # redirect if CC1
-        elif (state_1 == 'H-rich_Central_C_depletion'):
+        elif (state_1 == 'H-rich_Core_C_depleted'):
             self.binary.event = 'CC1'
             return
         # redirect if CC2
-        elif (state_2 == 'H-rich_Central_C_depletion'):
+        elif (state_2 == 'H-rich_Core_C_depleted'):
             self.binary.event = 'CC2'
             return
         else:
@@ -1368,10 +1368,10 @@ class CO_HMS_RLO_step(MesaGridStep):
         FOR_RLO_STATES = ["H-rich_Core_H_burning",
                           "H-rich_Shell_H_burning",
                           "H-rich_Core_He_burning",
-                          "H-rich_Central_He_depleted",
+                          "H-rich_Core_He_depleted",
                           "H-rich_Core_C_burning",
                           "accreted_He_Core_H_burning",
-                          "H-rich_Central_C_depletion",  # filtered out below
+                          "H-rich_Core_C_depleted",  # filtered out below
                           "H-rich_non_burning",
                           "accreted_He_non_burning"]
 
@@ -1381,7 +1381,7 @@ class CO_HMS_RLO_step(MesaGridStep):
                 and (state_1 in FOR_RLO_STATES) and event == "oRLO1"):
             self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
-            if self.binary.star_1.state == 'H-rich_Central_C_depletion':
+            if self.binary.star_1.state == 'H-rich_Core_C_depleted':
                 self.binary.event = 'CC1'
                 return
         # TODO: import states from flow_chart.py
@@ -1389,7 +1389,7 @@ class CO_HMS_RLO_step(MesaGridStep):
                 and event == "oRLO2"):
             self.flip_stars_before_step = True
             # catch and redirect double core collapse, this happens if q=1:
-            if self.binary.star_2.state == 'H-rich_Central_C_depletion':
+            if self.binary.star_2.state == 'H-rich_Core_C_depleted':
                 self.binary.event = 'CC2'
                 return
         else:
@@ -1484,8 +1484,8 @@ class CO_HeMS_RLO_step(MesaGridStep):
             'accreted_He_Core_He_burning',
             'stripped_He_Core_He_burning',
             'stripped_He_Shell_He_burning',
-            'stripped_He_Central_He_depleted',
-            'stripped_He_Central_C_depletion',  # filtered out below
+            'stripped_He_Core_He_depleted',
+            'stripped_He_Core_C_depleted',  # filtered out below
             # include systems that are on the brink of He exhaustion
             'stripped_He_non_burning',
             # include systems post CE with core_definition_H_fraction=0.1
@@ -1499,7 +1499,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
                 and (state_1 in CO_He_STATES) and event == "oRLO1"):
             self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
-            if self.binary.star_1.state == 'stripped_He_Central_C_depletion':
+            if self.binary.star_1.state == 'stripped_He_Core_C_depleted':
                 self.binary.event = 'CC1'
                 return
         # TODO: import states from flow_chart.py
@@ -1507,7 +1507,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
                 and event == "oRLO2"):
             self.flip_stars_before_step = True
             # catch and redirect double core collapse, this happens if q=1:
-            if self.binary.star_2.state == 'stripped_He_Central_C_depletion':
+            if self.binary.star_2.state == 'stripped_He_Core_C_depleted':
                 self.binary.event = 'CC2'
                 return
         else:
@@ -1598,8 +1598,8 @@ class CO_HeMS_step(MesaGridStep):
             'accreted_He_Core_He_burning',
             'stripped_He_Core_He_burning',
             'stripped_He_Shell_He_burning',
-            'stripped_He_Central_He_depleted',
-            'stripped_He_Central_C_depletion',  # filtered out below
+            'stripped_He_Core_He_depleted',
+            'stripped_He_Core_C_depleted',  # filtered out below
             # include systems that are on the brink of He exhaustion
             'stripped_He_non_burning',
             # include systems post CE with core_definition_H_fraction=0.1
@@ -1611,7 +1611,7 @@ class CO_HeMS_step(MesaGridStep):
                 and state_1 in CO_He_STATES and event is None):
             self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
-            if self.binary.star_1.state == 'stripped_He_Central_C_depletion':
+            if self.binary.star_1.state == 'stripped_He_Core_C_depleted':
                 self.binary.event = 'CC1'
                 return
         # TODO: import states from flow_chart.py
@@ -1619,7 +1619,7 @@ class CO_HeMS_step(MesaGridStep):
                 and state_2 in CO_He_STATES and event is None):
             self.flip_stars_before_step = True
             # catch and redirect double core collapse, this happens if q=1:
-            if self.binary.star_2.state == 'stripped_He_Central_C_depletion':
+            if self.binary.star_2.state == 'stripped_He_Core_C_depleted':
                 self.binary.event = 'CC2'
                 return
         else:
@@ -1713,10 +1713,10 @@ class HMS_HMS_RLO_step(MesaGridStep):
         FOR_RLO_STATES = ["H-rich_Core_H_burning",
                           "H-rich_Shell_H_burning",
                           "H-rich_Core_He_burning",
-                          "H-rich_Central_He_depleted",
+                          "H-rich_Core_He_depleted",
                           "H-rich_Core_C_burning",
                           "accreted_He_Core_H_burning",
-                          "H-rich_Central_C_depletion",  # filtered out below
+                          "H-rich_Core_C_depleted",  # filtered out below
                           "H-rich_non_burning",
                           "accreted_He_non_burning"]
 
@@ -1726,7 +1726,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
                 and event == "oRLO1"):
             self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
-            if state_1 == 'H-rich_Central_C_depletion':
+            if state_1 == 'H-rich_Core_C_depleted':
                 self.binary.event = 'CC1'
                 return
         # TODO: import states from flow_chart.py
@@ -1734,7 +1734,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
                 and event == "oRLO2"):
             self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
-            if state_2 == 'H-rich_Central_C_depletion':
+            if state_2 == 'H-rich_Core_C_depleted':
                 self.binary.event = 'CC2'
                 return
         else:

@@ -167,10 +167,10 @@ Depending on the parameters, ``evolve`` will create a temporary directory to
 store the batches of binaries during the evolution process.
 Within this folder, a batch will write ``dump_rate`` binaries to a temporary file:
 ``{dump_rate}_evolution.batch``. At the end of the evolution, these files will be merged into a single HDF5 file:
-``evolution.combined``.
+``evolution.combined.h5``.
 
 If you're running with SLURM or MPI, all different processes will write to the 
-same folder, with different batch indicators for each process: ``{dump_rate}_evolution.batch.{rank}``.
+same folder, with different batch indicators for each process: ``{dump_rate}_evolution.batch.{rank}.h5``.
 
 .. note::
 
@@ -192,12 +192,14 @@ Depending on the initialization parameters, the evolved population can be access
    You can access the individual binaries using the ``manager`` attribute:
 
   .. code-block:: python
+
     first_binary = population.manager.binaries[0]
     print(first_binary)
 
    Additionally you can show turn the binary into a history DataFrame or create a oneline summary DataFrame:
 
   .. code-block:: python
+
     history = population.to_df()
     print(history)
 
@@ -209,6 +211,7 @@ Depending on the initialization parameters, the evolved population can be access
    Make sure the file name has ``.h5`` extension, as this is required for the Population class to read the file correctly.
 
    .. code-block:: python
+    
     from posydon.popsyn.synthetic_population import Population
     population = Population('./population.h5')
 

@@ -12,6 +12,7 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Camille Liotine <cliotine@u.northwestern.edu>",
     "Seth Gossage <seth.gossage@northwestern.edu>"
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 import numpy as np
@@ -1555,11 +1556,12 @@ class detached_step:
                     "'M15' for Matt et al. 2015"
                     "'CARB' for Van & Ivanova 2019", "UnsupportedModelWarning")
 
-            if verbose and verbose != 1:
-                print("magnetic_braking_mode = ", magnetic_braking_mode)
-                print("dOmega_mb = ", dOmega_mb_sec, dOmega_mb_pri)
-                dOmega_sec = dOmega_sec + dOmega_mb_sec
-                dOmega_pri = dOmega_pri + dOmega_mb_pri
+        if verbose and verbose != 1:
+            print("magnetic_braking_mode = ", magnetic_braking_mode)
+            print("dOmega_mb = ", dOmega_mb_sec, dOmega_mb_pri)
+            
+        dOmega_sec = dOmega_sec + dOmega_mb_sec
+        dOmega_pri = dOmega_pri + dOmega_mb_pri
 
         if do_stellar_evolution_and_spin_from_winds:
             # Due to the secondary's own evolution, we have:
