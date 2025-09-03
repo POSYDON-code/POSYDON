@@ -167,10 +167,10 @@ Depending on the parameters, ``evolve`` will create a temporary directory to
 store the batches of binaries during the evolution process.
 Within this folder, a batch will write ``dump_rate`` binaries to a temporary file:
 ``{dump_rate}_evolution.batch``. At the end of the evolution, these files will be merged into a single HDF5 file:
-``evolution.combined``.
+``evolution.combined.h5``.
 
 If you're running with SLURM or MPI, all different processes will write to the 
-same folder, with different batch indicators for each process: ``{dump_rate}_evolution.batch.{rank}``.
+same folder, with different batch indicators for each process: ``{dump_rate}_evolution.batch.{rank}.h5``.
 
 .. note::
 
