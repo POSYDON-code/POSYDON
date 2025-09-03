@@ -1,0 +1,379 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Flow Chart Object &mdash; posydon 2.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=664ffad9"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Evolutionary Hooks" href="custom_hooks.html" />
+    <link rel="prev" title="POSYDON Population Synthesis Configuration Guide" href="population_params.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="single_star.html">The SingleStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_star.html">The BinaryStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSYDON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">The Flow Chart Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="star_formation_history.html">Star Formation History</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+      <li class="breadcrumb-item active">The Flow Chart Object</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/pop_syn/flow_chart.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="the-flow-chart-object">
+<span id="flow-chart"></span><h1>The Flow Chart Object<a class="headerlink" href="#the-flow-chart-object" title="Link to this heading"></a></h1>
+<p>Along with the <code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> object the <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> object is one of the most
+important building blocks of POSYDON, such that it is featured in the
+center of the POSYDON logo. The <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> object maps the evolution of a
+<code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> object to its corresponding evolutionary step.</p>
+<p>To use the <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> object, import it with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow_chart</span>
+</pre></div>
+</div>
+<p>Once imported, you can create an instance of POSYDON’s default
+flow chart by invoking, the <code class="docutils literal notranslate"><span class="pre">flow_chart()</span></code> function, e.g.,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">default_flow</span> <span class="o">=</span> <span class="n">flow_chart</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="components-of-a-flow-chart">
+<h2>Components of a Flow Chart<a class="headerlink" href="#components-of-a-flow-chart" title="Link to this heading"></a></h2>
+<p>At its heart, the <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> object is simply a dictionary. Its keys are
+tuples that describe the state of a binary. Its values are the corresponding
+evolutionary steps that these states map to.</p>
+<p>The tuples that define a binary state are expected to conform to a particular
+format. Schematically, they should look like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">EXAMPLE_STATE</span> <span class="o">=</span> <span class="p">(</span><span class="n">S1_state</span><span class="p">,</span> <span class="n">S2_state</span><span class="p">,</span> <span class="n">binary_state</span><span class="p">,</span> <span class="n">binary_event</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">S1_state</span></code> or <code class="docutils literal notranslate"><span class="pre">S2_state</span></code> is a valid <code class="docutils literal notranslate"><span class="pre">SingleStar.state</span></code> property of either
+star 1 or star 2 (see the State Options of <a class="reference internal" href="single_star.html#single-star"><span class="std std-ref">The SingleStar object</span></a>),
+<code class="docutils literal notranslate"><span class="pre">binary_state</span></code> should be a valid <code class="docutils literal notranslate"><span class="pre">BinaryStar.state</span></code> property, and
+<code class="docutils literal notranslate"><span class="pre">binary_event</span></code> a valid <code class="docutils literal notranslate"><span class="pre">BinaryStar.event</span></code> property (see the State
+and Event Options of <a class="reference internal" href="binary_star.html#binary-star"><span class="std std-ref">The BinaryStar object</span></a>). A tuple conforming to the
+convention above fully describes the evolutionary state of a binary
+star system as far as POSYDON is concerned. This may then be mapped
+to a particular evolution step that dictates how that state is
+evolved. For example, this <code class="docutils literal notranslate"><span class="pre">tuple</span></code> might look like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">EXAMPLE_STATE</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which by default maps to <code class="docutils literal notranslate"><span class="pre">step_HMS_HMS</span></code>. The evolutionary steps that a given
+tuple can match to are described in detail in the <a class="reference internal" href="population_params.html#pop-params-guide"><span class="std std-ref">POSYDON Population Synthesis Configuration Guide</span></a>. In
+summary, there are twelve evolutionary steps that POSYDON utilizes. These are:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Evolution steps</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Step name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">step_HMS_HMS</span></code></p></td>
+<td><p>Evolve the binary using a MESA grid of HMS-HMS binaries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step_CO_HeMS</span></code></p></td>
+<td><p>Evolve the binary using a MESA grid of CO-HeMS binaries.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">step_CO_HMS_RLO</span></code></p></td>
+<td><p>Evolve the binary using a MESA grid of CO-HMS binaries, starting from RLO.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step_CO_HeMS_RLO</span></code></p></td>
+<td><p>Evolve the binary using a MESA grid of CO-HeMS binaries, starting from RLO.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">step_detached</span></code></p></td>
+<td><p>Evolve the binary through detached evolution, using MESA single star grids.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step_disrupted</span></code></p></td>
+<td><p>Evolve the binary after disruption via a supernova; evolving the remaining star with MESA single star grids.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">step_merged</span></code></p></td>
+<td><p>Evolve the binary in the event that its components merge, forming a single stellar object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step_initially_single</span></code></p></td>
+<td><p>Evolve an initially single star using the MESA single star grids.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">step_dco</span></code></p></td>
+<td><p>Evolve the binary through the case where both components are compact objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step_SN</span></code></p></td>
+<td><p>Evolve the binary through a supernova event.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">step_CE</span></code></p></td>
+<td><p>Evolve the binary through a common envelope event.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step_end</span></code></p></td>
+<td><p>This represents a state where evolution comes to an end.</p></td>
+</tr>
+</tbody>
+</table>
+<p>A typical item of a flow chart may then look something like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FLOW_ITEM</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">)</span> <span class="p">:</span> <span class="s1">&#39;step_HMS_HMS&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>POSYDON builds its own default flow chart to handle evolution with
+a complete set of state to evolution step mappings. If you are curious
+to see the default construction, check out <code class="docutils literal notranslate"><span class="pre">posydon/binary_evol/flow_chart.py</span></code>.</p>
+</section>
+<section id="modifying-the-flow-chart">
+<h2>Modifying the Flow Chart<a class="headerlink" href="#modifying-the-flow-chart" title="Link to this heading"></a></h2>
+<p>You can also modify the flow chart to suit your own needs. As a
+flow chart needs to have a mapping for every possible state
+combination <code class="docutils literal notranslate"><span class="pre">tuple</span></code> to an evolution step, it can be convenient
+to start by inheriting POSYDON’s default flow chart and only
+modify certain state to step mappings that are of interest.
+There are a few ways to do this, one of which is covered in the tutorial on
+<a class="reference internal" href="../../tutorials-examples/population-synthesis/custom_step_and_flow.html"><span class="std std-ref">Custom POSYDON steps and flow chart</span></a>,
+which also shows how customize an evolution step. For an example of how you might
+write your own importable <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> via <a class="reference internal" href="user_modules.html"><span class="std std-ref">User Modules</span></a>, check out
+<code class="docutils literal notranslate"><span class="pre">posydon/user_modules/my_flow_chart_example.py</span></code>.</p>
+<p>However, as a brief example and alternative way to adjust the flow chart,
+let’s say we wanted to evolve a single binary with a modified flow. As in
+the tutorial that describes how to <a class="reference internal" href="../../tutorials-examples/population-synthesis/evolve_single_binaries.html"><span class="std std-ref">Evolve individual binaries 🐞</span></a>,
+we will load in the default simulation properties from <code class="docutils literal notranslate"><span class="pre">posydon/pop_syn/population_params_default.ini</span></code>.
+First, let’s copy the default simulation parameter <code class="docutils literal notranslate"><span class="pre">.ini</span></code> file to our current
+directory so we can play around with it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, we can load the evolution steps that our simulation will use,
+providing a desired metallicity to evolve our binary with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the function to load the simulation properties from the ini file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">simprop_kwargs_from_ini</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProperties</span>
+
+<span class="c1"># Load the simulation properties from the default ini file.</span>
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">)</span>
+<span class="c1"># manually add the metallicity to each step that requires it</span>
+<span class="n">metallicity</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;metallicity&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_HMS_HMS&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HeMS&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HMS_RLO&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HeMS_RLO&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_detached&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_disrupted&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_merged&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_initially_single&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+
+<span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+<span class="c1"># Load the steps and required data</span>
+<span class="n">sim_prop</span><span class="o">.</span><span class="n">load_steps</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At this point, we would be ready to simulate our binary at solar metallicity,
+however, let’s modify the flow first. The <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> loads the
+default POSYDON flow chart by default. You can access it with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># access the loaded flow_chart dictionary</span>
+<span class="n">sim_prop</span><span class="o">.</span><span class="n">flow</span>
+</pre></div>
+</div>
+<p>If you print this, you will see the dictionary that is the default
+POSYDON flow chart. Let’s replace this flow chart with our own.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import POSYDON default flow chart (we&#39;re going to modify it)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow_chart</span>
+
+<span class="c1"># create and store a copy of the default flow chart</span>
+<span class="n">my_flow</span> <span class="o">=</span> <span class="n">flow_chart</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>There are two optional arguments in the <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> function
+that facilitate modifications.</p>
+<p>One is the <code class="docutils literal notranslate"><span class="pre">FLOW_CHART</span></code> argument, which is <code class="docutils literal notranslate"><span class="pre">None</span></code> by default.
+With this argument, you may provide an entirely new flow chart
+dictionary that you have constructed, overriding POSYDON’s default.
+If this argument is left as <code class="docutils literal notranslate"><span class="pre">None</span></code>, then POSYDON simply loads its
+own flow chart.</p>
+<p>The other argument is <code class="docutils literal notranslate"><span class="pre">CHANGE_FLOW_CHART</span></code>, which also expects a
+dictionary as input. The difference is that this argument expects
+only a subset of the dictionary items that comprise a flow chart.
+Therefore, this argument is ideal for modifying only specific
+state to evolution step mappings within a pre-exisiting flow chart.</p>
+<p>We can use the <code class="docutils literal notranslate"><span class="pre">CHANGE_FLOW_CHART</span></code> argument like so to overwrite
+the HMS-HMS, detached ZAMS state (which is often the first step of
+evolution that a binary will go through). Normally, this state is
+mapped to <code class="docutils literal notranslate"><span class="pre">step_HMS_HMS</span></code> (as in the <code class="docutils literal notranslate"><span class="pre">EXAMPLE_ITEM</span></code> above),
+which will be evolved using the MESA grids. Let’s set this to map
+to <code class="docutils literal notranslate"><span class="pre">step_detached</span></code> instead:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">custom_mappings</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">)</span> <span class="p">:</span> <span class="s1">&#39;step_detached&#39;</span><span class="p">}</span>
+<span class="n">my_flow</span> <span class="o">=</span> <span class="n">flow_chart</span><span class="p">(</span><span class="n">CHANGE_FLOW_CHART</span><span class="o">=</span><span class="n">custom_mappings</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This state will now be mapped to <code class="docutils literal notranslate"><span class="pre">step_detached</span></code>, instead of the default
+<code class="docutils literal notranslate"><span class="pre">step_HMS_HMS</span></code>. Likewise, you can replace any state-evolution step
+mapping of your choosing. As a last step in this example, let’s replace
+the <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> that is stored in our simulation properties:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim_prop</span><span class="o">.</span><span class="n">flow</span> <span class="o">=</span> <span class="n">my_flow</span>
+</pre></div>
+</div>
+<p>Now, if you proceed to simulate binary star evolution, your flow chart
+will be used in place of POSYDON’s default.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="population_params.html" class="btn btn-neutral float-left" title="POSYDON Population Synthesis Configuration Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="custom_hooks.html" class="btn btn-neutral float-right" title="Evolutionary Hooks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.3/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1111 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.active_learning.psy_cris.utils &mdash; posydon 2.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=664ffad9"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.active_learning.psy_cris.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.active_learning.psy_cris.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module defining helper functions for PSY-CRIS.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">cdist</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neighbors</span><span class="w"> </span><span class="kn">import</span> <span class="n">NearestNeighbors</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.active_learning.psy_cris.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">TableData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.active_learning.psy_cris.classify</span><span class="w"> </span><span class="kn">import</span> <span class="n">Classifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.active_learning.psy_cris.regress</span><span class="w"> </span><span class="kn">import</span> <span class="n">Regressor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.active_learning.psy_cris.sample</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sampler</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.active_learning.psy_cris.synthetic_data.synth_data_2D</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_output_2D</span><span class="p">,</span> <span class="n">get_raw_output_2D</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.active_learning.psy_cris.synthetic_data.synth_data_3D</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_output_3D</span><span class="p">,</span> <span class="n">get_raw_output_3D</span><span class="p">)</span>
+
+<span class="c1"># for parsing ini files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ast</span><span class="w"> </span><span class="kn">import</span> <span class="n">literal_eval</span>
+
+
+<div class="viewcode-block" id="parse_inifile">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.parse_inifile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_inifile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an ini file to run psy-cris method &#39;get_new_query_points&#39;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to ini file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    all_kwargs_dict : dict</span>
+<span class="sd">        Nested dictionary of parsed inifile kwargs.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_kwargs_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">confparse</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="c1"># The following line makes it so keys do not become lowercase by default</span>
+    <span class="n">confparse</span><span class="o">.</span><span class="n">optionxform</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">option</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">option</span><span class="p">)</span>
+    <span class="n">files_read</span> <span class="o">=</span> <span class="n">confparse</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="c1"># Catch silent errors from configparser.read</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files_read</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No files were read successfully. Given </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span>
+                         <span class="nb">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">files_read</span><span class="p">)</span>
+    <span class="c1"># loop through sections</span>
+    <span class="k">for</span> <span class="n">sect</span> <span class="ow">in</span> <span class="n">confparse</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sect</span> <span class="o">==</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">section_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># loop through variables in each section and evaluate as python code</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">confparse</span><span class="p">[</span><span class="n">sect</span><span class="p">]:</span>
+            <span class="n">section_dict</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">confparse</span><span class="p">[</span><span class="n">sect</span><span class="p">][</span><span class="n">var</span><span class="p">])</span>
+        <span class="n">all_kwargs_dict</span><span class="p">[</span><span class="n">sect</span> <span class="o">+</span> <span class="s2">&quot;_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_dict</span>
+    <span class="k">return</span> <span class="n">all_kwargs_dict</span></div>
+
+
+
+<div class="viewcode-block" id="get_new_query_points">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.get_new_query_points">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_new_query_points</span><span class="p">(</span><span class="n">N_new_points</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">TableData_kwargs</span><span class="o">=</span><span class="p">{},</span>
+                         <span class="n">Classifier_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">Regressor_kwargs</span><span class="o">=</span><span class="p">{},</span>
+                         <span class="n">Sampler_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">Proposal_kwargs</span><span class="o">=</span><span class="p">{},</span>
+                         <span class="n">length_scale_mult</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the psy-cris algorithm to propose new query points to be labeled.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    N_new_points : int, optional</span>
+<span class="sd">        Number of new query points desired.</span>
+<span class="sd">    TableData_kwargs : dict, optional</span>
+<span class="sd">        Kwargs used for initializing TableData.</span>
+<span class="sd">    Classifier_kwargs : dict, optional</span>
+<span class="sd">        Kwargs used for the Classifier method `train_everything`.</span>
+<span class="sd">    Regressor_kwargs : dict, optional</span>
+<span class="sd">        Kwargs used the Regressor method `train_everything`.</span>
+<span class="sd">    Sampler_kwargs : dict, optinal</span>
+<span class="sd">        Kwargs used for choosing Sampler target distribution and the method</span>
+<span class="sd">        `run_PTMCMC`.</span>
+<span class="sd">    Proposal_kwargs : dict, optional</span>
+<span class="sd">        Kwargs used in the Sampler method &#39;get_proposed_points&#39; and the</span>
+<span class="sd">        Classifier method &#39;get_class_predictions&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    proposed_points : ndarray</span>
+<span class="sd">        Now query points.</span>
+<span class="sd">    pred_class : array</span>
+<span class="sd">        For all proposed points, the best prediction from the trained</span>
+<span class="sd">        classifier.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TableData</span>
+    <span class="n">table_obj</span> <span class="o">=</span> <span class="n">TableData</span><span class="p">(</span><span class="o">**</span><span class="n">TableData_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Classifier</span>
+    <span class="n">cls_obj</span> <span class="o">=</span> <span class="n">Classifier</span><span class="p">(</span><span class="n">table_obj</span><span class="p">)</span>
+    <span class="n">cls_obj</span><span class="o">.</span><span class="n">train_everything</span><span class="p">(</span><span class="o">**</span><span class="n">Classifier_kwargs</span><span class="p">)</span>
+
+    <span class="n">small_cls_prop_points</span> <span class="o">=</span> <span class="n">do_small_class_proposal</span><span class="p">(</span>
+        <span class="n">table_obj</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">table_obj</span><span class="o">.</span><span class="n">_input_</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">n_new_points</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">N_new_points</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">),</span>
+        <span class="n">length_scale_mult</span><span class="o">=</span><span class="n">length_scale_mult</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># small class proposal</span>
+    <span class="k">if</span> <span class="n">small_cls_prop_points</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">axis_points_in_rng</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">axis_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">small_cls_prop_points</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
+            <span class="n">within_max</span> <span class="o">=</span> <span class="n">axis_data</span> <span class="o">&lt;</span> <span class="n">table_obj</span><span class="o">.</span><span class="n">_max_input_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">within_min</span> <span class="o">=</span> <span class="n">axis_data</span> <span class="o">&gt;</span> <span class="n">table_obj</span><span class="o">.</span><span class="n">_min_input_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">axis_points_in_rng</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">within_max</span><span class="p">,</span> <span class="n">within_min</span><span class="p">))</span>
+
+        <span class="n">prop_points_in_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">all</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">axis_points_in_rng</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">])</span>
+        <span class="n">small_cls_prop_points_in_rng</span> <span class="o">=</span> <span class="n">small_cls_prop_points</span><span class="p">[</span>
+            <span class="n">prop_points_in_range</span><span class="p">]</span>
+
+        <span class="n">classifier_name</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pred_classifier_name&quot;</span><span class="p">,</span> <span class="s2">&quot;rbf&quot;</span><span class="p">)</span>
+        <span class="n">pred_class</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="n">cls_obj</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span>
+            <span class="n">classifier_name</span><span class="p">,</span> <span class="n">small_cls_prop_points_in_rng</span><span class="p">,</span> <span class="n">return_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">small_cls_prop_points_in_rng</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">N_new_points</span><span class="p">],</span>
+                <span class="n">pred_class</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">N_new_points</span><span class="p">])</span>
+
+    <span class="c1"># Regressor</span>
+    <span class="k">if</span> <span class="n">Regressor_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;do_regression&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">regr_obj</span> <span class="o">=</span> <span class="n">Regressor</span><span class="p">(</span><span class="n">table_obj</span><span class="p">)</span>
+        <span class="n">regr_obj</span><span class="o">.</span><span class="n">train_everything</span><span class="p">(</span><span class="o">**</span><span class="n">Regressor_kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">regr_obj</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Sampler</span>
+    <span class="n">sampler_obj</span> <span class="o">=</span> <span class="n">Sampler</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="n">cls_obj</span><span class="p">,</span> <span class="n">regressor</span><span class="o">=</span><span class="n">regr_obj</span><span class="p">)</span>
+
+    <span class="n">target_dist_name</span> <span class="o">=</span> <span class="n">Sampler_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_dist&quot;</span><span class="p">,</span> <span class="s2">&quot;TD_classification&quot;</span><span class="p">)</span>
+    <span class="n">target_dist_obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sampler_obj</span><span class="p">,</span> <span class="n">target_dist_name</span><span class="p">)</span>
+    <span class="n">Sampler_kwargs</span><span class="p">[</span><span class="s1">&#39;target_dist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_dist_obj</span>
+
+    <span class="n">chain_step_history</span><span class="p">,</span> <span class="n">T_list</span> <span class="o">=</span> <span class="n">sampler_obj</span><span class="o">.</span><span class="n">run_PTMCMC</span><span class="p">(</span><span class="o">**</span><span class="n">Sampler_kwargs</span><span class="p">)</span>
+    <span class="n">last_chain_hist</span> <span class="o">=</span> <span class="n">chain_step_history</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">T_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># burn in - default to use entire chain</span>
+    <span class="n">where_to_cut</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">last_chain_hist</span><span class="p">)</span>
+                       <span class="o">*</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cut_fraction&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">last_chain_hist</span> <span class="o">=</span> <span class="n">last_chain_hist</span><span class="p">[</span><span class="n">where_to_cut</span><span class="p">:]</span>
+
+    <span class="c1"># propose new points</span>
+    <span class="n">classifier_name</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pred_classifier_name&quot;</span><span class="p">,</span> <span class="s2">&quot;rbf&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">classifier_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Classifier_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;classifier_names&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="s2">&quot;Predictions must be with a trained classifier. &#39;</span><span class="si">{0}</span><span class="s2">&#39; was given&quot;</span><span class="o">.</span>
+            <span class="nb">format</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">))</span>
+
+    <span class="n">do_random_proposal</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;do_random_proposal&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">do_random_proposal</span><span class="p">:</span>
+        <span class="n">old_points</span> <span class="o">=</span> <span class="n">table_obj</span><span class="o">.</span><span class="n">_input_</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">new_points</span> <span class="o">=</span> <span class="n">last_chain_hist</span>
+        <span class="n">where_good_bools</span> <span class="o">=</span> <span class="n">check_dist</span><span class="p">(</span><span class="n">old_points</span><span class="p">,</span> <span class="n">new_points</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;do random proposal:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;good points in posterior: </span><span class="si">{:.3%}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_points</span><span class="p">)))</span>
+
+        <span class="n">good_points_in_posterior</span> <span class="o">=</span> <span class="n">new_points</span><span class="p">[</span><span class="n">where_good_bools</span><span class="p">]</span>
+        <span class="n">proposed_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">good_points_in_posterior</span><span class="p">),</span> <span class="n">N_new_points</span><span class="p">))</span>
+
+        <span class="n">pred_class</span> <span class="o">=</span> <span class="n">cls_obj</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span>
+            <span class="n">classifier_name</span><span class="p">,</span> <span class="n">proposed_points</span><span class="p">,</span> <span class="n">return_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposed_points</span><span class="p">,</span> <span class="n">pred_class</span>
+
+    <span class="n">kappa</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
+    <span class="n">proposed_points</span><span class="p">,</span> <span class="n">final_kappa</span> <span class="o">=</span> <span class="n">sampler_obj</span><span class="o">.</span><span class="n">get_proposed_points</span><span class="p">(</span>
+        <span class="n">last_chain_hist</span><span class="p">,</span> <span class="n">N_new_points</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="o">**</span><span class="n">Proposal_kwargs</span><span class="p">)</span>
+    <span class="n">pred_class</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="n">cls_obj</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span>
+        <span class="n">classifier_name</span><span class="p">,</span> <span class="n">proposed_points</span><span class="p">,</span> <span class="n">return_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">proposed_points</span><span class="p">,</span> <span class="n">pred_class</span></div>
+
+
+
+<span class="c1">###############################################################################</span>
+<span class="c1"># Functions below this point are designed specifically for testing cris so they</span>
+<span class="c1"># assume things like the data set being used and do not have the flexibility</span>
+<span class="c1"># present throughout the rest of the code.</span>
+<span class="c1">###############################################################################</span>
+
+
+<div class="viewcode-block" id="do_small_class_proposal">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.do_small_class_proposal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">do_small_class_proposal</span><span class="p">(</span><span class="n">table_data</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="p">,</span> <span class="n">n_new_points</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                            <span class="n">length_scale_mult</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span> <span class="n">neighbor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle proposals where only one point in class and regression is needed.</span>
+
+<span class="sd">    Handles proposals where only one point exists for a class and regression is</span>
+<span class="sd">    requested. Otherwise the interpolators will fail. Drawn from a gaussian</span>
+<span class="sd">    around the point with length scale given by the average distance between</span>
+<span class="sd">    nearest neighbors (in each axis).</span>
+
+<span class="sd">    Params</span>
+<span class="sd">    ------</span>
+<span class="sd">    data : ndarray</span>
+<span class="sd">        Data to train the NearestNeighbors class on.</span>
+<span class="sd">    n_neighbors : int</span>
+<span class="sd">        Number of neighbors to use when finding average distance.</span>
+<span class="sd">    neighbor : instance of NearestNeightbors class</span>
+<span class="sd">        For passing your own object.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    proposed_points : array</span>
+<span class="sd">        Points sampled around classes with 1 value.</span>
+<span class="sd">        Points are distributed as evenly as possible across all 1 value</span>
+<span class="sd">        classes by default.</span>
+<span class="sd">        Returns None in case of no small classes found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">small_classes_with_index</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">table_data</span><span class="o">.</span><span class="n">_regr_dfs_per_class_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="c1"># valid regression data exists for this class</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">small_classes_with_index</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">num_small_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">small_classes_with_index</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_small_classes</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt; SMALL CLASS PROPOSAL: </span><span class="si">{}</span><span class="s2"> &gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_small_classes</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">neighbor</span><span class="p">:</span>
+        <span class="n">neigh</span> <span class="o">=</span> <span class="n">neighbor</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">neigh</span> <span class="o">=</span> <span class="n">NearestNeighbors</span><span class="p">()</span>
+    <span class="n">neigh</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">table_data</span><span class="o">.</span><span class="n">_input_</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="n">sampled_points</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tup_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">small_classes_with_index</span><span class="p">):</span>
+        <span class="n">input_point</span> <span class="o">=</span> <span class="n">table_data</span><span class="o">.</span><span class="n">_input_</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tup_val</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">dist</span><span class="p">,</span> <span class="n">indicies</span> <span class="o">=</span> <span class="n">neigh</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="n">input_point</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:],</span>
+                                          <span class="n">n_neighbors</span><span class="o">=</span><span class="p">(</span><span class="n">n_neighbors</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># closest_dist = (dist.T[1:]).T</span>
+        <span class="n">closest_indi</span> <span class="o">=</span> <span class="p">(</span><span class="n">indicies</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="n">closest_points</span> <span class="o">=</span> <span class="n">table_data</span><span class="o">.</span><span class="n">_input_</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">closest_indi</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">length_scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">closest_points</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">new_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">input_point</span><span class="p">,</span>
+                                      <span class="n">scale</span><span class="o">=</span><span class="n">length_scale</span> <span class="o">*</span> <span class="n">length_scale_mult</span><span class="p">,</span>
+                                      <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_new_points</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">length_scale</span><span class="p">)))</span>
+        <span class="n">sampled_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_points</span><span class="p">)</span>
+    <span class="n">sampled_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sampled_points</span><span class="p">)</span>
+
+    <span class="n">interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_new_points</span> <span class="o">/</span> <span class="n">num_small_classes</span><span class="p">)</span>
+    <span class="n">remainder</span> <span class="o">=</span> <span class="n">n_new_points</span> <span class="o">%</span> <span class="n">num_small_classes</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">interval</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_small_classes</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">remainder</span><span class="p">):</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">proposed_points</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">num_pts</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="n">proposed_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampled_points</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">num_pts</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">proposed_points</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="do_dynamic_sampling">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.do_dynamic_sampling">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">do_dynamic_sampling</span><span class="p">(</span><span class="n">N_final_points</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">new_points_per_iter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">N_starting_points</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                        <span class="n">jitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">length_scale_mult</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span>
+                        <span class="n">percent_increase</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">all_kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run cris algorithm iteratively.</span>
+
+<span class="sd">    For a given number of starting and ending points, run the cris algorithm</span>
+<span class="sd">    iteratively in step sizes of new_points_per_iter. After each iteration,</span>
+<span class="sd">    query points are identified using the original 2D snythetic data set.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    N_starting_points : int</span>
+<span class="sd">        Number of starting points to being cris iterations on a 2D grid</span>
+<span class="sd">        sampled from the original 2D synthetic data set.</span>
+<span class="sd">    N_final_points : int</span>
+<span class="sd">        Number of points to converge to after iterating with cris.</span>
+<span class="sd">    new_points_per_iter : int, array-like</span>
+<span class="sd">        For every iteration the number of new query points for cris to propose.</span>
+<span class="sd">    threshold : float</span>
+<span class="sd">        New query points are ommited from the next iteration if their euclidean</span>
+<span class="sd">        distance to other data points is less than the threshold.</span>
+<span class="sd">    jitter : bool</span>
+<span class="sd">        Default False, for the starting grid jitter about the center randomly</span>
+<span class="sd">        in the range of +/- the 1/2 the bin width in each dimesnion.</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Print useful things.</span>
+<span class="sd">    show_plots : bool</span>
+<span class="sd">        Show plots of proposed points and training points each iteration.</span>
+<span class="sd">    all_kwargs : dict</span>
+<span class="sd">        Dictionary of all_kwargs passed to get_new_query_points defining</span>
+<span class="sd">        how every part of the cris algorithm is implemented.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">original_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">all_kwargs</span><span class="p">)</span>  <span class="c1"># !!!</span>
+
+    <span class="c1"># analytic classification and regression data set</span>
+    <span class="n">my_data</span> <span class="o">=</span> <span class="n">get_regular_grid_df</span><span class="p">(</span><span class="n">N_starting_points</span><span class="p">,</span> <span class="n">jitter</span><span class="o">=</span><span class="n">jitter</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
+    <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">&quot;TableData_kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;my_DataFrame&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_data</span>
+    <span class="n">dfs_per_iters</span> <span class="o">=</span> <span class="p">[</span><span class="n">my_data</span><span class="p">]</span>
+    <span class="n">preds_per_iter</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+
+    <span class="n">N_total</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N_final_points</span> <span class="o">-</span> <span class="n">N_starting_points</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sampling </span><span class="si">{}</span><span class="s2"> total points...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N_total</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DIM: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
+
+    <span class="n">num_loops</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">N_sampled_points</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">N_sampled_points</span> <span class="o">&lt;</span> <span class="n">N_total</span><span class="p">:</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_points_per_iter</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">new_points_per_iter</span>
+            <span class="k">if</span> <span class="n">percent_increase</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dfs_per_iters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">percent_increase</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">N_sampled_points</span> <span class="o">-</span> <span class="n">N_total</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="n">N_total</span> <span class="o">-</span> <span class="n">N_sampled_points</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="n">new_points_per_iter</span><span class="p">[</span><span class="n">num_loops</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="n">N_total</span> <span class="o">-</span> <span class="n">N_sampled_points</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\t</span><span class="s2">START ITER </span><span class="si">{0}</span><span class="s2">, init_pos = </span><span class="si">{1}</span><span class="s2">, n = </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">num_loops</span><span class="p">,</span> <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">&quot;Sampler_kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;init_pos&quot;</span><span class="p">],</span> <span class="n">n</span><span class="p">))</span>
+
+        <span class="n">new_points</span><span class="p">,</span> <span class="n">cls_preds</span> <span class="o">=</span> <span class="n">get_new_query_points</span><span class="p">(</span>
+            <span class="n">N_new_points</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">length_scale_mult</span><span class="o">=</span><span class="n">length_scale_mult</span><span class="p">,</span> <span class="o">**</span><span class="n">all_kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_points</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">new_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">new_points</span><span class="p">])</span>
+
+        <span class="c1"># Since we use .pop we must repopulate everything in the dicts</span>
+        <span class="n">all_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">original_kwargs</span><span class="p">)</span>  <span class="c1"># !!!!</span>
+
+        <span class="c1"># Update dicts</span>
+        <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">&quot;TableData_kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;file_path_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">&quot;TableData_kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;my_DataFrame&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_data</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">random_init_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">random_init_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">&quot;Sampler_kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;init_pos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_init_pos</span>
+
+        <span class="c1"># Check distances</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">old_points</span> <span class="o">=</span> <span class="n">my_data</span><span class="p">[[</span><span class="s2">&quot;input_1&quot;</span><span class="p">,</span> <span class="s2">&quot;input_2&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">old_points</span> <span class="o">=</span> <span class="n">my_data</span><span class="p">[[</span><span class="s2">&quot;input_1&quot;</span><span class="p">,</span> <span class="s2">&quot;input_2&quot;</span><span class="p">,</span> <span class="s2">&quot;input_3&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">where_good_bools</span> <span class="o">=</span> <span class="n">check_dist</span><span class="p">(</span>
+            <span class="n">old_points</span><span class="p">,</span> <span class="n">new_points</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_points</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We are getting rid of </span><span class="si">{}</span><span class="s2"> points below thresh this iter.&quot;</span><span class="o">.</span>
+                  <span class="nb">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_points</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)))</span>
+        <span class="n">new_points</span> <span class="o">=</span> <span class="n">new_points</span><span class="p">[</span><span class="n">where_good_bools</span><span class="p">]</span>
+
+        <span class="c1"># Evaluate query points with anayltic dataset</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">output_new_points_df</span> <span class="o">=</span> <span class="n">get_output_2D</span><span class="p">(</span><span class="o">*</span><span class="n">new_points</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">output_new_points_df</span> <span class="o">=</span> <span class="n">get_output_3D</span><span class="p">(</span><span class="o">*</span><span class="n">new_points</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+        <span class="n">new_data</span> <span class="o">=</span> <span class="n">my_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_new_points_df</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Append data to be returned</span>
+        <span class="n">dfs_per_iters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
+        <span class="n">my_data</span> <span class="o">=</span> <span class="n">new_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># Append data to be returned</span>
+        <span class="n">preds_per_iter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls_preds</span><span class="p">)</span>
+
+        <span class="n">where_to_cut</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N_starting_points</span> <span class="o">+</span> <span class="n">N_sampled_points</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">show_plots</span><span class="p">:</span>
+            <span class="n">plot_proposed_points_2D</span><span class="p">(</span><span class="n">where_to_cut</span><span class="p">,</span> <span class="n">num_loops</span><span class="p">,</span> <span class="n">random_init_pos</span><span class="p">,</span>
+                                    <span class="n">my_data</span><span class="p">,</span> <span class="n">where_good_bools</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">show_plots</span><span class="p">:</span>
+            <span class="n">plot_proposed_points_3D</span><span class="p">(</span><span class="n">where_to_cut</span><span class="p">,</span> <span class="n">num_loops</span><span class="p">,</span> <span class="n">random_init_pos</span><span class="p">,</span>
+                                    <span class="n">my_data</span><span class="p">,</span> <span class="n">where_good_bools</span><span class="p">)</span>
+
+        <span class="n">N_sampled_points</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_points</span><span class="p">)</span>
+        <span class="n">num_loops</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">end_of_iter_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">END ITER </span><span class="si">{0}</span><span class="s2"> in </span><span class="si">{1:.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">num_loops</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">end_of_iter_str</span> <span class="o">+</span> <span class="s2">&quot;, N_sampled_points: </span><span class="si">{}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span>
+                  <span class="nb">format</span><span class="p">(</span><span class="n">N_sampled_points</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Done. Sampled </span><span class="si">{0}</span><span class="s2"> points.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">my_data</span><span class="p">)</span> <span class="o">-</span> <span class="n">N_starting_points</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total time: </span><span class="si">{:.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">dfs_per_iters</span><span class="p">,</span> <span class="n">preds_per_iter</span></div>
+
+
+
+<div class="viewcode-block" id="plot_proposed_points_2D">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.plot_proposed_points_2D">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_proposed_points_2D</span><span class="p">(</span><span class="n">where_to_cut</span><span class="p">,</span> <span class="n">num_loops</span><span class="p">,</span> <span class="n">random_init_pos</span><span class="p">,</span>
+                            <span class="n">my_data</span><span class="p">,</span> <span class="n">where_good_bools</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot proposed points in 2-D space.&quot;&quot;&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">subs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;SAMPLE </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_loops</span><span class="p">))</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">random_init_pos</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+              <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;init_pos&quot;</span><span class="p">)</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                 <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_2&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                 <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;dodgerblue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                 <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_2&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                 <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;proposed&quot;</span><span class="p">)</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> new points this iter&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="plot_proposed_points_3D">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.plot_proposed_points_3D">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_proposed_points_3D</span><span class="p">(</span><span class="n">where_to_cut</span><span class="p">,</span> <span class="n">num_loops</span><span class="p">,</span> <span class="n">random_init_pos</span><span class="p">,</span>
+                            <span class="n">my_data</span><span class="p">,</span> <span class="n">where_good_bools</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot proposed points in 3-D space.&quot;&quot;&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">subs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;SAMPLE </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_loops</span><span class="p">))</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">random_init_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">random_init_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                 <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;init_pos&quot;</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                    <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_2&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;dodgerblue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                    <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_2&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                    <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;proposed&quot;</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
+        <span class="s2">&quot;X - </span><span class="si">{0}</span><span class="s2"> new points this iter&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)))</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+
+    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">random_init_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">random_init_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                 <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;init_pos&quot;</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                    <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_3&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;dodgerblue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                    <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_3&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                    <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;proposed&quot;</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="check_dist">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.check_dist">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_dist</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">proposed</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check euclidean distance between the original and proposed points.</span>
+
+<span class="sd">    Proposed points a distance &gt;= threshold are accepted.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    original : ndarray</span>
+<span class="sd">        Original points previously run.</span>
+<span class="sd">    proposed : ndarray</span>
+<span class="sd">        Proposed points for new simulations.</span>
+<span class="sd">    threshold : float, optional</span>
+<span class="sd">        The theshold distance between acceptance and rejection.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    proposed_above_thresh_for_all_original : bool, array</span>
+<span class="sd">        True if the distance between the proposed point is &gt;= threshold.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The purpose of this function is to not propose points that are some</span>
+<span class="sd">    threshold away from already accepted points.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">cdist</span><span class="p">(</span><span class="n">proposed</span><span class="p">,</span> <span class="n">original</span><span class="p">,</span> <span class="s1">&#39;euclidean&#39;</span><span class="p">)</span>
+    <span class="n">above_thresh</span> <span class="o">=</span> <span class="n">distances</span> <span class="o">&gt;=</span> <span class="n">threshold</span>
+    <span class="n">proposed_above_thresh_for_all_original</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">above_thresh</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">proposed_above_thresh_for_all_original</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_regular_grid_df">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.get_regular_grid_df">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_regular_grid_df</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">jitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">N_ppa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Produce an even grid.</span>
+
+<span class="sd">    Given N total points, produce an even grid with</span>
+<span class="sd">    approximately the same number of evenly spaced points sampled</span>
+<span class="sd">    from the analytic data set (2D or 3D).</span>
+
+<span class="sd">    The number of returned grid points is N only if N is a perfect square.</span>
+<span class="sd">    Otherwise use N_ppa to define number of points per axis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    N : int</span>
+<span class="sd">        Total number of points to make into a 2D even grid</span>
+<span class="sd">    jitter : bool, optional</span>
+<span class="sd">        Place the center of the grid randomly around (0,0) in the range of</span>
+<span class="sd">        +/- 1/2 bin width while keeping the span in each axis at 6.</span>
+<span class="sd">    N_ppa : array, optional</span>
+<span class="sd">        Numbers of points per axis. If provided, it overrides N.</span>
+<span class="sd">    dim : int, optional</span>
+<span class="sd">        Dimensionality of synthetic data set. (2 or 3)</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Print some diagnostics.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    extra_points : pandas DataFrame</span>
+<span class="sd">        DataFrame of true data drawn from the analytic classification</span>
+<span class="sd">        and regression functions.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">dim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dimensionality </span><span class="si">{}</span><span class="s2"> not supported.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">N_ppa</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">root_of_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">N</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">dim</span><span class="p">))</span>
+        <span class="n">x_res</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">root_of_N</span><span class="p">)</span>
+        <span class="n">y_res</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">root_of_N</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">z_res</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">root_of_N</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x_res</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N_ppa</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">y_res</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N_ppa</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">z_res</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N_ppa</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;x_res: </span><span class="si">{0}</span><span class="s2">, y_res: </span><span class="si">{1}</span><span class="se">\n</span><span class="s2">x*y:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">x_res</span><span class="p">,</span> <span class="n">y_res</span><span class="p">,</span> <span class="n">x_res</span> <span class="o">*</span> <span class="n">y_res</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x_res: </span><span class="si">{0}</span><span class="s2">, y_res: </span><span class="si">{1}</span><span class="s2">, z_res</span><span class="si">{2}</span><span class="se">\n</span><span class="s2">x*y*z:</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">x_res</span><span class="p">,</span> <span class="n">y_res</span><span class="p">,</span> <span class="n">z_res</span><span class="p">,</span> <span class="n">x_res</span> <span class="o">*</span> <span class="n">y_res</span> <span class="o">*</span> <span class="n">z_res</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">jitter</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">bin_widths</span> <span class="o">=</span> <span class="mi">6</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_res</span><span class="p">,</span> <span class="n">y_res</span><span class="p">])</span>  <span class="c1"># span / num bins</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">bin_widths</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_res</span><span class="p">,</span> <span class="n">y_res</span><span class="p">,</span> <span class="n">z_res</span><span class="p">])</span>  <span class="c1"># span / num bins</span>
+        <span class="n">random_center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
+        <span class="n">center_point</span> <span class="o">=</span> <span class="n">bin_widths</span> <span class="o">*</span> <span class="n">random_center</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">center_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;center_point : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">center_point</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span> <span class="o">=</span> <span class="n">center_point</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">+</span> <span class="n">center_x</span><span class="p">,</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">center_x</span><span class="p">,</span> <span class="n">x_res</span><span class="p">),</span>
+                           <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">+</span> <span class="n">center_y</span><span class="p">,</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">center_y</span><span class="p">,</span> <span class="n">y_res</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">get_output_2D</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span><span class="p">,</span> <span class="n">center_z</span> <span class="o">=</span> <span class="n">center_point</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">center_x</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">center_x</span><span class="p">,</span> <span class="n">x_res</span><span class="p">),</span>
+                              <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">center_y</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">center_y</span><span class="p">,</span> <span class="n">y_res</span><span class="p">),</span>
+                              <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="n">center_z</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">center_z</span><span class="p">,</span> <span class="n">z_res</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">get_output_3D</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_random_grid_df">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.get_random_grid_df">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_random_grid_df</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Produce a randomly sampled grid.</span>
+
+<span class="sd">    Given N total points, produce a randomly sampled grid drawn</span>
+<span class="sd">    from the analytic data set (2D or 3D).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    N : int</span>
+<span class="sd">        Total number of points to drawn from a 2D random data set</span>
+<span class="sd">    dim : int</span>
+<span class="sd">        Dimensionality of synthetic data set. (2 or 3)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    random_df : pandas DataFrame</span>
+<span class="sd">        DataFrame of true data drawn from the analytic classification</span>
+<span class="sd">        and regression functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">stacked_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                                           <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">random_df</span> <span class="o">=</span> <span class="n">get_output_2D</span><span class="p">(</span><span class="o">*</span><span class="n">stacked_points</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">stacked_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                                           <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">random_df</span> <span class="o">=</span> <span class="n">get_output_3D</span><span class="p">(</span><span class="o">*</span><span class="n">stacked_points</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">random_df</span></div>
+
+
+
+<span class="c1"># PERFORMANCE CALCULATIONS ####################################################</span>
+
+
+<div class="viewcode-block" id="calc_performance">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.calc_performance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_performance</span><span class="p">(</span><span class="n">dfs_per_iter</span><span class="p">,</span> <span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">regr_name</span><span class="o">=</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span>
+                     <span class="n">resolution</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate accuracy and confusion matrix.</span>
+
+<span class="sd">    Given a list of pandas DataFrames, iterate over them and</span>
+<span class="sd">    calculate the accuracy and confusion matrix for synthetic data sets.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dfs_per_iter : list</span>
+<span class="sd">        List of pandas DataFrames containing training data</span>
+<span class="sd">        to train an classifier on and then compare to the</span>
+<span class="sd">        true background distribution.</span>
+<span class="sd">    cls_name : str, optional</span>
+<span class="sd">        Name of classifier to train.</span>
+<span class="sd">    resolution : int, optional</span>
+<span class="sd">        Density per axis of the grid used to oversample the true background.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Print some helpful info.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    acc_per_iter : array</span>
+<span class="sd">        Array conatining overall accuracy of interpolator</span>
+<span class="sd">        per iteration of training data.</span>
+<span class="sd">    conf_matrix_per_iter : list</span>
+<span class="sd">        List of confusion matricies per iteration. Calculated</span>
+<span class="sd">        using &#39;get_confusion_matrix&#39;.</span>
+<span class="sd">    regr_acc_per_iter : list</span>
+<span class="sd">        List of regression accuracy terms.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">acc_per_iter</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">conf_matrix_per_iter</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">regr_acc_per_iter</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dfs_per_iter</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">df: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">resolution</span>
+        <span class="n">predictions</span><span class="p">,</span> <span class="n">true_class_result</span><span class="p">,</span> <span class="n">all_regr_acc_per_class</span> <span class="o">=</span> \
+            <span class="n">get_prediction_diffs</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">classifier_name</span><span class="o">=</span><span class="n">cls_name</span><span class="p">,</span>
+                                 <span class="n">regressor_name</span><span class="o">=</span><span class="n">regr_name</span><span class="p">,</span>
+                                 <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">conf_matrix</span> <span class="o">=</span> <span class="n">get_confusion_matrix</span><span class="p">(</span>
+            <span class="n">predictions</span><span class="p">,</span> <span class="n">true_class_result</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">true_class_result</span><span class="p">))</span>
+        <span class="n">conf_matrix_per_iter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conf_matrix</span><span class="p">)</span>
+
+        <span class="n">where_preds_match_truth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="n">predictions</span> <span class="o">==</span> <span class="n">true_class_result</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">&quot;input&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
+        <span class="n">accuracy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_preds_match_truth</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="o">**</span><span class="n">dim</span>
+        <span class="n">acc_per_iter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="n">regr_acc_per_iter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_regr_acc_per_class</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">acc_per_iter</span><span class="p">),</span> <span class="n">conf_matrix_per_iter</span><span class="p">,</span> <span class="n">regr_acc_per_iter</span></div>
+
+
+
+<div class="viewcode-block" id="get_prediction_diffs">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.get_prediction_diffs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_prediction_diffs</span><span class="p">(</span><span class="n">training_df</span><span class="p">,</span> <span class="n">classifier_name</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+                         <span class="n">regressor_name</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Train classifier and get predictions and actual classification.</span>
+
+<span class="sd">    From a DataFrame of training data, train a classifier and get both</span>
+<span class="sd">    the predictions and actual classification in the classification space</span>
+<span class="sd">    where the analytic function is defined. Also calculate the difference</span>
+<span class="sd">    between the true regression function and that infered from the trainined</span>
+<span class="sd">    regressor. Dimensionality is infered from &#39;training_df&#39;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    training_df : pandas DataFrame</span>
+<span class="sd">        DataFrame of training data, a subset of the true distribution.</span>
+<span class="sd">    classifier_name : str</span>
+<span class="sd">        Name of the classification algorithm to use.</span>
+<span class="sd">    N : int</span>
+<span class="sd">        Sets the (N**dim) resolution of points used to query the trained</span>
+<span class="sd">        classifier.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Print more useful information.</span>
+<span class="sd">    timer : bool, optional</span>
+<span class="sd">        Print timing diagnostic information.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pred_class : array</span>
+<span class="sd">        1D array of predictions from the trained classifier.</span>
+<span class="sd">    true_class_result : array</span>
+<span class="sd">        1D array of the true classification for the corresponding points.</span>
+<span class="sd">    all_regr_acc_per_class : dict</span>
+<span class="sd">        Dict of lists with regression accuracy values per class and combined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">og_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">input_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">training_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">&quot;input&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]</span>
+    <span class="n">output_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">training_df</span><span class="o">.</span><span class="n">columns</span>
+                        <span class="k">if</span> <span class="s2">&quot;output&quot;</span> <span class="ow">in</span> <span class="n">val</span> <span class="ow">or</span> <span class="s2">&quot;class&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]</span>
+    <span class="n">td</span> <span class="o">=</span> <span class="n">TableData</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_col_names</span><span class="p">,</span> <span class="n">output_col_names</span><span class="p">,</span>
+                   <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="n">my_DataFrame</span><span class="o">=</span><span class="n">training_df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">cls_obj</span> <span class="o">=</span> <span class="n">Classifier</span><span class="p">(</span><span class="n">td</span><span class="p">)</span>
+    <span class="n">cls_obj</span><span class="o">.</span><span class="n">train_everything</span><span class="p">([</span><span class="n">classifier_name</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">regr_obj</span> <span class="o">=</span> <span class="n">Regressor</span><span class="p">(</span><span class="n">td</span><span class="p">)</span>
+    <span class="n">regr_obj</span><span class="o">.</span><span class="n">train_everything</span><span class="p">([</span><span class="n">regressor_name</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">timer</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timer&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PSY-CRIS TRAIN: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_col_names</span><span class="p">)</span>
+    <span class="n">axes_values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_col_names</span><span class="p">):</span>
+        <span class="n">axis_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">training_df</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="n">axis_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">training_df</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="n">axis_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">axis_min</span><span class="p">,</span> <span class="n">axis_max</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+        <span class="n">axes_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">axis_vals</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">axes_values</span><span class="p">)</span>
+        <span class="n">holder</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="n">stacked_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">holder</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">axes_values</span><span class="p">)</span>
+        <span class="n">holder</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">Z</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="n">stacked_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">holder</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;VSTACK: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">pred_class</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="n">cls_obj</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span>
+        <span class="n">classifier_name</span><span class="p">,</span> <span class="n">stacked_points</span><span class="p">,</span> <span class="n">return_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;get_class_predictions: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># if there are nans, replace the preds with None so they count as</span>
+    <span class="c1"># missclassifications</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_class</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stacked_points</span><span class="p">):</span>
+        <span class="n">all_possible_ilocs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stacked_points</span><span class="p">))</span>
+        <span class="c1"># s.difference(t)  new set with elements in s but not in t</span>
+        <span class="n">set_where_nan</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_possible_ilocs</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">where_not_nan</span><span class="p">)</span>
+        <span class="n">where_nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">set_where_nan</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt; Nans found: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">where_nan</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">stacked_points</span><span class="p">[</span><span class="n">where_nan</span><span class="p">])</span>
+            <span class="n">pred_class</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> \
+                <span class="n">cls_obj</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">,</span>
+                                              <span class="n">stacked_points</span><span class="p">[</span><span class="n">where_nan</span><span class="p">],</span>
+                                              <span class="n">return_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">pred_class</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span><span class="p">)</span>
+
+        <span class="n">new_pred_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">stacked_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">)</span>
+        <span class="n">new_pred_class</span><span class="p">[</span><span class="n">where_not_nan</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred_class</span>
+        <span class="n">new_pred_class</span><span class="p">[</span><span class="n">where_nan</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_nan</span><span class="p">)</span>
+        <span class="n">pred_class</span> <span class="o">=</span> <span class="n">new_pred_class</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;where_nan &gt; 0: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Regression</span>
+    <span class="n">all_regr_preds_per_cls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">all_regr_locs_per_cls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">all_unique_classes</span><span class="p">,</span> <span class="n">classes_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+        <span class="n">training_df</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CLASSES: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">COUNTS: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">all_unique_classes</span><span class="p">,</span> <span class="n">classes_counts</span><span class="p">))</span>
+    <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">all_unique_classes</span><span class="p">:</span>
+        <span class="c1"># We look where the predictions are, not the true class result ....</span>
+        <span class="n">loc_where_cls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_class</span><span class="p">)</span> <span class="o">==</span> <span class="bp">cls</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Get predictions only for inputs where each class</span>
+        <span class="n">regr_preds</span> <span class="o">=</span> <span class="n">regr_obj</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">([</span><span class="n">regressor_name</span><span class="p">],</span> <span class="p">[</span><span class="bp">cls</span><span class="p">],</span>
+                                              <span class="p">[</span><span class="s2">&quot;output_1&quot;</span><span class="p">],</span>
+                                              <span class="n">stacked_points</span><span class="p">[</span><span class="n">loc_where_cls</span><span class="p">])</span>
+        <span class="n">regr_key</span> <span class="o">=</span> <span class="n">regr_obj</span><span class="o">.</span><span class="n">get_regressor_name_to_key</span><span class="p">(</span><span class="n">regressor_name</span><span class="p">)</span>
+        <span class="c1"># Save the array of predictions</span>
+        <span class="n">all_regr_preds_per_cls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">regr_preds</span><span class="p">[</span><span class="n">regr_key</span><span class="p">][</span><span class="bp">cls</span><span class="p">][</span><span class="s2">&quot;output_1&quot;</span><span class="p">])</span>  <span class="c1"># array or None</span>
+        <span class="n">all_regr_locs_per_cls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stacked_points</span><span class="p">[</span><span class="n">loc_where_cls</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Regression vals: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">get_output_func</span> <span class="o">=</span> <span class="n">get_raw_output_2D</span>
+    <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">get_output_func</span> <span class="o">=</span> <span class="n">get_raw_output_3D</span>
+
+    <span class="n">true_class_result</span><span class="p">,</span> <span class="n">true_regr_output</span> <span class="o">=</span> <span class="n">get_output_func</span><span class="p">(</span><span class="o">*</span><span class="n">stacked_points</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+    <span class="c1"># compare the regression predictions to the true values</span>
+    <span class="c1"># calculate fractional differences</span>
+    <span class="n">all_regr_abs_frac_diffs_per_class</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_unique_classes</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">all_regr_preds_per_cls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">all_regr_abs_frac_diffs_per_class</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">continue</span>  <span class="c1"># RBF failed training for this class,</span>
+
+        <span class="n">this_cls_true_result</span><span class="p">,</span> <span class="n">this_cls_true_regr_output</span> <span class="o">=</span> <span class="n">get_output_func</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">all_regr_locs_per_cls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">this_cls_diffs</span> <span class="o">=</span> <span class="n">all_regr_preds_per_cls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">this_cls_true_regr_output</span>
+        <span class="n">all_regr_abs_frac_diffs_per_class</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">this_cls_diffs</span> <span class="o">/</span> <span class="n">this_cls_true_regr_output</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;regr diffs: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">where_preds_match_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pred_class</span> <span class="o">==</span> <span class="n">true_class_result</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_preds_match_true</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="o">**</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+    <span class="c1"># error_rate = 1 - accuracy</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;N training points: </span><span class="si">{0}</span><span class="s2">, N query points: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">training_df</span><span class="p">),</span> <span class="n">N</span><span class="o">**</span><span class="p">(</span><span class="n">dim</span><span class="p">)))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;accuracy: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">timer</span> <span class="ow">or</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TOTAL TIME: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">og_start_time</span><span class="p">))</span>
+
+    <span class="c1"># Calculate regression accuracy values per class</span>
+    <span class="n">all_regr_acc_per_class</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_unique_classes</span><span class="p">):</span>
+        <span class="n">acc_vals_per_class</span> <span class="o">=</span> <span class="n">calc_regression_accuracy</span><span class="p">(</span>
+            <span class="n">all_regr_abs_frac_diffs_per_class</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">all_regr_acc_per_class</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_vals_per_class</span>
+
+    <span class="c1"># Calculate total regression accuracy values</span>
+    <span class="n">compressed_all_regr_abs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_regr_abs_frac_diffs_per_class</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">i</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)])</span>
+    <span class="n">acc_vals_total</span> <span class="o">=</span> <span class="n">calc_regression_accuracy</span><span class="p">(</span><span class="n">compressed_all_regr_abs</span><span class="p">)</span>
+
+    <span class="n">all_regr_acc_per_class</span><span class="p">[</span><span class="s2">&quot;combined&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_vals_total</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_class</span><span class="p">),</span> <span class="n">true_class_result</span><span class="p">,</span> <span class="n">all_regr_acc_per_class</span></div>
+
+
+
+<div class="viewcode-block" id="calc_regression_accuracy">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.calc_regression_accuracy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_regression_accuracy</span><span class="p">(</span><span class="n">all_regr_abs_frac_diffs</span><span class="p">,</span> <span class="n">cdf_cutoff_limits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the the fractional change at which the cdf_cutoff is below.</span>
+
+<span class="sd">    For a given distribution of absolute fractional differences: calculate the</span>
+<span class="sd">    the fractional change at which the cdf_cutoff is below.</span>
+
+<span class="sd">    For 50% of the data set, the range of frac diffs is [0,?].</span>
+
+<span class="sd">    (What is not being asked: For a frac diff of 10% what fraction of the data</span>
+<span class="sd">    has a frac diff &lt;= that number. )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cdf_cutoff_limits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># 1/2, 1 sigma, 2 sigma, 3 sigma</span>
+        <span class="n">cdf_cutoff_limits</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.683</span><span class="p">,</span> <span class="mf">0.954</span><span class="p">,</span> <span class="mf">0.997</span><span class="p">]</span>
+    <span class="c1"># checking for failed interpolators for small classes</span>
+    <span class="k">if</span> <span class="n">all_regr_abs_frac_diffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="mf">1e9</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">cdf_cutoff_limits</span><span class="p">)</span>
+
+    <span class="n">num_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_regr_abs_frac_diffs</span><span class="p">)</span>
+    <span class="n">sorted_abs_frac_diffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">all_regr_abs_frac_diffs</span><span class="p">)</span>
+
+    <span class="n">acc_vals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># append the largest abs_frac_diff within some fraction of the data set</span>
+    <span class="k">for</span> <span class="n">cdf_limit</span> <span class="ow">in</span> <span class="n">cdf_cutoff_limits</span><span class="p">:</span>
+        <span class="n">acc_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sorted_abs_frac_diffs</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">cdf_limit</span> <span class="o">*</span> <span class="n">num_points</span><span class="p">)])</span>
+
+    <span class="k">return</span> <span class="n">acc_vals</span></div>
+
+
+
+<div class="viewcode-block" id="get_confusion_matrix">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.get_confusion_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_confusion_matrix</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">all_classes</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate a confusion matrix given lists of predicted and actual values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    preds : list</span>
+<span class="sd">        Predicted values from the classifier.</span>
+<span class="sd">    actual : list</span>
+<span class="sd">        True values from the underlying distribution.</span>
+<span class="sd">    all_classes : list</span>
+<span class="sd">        A list of all unique classes.</span>
+<span class="sd">        Should be either np.unique(actual) or a subset thereof.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Print our the line by line confusion matrix prefixed with the class.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    confusion_matrix : ndarray</span>
+<span class="sd">        Rows and columns of confusion matrix in order and number given in</span>
+<span class="sd">        `all_classes`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pred_class_key</span> <span class="ow">in</span> <span class="n">all_classes</span><span class="p">:</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">actual</span> <span class="o">==</span> <span class="n">pred_class_key</span><span class="p">)</span>  <span class="c1"># where all true class</span>
+        <span class="n">how_many_per_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">preds</span><span class="p">[</span><span class="n">loc</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span>
+                                       <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_classes</span><span class="p">])</span>
+        <span class="c1"># how many preds matched true class A, class B, etc.</span>
+        <span class="n">how_many_per_class</span> <span class="o">=</span> <span class="n">how_many_per_class</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># normalize</span>
+        <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">how_many_per_class</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">pred_class_key</span><span class="p">,</span> <span class="n">how_many_per_class</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.3/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

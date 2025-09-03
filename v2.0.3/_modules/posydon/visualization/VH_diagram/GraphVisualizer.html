@@ -1,0 +1,1217 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.visualization.VH_diagram.GraphVisualizer &mdash; posydon 2.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=664ffad9"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.visualization.VH_diagram.GraphVisualizer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.visualization.VH_diagram.GraphVisualizer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Graph Visualizer for the VH diagram.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Maxime Rambosson &lt;Maxime.Rambosson@etu.unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">QWidget</span><span class="p">,</span> <span class="n">QFrame</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span>
+                                <span class="n">QLabel</span><span class="p">,</span> <span class="n">QGridLayout</span><span class="p">)</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QPoint</span><span class="p">,</span> <span class="n">QSize</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="n">QPainter</span><span class="p">,</span> <span class="n">QPixmap</span><span class="p">,</span> <span class="n">QFont</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.MathTextLabel</span><span class="w"> </span><span class="kn">import</span> <span class="n">MathTextLabel</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+
+
+<div class="viewcode-block" id="INFOSTYPE">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.INFOSTYPE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">INFOSTYPE</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumeration of different type of infos.&quot;&quot;&quot;</span>
+
+    <span class="n">CASE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">POINT</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">STATE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="Infos">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.Infos">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Infos</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mother-class with common informations uselful for all widget.&quot;&quot;&quot;</span>
+
+    <span class="n">column_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">infos_type</span><span class="p">:</span> <span class="n">INFOSTYPE</span>
+    <span class="n">connected</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_id</span><span class="p">,</span> <span class="n">infos_type</span><span class="p">,</span> <span class="n">connected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize an Infos instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_id</span> <span class="o">=</span> <span class="n">column_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">infos_type</span> <span class="o">=</span> <span class="n">infos_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="n">connected</span></div>
+
+
+
+<div class="viewcode-block" id="CaseInfos">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.CaseInfos">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CaseInfos</span><span class="p">(</span><span class="n">Infos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Informations to create a case widget.&quot;&quot;&quot;</span>
+
+    <span class="n">centered_text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">bot_right_text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">bot_left_text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">top_right_text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">top_left_text</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="n">border_width</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_id</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">centered_txt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">bot_right_txt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">bot_left_txt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">top_right_txt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">tot_left_txt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">border_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a CaseInfos instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CaseInfos</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">column_id</span><span class="p">,</span> <span class="n">INFOSTYPE</span><span class="o">.</span><span class="n">CASE</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">=</span> <span class="n">centered_txt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bot_right_text</span> <span class="o">=</span> <span class="n">bot_right_txt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bot_left_text</span> <span class="o">=</span> <span class="n">bot_left_txt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_right_text</span> <span class="o">=</span> <span class="n">top_right_txt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_left_text</span> <span class="o">=</span> <span class="n">tot_left_txt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">border_width</span> <span class="o">=</span> <span class="n">border_width</span></div>
+
+
+
+<div class="viewcode-block" id="PointInfos">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.PointInfos">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PointInfos</span><span class="p">(</span><span class="n">Infos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Informations to create a widget with a point drew.&quot;&quot;&quot;</span>
+
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_id</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a PointInfos instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PointInfos</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">column_id</span><span class="p">,</span> <span class="n">INFOSTYPE</span><span class="o">.</span><span class="n">POINT</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span></div>
+
+
+
+<div class="viewcode-block" id="GraphVisualizerItem">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphVisualizerItem</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Define the mother-class for widget in GraphVisualizer.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    connected : bool</span>
+<span class="sd">        Indicate if this widget need to be connected with the previous one in</span>
+<span class="sd">        the same column.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a GraphVisualizerItem instrance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GraphVisualizerItem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="GraphVisualizerItem.get_attach_point_top">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.get_attach_point_top">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_attach_point_top</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get coordinate to connect this widget with the previous one.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Coordinate to link the widget with the previous one.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>  <span class="c1"># Default behavior</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerItem.get_attach_point_bot">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerItem.get_attach_point_bot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_attach_point_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get coordinate to connect this widget with the next one.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Coordinate to link the widget with the next one.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>  <span class="c1"># Default behavior</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GraphVisualizerCase">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphVisualizerCase</span><span class="p">(</span><span class="n">GraphVisualizerItem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Case widget in GraphVisualizer.</span>
+
+<span class="sd">    Provides the ability to display 5 texts: 2 on the top 2 on the bottom,</span>
+<span class="sd">    and 1 in center. Can have a border.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a GraphVisualizerCase instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GraphVisualizerCase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_v_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_v_layout</span><span class="p">)</span>
+
+        <span class="n">top_label_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_v_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">top_label_layout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_top_left_label</span> <span class="o">=</span> <span class="n">MathTextLabel</span><span class="p">()</span>
+        <span class="n">top_label_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_top_left_label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_top_right_label</span> <span class="o">=</span> <span class="n">MathTextLabel</span><span class="p">()</span>
+        <span class="n">top_label_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_top_right_label</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_center_text_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_center_text_label</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_center_text_label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_v_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span><span class="p">)</span>
+
+        <span class="n">bot_label_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_v_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">bot_label_layout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bot_left_label</span> <span class="o">=</span> <span class="n">MathTextLabel</span><span class="p">()</span>
+        <span class="n">bot_label_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bot_left_label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bot_right_label</span> <span class="o">=</span> <span class="n">MathTextLabel</span><span class="p">()</span>
+        <span class="n">bot_label_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bot_right_label</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GraphVisualizerCase.set_central_text">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_central_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_central_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the text at the center.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_center_text_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerCase.set_bottom_left_text">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_bottom_left_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_bottom_left_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the text at the bottom left.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bot_left_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerCase.set_bottom_rigth_text">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_bottom_rigth_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_bottom_rigth_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the text at the bottom right.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bot_right_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerCase.set_top_left_text">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_top_left_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_top_left_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the text at the top left.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_top_left_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerCase.set_top_right_text">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_top_right_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_top_right_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the text at the top right.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_top_right_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerCase.set_central_border">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.set_central_border">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_central_border</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the text at the central border.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span><span class="o">.</span><span class="n">setFrameShape</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span><span class="o">.</span><span class="n">setLineWidth</span><span class="p">(</span><span class="n">width</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerCase.get_attach_point_top">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.get_attach_point_top">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_attach_point_top</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get coordinate to connect this widget with the previous one.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">topLeft</span><span class="p">()</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="n">QPoint</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerCase.get_attach_point_bot">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerCase.get_attach_point_bot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_attach_point_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get coordinate to connect this widget with the next one.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">bottomLeft</span><span class="p">()</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="n">QPoint</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_center_widget</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="prepare_case">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.prepare_case">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_case</span><span class="p">(</span><span class="n">infos</span><span class="p">:</span> <span class="n">CaseInfos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Help to create GraphVisualizerCase from CaseInfos.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    infos : CaseInfos</span>
+<span class="sd">        Infos to create the widget.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GraphVisualizerCase</span>
+<span class="sd">        Created widget with given infos.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">case</span> <span class="o">=</span> <span class="n">GraphVisualizerCase</span><span class="p">()</span>
+
+    <span class="k">case</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">connected</span>
+
+    <span class="k">case</span><span class="o">.</span><span class="n">set_central_text</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">centered_text</span><span class="p">)</span>
+
+    <span class="k">case</span><span class="o">.</span><span class="n">set_bottom_left_text</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">bot_left_text</span><span class="p">)</span>
+    <span class="k">case</span><span class="o">.</span><span class="n">set_bottom_rigth_text</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">bot_right_text</span><span class="p">)</span>
+    <span class="k">case</span><span class="o">.</span><span class="n">set_top_left_text</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">top_left_text</span><span class="p">)</span>
+    <span class="k">case</span><span class="o">.</span><span class="n">set_top_right_text</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">top_right_text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">infos</span><span class="o">.</span><span class="n">border_width</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">case</span><span class="o">.</span><span class="n">set_central_border</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">border_width</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">case</span></div>
+
+
+
+<div class="viewcode-block" id="GraphVisualizerPointDraw">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPointDraw">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphVisualizerPointDraw</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Define an empty widget with a point drew.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a GraphVisualizerPointDraw instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GraphVisualizerPointDraw</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMinimumSize</span><span class="p">(</span><span class="n">QSize</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">13</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMaximumSize</span><span class="p">(</span><span class="n">QSize</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">13</span><span class="p">))</span>
+
+<div class="viewcode-block" id="GraphVisualizerPointDraw.paintEvent">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPointDraw.paintEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>  <span class="c1"># override paintEvent of QWidget</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Paint an event.&quot;&quot;&quot;</span>
+        <span class="n">painter</span> <span class="o">=</span> <span class="n">QPainter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawEllipse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">black</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawEllipse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GraphVisualizerPoint">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphVisualizerPoint</span><span class="p">(</span><span class="n">GraphVisualizerItem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Widget containing GraphVisualizerPointDraw.</span>
+
+<span class="sd">    Provides the ability to display 2 texts, one at each side.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a GraphVisualizerPoint instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GraphVisualizerPoint</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">QGridLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_point_draw</span> <span class="o">=</span> <span class="n">GraphVisualizerPointDraw</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_point_draw</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_label</span> <span class="o">=</span> <span class="n">MathTextLabel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_label</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GraphVisualizerPoint.set_text">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.set_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Se the text of the label.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerPoint.get_attach_point_top">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.get_attach_point_top">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_attach_point_top</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get coordinate to connect this widget with the previous one.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_point_draw</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_point_draw</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerPoint.get_attach_point_bot">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerPoint.get_attach_point_bot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_attach_point_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get coordinate to connect this widget with the next one.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_point_draw</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_point_draw</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">())</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="prepare_point">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.prepare_point">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_point</span><span class="p">(</span><span class="n">infos</span><span class="p">:</span> <span class="n">PointInfos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Help to create GraphVisualizerPoint from PointInfos.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    infos : PointInfos</span>
+<span class="sd">        Infos to create the widget.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GraphVisualizerPoint</span>
+<span class="sd">        Created widget with given infos.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">point</span> <span class="o">=</span> <span class="n">GraphVisualizerPoint</span><span class="p">()</span>
+    <span class="n">point</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">connected</span>
+    <span class="n">point</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">point</span></div>
+
+
+
+<div class="viewcode-block" id="StateInfos">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.StateInfos">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StateInfos</span><span class="p">(</span><span class="n">Infos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Information to create a widget with a line of diagram inside.&quot;&quot;&quot;</span>
+
+    <span class="n">S1_filename</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">S2_filename</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">event_filename</span> <span class="p">:</span> <span class="nb">str</span>
+    <span class="n">distance</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">top_texts</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">bot_texts</span><span class="p">:</span> <span class="nb">list</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_id</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">S1_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">S2_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">event_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">distance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a StateInfos instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">StateInfos</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">column_id</span><span class="p">,</span> <span class="n">INFOSTYPE</span><span class="o">.</span><span class="n">STATE</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance</span> <span class="o">=</span> <span class="n">distance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S1_filename</span> <span class="o">=</span> <span class="n">S1_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S2_filename</span> <span class="o">=</span> <span class="n">S2_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_filename</span> <span class="o">=</span> <span class="n">event_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_texts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bot_texts</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+
+<div class="viewcode-block" id="GraphVisualizerState">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphVisualizerState</span><span class="p">(</span><span class="n">GraphVisualizerItem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Widget containing drawings.</span>
+
+<span class="sd">    Provides the ability to display 4 texts on top &amp; bottom.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_max_height</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">_offset</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a GraphVisualizerState instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GraphVisualizerState</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QGridLayout</span><span class="p">()</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bg</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_S1_pixmap</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_S2_pixmap</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_pixmap</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_top_labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bot_labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_top_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MathTextLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_top_labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">alignment</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bot_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MathTextLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_bot_labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">alignment</span><span class="o">=</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GraphVisualizerState.set_first_star">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_first_star">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_first_star</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the picture &#39;filename&#39; and resize it if needed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            Name (+ path) to the picture.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Indicate if loading &amp; resize success.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S1_pixmap</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S1_pixmap</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_S1_pixmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S1_pixmap</span><span class="o">.</span><span class="n">scaledToHeight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerState.set_second_star">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_second_star">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_second_star</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the picture &#39;filename&#39; and resize it if needed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            Name (+ path) to the picture.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Indicate if loading &amp; resize success.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S2_pixmap</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S2_pixmap</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_S2_pixmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S2_pixmap</span><span class="o">.</span><span class="n">scaledToHeight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerState.set_event">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_event">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the picture &#39;filename&#39; and resize it if needed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            Name (+ path) to the picture.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Indicate if loading &amp; resize success.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_pixmap</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_pixmap</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_pixmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_pixmap</span><span class="o">.</span><span class="n">scaledToHeight</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerState.set_distance">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_distance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the distance.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dist</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;`dist` needs to be normalised.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span> <span class="o">=</span> <span class="n">dist</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerState.set_top_text">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_top_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_top_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the text of the top label.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_top_labels</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t set text to top label </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_top_labels</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerState.set_bot_text">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.set_bot_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_bot_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Se the text of the bottom label.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bot_labels</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t set text to bot label </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bot_labels</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerState.get_attach_point_top">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.get_attach_point_top">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_attach_point_top</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get coordinate to connect this widget with the previous one.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">topLeft</span><span class="p">()</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="n">QPoint</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerState.get_attach_point_bot">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.get_attach_point_bot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_attach_point_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get coordinate to connect this widget with the next one.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">bottomLeft</span><span class="p">()</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="n">QPoint</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerState.resizeEvent">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.resizeEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resize the event.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="c1"># Offset is used here to keep the possibility to scale down</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bg</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset</span><span class="p">,</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">_max_height</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizerState.paintEvent">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerState.paintEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>  <span class="c1"># override paintEvent of QWidget</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Paint the event.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="o">.</span><span class="n">fill</span><span class="p">()</span>
+        <span class="n">painter</span> <span class="o">=</span> <span class="n">QPainter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="p">)</span>
+
+        <span class="n">x_S1</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S1_pixmap</span><span class="o">.</span><span class="n">width</span><span class="p">())</span>
+                <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">))</span>
+        <span class="n">y_S1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S1_pixmap</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span>
+
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x_S1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y_S1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S1_pixmap</span><span class="p">)</span>
+
+        <span class="n">x_S2</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S2_pixmap</span><span class="o">.</span><span class="n">width</span><span class="p">())</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span>
+        <span class="p">)</span>
+        <span class="n">y_S2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S2_pixmap</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span>
+
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x_S2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y_S2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_S2_pixmap</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_pixmap</span><span class="o">.</span><span class="n">isNull</span><span class="p">():</span>
+            <span class="n">x_event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_pixmap</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span>
+
+            <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x_event</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_pixmap</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bg_container</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="prepare_state">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.prepare_state">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_state</span><span class="p">(</span><span class="n">infos</span><span class="p">:</span> <span class="n">StateInfos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Help to create GraphVisualizerState from StateInfos.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    infos : StateInfos</span>
+<span class="sd">        Infos to create the widget.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GraphVisualizerState</span>
+<span class="sd">        Created widget with given infos.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">GraphVisualizerState</span><span class="p">()</span>
+
+    <span class="n">state</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">connected</span>
+
+    <span class="k">if</span> <span class="n">infos</span><span class="o">.</span><span class="n">S1_filename</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">set_first_star</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">S1_filename</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t load </span><span class="si">{</span><span class="n">infos</span><span class="o">.</span><span class="n">S1_filename</span><span class="si">}</span><span class="s2"> as S1&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">infos</span><span class="o">.</span><span class="n">S2_filename</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">set_second_star</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">S2_filename</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t load </span><span class="si">{</span><span class="n">infos</span><span class="o">.</span><span class="n">S2_filename</span><span class="si">}</span><span class="s2"> as S2&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">infos</span><span class="o">.</span><span class="n">event_filename</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">set_event</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">event_filename</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t load </span><span class="si">{</span><span class="n">infos</span><span class="o">.</span><span class="n">event_filename</span><span class="si">}</span><span class="s2"> as event&quot;</span><span class="p">)</span>
+
+    <span class="n">state</span><span class="o">.</span><span class="n">set_distance</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">top_texts</span><span class="p">)):</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">set_top_text</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">top_texts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">bot_texts</span><span class="p">)):</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">set_bot_text</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">bot_texts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">state</span></div>
+
+
+
+<div class="viewcode-block" id="columnTYPE">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.columnTYPE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">columnTYPE</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumeration of different column type.&quot;&quot;&quot;</span>
+
+    <span class="n">TIMELINE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">CONNECTED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="ConnectedItem">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.ConnectedItem">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConnectedItem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent a visual link between 2 widgets.&quot;&quot;&quot;</span>
+
+    <span class="n">from_item</span><span class="p">:</span> <span class="n">GraphVisualizerItem</span>
+    <span class="n">to_item</span><span class="p">:</span> <span class="n">GraphVisualizerItem</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_item</span><span class="p">:</span> <span class="n">GraphVisualizerItem</span><span class="p">,</span>
+                 <span class="n">to_item</span><span class="p">:</span> <span class="n">GraphVisualizerItem</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a ConnectedItem instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">from_item</span> <span class="o">=</span> <span class="n">from_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_item</span> <span class="o">=</span> <span class="n">to_item</span></div>
+
+
+
+<div class="viewcode-block" id="GraphVisualizercolumn">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphVisualizercolumn</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mother-class of visual column in GraphVisualizer.</span>
+
+<span class="sd">    Manage one visual column in the QGridLayout</span>
+<span class="sd">    (can take several logical columns).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">column_id</span><span class="p">,</span> <span class="n">column_span</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a GraphVisualizercolumn instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        grid : QGridLayout</span>
+<span class="sd">            Grid where column take place.</span>
+<span class="sd">        column_id : int</span>
+<span class="sd">            Unique id of this column.</span>
+<span class="sd">        column_span : int</span>
+<span class="sd">            Number of logical column used.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_column_id</span> <span class="o">=</span> <span class="n">column_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_column_span</span> <span class="o">=</span> <span class="n">column_span</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span> <span class="o">=</span> <span class="n">grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_title_label</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_item</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="GraphVisualizercolumn.set_title">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.set_title">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the title.&quot;&quot;&quot;</span>
+        <span class="n">font</span> <span class="o">=</span> <span class="n">QFont</span><span class="p">()</span>
+        <span class="n">font</span><span class="o">.</span><span class="n">setPointSize</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title_label</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">title</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizercolumn.add_item">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.add_item">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add one item in the column, connect it to previous if needed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item : GraphVisualizerItem</span>
+<span class="sd">            Widget to add in column.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">connected</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>  <span class="c1"># It&#39;s not the first item added ::</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connected_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConnectedItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_item</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_item</span> <span class="o">=</span> <span class="n">item</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizercolumn.clear">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.clear">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete all widget in the column, keep the title.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_item</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected_items</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_index</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizercolumn.reset">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.reset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete everythings (widget + title), reset logical column used.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_item</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected_items</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title_label</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_span</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="o">.</span><span class="n">setColumnStretch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_id</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_index</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizercolumn.skip">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.skip">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">skip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Skip one row.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_index</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizercolumn.get_id">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizercolumn.get_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the column id.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_id</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_title_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title_label</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_title_label</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add widget to the logical column used.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        widget : QWidget</span>
+<span class="sd">            Widget to add.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span>
+            <span class="n">widget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_id</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_span</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_index</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="GraphVisualizerConnectedcolumn">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerConnectedcolumn">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphVisualizerConnectedcolumn</span><span class="p">(</span><span class="n">GraphVisualizercolumn</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple visual column with arrow between connected widget.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">column_id</span><span class="p">,</span> <span class="n">column_span</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a GraphVisualizerConnectedcolumn instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GraphVisualizerConnectedcolumn</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">grid</span><span class="p">,</span> <span class="n">column_id</span><span class="p">,</span> <span class="n">column_span</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">column_span</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="o">.</span><span class="n">setColumnStretch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_id</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GraphVisualizerConnectedcolumn.draw">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerConnectedcolumn.draw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the surface.&quot;&quot;&quot;</span>
+        <span class="n">painter</span> <span class="o">=</span> <span class="n">QPainter</span><span class="p">(</span><span class="n">surface</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connected_items</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">surface</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span>
+                <span class="n">connection</span><span class="o">.</span><span class="n">from_item</span><span class="o">.</span><span class="n">get_attach_point_bot</span><span class="p">())</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">surface</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span>
+                <span class="n">connection</span><span class="o">.</span><span class="n">to_item</span><span class="o">.</span><span class="n">get_attach_point_top</span><span class="p">())</span>
+
+            <span class="n">painter</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">36</span><span class="p">)</span>
+                             <span class="p">,</span><span class="n">end</span> <span class="o">+</span> <span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">))</span>
+
+            <span class="n">left</span> <span class="o">=</span> <span class="n">end</span> <span class="o">+</span> <span class="n">QPoint</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">)</span>
+            <span class="n">rigth</span> <span class="o">=</span> <span class="n">end</span> <span class="o">+</span> <span class="n">QPoint</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">)</span>
+
+            <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">black</span><span class="p">)</span>
+            <span class="n">painter</span><span class="o">.</span><span class="n">drawEllipse</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">36</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">painter</span><span class="o">.</span><span class="n">drawPolygon</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">rigth</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GraphVisualizerTimeline">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerTimeline">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphVisualizerTimeline</span><span class="p">(</span><span class="n">GraphVisualizercolumn</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Draw a visual column, compressed by another other column.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">column_id</span><span class="p">,</span> <span class="n">column_span</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a GraphVisualizerTimeline instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GraphVisualizerTimeline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">grid</span><span class="p">,</span> <span class="n">column_id</span><span class="p">,</span> <span class="n">column_span</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">column_span</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="o">.</span><span class="n">setColumnStretch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_id</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GraphVisualizerTimeline.draw">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizerTimeline.draw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the surface.&quot;&quot;&quot;</span>
+        <span class="n">painter</span> <span class="o">=</span> <span class="n">QPainter</span><span class="p">(</span><span class="n">surface</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connected_items</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">surface</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span>
+                <span class="n">connection</span><span class="o">.</span><span class="n">from_item</span><span class="o">.</span><span class="n">get_attach_point_bot</span><span class="p">())</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">surface</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span>
+                <span class="n">connection</span><span class="o">.</span><span class="n">to_item</span><span class="o">.</span><span class="n">get_attach_point_top</span><span class="p">())</span>
+
+            <span class="n">painter</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GraphVisualizer">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphVisualizer</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Widget used to display the different columns and add widget in them.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a GraphVisualizer instance.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GraphVisualizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">QGridLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_column</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="GraphVisualizer.add_column">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.add_column">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_type</span><span class="p">,</span> <span class="n">column_span</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a column according to the column_type.</span>
+
+<span class="sd">        It takes account for the column_span of the logical column.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        column_type : columnTYPE</span>
+<span class="sd">            Type of the column to add.</span>
+<span class="sd">        column_span : int</span>
+<span class="sd">            Nb of logical column used.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            ID of created column.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">column_type</span> <span class="o">==</span> <span class="n">columnTYPE</span><span class="o">.</span><span class="n">TIMELINE</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">GraphVisualizerTimeline</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_column</span><span class="p">,</span> <span class="n">column_span</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">column_type</span> <span class="o">==</span> <span class="n">columnTYPE</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">GraphVisualizerConnectedcolumn</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_column</span><span class="p">,</span> <span class="n">column_span</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_column</span> <span class="o">+=</span> <span class="n">column_span</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizer.get_column">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.get_column">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return visual column with the given id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        column_id : int</span>
+<span class="sd">            ID of searched column.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        GraphVisualizercolumn</span>
+<span class="sd">            column with the given ID.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">column_id</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">[</span><span class="n">column_id</span><span class="p">]</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizer.add_line">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.add_line">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infos</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add all lines based on all elements in `infos`.</span>
+
+<span class="sd">        For each info in infos, create the corresponding widget and add it to</span>
+<span class="sd">        the column with corresponding id (given in each info), only 1 widget</span>
+<span class="sd">        per column by call, if one column haven&#39;t any widget associated,</span>
+<span class="sd">        column skip this row.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        infos : Array of Infos</span>
+<span class="sd">            Array with derivated struct of Infos to create the different</span>
+<span class="sd">            widget for this line.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">infos</span> <span class="k">if</span> <span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">info</span><span class="p">:</span> <span class="n">info</span><span class="o">.</span><span class="n">column_id</span> <span class="o">==</span> <span class="n">column</span><span class="o">.</span><span class="n">get_id</span><span class="p">())(</span><span class="n">x</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">infos_type</span> <span class="o">==</span> <span class="n">INFOSTYPE</span><span class="o">.</span><span class="n">CASE</span><span class="p">:</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">prepare_case</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">infos_type</span> <span class="o">==</span> <span class="n">INFOSTYPE</span><span class="o">.</span><span class="n">POINT</span><span class="p">:</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">prepare_point</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">infos_type</span> <span class="o">==</span> <span class="n">INFOSTYPE</span><span class="o">.</span><span class="n">STATE</span><span class="p">:</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">prepare_state</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">column</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">column</span><span class="o">.</span><span class="n">skip</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizer.clear">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.clear">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear each column.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">:</span>
+            <span class="n">col</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizer.reset">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.reset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all delete each column.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">:</span>
+            <span class="n">col</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_column</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizer.paintEvent">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.paintEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>  <span class="c1"># override paintEvent of QWidget</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Paint the event.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">:</span>
+            <span class="n">col</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GraphVisualizer.saveAsPicture">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.GraphVisualizer.GraphVisualizer.saveAsPicture">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">saveAsPicture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render this widget in a picture and save it a filename.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            Destination file of the picture.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pixmap</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">pixmap</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Can&#39;t save as &quot;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.3/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

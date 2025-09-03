@@ -1,0 +1,727 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run your first MESA HMS-HMS binary simulation with POSYDON &mdash; posydon 2.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=664ffad9"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Run one binary on your laptop for debugging" href="laptop.html" />
+    <link rel="prev" title="Architecting MESA Simulation Grids with POSYDON" href="running-grids.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="running-grids.html">Architecting MESA Simulation Grids with POSYDON</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Run your first MESA HMS-HMS binary simulation with POSYDON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laptop.html">Run one binary on your laptop for debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="running_a_grid.html">Running a real POSYDON MESA HMS-HMS grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="running_single_hms.html">Running Single Stars with POSYDON</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+      <li class="breadcrumb-item active">Run your first MESA HMS-HMS binary simulation with POSYDON</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/MESA-grids/1_hms_hms.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Run-your-first-MESA-HMS-HMS-binary-simulation-with-POSYDON">
+<h1>Run your first MESA HMS-HMS binary simulation with POSYDON<a class="headerlink" href="#Run-your-first-MESA-HMS-HMS-binary-simulation-with-POSYDON" title="Link to this heading"></a></h1>
+<p>If you haven’t done it already, export all the relevant POSYDON and MESA environment variables.</p>
+<p>Tip: create a file called <code class="docutils literal notranslate"><span class="pre">.bash_POSYDON_MESA</span></code> with the following content (please adapt the PATHs to your system):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PATH_TO_POSYDON</span><span class="o">=</span>~/software/POSYDON/
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH_TO_POSYDON_DATA</span><span class="o">=</span>~/software/POSYDON/data/
+
+<span class="nb">export</span><span class="w"> </span><span class="nv">MESA_DIR</span><span class="o">=</span>~/software/mesa-r11701_witheoschange_andwithreverseMTchange_fiximplicitmdot
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">4</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MESASDK_ROOT</span><span class="o">=</span>~/software/mesasdk
+<span class="nb">source</span><span class="w"> </span><span class="nv">$MESASDK_ROOT</span>/bin/mesasdk_init.sh
+</pre></div>
+</div>
+<p>so that every time you open a new terminal you can just run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>.bash_POSYDON_MESA
+</pre></div>
+</div>
+<p>If you haven’t done it already, please download the <code class="docutils literal notranslate"><span class="pre">development</span></code> branch of the <code class="docutils literal notranslate"><span class="pre">POSYDON-MESA-INLISTS</span></code> submodule, see <a class="reference internal" href="running-grids.html"><span class="doc">Architecting MESA Simulation Grids with POSYDON</span></a>. This is the branch that contains the simulation properties of all POSYDON MESA grids.</p>
+<section id="Creating-the-Initialization-File-for-the-POSYDON-MESA-Submission-Script">
+<h2>Creating the Initialization File for the POSYDON MESA Submission Script<a class="headerlink" href="#Creating-the-Initialization-File-for-the-POSYDON-MESA-Submission-Script" title="Link to this heading"></a></h2>
+<p>You can now copy in your working directory the API ini file configuration of HMS-HMS binaries: <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON/grid_params/grid_params.ini</span></code>.</p>
+<p>Note: in the <code class="docutils literal notranslate"><span class="pre">POSYDON-MESA-INLISTS</span></code> submodule we have more example ini files at <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON/grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts/</span></code>. For each grid we support two ini file configured to the Northwestern and UNIGE HPC clusters.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+
+<span class="n">path_to_ini</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;grid_params/grid_params.ini&quot;</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_ini</span><span class="p">,</span> <span class="s1">&#39;./HMS-HMS.ini&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;./HMS-HMS.ini&#39;
+</pre></div></div>
+</div>
+<p>Open the file and edit the following parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">user=your_username</span> <span class="pre">(can</span> <span class="pre">be</span> <span class="pre">skipped</span> <span class="pre">if</span> <span class="pre">not</span> <span class="pre">run</span> <span class="pre">via</span> <span class="pre">SLURM)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">partition=the_slurm_partition_to_run_on</span></code> (can be skipped if not run via SLURM)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">account=your_slurm_account</span></code> (can be skipped if not run via SLURM)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">email=your_email</span></code> (can be skipped if not run via SLURM)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">posydon_github_root=your_path_to_POSYDON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">grid=your_grid_csv_file</span></code> (will get created in the next section)</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">scenario</span></code> parameter of the ini file is the main parameter that controls the simulation setup. This parameter let’s us decide which simulation we want to run. The syntax is the following:</p>
+<ul class="simple">
+<li><p>the first argument is the name of the submodule <code class="docutils literal notranslate"><span class="pre">posydon</span></code> which points to the POSYDON-MESA-INLISTS submodule (other options are available, e.g. <code class="docutils literal notranslate"><span class="pre">user</span></code> which points to a private submodule)</p></li>
+<li><p>the second argument is the name of the branch and commit of the submodule we want to use connected by a dash <code class="docutils literal notranslate"><span class="pre">-</span></code>. In this case we want to use the <code class="docutils literal notranslate"><span class="pre">development</span></code> branch of the submodule and it’s latest commit, so we write <code class="docutils literal notranslate"><span class="pre">development-c1f75acacc3bd645197c5d3e920a121e94d95a80</span></code></p></li>
+<li><p>the third argument is the name of the simulation grid we want to run, in this case we want to run a HMS-HMS grid. The name of the grid is <code class="docutils literal notranslate"><span class="pre">HMS-HMS</span></code>.</p></li>
+</ul>
+<p>To summarize, you should have <code class="docutils literal notranslate"><span class="pre">scenario</span> <span class="pre">=</span> <span class="pre">['posydon',</span> <span class="pre">'development-c1f75acacc3bd645197c5d3e920a121e94d95a80',</span> <span class="pre">'HMS-HMS']</span></code></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">zams_file</span></code> points to the ZAMS model used to generate the HMS stars in the binary system. POSYDON v2.0.0 supports 8 different metallicities, here we would like to use the 0.1Zsun POSYDON MESA ZAMS model <code class="docutils literal notranslate"><span class="pre">${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/ZAMS_models/zams_z1.42m3_y0.2511.data</span></code></p>
+<p>The last parameter of this file is <code class="docutils literal notranslate"><span class="pre">grid</span></code> and points to the <code class="docutils literal notranslate"><span class="pre">csv</span></code> file containing the initial conditions of the grid. In this case we want to run a <code class="docutils literal notranslate"><span class="pre">HMS-HMS</span></code> grid consisting of one system, so we set <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">=</span> <span class="pre">grid_test.csv</span></code> and generate such file specifying the metallicity, the two star masses and the initial orbital period.</p>
+</section>
+<section id="Creating-the-Initial-Simulation-Points-CSV-File">
+<h2>Creating the Initial Simulation Points CSV File<a class="headerlink" href="#Creating-the-Initial-Simulation-Points-CSV-File" title="Link to this heading"></a></h2>
+<p>Note: a notebook showing you how all the grid points of v2.0.0 are generated is available in the <code class="docutils literal notranslate"><span class="pre">POSYDON-MESA-INLISTS</span></code> submodule at <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON/grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts/parameter_space_v2/create_csv.ipynb</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./grid_test.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">&#39;initial_z&#39;</span><span class="p">,</span><span class="s1">&#39;Zbase&#39;</span><span class="p">,</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span><span class="s1">&#39;m2&#39;</span><span class="p">,</span><span class="s1">&#39;initial_period_in_days&#39;</span><span class="p">])</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="mf">0.00142</span><span class="p">,</span> <span class="mf">0.00142</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">21.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>The above script will create a .csv file for the parameters of a MESA ‘grid’ with one row, i.e. practically with one binary system. You should now have the following files in your working directory:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1_hms_hms.ipynb  grid_test.csv  HMS-HMS.ini
+</pre></div></div>
+</div>
+<p>Let’s now use POSYDON to set up the MESA simulation. In your terminal run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>posydon-setup-grid<span class="w"> </span>--grid-type<span class="w"> </span>fixed<span class="w"> </span>--inifile<span class="w"> </span>HMS-HMS.ini<span class="w"> </span>--submission-type<span class="w"> </span>slurm
+</pre></div>
+</div>
+<p>The following files will be created:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1_hms_hms.ipynb  column_lists   job_array_grid_submit.slurm  star1
+binary           grid_test.csv  mk                           star2
+cleanup.slurm    HMS-HMS.ini    run_grid.sh
+</pre></div></div>
+</div>
+</section>
+<section id="Running-the-MESA-Model-and-Exploring-the-Simulation-Output">
+<h2>Running the MESA Model and Exploring the Simulation Output<a class="headerlink" href="#Running-the-MESA-Model-and-Exploring-the-Simulation-Output" title="Link to this heading"></a></h2>
+<p>You are now ready to submit the simulation to the cluster with the following command:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>./run_grid.sh
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+job_array_grid_submit.slurm submitted as 38720106
+cleanup.slurm submitted as 38720107
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>squeue<span class="w"> </span>-u<span class="w"> </span>kruckow
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+          38720107 private-a mesa_gri  kruckow PD       0:00      1 (Dependency)
+        38720106_0 private-a mesa_gri  kruckow  R       0:22      1 cpu146
+</pre></div></div>
+</div>
+<p>After the job is finished, we can check the output files:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1_hms_hms.ipynb
+binary
+cleanup.slurm
+column_lists
+grid_test.csv
+HMS-HMS.ini
+job_array_grid_submit.slurm
+mesa_cleanup.out
+mesa_grid.38720106_0.out
+mk
+run_grid.sh
+star1
+star2
+Zbase_0.0014_m1_30.0000_m2_21.0000_initial_z_1.4200e-03_initial_period_in_days_1.0000e+01_grid_index_0
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls<span class="w"> </span>Zbase_0.0014_m1_30.0000_m2_21.0000_initial_z_1.4200e-03_initial_period_in_days_1.0000e+01_grid_index_0
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+binary_history_columns.list  inlist_grid_star1_binary_controls
+binary_history.data.gz       inlist_grid_star2_binary_controls
+final_star1.mod.gz           LOGS1
+history_columns.list         LOGS2
+initial_star1.mod.gz         out.txt.gz
+initial_star2.mod.gz         profile_columns.list
+inlist                       tmp.hdf5
+inlist_grid_points
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>gzip<span class="w"> </span>-cd<span class="w"> </span>Zbase_0.0014_m1_30.0000_m2_21.0000_initial_z_1.4200e-03_initial_period_in_days_1.0000e+01_grid_index_0/out.txt.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><span class="m">320</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+
+ read /home/users/k/kruckow/tutorial_run_MESA/binary/inlist_project
+ read inlist_grid_points
+                                         version_number       11701
+ read inlist_grid_star1_binary_controls
+ set_eos_PC_parameters
+                             mass_fraction_limit_for_PC    1.0000000000000000D-03
+                                       logRho1_PC_limit    2.9990000000000001D+00
+                                       logRho2_PC_limit    2.7999999999999998D+00
+                                     log_Gamma_all_HELM    1.0000000000000000D+00
+                                       log_Gamma_all_PC    1.3010299956000000D+00
+                                 PC_Gamma_start_crystal    1.5000000000000000D+02
+                                  PC_Gamma_full_crystal    1.7500000000000000D+02
+                                               PC_min_Z    9.9900000000000000D-01
+ change rates preference to           2
+                                        set_initial_age    0.0000000000000000D+00
+                               set_initial_model_number           0
+ change to &#34;approx21.net&#34;
+ number of species          21
+ new_rotation_flag T
+                                 new_surface_rotation_v           0    0.0000000000000000D+00    0.0000000000000000D+00
+ net name approx21.net
+ rotation_flag T
+ species
+     1   neut
+     2   h1
+     3   prot
+     4   he3
+     5   he4
+     6   c12
+     7   n14
+     8   o16
+     9   ne20
+    10   mg24
+    11   si28
+    12   s32
+    13   ar36
+    14   ca40
+    15   ti44
+    16   cr48
+    17   cr56
+    18   fe52
+    19   fe54
+    20   fe56
+    21   ni56
+
+ kappa_file_prefix gs98
+ kappa_lowT_prefix lowT_fa05_gs98
+                                        OMP_NUM_THREADS           4
+
+
+
+
+ read inlist_grid_star2_binary_controls
+ set_eos_PC_parameters
+                             mass_fraction_limit_for_PC    1.0000000000000000D-03
+                                       logRho1_PC_limit    2.9990000000000001D+00
+                                       logRho2_PC_limit    2.7999999999999998D+00
+                                     log_Gamma_all_HELM    1.0000000000000000D+00
+                                       log_Gamma_all_PC    1.3010299956000000D+00
+                                 PC_Gamma_start_crystal    1.5000000000000000D+02
+                                  PC_Gamma_full_crystal    1.7500000000000000D+02
+                                               PC_min_Z    9.9900000000000000D-01
+ change rates preference to           2
+                                        set_initial_age    0.0000000000000000D+00
+                               set_initial_model_number           0
+ change to &#34;approx21.net&#34;
+ number of species          21
+ new_rotation_flag T
+                                 new_surface_rotation_v           0    0.0000000000000000D+00    0.0000000000000000D+00
+ net name approx21.net
+ rotation_flag T
+ species
+     1   neut
+     2   h1
+     3   prot
+     4   he3
+     5   he4
+     6   c12
+     7   n14
+     8   o16
+     9   ne20
+    10   mg24
+    11   si28
+    12   s32
+    13   ar36
+    14   ca40
+    15   ti44
+    16   cr48
+    17   cr56
+    18   fe52
+    19   fe54
+    20   fe56
+    21   ni56
+
+ kappa_file_prefix gs98
+ kappa_lowT_prefix lowT_fa05_gs98
+                                        OMP_NUM_THREADS           4
+
+
+
+
+
+                                                     m2    2.1000000000000000D+01
+                                                     m1    3.0000000000000000D+01
+                                 initial_period_in_days    1.0000000000000000D+01
+                             initial_separation_in_Rsun    7.2417496333000003D+01
+                                        jdot_multiplier    1.0000000000000000D+00
+                                                     fr    1.0000000000000000D-02
+
+
+
+ The binary terminal output contains the following information
+
+      &#39;step&#39; is the number of steps since the start of the run,
+      &#39;lg_dt&#39; is log10 timestep in years,
+      &#39;age_yr&#39; is the simulated years since the start run,
+      &#39;M1+M2&#39; is the total mass of the system (Msun),
+      &#39;M1&#39; is the mass of the primary (Msun)
+      &#39;M2&#39; is the mass of the secondary (Msun)
+      &#39;separ&#39; is the semi-major axis of the orbit (Rsun),
+      &#39;R1&#39; is the radius of the primary (Rsun)
+      &#39;R2&#39; is the radius of the secondary (Rsun)
+      &#39;Porb&#39; is the orbital period (days),
+      &#39;P1&#39; is the rotation period of star 1 (days, zero if not modeling rotation),
+      &#39;P2&#39; is the rotation period of star 2 (days, zero if not modeling rotation),
+      &#39;e&#39; orbital eccentricity,
+      &#39;dot_e&#39; time derivative of e (1/yr),
+      &#39;Eorb&#39; orbital energy G*M1*M2/2*separation (ergs),
+      &#39;M2/M1&#39; mass ratio,
+      &#39;vorb1&#39; orbital velocity of star 1 (km/s),
+      &#39;vorb2&#39; orbital velocity of star 2 (km/s),
+      &#39;pm_i&#39; index of star evolved as point mass, zero if both stars are modeled,
+      &#39;RL1&#39; Roche lobe radius of star 1 (Rsun),
+      &#39;Rl2&#39; Roche lobe radius of star 2 (Rsun),
+      &#39;donor_i&#39; index of star taken as donor,
+      &#39;RL_gap1&#39; (R1-Rl1)/Rl1,
+      &#39;RL_gap2&#39; (R2-Rl2)/Rl2,
+      &#39;dot_Mmt&#39;, mass transfer rate (Msun/yr),
+      &#39;dot_M1&#39;, time derivative for the mass of star 1 (Msun/yr),
+      &#39;dot_M2&#39;, time derivative for the mass of star 2 (Msun/yr),
+      &#39;eff&#39;, mass transfer efficiency, computed as -dot_M2/dot_M1 (zero if dot_M1=0),
+      &#39;dot_Medd&#39;, Eddington accretion rate (Msun/yr),
+      &#39;L_acc&#39;, accretion luminosity when accreting to a point mass (ergs/s),
+      &#39;Jorb&#39;, orbital angular momentum (g*cm^2/s)
+      &#39;spin1&#39;, spin angular momentum of star 1 (g*cm^2/s),
+      &#39;spin2&#39;, spin angular momentum of star 2 (g*cm^2/s),
+      &#39;dot_J&#39;, time derivative of Jorb (g*cm^2/s^2),
+      &#39;dot_Jgr&#39;, time derivative of Jorb due to gravitational waves (g*cm^2/s^2),
+      &#39;dot_Jml&#39;, time derivative of Jorb due to mass loss (g*cm^2/s^2),
+      &#39;dot_Jmb&#39;, time derivative of Jorb due to magnetic braking (g*cm^2/s^2),
+      &#39;dot_Jls&#39;, time derivative of Jorb due to spin-orbit coupling (g*cm^2/s^2),
+      &#39;rlo_iters&#39;, number of iterations for implicit calculation of mass transfer,
+
+ All this and more can be saved in binary_history.data during the run.
+ num_steps_to_relax_rotation          50
+        relax to omega: wanted-current, current, wanted           1    7.2722052166430393D-06    0.0000000000000000D+00    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           2    7.1239370299804958D-06    1.4826818666254330D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           3    6.9775031634253124D-06    2.9470205321772722D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           4    6.8325227781707742D-06    4.3968243847226474D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           5    6.6880336129568242D-06    5.8417160368621492D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           6    6.5429721100078805D-06    7.2923310663515874D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           7    6.3960414375365654D-06    8.7616377910647371D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           8    6.2481184946104557D-06    1.0240867220325836D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           9    6.0988143280937228D-06    1.1733908885493166D-06    7.2722052166430393D-06
+         10   7.649681  4.541E+04   5.083637   5.083787  30.000000  30.000000   0.746765   0.000508   0.251100   0.747141  -6.159624   2598      0
+   3.021833   0.768039   0.749892 -23.011310   3.935137 -99.000000   0.000000   0.251795   0.000441   0.001420   0.251427   0.009963      3      0
+ 2.3543E+03  16.667399   5.081908   1.622938   4.361600  -8.707435   0.000000   0.000004   0.000133   0.000071  1.432E-03  0.000E+00  max increase
+
+        relax to omega: wanted-current, current, wanted          10    5.9494920708119283D-06    1.3227131458311106D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          11    5.8047898071657684D-06    1.4674154094772709D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          12    5.6656471713199783D-06    1.6065580453230609D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          13    5.5253851216154814D-06    1.7468200950275575D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          14    5.3814004626389407D-06    1.8908047540040986D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          15    5.2360336852655910D-06    2.0361715313774479D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          16    5.0905570727440271D-06    2.1816481438990118D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          17    4.9451037265468788D-06    2.3271014900961605D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          18    4.7996593714595307D-06    2.4725458451835086D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          19    4.6542152930004046D-06    2.6179899236426347D-06    7.2722052166430393D-06
+         20   7.648797  4.525E+04   5.069089   5.069239  30.000000  30.000000   0.746765   0.000508   0.251100   0.747141  -6.164975   2613      0
+   6.032133   0.764405   0.746596 -23.057889   3.920548 -99.000000   0.000000   0.251795   0.000441   0.001420   0.251427   0.009955      2      0
+ 2.1538E+06  16.663052   5.069239   1.607921   4.359365  -8.704639   0.000000   0.000004   0.000133   0.000071  1.432E-03  0.000E+00  max increase
+
+        relax to omega: wanted-current, current, wanted          20    4.5087711966205017D-06    2.7634340200225373D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          21    4.3633268036162395D-06    2.9088784130267999D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          22    4.2178823416292592D-06    3.0543228750137802D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          23    4.0724377954490792D-06    3.1997674211939601D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          24    3.9269931389606084D-06    3.3452120776824310D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          25    3.7815483392570430D-06    3.4906568773859964D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          26    3.6361034724003977D-06    3.6361017442426417D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          27    3.4906587782149381D-06    3.7815464384281013D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          28    3.3452144143481404D-06    3.9269908022948989D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          29    3.1997702486009012D-06    4.0724349680421382D-06    7.2722052166430393D-06
+         30   7.648796  4.525E+04   5.069078   5.069228  30.000000  30.000000   0.746765   0.000508   0.251100   0.747141  -6.164960   2610      0
+   9.042433   0.764409   0.746606 -23.057923   3.920536 -99.000000   0.000000   0.251795   0.000441   0.001420   0.251427   0.009955      2      0
+ 2.2053E+09  16.663054   5.069228   1.607910   4.359335  -8.704658   0.000000   0.000004   0.000133   0.000071  1.432E-03  0.000E+00  max increase
+
+        relax to omega: wanted-current, current, wanted          30    3.0543261358872070D-06    4.2178790807558323D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          31    2.9088820315467191D-06    4.3633231850963203D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          32    2.7634379268261852D-06    4.5087672898168542D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          33    2.6179938218649762D-06    4.6542113947780632D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          34    2.4725497163505801D-06    4.7996555002924592D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          35    2.3271056116451454D-06    4.9450996049978939D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          36    2.1816615088007590D-06    5.0905437078422803D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          37    2.0362174007229542D-06    5.2359878159200852D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          38    1.8907732940142874D-06    5.3814319226287519D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          39    1.7453291891721467D-06    5.5268760274708927D-06    7.2722052166430393D-06
+         40   7.648795  4.525E+04   5.069062   5.069212  30.000000  30.000000   0.746765   0.000508   0.251100   0.747141  -6.164940   2607      0
+  12.052733   0.764417   0.746620 -23.057971   3.920520 -99.000000   0.000000   0.251795   0.000441   0.001420   0.251427   0.009955      2      0
+ 2.2582E+12  16.663057   5.069212   1.607894   4.359294  -8.704686   0.000000   0.000004   0.000133   0.000071  1.432E-03  0.000E+00  max increase
+
+        relax to omega: wanted-current, current, wanted          40    1.5998850831994643D-06    5.6723201334435750D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          41    1.4544409770744422D-06    5.8177642395685971D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          42    1.3089968705342554D-06    5.9632083461087839D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          43    1.1635527639419701D-06    6.1086524527010692D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          44    1.0181086591042797D-06    6.2540965575387596D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          45    8.7266455123154744D-07    6.3995406654114919D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          46    7.2722044498914098D-07    6.5449847716538984D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          47    5.8177633970541403D-07    6.6904288769376253D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          48    4.3633223233433363D-07    6.8358729843087057D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          49    2.9088812460997866D-07    6.9813170920330607D-06    7.2722052166430393D-06
+         50   7.648794  4.525E+04   5.069042   5.069192  30.000000  30.000000   0.746765   0.000508   0.251100   0.747141  -6.164913   2607      0
+  15.063033   0.764426   0.746639 -23.058033   3.920500 -99.000000   0.000000   0.251795   0.000441   0.001420   0.251427   0.009955      2      0
+ 2.3124E+15  16.663062   5.069192   1.607873   4.359240  -8.704722   0.000000   0.000004   0.000133   0.000071  1.432E-03  0.000E+00  max increase
+
+        relax to omega: wanted-current, current, wanted          50    1.4544401957845492D-07    7.1267611970645844D-06    7.2722052166430393D-06
+            final step: wanted-current, current, wanted          51   -8.8872453572253797D-14    7.2722053055154929D-06    7.2722052166430393D-06
+ num_steps_to_relax_rotation          50
+        relax to omega: wanted-current, current, wanted           1    7.2722052166430393D-06    0.0000000000000000D+00    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           2    7.1233476044913972D-06    1.4885761215164192D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           3    6.9765158364664393D-06    2.9568938017660038D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           4    6.8315785028308242D-06    4.4062671381221501D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           5    6.6872664451027811D-06    5.8493877154025819D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           6    6.5422553499448946D-06    7.2994986669814492D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           7    6.3946688756986521D-06    8.7753634094438770D-07    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           8    6.2457320323138947D-06    1.0264731843291449D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted           9    6.0961527996288285D-06    1.1760524170142110D-06    7.2722052166430393D-06
+  2      10   7.626746  4.039E+04   4.702123   4.702274  21.000000  21.000000   0.746746   0.000504   0.251100   0.747186  -5.802804   2094      0
+   3.397968   0.888883   0.660278 -24.009890   3.553286 -99.000000   0.000000   0.251813   0.000447   0.001420   0.251381   0.011524      3      0
+ 5.6097E+03  16.729885   4.698975   1.243311   4.233606  -8.722599   0.000000   0.000004   0.000133   0.000071  1.433E-03  0.000E+00  max increase
+
+        relax to omega: wanted-current, current, wanted          10    5.9497664059555575D-06    1.3224388106874818D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          11    5.8096280128646104D-06    1.4625772037784294D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          12    5.6702121385033817D-06    1.6019930781396575D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          13    5.5268762195040200D-06    1.7453289971390194D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          14    5.3814893418133806D-06    1.8907158748296590D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          15    5.2359962060341824D-06    2.0362090106088570D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          16    5.0905469533439396D-06    2.1816582632991002D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          17    4.9451025348753598D-06    2.3271026817676795D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          18    4.7996593159162278D-06    2.4725459007268115D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          19    4.6542137048352694D-06    2.6179915118077704D-06    7.2722052166430393D-06
+  2      20   7.626057  4.027E+04   4.690568   4.690719  21.000000  21.000000   0.746746   0.000504   0.251100   0.747186  -5.806944   2142      0
+   6.408268   0.886095   0.658647 -24.047363   3.541695 -99.000000   0.000000   0.251813   0.000447   0.001420   0.251381   0.011517      2      0
+ 5.1209E+06  16.726495   4.690719   1.231378   4.231839  -8.720788   0.000000   0.000004   0.000133   0.000071  1.433E-03  0.000E+00  max increase
+
+        relax to omega: wanted-current, current, wanted          20    4.5087702091765951D-06    2.7634350074664442D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          21    4.3633258925594751D-06    2.9088793240835646D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          22    4.2178814610967289D-06    3.0543237555463109D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          23    4.0724368772888120D-06    3.1997683393542269D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          24    3.9269922854427176D-06    3.3452129312003218D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          25    3.7815476480289336D-06    3.4906575686141058D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          26    3.6361029746011353D-06    3.6361022420419041D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          27    3.4906584885813882D-06    3.7815467280616511D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          28    3.3452142083025420D-06    3.9269910083404973D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          29    3.1997700535865694D-06    4.0724351630564699D-06    7.2722052166430393D-06
+  2      30   7.626056  4.027E+04   4.690559   4.690709  21.000000  21.000000   0.746746   0.000504   0.251100   0.747186  -5.806932   2161      0
+   9.418568   0.886099   0.658656 -24.047394   3.541686 -99.000000   0.000000   0.251813   0.000447   0.001420   0.251381   0.011517      2      0
+ 5.2432E+09  16.726497   4.690709   1.231368   4.231817  -8.720799   0.000000   0.000004   0.000133   0.000071  1.433E-03  0.000E+00  max increase
+
+        relax to omega: wanted-current, current, wanted          30    3.0543259269715730D-06    4.2178792896714663D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          31    2.9088818039901709D-06    4.3633234126528685D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          32    2.7634376805293879D-06    4.5087675361136514D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          33    2.6179935564114802D-06    4.6542116602315591D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          34    2.4725494315840545D-06    4.7996557850589848D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          35    2.3271053084760396D-06    4.9450999081669997D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          36    2.1816611779797231D-06    5.0905440386633162D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          37    2.0362170531092207D-06    5.2359881635338187D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          38    1.8907729258279075D-06    5.3814322908151319D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          39    1.7453287980464179D-06    5.5268764185966214D-06    7.2722052166430393D-06
+  2      40   7.626055  4.027E+04   4.690545   4.690696  21.000000  21.000000   0.746746   0.000504   0.251100   0.747186  -5.806914   2153      0
+  12.428868   0.886105   0.658667 -24.047437   3.541672 -99.000000   0.000000   0.251813   0.000447   0.001420   0.251381   0.011517      2      0
+ 5.3691E+12  16.726501   4.690696   1.231354   4.231787  -8.720815   0.000000   0.000004   0.000133   0.000071  1.433E-03  0.000E+00  max increase
+
+        relax to omega: wanted-current, current, wanted          40    1.5998846692471412D-06    5.6723205473958981D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          41    1.4544405402861448D-06    5.8177646763568946D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          42    1.3089964117734896D-06    5.9632088048695497D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          43    1.1635522807878633D-06    6.1086529358551760D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          44    1.0181081448464963D-06    6.2540970717965430D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          45    8.7266401721243792D-07    6.3995411994306014D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          46    7.2721988481735897D-07    6.5449853318256804D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          47    5.8177575181154132D-07    6.6904294648314980D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          48    4.3633161713273364D-07    6.8358735995103057D-06    7.2722052166430393D-06
+        relax to omega: wanted-current, current, wanted          49    2.9088748859537223D-07    6.9813177280476671D-06    7.2722052166430393D-06
+  2      50   7.626054  4.027E+04   4.690527   4.690678  21.000000  21.000000   0.746746   0.000504   0.251100   0.747186  -5.806891   2153      0
+  15.439168   0.886113   0.658682 -24.047492   3.541654 -99.000000   0.000000   0.251813   0.000447   0.001420   0.251381   0.011517      2      0
+ 5.4979E+15  16.726505   4.690678   1.231337   4.231748  -8.720836   0.000000   0.000004   0.000133   0.000071  1.433E-03  0.000E+00  max increase
+
+        relax to omega: wanted-current, current, wanted          50    1.4544334521563968D-07    7.1267618714273997D-06    7.2722052166430393D-06
+            final step: wanted-current, current, wanted          51   -7.8765733440910391D-13    7.2722060043003737D-06    7.2722052166430393D-06
+          1   7.648422  4.523E+04   5.343064   5.343138  29.999999  29.999999   0.746869   0.000476   0.251100   0.747139  -6.166319   2606      0
+   1.307197   0.763236   0.746854 -23.077820   4.293714  -7.350350   0.000000   0.251689   0.000467   0.001420   0.251428   0.009954      4      0
+ 2.0286E+01  16.661525   5.068843   1.573581   4.358537  -8.705162   0.000000   0.000013   0.000133   0.000071  1.433E-03  0.000E+00  max increase
+
+  2       1   7.625915  4.026E+04   4.849915   4.850013  21.000000  21.000000   0.746868   0.000475   0.251100   0.747186  -5.807440   2125      0
+   1.307197   0.885645   0.658746 -24.055524   3.785636  -7.994602   0.000000   0.251688   0.000475   0.001420   0.251381   0.011516      5      0
+ 2.0286E+01  16.725936   4.690535   1.203320   4.231541  -8.720928   0.000000   0.000008   0.000133   0.000071  1.433E-03  0.000E+00   b_companion
+
+ saving initial models
+         10   7.647466  4.517E+04   5.017842   5.017992  29.999977  29.999977   0.746916   0.000476   0.251100   0.747118  -6.169780   2531      0
+   2.019828   0.760299   0.747480 -23.127544   3.892503  -7.353486   0.000000   0.251639   0.000479   0.001420   0.251446   0.009954      4      0
+ 5.2660E+02  16.657613   5.067885   1.556907   4.356530  -8.706430   0.000000   0.000004   0.000133   0.000071  1.436E-03  0.000E+00  max increase
+
+  2      10   7.625061  4.021E+04   4.645284   4.645433  20.999995  20.999995   0.746937   0.000465   0.251100   0.747172  -5.811002   2175      0
+   2.019828   0.882850   0.659232 -24.101626   3.538730  -7.998093   0.000000   0.251616   0.000491   0.001420   0.251393   0.011514      3      0
+ 5.2660E+02  16.722315   4.689495   1.180081   4.229992  -8.721628   0.000000   0.000004   0.000133   0.000071  1.435E-03  0.000E+00  max increase
+
+bin      10  50.999971  72.417537  10.000011  0.000E+00   0.700000          0          1  0.000E+00 -2.267E-01  4.539E+54 -1.281E+38  0.000E+00
+   2.019828  29.999977   5.590882  10.055301  0.000E+00 150.922990  29.701262 -8.118E-01 -4.431E-08  1.000E+99  6.342E+51 -1.398E+35 -7.998E+33
+ 5.2660E+02  20.999995   4.562810  10.036142 -1.651E+49 215.604158  25.237109 -8.192E-01 -1.004E-08  0.000E+00  2.880E+51 -1.280E+38          1
+
+gzip: stdout: Broken pipe
+</pre></div></div>
+</div>
+<p>The above output is standard output of the beginning of a MESA binary run. Congratulations, you now know how to leverage POSYDON to run a grid of MESA simulations on a computer cluster!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="running-grids.html" class="btn btn-neutral float-left" title="Architecting MESA Simulation Grids with POSYDON" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="laptop.html" class="btn btn-neutral float-right" title="Run one binary on your laptop for debugging" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.3/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

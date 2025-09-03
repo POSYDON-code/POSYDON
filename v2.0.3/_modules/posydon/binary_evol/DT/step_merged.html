@@ -1,0 +1,734 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.DT.step_merged &mdash; posydon 2.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=664ffad9"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.DT.step_merged</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.DT.step_merged</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Merging and isolated evolution step.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.singlestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">STARPROPERTIES</span><span class="p">,</span> <span class="n">convert_star_to_massless_remnant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_state_of_star</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.step_isolated</span><span class="w"> </span><span class="kn">import</span> <span class="n">IsolatedStep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonerror</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">STAR_STATES_H_RICH</span><span class="p">,</span>
+    <span class="n">STAR_STATES_HE_RICH</span><span class="p">,</span>
+    <span class="n">STAR_STATES_NOT_CO</span>
+    <span class="p">)</span>
+
+<span class="n">LIST_ACCEPTABLE_STATES_FOR_HMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;H-rich_Core_H_burning&quot;</span><span class="p">]</span>
+<span class="n">LIST_ACCEPTABLE_STATES_FOR_HeMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;stripped_He_Core_He_burning&quot;</span><span class="p">]</span>
+
+<span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span> <span class="o">=</span> <span class="n">STAR_STATES_H_RICH</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="p">[</span><span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_HMS</span><span class="p">]</span>
+
+<span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTHeMS</span> <span class="o">=</span> <span class="n">STAR_STATES_HE_RICH</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="p">[</span><span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTHeMS</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_HeMS</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="MergedStep">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_merged.MergedStep">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MergedStep</span><span class="p">(</span><span class="n">IsolatedStep</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepare a merging star to do an an IsolatedStep</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">grid_name_Hrich</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">grid_name_strippedHe</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span>
+        <span class="n">merger_critical_rot</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">rel_mass_lost_HMS_HMS</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">list_for_matching_HMS</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;center_h1&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">&quot;log_min_max&quot;</span><span class="p">,</span> <span class="s2">&quot;min_max&quot;</span><span class="p">,</span> <span class="s2">&quot;min_max&quot;</span><span class="p">],</span>
+                <span class="c1">#[m_min_H, m_max_H], [0, None]</span>
+                <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="p">],</span>
+        <span class="n">list_for_matching_postMS</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">&quot;log_min_max&quot;</span><span class="p">,</span> <span class="s2">&quot;min_max&quot;</span><span class="p">,</span> <span class="s2">&quot;min_max&quot;</span><span class="p">],</span>
+                <span class="c1">#[m_min_H, m_max_H], [0, None]</span>
+                <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="p">],</span>
+        <span class="n">list_for_matching_HeStar</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">],</span>
+                <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">&quot;min_max&quot;</span> <span class="p">,</span> <span class="s2">&quot;min_max&quot;</span><span class="p">],</span>
+                <span class="c1">#[[m_min_He, m_max_He], [0, None]],</span>
+                <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="p">],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">merger_critical_rot</span> <span class="o">=</span> <span class="n">merger_critical_rot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_mass_lost_HMS_HMS</span> <span class="o">=</span> <span class="n">rel_mass_lost_HMS_HMS</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">grid_name_Hrich</span><span class="o">=</span><span class="n">grid_name_Hrich</span><span class="p">,</span>
+        <span class="n">grid_name_strippedHe</span><span class="o">=</span><span class="n">grid_name_strippedHe</span><span class="p">,</span>
+        <span class="n">list_for_matching_HMS</span> <span class="o">=</span> <span class="n">list_for_matching_HMS</span><span class="p">,</span>
+        <span class="n">list_for_matching_postMS</span> <span class="o">=</span> <span class="n">list_for_matching_postMS</span><span class="p">,</span>
+        <span class="n">list_for_matching_HeStar</span> <span class="o">=</span> <span class="n">list_for_matching_HeStar</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">binary</span><span class="p">):</span>
+
+        <span class="n">merged_star_properties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merged_star_properties</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Before Merger&quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                  <span class="n">binary</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;M1 , M2, he_core_mass1, he_core_mass2: &quot;</span><span class="p">,</span>
+                  <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span>
+                  <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">he_core_mass</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">he_core_mass</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;star_1.center_he4, star_2.center_he4, star_1.surface_he4, &quot;</span>
+                  <span class="s2">&quot;star_2.surface_he4: &quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">center_he4</span><span class="p">,</span>
+                  <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">center_he4</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">surface_he4</span><span class="p">,</span>
+                  <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">surface_he4</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;merged&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;oMerging1&#39;</span><span class="p">:</span>
+                <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span> <span class="o">=</span> <span class="n">merged_star_properties</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;oMerging2&#39;</span><span class="p">:</span>
+                <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span> <span class="o">=</span> <span class="n">merged_star_properties</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;binary.state=&#39;merged&#39; but binary.event != &#39;oMerging1/2&#39;&quot;</span><span class="p">)</span>
+
+        <span class="c1">## assume that binaries in RLO with two He-rich stars always merge   </span>
+        <span class="k">elif</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH</span> <span class="ow">and</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;merged&quot;</span>
+            <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;oRLO1&#39;</span><span class="p">:</span>
+                <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span> <span class="o">=</span> <span class="n">merged_star_properties</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;oRLO2&#39;</span><span class="p">:</span>
+                <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span> <span class="o">=</span> <span class="n">merged_star_properties</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;step_merged initiated for He stars but RLO not initiated&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;step_merged initiated but binary is not in valid merging state!&quot;</span><span class="p">)</span>
+
+        <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;After Merger&quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                  <span class="n">binary</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;M_merged , he_core_mass merged: &quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span>
+                  <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">he_core_mass</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;star_1.center_he4, star_1.surface_he4: &quot;</span><span class="p">,</span>
+                  <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">center_he4</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">surface_he4</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MergedStep.merged_star_properties">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_merged.MergedStep.merged_star_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merged_star_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">star_base</span><span class="p">,</span><span class="n">comp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make assumptions about the core/total mass, and abundances of the star of a merged product.</span>
+
+<span class="sd">        Similar to the table of merging in BSE</span>
+
+<span class="sd">        star_base: Single Star</span>
+<span class="sd">            is our base star that engulfs its companion. The merged star will have this star as a base</span>
+<span class="sd">        comp: Single Star</span>
+<span class="sd">            is the star that is engulfed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#by default the stellar attributes that keep the same value from the</span>
+        <span class="c1">#merged_star = copy.copy(star_base)</span>
+        <span class="n">merged_star</span> <span class="o">=</span> <span class="n">star_base</span>
+
+        <span class="n">s1</span> <span class="o">=</span> <span class="n">star_base</span><span class="o">.</span><span class="n">state</span>
+        <span class="n">s2</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">state</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mass_weighted_avg</span><span class="p">(</span><span class="n">star1</span><span class="o">=</span><span class="n">star_base</span><span class="p">,</span><span class="n">star2</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">abundance_name</span><span class="o">=</span><span class="s2">&quot;center_h1&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="n">A1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star1</span><span class="p">,</span> <span class="n">abundance_name</span><span class="p">)</span>
+            <span class="n">A2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star2</span><span class="p">,</span> <span class="n">abundance_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mass_weight1</span> <span class="o">==</span> <span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">:</span>
+                <span class="n">M1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star1</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star1</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">mass_weight1</span> <span class="o">==</span> <span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">:</span>
+                <span class="n">M1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star1</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star1</span><span class="p">,</span> <span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">M1</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star1</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">mass_weight2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">mass_weight2</span> <span class="o">=</span> <span class="n">mass_weight1</span>
+            <span class="k">if</span> <span class="n">mass_weight2</span> <span class="o">==</span> <span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">:</span>
+                <span class="n">M2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star2</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star2</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">mass_weight2</span> <span class="o">==</span> <span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">:</span>
+                <span class="n">M2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star2</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star2</span><span class="p">,</span> <span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">M2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star2</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">A1</span><span class="o">*</span><span class="n">M1</span> <span class="o">+</span> <span class="n">A2</span><span class="o">*</span><span class="n">M2</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">M1</span><span class="o">+</span><span class="n">M2</span><span class="p">)</span>
+
+        <span class="c1"># MS + MS</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_HMS</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_HMS</span><span class="p">):</span>
+                <span class="c1">#these stellar attributes change value</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">mass</span> <span class="o">+</span> <span class="n">comp</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">rel_mass_lost_HMS_HMS</span><span class="p">)</span>
+
+                <span class="c1">#TODO for key in [&quot;center_h1&quot;, &quot;center_he4&quot;, &quot;center_c12&quot;, &quot;center_n14&quot;,&quot;center_o16&quot;]:</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">()</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">)</span>
+                <span class="c1">#TODO: should I check if the abundaces above end up in ~1 (?)</span>
+
+                <span class="c1"># weigheted mixing on the surface abundances</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_h1&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_he4&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_c12&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_n14&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_o16&quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># these stellar attributes become np.nan</span>
+                    <span class="k">for</span> <span class="n">substring</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_&quot;</span><span class="p">,</span> <span class="s2">&quot;conv_&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">substring</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">,</span> <span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">,</span> <span class="s2">&quot;envelope_binding_energy&quot;</span><span class="p">]:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+
+        <span class="c1">#postMS + MS</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">s1</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_HMS</span><span class="p">):</span>
+
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">star_base</span><span class="o">.</span><span class="n">mass</span> <span class="o">+</span> <span class="n">comp</span><span class="o">.</span><span class="n">mass</span> <span class="c1">#TODO: in step_CEE we need to eject part of the (common) envelope</span>
+
+                <span class="c1"># weigheted mixing on the surface abundances of the whole comp with the envelope of star_base</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># these stellar attributes become np.nan</span>
+                    <span class="k">for</span> <span class="n">substring</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_&quot;</span><span class="p">,</span> <span class="s2">&quot;conv_&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">substring</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">,</span> <span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">]:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">log_LHe</span> <span class="o">=</span> <span class="n">star_base</span><span class="o">.</span><span class="n">log_LHe</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">log_LZ</span> <span class="o">=</span> <span class="n">star_base</span><span class="o">.</span><span class="n">log_LZ</span>
+
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># TODO for sure this needs testing!</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+
+        <span class="c1"># as above but opposite stars</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">s1</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_HMS</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span><span class="p">):</span>
+
+                <span class="n">merged_star</span> <span class="o">=</span> <span class="n">comp</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">star_base</span><span class="o">.</span><span class="n">mass</span> <span class="o">+</span> <span class="n">comp</span><span class="o">.</span><span class="n">mass</span>
+
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># these stellar attributes become np.nan</span>
+                    <span class="k">for</span> <span class="n">substring</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_&quot;</span><span class="p">,</span> <span class="s2">&quot;conv_&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">substring</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">,</span> <span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">]:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">log_LHe</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">log_LHe</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">log_LZ</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">log_LZ</span>
+
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># TODO for sure this needs testing!</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">star_base</span><span class="p">)</span>
+
+        <span class="c1">#postMS + postMS</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">s1</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span><span class="p">):</span>
+
+                <span class="c1"># add total and core masses</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;c_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;o_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;co_core_mass&quot;</span><span class="p">]:</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span><span class="n">current</span><span class="p">)</span>
+
+                <span class="c1"># weighted central abundances if merging cores. Else only from star_base</span>
+                <span class="k">if</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># two stars with Helium cores</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># star_base with CO core and the comp has a He core</span>
+                    <span class="k">pass</span> <span class="c1"># the central abundances are kept as the ones of star_base</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># comp with CO core and the star_base has a He core</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_h1</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_he4</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_c12</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_n14</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_o16</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span> <span class="c1">#TODO : maybe he_core_mass makes more sense?</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;weird compbination of CO core masses during merging&quot;</span><span class="p">,</span> <span class="s2">&quot;EvolutionWarning&quot;</span><span class="p">)</span>
+
+                <span class="c1"># weigheted mixing on the surface abundances based on the envelopes of the two stars</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;H-rich_envelope_mass&quot;</span><span class="p">)</span>
+
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># these stellar attributes become np.nan</span>
+                    <span class="k">for</span> <span class="n">substring</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_&quot;</span><span class="p">,</span> <span class="s2">&quot;conv_&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">substring</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">,</span> <span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">]:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># TODO for sure this needs testing!</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+
+        <span class="c1">#postMS + HeMSStar</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">s1</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_HeMS</span><span class="p">):</span>
+
+                <span class="c1"># add total and core masses</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;c_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;o_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;co_core_mass&quot;</span><span class="p">]:</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span><span class="n">current</span><span class="p">)</span>
+
+                <span class="c1"># weighted central abundances if merging cores. Else only from star_base</span>
+                <span class="k">if</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># two stars with only Helium cores, not CO cores</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># star_base with CO core and the comp has just a He core (is a HeMS star)</span>
+                    <span class="k">pass</span> <span class="c1"># the central abundances are kept as the ones of star_base</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;weird compbination of CO core masses during merging&quot;</span><span class="p">,</span> <span class="s2">&quot;EvolutionWarning&quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># these stellar attributes become np.nan</span>
+                    <span class="k">for</span> <span class="n">substring</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_&quot;</span><span class="p">,</span> <span class="s2">&quot;conv_&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">substring</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">,</span> <span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">]:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># TODO for sure this needs testing!</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+
+        <span class="c1"># as above but opposite stars</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">s1</span> <span class="ow">in</span>  <span class="n">LIST_ACCEPTABLE_STATES_FOR_HeMS</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span><span class="p">):</span>
+
+                <span class="n">merged_star</span> <span class="o">=</span> <span class="n">comp</span>
+
+                <span class="c1"># add total and core masses</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;c_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;o_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;co_core_mass&quot;</span><span class="p">]:</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star_base</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span><span class="n">current</span><span class="p">)</span>
+
+                <span class="c1"># weighted central abundances if merging cores. Else only from star_base</span>
+                <span class="k">if</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># two stars with only Helium cores, not CO cores</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># star_base is the HeMS Star and comp has a CO core</span>
+                    <span class="k">pass</span> <span class="c1"># the central abundances are kept as the ones of star_base</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;weird compbination of CO core masses during merging&quot;</span><span class="p">,</span> <span class="s2">&quot;EvolutionWarning&quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># these stellar attributes become np.nan</span>
+                    <span class="k">for</span> <span class="n">substring</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_&quot;</span><span class="p">,</span> <span class="s2">&quot;conv_&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">substring</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">,</span> <span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">]:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># TODO for sure this needs testing!</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">star_base</span><span class="p">)</span>
+
+        <span class="c1">#postMS + HeStar that is not in HeMS</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">s1</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTHeMS</span><span class="p">):</span>
+
+                <span class="c1"># add total and core masses</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;c_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;o_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;co_core_mass&quot;</span><span class="p">]:</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span><span class="n">current</span><span class="p">)</span>
+
+                <span class="c1"># weighted central abundances if merging cores. Else only from star_base</span>
+                <span class="k">if</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># two stars with Helium cores</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># star_base with CO core and the comp has a He core</span>
+                    <span class="k">pass</span> <span class="c1"># the central abundances are kept as the ones of star_base</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># comp with CO core and the star_base has a He core</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_h1</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_he4</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_c12</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_n14</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_o16</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;weird compbination of CO core masses during merging&quot;</span><span class="p">,</span> <span class="s2">&quot;EvolutionWarning&quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># these stellar attributes become np.nan</span>
+                    <span class="k">for</span> <span class="n">substring</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_&quot;</span><span class="p">,</span> <span class="s2">&quot;conv_&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">substring</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">,</span> <span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">]:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># TODO for sure this needs testing!</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+
+        <span class="c1"># as above but the opposite stars</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">s1</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTHeMS</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span><span class="p">):</span>
+
+                <span class="n">merged_star</span> <span class="o">=</span> <span class="n">comp</span>
+                <span class="c1"># add total and core masses</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;c_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;o_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;co_core_mass&quot;</span><span class="p">]:</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">star_base</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span><span class="n">current</span><span class="p">)</span>
+                <span class="c1"># weighted central abundances if merging cores. Else only from star_base</span>
+                <span class="k">if</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># two stars with Helium cores</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># star_base with CO core and the comp has a He core</span>
+                    <span class="k">pass</span> <span class="c1"># the central abundances are kept as the ones of star_base</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># comp with CO core and the star_base has a He core</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_h1</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_he4</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_c12</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_n14</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_o16</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;weird compbination of CO core masses during merging&quot;</span><span class="p">,</span> <span class="s2">&quot;EvolutionWarning&quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># these stellar attributes become np.nan</span>
+                    <span class="k">for</span> <span class="n">substring</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_&quot;</span><span class="p">,</span> <span class="s2">&quot;conv_&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">substring</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">,</span> <span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">]:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># TODO for sure this needs testing!</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">star_base</span><span class="p">)</span>
+
+        <span class="c1"># HeStar + HeStar</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH</span><span class="p">):</span>
+
+                <span class="c1"># add total and core masses</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;c_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;o_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;co_core_mass&quot;</span><span class="p">]:</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span><span class="n">current</span><span class="p">)</span>
+
+                <span class="c1"># weighted central abundances if merging cores. Else only from star_base</span>
+                <span class="k">if</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># two stars with Helium cores</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;he_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># star_base with CO core and the comp has a He core</span>
+                    <span class="k">pass</span> <span class="c1"># the central abundances are kept as the ones of star_base</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># comp with CO core and the star_base has a He core</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_h1</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_he4</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_c12</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_n14</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_o16</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;weird compbination of CO core masses during merging&quot;</span><span class="p">,</span> <span class="s2">&quot;EvolutionWarning&quot;</span><span class="p">)</span>
+
+                <span class="c1"># weigheted mixing on the surface abundances based on the He-rich envelopes of the two stars</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">surface_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;surface_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">,</span> <span class="n">mass_weight2</span><span class="o">=</span><span class="s2">&quot;He-rich_envelope_mass&quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># these stellar attributes become np.nan</span>
+                    <span class="k">for</span> <span class="n">substring</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_&quot;</span><span class="p">,</span> <span class="s2">&quot;conv_&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">substring</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">,</span> <span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">]:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># TODO for sure this needs testing!</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+
+        <span class="c1"># Star + WD</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_NOT_CO</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;WD&quot;</span><span class="p">]):</span>
+
+                <span class="c1">#WD is considered a stripped CO core</span>
+                <span class="c1"># add total and core masses</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;c_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;o_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;co_core_mass&quot;</span><span class="p">]:</span>
+                    <span class="n">current</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span><span class="n">current</span><span class="p">)</span>
+                <span class="c1"># weighted central abundances if merging cores. Else only from star_base</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># comp with CO core and the star_base has not</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_h1</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_he4</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_c12</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_n14</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">center_o16</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">star_base</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">comp</span><span class="o">.</span><span class="n">co_core_mass</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_h1</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_he4</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_c12</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_n14</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_n14&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                    <span class="n">merged_star</span><span class="o">.</span><span class="n">center_o16</span> <span class="o">=</span> <span class="n">mass_weighted_avg</span><span class="p">(</span><span class="n">abundance_name</span> <span class="o">=</span> <span class="s2">&quot;center_o16&quot;</span><span class="p">,</span> <span class="n">mass_weight1</span><span class="o">=</span><span class="s2">&quot;co_core_mass&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;weird compbination of CO core masses during merging&quot;</span><span class="p">,</span> <span class="s2">&quot;EvolutionWarning&quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STARPROPERTIES</span><span class="p">:</span>
+                    <span class="c1"># these stellar attributes become np.nan</span>
+                    <span class="k">for</span> <span class="n">substring</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_&quot;</span><span class="p">,</span> <span class="s2">&quot;conv_&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">substring</span> <span class="ow">in</span> <span class="n">key</span><span class="p">)</span> <span class="p">:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span> <span class="s2">&quot;c12_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;center_gamma&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;avg_c_in_c_core&quot;</span><span class="p">,</span> <span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">]:</span>
+                            <span class="nb">setattr</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">merged_star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">merged_star</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># TODO for sure this needs testing!</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+
+        <span class="c1"># Star + NS/BH</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_NOT_CO</span>
+            <span class="ow">and</span> <span class="n">s2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;NS&quot;</span><span class="p">,</span> <span class="s2">&quot;BH&quot;</span><span class="p">]):</span>
+                <span class="n">merged_star</span> <span class="o">=</span> <span class="n">comp</span>
+                <span class="c1"># TODO: potentially flag a Thorne-Zytkov object</span>
+                <span class="n">massless_remnant</span> <span class="o">=</span> <span class="n">convert_star_to_massless_remnant</span><span class="p">(</span><span class="n">star_base</span><span class="p">)</span>
+
+                <span class="c1">## in this case, want CO companion object to stay the same, and base star to be assigned massless remnant</span>
+                <span class="k">return</span> <span class="n">massless_remnant</span><span class="p">,</span> <span class="n">merged_star</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ModelError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Combination of merging star states not expected: </span><span class="si">{</span><span class="n">s1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">s2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ad hoc spin of merged star to be used in the detached step</span>
+        <span class="n">merged_star</span><span class="o">.</span><span class="n">surf_avg_omega_div_omega_crit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_critical_rot</span>
+
+        <span class="k">return</span> <span class="n">merged_star</span><span class="p">,</span> <span class="n">massless_remnant</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.3/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

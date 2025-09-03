@@ -1,0 +1,527 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.utils.configfile &mdash; posydon 2.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=664ffad9"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.utils.configfile</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.utils.configfile</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for providing support for configuration files.</span>
+
+<span class="sd">The ConfigClass loads, edits and saves configuration files in JSON format. The</span>
+<span class="sd">data are encapsulated in a single dictionary mapping the variable names (keys)</span>
+<span class="sd">to their values.</span>
+
+<span class="sd">ConfigFile is an alternative to the `configparse` module in Python&#39;s standard</span>
+<span class="sd">libray. While `configparser` can handle only string values and requires using</span>
+<span class="sd">sections (as in .ini files), `ConfigFile` is simpler and faster to use, while</span>
+<span class="sd">permits keys and values of any type that a Python dictionary permits.</span>
+
+<span class="sd">As it relies on the Python `json` module, an internal function is called when</span>
+<span class="sd">a values is not known to `json`, e.g. numpy arrays.</span>
+
+<span class="sd">Finally, the function `parse_inifile` is defined to help reading .ini files.</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">(1) Saving a dictionary:</span>
+
+<span class="sd">    D = {&quot;username&quot;: &quot;konstantinos&quot;,</span>
+<span class="sd">         &quot;nodes&quot;: [1, 5, 3],</span>
+<span class="sd">         &quot;memory&quot;: 1024,</span>
+<span class="sd">         &quot;code&quot;: 42,</span>
+<span class="sd">         &quot;std.out&quot;: &quot;/data/output/std.out&quot;}</span>
+
+<span class="sd">    config_file = ConfigFile(&quot;tmp.cfg&quot;)</span>
+<span class="sd">    config_file.update(D)</span>
+<span class="sd">    config_file.save()</span>
+
+<span class="sd">    OR</span>
+
+<span class="sd">    my_config_file = ConfigFile()</span>
+<span class="sd">    my_config_file.update(D)</span>
+<span class="sd">    my_config_file.save(filename)</span>
+
+
+<span class="sd">(2) Loading and printing configuration:</span>
+
+<span class="sd">    config = ConfigFile(filename)</span>
+<span class="sd">    print(&quot;Loaded a config file with {} entries.&quot;.format(len(config)))</span>
+<span class="sd">    print(&quot;The code is&quot;, config[&quot;code&quot;])</span>
+<span class="sd">    print(config)</span>
+
+<span class="sd">(4) Altering entries (and creating if non-existing):</span>
+
+<span class="sd">    config[&quot;machine&quot;] = &quot;supercomputer&quot;</span>
+<span class="sd">    config[&quot;code&quot;] = 24</span>
+<span class="sd">    config[&quot;H0 and error&quot;] = (67.8, 0.9)</span>
+
+<span class="sd">(3) Loading configuration from multiple files:</span>
+
+<span class="sd">    config = CongfigFile(&quot;config1.json&quot;)</span>
+<span class="sd">    config.load(&quot;config2.json&quot;)</span>
+
+<span class="sd">    OR</span>
+
+<span class="sd">    config.load(&quot;config1.json&quot;)</span>
+<span class="sd">    config.load(&quot;config2.json&quot;)</span>
+
+<span class="sd">    If the two loaded configuration files have common keys, then an Exception</span>
+<span class="sd">    will occur. To allow updates, e.g. in the case of default configuration</span>
+<span class="sd">    and user configuration overriding the former, then:</span>
+
+<span class="sd">    config = ConfigFile(&quot;default.cfg&quot;)</span>
+<span class="sd">    config.load(&quot;user.cfg&quot;, can_update=True)</span>
+
+<span class="sd">(5) Iterating entries:</span>
+
+<span class="sd">    config = ConfigFile(&quot;my_conf.json&quot;)</span>
+
+<span class="sd">    print(&quot;All configuration items:&quot;)</span>
+<span class="sd">    for key in config:</span>
+<span class="sd">        print(&quot;    {}: {}&quot;.format(key, config[key]))</span>
+
+<span class="sd">    print(&quot;Ok, I&#39;ll repeat that...:&quot;)</span>
+<span class="sd">    for key, value in config.items():</span>
+<span class="sd">        print(&quot;    {}: {}&quot;.format(key, value))</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">configparser</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+
+
+<div class="viewcode-block" id="ConfigFile">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.configfile.ConfigFile">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigFile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class handling input, process and output of configurations.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a ConfigFile with or without a path.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entries</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConfigFile.deepcopy">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.configfile.ConfigFile.deepcopy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a deep copy of the object.&quot;&quot;&quot;</span>
+        <span class="n">newobj</span> <span class="o">=</span> <span class="n">ConfigFile</span><span class="p">()</span>
+        <span class="n">newobj</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">newobj</span><span class="o">.</span><span class="n">entries</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">newobj</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_serialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize data of types unknown to Python&#39;s `json` module.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ConfigFile.save">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.configfile.ConfigFile.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the configuration entries into a JSON file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or None</span>
+<span class="sd">            Where to save. If None, save to the path from the initialization.</span>
+<span class="sd">        overwrite : bool</span>
+<span class="sd">            If True, it will overwrite if the path exists.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No path passed.&quot;</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">PermissionError</span><span class="p">(</span><span class="s2">&quot;JSON file not saved: overwrite not &quot;</span>
+                                  <span class="s2">&quot;permitted.&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                      <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_serialize</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConfigFile.load">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.configfile.ConfigFile.load">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">can_update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the entries from a JSON file containing a dictionary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or None</span>
+<span class="sd">            The path of the JSON file. If `None` it will use the path which</span>
+<span class="sd">            which the ConfigFile instance was initialized.</span>
+<span class="sd">        can_update : bool</span>
+<span class="sd">            If True, if a key already exists, it will get the new value.</span>
+<span class="sd">            If False, an Exception is thrown.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No path passed.&quot;</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">new_entries</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">can_update</span><span class="p">:</span>
+                <span class="n">current_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="n">new_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">new_entries</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="n">common</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">current_keys</span> <span class="o">&amp;</span> <span class="n">new_keys</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">PermissionError</span><span class="p">(</span><span class="s2">&quot;Not allowed to update the entries&quot;</span>
+                                          <span class="s2">&quot; </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">common</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_entries</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the value of an entry.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the value of an entry.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create new or updates an entry.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete an entry by it&#39;s key.&quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow the iteration of entries.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConfigFile.update">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.configfile.ConfigFile.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create new or update entries from an external dictionary.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dictionary</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConfigFile.keys">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.configfile.ConfigFile.keys">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the keys of the configuration dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConfigFile.values">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.configfile.ConfigFile.values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the values of the configuration dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConfigFile.items">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.configfile.ConfigFile.items">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return (key, value) tuples of the configuration dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Represent the configuration dictionary as a string.&quot;&quot;&quot;</span>
+        <span class="n">output_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">output_str</span> <span class="o">=</span> <span class="n">output_str</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">output_str</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Search if a specific entry exists in the configuration.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of configuration entries.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_inifile">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.configfile.parse_inifile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_inifile</span><span class="p">(</span><span class="n">inifile</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an inifile and return dicts of each section.&quot;&quot;&quot;</span>
+    <span class="n">binOps</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">ast</span><span class="o">.</span><span class="n">Add</span><span class="p">:</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span>
+        <span class="n">ast</span><span class="o">.</span><span class="n">Sub</span><span class="p">:</span> <span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">,</span>
+        <span class="n">ast</span><span class="o">.</span><span class="n">Mult</span><span class="p">:</span> <span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span>
+        <span class="n">ast</span><span class="o">.</span><span class="n">Div</span><span class="p">:</span> <span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">,</span>
+        <span class="n">ast</span><span class="o">.</span><span class="n">Mod</span><span class="p">:</span> <span class="n">operator</span><span class="o">.</span><span class="n">mod</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">arithmetic_eval</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Control how the strings from the inifile get parsed.&quot;&quot;&quot;</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;eval&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_eval</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Different strings receive different evaluation.&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Expression</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">_eval</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s1">&#39;,&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">s</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">s</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Num</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">n</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">BinOp</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">binOps</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">op</span><span class="p">)](</span><span class="n">_eval</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">),</span>
+                                             <span class="n">_eval</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">List</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">_eval</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">elts</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">VariableKey</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">node</span><span class="p">)</span>
+                <span class="n">constants_lookup</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;True&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s1">&#39;False&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s1">&#39;None&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">constants_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">result</span><span class="p">,)</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">VariableKey</span><span class="p">:</span>
+                    <span class="c1"># return regular string</span>
+                    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># return special string like True or False</span>
+                    <span class="k">return</span> <span class="n">value</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">NameConstant</span><span class="p">):</span>
+                <span class="c1"># None, True, False are nameconstants in python3 but names in 2</span>
+                <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unsupported type </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">_eval</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+
+    <span class="c1"># ---- Create configuration-file-parser object and read parameters file.</span>
+    <span class="n">cp</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span>
+        <span class="p">{</span><span class="s1">&#39;MESA_DIR&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MESA_DIR&#39;</span><span class="p">]},</span>
+        <span class="n">interpolation</span><span class="o">=</span><span class="n">configparser</span><span class="o">.</span><span class="n">ExtendedInterpolation</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">cp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">inifile</span><span class="p">)</span>
+
+    <span class="c1"># ---- Read needed variables from the inifile</span>
+    <span class="n">dictionary</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">cp</span><span class="o">.</span><span class="n">sections</span><span class="p">():</span>
+        <span class="n">dictionary</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">cp</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">section</span><span class="p">):</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">dictionary</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">arithmetic_eval</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="n">dictionary</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;,&#39;</span> <span class="ow">in</span> <span class="n">opt</span><span class="p">:</span>
+                    <span class="n">dictionary</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                        <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dictionary</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">opt</span>
+
+    <span class="n">run_parameters</span> <span class="o">=</span> <span class="n">dictionary</span><span class="p">[</span><span class="s1">&#39;run_parameters&#39;</span><span class="p">]</span>
+    <span class="n">mesa_inlists</span> <span class="o">=</span> <span class="n">dictionary</span><span class="p">[</span><span class="s1">&#39;mesa_inlists&#39;</span><span class="p">]</span>
+    <span class="n">mesa_extras</span> <span class="o">=</span> <span class="n">dictionary</span><span class="p">[</span><span class="s1">&#39;mesa_extras&#39;</span><span class="p">]</span>
+    <span class="n">slurm</span> <span class="o">=</span> <span class="n">dictionary</span><span class="p">[</span><span class="s1">&#39;slurm&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">run_parameters</span><span class="p">,</span> <span class="n">slurm</span><span class="p">,</span> <span class="n">mesa_inlists</span><span class="p">,</span> <span class="n">mesa_extras</span></div>
+
+
+
+<div class="viewcode-block" id="VariableKey">
+<a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.configfile.VariableKey">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VariableKey</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dictionary key which is a variable.</span>
+
+<span class="sd">    @ivar item: The variable AST object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the object by giving a `name` to it.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compare</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Equality if the names are the same.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">compare</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+            <span class="ow">and</span> <span class="n">compare</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow hashing using the name of the variable.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.3/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
