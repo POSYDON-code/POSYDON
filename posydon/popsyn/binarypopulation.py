@@ -935,7 +935,6 @@ class BinaryGenerator:
         self.kwargs = kwargs.copy()
         self.sampler = sampler
         self.star_formation = kwargs.get('star_formation', 'burst')
-        self.binary_fraction_generator =  binary_fraction_value
         self.Z_div_Zsun = kwargs.get('metallicity', 1.)
 
     def reset_rng(self):
