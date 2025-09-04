@@ -759,8 +759,8 @@ class detached_step:
                             / (const.standard_cgrav * (interp1d[self.translate["mass"]](t[:-1]) \
                             * const.msol)**2))
     
-                            current = zero_negative_values([current], key)[0]
-                            history = zero_negative_values(history, key)
+                        current = zero_negative_values([current], key)[0]
+                        history = zero_negative_values(history, key)
 
                 elif (key in ["lg_mdot", "lg_wind_mdot"] and obj != binary):
                     if obj.co:
