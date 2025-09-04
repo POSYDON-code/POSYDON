@@ -28,10 +28,12 @@ from posydon.utils.common_functions import (bondi_hoyle,
                                             orbital_period_from_separation,
                                             roche_lobe_radius,
                                             check_state_of_star,
-                                            set_binary_to_failed)
+                                            set_binary_to_failed,
+                                            zero_negative_values)
 from posydon.binary_evol.flow_chart import (STAR_STATES_CC, 
                                             STAR_STATES_H_RICH_EVOLVABLE,
-                                            STAR_STATES_HE_RICH_EVOLVABLE)
+                                            STAR_STATES_HE_RICH_EVOLVABLE,
+                                            UNDEFINED_STATES)
 import posydon.utils.constants as const
 from posydon.utils.posydonerror import (NumericalError, POSYDONError, 
                                         FlowError, ClassificationError)
@@ -330,8 +332,13 @@ class detached_step:
         binary_sim_prop = getattr(binary, "properties")
         all_step_names = getattr(binary_sim_prop, "all_step_names")
 
+        # get the next step's name to display for match recording in data frame
+        # (in the event that the total_state is not in the flow, this will be None,
+        #  and the binary will be set to fail in BinaryStar().run_step()).
+        next_step_name = binary.get_next_step_name()
+        
         # match stars to single star models for detached evolution
-        primary, secondary, only_CO = self.track_matcher.do_matching(binary, "step_detached")
+        primary, secondary, only_CO = self.track_matcher.do_matching(binary, next_step_name)
         
         if only_CO:
             if self.verbose:
@@ -609,8 +616,13 @@ class detached_step:
         mass_interp_pri = primary.interp1d[self.translate["mass"]]
 
         secondary.interp1d["sep"] = sep_interp
-        secondary.interp1d["ecc"] = ecc_interp    
+        secondary.interp1d["ecc"] = ecc_interp
+        secondary.interp1d["time"] = t    
         secondary.interp1d["omega"] = omega_interp_sec
+
+        primary.interp1d["sep"] = sep_interp
+        primary.interp1d["ecc"] = ecc_interp
+        primary.interp1d["time"] = t            
         primary.interp1d["omega"] = omega_interp_pri
 
         secondary.interp1d["porb"] = orbital_period_from_separation(
@@ -660,7 +672,10 @@ class detached_step:
 
                         current = (interp1d["omega"][-1] / const.secyer / omega_crit_current)
                         history = (interp1d["omega"][:-1] / const.secyer / omega_crit_hist)
-                        
+
+                        # ensure positive rotation values
+                        current = zero_negative_values([current], key)[0]
+                        history = zero_negative_values(history, key)
 
                 elif (key in ["surf_avg_omega"] and obj != binary):
                     if obj.co:
@@ -669,6 +684,9 @@ class detached_step:
                     else:
                         current = interp1d["omega"][-1] / const.secyer
                         history = interp1d["omega"][:-1] / const.secyer
+
+                        current = zero_negative_values([current], key)[0]
+                        history = zero_negative_values(history, key)
                         
                 elif ("rl_relative_overflow_" in key and obj == binary):
                     s = binary.star_1 if "_1" in key[-2:] else binary.star_2
@@ -688,14 +706,21 @@ class detached_step:
                 elif key in ["separation", "orbital_period", "eccentricity", "time"]:
                     current = interp1d[self.translate[key]][-1].item()
                     history = interp1d[self.translate[key]][:-1]
+
+                    current = zero_negative_values([current], key)[0]
+                    history = zero_negative_values(history, key)
                     
                 elif (key in ["total_moment_of_inertia"] and obj != binary):
                     if obj.co:
                         current = getattr(obj, key)
                         history = [current] * len(t[:-1])
                     else:
+
                         current = interp1d[self.translate[key]](t[-1]).item() * (const.msol * const.rsol**2)
                         history = interp1d[self.translate[key]](t[:-1]) * (const.msol * const.rsol**2)
+    
+                        current = zero_negative_values([current], key)[0]
+                        history = zero_negative_values(history, key)
                     
                 elif (key in ["log_total_angular_momentum"] and obj != binary):
                     if obj.co:
@@ -711,6 +736,9 @@ class detached_step:
                                        * (interp1d[self.translate["total_moment_of_inertia"]](t[:-1]) \
                                        * (const.msol * const.rsol**2))
                         history = np.where(tot_j_hist > 0, np.log10(tot_j_hist), -99)
+
+                        current = zero_negative_values([current], key)[0]
+                        history = zero_negative_values(history, key)
                     
                 elif (key in ["spin"] and obj != binary):
                     if obj.co:
@@ -725,11 +753,14 @@ class detached_step:
                             * const.msol)**2))
                         
                         history = (const.clight 
-                            * (interp1d["omega"][:-1] / const.secyer)
+                            * (interp1d["omega"][:-1] / const.secyer) \
                             * interp1d[self.translate["total_moment_of_inertia"]](t[:-1]) \
-                            * (const.msol * const.rsol**2)
+                            * (const.msol * const.rsol**2) \
                             / (const.standard_cgrav * (interp1d[self.translate["mass"]](t[:-1]) \
                             * const.msol)**2))
+    
+                            current = zero_negative_values([current], key)[0]
+                            history = zero_negative_values(history, key)
 
                 elif (key in ["lg_mdot", "lg_wind_mdot"] and obj != binary):
                     if obj.co:

@@ -111,7 +111,8 @@ class TestElements:
                     'rzams', 'separation_evol_wind_loss',\
                     'set_binary_to_failed', 'spin_stable_mass_transfer',\
                     'stefan_boltzmann_law', 'STAR_STATES_H_RICH',\
-                    'STAR_STATES_HE_RICH'}
+                    'STAR_STATES_HE_RICH', 'zero_negative_values'}
+
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
