@@ -163,7 +163,8 @@ class SingleStar:
             self.M4 = None
         if not hasattr(self, 'mu4'):
             self.mu4 = None
-
+        if not hasattr(self, 'interp1d'):
+            self.interp1d = None
 
         # the following quantities are updated in mesa_step.py
 

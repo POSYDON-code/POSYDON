@@ -96,6 +96,31 @@ def is_number(s):
     except ValueError:
         return False
 
+def zero_negative_values(arr, key): # pragma no cover
+    """
+        Set negative values in the array to zero.
+
+        Parameters
+        ----------
+        arr : np.ndarray
+            The input array to process.
+        key : string
+            The name of the array column
+
+        Returns
+        -------
+        np.ndarray
+            The processed array with negative values set to zero.
+    """
+    arr = np.array(arr)
+
+    if np.any(arr < 0):
+        Pwarn("A " + key + " value is negative. Setting to zero.", 
+              "ReplaceValueWarning")
+
+    arr[arr < 0] = 0.0
+    return arr
+
 
 def stefan_boltzmann_law(L, R):
     """Compute the effective temperature give the luminosity and radius."""
@@ -1429,7 +1454,7 @@ def infer_star_state(star_mass=None, surface_h1=None,
         return STATE_UNDETERMINED
 
     rich_in = ("H-rich" if surface_h1 > THRESHOLD_HE_NAKED_ABUNDANCE
-               else ("accreted_He" if round(surface_h1, 10)<round(center_h1,10)
+               else ("accreted_He" if round(surface_h1, 10) < round(center_h1,10)
                else "stripped_He"))
     burning_H = (log_LH > LOG10_BURNING_THRESHOLD
                  and log_LH - log_Lnuc > REL_LOG10_BURNING_THRESHOLD)

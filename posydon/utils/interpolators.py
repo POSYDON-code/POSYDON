@@ -3,11 +3,13 @@
 
 __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator
+import copy
 
 
 class interp1d:
@@ -95,6 +97,7 @@ class interp1d:
             Interpolated y-values.
 
         """
+
         x_n = np.array(x_new)
         if self.kind == 'linear':
             y_interp = np.array(np.interp(x=x_n, xp=self.x, fp=self.y,
@@ -119,7 +122,7 @@ class interp1d:
 
 class PchipInterpolator2:
     """Interpolation class."""
-    def __init__(self, *args, positive=False, **kwargs):
+    def __init__(self, *args, positive=False, derivative=False, **kwargs):
         """Initialize the interpolator.
 
         Parameters
@@ -130,8 +133,22 @@ class PchipInterpolator2:
             Arguments passed to original PchipInterpolator init.
 
         """
-        self.interpolator = PchipInterpolator(*args, **kwargs)
+
+
+        # this will set whether or not the __call__ should return the y(x) or y'(x)
+        self.derivative = derivative
+
+        if self.derivative:
+            self.interpolator = PchipInterpolator(*args, **kwargs).derivative()
+        else:
+            self.interpolator = PchipInterpolator(*args, **kwargs)
+            
         self.positive = positive
+
+        # potential offset (for example, we've matched a MESA sim to another
+        # but need to offset the matched track's age to fast forward to current
+        # age in the evolution)
+        self.offset = 0.0
 
     def __call__(self, *args, **kwargs):
         """Use the interpolator.
@@ -147,7 +164,15 @@ class PchipInterpolator2:
             Interpolated values.
 
         """
+
+        # offset x (the offset is 0 unless otherwise set)
+        args = np.array(list(args))
+        args_copy = copy.deepcopy(args)
+        args_copy[0] -= self.offset
+        args = tuple(args_copy)
+
         result = self.interpolator(*args, **kwargs)
+
         if self.positive:
             result = np.maximum(result, 0.0)
         return result

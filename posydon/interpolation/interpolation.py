@@ -331,6 +331,11 @@ class GRIDInterpolator():
             grid_mass.append(grid[i].history1['star_mass'][0])
         self.grid_mass = np.array(grid_mass)
 
+        grid_age = []
+        for i in range(len(grid)):
+            grid_age.append(max(grid[i].history1['star_age']))
+        self.grid_age = np.array(grid_age)
+
         self.grid_data = dict()
         self.grid_final_values = dict()
         self.grid_profile = dict()

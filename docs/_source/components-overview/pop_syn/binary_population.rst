@@ -224,4 +224,3 @@ The ``BinaryGenerator`` class is a helper class for generating binary systems ba
 It can be used to create a population of binaries with specific characteristics, such as mass ratios,
 metallicity, and initial conditions.
 Please see the :class:`BinaryGenerator <posydon.popsyn.binarypopulation.BinaryGenerator>` documentation for more details on how to use this class.
-
