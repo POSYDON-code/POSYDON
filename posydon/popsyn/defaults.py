@@ -56,5 +56,5 @@ default_kwargs = {
 
     #Binary fraction
     'binary_fraction_const' : 1,
-    'binary_fraction_scheme' : 'const',#'Moe_17'
+    'binary_fraction_scheme' : 'const',
 }
