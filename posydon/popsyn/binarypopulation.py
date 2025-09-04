@@ -37,7 +37,6 @@ from tqdm import tqdm
 import psutil
 import sys
 
-
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
 from posydon.binary_evol.simulationproperties import SimulationProperties
@@ -935,7 +934,6 @@ class BinaryGenerator:
         self.kwargs = kwargs.copy()
         self.sampler = sampler
         self.star_formation = kwargs.get('star_formation', 'burst')
-        self.binary_fraction_generator =  binary_fraction_value
         self.Z_div_Zsun = kwargs.get('metallicity', 1.)
 
     def reset_rng(self):
