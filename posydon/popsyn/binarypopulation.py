@@ -22,6 +22,7 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
@@ -35,8 +36,6 @@ import atexit
 import os
 from tqdm import tqdm
 import psutil
-import sys
-
 
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
@@ -48,7 +47,7 @@ from posydon.popsyn.independent_sample import (generate_independent_samples,
                                                binary_fraction_value)
 from posydon.popsyn.sample_from_file import (get_samples_from_file,
                                              get_kick_samples_from_file)
-from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
+
 from posydon.popsyn.defaults import default_kwargs
 
 from posydon.popsyn.io import binarypop_kwargs_from_ini
@@ -503,7 +502,6 @@ class BinaryPopulation:
             List of absolute paths to the temporary files.
 
         """
-        dir_name = os.path.dirname(absolute_filepath)
 
         history_cols = pd.read_hdf(file_names[0], key='history').columns
         oneline_cols = pd.read_hdf(file_names[0], key='oneline').columns
@@ -855,25 +853,32 @@ class PopulationManager:
             simulated_mass_binaries = 0.0
             number_of_systems=0
 
+            # read history and oneline
             history_df = self.to_df(**kwargs)
-            store.append('history', history_df)
-
-            kwargs['S1_kwargs'] = {"only_select_columns": ["mass"]}
-            kwargs['S2_kwargs'] = {"only_select_columns": ["mass"]}
             oneline_df = self.to_oneline_df(**kwargs)
+
+            # get columns for saving
+            history_cols = history_df.columns
+            oneline_cols = oneline_df.columns
+
+            history_min_itemsize = {key: val for key, val in
+                                    HISTORY_MIN_ITEMSIZE.items()
+                                    if key in history_cols}
+            oneline_min_itemsize = {key: val for key, val in
+                                    ONELINE_MIN_ITEMSIZE.items()
+                                    if key in oneline_cols}
+
+            # store history
+            store.append('history', history_df,
+                         min_itemsize=history_min_itemsize)
 
             try:
 
                 # split weight between single and binary stars
-                mask = oneline_df["state_i"] == "initially_single_star"
-                filtered_data_single = oneline_df[mask]
-                filtered_data_binaries = oneline_df[~mask]
-
                 ZAMS_mask = history_df["event"] == "ZAMS"
                 singles_mask = history_df[ZAMS_mask]["state"] == "initially_single_star"
                 filtered_data_single = history_df[ZAMS_mask][singles_mask]
                 filtered_data_binaries = history_df[ZAMS_mask][~singles_mask]
-
 
                 simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass", "S2_mass"]].to_numpy())
                 simulated_mass_single += np.nansum(filtered_data_single[["S1_mass"]].to_numpy())
@@ -885,10 +890,18 @@ class PopulationManager:
 
                 number_of_systems += len(oneline_df)
 
-                store.append('oneline', oneline_df)
+                # store oneline
+                store.append('oneline', oneline_df,
+                             min_itemsize=oneline_min_itemsize)
 
             except Exception:
                 print(traceback.format_exc(), flush=True)
+
+            # store population metadata
+            tmp_df = pd.DataFrame()
+            for c in saved_ini_parameters:
+                tmp_df[c] = [self.kwargs[c]]
+            store.append('ini_parameters', tmp_df)
             
             tmp_df = pd.DataFrame(
                 index=[self.metallicity],
@@ -898,12 +911,6 @@ class PopulationManager:
                       'number_of_systems': number_of_systems})
             tmp_df.index.name = 'metallicity'
             store.append('mass_per_metallicity', tmp_df)
-
-            # store population metadata
-            tmp_df = pd.DataFrame()
-            for c in saved_ini_parameters:
-                tmp_df[c] = [self.kwargs[c]]
-            store.append('ini_parameters', tmp_df)
 
         return
 
