@@ -37,7 +37,6 @@ from tqdm import tqdm
 import psutil
 import sys
 
-
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
 from posydon.binary_evol.simulationproperties import SimulationProperties
