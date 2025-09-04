@@ -433,7 +433,7 @@ class BinaryPopulation:
                 self.manager.remove(self.manager.binaries.copy())
 
         # save by either combining dump files if optimize_ram = True...
-        if optimize_ram:
+        if (optimize_ram and not breakdown_to_df):
             # combining files
             if self.JOB_ID is None and self.comm is None:
                 self.combine_saved_files(os.path.join(temp_directory,
@@ -462,14 +462,13 @@ class BinaryPopulation:
         """Save BinaryPopulation to hdf file."""
         optimize_ram = self.kwargs['optimize_ram']
         temp_directory = self.kwargs['temp_directory']
-        mode = self.kwargs.get('mode', 'a')
 
         if self.JOB_ID is None and self.comm is None:
             if optimize_ram:
                 os.rename(os.path.join(temp_directory, "evolution.combined.h5"),
                           save_path)
             else:
-                self.manager.save(save_path, mode=mode, **kwargs)
+                self.manager.save(save_path, **kwargs)
         else:
             absolute_filepath = os.path.abspath(save_path)
             dir_name = os.path.dirname(absolute_filepath)
@@ -532,18 +531,20 @@ class BinaryPopulation:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
                 try:
-                    store.append('history', pd.read_hdf(f, key='history'),
+                    history = pd.read_hdf(f, key='history')
+                    store.append('history', history,
                                  min_itemsize=history_min_itemsize)
                     
                     oneline = pd.read_hdf(f, key='oneline')
                     
                     # split weight between single and binary stars
-                    mask = oneline["state_i"] == "initially_single_star"
-                    filtered_data_single = oneline[mask]
-                    filtered_data_binaries = oneline[~mask]
+                    ZAMS_mask = history["event"] == "ZAMS"
+                    singles_mask = history[ZAMS_mask]["state"] == "initially_single_star"
+                    filtered_data_single = history[ZAMS_mask][singles_mask]
+                    filtered_data_binaries = history[ZAMS_mask][~singles_mask]
                     
-                    simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                    simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                    simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass", "S2_mass"]].to_numpy())
+                    simulated_mass_single += np.nansum(filtered_data_single[["S1_mass"]].to_numpy())
                     simulated_mass = simulated_mass_single + simulated_mass_binaries
                        
                     if 'metallicity' not in oneline.columns:
@@ -843,7 +844,7 @@ class PopulationManager:
         # needed for metadata
         self.metallicity = self.binary_generator.Z_div_Zsun
 
-        mode = kwargs.get('mode', 'a')
+        mode = kwargs.get('mode', 'w')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
 
@@ -868,8 +869,14 @@ class PopulationManager:
                 filtered_data_single = oneline_df[mask]
                 filtered_data_binaries = oneline_df[~mask]
 
-                simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                ZAMS_mask = history_df["event"] == "ZAMS"
+                singles_mask = history_df[ZAMS_mask]["state"] == "initially_single_star"
+                filtered_data_single = history_df[ZAMS_mask][singles_mask]
+                filtered_data_binaries = history_df[ZAMS_mask][~singles_mask]
+
+
+                simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass", "S2_mass"]].to_numpy())
+                simulated_mass_single += np.nansum(filtered_data_single[["S1_mass"]].to_numpy())
                 simulated_mass = simulated_mass_single + simulated_mass_binaries
 
                 if 'metallicity' not in oneline_df.columns:
