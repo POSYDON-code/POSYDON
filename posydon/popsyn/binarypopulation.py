@@ -536,10 +536,10 @@ class BinaryPopulation:
                     oneline = pd.read_hdf(f, key='oneline')
                     
                     # split weight between single and binary stars
-                    ZAMS_mask = history["event"] == "ZAMS"
-                    singles_mask = history[ZAMS_mask]["state"] == "initially_single_star"
-                    filtered_data_single = history[ZAMS_mask][singles_mask]
-                    filtered_data_binaries = history[ZAMS_mask][~singles_mask]
+                    init_step_mask = ~history.index.duplicated(keep="first")  # indices that are NOT duplicates of the first
+                    singles_mask = history["state"] == "initially_single_star"
+                    filtered_data_single = history[init_step_mask & singles_mask]
+                    filtered_data_binaries = history[init_step_mask & ~singles_mask]
                     
                     simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass", "S2_mass"]].to_numpy())
                     simulated_mass_single += np.nansum(filtered_data_single[["S1_mass"]].to_numpy())
@@ -875,10 +875,10 @@ class PopulationManager:
             try:
 
                 # split weight between single and binary stars
-                ZAMS_mask = history_df["event"] == "ZAMS"
-                singles_mask = history_df[ZAMS_mask]["state"] == "initially_single_star"
-                filtered_data_single = history_df[ZAMS_mask][singles_mask]
-                filtered_data_binaries = history_df[ZAMS_mask][~singles_mask]
+                init_step_mask = ~history_df.index.duplicated(keep="first") # indices that are NOT duplicates of the first
+                singles_mask = history_df["state"] == "initially_single_star"
+                filtered_data_single = history_df[init_step_mask & singles_mask]
+                filtered_data_binaries = history_df[init_step_mask & ~singles_mask]
 
                 simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass", "S2_mass"]].to_numpy())
                 simulated_mass_single += np.nansum(filtered_data_single[["S1_mass"]].to_numpy())
