@@ -432,7 +432,7 @@ class BinaryPopulation:
                 self.manager.remove(self.manager.binaries.copy())
 
         # save by either combining dump files if optimize_ram = True...
-        if (optimize_ram and not breakdown_to_df):
+        if optimize_ram:
             # combining files
             if self.JOB_ID is None and self.comm is None:
                 self.combine_saved_files(os.path.join(temp_directory,
@@ -444,8 +444,8 @@ class BinaryPopulation:
                                  f"evolution.combined.{self.rank}.h5"),
                     filenames, mode = "w")
 
-        # ...or just save the population to a single file (if breakdown_to_df = False)
-        elif (not breakdown_to_df):
+        # ...or just save the population to a single file
+        else:
             if self.JOB_ID is None and self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
                                                "evolution.combined.h5"),
