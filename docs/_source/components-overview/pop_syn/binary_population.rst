@@ -196,7 +196,7 @@ Depending on the initialization parameters, the evolved population can be access
     first_binary = population.manager.binaries[0]
     print(first_binary)
 
-   Additionally you can show turn the binary into a history DataFrame or create a oneline summary DataFrame:
+  Additionally you can turn the binary into a history ``DataFrame`` or create a ``oneline`` summary ``DataFrame``:
 
   .. code-block:: python
 
@@ -213,7 +213,7 @@ Depending on the initialization parameters, the evolved population can be access
    .. code-block:: python
     
     from posydon.popsyn.synthetic_population import Population
-    population = Population('./population.h5')
+    population = Population('./batches/evolution.combined.h5')
 
 
 

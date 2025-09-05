@@ -230,7 +230,7 @@ class BinaryPopulation:
         # combine kw defined at init and any passed here
         kw = {**self.kwargs, **kwargs}
         tqdm_bool = kw.get('tqdm', False)
-        breakdown_to_df_bool = kw.get('breakdown_to_df', True)
+        breakdown_to_df_bool = kw.get('breakdown_to_df', False)
         optimize_ram = kw.get('optimize_ram', False)
         from_hdf_bool = kw.get('from_hdf', False)
 
@@ -281,7 +281,7 @@ class BinaryPopulation:
 
         indices_for_iter = (tqdm(indices) if kwargs.get('tqdm', False)
                             else indices)
-        breakdown_to_df = kwargs.get('breakdown_to_df', True)
+        breakdown_to_df = kwargs.get('breakdown_to_df', False)
         optimize_ram = kwargs.get("optimize_ram", True)
         ram_per_cpu = kwargs.get("ram_per_cpu", None)
 
@@ -444,8 +444,8 @@ class BinaryPopulation:
                                  f"evolution.combined.{self.rank}.h5"),
                     filenames, mode = "w")
 
-        # ...or just save the population to a single file
-        else:
+        # ...or just save the population to a single file if breakdown_to_df is True
+        elif breakdown_to_df:
             if self.JOB_ID is None and self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
                                                "evolution.combined.h5"),
