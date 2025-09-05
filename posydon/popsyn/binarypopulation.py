@@ -215,7 +215,7 @@ class BinaryPopulation:
         indices : list, optional
             Custom binary indices to use. Default is range(number_of_binaries).
             If running with MPI, indices are split between processes if given.
-        breakdown_to_df : bool, True
+        breakdown_to_df : bool, False
             Breakdown a binary after evolution, converting to dataframe and
             removing the binary instance from memory.
         tqdm : bool, False
