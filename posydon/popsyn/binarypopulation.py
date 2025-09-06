@@ -688,6 +688,8 @@ class PopulationManager:
 
     def to_df(self, selection_function=None, **kwargs):
         """Convert all binaries to dataframe."""
+
+        kwargs = {**self.kwargs, **kwargs}
         
         if len(self.binaries) == 0 and len(self.history_dfs) == 0:
             return
@@ -709,6 +711,9 @@ class PopulationManager:
 
     def to_oneline_df(self, selection_function=None, **kwargs):
         """Convert all binaries to oneline dataframe."""
+
+        kwargs = {**self.kwargs, **kwargs}
+
         if len(self.binaries) == 0 and len(self.oneline_dfs) == 0:
             return
         is_callable = callable(selection_function)
@@ -725,7 +730,7 @@ class PopulationManager:
         if len(holder) > 0:
             return pd.concat(holder, axis=0, ignore_index=False)
 
-    def find_failed(self,):
+    def find_failed(self):
         """Find any failed binaries in the population."""
         if len(self) > 0:
             return [b for b in self if b.event == 'FAILED']
@@ -839,6 +844,9 @@ class PopulationManager:
         -------
         None
         """
+        
+        kwargs = {**self.kwargs, **kwargs}
+
         # needed for metadata
         self.metallicity = self.binary_generator.Z_div_Zsun
 
