@@ -675,6 +675,9 @@ class PopulationManager:
         remove the BinaryStar instance from self.
 
         """
+
+        kwargs = {**self.kwargs, **kwargs}
+
         try:
             history = binary.to_df(**kwargs)
             self.history_dfs.append(history)

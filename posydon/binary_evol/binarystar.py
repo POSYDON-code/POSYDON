@@ -689,6 +689,9 @@ class BinaryStar:
                                             extra_binary_dtypes_user=extra_binary_cols_dict,
                                             extra_S1_dtypes_user=extra_s1_cols_dict,
                                             extra_S2_dtypes_user=extra_s2_cols_dict)
+        
+        # remove any columns duplicated from user keys/full star properties
+        oneline_df = oneline_df.loc[:,~oneline_df.columns.duplicated()].copy()
 
         return oneline_df
 
