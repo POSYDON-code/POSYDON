@@ -211,13 +211,13 @@ class PopulationRunner:
         if self.verbose:
             print(f"Merging {len(tmp_files)} files...")
         
-        pop.combine_saved_files(fname, tmp_files)
+        pop.combine_saved_files(fname, tmp_files, mode='w')
 
         if self.verbose:
             print("Files merged!")
             print(f"Saved merged files to {fname}...")
             print(f"Removing files in {path_to_batch}...")
-            
+
         # remove files
         if len(os.listdir(path_to_batch)) == 0:
             os.rmdir(path_to_batch)

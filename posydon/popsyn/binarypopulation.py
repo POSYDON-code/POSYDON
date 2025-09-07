@@ -514,7 +514,7 @@ class BinaryPopulation:
         oneline_min_itemsize = {key: val for key, val in
                                 ONELINE_MIN_ITEMSIZE.items()
                                 if key in oneline_cols}
-        mode = kwargs.get('mode', 'a')
+        mode = kwargs.get('mode', 'w')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
         
