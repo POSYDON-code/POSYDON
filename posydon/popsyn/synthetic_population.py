@@ -211,7 +211,7 @@ class PopulationRunner:
         if self.verbose:
             print(f"Merging {len(tmp_files)} files...")
         
-        pop.combine_saved_files(fname, tmp_files, mode='w')
+        pop.combine_saved_files(fname, tmp_files)
 
         if self.verbose:
             print("Files merged!")
