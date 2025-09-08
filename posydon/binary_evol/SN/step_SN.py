@@ -266,6 +266,13 @@ class StepSN(object):
             for varname in SN_MODEL:
                 default_value = SN_MODEL[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
+                # backward compatibility for kick
+                if (self.kick_normalisation == 'asym_ej'
+                    or self.kick_normalisation == 'linear'):
+                    Pwarn("kick_normalisation 'asym_ej' and 'linear' are "
+                          "deprecated, use kick_prescription instead.",
+                          "DeprecationWarning")
+                    self.kick_prescription = self.kick_normalisation
         else:
             for varname in SN_MODEL:
                 default_value = SN_MODEL[varname]
