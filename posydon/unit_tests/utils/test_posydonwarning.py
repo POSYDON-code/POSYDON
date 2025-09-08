@@ -106,6 +106,10 @@ class TestElements:
     def test_instance_SFHModelWarning(self):
         assert isclass(totest.SFHModelWarning)
         assert issubclass(totest.SFHModelWarning, totest.POSYDONWarning)
+        
+    def test_instance_DeprecationWarning(self):
+        assert isclass(totest.DeprecationWarning)
+        assert issubclass(totest.DeprecationWarning, totest.POSYDONWarning)
 
     def test_instance_POSYDONWarning_subclasses(self):
         assert isinstance(totest._POSYDONWarning_subclasses, (dict))
