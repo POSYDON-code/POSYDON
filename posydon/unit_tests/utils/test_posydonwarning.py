@@ -572,6 +572,36 @@ class TestStepWarning:
                           totest.StepWarning)
         assert StepWarning.message == ''
 
+class TestSFHModelWarning:
+    @fixture
+    def SFHModelWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.SFHModelWarning()
+
+    # test the SFHModelWarning class
+    def test_init(self, SFHModelWarning):
+        assert isroutine(SFHModelWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(SFHModelWarning, totest.SFHModelWarning)
+        assert SFHModelWarning.message == ''
+
+
+class TestDeprecationWarning:
+    @fixture
+    def DeprecationWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.DeprecationWarning()
+
+    # test the DeprecationWarning class
+    def test_init(self, DeprecationWarning):
+        assert isroutine(DeprecationWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(DeprecationWarning, totest.DeprecationWarning)
+        assert DeprecationWarning.message == ''
+
+
 class Test_Caught_POSYDON_Warnings:
     @fixture
     def clear_registry(self):
