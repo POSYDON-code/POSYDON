@@ -90,7 +90,7 @@ SN_MODEL = {
     # kick physics
     "kick": True,
     "kick_normalisation": 'one_over_mass',
-    "kick_prescription": 'Hobbs+05',
+    "kick_prescription": 'maxwellian',
     "sigma_kick_CCSN_NS": 265.0,
     "mean_kick_CCSN_NS": None,
     "sigma_kick_CCSN_BH": 265.0,
@@ -2011,7 +2011,7 @@ class StepSN(object):
         star : object
             Star object containing the star properties.
         sigma : float
-            Velocity dispersion for Hobbs+05 or log-normal distribution.
+            Velocity dispersion for maxwellian or log-normal distribution.
         mean : float
             Mean for the log-normal distribution.
 
@@ -2074,7 +2074,7 @@ class StepSN(object):
             Kick velocity drawn from the chosen distribution.
         """
 
-        if self.kick_prescription == "Hobbs+05":
+        if self.kick_prescription == "maxwellian":
             # sigma==None should never be reached, since in that case Vkick=0
             # in generate_kick function
             # this is a fallback
