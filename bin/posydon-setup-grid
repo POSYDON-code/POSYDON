@@ -317,7 +317,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
         / / ! end of star_job namelist
 
         """)
-            mesa_inlists['star1_controls_user'].append(special_single_star_user_inlist)
+            mesa_inlists['star1_controls_special'].append(special_single_star_user_inlist)
 
     # change back to where I was
     os.chdir(where_am_i_now)
