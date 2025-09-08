@@ -1997,7 +1997,7 @@ class StepSN(object):
     ##### Generating the CCSN SN kick of a single star #####
     """
 
-    def generate_kick(self, star, sigma=None, mean=None):
+    def generate_kick(self, star, sigma, mean):
         """Draw a kick from a Maxwellian distribution.
 
         We follow Hobbs G., Lorimer D. R., Lyne A. G., Kramer M., 2005, MNRAS, 360, 974
@@ -2010,6 +2010,10 @@ class StepSN(object):
         ----------
         star : object
             Star object containing the star properties.
+        sigma : float
+            Velocity dispersion for Hobbs+05 or log-normal distribution.
+        mean : float
+            Mean for the log-normal distribution.
 
         Returns
         -------
