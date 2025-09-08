@@ -278,7 +278,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
         / ! end of star1_controls namelist
 
         """)
-            mesa_inlists['star1_controls_user'] = special_single_star_user_inlist
+            mesa_inlists['star1_controls_special'] = special_single_star_user_inlist
         elif system_type == "CO-He_star" and mesa_inlists['single_star_grid']:
             inlists_location = '{0}/{1}/{2}/'.format(inlists_dir, 'r11701', system_type)
             print("Based on system_type {0} "
