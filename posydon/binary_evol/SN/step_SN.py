@@ -78,8 +78,11 @@ SN_MODEL = {
     "kick": True,
     "kick_normalisation": 'one_over_mass',
     "sigma_kick_CCSN_NS": 265.0,
+    "mean_kick_CCSN_NS": None,
     "sigma_kick_CCSN_BH": 265.0,
+    "mean_kciK_CCSN_BH": None,
     "sigma_kick_ECSN": 20.0,
+    "mean_kick_ECSN": None,
     # other
     "verbose": False,
 }
@@ -1467,23 +1470,28 @@ class StepSN(object):
                 if binary.star_1.SN_type == "ECSN":
                     # Kick for electron-capture SN
                     Vkick = self.generate_kick(
-                        star=binary.star_1, sigma=self.sigma_kick_ECSN
+                        star=binary.star_1,
+                        sigma=self.sigma_kick_ECSN,
+                        mean=self.mean_kick_ECSN,
                     )
                 elif ((binary.star_1.SN_type == "CCSN")
                       or (binary.star_1.SN_type == "PPISN")
                       or (binary.star_1.SN_type == "PISN")):
                     if binary.star_1.state == 'NS':
                         sigma = self.sigma_kick_CCSN_NS
+                        mean = self.mean_kick_CCSN_NS
                     elif binary.star_1.state == 'BH':
                         sigma = self.sigma_kick_CCSN_BH
+                        mean = self.mean_kick_CCSN_BH
                     elif binary.star_1.state == 'massless_remnant':
                         # No kick on a massless object
                         sigma = None
+                        mean = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
                     # Kick for core-collapse SN
                     Vkick = self.generate_kick(
-                        star=binary.star_1, sigma=sigma
+                        star=binary.star_1, sigma=sigma, mean=mean
                     )
                 elif binary.star_1.SN_type == "WD":
                     # Kick for white dwarfs (allways f_fb = 1 => Vkick = 0)
@@ -1567,21 +1575,27 @@ class StepSN(object):
                 if binary.star_2.SN_type == "ECSN":
                     # Kick for electron-capture SN
                     Vkick = self.generate_kick(star=binary.star_2,
-                                               sigma=self.sigma_kick_ECSN)
+                                               sigma=self.sigma_kick_ECSN,
+                                               mean=self.mean_kick_ECSN)
                 elif ((binary.star_2.SN_type == "CCSN")
                       or (binary.star_2.SN_type == "PPISN")
                       or (binary.star_2.SN_type == "PISN")):
                     if binary.star_2.state == 'NS':
                         sigma = self.sigma_kick_CCSN_NS
+                        mean = self.mean_kick_CCSN_NS
                     elif binary.star_2.state == 'BH':
                         sigma = self.sigma_kick_CCSN_BH
+                        mean = self.mean_kick_CCSN_BH
                     elif binary.star_2.state == 'massless_remnant':
                         # No kick on a massless object
                         sigma = None
+                        mean = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
                     # Kick for core-collapse SN
-                    Vkick = self.generate_kick(star=binary.star_2, sigma=sigma)
+                    Vkick = self.generate_kick(star=binary.star_2,
+                                               sigma=sigma,
+                                               mean=mean)
                 else:
                     raise ValueError("The SN type is not ECSN neither CCSN.")
 
@@ -1949,7 +1963,7 @@ class StepSN(object):
     ##### Generating the CCSN SN kick of a single star #####
     """
 
-    def generate_kick(self, star, sigma):
+    def generate_kick(self, star, sigma=None, mean=None):
         """Draw a kick from a Maxwellian distribution.
 
         We follow Hobbs G., Lorimer D. R., Lyne A. G., Kramer M., 2005, MNRAS, 360, 974
@@ -1994,24 +2008,47 @@ class StepSN(object):
 
 
         """
-        if self.kick_normalisation == 'one_minus_fallback':
-            # Normalization from Eq. 21, Fryer, C. L., Belczynski, K., Wiktorowicz,
-            # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
-            norm = (1.0 - star.f_fb)
-        elif self.kick_normalisation == 'one_over_mass':
-            if star.state == 'BH':
-                norm = 1.4/star.mass
-            else:
-                norm = 1.0
+        if sigma is None:
+            Vkick = 0.0
+        else:
+            norm = self._get_kick_normalisation(star)
+            Vkick_ej = self._get_kick_velocity(star, sigma=sigma, mean=mean)
+            Vkick = norm * Vkick_ej
 
-        elif self.kick_normalisation == 'log_normal':
-            if star.state == 'BH':
-                norm = 1.4/star.mass
-            else:
-                norm = 1.0
-
-        elif self.kick_normalisation == 'asym_ej':
-           
+        return Vkick
+    
+    
+    def _get_kick_velocity(self, star, sigma=None, mean=None):
+        """Get the kick velocity based on the chosen prescription.
+        
+        Parameters
+        ----------
+        star : object
+            Star object containing the star properties.
+        sigma : float, optional
+            Velocity dispersion for the distribution.
+        mean : float, optional
+            Mean for the log-normal distribution.
+            
+        Returns
+        -------
+        Vkick_ej : float
+            Kick velocity drawn from the chosen distribution.
+        """
+        
+        if self.kick_prescription == "Hobbs+05":
+            if sigma is None:
+                sigma = 265.0
+            Vkick_ej = sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
+        
+        elif self.kick_prescription == "log_normal":
+            if sigma is None:
+                sigma = 0.68
+            if mean is None:
+                mean = np.exp(5.60)
+            Vkick_ej = sp.stats.lognorm.rvs(s=sigma, scale=mean, size=1)[0]
+        
+        elif self.kick_prescription == "asym_ej":
             f_kin = 0.1         # Fraction of SN explosion energy that is kinetic energy of the gas
             beta = 0.1          # Fraction of ejecta mass that is neutrino heated
             epsilon = 1    
@@ -2021,16 +2058,43 @@ class StepSN(object):
             M_ej=abs(star.mass_history[-1] - M_rembar)          # Ejecta mass
 
             Vkick_ej = 211*(f_kin*beta*epsilon)**(1/2)*(alpha_ej/0.1)*(M_ej/0.1)*(M_NS/1.5)**(-1)
-        
-        elif self.kick_normalisation == 'linear':
             
+        elif self.kick_prescription == "linear":
             M_ej = star.co_core_mass_history[-1]-star.mass        # Ejecta mass
             M_rem = star.mass                                     # Neutron star mass
             alpha = 115                                           # alpha and beta are best-fit parameters
             beta = 15                                             
 
             Vkick_ej = alpha * (M_ej/M_rem) + beta
+        
+        else:
+            raise ValueError('kick_prescription option not supported!')
+        
+        return Vkick_ej
+    
+    def _get_kick_normalisation(self, star):
+        """Get the kick normalisation method.
+        
+        Parameters
+        ----------
+        star : object
+            Star object containing the star properties.
+        Returns
+        -------
+        norm : float
+            Normalisation factor for the natal kick.
+        
+        """
 
+        if self.kick_normalisation == 'one_minus_fallback':
+            # Normalization from Eq. 21, Fryer, C. L., Belczynski, K., Wiktorowicz,
+            # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
+            norm = (1.0 - star.f_fb)
+        elif self.kick_normalisation == 'one_over_mass':
+            if star.state == 'BH':
+                norm = 1.4/star.mass
+            else:
+                norm = 1.0
         elif self.kick_normalisation == 'NS_one_minus_fallback_BH_one':
             if star.state == 'BH':
                 norm = 1.
@@ -2044,22 +2108,8 @@ class StepSN(object):
             norm = 0.
         else:
             raise ValueError('kick_normalisation option not supported!')
-
-        if sigma is not None:
-            # f_fb = self.compute_m_rembar(star, None)[1]
-
-            if self.kick_normalisation in ['asym_ej', 'linear']:
-                Vkick = Vkick_ej
-            elif self.kick_normalisation == 'log_normal':
-                Vkick = norm * sp.stats.lognorm.rvs(s=0.68, scale=np.exp(5.60), size=1)[0]
-            else:
-                Vkick = norm * sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
-            
-        else:
-            Vkick = 0.0
-
-        return Vkick
-
+        
+        return norm
 
     def get_combined_tilt(self, tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
         """Get the combined spin-orbit-tilt after two supernovae, assuming
