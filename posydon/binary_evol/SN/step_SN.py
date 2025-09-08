@@ -90,6 +90,7 @@ SN_MODEL = {
     # kick physics
     "kick": True,
     "kick_normalisation": 'one_over_mass',
+    "kick_prescription": 'Hobbs+05',
     "sigma_kick_CCSN_NS": 265.0,
     "mean_kick_CCSN_NS": None,
     "sigma_kick_CCSN_BH": 265.0,
