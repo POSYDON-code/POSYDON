@@ -34,10 +34,12 @@ Frequently Asked Questions
     A population run requires a bare minimum of 8GB of memory per CPU. The DR2 POSYDON grids need to be loaded in completely. At the moment, the binary grids are loaded in at startup, but single star models are loaded when needed. 
     However, 8GB allows you to run a small population, but it restricts the number of binaries you can keep in memory and requires a :code:`dump_rate < 1000` to keep the memory usage low, which slows down the simulation.
     
-    As such, 9GB or 10GB per CPU is a better starting point. This allows you to keep more binaries in memory and increases the speed of the population synthesis run and work well with with a :code:`dump_rate` of 5.000 binaries.
+    As such, 9GB or 10GB per CPU is a better starting point. This allows you to keep more binaries in memory and increases the speed of the population synthesis run and work well with a :code:`dump_rate` of 5.000 binaries.
 
     In general, the :code:`dump_rate` should be at least 500 for populations of 100,000 binaries or more.
-    Setting a very low :code:`dump_rate` for larger populations can potentially introduce I/O issues during the reading, writing, and merging of output files.
+    Setting a very low :code:`dump_rate` for larger populations will cause many I/O operations to be called (we are dumping out and saving our binary star data more frequently) and can potentially introduce issues during the reading, writing, 
+    and merging of output files. Keeping the ``dump_rate`` at a relatively high number, but not so much that it causes excessive memory usage will allow your population to run faster by limiting I/O operations. (However, of course setting a 
+    ``dump_rate`` that is greater than the number of binaries in your population will effectivley counteract the purpose of this parameter, as it means you would only dump your binaries into a file after you have run all of them.)
 
 
 4. **What should the walltime and job array size be for my population synthesis run?**

@@ -244,15 +244,15 @@ class BinaryStar:
 
     def run_step(self):
         """Evolve the binary through one evolutionary step."""
-        total_state = (self.star_1.state, self.star_2.state, self.state, self.event)
+        total_state = self.get_total_state()
         if total_state in UNDEFINED_STATES:
             raise FlowError(f"Binary failed with a known undefined state in the flow:\n{total_state}")
 
-        next_step_name = self.properties.flow.get(total_state)
+        next_step_name = self.get_next_step_name()
         if next_step_name is None:
             raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
 
-        next_step = getattr(self.properties, next_step_name, None)
+        next_step = self.get_next_step()
         if next_step is None:
             raise ValueError("Next step name '{}' does not correspond to a function in "
                              "SimulationProperties.".format(next_step_name))
@@ -262,6 +262,18 @@ class BinaryStar:
         
         self.append_state()
         self.properties.post_step(self, next_step_name)
+    
+    def get_total_state(self):
+        """Return the total state of the binary (star1.state, star2.state, binary.state, binary.event)."""
+        return (self.star_1.state, self.star_2.state, self.state, self.event)
+    
+    def get_next_step_name(self):
+        """Return the name of the next step based on the current total state."""
+        return self.properties.flow.get(self.get_total_state())
+    
+    def get_next_step(self):
+        """Get the next step class object based on the current total state."""
+        return getattr(self.properties, self.get_next_step_name(), None)
 
     def append_state(self):
         """Update the history of the binaries' properties."""
@@ -529,6 +541,23 @@ class BinaryStar:
 
             # Lose the V_sys list
             bin_df = bin_df.drop(['V_sys'], axis=1)
+
+        # Add 3 columns for nearest_neighbour_distance
+        if 'nearest_neighbour_distance' in column_names:
+            NN_dist_x = np.zeros(len(bin_df))
+            NN_dist_y = np.zeros(len(bin_df))
+            NN_dist_z = np.zeros(len(bin_df))
+            for i in range(len(bin_df)):
+                NN_dist_x[i] = bin_df.iloc[i]['nearest_neighbour_distance'][0]
+                NN_dist_y[i] = bin_df.iloc[i]['nearest_neighbour_distance'][1]
+                NN_dist_z[i] = bin_df.iloc[i]['nearest_neighbour_distance'][2]
+
+            bin_df['NN_dist_x'] = copy.deepcopy(NN_dist_x)
+            bin_df['NN_dist_y'] = copy.deepcopy(NN_dist_y)
+            bin_df['NN_dist_z'] = copy.deepcopy(NN_dist_z)
+
+            # Lose the nearest_neighbour_distance list
+            bin_df = bin_df.drop(['nearest_neighbour_distance'], axis=1)
 
         frames = [bin_df]
         if kwargs.get('include_S1', True):

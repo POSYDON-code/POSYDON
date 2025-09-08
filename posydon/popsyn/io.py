@@ -618,7 +618,7 @@ def create_merge_script_text(ini_file):
             '    synpop = BinaryPopulation(**ini_kw)',
             '    path_to_batch = ini_kw["temp_directory"]',
             '    tmp_files = [os.path.join(path_to_batch, f) for f in os.listdir(path_to_batch) if os.path.isfile(os.path.join(path_to_batch, f))]',
-            '    tmp_files = sorted(tmp_files, key=lambda x: int(x.split(".")[-1]))',
+            '    tmp_files = sorted(tmp_files, key=lambda x: int(x.split(".h5")[0].split(".")[-1]))',
             '    synpop.combine_saved_files(str_met+ "_Zsun_population.h5", tmp_files)',
             '    print("done")',
             '    if len(os.listdir(path_to_batch)) == 0:',
