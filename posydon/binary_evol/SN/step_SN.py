@@ -94,7 +94,7 @@ SN_MODEL = {
     "sigma_kick_CCSN_NS": 265.0,
     "mean_kick_CCSN_NS": None,
     "sigma_kick_CCSN_BH": 265.0,
-    "mean_kciK_CCSN_BH": None,
+    "mean_kick_CCSN_BH": None,
     "sigma_kick_ECSN": 20.0,
     "mean_kick_ECSN": None,
     # other
@@ -2064,11 +2064,17 @@ class StepSN(object):
         """
 
         if self.kick_prescription == "Hobbs+05":
+            # sigma==None should never be reached, since in that case Vkick=0
+            # in generate_kick function
+            # this is a fallback
             if sigma is None:
                 sigma = 265.0
             Vkick_ej = sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
 
         elif self.kick_prescription == "log_normal":
+            # sigma==None should never be reached, since in that case Vkick=0
+            # in generate_kick function
+            # this is a fallback
             if sigma is None:
                 sigma = 0.68
             if mean is None:
