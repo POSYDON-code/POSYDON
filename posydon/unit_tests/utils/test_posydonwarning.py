@@ -29,7 +29,7 @@ class TestElements:
                     'InterpolationWarning', 'MissingFilesWarning',\
                     'NoPOSYDONWarnings', 'OverwriteWarning', 'SFHModelWarning',\
                     'POSYDONWarning','Pwarn', 'ReplaceValueWarning',\
-                    'SetPOSYDONWarnings',\
+                    'SetPOSYDONWarnings','DeprecationWarning', \
                     'UnsupportedModelWarning', '_CAUGHT_POSYDON_WARNINGS',\
                     '_Caught_POSYDON_Warnings', '_POSYDONWarning_subclasses',\
                     '_POSYDON_WARNINGS_REGISTRY', '__authors__',\
