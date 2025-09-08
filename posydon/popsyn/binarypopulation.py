@@ -933,10 +933,7 @@ class BinaryGenerator:
         self.kwargs = kwargs.copy()
         self.sampler = sampler
         self.star_formation = kwargs.get('star_formation', 'burst')
-<<<<<<< HEAD
-=======
         self.Z_div_Zsun = kwargs.get('metallicity', 1.)
->>>>>>> v2.1-dev
 
     def reset_rng(self):
         """Reset the RNG with the stored entropy."""
