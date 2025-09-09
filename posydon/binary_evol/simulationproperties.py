@@ -185,15 +185,55 @@ class SimulationProperties:
                 self.all_step_names.append(key)
         self.steps_loaded = False
 
+    @classmethod
+    def from_ini(cls, path, metallicity = None, load_steps=False, verbose=False, **override_sim_kwargs):
+        """Create a SimulationProperties instance from an inifile.
+
+        Parameters
+        ----------
+        path : str
+            Path to an inifile to load in.
+
+        metallicity : float
+            A metallicity (Z) may be provided to automatically assign
+            to steps as they are loaded. Should be one of e.g., 2.0, 1.0, 
+            4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to 
+            metallicities available in your POSYDON_DATA grids.
+
+        load_steps : bool
+            Whether or not evolution steps should be automatically loaded.
+
+        verbose : bool
+            Print useful info.
+
+        Returns
+        -------
+        SimulationProperties
+            A new instance of SimulationProperties.
+        """
+
+        sim_kwargs = simprop_kwargs_from_ini(path)
+
+        sim_kwargs = {**sim_kwargs, **override_sim_kwargs}
+
+        new_instance = cls(**sim_kwargs)
+        
+        if load_steps:
+            # Load the steps and required data
+            new_instance.load_steps(metallicity=metallicity, 
+                                    verbose=verbose)
+
+        return new_instance
+
     def load_steps(self, metallicity=None, verbose=False):
         """Instantiate step classes and set as instance attributes.
 
         Parameters
         ----------
-        verbose: bool
+        verbose : bool
             Print extra information.
 
-        metallicity: float
+        metallicity : float
             A metallicity (Z) may be provided to automatically assign
             to steps as they are loaded. Should be one of e.g., 2.0, 1.0, 
             4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to 
@@ -205,10 +245,11 @@ class SimulationProperties:
         """
         if verbose:
             print('STEP NAME'.ljust(20) + 'STEP FUNCTION'.ljust(25) + 'KWARGS')
-            if metallicity is None:
-                Pwarn("Steps were not assigned a metallicity. Defaulting to Z = 1.0 (solar).", 
-                      "MissingValueWarning")
-                metallicity = 1.0
+
+        if metallicity is None:
+            Pwarn("Steps were not assigned a metallicity. Defaulting to Z = Zsun (solar).", 
+                    "MissingValueWarning")
+            metallicity = 1.0
 
         # these steps and the flow do not require a metallicity
         ignore_for_met = ["flow", "step_CE", "step_SN","step_dco", "step_end"]
@@ -462,11 +503,3 @@ class PrintStepInfoHooks(EvolveHooks):
         print("End evol for binary {}".format(binary.index), end='\n'*2)
         return binary
     
-def init_sim(initialization_file):
-
-    sim_kwargs = simprop_kwargs_from_ini(initialization_file)
-    sim_props = SimulationProperties(**sim_kwargs)
-    # Load the steps and required data
-    sim_props.load_steps(verbose=True)
-
-    return sim_props
