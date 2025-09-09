@@ -1,0 +1,1027 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Stellar Transient Populations 🔍"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "In this notebook, we will cover:\n",
+    "\n",
+    "1. Selecting binaries and combining metallicities\n",
+    "2. Exploring the `TransientPopulation` class\n",
+    "3. Calculating cosmic rates\n",
+    "\n",
+    "We will do this in the context of the merging binary black hole population."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "----\n",
+    "\n",
+    "## Creating multi-metallicity Populations\n",
+    "\n",
+    "\n",
+    "<div class=\"alert alert-warning\"><b>Reprocessed POSYDON v1 dataset</b> \n",
+    "\n",
+    "Please note that with the reprocessed POSYDON v1 data, only solar metallicity is available.\n",
+    "You will not be able to follow along with the full tutorial!\n",
+    "If you would still like to explore a population at solar metallicity, you can follow the [One metallicity tutorial](one_met_pop_syn.ipynb).\n",
+    "\n",
+    "</div>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "vscode": {
+     "languageId": "plaintext"
+    }
+   },
+   "source": [
+    "In the previous tutorial, you generated 8 population files, each at a different metallicity, with 1,000 binaries in each file.\n",
+    "Since this is a small population of only 8,000 binaries in total, you can explore the complete population.\n",
+    "However, the larger your population gets, the better it is to select a subset of the population to minimize memory usage.\n",
+    "\n",
+    "In this tutorial we will select the subset of the population that ends in a binary black hole merger.\n",
+    "For each population file, we will export these binaries into a new file.\n",
+    "For this, we need to find the indices of the merging binaries. The relevant conditions are that the properties S1_state and S2_state equal 'BH', while the binary has the `event == 'CO_contact'`.\n",
+    "\n",
+    "We will load one of the population files to build our merging binaries selection.\n",
+    "\n",
+    "\n",
+    "\n",
+    "<div class=\"alert alert-warning\"><b>No indices?</b> \n",
+    "\n",
+    "It might be that the population you generated does not contain any merging BBHs, they're rare after all.\n",
+    "You can download an example population, which contains 10,000 binaries at each of the 8 metallicities.\n",
+    "\n",
+    "```get-posydon-data v2_tutorial_populations```\n",
+    "\n",
+    "This automatically downloads the tutorial populations from [Zenodo](https://zenodo.org/communities/posydon) into `$PATH_TO_POSYDON_DATA/tutorial_populations`\n",
+    "</div>\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import Population\n",
+    "\n",
+    "# change the path to $PATH_TO_POSYDON_DATA/tutorial_populations/1e+00_Zsun_population.h5\n",
+    "# when using the example population file.\n",
+    "pop = Population('1e+00_Zsun_population.h5') \n",
+    "tmp_data = pop.history.select(columns=['S1_state', 'S2_state', 'event'])\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Note: `pop.history.select` is a read operation on the population file and can take quite a lot of time if the population is large.\n",
+    "\n",
+    "We will now select only the relevant columns in this file. If you have sufficient memory, it is more efficient to select several columns at the same time instead of selecting a single column each time."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Selection of S1 being a BH\n",
+    "S1_state = tmp_data['S1_state'] == 'BH'\n",
+    "# Selection of S2 being a BH\n",
+    "S2_state = tmp_data['S2_state'] == 'BH'\n",
+    "# Selection of the binary system being in contact during the double CO phase.\n",
+    "state = tmp_data['event'] == 'CO_contact'\n",
+    "\n",
+    "# get the indices of all systems\n",
+    "indices = tmp_data.index\n",
+    "\n",
+    "# delete the temporary data\n",
+    "del tmp_data\n",
+    "\n",
+    "# get a mask for the indices that satisfy all the conditions\n",
+    "mask = S1_state & S2_state & state\n",
+    "\n",
+    "# get the indices that satisfy all the conditions\n",
+    "selected_indices = indices[mask].to_list()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The `selected_indices` has to be a list for the selection to work correctly.\n",
+    "\n",
+    "You can test your selection by doing the following:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(selected_indices)\n",
+    "pop.history[selected_indices]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If your selected indices are empty, no BBH mergers occurred in your population. They're quite rare after all!\n",
+    "\n",
+    "Let's use an example set of populations to make sure there will be BBHs in your population.\n",
+    "\n",
+    "**This can only be used with the multi-metallicity populations!**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import Population\n",
+    "\n",
+    "# Change the path to the data you want to use\n",
+    "# or the path to the tutorial data: # $PATH_TO_POSYDON_DATA/tutorial_populations/\n",
+    "data_path = f'PATH/TO/TUTORIAL/DATA/'\n",
+    "# change to PATH_TO_POSYDON_DATA/tutorial_populations/ for the tutorial data\n",
+    "# and add \"from posydon.config import PATH_TO_POSYDON_DATA\" to the imports above\n",
+    "\n",
+    "# Let's load one of the populations\n",
+    "pop = Population(data_path+'1e-01_Zsun_population.h5')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pop.oneline.columns"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We don’t just want to find the BBH mergers at a single metallicity. We want to export them for each metallicity file. As such, we loop over each Population file and export all the BBH mergers to a new file. It’s important that the Population files have the same columns, otherwise it’s not possible to append them.\n",
+    "\n",
+    "The indices of the binaries will be reset, when being exported, such that the new file contains unique indices for each binary."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import Population\n",
+    "\n",
+    "# The names of the populations, if you followed along.\n",
+    "files = ['1e-01_Zsun_population.h5',\n",
+    "         '1e-02_Zsun_population.h5',\n",
+    "         '1e-03_Zsun_population.h5',\n",
+    "         '1e-04_Zsun_population.h5',\n",
+    "         '1e+00_Zsun_population.h5',\n",
+    "         '2e-01_Zsun_population.h5',\n",
+    "         '2e+00_Zsun_population.h5',\n",
+    "         '4.5e-01_Zsun_population.h5']\n",
+    "\n",
+    "\n",
+    "for file in files:\n",
+    "    pop = Population(data_path+file)\n",
+    "    # read the relevant data in one go\n",
+    "    # (faster than reading it in chunks, but requires more memory)\n",
+    "    tmp_data = pop.history.select(columns=['S1_state', 'S2_state', 'event'])\n",
+    "    # Selection of S1 being a BH\n",
+    "    S1_state = tmp_data['S1_state'] == 'BH'\n",
+    "    # Selection of S2 being a BH\n",
+    "    S2_state = tmp_data['S2_state'] == 'BH'\n",
+    "    # Selection of the binary system being in contact during the double CO phase.\n",
+    "    state = tmp_data['event'] == 'CO_contact'\n",
+    "    indices = tmp_data.index\n",
+    "    del tmp_data\n",
+    "    mask = S1_state & S2_state & state\n",
+    "    selected_indices = indices[mask].to_list()\n",
+    "    print(f'File: {file}, Number of systems: {len(selected_indices)}')\n",
+    "    \n",
+    "    # set overwrite to False to add to the file\n",
+    "    pop.export_selection(selected_indices, 'BBH_contact.h5', append=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If your population did not contain any BBH mergers, all the \"Number of Systems\" will be 0, and you won't be able to open the file in the next cell.\n",
+    "\n",
+    "If you ran the population with the tutorial populations, you should have a total of 483 merging BBHs.\n",
+    "\n",
+    "We can confirm the number of BBH mergers by adding up the values above. Alternatively, we can open the new file, BBH_contact.h5, and use `Population.number_of_systems` to get the total number of binaries in the file. \n",
+    "\n",
+    "Additionally, you now see that the `mass_per_metallicity` property contains information about all the metallicities in the file.\n",
+    "\n",
+    "You can even combine multiple runs at the same metallicity together, if you like. This will combine their simulated mass."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import Population\n",
+    "BBH_pop = Population('BBH_contact.h5', chunksize=10000)\n",
+    "print(BBH_pop.number_of_systems)\n",
+    "\n",
+    "BBH_pop.mass_per_metallicity"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Underlying mass\n",
+    "\n",
+    "Before we move on, we have to discuss the occurrence rate of each binary in the population.\n",
+    "\n",
+    "We have sampled several distributions at the start of our simulations.\n",
+    "These include:\n",
+    "\n",
+    "- Initial mass function\n",
+    "- Period\n",
+    "- Mass ratio\n",
+    "- Binary fraction\n",
+    "\n",
+    "The default parameters do not sample the complete distributions.\n",
+    "For example, we sample binaries with primary masses between 7 and 150 $M_\\odot$, and a binary fraction of 1.\n",
+    "While you can use the population as it is, you should consider the weight of the unsampled distributions.\n",
+    "\n",
+    "You can calculate the underlying mass of these distributions, which is the actual weight of the binary in our population.\n",
+    "Since we've stored essential information about the population run, we are able to calculate this even after our selection.\n",
+    "This will return the `underlying_mass` of the sampled population and add it to the population file.\n",
+    "\n",
+    "We will need these weights to be able to continue with the rest of the calculations.\n",
+    "\n",
+    "<div class=\"alert alert-warning\">\n",
+    "\n",
+    "**Caveats**\n",
+    "\n",
+    "Currently, only changing the binary fraction (`f_bin`) is supported in the calculation of the underlying mass!\n",
+    "The initially sampled population can have any binary fraction.\n",
+    "\n",
+    "Additionally, only parts of the period, IMF, and mass ratio distribution are included.\n",
+    "We allow for different parameter limits to be set for sampling, but these are not included in this normalization!\n",
+    "\n",
+    "</div>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# This will calculate the underlying mass for the population \n",
+    "# with a binary fraction of 0.7 (default value)\n",
+    "BBH_pop.calculate_underlying_mass(f_bin=0.7, overwrite=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "-----\n",
+    "\n",
+    "## Transient population\n",
+    "\n",
+    "Although we now have selected all binaries with a BBH merger, we don't have the exact moment of the merger yet.\n",
+    "This will be required to calculate merger rates across cosmic time.\n",
+    "\n",
+    "\n",
+    "For this, we will create a `TransientPopulation`.\n",
+    "This class is used to hold information about a specific event/moment in time.\n",
+    "In our case, this is the moment of \"CO_contact\", the moment of the BBH merger.\n",
+    "However, we might want to store and calculate some additional values, such as the $M_\\mathrm{chirp}$ or $\\chi_\\mathrm{eff}$.\n",
+    "\n",
+    "The `Population` class has a function `create_transient_population` (see [here for more details](../../api_reference/posydon.popsyn.rst#posydon.popsyn.synthetic_population.Population.create_transient_population)).\n",
+    "In short, it takes a `selection_function` and a `transient_name`.\n",
+    "The `transient_name` is a string identifying the transient population in the file,\n",
+    "while `selection_function` extracts the `TransientPopulation` for us.\n",
+    "This can be any custom function you want it to be, as long as it outputs a pandas DataFrame with a 'time' and 'metallicity' column.\n",
+    "\n",
+    "Several selection functions are provided in `posydon.popsyn.transient_select_funcs`:\n",
+    "\n",
+    "1. [BBH_selection_function](../../api_reference/posydon.popsyn.rst#posydon.popsyn.transient_select_funcs.BBH_selection_function)\n",
+    "2. [GRB_selection_function](../../api_reference/posydon.popsyn.rst#posydon.popsyn.transient_select_funcs.GRB_selection)\n",
+    "\n",
+    "We have copied part of the `BBH_selection_function` below to explain how a `selection_function` works."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chunk=None):\n",
+    "    '''A BBH selection function to create a transient population of BBHs mergers.'''\n",
+    "    \n",
+    "    indices = oneline_chunk.index.to_numpy()\n",
+    "    df_transients = pd.DataFrame(index = indices)\n",
+    "    \n",
+    "    df_transients['time'] = history_chunk[history_chunk['event'] == 'CO_contact']['time'] * 1e-6 #Myr\n",
+    "    df_transients['metallicity'] = oneline_chunk['metallicity']\n",
+    "\n",
+    "    return df_transients"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A `selection_function` always has as an input a chunk of the history, oneline, and formation_pathways (optional). For example, you set your `chunksize=10000` when you initialise the `Population`, like we've done above for `BBH_pop`, each chunk will contain 10,000 binaries.\n",
+    "This means that the complete history, oneline and formation_pathways of those 10,000 binaries are passed to this function.\n",
+    "\n",
+    "The `BBH_selection_function` selects the moment the binary reaches CO_contact as the moment of merger, and stores it in the `time` column in Myr.\n",
+    "The `metallicity` is also outputted, since this will be essential when combining it with the star formation history.\n",
+    "\n",
+    "We can test this function by inputting a single binary into it, as done below.\n",
+    "If you've used the example populations, you might not have calculated the formation_channels yet. We will set that input to None."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BBH_selection_function(BBH_pop.history[0], BBH_pop.oneline[0], None)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "This gives us a DataFrame containing our 1 binary, its index (0), the moment of merger, and its metallicity.\n",
+    "\n",
+    "Of course, we would like to know a bit more about our merger than just when it occurs.\n",
+    "Let's expand our output with the BH masses, their spin, their tilt, and the orbital period at DCO formation."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chunk):\n",
+    "    '''A BBH selection function to create a transient population of BBHs mergers.'''\n",
+    "    \n",
+    "    indices = oneline_chunk.index.to_numpy()\n",
+    "    df_transients = pd.DataFrame(index = indices)\n",
+    "    \n",
+    "    df_transients['time'] = history_chunk[history_chunk['event'] == 'CO_contact']['time'] * 1e-6 #Myr\n",
+    "    df_transients['metallicity'] = oneline_chunk['metallicity']\n",
+    "    \n",
+    "    # Added properties\n",
+    "    mask = (history_chunk['S1_state'] == 'BH') & (history_chunk['S2_state'] == 'BH') & (history_chunk['step_names'] == 'step_SN') & (history_chunk['state'] == 'detached')\n",
+    "    df_transients['t_inspiral'] = df_transients['time'] - history_chunk[mask]['time']*1e-6\n",
+    "    df_transients['S1_state']  = history_chunk[mask]['S1_state']\n",
+    "    df_transients['S2_state']  = history_chunk[mask]['S2_state']\n",
+    "    df_transients['S1_mass'] = history_chunk[mask]['S1_mass']\n",
+    "    df_transients['S2_mass'] = history_chunk[mask]['S2_mass']\n",
+    "    df_transients['S1_spin'] = history_chunk[mask]['S1_spin']\n",
+    "    df_transients['S2_spin'] = history_chunk[mask]['S2_spin']\n",
+    "    # we distinguish the tilt of the spin to the orbit after the first and second SN.\n",
+    "    df_transients['S1_spin_orbit_tilt_merger'] = oneline_chunk['S1_spin_orbit_tilt_second_SN']\n",
+    "    df_transients['S2_spin_orbit_tilt_merger'] = oneline_chunk['S2_spin_orbit_tilt_second_SN']\n",
+    "    df_transients['orbital_period'] = history_chunk[mask]['orbital_period']\n",
+    "    \n",
+    "    return df_transients"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BBH_selection_function(BBH_pop.history[0], BBH_pop.oneline[0], None)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "With this new function, we have a lot more information available in the TransientPopulation.\n",
+    "\n",
+    "You can further customize this to your liking, if you want to store specific information.\n",
+    "It's also possible to calculate additional information based on any value in the history, oneline or formation_channels.\n",
+    "\n",
+    "We will import some functions to calculate $\\chi_\\mathrm{eff}$, $q$ and $\\mathcal{M}_\\mathrm{chirp}$ and also add them to the DataFrame.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.transient_select_funcs import chi_eff, mass_ratio, m_chirp\n",
+    "\n",
+    "def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chunk):\n",
+    "    '''A BBH selection function to create a transient population of BBHs mergers.'''\n",
+    "    \n",
+    "    indices = oneline_chunk.index.to_numpy()\n",
+    "    df_transients = pd.DataFrame(index = indices)\n",
+    "    \n",
+    "    df_transients['time'] = history_chunk[history_chunk['event'] == 'CO_contact']['time'] * 1e-6 #Myr\n",
+    "    mask = (history_chunk['S1_state'] == 'BH') & (history_chunk['S2_state'] == 'BH') & (history_chunk['step_names'] == 'step_SN') & (history_chunk['state'] == 'detached')\n",
+    "    df_transients['metallicity'] = oneline_chunk['metallicity']\n",
+    "    df_transients['t_inspiral'] = df_transients['time'] - history_chunk[mask]['time']*1e-6\n",
+    "    \n",
+    "    df_transients['S1_state']  = history_chunk[mask]['S1_state']\n",
+    "    df_transients['S2_state']  = history_chunk[mask]['S2_state']\n",
+    "    df_transients['S1_mass'] = history_chunk[mask]['S1_mass']\n",
+    "    df_transients['S2_mass'] = history_chunk[mask]['S2_mass']\n",
+    "    df_transients['S1_spin'] = history_chunk[mask]['S1_spin']\n",
+    "    df_transients['S2_spin'] = history_chunk[mask]['S2_spin']\n",
+    "    # we distinguish the tilt of the spin to the orbit after the first and second SN.\n",
+    "    df_transients['S1_spin_orbit_tilt_merger'] = oneline_chunk['S1_spin_orbit_tilt_second_SN']\n",
+    "    df_transients['S2_spin_orbit_tilt_merger'] = oneline_chunk['S2_spin_orbit_tilt_second_SN']\n",
+    "    df_transients['orbital_period'] = history_chunk[mask]['orbital_period']\n",
+    "    df_transients['eccentricity'] = history_chunk[mask]['eccentricity']\n",
+    "    \n",
+    "    # Added\n",
+    "    df_transients['chirp_mass'] = m_chirp(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])\n",
+    "    df_transients['mass_ratio'] = mass_ratio(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])\n",
+    "    df_transients['chi_eff'] = chi_eff(history_chunk[mask]['S1_mass'],\n",
+    "                                       history_chunk[mask]['S2_mass'],\n",
+    "                                       history_chunk[mask]['S1_spin'],\n",
+    "                                       history_chunk[mask]['S2_spin'],\n",
+    "                                       oneline_chunk['S1_spin_orbit_tilt_second_SN'],\n",
+    "                                       oneline_chunk['S2_spin_orbit_tilt_second_SN'])\n",
+    "    \n",
+    "    return df_transients"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BBH_selection_function(BBH_pop.history[0], BBH_pop.oneline[0], None)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Before running this selection on the whole population, we would like to include the `formation_channels` too.\n",
+    "These are calculated for the systems in the population file and add a good overview of the evolution of binaries."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# mt_history=True adds detailed information about the mass transfer in the HMS-HMS grid\n",
+    "BBH_pop.calculate_formation_channels(mt_history=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Now we can include the formation_channels in `df_transients`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chunk):\n",
+    "    '''A BBH selection function to create a transient population of BBHs mergers.'''\n",
+    "    \n",
+    "    indices = oneline_chunk.index.to_numpy()\n",
+    "    df_transients = pd.DataFrame(index = indices)\n",
+    "    \n",
+    "    df_transients['time'] = history_chunk[history_chunk['event'] == 'CO_contact']['time'] * 1e-6 #Myr\n",
+    "    mask = (history_chunk['S1_state'] == 'BH') & (history_chunk['S2_state'] == 'BH') & (history_chunk['step_names'] == 'step_SN') & (history_chunk['state'] == 'detached')\n",
+    "    df_transients['metallicity'] = oneline_chunk['metallicity']\n",
+    "    df_transients['t_inspiral'] = df_transients['time'] - history_chunk[mask]['time']*1e-6\n",
+    "    \n",
+    "    df_transients['S1_state']  = history_chunk[mask]['S1_state']\n",
+    "    df_transients['S2_state']  = history_chunk[mask]['S2_state']\n",
+    "    df_transients['S1_mass'] = history_chunk[mask]['S1_mass']\n",
+    "    df_transients['S2_mass'] = history_chunk[mask]['S2_mass']\n",
+    "    df_transients['S1_spin'] = history_chunk[mask]['S1_spin']\n",
+    "    df_transients['S2_spin'] = history_chunk[mask]['S2_spin']\n",
+    "    # we distinguish the tilt of the spin to the orbit after the first and second SN.\n",
+    "    df_transients['S1_spin_orbit_tilt_merger'] = oneline_chunk['S1_spin_orbit_tilt_second_SN']\n",
+    "    df_transients['S2_spin_orbit_tilt_merger'] = oneline_chunk['S2_spin_orbit_tilt_second_SN']\n",
+    "    df_transients['orbital_period'] = history_chunk[mask]['orbital_period']\n",
+    "    df_transients['eccentricity'] = history_chunk[mask]['eccentricity']\n",
+    "    \n",
+    "    df_transients['chirp_mass'] = m_chirp(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])\n",
+    "    df_transients['mass_ratio'] = mass_ratio(history_chunk[mask]['S1_mass'], history_chunk[mask]['S2_mass'])\n",
+    "    df_transients['chi_eff'] = chi_eff(history_chunk[mask]['S1_mass'],\n",
+    "                                       history_chunk[mask]['S2_mass'],\n",
+    "                                       history_chunk[mask]['S1_spin'],\n",
+    "                                       history_chunk[mask]['S2_spin'],\n",
+    "                                       oneline_chunk['S1_spin_orbit_tilt_second_SN'],\n",
+    "                                       oneline_chunk['S2_spin_orbit_tilt_second_SN'])\n",
+    "    \n",
+    "    # added\n",
+    "    df_transients = pd.concat([df_transients, formation_channels_chunk[['channel']]], axis=1)    \n",
+    "    \n",
+    "    return df_transients\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# NOTE: the formation channels have to be given as a dataframe, as such we call it with loc[[0]] for testing\n",
+    "# Make sure you use double brackets for loc to return a dataframe\n",
+    "BBH_selection_function(BBH_pop.history[0],\n",
+    "                       BBH_pop.oneline[0],\n",
+    "                       BBH_pop.formation_channels.loc[[0]])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The example binary gives us a dataframe with all the information we're interested in. But if something is missing feel free to customize the selection further!\n",
+    "\n",
+    "We now create a `TransientPopulation` instance with the `BBH_selection_function` and `create_transient_population`.\n",
+    "\n",
+    "This will write the transient population to the current file.\n",
+    "\n",
+    "`BBH_mergers.population` will load the complete dataframe we've just created. Each of the indices in this population refer back to the original binaries, which are still accessible through `BBH_mergers.history` or `BBH_mergers.oneline`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BBH_mergers = BBH_pop.create_transient_population(BBH_selection_function, 'BBH')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BBH_mergers.population"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Since the Transient Population is stored in the same file, you can continue your analysis by opening the file using the `TransientPopulation` class.\n",
+    "You only need to do your selection once and you can then continue from this stage."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import TransientPopulation\n",
+    "\n",
+    "BBH_mergers = TransientPopulation(filename='BBH_contact.h5', transient_name='BBH')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BBH_mergers.mass_per_metallicity"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "With `TransientPopulation` class you can compute the efficiency of the transient population at a given metallicity, i.e. the number of merging DCO per unit star formation and visualize the results.\n",
+    "\n",
+    "<div class=\"alert alert-info\">\n",
+    "\n",
+    "**Underlying mass**\n",
+    "\n",
+    "Make sure you've calculated the underlying mass for the population, as done earlier in this tutorial.\n",
+    "\n",
+    "</div>\n",
+    "\n",
+    "Applying the underlying mass normalization assumes that no events occur outside the sampled parameter space. \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BBH_mergers.get_efficiency_over_metallicity()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# if you want to plot the channels, you can set channels=True\n",
+    "BBH_mergers.plot_efficiency_over_metallicity(channels=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BBH_mergers.efficiency"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "You can also plot the delay time distribution based on the time column in the TransientPopulation.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "bins = np.logspace(6.5,10.5)\n",
+    "BBH_mergers.plot_delay_time_distribution(bins=bins)\n",
+    "# you can also set a specific metallicity. However, this normalises the rate with only the mass of the selected metallicity.\n",
+    "BBH_mergers.plot_delay_time_distribution(metallicity=0.1, bins=bins)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "You might also be interested in seeing the evolution of the binary in more detail.\n",
+    "\n",
+    "For this, you can plot the TransientPopulation over a grid slice.\n",
+    "For example, below we plot binaries over the $q=0.7$ slice at $Z=10^{-4} Z_\\odot$ on the HMS-HMS grid.\n",
+    "\n",
+    "If no slice is given, all mass ratios are plotted.\n",
+    "\n",
+    "You can also plot a property from the `TransientPopulation.population` DataFrame as a colormap.\n",
+    "And specific formation_channels if they're in the DataFrame."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BBH_mergers.plot_popsyn_over_grid_slice('HMS-HMS', 1e-4, slices=[0.7], save_fig=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BBH_mergers.plot_popsyn_over_grid_slice('HMS-HMS', 1e-4, slices=[0.7], prop='S1_spin', prop_range=[0,0.3], save_fig=False, channel='ZAMS_oRLO1_CC1_oRLO2_CC2_END') # SMT channel"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "-----\n",
+    "\n",
+    "## Cosmic Rate\n",
+    "\n",
+    "So far these events do not consider the metallicity or star formation rate evolution of the Universe.\n",
+    "\n",
+    "POSYDON comes with several built-in star formation histories and metallicity evolutions, a few examples are:\n",
+    "\n",
+    "- IllustrisTNG\n",
+    "- Neijssel2019\n",
+    "- Madau+Fragos2017\n",
+    "\n",
+    "We can apply these to our population with the `calculate_cosmic_weights` function.\n",
+    "Here, we will use the metallicity and SFR evolution of the IllustrisTNG, which is the default model used, if no `MODEL_in` is given.\n",
+    "\n",
+    "The function returns an instance of the `Rates` class, which gives us access to some new variables:\n",
+    "\n",
+    "\n",
+    "- `z_birth`: the redshift and age of the universe at which we probe the star formation\n",
+    "- `z_events`: the redshift at which an event takes place\n",
+    "- `weights`: the weight of the event based on the SFR, its metallicity, and its weight in the population."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import TransientPopulation\n",
+    "BBH_mergers = TransientPopulation(filename='BBH_contact.h5', transient_name='BBH')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "MODEL = {\n",
+    "    'delta_t' : 100, # Myr\n",
+    "    'SFR' : 'IllustrisTNG', # Neijssel2019, Madau+Fragos2017\n",
+    "    'sigma_SFR' : None,\n",
+    "}\n",
+    "\n",
+    "rates = BBH_mergers.calculate_cosmic_weights('IllustrisTNG', MODEL_in=MODEL)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rates.z_birth.head(2)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rates.z_events.head(2)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rates.weights.head(2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Similar to the `TransientPopulation`, the rates can also be accessed using the `Rates` class. You will need to provide your `transient_name` and `SFH_identifier`.\n",
+    "These rates are also stored in the file. You can have as many transients and star formation histories in your population file as you want."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.synthetic_population import Rates\n",
+    "\n",
+    "rates = Rates(filename='BBH_contact.h5', transient_name='BBH', SFH_identifier='IllustrisTNG')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "You can directly work with the weights and the z_events to get events at specific redshifts.\n",
+    "\n",
+    "Or you can calculate the rate density over redshift using the `calculate_intrinsic_rate_density` function.\n",
+    "This will calculate the rate over redshift for you.\n",
+    "\n",
+    "You can use the output of the function immediately, or get them from `rates.intrinsic_rate_density`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = rates.calculate_intrinsic_rate_density(channels=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rates.intrinsic_rate_density"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rates.plot_intrinsic_rate(channels=True, xlim=(0,10), ylim=(1e-2,1e3))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Properties of the systems\n",
+    "\n",
+    "Sometimes you might want some more details about the actual population and its properties.\n",
+    "\n",
+    "`plot_hist_properties()` allows you to plot these.\n",
+    "\n",
+    "By default, the function will create its own figure and plot it. If you would like more control over the output, you can give it your own pyplot axis and set `show=False`.\n",
+    "This allows you to adapt and change the plot to your liking after finishing adding the properties."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "bins = np.linspace(0,100,101)\n",
+    "fig, ax = plt.subplots(1,1)\n",
+    "rates.plot_hist_properties('S1_mass', intrinsice=True, bins=bins, color='red', ax =ax, label='S1', show=False)\n",
+    "rates.plot_hist_properties('S2_mass', intrinsice=True, bins=bins, ax=ax, label='S2', show=False)\n",
+    "\n",
+    "ax.set_ylabel('Rate density [Gpc$^-3$ yr$^-1$]')\n",
+    "ax.set_xlabel('Mass [Msun]')\n",
+    "ax.legend()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Observable population\n",
+    "\n",
+    "Sometimes, however, you're not just interested in the intrinsic population, and want an observable population.\n",
+    "This could be a supernova detection fraction for a telescope survey, or the LVK detection efficiency for GW mergers.\n",
+    "\n",
+    "You can apply these using `calculate_observable_population`. Similar to the `create_transient_population`, this function takes a `observable_func`, which describes the observability of a transient.\n",
+    "\n",
+    "An `observable_func` takes chunks of\n",
+    "\n",
+    "1. `TransientPopulation.population`\n",
+    "2. The `TransientPopulation.z_events`\n",
+    "3. The `TransientPopulation.weights`\n",
+    "\n",
+    "Using these, new weights are calculated and stored as a separate observable population of your TransientPopulation.\n",
+    "The BBH analysis framework comes with a detection function for several detector sensitivities and configurations."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.popsyn.transient_select_funcs import DCO_detectability"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def DCO_wrapper(transient_chunk, z_events_chunk, weights_chunk):\n",
+    "    sensitivity = 'design_H1L1V1'\n",
+    "    return DCO_detectability(sensitivity, transient_chunk, z_events_chunk, weights_chunk, verbose=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# We also give it a name, which is used as an identifier in the file\n",
+    "rates.calculate_observable_population(DCO_wrapper, 'design_H1L1V1')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# We can now access this observable population\n",
+    "rates.observable_population('design_H1L1V1')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "You can also plot the intrinsic and observable population together."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "bins = np.linspace(0,100,101)\n",
+    "fig, ax = plt.subplots(1,1)\n",
+    "\n",
+    "rates.plot_hist_properties('S1_mass', intrinsice=True, observable='design_H1L1V1', bins=bins, ax = ax, label='S1', show=False)\n",
+    "ax.set_ylabel('Rate density [Gpc$^-3$ yr$^-1$]')\n",
+    "ax.set_xlabel('Mass [Msun]') \n",
+    "ax.legend()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Congratulations, you are now ready to analyze any DCO population data you generated with POSYDON. Feel free to further explore the BBH model or to use this tutorial to study other populations.\n",
+    "The next tutorials show you how to [select GRBs](lgrb_pop_syn.ipynb), perform a [SFH calculation at a single metallicity](one_met_pop_syn.ipynb), and [how to run an individual binary](evolve_single_binaries.ipynb)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "posydon_env",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.5"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

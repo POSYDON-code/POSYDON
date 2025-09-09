@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evolutionary Hooks &mdash; posydon 2.0.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=09beee0d"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="User Modules" href="user_modules.html" />
+    <link rel="prev" title="The Flow Chart Object" href="flow_chart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="single_star.html">The SingleStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_star.html">The BinaryStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSYDON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow_chart.html">The Flow Chart Object</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Evolutionary Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="star_formation_history.html">Star Formation History</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+      <li class="breadcrumb-item active">Evolutionary Hooks</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/pop_syn/custom_hooks.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="evolutionary-hooks">
+<span id="custom-hooks"></span><h1>Evolutionary Hooks<a class="headerlink" href="#evolutionary-hooks" title="Link to this heading"></a></h1>
+<p>During the evolution of a binary, one may be interested in having access to the <code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> instance before, during, and after the evolutionary loop. You may check the attributes, or add your own data to the binary during the evolution. We use <em>hooks</em> to pass functions that are called during the evolution of all binaries.</p>
+<p>The evolutionary loop is in <code class="docutils literal notranslate"><span class="pre">BinaryStar.evolve</span></code>, and the pseudo code looks like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">evolve</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">pre_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">!=</span> <span class="s1">&#39;END&#39;</span><span class="p">:</span>
+            <span class="n">pre_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+            <span class="o">...</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+            <span class="o">...</span>
+            <span class="n">post_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+            <span class="o">...</span>
+    <span class="n">post_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All hooks functions and classes should be provided in the <code class="docutils literal notranslate"><span class="pre">SimulationProperties</span></code> with the name <code class="docutils literal notranslate"><span class="pre">extra_hooks</span></code>. Then <code class="docutils literal notranslate"><span class="pre">extra_hooks</span></code> points to a <code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">tuples</span></code>, containing either:</p>
+<ol class="arabic simple">
+<li><p>The corresponding extra step name and a callable or,</p></li>
+<li><p>a class deriving from <code class="docutils literal notranslate"><span class="pre">EvolveHooks</span></code> and a dictionary passed during initialization.</p></li>
+</ol>
+<section id="passing-extra-hooks-functions">
+<h2>1. Passing extra hooks functions<a class="headerlink" href="#passing-extra-hooks-functions" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># import evolutionary steps</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.binarypopulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryPopulation</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProperties</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow_chart</span>
+<span class="linenos"> 5</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.CE.step_CEE</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepCEE</span>
+<span class="linenos"> 6</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.SN.step_SN</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepSN</span>
+<span class="linenos"> 7</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.step_end</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_end</span>
+<span class="linenos"> 8</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.MESA.step_mesa</span><span class="w"> </span><span class="kn">import</span> <span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">CO_HMS_RLO_step</span>
+<span class="linenos"> 9</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.step_detached</span><span class="w"> </span><span class="kn">import</span> <span class="n">detached_step</span>
+<span class="linenos">10</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.double_CO</span><span class="w"> </span><span class="kn">import</span> <span class="n">DoubleCO</span>
+<span class="linenos">11</span>
+<span class="hll"><span class="linenos">12</span><span class="k">def</span><span class="w"> </span><span class="nf">print_info_before</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+</span><span class="hll"><span class="linenos">13</span>    <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s1">&#39;Step </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s1"> for </span><span class="se">\n</span><span class="s1">before:</span><span class="se">\t</span><span class="si">{</span><span class="n">binary</span><span class="si">}</span><span class="s1">&#39;</span> <span class="p">)</span>
+</span><span class="linenos">14</span>
+<span class="hll"><span class="linenos">15</span><span class="k">def</span><span class="w"> </span><span class="nf">print_info_after</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+</span><span class="hll"><span class="linenos">16</span>    <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s1">&#39;after:</span><span class="se">\t</span><span class="si">{</span><span class="n">binary</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="p">)</span>
+</span><span class="linenos">17</span>
+<span class="linenos">18</span><span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+<span class="linenos">19</span>      <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">20</span>      <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">MS_MS_step</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">21</span>      <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">22</span>      <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">23</span>      <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">24</span>      <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepCEE</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">25</span>      <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepSN</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">26</span>      <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">27</span>      <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">28</span>      <span class="c1"># put hooks here</span>
+<span class="hll"><span class="linenos">29</span>      <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;extra_pre_step&#39;</span><span class="p">,</span> <span class="n">print_info_before</span><span class="p">),</span>
+</span><span class="hll"><span class="linenos">30</span>                    <span class="p">(</span><span class="s1">&#39;extra_post_step&#39;</span><span class="p">,</span> <span class="n">print_info_after</span><span class="p">)]</span>
+</span><span class="linenos">31</span>  <span class="p">)</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span>  <span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>With the corresponding output from evolving a single binary:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Step step_HMS_HMS for
+before:     BinaryStar(detached, ZAMS, p=3.13, S1=(H-rich_Core_H_burning,M=58.14), S2=(H-rich_Core_H_burning,M=50.83))
+after:      BinaryStar(contact, oCE1, p=4.05, S1=(H-rich_Core_H_burning,M=42.97), S2=(H-rich_Core_H_burning,M=44.23))
+
+Step step_CE for
+before:     BinaryStar(contact, oCE1, p=4.05, S1=(H-rich_Core_H_burning,M=42.97), S2=(H-rich_Core_H_burning,M=44.23))
+after:      BinaryStar(merged, None, p=nan, S1=(H-rich_Core_H_burning,M=87.20), S2=(H-rich_Core_H_burning,M=nan))
+
+Step step_end for
+before:     BinaryStar(merged, None, p=nan, S1=(H-rich_Core_H_burning,M=87.20), S2=(H-rich_Core_H_burning,M=nan))
+after:      BinaryStar(merged, END, p=nan, S1=(H-rich_Core_H_burning,M=87.20), S2=(H-rich_Core_H_burning,M=nan))
+</pre></div>
+</div>
+<p>The options for step names and their arguments include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'extra_pre_evolve'</span></code>, functional form: <code class="docutils literal notranslate"><span class="pre">f(binary)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'extra_pre_step'</span></code>, functional form: <code class="docutils literal notranslate"><span class="pre">f(binary,</span> <span class="pre">step_name)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'extra_post_step'</span></code>, functional form: <code class="docutils literal notranslate"><span class="pre">f(binary,</span> <span class="pre">step_name)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'extra_post_evolve'</span></code>, functional form: <code class="docutils literal notranslate"><span class="pre">f(binary)</span></code></p></li>
+</ul>
+</section>
+<section id="passing-extra-hooks-classes">
+<h2>2. Passing extra hooks classes<a class="headerlink" href="#passing-extra-hooks-classes" title="Link to this heading"></a></h2>
+<p>For more complex tasks, you can provide a class deriving from <code class="docutils literal notranslate"><span class="pre">EvolveHooks</span></code>. We have implemented two examples of hooks classes which add step timing and step names to the history of a binary in <code class="docutils literal notranslate"><span class="pre">simulationproperties.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># import evolutionary steps</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.binarypopulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryPopulation</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProperties</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow_chart</span>
+<span class="linenos"> 5</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.CE.step_CEE</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepCEE</span>
+<span class="linenos"> 6</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.SN.step_SN</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepSN</span>
+<span class="linenos"> 7</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.step_end</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_end</span>
+<span class="linenos"> 8</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.MESA.step_mesa</span><span class="w"> </span><span class="kn">import</span> <span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">CO_HMS_RLO_step</span>
+<span class="linenos"> 9</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.step_detached</span><span class="w"> </span><span class="kn">import</span> <span class="n">detached_step</span>
+<span class="linenos">10</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.double_CO</span><span class="w"> </span><span class="kn">import</span> <span class="n">DoubleCO</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="c1"># import hooks classes</span>
+<span class="hll"><span class="linenos">13</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimingHooks</span><span class="p">,</span> <span class="n">StepNamesHooks</span>
+</span><span class="linenos">14</span>
+<span class="linenos">15</span><span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+<span class="linenos">16</span>      <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">17</span>      <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">MS_MS_step</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">18</span>      <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">19</span>      <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">20</span>      <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">21</span>      <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepCEE</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">22</span>      <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepSN</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">23</span>      <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">24</span>      <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="p">{}),</span>
+<span class="linenos">25</span>      <span class="c1"># put hooks here</span>
+<span class="hll"><span class="linenos">26</span>      <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">TimingHooks</span><span class="p">,</span> <span class="p">{}),(</span><span class="n">StepNamesHooks</span><span class="p">,</span> <span class="p">{})]</span>
+</span><span class="linenos">27</span>  <span class="p">)</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span>  <span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The source for <code class="docutils literal notranslate"><span class="pre">StepNamesHooks</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">StepNamesHooks</span><span class="p">(</span><span class="n">EvolveHooks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add history column &#39;step_name&#39; to each binary.</span>
+
+<span class="sd">    Name of evolutionary step as defined in SimulationProperties.</span>
+
+<span class="sd">    &gt;&gt;&gt; pop.to_df(extra_columns=[&#39;step_names&#39;])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the step name to match history.&quot;&quot;&quot;</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;initial_cond&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">binary</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do not do anything before the step.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">binary</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Record the step name.&quot;&quot;&quot;</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span>
+        <span class="n">len_binary_hist</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span>
+        <span class="n">len_step_names</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">len_binary_hist</span> <span class="o">-</span> <span class="n">len_step_names</span>
+        <span class="k">if</span> <span class="n">len_binary_hist</span> <span class="o">&gt;</span> <span class="n">len_step_names</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">len_binary_hist</span> <span class="o">&lt;</span> <span class="n">len_step_names</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">len_binary_hist</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):]</span>
+        <span class="k">return</span> <span class="n">binary</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensure None&#39;s are append to step_names to match rows in history.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;END&#39;</span> <span class="ow">or</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;FAILED&#39;</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">))</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">diff</span>
+        <span class="k">return</span> <span class="n">binary</span>
+</pre></div>
+</div>
+<p>You can simply combine multiple hooks classes and functions together by passing them in the list.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">TimingHooks</span><span class="p">,</span> <span class="p">{}),(</span><span class="n">StepNamesHooks</span><span class="p">,</span> <span class="p">{}),</span>
+                  <span class="p">(</span><span class="s1">&#39;extra_pre_step&#39;</span><span class="p">,</span> <span class="n">print_info_before</span><span class="p">)],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="flow_chart.html" class="btn btn-neutral float-left" title="The Flow Chart Object" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="user_modules.html" class="btn btn-neutral float-right" title="User Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.5
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.5/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Binary Population Object &mdash; posydon 2.0.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=09beee0d"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="POSYDON Population Synthesis Configuration Guide" href="population_params.html" />
+    <link rel="prev" title="The BinaryStar object" href="binary_star.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="single_star.html">The SingleStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_star.html">The BinaryStar object</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">The Binary Population Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSYDON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow_chart.html">The Flow Chart Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="star_formation_history.html">Star Formation History</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+      <li class="breadcrumb-item active">The Binary Population Object</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/pop_syn/binary_population.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="the-binary-population-object">
+<span id="binary-population"></span><h1>The Binary Population Object<a class="headerlink" href="#the-binary-population-object" title="Link to this heading"></a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> class is the main object for handling the evolution of
+binary populations in POSYDON. <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span></code> and <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> build upon
+it to provide a more user-friendly interface for simulating populations.</p>
+<p>However, its features are useful if you want to adapt part of the population synthesis,
+for example, to test a specific population of binaries with custom parameters.</p>
+<section id="the-initialization-of-the-binarypopulation-object">
+<h2>The initialization of the BinaryPopulation object<a class="headerlink" href="#the-initialization-of-the-binarypopulation-object" title="Link to this heading"></a></h2>
+<p>To create a <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> object, you need to provide a set of parameters that define the population’s characteristics.
+The easiest way is to load in the parameters from the default population <code class="docutils literal notranslate"><span class="pre">ini</span></code> file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here’s an example of how to initialize a <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.binarypopulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryPopulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">binarypop_kwargs_from_ini</span>
+
+<span class="c1"># Load the parameters from the ini file</span>
+<span class="n">ini_kwargs</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create the BinaryPopulation object</span>
+<span class="n">population</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="p">(</span><span class="o">**</span><span class="n">ini_kwargs</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">population</span><span class="o">.</span><span class="n">number_of_binaries</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This code will create a <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> object with the parameters defined in the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file and print the number of binaries in the population.
+You can adapt the <code class="docutils literal notranslate"><span class="pre">ini_kwargs</span></code> dictionary to change the parameters of the population, such as the number of binaries and the metallicity.</p>
+<p>You can also skip the read in from the ini file and create the <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> object directly.
+This performs the same task as the previous example, but automatically.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.binarypopulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryPopulation</span>
+
+<span class="n">population</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="o">.</span><span class="n">from_ini</span><span class="p">(</span><span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">population</span><span class="o">.</span><span class="n">number_of_binaries</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>On initialization, the <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> class will initialize the following attributes:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Core Attributes</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
+<td><p>Dictionary containing all initialization parameters, starting with defaults and updated with user inputs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">number_of_binaries</span></code></p></td>
+<td><p>Total number of binaries in the population</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">population_properties</span></code></p></td>
+<td><p>SimulationProperties instance containing the evolution steps and configuration</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metallicity</span></code></p></td>
+<td><p>Metallicity value for the population [Z/Z_sun]</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metallicities</span></code></p></td>
+<td><p>List of metallicity values, defaults to [metallicity] for single metallicity populations</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">history_verbose</span></code></p></td>
+<td><p>Boolean flag controlling verbosity of evolution history output</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">entropy</span></code></p></td>
+<td><p>Entropy value used for random number generation seeding</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RNG</span></code></p></td>
+<td><p>NumPy random number generator instance for reproducible sampling</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">manager</span></code></p></td>
+<td><p>PopulationManager instance that handles binary creation, evolution, and data management</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">to_df</span></code></p></td>
+<td><p>Method reference to manager’s to_df method for converting binaries to DataFrame</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">to_oneline_df</span></code></p></td>
+<td><p>Method reference to manager’s to_oneline_df method for converting binaries to summary DataFrame</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">find_failed</span></code></p></td>
+<td><p>Method reference to manager’s find_failed method for identifying failed binary evolutions</p></td>
+</tr>
+</tbody>
+</table>
+<p>During the initialization, the <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> creates a <code class="docutils literal notranslate"><span class="pre">PopulationManager</span></code> and <code class="docutils literal notranslate"><span class="pre">SimulationProperties</span></code> instance.</p>
+<p>Several variables are only set when running with MPI or job arrays, which are used for parallel processing of the population synthesis.
+These will not be used in a standard run of the <code class="docutils literal notranslate"><span class="pre">BinaryPopulation</span></code> class, but are set when using the <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span></code> or <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> classes.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Conditional Attributes (MPI/Job Array)</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">comm</span></code></p></td>
+<td><p>MPI communicator object (only when running with MPI)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">JOB_ID</span></code></p></td>
+<td><p>Job array ID for parallel processing (only when using job arrays)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rank</span></code></p></td>
+<td><p>Process rank for parallel processing (set when using MPI or job arrays)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">size</span></code></p></td>
+<td><p>Total number of processes (set when using MPI or job arrays)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="evolving-the-population">
+<h2>Evolving the population<a class="headerlink" href="#evolving-the-population" title="Link to this heading"></a></h2>
+<p>With the population parameters defined, you can evolve the population using the <code class="docutils literal notranslate"><span class="pre">evolve</span></code> method.
+This method will</p>
+<ol class="arabic simple">
+<li><p>Sample the initial system parameters (single or binary systems).</p></li>
+<li><p>Evolve each binary system through its evolutionary steps.</p></li>
+</ol>
+<p>Here’s an example of how to evolve the population:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">population</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Additional <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> can be passed to the <code class="docutils literal notranslate"><span class="pre">evolve</span></code> method to control the evolution process, such as:</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Additional evolve kwargs</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 50.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">indices</span></code></p></td>
+<td><p>Custom binary indices to use instead of range(number_of_binaries). If running with MPI, indices are split between processes</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">breakdown_to_df</span></code></p></td>
+<td><p>Convert binaries to dataframe and remove from memory after evolution to save RAM</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tqdm</span></code></p></td>
+<td><p>Whether to show a progress bar during evolution</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">from_hdf</span></code></p></td>
+<td><p>Whether to load the population from an HDF5 file instead of evolving it</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">optimize_ram</span></code></p></td>
+<td><p>Enable RAM optimization by processing binaries in batches. Uses dump_rate from the ini file</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ram_per_cpu</span></code></p></td>
+<td><p>Amount of RAM per CPU for batch size calculation (in GB)</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">temp_directory</span></code></p></td>
+<td><p>Directory path for storing temporary batch files during evolution</p></td>
+<td><p>“batches”</p></td>
+</tr>
+</tbody>
+</table>
+<p>Depending on the parameters, <code class="docutils literal notranslate"><span class="pre">evolve</span></code> will create a temporary directory to
+store the batches of binaries during the evolution process.
+Within this folder, a batch will write <code class="docutils literal notranslate"><span class="pre">dump_rate</span></code> binaries to a temporary file:
+<code class="docutils literal notranslate"><span class="pre">{dump_rate}_evolution.batch</span></code>. At the end of the evolution, these files will be merged into a single HDF5 file:
+<code class="docutils literal notranslate"><span class="pre">evolution.combined.h5</span></code>.</p>
+<p>If you’re running with SLURM or MPI, all different processes will write to the
+same folder, with different batch indicators for each process: <code class="docutils literal notranslate"><span class="pre">{dump_rate}_evolution.batch.{rank}.h5</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The merging of different processes is different from the merging of batches within a single process!
+We recommend running this with the <code class="docutils literal notranslate"><span class="pre">PopulationRunner</span></code> class, which will handle
+the batch writing and merging the output of multiple processes automatically into a single HDF5 file.</p>
+</div>
+<p>When evolving a population, you can read the starting conditions from an HDF5 file
+or sample the initial conditions from the given population parameters.
+See <a class="reference internal" href="population_params.html#pop-params-guide"><span class="std std-ref">POSYDON Population Synthesis Configuration Guide</span></a> for more details about the population parameters file.</p>
+</section>
+<section id="accessing-the-evolved-population">
+<h2>Accessing the evolved population<a class="headerlink" href="#accessing-the-evolved-population" title="Link to this heading"></a></h2>
+<p>Depending on the initialization parameters, the evolved population can be accessed in different ways.</p>
+<ol class="arabic simple">
+<li><p>If not written to file with <code class="docutils literal notranslate"><span class="pre">breakdown_to_df=False</span></code>, the population is stored in memory as a list of <code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> objects.
+You can access the individual binaries using the <code class="docutils literal notranslate"><span class="pre">manager</span></code> attribute:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">first_binary</span> <span class="o">=</span> <span class="n">population</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">binaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">first_binary</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Additionally you can turn the binary into a history <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> or create a <code class="docutils literal notranslate"><span class="pre">oneline</span></code> summary <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">history</span> <span class="o">=</span> <span class="n">population</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
+
+<span class="n">oneline</span> <span class="o">=</span> <span class="n">population</span><span class="o">.</span><span class="n">to_oneline_df</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">oneline</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic" start="2">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">breakdown_to_df=True</span></code>, the population is removed from memory and written to the population file.
+You can access the population with the normal <code class="docutils literal notranslate"><span class="pre">Population</span></code> class.
+Make sure the file name has <code class="docutils literal notranslate"><span class="pre">.h5</span></code> extension, as this is required for the Population class to read the file correctly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
+<span class="n">population</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;./batches/evolution.combined.h5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="binarygenerator-class">
+<h2>BinaryGenerator class<a class="headerlink" href="#binarygenerator-class" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">BinaryGenerator</span></code> class is a helper class for generating binary systems based on the population parameters.
+It can be used to create a population of binaries with specific characteristics, such as mass ratios,
+metallicity, and initial conditions.
+Please see the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryGenerator" title="posydon.popsyn.binarypopulation.BinaryGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryGenerator</span></code></a> documentation for more details on how to use this class.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="binary_star.html" class="btn btn-neutral float-left" title="The BinaryStar object" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="population_params.html" class="btn btn-neutral float-right" title="POSYDON Population Synthesis Configuration Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.5
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.5/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
