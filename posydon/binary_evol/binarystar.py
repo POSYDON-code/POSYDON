@@ -164,6 +164,8 @@ class BinaryStar:
                 setattr(self, item, binary_kwargs.pop(item, [0.0,
                                                              0.0,
                                                              0.0]))
+            elif item == 'eccentricity':
+                setattr(self, item, binary_kwargs.pop(item, 0.0))
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
             setattr(self, item + '_history', [getattr(self, item)])
@@ -648,8 +650,8 @@ class BinaryStar:
         # set some orbital parameters that should exist by hand
         bp_keys = binary_params.keys()
         if 'eccentricity_history' not in bp_keys:
-            setattr(binary, 'eccentricity_history', [0]*history_length)
-            setattr(binary, 'eccentricity', 0)
+            setattr(binary, 'eccentricity_history', [0.0]*history_length)
+            setattr(binary, 'eccentricity', 0.0)
         if ('separation_history' not in bp_keys
                 and 'orbital_period_history' in bp_keys):
             separation = orbital_separation_from_period(
@@ -867,8 +869,8 @@ class BinaryStar:
         # set some orbital parameters that should exist by hand
         bp_keys = binary_params.keys()
         if 'eccentricity_history' not in bp_keys:
-            setattr(binary, 'eccentricity_history', [0])
-            setattr(binary, 'eccentricity', 0)
+            setattr(binary, 'eccentricity_history', [0.0])
+            setattr(binary, 'eccentricity', 0.0)
         if ('separation_history' not in bp_keys
                 and 'orbital_period_history' in bp_keys):
             separation = orbital_separation_from_period(
