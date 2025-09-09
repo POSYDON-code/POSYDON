@@ -22,6 +22,7 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
@@ -35,8 +36,6 @@ import atexit
 import os
 from tqdm import tqdm
 import psutil
-import sys
-
 
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
@@ -48,7 +47,7 @@ from posydon.popsyn.independent_sample import (generate_independent_samples,
                                                binary_fraction_value)
 from posydon.popsyn.sample_from_file import (get_samples_from_file,
                                              get_kick_samples_from_file)
-from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
+
 from posydon.popsyn.defaults import default_kwargs
 
 from posydon.popsyn.io import binarypop_kwargs_from_ini
@@ -216,7 +215,7 @@ class BinaryPopulation:
         indices : list, optional
             Custom binary indices to use. Default is range(number_of_binaries).
             If running with MPI, indices are split between processes if given.
-        breakdown_to_df : bool, True
+        breakdown_to_df : bool, False
             Breakdown a binary after evolution, converting to dataframe and
             removing the binary instance from memory.
         tqdm : bool, False
@@ -231,7 +230,7 @@ class BinaryPopulation:
         # combine kw defined at init and any passed here
         kw = {**self.kwargs, **kwargs}
         tqdm_bool = kw.get('tqdm', False)
-        breakdown_to_df_bool = kw.get('breakdown_to_df', True)
+        breakdown_to_df_bool = kw.get('breakdown_to_df', False)
         optimize_ram = kw.get('optimize_ram', False)
         from_hdf_bool = kw.get('from_hdf', False)
 
@@ -282,7 +281,7 @@ class BinaryPopulation:
 
         indices_for_iter = (tqdm(indices) if kwargs.get('tqdm', False)
                             else indices)
-        breakdown_to_df = kwargs.get('breakdown_to_df', True)
+        breakdown_to_df = kwargs.get('breakdown_to_df', False)
         optimize_ram = kwargs.get("optimize_ram", True)
         ram_per_cpu = kwargs.get("ram_per_cpu", None)
 
@@ -445,8 +444,8 @@ class BinaryPopulation:
                                  f"evolution.combined.{self.rank}.h5"),
                     filenames, mode = "w")
 
-        # ...or just save the population to a single file (if breakdown_to_df = False)
-        elif (not breakdown_to_df):
+        # ...or just save the population to a single file if breakdown_to_df is True
+        elif breakdown_to_df:
             if self.JOB_ID is None and self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
                                                "evolution.combined.h5"),
@@ -462,14 +461,13 @@ class BinaryPopulation:
         """Save BinaryPopulation to hdf file."""
         optimize_ram = self.kwargs['optimize_ram']
         temp_directory = self.kwargs['temp_directory']
-        mode = self.kwargs.get('mode', 'a')
 
         if self.JOB_ID is None and self.comm is None:
             if optimize_ram:
                 os.rename(os.path.join(temp_directory, "evolution.combined.h5"),
                           save_path)
             else:
-                self.manager.save(save_path, mode=mode, **kwargs)
+                self.manager.save(save_path, **kwargs)
         else:
             absolute_filepath = os.path.abspath(save_path)
             dir_name = os.path.dirname(absolute_filepath)
@@ -504,7 +502,6 @@ class BinaryPopulation:
             List of absolute paths to the temporary files.
 
         """
-        dir_name = os.path.dirname(absolute_filepath)
 
         history_cols = pd.read_hdf(file_names[0], key='history').columns
         oneline_cols = pd.read_hdf(file_names[0], key='oneline').columns
@@ -517,7 +514,7 @@ class BinaryPopulation:
         oneline_min_itemsize = {key: val for key, val in
                                 ONELINE_MIN_ITEMSIZE.items()
                                 if key in oneline_cols}
-        mode = kwargs.get('mode', 'a')
+        mode = kwargs.get('mode', 'w')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
         
@@ -532,18 +529,20 @@ class BinaryPopulation:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
                 try:
-                    store.append('history', pd.read_hdf(f, key='history'),
+                    history = pd.read_hdf(f, key='history')
+                    store.append('history', history,
                                  min_itemsize=history_min_itemsize)
                     
                     oneline = pd.read_hdf(f, key='oneline')
                     
                     # split weight between single and binary stars
-                    mask = oneline["state_i"] == "initially_single_star"
-                    filtered_data_single = oneline[mask]
-                    filtered_data_binaries = oneline[~mask]
+                    init_step_mask = ~history.index.duplicated(keep="first")  # indices that are NOT duplicates of the first
+                    singles_mask = history["state"] == "initially_single_star"
+                    filtered_data_single = history[init_step_mask & singles_mask]
+                    filtered_data_binaries = history[init_step_mask & ~singles_mask]
                     
-                    simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                    simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                    simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass", "S2_mass"]].to_numpy())
+                    simulated_mass_single += np.nansum(filtered_data_single[["S1_mass"]].to_numpy())
                     simulated_mass = simulated_mass_single + simulated_mass_binaries
                        
                     if 'metallicity' not in oneline.columns:
@@ -676,6 +675,9 @@ class PopulationManager:
         remove the BinaryStar instance from self.
 
         """
+
+        kwargs = {**self.kwargs, **kwargs}
+
         try:
             history = binary.to_df(**kwargs)
             self.history_dfs.append(history)
@@ -689,6 +691,8 @@ class PopulationManager:
 
     def to_df(self, selection_function=None, **kwargs):
         """Convert all binaries to dataframe."""
+
+        kwargs = {**self.kwargs, **kwargs}
         
         if len(self.binaries) == 0 and len(self.history_dfs) == 0:
             return
@@ -710,6 +714,9 @@ class PopulationManager:
 
     def to_oneline_df(self, selection_function=None, **kwargs):
         """Convert all binaries to oneline dataframe."""
+
+        kwargs = {**self.kwargs, **kwargs}
+
         if len(self.binaries) == 0 and len(self.oneline_dfs) == 0:
             return
         is_callable = callable(selection_function)
@@ -726,7 +733,7 @@ class PopulationManager:
         if len(holder) > 0:
             return pd.concat(holder, axis=0, ignore_index=False)
 
-    def find_failed(self,):
+    def find_failed(self):
         """Find any failed binaries in the population."""
         if len(self) > 0:
             return [b for b in self if b.event == 'FAILED']
@@ -840,10 +847,13 @@ class PopulationManager:
         -------
         None
         """
+        
+        kwargs = {**self.kwargs, **kwargs}
+
         # needed for metadata
         self.metallicity = self.binary_generator.Z_div_Zsun
 
-        mode = kwargs.get('mode', 'a')
+        mode = kwargs.get('mode', 'w')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
 
@@ -854,22 +864,35 @@ class PopulationManager:
             simulated_mass_binaries = 0.0
             number_of_systems=0
 
+            # read history and oneline
             history_df = self.to_df(**kwargs)
-            store.append('history', history_df)
-
-            kwargs['S1_kwargs'] = {"only_select_columns": ["mass"]}
-            kwargs['S2_kwargs'] = {"only_select_columns": ["mass"]}
             oneline_df = self.to_oneline_df(**kwargs)
+
+            # get columns for saving
+            history_cols = history_df.columns
+            oneline_cols = oneline_df.columns
+
+            history_min_itemsize = {key: val for key, val in
+                                    HISTORY_MIN_ITEMSIZE.items()
+                                    if key in history_cols}
+            oneline_min_itemsize = {key: val for key, val in
+                                    ONELINE_MIN_ITEMSIZE.items()
+                                    if key in oneline_cols}
+
+            # store history
+            store.append('history', history_df,
+                         min_itemsize=history_min_itemsize)
 
             try:
 
                 # split weight between single and binary stars
-                mask = oneline_df["state_i"] == "initially_single_star"
-                filtered_data_single = oneline_df[mask]
-                filtered_data_binaries = oneline_df[~mask]
+                init_step_mask = ~history_df.index.duplicated(keep="first") # indices that are NOT duplicates of the first
+                singles_mask = history_df["state"] == "initially_single_star"
+                filtered_data_single = history_df[init_step_mask & singles_mask]
+                filtered_data_binaries = history_df[init_step_mask & ~singles_mask]
 
-                simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass", "S2_mass"]].to_numpy())
+                simulated_mass_single += np.nansum(filtered_data_single[["S1_mass"]].to_numpy())
                 simulated_mass = simulated_mass_single + simulated_mass_binaries
 
                 if 'metallicity' not in oneline_df.columns:
@@ -878,10 +901,18 @@ class PopulationManager:
 
                 number_of_systems += len(oneline_df)
 
-                store.append('oneline', oneline_df)
+                # store oneline
+                store.append('oneline', oneline_df,
+                             min_itemsize=oneline_min_itemsize)
 
             except Exception:
                 print(traceback.format_exc(), flush=True)
+
+            # store population metadata
+            tmp_df = pd.DataFrame()
+            for c in saved_ini_parameters:
+                tmp_df[c] = [self.kwargs[c]]
+            store.append('ini_parameters', tmp_df)
             
             tmp_df = pd.DataFrame(
                 index=[self.metallicity],
@@ -891,12 +922,6 @@ class PopulationManager:
                       'number_of_systems': number_of_systems})
             tmp_df.index.name = 'metallicity'
             store.append('mass_per_metallicity', tmp_df)
-
-            # store population metadata
-            tmp_df = pd.DataFrame()
-            for c in saved_ini_parameters:
-                tmp_df[c] = [self.kwargs[c]]
-            store.append('ini_parameters', tmp_df)
 
         return
 

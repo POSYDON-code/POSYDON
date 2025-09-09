@@ -36,6 +36,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import os
+import shutil
 from matplotlib import pyplot as plt
 
 from posydon.utils.constants import Zsun
@@ -172,14 +173,14 @@ class PopulationRunner:
                 raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.") 
             elif os.path.exists(pop.kwargs["temp_directory"]) and overwrite:
                 if self.verbose:
-                    print(f"Removing {pop.kwargs['temp_directory']} directory...")
-                os.removedirs(pop.kwargs["temp_directory"])    
+                    print(f"Removing pre-existing {pop.kwargs['temp_directory']} directory...")
+                shutil.rmtree(pop.kwargs["temp_directory"])    
                 
             pop.evolve(optimize_ram=True)
             if pop.comm is None:
-                self.merge_parallel_runs(pop)
+                self.merge_parallel_runs(pop, overwrite)
 
-    def merge_parallel_runs(self, pop):
+    def merge_parallel_runs(self, pop, overwrite=False):
         """Merge the parallel runs of the population.
 
         Parameters
@@ -188,11 +189,17 @@ class PopulationRunner:
             The binary population whose files have to be merged.
 
         """
-        if os.path.exists(convert_metallicity_to_string(pop.metallicity) + "_Zsun_population.h5"):
+        Zstr = convert_metallicity_to_string(pop.metallicity)
+        fname = Zstr + "_Zsun_population.h5"
+        if os.path.exists(fname) and not overwrite:
             raise FileExistsError(
-                f"{convert_metallicity_to_string(pop.metallicity)}_Zsun_population.h5 already exists!\n"
+                f"{Zstr}_Zsun_population.h5 already exists!\n"
                 +"Files were not merged. You can use PopulationRunner.merge_parallel_runs() to merge the files manually."
             )
+        elif os.path.exists(fname) and overwrite:
+            if self.verbose:
+                print(f"Removing pre-exisiting {fname}...")
+            os.remove(fname)                
                 
         path_to_batch = pop.kwargs["temp_directory"]
         
@@ -204,13 +211,13 @@ class PopulationRunner:
         if self.verbose:
             print(f"Merging {len(tmp_files)} files...")
         
-        pop.combine_saved_files(
-            convert_metallicity_to_string(pop.metallicity) + "_Zsun_population.h5",
-            tmp_files,
-        )
+        pop.combine_saved_files(fname, tmp_files)
+
         if self.verbose:
             print("Files merged!")
+            print(f"Saved merged files to {fname}...")
             print(f"Removing files in {path_to_batch}...")
+
         # remove files
         if len(os.listdir(path_to_batch)) == 0:
             os.rmdir(path_to_batch)

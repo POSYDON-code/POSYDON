@@ -1404,6 +1404,7 @@ def set_binary_to_failed(binary):
     '''
     binary.state = "ERR"
     binary.event = "FAILED"
+    binary.append_state()
 
 
 def infer_star_state(star_mass=None, surface_h1=None,

@@ -632,8 +632,6 @@ class BinaryStar:
         """Convert binary into a single row DataFrame."""
         if history:
             bin_kwargs = kwargs.copy()
-            bin_kwargs['include_S1'] = False
-            bin_kwargs['include_S2'] = False
             output_df = self.to_df(**bin_kwargs)
             initial_final_data = output_df.values[[0, -1], :]  # first/last row
             col_names = list(output_df.columns)
@@ -691,6 +689,9 @@ class BinaryStar:
                                             extra_binary_dtypes_user=extra_binary_cols_dict,
                                             extra_S1_dtypes_user=extra_s1_cols_dict,
                                             extra_S2_dtypes_user=extra_s2_cols_dict)
+        
+        # remove any columns duplicated from user keys/full star properties
+        oneline_df = oneline_df.loc[:,~oneline_df.columns.duplicated()].copy()
 
         return oneline_df
 
