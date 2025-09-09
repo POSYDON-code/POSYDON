@@ -226,7 +226,7 @@ class SimulationProperties:
         return new_instance
 
     def load_steps(self, metallicity=None, verbose=False):
-        """Instantiate step classes and set as instance attributes.
+        """Instantiate all step classes and set as instance attributes.
 
         Parameters
         ----------
@@ -249,13 +249,13 @@ class SimulationProperties:
         # for every other step, give it a metallicity and load each step
         for name, tup in self.kwargs.items():
             if isinstance(tup, tuple):
-                self.load_a_step(name, tup, metallicity, verbose=True)
+                self.load_a_step(name, tup, metallicity, verbose)
 
         # track that all steps have been loaded
         self.steps_loaded = True
 
     def load_a_step(self, step_name, step_tup, metallicity=None, verbose=False):
-        """Instantiate step classes and set as instance attributes.
+        """Instantiate one step class and set as instance attribute.
 
         Parameters
         ----------
