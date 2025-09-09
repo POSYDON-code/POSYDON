@@ -144,8 +144,15 @@ class BinaryStar:
         self.index = index
 
         # Create the two stars
-        self.star_1 = star_1 if star_1 is not None else SingleStar()
-        self.star_2 = star_2 if star_2 is not None else SingleStar()
+        if star_1 is not None:
+            self.star_1 = copy.deepcopy(star_1)
+        else:
+            self.star_1 = SingleStar()
+
+        if star_2 is not None:
+            self.star_2 = copy.deepcopy(star_2)
+        else:
+            self.star_2 = SingleStar()
 
         # Stars now exist
         self.companion_1_exists = True
