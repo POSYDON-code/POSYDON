@@ -1203,10 +1203,6 @@ class TestFunctions:
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'binary'"):
             totest.get_binary_state_and_event_and_mt_case_array()
-        # bad input
-        with raises(TypeError, match="argument of type 'NoneType' is not "\
-                                     +"iterable"):
-            totest.get_binary_state_and_event_and_mt_case_array(binary)
         with raises(IndexError, match="list index out of range"):
             totest.get_binary_state_and_event_and_mt_case_array(binary, N=10)
         # examples: no binary
@@ -1694,17 +1690,14 @@ class TestFunctions:
         with raises(AttributeError, match="'NoneType' object has no "\
                                           +"attribute 'mass'"):
             totest.CEE_parameters_from_core_abundance_thresholds(None)
-        with raises(TypeError) as error_info:
-            totest.CEE_parameters_from_core_abundance_thresholds(star)
-        assert error_info.value.args[0] == "unsupported operand type(s) for "\
-                                           + "** or pow(): 'float' and "\
-                                           + "'NoneType'"
+
+        totest.CEE_parameters_from_core_abundance_thresholds(star)
+        assert np.isnan(star.m_core_CE_1cent)
         star.log_R = 0.0
         star.profile = np.array([(1.0), (1.0), (1.0)],\
                                 dtype=([('mass', 'f8')]))
-        with raises(TypeError, match="argument of type 'NoneType' is not "\
-                                     +"iterable"):
-            totest.CEE_parameters_from_core_abundance_thresholds(star)
+        
+        assert np.isnan(star.m_core_CE_1cent)
         # examples: missing state with profile and verbose
         star.state = "test_state"
         totest.CEE_parameters_from_core_abundance_thresholds(star,\
@@ -1744,7 +1737,7 @@ class TestFunctions:
                     assert np.isnan(getattr(star, attr))
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("m_core" in attr)):
-                    assert getattr(star, attr) == star.mass
+                    assert np.isnan(getattr(star, attr)) and np.isnan(star.mass)
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("r_core" in attr)):
                     assert getattr(star, attr) == 10 ** star.log_R

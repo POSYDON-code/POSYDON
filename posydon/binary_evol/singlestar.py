@@ -15,6 +15,7 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Devina Misra <devina.misra@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
@@ -22,6 +23,7 @@ import numpy as np
 import pandas as pd
 from posydon.utils.common_functions import check_state_of_star
 from posydon.grids.SN_MODELS import SN_MODELS
+from posydon.popsyn.io import STARPROPERTIES_DTYPES
 
 
 
@@ -133,7 +135,15 @@ class SingleStar:
         """
         # Set the initial star properties
         for item in STARPROPERTIES:
-            setattr(self, item, kwargs.pop(item, None))
+            # set default values when a kwarg is absent
+            dtype = STARPROPERTIES_DTYPES.get(item, '')
+            if dtype == 'float64' or dtype == 'int':
+                default = np.nan
+            elif dtype == 'string':
+                default = ''
+            else:
+                default = None
+            setattr(self, item, kwargs.pop(item, default))
             setattr(self, item + '_history', [getattr(self, item)])
         for item, val in kwargs.items():
             setattr(self, item, val)
