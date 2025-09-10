@@ -131,14 +131,13 @@ class SimulationProperties:
                        "step_end": step_end}
 
         for key, step_tuple in step_kwargs.items():
-            
+
             step_class, _ = step_tuple
-            if isinstance(step_class, NullStep):
-                if verbose: Pwarn(f"Step {key} not provided, skipping it.",
-                                  "POSYDONWarning")
-                continue   
-            else:
-                self.kwargs[key] = step_tuple
+            if verbose and isinstance(step_class, NullStep): 
+                Pwarn(f"Step {key} not provided, skipping it.",
+                                "POSYDONWarning")
+
+            self.kwargs[key] = step_tuple
 
         self.kwargs["extra_hooks"] = extra_hooks
 
@@ -305,8 +304,10 @@ class SimulationProperties:
         setattr(self, step_name, step_func(**kwargs))
 
         # check if all steps have been loaded
+        print(self.steps_loaded)
         for name, tup in self.kwargs.items():
-            # if it is a step class, tup combo kwarg
+            # if it is a step class, tup combo kwarg,
+            # check if loaded
             if isinstance(tup, tuple):
                 if hasattr(self, name):
                     self.steps_loaded = True
