@@ -304,10 +304,7 @@ class SimulationProperties:
         setattr(self, step_name, step_func(**kwargs))
 
         # check if all steps have been loaded
-        print(self.steps_loaded)
         for name, tup in self.kwargs.items():
-            # if it is a step class, tup combo kwarg,
-            # check if loaded
             if isinstance(tup, tuple):
                 if hasattr(self, name):
                     self.steps_loaded = True
