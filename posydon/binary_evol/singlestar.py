@@ -136,8 +136,6 @@ class SingleStar:
         **kwargs : dict
           List of initialization parameters for a star.
         """
-        # Set the initial star properties
-        non_numerical_props = ['state', 'profile']
 
         # initialize composition at least
         # this is needed to match to a star in 
@@ -169,34 +167,39 @@ class SingleStar:
             default_core_X = np.nan
             default_core_Y = np.nan
 
-        """
-                    if item in non_numerical_props:
-                        setattr(self, item, kwargs.pop(item, None))
-                    elif item == 'center_h1':
-                        # initialize surface and center h1
-                        setattr(self, item, kwargs.pop(item, default_core_X))
-                    elif item == 'center_he4':
-                        # initialize surface and center he4
-                        setattr(self, item, kwargs.pop(item, default_core_Y))
-                    elif 'core_mass' in item:
-                        # intiailize all core_mass values to 0
-                        # they are used in matching, but we will rely on 
-                        # abundances set above to find a good match
-                        setattr(self, item, kwargs.pop(item, 0.0))
-        """
-
-
         for item in STARPROPERTIES:
+ 
             # set default values when a kwarg is absent
-            dtype = STARPROPERTIES_DTYPES.get(item, '')
-            if dtype == 'float64' or dtype == 'int':
-                default = np.nan
-            elif dtype == 'string':
-                default = ''
+            # matching at least needs these initiailized to non-null values
+            if item == 'center_h1':
+                # initialize surface and center h1
+                setattr(self, item, kwargs.pop(item, default_core_X))
+            elif item == 'center_he4':
+                # initialize surface and center he4
+                setattr(self, item, kwargs.pop(item, default_core_Y))
+            elif 'core_mass' in item:
+                # intiailize all core_mass values to 0
+                # they are used in matching, but we will rely on 
+                # abundances set above to find a good match
+                setattr(self, item, kwargs.pop(item, 0.0))
+            elif item == 'metallicity':
+                # already set
+                pass
+
+            # everything else, set it according to stored dtype:
             else:
-                default = None
-            setattr(self, item, kwargs.pop(item, default))
+                dtype = STARPROPERTIES_DTYPES.get(item, '')
+                if dtype == 'float64' or dtype == 'int':
+                    default = np.nan
+                elif dtype == 'string':
+                    default = ''
+                else:
+                    # if we haven't defined a dtype for this prop
+                    default = None
+                setattr(self, item, kwargs.pop(item, default))
+
             setattr(self, item + '_history', [getattr(self, item)])
+
         for item, val in kwargs.items():
             setattr(self, item, val)
 

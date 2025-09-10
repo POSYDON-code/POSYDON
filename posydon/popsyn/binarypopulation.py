@@ -50,7 +50,6 @@ from posydon.popsyn.sample_from_file import (get_samples_from_file,
 from posydon.popsyn.defaults import default_kwargs
 
 from posydon.popsyn.io import binarypop_kwargs_from_ini
-from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import POSYDONError
 from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
 from posydon.utils.common_functions import (orbital_period_from_separation, orbital_separation_from_period, 
