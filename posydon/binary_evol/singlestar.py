@@ -24,6 +24,9 @@ import pandas as pd
 from posydon.utils.common_functions import check_state_of_star
 from posydon.grids.SN_MODELS import SN_MODELS
 from posydon.popsyn.io import STARPROPERTIES_DTYPES
+from posydon.utils.constants import Zsun, zams_table
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
+                                             THRESHOLD_HE_NAKED_ABUNDANCE)
 
 
 
@@ -134,6 +137,55 @@ class SingleStar:
           List of initialization parameters for a star.
         """
         # Set the initial star properties
+        non_numerical_props = ['state', 'profile']
+
+        # initialize composition at least
+        # this is needed to match to a star in 
+        # the first place
+        setattr(self, 'metallicity', kwargs.pop('metallicity', 1.0))
+        Z_div_Zsun = self.metallicity
+        if Z_div_Zsun in zams_table.keys():
+            Y = zams_table[Z_div_Zsun]
+        else:
+            raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
+        Z = Z_div_Zsun*Zsun        
+        X = 1 - Y - Z
+
+        state = kwargs.get('state', 'H-rich_Core_H_burning')
+        if "Core_H_burning" in state:
+            default_core_X = X
+            default_core_Y = Y
+        elif "Core_He_burning" in state:
+            # default to end of H burn
+            default_core_X = THRESHOLD_CENTRAL_ABUNDANCE
+            default_core_Y = 1 - default_core_X - Z
+        elif ("Core_" in state) and ("_depleted" in state):
+            # default to end of He burn (matching doesn't check other 
+            # center_* abundances beyond he4 right now anyways)
+            default_core_X = 0.0
+            default_core_Y = THRESHOLD_CENTRAL_ABUNDANCE
+        else:
+            # this is a compact object, point mass
+            default_core_X = np.nan
+            default_core_Y = np.nan
+
+        """
+                    if item in non_numerical_props:
+                        setattr(self, item, kwargs.pop(item, None))
+                    elif item == 'center_h1':
+                        # initialize surface and center h1
+                        setattr(self, item, kwargs.pop(item, default_core_X))
+                    elif item == 'center_he4':
+                        # initialize surface and center he4
+                        setattr(self, item, kwargs.pop(item, default_core_Y))
+                    elif 'core_mass' in item:
+                        # intiailize all core_mass values to 0
+                        # they are used in matching, but we will rely on 
+                        # abundances set above to find a good match
+                        setattr(self, item, kwargs.pop(item, 0.0))
+        """
+
+
         for item in STARPROPERTIES:
             # set default values when a kwarg is absent
             dtype = STARPROPERTIES_DTYPES.get(item, '')
