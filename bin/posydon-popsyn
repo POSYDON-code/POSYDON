@@ -468,7 +468,7 @@ def check_batches(run_folder, metallicity, batch_folder_name):
         for batch_file in batch_files:
             file_name = os.path.basename(batch_file)
             if 'evolution.combined' in file_name:
-                idx_str = file_name.split('.')[-1]
+                idx_str = file_name.split('.')[-2]
                 found_indices.add(int(idx_str))
         
         missing_indices = set(range(expected_batch_count)) - found_indices
