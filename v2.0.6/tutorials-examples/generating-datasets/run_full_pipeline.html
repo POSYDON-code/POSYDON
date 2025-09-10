@@ -1,0 +1,774 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The full POSYDON Processing Pipeline experience &mdash; posydon 2.0.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=3e466467"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="1D Plotting Functionalities for POSYDON PSyGrids" href="plot_1D.html" />
+    <link rel="prev" title="Processing MESA grids with the POSYDON pipeline API" href="just_step_1.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="generating-datasets.html">Crafting the Core Datasets for POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="just_step_1.html">Processing MESA grids with the POSYDON pipeline API</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">The full POSYDON Processing Pipeline experience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_1D.html">1D Plotting Functionalities for POSYDON PSyGrids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_2D.html">2D Plotting Functionalities for POSYDON PSyGrids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_rerun.html">Export Rerun Grids with POSYDON Post Processing Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processing_single_hms.html">Processing Single Stars with POSYDON</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+      <li class="breadcrumb-item active">The full POSYDON Processing Pipeline experience</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/generating-datasets/run_full_pipeline.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="The-full-POSYDON-Processing-Pipeline-experience">
+<h1>The full POSYDON Processing Pipeline experience<a class="headerlink" href="#The-full-POSYDON-Processing-Pipeline-experience" title="Link to this heading"></a></h1>
+<p>From A to Z: this tutorial shows you how to run all steps of the POSYDON post processing pipeline. This includes:</p>
+<ul class="simple">
+<li><p>step 1: create the h5 file of each MESA grid, this includes the base grid and any expansion or rerun</p></li>
+<li><p>step 2: stack the grids together by concatenating them in the correct order</p></li>
+<li><p>step 2 plot: plot 2D grid slices to visualize termination flags, final values and other properties</p></li>
+<li><p>step 2 check failure rate: check the failure rate of the grid</p></li>
+<li><p>step 3: compute post processing values on the ORIGINAL grid (these values are stored as additional final values columns)</p></li>
+<li><p>step 4: train the initial final interpolators and classifiers</p></li>
+<li><p>step F: export the entire POSYDON dataset in the working directory</p></li>
+</ul>
+<p>All these steps are linked together and, when possible, they will be executed in parallel, or else sequentially.</p>
+<p>We support two types of compression LITE and ORIGINAL, the former resamples the stellar histories, the binary history and the final stellar profile. Please refer to the POSYDON v1.0.0 paper for more details.</p>
+<p>We illustrate this example using the 100 HMS-HMS MESA models which we refer to as the <code class="docutils literal notranslate"><span class="pre">test_grid</span></code> and the opacity_max rerun layer, <code class="docutils literal notranslate"><span class="pre">rerun_opacity_max_test_grid</span></code>, we generated by rerunning failed models in the <code class="docutils literal notranslate"><span class="pre">test_grid</span></code> with a lower opacity max limit as illustrative <code class="docutils literal notranslate"><span class="pre">fix</span></code>.</p>
+<section id="Preparing-the-Pipeline-initialization-file">
+<h2>Preparing the Pipeline initialization file<a class="headerlink" href="#Preparing-the-Pipeline-initialization-file" title="Link to this heading"></a></h2>
+<p>The following cell exports the entire <code class="docutils literal notranslate"><span class="pre">pipeline.ini</span></code>, the purpose of this tutorial is to get you acquainted with the pipeline and not to teach you how to export the entire POSYDON v2.0.0 dataset.</p>
+<p>EXTRA: If you are a POSYDON developer or just a curious person, you can find the full POSYDON v2.0.0 <code class="docutils literal notranslate"><span class="pre">pipeline.ini</span></code> file in <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON/grid_params/pipeline_quest.ini</span></code> and <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON/grid_params/pipeline_yggdrasil.ini</span></code>. At the time of writing this tutorial we support 5 layers of reruns and store the raw MESA data of v2.0.0 across two HPC facilities. Exporting the entire v2.0.0 dataset from start to finish might require more than 24 hours computing time. !!! WARNING !!! before
+exporting the entire POSYDON v2.0.0 dataset, make sure you know what you are doing!</p>
+<p>Now sit back, relax and enjoy the POSYDON experience!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> pipeline.ini
+<span class="p">[</span><span class="n">account</span><span class="p">]</span>
+    <span class="n">ACCOUNT</span> <span class="o">=</span> <span class="s1">&#39;meynet&#39;</span>
+    <span class="n">PARTITION</span> <span class="o">=</span> <span class="s1">&#39;public-cpu&#39;</span>
+    <span class="n">WALLTIME</span> <span class="o">=</span> <span class="s1">&#39;06:00:00&#39;</span>
+    <span class="n">MAILTYPE</span> <span class="o">=</span> <span class="s1">&#39;ALL&#39;</span>
+    <span class="n">EMAIL</span> <span class="o">=</span> <span class="s1">&#39;simone.bavera@unige.ch&#39;</span>
+
+<span class="p">[</span><span class="n">pipeline</span> <span class="n">setup</span><span class="p">]</span>
+    <span class="n">PATH_TO_GRIDS</span> <span class="o">=</span> <span class="s1">&#39;/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/&#39;</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># to have a version below the grid type level</span>
+    <span class="n">PATH</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span> <span class="c1"># working dir</span>
+    <span class="n">VERBOSE</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># steps</span>
+    <span class="n">CREATE_GRID_SLICES</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">COMBINE_GRID_SLICES</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">CALCULATE_EXTRA_VALUES</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">TRAIN_INTERPOLATORS</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">EXPORT_DATASET</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># rerun step</span>
+    <span class="n">RERUN</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1">#CREATE_GRID_SLICES</span>
+<span class="p">[</span><span class="n">step_1</span><span class="p">]</span>
+    <span class="c1"># e.g. [&#39;CO-HMS_RLO&#39;,&#39;CO-HeMS&#39;,&#39;HMS-HMS&#39;]</span>
+    <span class="n">GRID_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HMS-HMS&#39;</span><span class="p">]</span>
+    <span class="c1"># e.g. [&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;]</span>
+    <span class="n">METALLICITIES</span> <span class="o">=</span> <span class="p">[</span>
+                     <span class="c1"># HMS-HMS</span>
+                     <span class="p">[</span><span class="s1">&#39;1e-01_Zsun&#39;</span><span class="p">]</span>
+                    <span class="p">]</span>
+    <span class="n">GRID_SLICES</span> <span class="o">=</span> <span class="p">[</span>
+                   <span class="c1"># HMS-HMS</span>
+                   <span class="p">[</span><span class="s1">&#39;test_grid&#39;</span><span class="p">,</span> <span class="s1">&#39;rerun_opacity_max_test_grid&#39;</span><span class="p">]</span>
+                  <span class="p">]</span>
+    <span class="n">COMPRESSIONS</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="c1"># HMS-HMS</span>
+                    <span class="p">[</span><span class="s1">&#39;LITE&#39;</span><span class="p">,</span> <span class="s1">&#39;ORIGINAL&#39;</span><span class="p">]</span>
+                   <span class="p">]</span>
+    <span class="n">DROP_MISSING_FILES</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># EXTRA PARAMETERS</span>
+    <span class="c1"># only applied to HMS grids</span>
+    <span class="n">STOP_BEFORE_CARBON_DEPLETION</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1"># supported plots: e.g. &#39;combined_TF12&#39;, &#39;termination_flag_1&#39;, &#39;termination_flag_2&#39;, &#39;termination_flag_3&#39;, &#39;termination_flag_4&#39;, and any quantity valid for a Z-plotting</span>
+    <span class="n">CREATE_PLOTS</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># supported checks: e.g. &#39;failure_rate&#39;</span>
+    <span class="n">DO_CHECKS</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1">#COMBINE_GRID_SLICES</span>
+<span class="p">[</span><span class="n">step_2</span><span class="p">]</span>
+    <span class="n">GRID_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HMS-HMS&#39;</span><span class="p">]</span>
+    <span class="n">METALLICITIES</span> <span class="o">=</span> <span class="p">[</span><span class="c1"># HMS-HMS</span>
+                     <span class="p">[</span><span class="s1">&#39;1e-01_Zsun&#39;</span><span class="p">]</span>
+                    <span class="p">]</span>
+    <span class="n">GRID_SLICES</span> <span class="o">=</span> <span class="p">[</span>
+                   <span class="c1"># HMS-HMS</span>
+                   <span class="p">[[</span><span class="s1">&#39;test_grid&#39;</span><span class="p">,</span> <span class="s1">&#39;rerun_opacity_max_test_grid&#39;</span><span class="p">]]</span>
+                  <span class="p">]</span>
+    <span class="n">GRIDS_COMBINED</span> <span class="o">=</span> <span class="p">[</span>
+                      <span class="c1"># HMS-HMS</span>
+                      <span class="p">[</span><span class="s1">&#39;grid_test_combined&#39;</span><span class="p">]</span>
+                     <span class="p">]</span>
+    <span class="n">COMPRESSIONS</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="c1"># HMS-HMS</span>
+                    <span class="p">[</span><span class="s1">&#39;LITE&#39;</span><span class="p">,</span> <span class="s1">&#39;ORIGINAL&#39;</span><span class="p">]</span>
+                   <span class="p">]</span>
+    <span class="n">DROP_MISSING_FILES</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># supported plots: e.g. &#39;combined_TF12&#39;, &#39;termination_flag_1&#39;, &#39;termination_flag_2&#39;, &#39;termination_flag_3&#39;, &#39;termination_flag_4&#39;, and any quantity valid for a Z-plotting</span>
+    <span class="n">CREATE_PLOTS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PLOT_AFTER_COMBINE&#39;</span><span class="p">]</span>
+    <span class="c1"># supported checks: e.g. &#39;failure_rate&#39;</span>
+    <span class="n">DO_CHECKS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CHECK_AFTER_COMBINE&#39;</span><span class="p">]</span>
+
+<span class="c1">#CALCULATE_EXTRA_VALUES</span>
+<span class="p">[</span><span class="n">step_3</span><span class="p">]</span>
+    <span class="n">GRID_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HMS-HMS&#39;</span><span class="p">]</span>
+    <span class="n">METALLICITIES</span> <span class="o">=</span> <span class="p">[</span><span class="c1"># HMS-HMS</span>
+                     <span class="p">[</span><span class="s1">&#39;1e-01_Zsun&#39;</span><span class="p">]</span>
+                    <span class="p">]</span>
+    <span class="n">GRID_SLICES</span> <span class="o">=</span> <span class="p">[</span><span class="c1"># HMS-HMS</span>
+                   <span class="p">[</span><span class="s1">&#39;grid_test_combined&#39;</span><span class="p">]</span>
+                  <span class="p">]</span>
+    <span class="n">COMPRESSIONS</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="c1"># HMS-HMS</span>
+                    <span class="p">[</span><span class="s1">&#39;LITE&#39;</span><span class="p">]</span>
+                   <span class="p">]</span>
+    <span class="n">DROP_MISSING_FILES</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># supported plots: e.g. &#39;combined_TF12&#39;, &#39;termination_flag_1&#39;, &#39;termination_flag_2&#39;, &#39;termination_flag_3&#39;, &#39;termination_flag_4&#39;, and any quantity valid for a Z-plotting</span>
+    <span class="n">CREATE_PLOTS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PLOT_AFTER_EXTRA&#39;</span><span class="p">]</span>
+    <span class="c1"># supported checks: e.g. &#39;failure_rate&#39;, &#39;CO_TYPE&#39;, &#39;SN_TYPE&#39;</span>
+    <span class="n">DO_CHECKS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CHECK_AFTER_EXTRA&#39;</span><span class="p">]</span>
+
+<span class="c1">#TRAIN_INTERPOLATORS</span>
+<span class="p">[</span><span class="n">step_4</span><span class="p">]</span>
+    <span class="n">GRID_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HMS-HMS&#39;</span><span class="p">]</span>
+    <span class="n">METALLICITIES</span> <span class="o">=</span> <span class="p">[</span><span class="c1"># HMS-HMS</span>
+                     <span class="p">[</span><span class="s1">&#39;1e-01_Zsun&#39;</span><span class="p">]</span>
+                    <span class="p">]</span>
+    <span class="n">GRID_SLICES</span> <span class="o">=</span> <span class="p">[</span><span class="c1"># HMS-HMS</span>
+                   <span class="p">[</span><span class="s1">&#39;grid_test_combined_processed&#39;</span><span class="p">]</span>
+                  <span class="p">]</span>
+    <span class="n">INTERPOLATION_METHODS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span><span class="s2">&quot;1NN&quot;</span><span class="p">]</span>
+    <span class="n">COMPRESSIONS</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="c1"># HMS-HMS</span>
+                    <span class="p">[</span><span class="s1">&#39;LITE&#39;</span><span class="p">]</span>
+                   <span class="p">]</span>
+    <span class="n">CONTROL_GRIDS</span> <span class="o">=</span> <span class="p">[</span>
+                     <span class="c1"># HMS-HMS</span>
+                     <span class="p">[</span><span class="s1">&#39;grid_test_combined&#39;</span><span class="p">]</span> <span class="c1"># if available this should be a randomly sampled grid</span>
+                    <span class="p">]</span>
+    <span class="n">DROP_MISSING_FILES</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># supported plots: e.g. &#39;combined_TF12&#39;, &#39;termination_flag_1&#39;, &#39;termination_flag_2&#39;, &#39;termination_flag_3&#39;, &#39;termination_flag_4&#39;, and any quantity valid for a Z-plotting</span>
+    <span class="n">CREATE_PLOTS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PLOT_AFTER_TRAINING&#39;</span><span class="p">]</span>
+    <span class="c1"># supported checks: e.g. &#39;failure_rate&#39;</span>
+    <span class="n">DO_CHECKS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CHECK_AFTER_TRAINING&#39;</span><span class="p">]</span>
+
+<span class="c1">#EXPORT_DATASET</span>
+<span class="p">[</span><span class="n">step_F</span><span class="p">]</span>
+    <span class="n">GRID_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HMS-HMS&#39;</span><span class="p">]</span>
+    <span class="n">METALLICITIES</span> <span class="o">=</span> <span class="p">[</span><span class="c1"># HMS-HMS</span>
+                     <span class="p">[</span><span class="s1">&#39;1e-01_Zsun&#39;</span><span class="p">]</span>
+                    <span class="p">]</span>
+    <span class="n">GRID_SLICES</span> <span class="o">=</span> <span class="p">[</span>
+                   <span class="c1"># HMS-HMS</span>
+                   <span class="p">[</span><span class="s1">&#39;grid_test_combined_processed&#39;</span><span class="p">]</span>
+                  <span class="p">]</span>
+    <span class="n">COMPRESSIONS</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="c1"># HMS-HMS</span>
+                    <span class="p">[</span><span class="s1">&#39;LITE&#39;</span><span class="p">]</span>
+                   <span class="p">]</span>
+    <span class="n">DROP_MISSING_FILES</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1">#EXPORT_RERUNS</span>
+<span class="p">[</span><span class="n">rerun</span><span class="p">]</span>
+    <span class="n">GRID_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HMS-HMS&#39;</span><span class="p">]</span>
+    <span class="n">METALLICITIES</span> <span class="o">=</span> <span class="p">[</span><span class="c1"># HMS-HMS</span>
+                     <span class="p">[</span> <span class="s1">&#39;1e-01_Zsun&#39;</span><span class="p">]</span>
+                    <span class="p">]</span>
+    <span class="n">GRID_SLICES</span> <span class="o">=</span> <span class="p">[</span>
+                   <span class="c1"># HMS-HMS</span>
+                   <span class="p">[</span><span class="s1">&#39;grid_test_combined&#39;</span><span class="p">],</span>
+                  <span class="p">]</span>
+    <span class="n">COMPRESSIONS</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="c1"># HMS-HMS</span>
+                    <span class="p">[</span><span class="s1">&#39;LITE&#39;</span><span class="p">]</span>
+                   <span class="p">]</span>
+    <span class="n">DROP_MISSING_FILES</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># example reruns are &#39;PISN&#39;, &#39;reverse_MT&#39;, &#39;opacity_max&#39;, &#39;TPAGBwind&#39;</span>
+    <span class="n">RERUN_TYPE</span> <span class="o">=</span> <span class="kc">None</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Overwriting pipeline.ini
+</pre></div></div>
+</div>
+</section>
+<section id="Setting-up-and-Running-the-Post-Processing-Pipeline">
+<h2>Setting-up and Running the Post Processing Pipeline<a class="headerlink" href="#Setting-up-and-Running-the-Post-Processing-Pipeline" title="Link to this heading"></a></h2>
+<p>We are all set, let’s set up the pipeline and run it!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[68]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>posydon-setup-pipeline<span class="w"> </span>pipeline.ini
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/home/bavera/.conda/envs/posydon_env/bin/posydon-setup-pipeline:4: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  __import__(&#39;pkg_resources&#39;).require(&#39;posydon==1.0.0+194.g3953a14&#39;)
+
++++++++++++++++++++ACCOUNT+++++++++++++++++++
+{ &#39;ACCOUNT&#39;: &#39;meynet&#39;,
+  &#39;EMAIL&#39;: &#39;simone.bavera@unige.ch&#39;,
+  &#39;MAILTYPE&#39;: &#39;ALL&#39;,
+  &#39;PARTITION&#39;: &#39;public-cpu&#39;,
+  &#39;WALLTIME&#39;: &#39;06:00:00&#39;}
+
+++++++++++++++++++++SETUP++++++++++++++++++++
+{ &#39;CALCULATE_EXTRA_VALUES&#39;: True,
+  &#39;COMBINE_GRID_SLICES&#39;: True,
+  &#39;CREATE_GRID_SLICES&#39;: True,
+  &#39;EXPORT_DATASET&#39;: True,
+  &#39;PATH&#39;: &#39;.&#39;,
+  &#39;PATH_TO_GRIDS&#39;: &#39;/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/&#39;,
+  &#39;RERUN&#39;: False,
+  &#39;TRAIN_INTERPOLATORS&#39;: True,
+  &#39;VERBOSE&#39;: True,
+  &#39;VERSION&#39;: &#39;&#39;}
+
+
+-------------CREATE_GRID_SLICES--------------  step_1 : True
+{ &#39;COMPRESSIONS&#39;: [[&#39;LITE&#39;, &#39;ORIGINAL&#39;]],
+  &#39;CREATE_PLOTS&#39;: [],
+  &#39;DO_CHECKS&#39;: [],
+  &#39;DROP_MISSING_FILES&#39;: True,
+  &#39;GRID_SLICES&#39;: [[&#39;test_grid&#39;, &#39;rerun_opacity_max_test_grid&#39;]],
+  &#39;GRID_TYPES&#39;: [&#39;HMS-HMS&#39;],
+  &#39;METALLICITIES&#39;: [[&#39;1e-01_Zsun&#39;]],
+  &#39;STOP_BEFORE_CARBON_DEPLETION&#39;: 1}
+
+
+-------------COMBINE_GRID_SLICES-------------  step_2 : True
+{ &#39;COMPRESSIONS&#39;: [[&#39;LITE&#39;, &#39;ORIGINAL&#39;]],
+  &#39;CREATE_PLOTS&#39;: [ &#39;combined_TF12&#39;,
+                    &#39;termination_flag_1&#39;,
+                    &#39;termination_flag_2&#39;,
+                    &#39;termination_flag_3&#39;,
+                    &#39;termination_flag_4&#39;,
+                    &#39;rl_relative_overflow_1&#39;,
+                    &#39;rl_relative_overflow_2&#39;,
+                    &#39;lg_mtransfer_rate&#39;],
+  &#39;DO_CHECKS&#39;: [&#39;failure_rate&#39;],
+  &#39;DROP_MISSING_FILES&#39;: True,
+  &#39;GRIDS_COMBINED&#39;: [[&#39;grid_test_combined&#39;]],
+  &#39;GRID_SLICES&#39;: [[[&#39;test_grid&#39;, &#39;rerun_opacity_max_test_grid&#39;]]],
+  &#39;GRID_TYPES&#39;: [&#39;HMS-HMS&#39;],
+  &#39;METALLICITIES&#39;: [[&#39;1e-01_Zsun&#39;]]}
+
+
+-----------CALCULATE_EXTRA_VALUES------------  step_3 : True
+{ &#39;COMPRESSIONS&#39;: [[&#39;LITE&#39;]],
+  &#39;CREATE_PLOTS&#39;: [ &#39;S1_MODEL01_CO_type&#39;,
+                    &#39;S1_MODEL01_SN_type&#39;,
+                    &#39;S1_MODEL01_mass&#39;,
+                    &#39;S1_MODEL01_spin&#39;,
+                    &#39;S1_MODEL01_m_disk_radiated&#39;,
+                    &#39;S1_MODEL02_CO_type&#39;,
+                    &#39;S1_MODEL02_SN_type&#39;,
+                    &#39;S1_MODEL02_mass&#39;,
+                    &#39;S1_MODEL02_spin&#39;,
+                    &#39;S1_MODEL02_m_disk_radiated&#39;,
+                    &#39;S1_MODEL03_CO_type&#39;,
+                    &#39;S1_MODEL03_SN_type&#39;,
+                    &#39;S1_MODEL03_mass&#39;,
+                    &#39;S1_MODEL03_spin&#39;,
+                    &#39;S1_MODEL03_m_disk_radiated&#39;,
+                    &#39;S1_MODEL04_CO_type&#39;,
+                    &#39;S1_MODEL04_SN_type&#39;,
+                    &#39;S1_MODEL04_mass&#39;,
+                    &#39;S1_MODEL04_spin&#39;,
+                    &#39;S1_MODEL04_m_disk_radiated&#39;,
+                    &#39;S1_MODEL05_CO_type&#39;,
+                    &#39;S1_MODEL05_SN_type&#39;,
+                    &#39;S1_MODEL05_mass&#39;,
+                    &#39;S1_MODEL05_spin&#39;,
+                    &#39;S1_MODEL05_m_disk_radiated&#39;,
+                    &#39;S1_MODEL06_CO_type&#39;,
+                    &#39;S1_MODEL06_SN_type&#39;,
+                    &#39;S1_MODEL06_mass&#39;,
+                    &#39;S1_MODEL06_spin&#39;,
+                    &#39;S1_MODEL06_m_disk_radiated&#39;,
+                    &#39;S1_MODEL07_CO_type&#39;,
+                    &#39;S1_MODEL07_SN_type&#39;,
+                    &#39;S1_MODEL07_mass&#39;,
+                    &#39;S1_MODEL07_spin&#39;,
+                    &#39;S1_MODEL07_m_disk_radiated&#39;,
+                    &#39;S1_MODEL08_CO_type&#39;,
+                    &#39;S1_MODEL08_SN_type&#39;,
+                    &#39;S1_MODEL08_mass&#39;,
+                    &#39;S1_MODEL08_spin&#39;,
+                    &#39;S1_MODEL08_m_disk_radiated&#39;,
+                    &#39;S1_MODEL09_CO_type&#39;,
+                    &#39;S1_MODEL09_SN_type&#39;,
+                    &#39;S1_MODEL09_mass&#39;,
+                    &#39;S1_MODEL09_spin&#39;,
+                    &#39;S1_MODEL09_m_disk_radiated&#39;,
+                    &#39;S1_MODEL10_CO_type&#39;,
+                    &#39;S1_MODEL10_SN_type&#39;,
+                    &#39;S1_MODEL10_mass&#39;,
+                    &#39;S1_MODEL10_spin&#39;,
+                    &#39;S1_MODEL10_m_disk_radiated&#39;],
+  &#39;DO_CHECKS&#39;: [&#39;CO_type&#39;, &#39;SN_type&#39;],
+  &#39;DROP_MISSING_FILES&#39;: True,
+  &#39;GRID_SLICES&#39;: [[&#39;grid_test_combined&#39;]],
+  &#39;GRID_TYPES&#39;: [&#39;HMS-HMS&#39;],
+  &#39;METALLICITIES&#39;: [[&#39;1e-01_Zsun&#39;]]}
+
+
+-------------TRAIN_INTERPOLATORS-------------  step_4 : True
+{ &#39;COMPRESSIONS&#39;: [[&#39;LITE&#39;]],
+  &#39;CONTROL_GRIDS&#39;: [[&#39;grid_test_combined&#39;]],
+  &#39;CREATE_PLOTS&#39;: [ &#39;INTERP_ERROR_age&#39;,
+                    &#39;INTERP_ERROR_star_1_mass&#39;,
+                    &#39;INTERP_ERROR_star_2_mass&#39;,
+                    &#39;INTERP_ERROR_period_days&#39;,
+                    &#39;INTERP_ERROR_S1_co_core_mass&#39;,
+                    &#39;INTERP_ERROR_S1_co_core_radius&#39;,
+                    &#39;INTERP_ERROR_S1_he_core_mass&#39;,
+                    &#39;INTERP_ERROR_S1_he_core_radius&#39;,
+                    &#39;INTERP_ERROR_S1_center_h1&#39;,
+                    &#39;INTERP_ERROR_S1_center_he4&#39;,
+                    &#39;INTERP_ERROR_S1_surface_h1&#39;,
+                    &#39;INTERP_ERROR_S1_surface_he4&#39;,
+                    &#39;INTERP_ERROR_S1_surf_avg_omega_div_omega_crit&#39;,
+                    &#39;INTERP_ERROR_S1_log_Teff&#39;,
+                    &#39;INTERP_ERROR_S1_log_L&#39;,
+                    &#39;INTERP_ERROR_S1_log_R&#39;,
+                    &#39;INTERP_ERROR_S1_spin_parameter&#39;,
+                    &#39;INTERP_ERROR_S1_lambda_CE_10cent&#39;,
+                    &#39;INTERP_ERROR_S2_co_core_mass&#39;,
+                    &#39;INTERP_ERROR_S2_co_core_radius&#39;,
+                    &#39;INTERP_ERROR_S2_he_core_mass&#39;,
+                    &#39;INTERP_ERROR_S2_he_core_radius&#39;,
+                    &#39;INTERP_ERROR_S2_center_h1&#39;,
+                    &#39;INTERP_ERROR_S2_center_he4&#39;,
+                    &#39;INTERP_ERROR_S2_surface_h1&#39;,
+                    &#39;INTERP_ERROR_S2_surface_he4&#39;,
+                    &#39;INTERP_ERROR_S2_surf_avg_omega_div_omega_crit&#39;,
+                    &#39;INTERP_ERROR_S2_log_Teff&#39;,
+                    &#39;INTERP_ERROR_S2_log_L&#39;,
+                    &#39;INTERP_ERROR_S2_log_R&#39;,
+                    &#39;INTERP_ERROR_S2_spin_parameter&#39;,
+                    &#39;INTERP_ERROR_S2_lambda_CE_10cent&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL01_mass&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL01_spin&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL01_m_disk_radiated&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL05_mass&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL05_spin&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL05_m_disk_radiated&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL06_mass&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL06_spin&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL06_m_disk_radiated&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL10_mass&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL10_spin&#39;,
+                    &#39;INTERP_ERROR_S1_MODEL10_m_disk_radiated&#39;],
+  &#39;DO_CHECKS&#39;: [],
+  &#39;DROP_MISSING_FILES&#39;: True,
+  &#39;GRID_SLICES&#39;: [[&#39;grid_test_combined_processed&#39;]],
+  &#39;GRID_TYPES&#39;: [&#39;HMS-HMS&#39;],
+  &#39;INTERPOLATION_METHODS&#39;: [&#39;linear&#39;, &#39;1NN&#39;],
+  &#39;METALLICITIES&#39;: [[&#39;1e-01_Zsun&#39;]]}
+
+
+---------------EXPORT_DATASET----------------  step_F : True
+{ &#39;COMPRESSIONS&#39;: [[&#39;LITE&#39;]],
+  &#39;DROP_MISSING_FILES&#39;: True,
+  &#39;GRID_SLICES&#39;: [[&#39;grid_test_combined_processed&#39;]],
+  &#39;GRID_TYPES&#39;: [&#39;HMS-HMS&#39;],
+  &#39;METALLICITIES&#39;: [[&#39;1e-01_Zsun&#39;]]}
+
+
+--------------------RERUN--------------------  rerun  :False
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+logs                      step_2.csv           step_3.slurm
+pipeline.ini              step_2_plots.csv     step_4.csv
+POSYDON_data              step_2_plots.slurm   step_4_plots.csv
+run_full_piepeline.ipynb  step_2.slurm         step_4_plots.slurm
+run_pipeline.sh           step_3_checks.csv    step_4.slurm
+step_1.csv                step_3_checks.slurm  step_F.csv
+step_1.slurm              step_3.csv           step_F.slurm
+step_2_checks.csv         step_3_plots.csv
+step_2_checks.slurm       step_3_plots.slurm
+</pre></div></div>
+</div>
+<p>Data will be exported in the <code class="docutils literal notranslate"><span class="pre">POSYDON_data/</span></code> directory once the pipeline is done. You can keep track of the progress by checking the log files of each step in the <code class="docutils literal notranslate"><span class="pre">logs/</span></code> directory. Let’s submit the entire pipeline with the shell script.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>./run_pipeline.sh
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+step_1.slurm submitted as 28474240
+step_2.slurm submitted as 28474241
+step_2_plots.slurm submitted as 28474242
+step_2_checks.slurm submitted as 28474243
+step_3.slurm submitted as 28474244
+step_3_plots.slurm submitted as 28474245
+step_3_checks.slurm submitted as 28474246
+step_4.slurm submitted as 28474247
+step_4_plots.slurm submitted as 28474248
+step_F.slurm submitted as 28474249
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>squeue<span class="w"> </span>-u<span class="w"> </span>bavera
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+        28473967_1 private-a mesa_gri   bavera  R    5:13:52      1 cpu144
+        28473967_4 private-a mesa_gri   bavera  R    5:13:52      1 cpu144
+        28473967_5 private-a mesa_gri   bavera  R    5:13:52      1 cpu144
+        28473967_7 private-a mesa_gri   bavera  R    5:13:52      1 cpu144
+    28474249_[0-2] public-cp psygrid9   bavera PD       0:00      1 (Dependency)
+    28474248_[0-1] public-cp psygrid4   bavera PD       0:00      1 (Dependency)
+    28474247_[0-1] public-cp psygrid4   bavera PD       0:00      1 (Dependency)
+      28474246_[0] public-cp psygrid3   bavera PD       0:00      1 (Dependency)
+      28474245_[0] public-cp psygrid3   bavera PD       0:00      1 (Dependency)
+      28474244_[0] public-cp psygrid3   bavera PD       0:00      1 (Dependency)
+    28474243_[0-1] public-cp psygrid2   bavera PD       0:00      1 (Dependency)
+      28474242_[0] public-cp psygrid2   bavera PD       0:00      1 (Dependency)
+    28474241_[0-1] public-cp psygrid2   bavera PD       0:00      1 (Dependency)
+        28474240_0 public-cp psygrid1   bavera  R       0:04      1 cpu024
+        28474240_1 public-cp psygrid1   bavera  R       0:04      1 cpu024
+        28474240_2 public-cp psygrid1   bavera  R       0:04      1 cpu024
+        28474240_3 public-cp psygrid1   bavera  R       0:04      1 cpu024
+</pre></div></div>
+</div>
+<section id="Exploring-the-visualization-outputs">
+<h3>Exploring the visualization outputs<a class="headerlink" href="#Exploring-the-visualization-outputs" title="Link to this heading"></a></h3>
+<p>While we wait for the entire pipeline to finish we can explore the plots which we find in <code class="docutils literal notranslate"><span class="pre">PATH_TO_GRIDS/HMS-HMS/1e-01_Zsun/plots/GRID_NAME</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls<span class="w"> </span>/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/plots/grid_test_combined_processed/S1_MODEL01/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CO_type  mass  m_disk_radiated  SN_type  spin
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Image</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/plots/&#39;</span>
+<span class="c1"># termination flags</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;grid_test_combined/TF12/grid_q_0.70.png&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;grid_test_combined/TF1/grid_q_0.70.png&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;grid_test_combined/TF2/grid_q_0.70.png&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;grid_test_combined/TF3/grid_q_0.70.png&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;grid_test_combined/TF4/grid_q_0.70.png&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="c1"># processed values</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;grid_test_combined_processed/S1_MODEL01/SN_type/grid_q_0.70.png&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;grid_test_combined_processed/S1_MODEL01/CO_type/grid_q_0.70.png&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;grid_test_combined_processed/S1_MODEL01/mass/grid_q_0.70.png&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;grid_test_combined_processed/S1_MODEL01/spin/grid_q_0.70.png&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_0.png" src="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_1.png" src="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_2.png" src="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_2.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_3.png" src="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_4.png" src="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_4.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_5.png" src="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_5.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_6.png" src="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_6.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_7.png" src="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_7.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_8.png" src="../../_images/tutorials-examples_generating-datasets_run_full_pipeline_15_8.png" />
+</div>
+</div>
+<p>In this tutorial we did not create a randomly sampled grid to test the accuracy of the interpolators. If you create a randomly sampled grid, then the pipeline will also export 2D error maps evaluated on the randomly sampled grid. This is left as an exercise to the reader.</p>
+<p>TODO: add the automatic export of violin plots and confusion matrices to the plotting.</p>
+<p>Check that you obtained the dataset.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[80]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls<span class="w"> </span>POSYDON_data/HMS-HMS/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1e-01_Zsun.h5  interpolators
+</pre></div></div>
+</div>
+<p>Congratulations you have completed the POSYDON v2.0.0 pipeline tutorial!</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="just_step_1.html" class="btn btn-neutral float-left" title="Processing MESA grids with the POSYDON pipeline API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_1D.html" class="btn btn-neutral float-right" title="1D Plotting Functionalities for POSYDON PSyGrids" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.6
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

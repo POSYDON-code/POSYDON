@@ -1,0 +1,273 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run a fixed MESA grid &mdash; posydon 2.0.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=3e466467"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Run a dynamic MESA grid" href="dynamic.html" />
+    <link rel="prev" title="MESA Grids API" href="../mesa-grids.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Run a fixed MESA grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html">Run a dynamic MESA grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inifile.html">ini file documentation for POSYDON GRIDS</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../mesa-grids.html">MESA Grids API</a></li>
+      <li class="breadcrumb-item active">Run a fixed MESA grid</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/mesa_grids/fixed.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="run-a-fixed-mesa-grid">
+<span id="fixed-grid"></span><h1>Run a fixed MESA grid<a class="headerlink" href="#run-a-fixed-mesa-grid" title="Link to this heading"></a></h1>
+<section id="default-evolutionary-parameters">
+<h2>Default evolutionary parameters<a class="headerlink" href="#default-evolutionary-parameters" title="Link to this heading"></a></h2>
+<p>POSYDON makes it easy to run a fixed grid of binaries with MESA within a high
+performance computing environment. Note that these instructions assume you
+are using slurm as your job scheduler. We just need to start by setting a few
+environment variables. We recommend you add these to your <cite>.bashrc</cite> or
+<cite>.bash_profile</cite> so they are included at login. The filepaths of these need to be
+edited for your own installation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export MESA_DIR=&quot;/projects/b1119/mesa_sdk/mesa-r11701&quot;
+export OMP_NUM_THREADS=4
+export MESASDK_ROOT=&quot;/projects/b1119/mesa_sdk/mesasdk&quot;
+source $MESASDK_ROOT/bin/mesasdk_init.sh
+</pre></div>
+</div>
+<p>Next, you will need to create a working directory for your grid of binaries.
+For this example, we will create a working directory called <cite>example_grid</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">example_grid</span>
+<span class="n">cd</span> <span class="n">example_grid</span>
+</pre></div>
+</div>
+<p>This directory will contain all the binary runs and associated data generated
+by the individual MESA runs as well as the functionality for slurm to run the
+grid.</p>
+<p>Now that we have our directory, we need to create two separate files: a file
+containing the list of binaries we want to evolve and an <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file that
+contains all the parameters associated with running the grid. Let’s start with
+the list of binaries we want to evolve. For the case of this example, let’s
+evolve a series of high-mass X-ray binaries with neutron star accretors at a
+series of initial binary periods. We’ll use our favorite text editor to add the
+following lines into a file we’ll call <cite>grid.csv</cite>. As we’ll see below, it can
+be given any name, but the entries must be separated by commas.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">m1</span><span class="p">,</span><span class="n">m2</span><span class="p">,</span><span class="n">initial_period_in_days</span>
+<span class="mi">10</span><span class="p">,</span><span class="mf">1.4</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">10</span><span class="p">,</span><span class="mf">1.4</span><span class="p">,</span><span class="mi">10</span>
+<span class="mi">10</span><span class="p">,</span><span class="mf">1.4</span><span class="p">,</span><span class="mi">100</span>
+<span class="mi">10</span><span class="p">,</span><span class="mf">1.4</span><span class="p">,</span><span class="mi">1000</span>
+</pre></div>
+</div>
+<p>POSYDON internally allows any variable to be included here, so long as it has
+the same name as a variable in MESA. However, these three parameters ought to
+always be specified, otherwise you will be evolving a binary with a default
+orbital period and masses.</p>
+<p>As for the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file, you can copy over the <a class="reference external" href="https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini">example</a>
+from the <a class="reference internal" href="inifile.html#inifile"><span class="std std-ref">ini file documentation for POSYDON GRIDS</span></a> page, which provides a more detailed description of all
+the entries. Make sure to carefully go through each of the separate entries and
+adjust them for your particular needs. Place that <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file (which we have
+named <cite>example_grid.ini</cite>) in the example_grid directory.</p>
+<p>Now, with our <cite>grid.csv</cite> and <cite>example_grid.ini</cite> files ready to go, we use a
+POSYDON script <cite>posydon-setup-grid</cite> to generate all the necessary files to run
+the grid using slurm. Note the different arguments here. We are designating
+that: 1) we are using a fixed grid, 2) that our job scheduler is slurm, and 3)
+the name of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file. We may expand compatibility for other job
+schedulers in the future, but for now slurm is the only implemented option.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">posydon</span><span class="o">-</span><span class="n">setup</span><span class="o">-</span><span class="n">grid</span> <span class="o">--</span><span class="n">grid</span><span class="o">-</span><span class="nb">type</span> <span class="n">fixed</span> <span class="o">--</span><span class="n">submission</span><span class="o">-</span><span class="nb">type</span> <span class="n">slurm</span> <span class="o">--</span><span class="n">inifile</span> <span class="n">example_grid</span><span class="o">.</span><span class="n">ini</span>
+</pre></div>
+</div>
+<p>This will take a minute to run. You will note that it includes a pull from the
+POSYDON GitHub repository to ensure the correct, designated version of the MESA
+inlists are being used. It is possible that you will need to enter your
+GitHub username and password during this step. Additionally, note that this
+step takes some time to run, as several MESA files are being compiled.</p>
+<p>Once finished, you will note that in our <cite>example_grid</cite> directory, we now have
+several new files and new directories. One advantage of this implementation is
+that all the binaries we run use a single version of the MESA executables,
+rather than each binary having its own copy of the same files.</p>
+<p>Finally, we are ready to submit our jobs with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">run_grid</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>This shell script will submit the two slurm jobs
+<code class="samp docutils literal notranslate"><span class="pre">slurm_job_array_grid_submit.sh</span></code> and <code class="samp docutils literal notranslate"><span class="pre">cleanup.sh</span></code>. The first one
+will run the MESA simulations, where several runs will go in parallel. The
+second job, will run after all MESA runs are completed. It is doing some
+cleanup:</p>
+<ul class="simple">
+<li><p>removing files no longer needed (e.g. memory copies created as backups)</p></li>
+<li><p>compressing files containing a lot of text (those files are individually
+compressed and will be kept in place, hence getting a file extension <cite>.gz</cite>
+added)</p></li>
+<li><p>changing the owning group and permissions (this will only be done if a new
+group was specified in the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file in the setup)</p></li>
+</ul>
+<p>Once the grid of runs is completed, we recommend you use our provided PSyGrid
+functionality to examine and collate the individual binary runs
+(link for documentation: <a class="reference internal" href="../../api_reference/posydon.grids.html#module-posydon.grids.psygrid" title="posydon.grids.psygrid"><code class="xref py py-mod docutils literal notranslate"><span class="pre">posydon.grids.psygrid</span></code></a>.)</p>
+</section>
+<section id="non-default-evolutionary-parameters">
+<h2>Non-default evolutionary parameters<a class="headerlink" href="#non-default-evolutionary-parameters" title="Link to this heading"></a></h2>
+<p>If you want to change the binary evolution parameters so you are using
+non-default options, we have constructed a hierarchy of MESA inlists. You can
+provide a non-default option in your own user-provided MESA inlist, which is
+explicitly linked in the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file (make sure you uncomment the appropriate
+lines). We additionally provide the capability to use your own
+<cite>run_star_extras.f</cite> and <cite>run_binary_extras.f</cite> as well as provide your own list
+of history and profile columns. See <a class="reference internal" href="inifile.html#inifile"><span class="std std-ref">ini file documentation for POSYDON GRIDS</span></a> for details.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../mesa-grids.html" class="btn btn-neutral float-left" title="MESA Grids API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dynamic.html" class="btn btn-neutral float-right" title="Run a dynamic MESA grid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.6
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

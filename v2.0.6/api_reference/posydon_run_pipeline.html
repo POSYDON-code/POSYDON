@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon_run_pipeline &mdash; posydon 2.0.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=3e466467"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="posydon_setup_grid" href="posydon_setup_grid.html" />
+    <link rel="prev" title="posydon_run_grid" href="posydon_run_grid.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="posydon.html">posydon</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="bin.html">executables</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="compress_mesa.html">compress_mesa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_posydon_data.html">get_posydon_data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon_popsyn.html">posydon_popsyn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon_run_grid.html">posydon_run_grid</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">posydon_run_pipeline</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.calculate_extra_values"><code class="docutils literal notranslate"><span class="pre">calculate_extra_values()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.combine_grid_slices"><code class="docutils literal notranslate"><span class="pre">combine_grid_slices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.copy_ini_file"><code class="docutils literal notranslate"><span class="pre">copy_ini_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.create_grid_slice"><code class="docutils literal notranslate"><span class="pre">create_grid_slice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.do_check"><code class="docutils literal notranslate"><span class="pre">do_check()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.export_dataset"><code class="docutils literal notranslate"><span class="pre">export_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.logic_rerun"><code class="docutils literal notranslate"><span class="pre">logic_rerun()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.plot_grid"><code class="docutils literal notranslate"><span class="pre">plot_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.rerun"><code class="docutils literal notranslate"><span class="pre">rerun()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.train_interpolators"><code class="docutils literal notranslate"><span class="pre">train_interpolators()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.train_profile_interpolators"><code class="docutils literal notranslate"><span class="pre">train_profile_interpolators()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_run_pipeline.zams_file_name"><code class="docutils literal notranslate"><span class="pre">zams_file_name()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon_setup_grid.html">posydon_setup_grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon_setup_pipeline.html">posydon_setup_pipeline</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="bin.html">executables</a></li>
+      <li class="breadcrumb-item active">posydon_run_pipeline</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/posydon_run_pipeline.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-posydon_run_pipeline">
+<span id="posydon-run-pipeline"></span><h1>posydon_run_pipeline<a class="headerlink" href="#module-posydon_run_pipeline" title="Link to this heading"></a></h1>
+<p>MESA low_res_grids were run. This includes random grids and reruns.</p>
+<p>This is an EXAMPLE of the pipeline for a grid_type=HMS-HMS,
+metallicity=1e-01_Zsun, compression=LITE/ORIGINAL</p>
+<p>STEP 1: grid slices creation
+[‘grid_low_res_0’,’grid_low_res_1’,’grid_low_res_2’,’grid_low_res_3’,
+‘grid_low_res_4’,’grid_low_res_5’,’grid_random_1’,
+‘grid_low_res_rerun_opacity_max’] –&gt; output <a href="#id1"><span class="problematic" id="id2">*</span></a>.h5</p>
+<p>STEP 2: grid slices concatenation
+[[‘grid_low_res_0’,’grid_low_res_1’,’grid_low_res_2’,’grid_low_res_3’,
+‘grid_low_res_4’,’grid_low_res_5’],[‘grid_low_res_0’,’grid_low_res_1’,
+‘grid_low_res_2’,’grid_low_res_3’,’grid_low_res_4’,’grid_low_res_5’,
+‘grid_low_res_rerun_opacity_max’]] –&gt;
+grid_low_res_combined.h5, grid_low_res_combined_rerun1.h5</p>
+<p>STEP 2.1: plot grid slices
+[‘grid_low_res_combined’,’grid_random_1’,’grid_low_res_combined_rerun1’]
+–&gt; loop over all plot types</p>
+<p>STEP 2.2: check failure rate
+[‘grid_low_res_combined’,’grid_random_1’,’grid_low_res_combined_rerun1’]
+–&gt; check failure rate</p>
+<p>STEP 3: calculate extra values
+[‘grid_low_res_combined’,’grid_random_1’,’grid_low_res_combined_rerun1’]
+–&gt; do post processing on the ORIGINAL grid and append back on the LITE grid
+the post processed quantities</p>
+<p>STEP 3.1: plot extra values
+[‘grid_low_res_combined’,’grid_random_1’,’grid_low_res_combined_rerun1’]
+–&gt; loop over all plot types</p>
+<p>STEP 3.2: check rates of compact object types
+[‘grid_low_res_combined’,’grid_random_1’,’grid_low_res_combined_rerun1’]
+–&gt; check rates of compact object types</p>
+<p>STEP 4: train interpolators
+[‘grid_low_res_combined_rerun1’] –&gt; train the interpolators</p>
+<p>STEP 4.1: plot interpolator accuracy and confusion matrices
+[‘grid_random_1’]
+–&gt; loop over all plot types</p>
+<p>STEP 5: train profile interpolators
+uses grid and initial-final interpolators to train the profile interpolators</p>
+<p>STEP F: export dataset</p>
+<p>STEP RERUN: rerun grid with a fix
+grid_low_res_combined.rerun(index=logic) –&gt; grid_low_res_rerun_1/grid.csv</p>
+<blockquote>
+<div><p>–&gt; grid_random_1_rerun_1/grid.csv</p>
+</div></blockquote>
+<p>– run grid fix and do next post processing</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.calculate_extra_values">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">calculate_extra_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#calculate_extra_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.calculate_extra_values" title="Link to this definition"></a></dt>
+<dd><p>Calculating extra values, e.g. values derived from the final profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index in csv file.</p></li>
+<li><p><strong>path_to_csv_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to csv file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Enable/Disable additional output.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.combine_grid_slices">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">combine_grid_slices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#combine_grid_slices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.combine_grid_slices" title="Link to this definition"></a></dt>
+<dd><p>Combining grid slices to one grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index in csv file.</p></li>
+<li><p><strong>path_to_csv_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to csv file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Enable/Disable additional output.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.copy_ini_file">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">copy_ini_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rerun_metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rerun_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#copy_ini_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.copy_ini_file" title="Link to this definition"></a></dt>
+<dd><p>Copies the ini file and make replacements according to the rerun.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Type of the grid.</p></li>
+<li><p><strong>rerun_metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String representation of the metallicity (e.g. 1e+00_Zsun).</p></li>
+<li><p><strong>rerun_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Type of rerun (e.g. PISN).</p></li>
+<li><p><strong>destination</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the directory for the new runs.</p></li>
+<li><p><strong>cluster</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Cluster name (e.g. yggdrasil or quest).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.create_grid_slice">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">create_grid_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite_psygrid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#create_grid_slice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.create_grid_slice" title="Link to this definition"></a></dt>
+<dd><p>Creates a new PSyGrid slice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index in csv file.</p></li>
+<li><p><strong>path_to_csv_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to csv file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Enable/Disable additional output.</p></li>
+<li><p><strong>overwrite_psygrid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether existing file(s) should be overwritten.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.do_check">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">do_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#do_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.do_check" title="Link to this definition"></a></dt>
+<dd><p>Perform a check on a grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index in csv file.</p></li>
+<li><p><strong>path_to_csv_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to csv file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Enable/Disable additional output.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.export_dataset">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">export_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#export_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.export_dataset" title="Link to this definition"></a></dt>
+<dd><p>Moving the data set to a place containing all, what is needed to run a
+population synthesis with POSYDON.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index in csv file.</p></li>
+<li><p><strong>path_to_csv_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to csv file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Enable/Disable additional output.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.logic_rerun">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">logic_rerun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rerun_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#logic_rerun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.logic_rerun" title="Link to this definition"></a></dt>
+<dd><p>Get the runs, which need a rerun.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<a class="reference internal" href="posydon.grids.html#posydon.grids.psygrid.PSyGrid" title="posydon.grids.psygrid.PSyGrid"><em>PSyGrid</em></a>) – PSyGrid to select runs from.</p></li>
+<li><p><strong>rerun_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Type of rerun (e.g. PISN).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>runs_to_rerun</strong> (<em>list</em>) – Indecies of runs to be rerun.</p></li>
+<li><p><strong>termination_flags</strong> (<em>list</em>) – Termination flags to select reruns by.</p></li>
+<li><p><strong>new_mesa_flag</strong> (<em>dict</em>) – Name and value of MESA inlist parameters to change to for this rerun.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.plot_grid">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">plot_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#plot_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.plot_grid" title="Link to this definition"></a></dt>
+<dd><p>Creates plots of a grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index in csv file.</p></li>
+<li><p><strong>path_to_csv_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to csv file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Enable/Disable additional output.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.rerun">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">rerun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#rerun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.rerun" title="Link to this definition"></a></dt>
+<dd><p>Generate files to start a rerun.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index in csv file.</p></li>
+<li><p><strong>path_to_csv_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to csv file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Enable/Disable additional output.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.train_interpolators">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">train_interpolators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#train_interpolators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.train_interpolators" title="Link to this definition"></a></dt>
+<dd><p>Train an interpolator on a grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index in csv file.</p></li>
+<li><p><strong>path_to_csv_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to csv file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Enable/Disable additional output.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.train_profile_interpolators">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">train_profile_interpolators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_csv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#train_profile_interpolators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.train_profile_interpolators" title="Link to this definition"></a></dt>
+<dd><p>Train a profile interpolator on a grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index in csv file.</p></li>
+<li><p><strong>path_to_csv_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to csv file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Enable/Disable additional output.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_run_pipeline.zams_file_name">
+<span class="sig-prename descclassname"><span class="pre">posydon_run_pipeline.</span></span><span class="sig-name descname"><span class="pre">zams_file_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_run_pipeline.html#zams_file_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_run_pipeline.zams_file_name" title="Link to this definition"></a></dt>
+<dd><p>Gives the name of the ZAMS file depending on the metallicity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String representation of the metallicity (e.g. 1e+00_Zsun).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Name of ZAMS file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="posydon_run_grid.html" class="btn btn-neutral float-left" title="posydon_run_grid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="posydon_setup_grid.html" class="btn btn-neutral float-right" title="posydon_setup_grid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.6
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

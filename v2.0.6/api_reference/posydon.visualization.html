@@ -1,0 +1,886 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.visualization &mdash; posydon 2.0.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=3e466467"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="posydon.visualization.VH_diagram" href="posydon.visualization.VH_diagram.html" />
+    <link rel="prev" title="posydon.utils" href="posydon.utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="posydon.html">posydon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="posydon.active_learning.html">posydon.active_learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.html">posydon.binary_evol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.grids.html">posydon.grids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.interpolation.html">posydon.interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.popsyn.html">posydon.popsyn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.user_modules.html">posydon.user_modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.utils.html">posydon.utils</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">posydon.visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.visualization.VH_diagram.html">posydon.visualization.VH_diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.visualization.VHdiagram">posydon.visualization.VHdiagram</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.VHdiagram.DisplayMode"><code class="docutils literal notranslate"><span class="pre">DisplayMode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.VHdiagram.VHdiagram"><code class="docutils literal notranslate"><span class="pre">VHdiagram</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.visualization.combine_TF">posydon.visualization.combine_TF</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.combine_TF.combine_TF12"><code class="docutils literal notranslate"><span class="pre">combine_TF12()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.visualization.interpolation">posydon.visualization.interpolation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.interpolation.EvaluateIFInterpolator"><code class="docutils literal notranslate"><span class="pre">EvaluateIFInterpolator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.visualization.plot1D">posydon.visualization.plot1D</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot1D.plot1D"><code class="docutils literal notranslate"><span class="pre">plot1D</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.visualization.plot2D">posydon.visualization.plot2D</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot2D.plot2D"><code class="docutils literal notranslate"><span class="pre">plot2D</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.visualization.plot_defaults">posydon.visualization.plot_defaults</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot_defaults.add_flag_to_MARKERS_COLORS_LEGENDS"><code class="docutils literal notranslate"><span class="pre">add_flag_to_MARKERS_COLORS_LEGENDS()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.visualization.plot_pop">posydon.visualization.plot_pop</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot_pop.get_population_data"><code class="docutils literal notranslate"><span class="pre">get_population_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot_pop.plot_grid_slice"><code class="docutils literal notranslate"><span class="pre">plot_grid_slice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot_pop.plot_hist_properties"><code class="docutils literal notranslate"><span class="pre">plot_hist_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot_pop.plot_merger_efficiency"><code class="docutils literal notranslate"><span class="pre">plot_merger_efficiency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot_pop.plot_perley16_rate_density"><code class="docutils literal notranslate"><span class="pre">plot_perley16_rate_density()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot_pop.plot_popsyn_over_grid_slice"><code class="docutils literal notranslate"><span class="pre">plot_popsyn_over_grid_slice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot_pop.plot_population_data"><code class="docutils literal notranslate"><span class="pre">plot_population_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot_pop.plot_rate_density"><code class="docutils literal notranslate"><span class="pre">plot_rate_density()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.visualization.plot_pop.setup_grid_slice_plotting"><code class="docutils literal notranslate"><span class="pre">setup_grid_slice_plotting()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="posydon.html">posydon</a></li>
+      <li class="breadcrumb-item active">posydon.visualization</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/posydon.visualization.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-posydon.visualization">
+<span id="posydon-visualization"></span><h1>posydon.visualization<a class="headerlink" href="#module-posydon.visualization" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="posydon.visualization.VH_diagram.html">posydon.visualization.VH_diagram</a></li>
+</ul>
+</div>
+<section id="module-posydon.visualization.VHdiagram">
+<span id="posydon-visualization-vhdiagram"></span><h2>posydon.visualization.VHdiagram<a class="headerlink" href="#module-posydon.visualization.VHdiagram" title="Link to this heading"></a></h2>
+<p>The definition of the VHdiagram class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VHdiagram.DisplayMode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VHdiagram.</span></span><span class="sig-name descname"><span class="pre">DisplayMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VHdiagram.html#DisplayMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VHdiagram.DisplayMode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>The different view for the Presenter.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VHdiagram.DisplayMode.INLINE_B">
+<span class="sig-name descname"><span class="pre">INLINE_B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#posydon.visualization.VHdiagram.DisplayMode.INLINE_B" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VHdiagram.DisplayMode.INLINE_S">
+<span class="sig-name descname"><span class="pre">INLINE_S</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#posydon.visualization.VHdiagram.DisplayMode.INLINE_S" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.visualization.VHdiagram.DisplayMode.WINDOW">
+<span class="sig-name descname"><span class="pre">WINDOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#posydon.visualization.VHdiagram.DisplayMode.WINDOW" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.VHdiagram.VHdiagram">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.VHdiagram.</span></span><span class="sig-name descname"><span class="pre">VHdiagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">presentMode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PresenterMode.DETAILED</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">displayMode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DisplayMode.WINDOW</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">8)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/VHdiagram.html#VHdiagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.VHdiagram.VHdiagram" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Handle a VH diagram.</p>
+<p>Initialize a VHdiagram instance.</p>
+</dd></dl>
+
+</section>
+<section id="module-posydon.visualization.combine_TF">
+<span id="posydon-visualization-combine-tf"></span><h2>posydon.visualization.combine_TF<a class="headerlink" href="#module-posydon.visualization.combine_TF" title="Link to this heading"></a></h2>
+<p>Module for combining termination flags for visualization purposes.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.combine_TF.combine_TF12">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.combine_TF.</span></span><span class="sig-name descname"><span class="pre">combine_TF12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TF2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/combine_TF.html#combine_TF12"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.combine_TF.combine_TF12" title="Link to this definition"></a></dt>
+<dd><p>Get the combination of interpolation classion and termination flag 2.</p>
+</dd></dl>
+
+</section>
+<section id="module-posydon.visualization.interpolation">
+<span id="posydon-visualization-interpolation"></span><h2>posydon.visualization.interpolation<a class="headerlink" href="#module-posydon.visualization.interpolation" title="Link to this heading"></a></h2>
+<p>Module to evaluate IFInterpolator class</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.interpolation.EvaluateIFInterpolator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.interpolation.</span></span><span class="sig-name descname"><span class="pre">EvaluateIFInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interpolator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/interpolation.html#EvaluateIFInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.interpolation.EvaluateIFInterpolator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class that is helpful for evaluating interpolation performance</p>
+<p>Initialize the EvaluateIFInterpolator class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interpolator</strong> (<a class="reference internal" href="posydon.interpolation.html#posydon.interpolation.IF_interpolation.IFInterpolator" title="posydon.interpolation.IF_interpolation.IFInterpolator"><em>IFInterpolator</em></a>) – Interpolator that user wants to test</p></li>
+<li><p><strong>test_grid</strong> (<a class="reference internal" href="posydon.grids.html#posydon.grids.psygrid.PSyGrid" title="posydon.grids.psygrid.PSyGrid"><em>PSyGrid</em></a>) – Grid object containing testing tracks</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.interpolation.EvaluateIFInterpolator.classifiers">
+<span class="sig-name descname"><span class="pre">classifiers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/interpolation.html#EvaluateIFInterpolator.classifiers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.interpolation.EvaluateIFInterpolator.classifiers" title="Link to this definition"></a></dt>
+<dd><p>Method that lists classifiers available</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.interpolation.EvaluateIFInterpolator.confusion_matrix">
+<span class="sig-name descname"><span class="pre">confusion_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/interpolation.html#EvaluateIFInterpolator.confusion_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.interpolation.EvaluateIFInterpolator.confusion_matrix" title="Link to this definition"></a></dt>
+<dd><p>Method that plots confusion matrices to evaluate classification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The key for the classifier of interest</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Extra params to pass to matplolib, x_labels (list), y_labels (list), title (str)</p></li>
+<li><p><strong>save_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path where the figure should be saved to</p></li>
+<li><p><strong>close_fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Flag whether figure should be closed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.interpolation.EvaluateIFInterpolator.decision_boundaries">
+<span class="sig-name descname"><span class="pre">decision_boundaries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/interpolation.html#EvaluateIFInterpolator.decision_boundaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.interpolation.EvaluateIFInterpolator.decision_boundaries" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.interpolation.EvaluateIFInterpolator.keys">
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/interpolation.html#EvaluateIFInterpolator.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.interpolation.EvaluateIFInterpolator.keys" title="Link to this definition"></a></dt>
+<dd><p>Method that lists out keys available</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.interpolation.EvaluateIFInterpolator.plot2D">
+<span class="sig-name descname"><span class="pre">plot2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_3D_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_3D_var_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PLOT_PROPERTIES</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/interpolation.html#EvaluateIFInterpolator.plot2D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.interpolation.EvaluateIFInterpolator.plot2D" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.interpolation.EvaluateIFInterpolator.violin_plots">
+<span class="sig-name descname"><span class="pre">violin_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">err_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'relative'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/interpolation.html#EvaluateIFInterpolator.violin_plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.interpolation.EvaluateIFInterpolator.violin_plots" title="Link to this definition"></a></dt>
+<dd><p>Method that plots distribution of specified error for given keys and
+optionally saves it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>err_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Either relative or absolute, default is relative</p></li>
+<li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – A list of keys for which the errors will be shown, by default is all of them</p></li>
+<li><p><strong>save_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path where the figure should be saved to</p></li>
+<li><p><strong>close_fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Flag whether figure should be closed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-posydon.visualization.plot1D">
+<span id="posydon-visualization-plot1d"></span><h2>posydon.visualization.plot1D<a class="headerlink" href="#module-posydon.visualization.plot1D" title="Link to this heading"></a></h2>
+<p>Plotting class for 1D (MESA) psygrids.</p>
+<p>The 1D visualization plotting class allows to plot 1D tracks of PsyGrid
+objects. The PsyGrid object is composed of nD MESA grid run with POSYDON
+and post processed with the psygrid object into an h5 file.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot1D.</span></span><span class="sig-name descname"><span class="pre">plot1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_var_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'binary_history'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Plotting class for 1D (MESA) grids.</p>
+<p>Read a PsyGrid object and plot a 1D track of x vs y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index or list of indeces of the PsyGrid object you would like to
+plot.</p></li>
+<li><p><strong>x_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of values to plot on the x axis. Allowed strings are the
+one in <cite>psygrid.history.dtype.names</cite> where “history” needs to be
+chosen accordingly.</p></li>
+<li><p><strong>y_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String or list of stringvalues to plot on the y axis. Allowed
+strings are the one in <cite>psygrid.history.dtype.names</cite> where
+“history” needs to be chosen accordingly.</p></li>
+<li><p><strong>z_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of values to plot on the z axis (displayed with a color).
+Allowed strings are the one in <cite>psygrid.history.dtype.names</cite> where
+“history” needs to be chosen accordingly.</p></li>
+<li><p><strong>history</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The x, y, z variables are read from either: “binary_history”,
+“history1”, “history2”.</p></li>
+<li><p><strong>HR</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, an HR diagram will be plotted.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the object reports by printing to standard output.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary containing extra visualisation options (cf.
+<cite>PLOT_PROPERTIES</cite> in <cite>plot_defaults.py</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.HR_diagram">
+<span class="sig-name descname"><span class="pre">HR_diagram</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.HR_diagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.HR_diagram" title="Link to this definition"></a></dt>
+<dd><p>Plot and HR diagram.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.lines_constant_radius">
+<span class="sig-name descname"><span class="pre">lines_constant_radius</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.lines_constant_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.lines_constant_radius" title="Link to this definition"></a></dt>
+<dd><p>Constant radius lines for the HR diagram.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.plot_panel">
+<span class="sig-name descname"><span class="pre">plot_panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_var_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.plot_panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.plot_panel" title="Link to this definition"></a></dt>
+<dd><p>Plot the 1D pannel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure axes.</p></li>
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index of the run to plot.</p></li>
+<li><p><strong>y_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String or list of stringvalues to plot on the y axis.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.set_color_bar">
+<span class="sig-name descname"><span class="pre">set_color_bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scatter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.set_color_bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.set_color_bar" title="Link to this definition"></a></dt>
+<dd><p>Add colorbar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scatters</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib scatter object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.set_legend">
+<span class="sig-name descname"><span class="pre">set_legend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.set_legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.set_legend" title="Link to this definition"></a></dt>
+<dd><p>Add legend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure axes.</p></li>
+<li><p><strong>lines</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib lines object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.set_title">
+<span class="sig-name descname"><span class="pre">set_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.set_title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.set_title" title="Link to this definition"></a></dt>
+<dd><p>Add title.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.set_xlabel">
+<span class="sig-name descname"><span class="pre">set_xlabel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.set_xlabel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.set_xlabel" title="Link to this definition"></a></dt>
+<dd><p>Add x label.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.set_xlim">
+<span class="sig-name descname"><span class="pre">set_xlim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.set_xlim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.set_xlim" title="Link to this definition"></a></dt>
+<dd><p>Set x axes limits.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.set_ylabel">
+<span class="sig-name descname"><span class="pre">set_ylabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.set_ylabel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.set_ylabel" title="Link to this definition"></a></dt>
+<dd><p>Add y label.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.set_ylim">
+<span class="sig-name descname"><span class="pre">set_ylim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.set_ylim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.set_ylim" title="Link to this definition"></a></dt>
+<dd><p>Set y axes limits.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot1D.plot1D.update_values_to_plot">
+<span class="sig-name descname"><span class="pre">update_values_to_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_var_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot1D.html#plot1D.update_values_to_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot1D.plot1D.update_values_to_plot" title="Link to this definition"></a></dt>
+<dd><p>Update all values to plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>y_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String or list of stringvalues to plot on the y axis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-posydon.visualization.plot2D">
+<span id="posydon-visualization-plot2d"></span><h2>posydon.visualization.plot2D<a class="headerlink" href="#module-posydon.visualization.plot2D" title="Link to this heading"></a></h2>
+<p>Plotting class for 2D (MESA) psygrids.</p>
+<p>The 2D visualization plotting class allows to plot 2D slices of PsyGrid
+objects. The PsyGrid object is composed of 2D/3D/4D MESA grid run with POSYDON
+and post processed with the psygrid object into an h5 file.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot2D.</span></span><span class="sig-name descname"><span class="pre">plot2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psygrid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_var_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_star_history_for_z_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'termination_flag_1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_3D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_3D_var_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_3D_var_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_4D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_4D_var_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_4D_var_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_at_RLO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MARKERS_COLORS_LEGENDS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(3,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Plotting class for 2D (MESA) grids.</p>
+<p>Read a PsyGrid object and plot a 2D slice of x vs y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>psygrid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – PsyGrid object containing a 2D/3D/4D MESA grid.</p></li>
+<li><p><strong>x_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of the initial value to plot on the x axis. Allowed strings
+are <cite>psygrid.initial_values.dtype.names</cite>.</p></li>
+<li><p><strong>y_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of the initial value to plot on the y axis. Allowed strings
+are <cite>psygrid.initial_values.dtype.names</cite>.</p></li>
+<li><p><strong>z_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of the initial value to plot on the z axis (displayed as
+a color). Allowed strings are
+<cite>psygrid.final_values.dtype.names</cite>, <cite>psygrid.history1.dtype.names</cite>
+or <cite>psygrid.history2.dtype.names</cite> depending on
+“selected_star_history_for_z_var” value, and
+<cite>psygrid.binary_history.dtype.names</cite>.</p></li>
+<li><p><strong>selected_star_history_for_z_var</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Accepted valuess: 1 or 2. In case z_var_str is an attribute of
+history1 or history2, then selected_star_history_for_z_var
+determines which of the two to select.</p></li>
+<li><p><strong>termination_flag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Termination flag to display, allowed values are:
+“termination_flag_1”, “termination_flag_2”, “termination_flag_3”,
+“termination_flag_4”, “all”.</p></li>
+<li><p><strong>grid_3D</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the psygrid object is a 3D grid and needs to be sliced.</p></li>
+<li><p><strong>slice_3D_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Variable along which the 3D space will be sliced. Allowed values
+are <cite>psygrid.initial_values.dtype.names</cite>.</p></li>
+<li><p><strong>slice_3D_var_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em> or </em><em>a list</em><em> of </em><em>tuples</em>) – Range between which you want to slice the variable slice_3D_var_str
+e.g., <cite>(2.5,3.)</cite>. In case of a list of tuples, one will get a large
+plot with one subplot for each tuple in the list.</p></li>
+<li><p><strong>grid_4D</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the psygrid object is a 4D grid and needs to be sliced.</p></li>
+<li><p><strong>slice_4D_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Variable along which the 4D space will be sliced. Allowed values
+are <cite>psygrid.initial_values.dtype.names</cite>.</p></li>
+<li><p><strong>slice_4D_var_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em> or </em><em>a list</em><em> of </em><em>tuples</em>) – Range between which you want to slice the variable slice_4D_var_str
+e.g., <cite>(2.5,3.)</cite>. In case of a list of tuples, one will get a large
+plot with one subplot for each tuple in the list.</p></li>
+<li><p><strong>extra_grid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a><em> or </em><em>array</em><em> of </em><em>objects</em>) – If subset of the grid was rerun a or an extention was added, one
+can overlay the new psygrid by passing it here.</p></li>
+<li><p><strong>slice_at_RLO</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the object plots the tracks until onset of Roche Lobe
+overflow.</p></li>
+<li><p><strong>MARKERS_COLORS_LEGENDS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Each termination flag is associated with a marker shape, size,
+color and label (cf. <cite>MARKERS_COLORS_LEGENDS</cite> in
+<cite>plot_defaults.py</cite>).</p></li>
+<li><p><strong>DEFAULT_LABELS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Each varaible is associated to an axis label. (cf. <cite>DEFAULT_LABELS</cite>
+in <cite>plot_defaults.py</cite>).</p></li>
+<li><p><strong>max_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Defines the maximum number of columns of subplots. Default: 3</p></li>
+<li><p><strong>legend_pos</strong> (<em>SubplotSpec</em><em> (</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>)</em>) – Defines which subplots won’t contain an axis but are used to
+display the legend there. Default: (3, 3)</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, the object reports by printing to standard output.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary containing extra visualisation options (cf.
+<cite>PLOT_PROPERTIES</cite> in <cite>plot_defaults.py</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.add_properties_to_final_values">
+<span class="sig-name descname"><span class="pre">add_properties_to_final_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">termination_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.add_properties_to_final_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.add_properties_to_final_values" title="Link to this definition"></a></dt>
+<dd><p>Add extra initial values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.add_properties_to_initial_values">
+<span class="sig-name descname"><span class="pre">add_properties_to_initial_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.add_properties_to_initial_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.add_properties_to_initial_values" title="Link to this definition"></a></dt>
+<dd><p>Add extra initial values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.get_x_var">
+<span class="sig-name descname"><span class="pre">get_x_var</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.get_x_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.get_x_var" title="Link to this definition"></a></dt>
+<dd><p>Get x value to plot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.get_y_var">
+<span class="sig-name descname"><span class="pre">get_y_var</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.get_y_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.get_y_var" title="Link to this definition"></a></dt>
+<dd><p>Get y value to plot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.get_z_var">
+<span class="sig-name descname"><span class="pre">get_z_var</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.get_z_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.get_z_var" title="Link to this definition"></a></dt>
+<dd><p>Get z value to plot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.plot_panel">
+<span class="sig-name descname"><span class="pre">plot_panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_grid_call</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.plot_panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.plot_panel" title="Link to this definition"></a></dt>
+<dd><p>Plot the 2D pannel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure axes.</p></li>
+<li><p><strong>extra_grid_call</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, one ore more extra grids are passed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.plot_panels">
+<span class="sig-name descname"><span class="pre">plot_panels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_idxs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.plot_panels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.plot_panels" title="Link to this definition"></a></dt>
+<dd><p>Plot the 2D panels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axs</strong> (<em>array</em><em> of </em><em>axes</em>) – matplotlib figure axes. Its dimensions should be stored in
+self.n_cols and self.n_rows.</p></li>
+<li><p><strong>legend_idxs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>indices</em>) – Tells where to place the legend instead of a plot.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.set_color_bar">
+<span class="sig-name descname"><span class="pre">set_color_bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scatter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.set_color_bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.set_color_bar" title="Link to this definition"></a></dt>
+<dd><p>Add colorbar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scatters</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib scatter object.</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure axes.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.set_legend">
+<span class="sig-name descname"><span class="pre">set_legend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatters_legend</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.set_legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.set_legend" title="Link to this definition"></a></dt>
+<dd><p>Add legend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure axes.</p></li>
+<li><p><strong>scatters</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib scatter object.</p></li>
+<li><p><strong>scatters_legend</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – List of strings which will be used as labels.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.set_title">
+<span class="sig-name descname"><span class="pre">set_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.set_title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.set_title" title="Link to this definition"></a></dt>
+<dd><p>Add title.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.set_xlabel">
+<span class="sig-name descname"><span class="pre">set_xlabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.set_xlabel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.set_xlabel" title="Link to this definition"></a></dt>
+<dd><p>Add x label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure axes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.set_xlim">
+<span class="sig-name descname"><span class="pre">set_xlim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.set_xlim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.set_xlim" title="Link to this definition"></a></dt>
+<dd><p>Set x axes limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure axes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.set_ylabel">
+<span class="sig-name descname"><span class="pre">set_ylabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.set_ylabel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.set_ylabel" title="Link to this definition"></a></dt>
+<dd><p>Add y label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure axes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.set_ylim">
+<span class="sig-name descname"><span class="pre">set_ylim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.set_ylim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.set_ylim" title="Link to this definition"></a></dt>
+<dd><p>Set y axes limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><em>object</em></a>) – matplotlib figure axes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.update_markers_colors_legends">
+<span class="sig-name descname"><span class="pre">update_markers_colors_legends</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">termination_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MARKERS_COLORS_LEGENDS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.update_markers_colors_legends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.update_markers_colors_legends" title="Link to this definition"></a></dt>
+<dd><p>Udpdate markers, colors and legend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>termination_flag</strong> (<em>string</em>) – Termination flag to display, allowed values are:
+“termination_flag_1”, “termination_flag_2”, “termination_flag_3”,
+“termination_flag_4”.</p></li>
+<li><p><strong>MARKERS_COLORS_LEGENDS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Each termination flag is associated with a marker shape, size,
+color and label.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.visualization.plot2D.plot2D.update_values_to_plot">
+<span class="sig-name descname"><span class="pre">update_values_to_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">termination_flag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot2D.html#plot2D.update_values_to_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot2D.plot2D.update_values_to_plot" title="Link to this definition"></a></dt>
+<dd><p>Update all values to plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>termination_flag</strong> (<em>string</em>) – Termination flag to display, allowed values are:
+“termination_flag_1”, “termination_flag_2”, “termination_flag_3”,
+“termination_flag_4”.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-posydon.visualization.plot_defaults">
+<span id="posydon-visualization-plot-defaults"></span><h2>posydon.visualization.plot_defaults<a class="headerlink" href="#module-posydon.visualization.plot_defaults" title="Link to this heading"></a></h2>
+<p>Default values for plotting routines.</p>
+<p>This file contains the default parameters of each plotting routines.
+PLOT_PROPERTIES:</p>
+<blockquote>
+<div><p>Each default plotting variable is contained in this dictionary.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>DEFAULT_MARKERS_COLORS_LEGENDS:</dt><dd><p>Each termination condition is associated with a marker shape, size, color
+and label.</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.plot_defaults.add_flag_to_MARKERS_COLORS_LEGENDS">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot_defaults.</span></span><span class="sig-name descname"><span class="pre">add_flag_to_MARKERS_COLORS_LEGENDS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MARKERS_COLORS_LEGENDS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot_defaults.html#add_flag_to_MARKERS_COLORS_LEGENDS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot_defaults.add_flag_to_MARKERS_COLORS_LEGENDS" title="Link to this definition"></a></dt>
+<dd><p>Add not pre defined stuff to DEFAULT_MARKERS_COLORS_LEGENDS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>MARKERS_COLORS_LEGENDS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em> of </em><em>lists</em>) – Dictionary with flags as keys given a list with marker, size, color,
+and legend text for each flag.</p></li>
+<li><p><strong>flag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The flag itself.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-posydon.visualization.plot_pop">
+<span id="posydon-visualization-plot-pop"></span><h2>posydon.visualization.plot_pop<a class="headerlink" href="#module-posydon.visualization.plot_pop" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.plot_pop.get_population_data">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot_pop.</span></span><span class="sig-name descname"><span class="pre">get_population_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot_pop.html#get_population_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot_pop.get_population_data" title="Link to this definition"></a></dt>
+<dd><p>get the population data of a given metallicity for plotting</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pop</strong> (<a class="reference internal" href="posydon.popsyn.html#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><em>Population</em></a>) – Population object</p></li>
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Metallicity of the population in solar units</p></li>
+<li><p><strong>grid_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Grid type to get data for.
+Options are ‘HMS-HMS’, ‘CO-HMS_RLO’, ‘CO-HeMS’, ‘CO-HeMS_RLO’.</p></li>
+<li><p><strong>channel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Formation channel to be plotted</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> – Population data of the given metallicity and channel and grid type</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.plot_pop.plot_grid_slice">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot_pop.</span></span><span class="sig-name descname"><span class="pre">plot_grid_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_3D_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_3D_var_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'combined_TF12'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PLOT_PROPERTIES</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot_pop.html#plot_grid_slice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot_pop.plot_grid_slice" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.plot_pop.plot_hist_properties">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot_pop.</span></span><span class="sig-name descname"><span class="pre">plot_hist_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_intrinsic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_observable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">COLORS[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot_pop.html#plot_hist_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot_pop.plot_hist_properties" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.plot_pop.plot_merger_efficiency">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot_pop.</span></span><span class="sig-name descname"><span class="pre">plot_merger_efficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">met</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merger_efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot_pop.html#plot_merger_efficiency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot_pop.plot_merger_efficiency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.plot_pop.plot_perley16_rate_density">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot_pop.</span></span><span class="sig-name descname"><span class="pre">plot_perley16_rate_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot_pop.html#plot_perley16_rate_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot_pop.plot_perley16_rate_density" title="Link to this definition"></a></dt>
+<dd><p>Plot the GRB rate density from Perley et al. (2016)</p>
+<p>plot the long gamma-ray burst rate density from Perley et al. (2016)
+if ax is None, it plotted on the latest axis, otherwise it is added to the given axis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.10.6)"><em>matplotlib.axes.Axes</em></a><em> (</em><em>optional</em><em>)</em>) – Axes object to plot the data on</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.plot_pop.plot_popsyn_over_grid_slice">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot_pop.</span></span><span class="sig-name descname"><span class="pre">plot_popsyn_over_grid_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">met_Zsun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">termination_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'combined_TF12'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_prop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot_pop.html#plot_popsyn_over_grid_slice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot_pop.plot_popsyn_over_grid_slice" title="Link to this definition"></a></dt>
+<dd><p>Plot the population synthesis data over a grid slice</p>
+<p>Outputs one or multiple plots of the population synthesis data over a grid slice.
+Either stores the plots in a directory or shows them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pop</strong> (<a class="reference internal" href="posydon.popsyn.html#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><em>Population</em></a>) – Population object</p></li>
+<li><p><strong>grid_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Grid type to get data for.
+Options are ‘HMS-HMS’, ‘CO-HMS_RLO’, ‘CO-HeMS’, ‘CO-HeMS_RLO’.</p></li>
+<li><p><strong>met_Zsun</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Metallicity of the population in solar units</p></li>
+<li><p><strong>termination_flag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Termination flag for the grid</p></li>
+<li><p><strong>slices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – List of slices to plot</p></li>
+<li><p><strong>channel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> (</em><em>optional</em><em>)</em>) – Formation channel to be plotted</p></li>
+<li><p><strong>plot_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> (</em><em>optional</em><em>)</em>) – Directory to save the plots</p></li>
+<li><p><strong>prop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> (</em><em>optional</em><em>)</em>) – Property to plot on top of the grid slice</p></li>
+<li><p><strong>prop_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – Range of the property to plot</p></li>
+<li><p><strong>log_prop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>optional</em><em>)</em>) – Logarithmic scale for the property</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – Transparency of the data points</p></li>
+<li><p><strong>s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – Size of the data points</p></li>
+<li><p><strong>show_fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>optional</em><em>)</em>) – Show the figure</p></li>
+<li><p><strong>save_fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>optional</em><em>)</em>) – Save the figure</p></li>
+<li><p><strong>close_fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>optional</em><em>)</em>) – Close the figure</p></li>
+<li><p><strong>plot_extension</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> (</em><em>optional</em><em>)</em>) – File extension for saving the plot</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>optional</em><em>)</em>) – Print information</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.plot_pop.plot_population_data">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot_pop.</span></span><span class="sig-name descname"><span class="pre">plot_population_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_3D_var_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_3D_var_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_prop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot_pop.html#plot_population_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot_pop.plot_population_data" title="Link to this definition"></a></dt>
+<dd><p>Plot the population data based on the grid slice parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataFrame</em>) – Population data</p></li>
+<li><p><strong>slice_3D_var_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String of the 3D variable to slice the grid</p></li>
+<li><p><strong>slice_3D_var_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – Range of the 3D variable to slice the grid</p></li>
+<li><p><strong>prop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> (</em><em>optional</em><em>)</em>) – Property to plot on top of the grid slice</p></li>
+<li><p><strong>prop_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – Range of the property to plot</p></li>
+<li><p><strong>log_prop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>optional</em><em>)</em>) – Logarithmic scale for the property</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – Transparency of the data points</p></li>
+<li><p><strong>s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – Size of the data points</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.plot_pop.plot_rate_density">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot_pop.</span></span><span class="sig-name descname"><span class="pre">plot_rate_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intrinsic_rates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot_pop.html#plot_rate_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot_pop.plot_rate_density" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.visualization.plot_pop.setup_grid_slice_plotting">
+<span class="sig-prename descclassname"><span class="pre">posydon.visualization.plot_pop.</span></span><span class="sig-name descname"><span class="pre">setup_grid_slice_plotting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_extension</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/visualization/plot_pop.html#setup_grid_slice_plotting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.visualization.plot_pop.setup_grid_slice_plotting" title="Link to this definition"></a></dt>
+<dd><p>Setup the values for plotting the grid slice</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<a class="reference internal" href="posydon.grids.html#posydon.grids.psygrid.PSyGrid" title="posydon.grids.psygrid.PSyGrid"><em>PSyGrid</em></a>) – PSyGrid object</p></li>
+<li><p><strong>grid_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Grid type to get data for.
+Options are ‘HMS-HMS’, ‘CO-HMS_RLO’, ‘CO-HeMS’, ‘CO-HeMS_RLO’.</p></li>
+<li><p><strong>plot_extension</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – File extension for saving the plot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>bin_centers</strong> (<em>list</em>) – List of bin centers</p></li>
+<li><p><strong>bin_edges</strong> (<em>list</em>) – List of bin edges</p></li>
+<li><p><strong>PLOT_PROPERTIES</strong> (<em>dict</em>) – Dictionary of plot properties</p></li>
+<li><p><strong>slice_3D_var_str</strong> (<em>str</em>) – String of the 3D variable to slice the grid</p></li>
+<li><p><strong>tmp_fname</strong> (<em>str</em>) – Template file name for saving the plot</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="posydon.utils.html" class="btn btn-neutral float-left" title="posydon.utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="posydon.visualization.VH_diagram.html" class="btn btn-neutral float-right" title="posydon.visualization.VH_diagram" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.0.6
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
