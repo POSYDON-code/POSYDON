@@ -136,7 +136,7 @@ class SimulationProperties:
             step_class, _ = step_tuple
             if verbose and isinstance(step_class, NullStep): 
                 Pwarn(f"Step {key} not provided, skipping it.",
-                                "POSYDONWarning")
+                                "StepWarning")
 
             self.kwargs[key] = step_tuple
 
