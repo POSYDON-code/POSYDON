@@ -288,8 +288,8 @@ class TrackMatcher:
 
         self.metallicity = convert_metallicity_to_string(metallicity)
         self.matching_method = matching_method
-        self.matching_tolerance = matching_tolerance # DEF: 1e-2
-        self.matching_tolerance_hard = matching_tolerance_hard # DEF: 1e-1
+        self.matching_tolerance = matching_tolerance # DEFAULT: 1e-2
+        self.matching_tolerance_hard = matching_tolerance_hard # DEFAULT: 1e-1
 
         self.initial_mass = None
         self.rootm = None
