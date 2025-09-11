@@ -239,7 +239,28 @@ class StepSN(object):
 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, mechanism = 'Fryer+12-delayed',
+                       engine = '',
+                       PISN = 'Hendriks+23',
+                       PISN_CO_shift = 0.0,
+                       PPI_extra_mass_loss = -20.0,
+                       ECSN = "Tauris+15",
+                       conserve_hydrogen_envelope = False,
+                       conserve_hydrogen_PPI = False,
+                       max_neutrino_mass_loss = 0.5,
+                       max_NS_mass = 2.5,
+                       use_interp_values = True,
+                       use_profiles = True,
+                       use_core_masses = True,
+                       allow_spin_None = False,
+                       approx_at_he_depletion = False,
+                       kick = True,
+                       kick_normalisation = 'one_over_mass',
+                       sigma_kick_CCSN_NS = 265.0,
+                       sigma_kick_CCSN_BH = 265.0,
+                       sigma_kick_ECSN = 20.0,
+                       verbose=False,
+                       **kwargs):
         """Initialize a StepSN instance."""
         # read kwargs to initialize the class
         if kwargs:
@@ -250,9 +271,27 @@ class StepSN(object):
                 default_value = SN_MODEL[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
-            for varname in SN_MODEL:
-                default_value = SN_MODEL[varname]
-                setattr(self, varname, default_value)
+            self.mechanism = mechanism
+            self.engine = engine
+            self.PISN = PISN
+            self.PISN_CO_shift = PISN_CO_shift
+            self.PPI_extra_mass_loss = PPI_extra_mass_loss
+            self.ECSN = ECSN
+            self.conserve_hydrogen_envelope = conserve_hydrogen_envelope
+            self.conserve_hydrogen_PPI = conserve_hydrogen_PPI
+            self.max_neutrino_mass_loss = max_neutrino_mass_loss
+            self.max_NS_mass = max_NS_mass
+            self.use_interp_values = use_interp_values
+            self.use_profiles = use_profiles
+            self.use_core_masses = use_core_masses
+            self.allow_spin_None = allow_spin_None
+            self.approx_at_he_depletion = approx_at_he_depletion
+            self.kick = kick
+            self.kick_normalisation = kick_normalisation
+            self.sigma_kick_CCSN_NS = sigma_kick_CCSN_NS
+            self.sigma_kick_CCSN_BH = sigma_kick_CCSN_BH
+            self.sigma_kick_ECSN = sigma_kick_ECSN
+            self.verbose = verbose
 
         if self.max_neutrino_mass_loss is None:
             self.max_neutrino_mass_loss = 0
