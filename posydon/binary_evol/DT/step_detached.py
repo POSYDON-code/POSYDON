@@ -843,7 +843,6 @@ class detached_evolution:
         self.do_magnetic_braking = do_magnetic_braking
         self.magnetic_braking_mode = magnetic_braking_mode
         self.do_stellar_evolution_and_spin_from_winds = do_stellar_evolution_and_spin_from_winds
-        self.verbose = False
 
     # timing events for solve_ivp...
     # detects secondary RLO
