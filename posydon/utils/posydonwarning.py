@@ -124,6 +124,11 @@ class DeprecationWarning(POSYDONWarning):
     def __init__(self, message=''):
         super().__init__(message)
 
+class ValueWarning(POSYDONWarning):
+    """Warnings related to a ValueError."""
+    def __init__(self, message=''):
+        super().__init__(message)
+
 
 # All POSYDON warnings subclasses should be defined beforehand
 _POSYDONWarning_subclasses = {cls.__name__: cls for cls in\
