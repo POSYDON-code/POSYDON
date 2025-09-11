@@ -217,6 +217,8 @@ class detached_step:
             metallicity=None,
             path=PATH_TO_POSYDON_DATA,
             matching_method="minimize",
+            matching_tolerance=1e-2,
+            matching_tolerance_hard=1e-1,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None
@@ -258,6 +260,8 @@ class detached_step:
                                           grid_name_strippedHe = grid_name_strippedHe,
                                           path=path, metallicity = metallicity,
                                           matching_method = matching_method,
+                                          matching_tolerance=matching_tolerance,
+                                          matching_tolerance_hard=matching_tolerance_hard,
                                           list_for_matching_HMS = list_for_matching_HMS,
                                           list_for_matching_HeStar = list_for_matching_HeStar,
                                           list_for_matching_postMS = list_for_matching_postMS,

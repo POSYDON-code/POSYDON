@@ -256,6 +256,8 @@ class TrackMatcher:
             path=PATH_TO_POSYDON_DATA,
             metallicity=None,
             matching_method="minimize",
+            matching_tolerance=1e-2,
+            matching_tolerance_hard=1e-1,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None,
@@ -286,8 +288,8 @@ class TrackMatcher:
 
         self.metallicity = convert_metallicity_to_string(metallicity)
         self.matching_method = matching_method
-        self.matching_tolerance = 1e-2 # DEF: 1e-2
-        self.matching_tolerance_hard = 1e-1 # DEF: 1e-1
+        self.matching_tolerance = matching_tolerance # DEF: 1e-2
+        self.matching_tolerance_hard = matching_tolerance_hard # DEF: 1e-1
 
         self.initial_mass = None
         self.rootm = None
