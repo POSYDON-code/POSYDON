@@ -46,7 +46,6 @@ from posydon.popsyn.star_formation_history import get_formation_times
 from posydon.popsyn.independent_sample import generate_independent_samples
 from posydon.popsyn.sample_from_file import (get_samples_from_file,
                                              get_kick_samples_from_file)
-from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
 from posydon.popsyn.defaults import default_kwargs
 
 from posydon.popsyn.io import binarypop_kwargs_from_ini
