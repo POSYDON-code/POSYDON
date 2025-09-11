@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.visualization.combine_TF &mdash; posydon 2.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=20623aea"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.visualization.combine_TF</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.visualization.combine_TF</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for combining termination flags for visualization purposes.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># TODO: rename the varaible, these are termination flags that indicates</span>
+<span class="c1"># the star has reached the end of the evolution</span>
+<span class="n">TF1_POOL_STABLE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Primary has depleted central carbon&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Secondary has depleted central carbon&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Primary got stopped before central carbon depletion&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Secondary got stopped before central carbon depletion&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Primary enters pair-instability regime&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Secondary enters pair-instability regime&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Primary enters pulsational pair-instability regime&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Secondary enters pulsational pair-instability regime&#39;</span><span class="p">,</span>
+    <span class="c1"># &#39;offcenter neon ignition for primary&#39;,</span>
+    <span class="c1"># &#39;offcenter neon ignition for secondary&#39;,</span>
+    <span class="s1">&#39;envelope_mass_limit&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;gamma_center_limit&#39;</span><span class="p">,</span>
+    <span class="c1"># &#39;Reached TPAGB&#39;,</span>
+    <span class="s1">&#39;max_age&#39;</span>
+    <span class="p">]</span>
+
+<span class="n">TF1_POOL_UNSTABLE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;overflow from L2 (D_L2) distance for q(=Macc/Mdon)&gt;1, donor is star 1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;overflow from L2 (R_L2) surface for q(=Macc/Mdon)&lt;1, donor is star 1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;overflow from L2 (R_L2) surface for q(=Macc/Mdon)&gt;1, donor is star 1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;overflow from L2 (D_L2) distance for q(=Macc/Mdon)&lt;1, donor is star 1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;overflow from L2 (R_L2) surface for q(=Macc/Mdon)&lt;1, donor is star 2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;overflow from L2 (R_L2) surface for q(=Macc/Mdon)&gt;1, donor is star 2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Reached maximum mass transfer rate: 1d-1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Reached maximum mass transfer rate: Exceeded photon trapping radius&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Both stars fill their Roche Lobe and at least one of them is off MS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Terminate due to L2 overflow during case A&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Both stars fill their Roche Lobe and t_kh &gt; t_acc&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;overflow from L2, t_kh &gt; t_acc and w &gt; w_crit_lim, donor is star 1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;overflow from L2, t_kh &gt; t_acc and w &gt; w_crit_lim, donor is star 2&#39;</span>
+    <span class="p">]</span>
+
+<span class="n">TF1_POOL_INITIAL_RLO</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;forced_initial_RLO&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Terminate because of overflowing initial model&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+<span class="n">TF1_POOL_ERROR</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;logQ_min_limit&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;min_timestep_limit&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;reach cluster timelimit&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+<span class="n">TF2_POOL_NO_RLO</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;no_RLOF&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+<span class="n">TF2_POOL_INITIAL_RLO</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;initial_RLOF&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+<span class="n">TF2_POOL_UNSTABLE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;L2_RLOF&quot;</span>
+    <span class="p">]</span>
+
+<span class="n">TF2_POOL_UNKNOWN</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;None&#39;</span>
+    <span class="p">]</span>
+
+<span class="n">TF2_POOL_CONT</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;contact_during_MS&#39;</span>
+    <span class="p">]</span>
+                        
+<span class="n">TF2_POOL_A</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;case_A1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;case_A2&#39;</span>
+    <span class="p">]</span>
+
+<span class="n">TF2_POOL_B</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;case_B1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;case_B2&#39;</span>
+    <span class="p">]</span>
+
+<span class="n">TF2_POOL_C</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;case_C1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;case_C2&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+<span class="n">TF2_POOL_BA</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;case_BA1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;case_BA2&#39;</span>
+    <span class="p">]</span>
+
+<span class="n">TF2_POOL_BB</span> <span class="o">=</span> <span class="p">[</span>
+<span class="c1">#    &#39;case_A1/B1/BB1&#39;,</span>
+<span class="c1">#    &#39;case_A2/B2/BB2&#39;,</span>
+<span class="c1">#    &#39;case_B1/BB1&#39;,</span>
+<span class="c1">#    &#39;case_B2/BB2&#39;,</span>
+<span class="c1">#    &#39;case_B1/C1/BB1&#39;,</span>
+<span class="c1">#    &#39;case_B2/C2/BB2&#39;,</span>
+<span class="c1">#    &#39;case_BA1/BB1&#39;,</span>
+<span class="c1">#    &#39;case_BA2/BB2&#39;,</span>
+<span class="c1">#    &#39;case_C1/BB1&#39;,</span>
+<span class="c1">#    &#39;case_C2/BB2&#39;,</span>
+    <span class="s1">&#39;case_BB1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;case_BB2&#39;</span>
+    <span class="p">]</span>
+
+<span class="c1">#TF2_POOL_AB = [</span>
+<span class="c1">#    &#39;case_A1/B1&#39;,</span>
+<span class="c1">#    &#39;case_A2/B2&#39;,</span>
+<span class="c1">#    &#39;case_A1/B1/C1&#39;,</span>
+<span class="c1">#    &#39;case_A2/B2/C2&#39;,</span>
+<span class="c1">#    &#39;case_A1/B1/C1/BB1&#39;,</span>
+<span class="c1">#    &#39;case_A2/B2/C2/BB2&#39;,</span>
+<span class="c1">#    &#39;case_A1/B1/A1&#39;,</span>
+<span class="c1">#    &#39;case_A2/B2/A2&#39;</span>
+<span class="c1">#    ]</span>
+
+<span class="c1">#TF2_POOL_AC = [</span>
+<span class="c1">#    &#39;case_A1/C1&#39;,</span>
+<span class="c1">#    &#39;case_A2/C2&#39;</span>
+<span class="c1">#    ]</span>
+
+<span class="c1">#TF2_POOL_ABB = [</span>
+<span class="c1">#    &#39;case_A1/BB1&#39;,</span>
+<span class="c1">#    &#39;case_A2/BB2&#39;</span>
+<span class="c1">#    ]</span>
+
+<span class="c1">#TF2_POOL_BC = [</span>
+<span class="c1">#    &#39;case_B1/C1&#39;,</span>
+<span class="c1">#    &#39;case_B2/C2&#39;</span>
+<span class="c1">#    ]</span>
+
+<div class="viewcode-block" id="combine_TF12">
+<a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.combine_TF.combine_TF12">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_TF12</span><span class="p">(</span><span class="n">IC</span><span class="p">,</span> <span class="n">TF2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the combination of interpolation classion and termination flag 2.&quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">IC</span><span class="p">)</span>
+    <span class="n">TF12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;unknown&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;U25&#39;</span><span class="p">)</span>
+
+    <span class="c1"># mask unknown cases during history TF2</span>
+    <span class="n">TF2</span> <span class="o">=</span> <span class="p">[(</span><span class="n">tf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">tf</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;?case&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">tf</span><span class="p">)</span> <span class="k">for</span> <span class="n">tf</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;initial_MT&#39;</span><span class="p">:</span>
+            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Initial RLOF&#39;</span>
+        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;not_converged&#39;</span><span class="p">:</span>
+            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Not converged&#39;</span>
+        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;no_MT&#39;</span><span class="p">:</span>
+            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;no_RLOF&#39;</span>
+        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;stable_reverse_MT&#39;</span><span class="p">:</span>
+            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reverse stable MT&#39;</span>
+        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;stable_MT&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;1&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">&#39;2&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reverse stable MT&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_CONT</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable contact&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_A</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case A&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_B</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case B&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_C</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case C&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_BA</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case BA&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_BB</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case BB&#39;</span>
+<span class="c1">#            elif TF2[i] in TF2_POOL_AB:</span>
+<span class="c1">#                TF12[i] = &#39;Stable case AB&#39;</span>
+<span class="c1">#            elif TF2[i] in TF2_POOL_AC:</span>
+<span class="c1">#                TF12[i] = &#39;Stable case AC&#39;</span>
+<span class="c1">#            elif TF2[i] in TF2_POOL_ABB:</span>
+<span class="c1">#                TF12[i] = &#39;Stable case ABB&#39;</span>
+<span class="c1">#            elif TF2[i] in TF2_POOL_BC:</span>
+<span class="c1">#                TF12[i] = &#39;Stable case BC&#39;</span>
+            <span class="k">elif</span> <span class="s1">&#39;case_nonburning&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case n&#39;</span>
+            <span class="k">elif</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="c1"># multiple cases, split them up</span>
+                <span class="n">MTcases</span> <span class="o">=</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+                <span class="c1"># record first case</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable &#39;</span><span class="o">+</span><span class="n">MTcases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="c1"># record last case</span>
+                <span class="k">if</span> <span class="s1">&#39;nonburning&#39;</span> <span class="ow">in</span> <span class="n">MTcases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;n&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">MTcases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;unstable_MT&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;1&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">&#39;2&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reverse unstable MT&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_CONT</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable contact&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_A</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case A&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_B</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case B&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_C</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case C&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_BA</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case BA&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_BB</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case BB&#39;</span>
+<span class="c1">#            elif TF2[i] in TF2_POOL_AB:</span>
+<span class="c1">#                TF12[i] = &#39;Unstable case AB&#39;</span>
+<span class="c1">#            elif TF2[i] in TF2_POOL_AC:</span>
+<span class="c1">#                TF12[i] = &#39;Unstable case AC&#39;</span>
+<span class="c1">#            elif TF2[i] in TF2_POOL_ABB:</span>
+<span class="c1">#                TF12[i] = &#39;Unstable case ABB&#39;</span>
+<span class="c1">#            elif TF2[i] in TF2_POOL_BC:</span>
+<span class="c1">#                TF12[i] = &#39;Unstable case BC&#39;</span>
+            <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_UNSTABLE</span><span class="p">:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Unstable L2 RLOF&quot;</span>
+            <span class="k">elif</span> <span class="s1">&#39;case_nonburning&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case n&#39;</span>
+            <span class="k">elif</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="c1"># multiple cases, split them up</span>
+                <span class="n">MTcases</span> <span class="o">=</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+                <span class="c1"># record first case</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable &#39;</span><span class="o">+</span><span class="n">MTcases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="c1"># record last case</span>
+                <span class="k">if</span> <span class="s1">&#39;nonburning&#39;</span> <span class="ow">in</span> <span class="n">MTcases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;n&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">MTcases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># catch if something is missing from the logic</span>
+        <span class="k">if</span> <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;unknown&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">TF12</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.0/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
