@@ -359,12 +359,11 @@ class detached_step:
         for item in secondary.interp1d.values():
             if type(item) == PchipInterpolator2:
                 item.offset = secondary.t_offset
-        #secondary.interp1d.x_offset = secondary.t_offset
+
         primary.t_offset = binary.time - primary.interp1d["t0"]
         for item in primary.interp1d.values():
             if type(item) == PchipInterpolator2:
                 item.offset = primary.t_offset
-        #primary.interp1d.x_offset = primary.t_offset
 
         max_time = secondary.interp1d["max_time"]
 
@@ -438,6 +437,7 @@ class detached_step:
 
             ## CHECK IF THE BINARY IS IN RLO
             if res.t_events[0] or res.t_events[1]:
+
                 if self.RLO_orbit_at_orbit_with_same_am:
                     # final circular orbit conserves angular momentum
                     # compared to the eccentric orbit
@@ -451,11 +451,18 @@ class detached_step:
                 abs_diff_porb = np.abs(binary.orbital_period - orbital_period_from_separation(
                                 binary.separation, secondary.mass, primary.mass)) / binary.orbital_period
 
-                assert abs_diff_porb < 10 ** (-2),  \
-                f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
-                f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
-                "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) =" + \
-                f"{orbital_period_from_separation(binary.separation, secondary.mass, primary.mass):.4f}"
+                
+                abs_diff_porb_str = f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
+                    f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
+                    "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) = " + \
+                    f"{orbital_period_from_separation(binary.separation, secondary.mass, primary.mass):.4f}"
+
+                if self.verbose:
+                    print(abs_diff_porb_str)
+
+                assert abs_diff_porb < 1e-2, \
+                        "detached_step: abs_diff_porb >= 1e-2\n" + \
+                         abs_diff_porb_str
 
                 # instantly circularize at RLO
                 binary.eccentricity = 0
@@ -643,7 +650,6 @@ class detached_step:
                                 [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
             
             interp1d = primary.interp1d if obj == primary else secondary.interp1d
-            t_offset = primary.t_offset if obj == primary else secondary.t_offset
 
             for key in prop:
                 if key in ["event",
