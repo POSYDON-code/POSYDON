@@ -424,6 +424,9 @@ class StepSN(object):
         # do orbital_kick on the binary object
         if self.kick:
             self.orbital_kick(binary=binary)
+        else:
+            # no kick, but still need to unset the event after CC
+            binary.event = None
 
         # Checks if the binary is not disrupted to compute the
         # inspiral time due to gravitational wave emission

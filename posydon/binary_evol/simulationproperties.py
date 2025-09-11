@@ -15,6 +15,7 @@ __authors__ = [
 
 
 import time
+import os
 from posydon.utils.constants import age_of_universe
 from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.posydonwarning import Pwarn
@@ -253,7 +254,7 @@ class SimulationProperties:
         # track that all steps have been loaded
         self.steps_loaded = True
 
-    def load_a_step(self, step_name, step_tup, metallicity=None, verbose=False):
+    def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None, from_ini='', verbose=False):
         """Instantiate one step class and set as instance attribute.
 
         Parameters
@@ -273,6 +274,9 @@ class SimulationProperties:
             4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to 
             metallicities available in your POSYDON_DATA grids.
 
+        from_ini : str
+            Path to a .ini file to read step options from.
+
         verbose : bool
             Print extra information.
 
@@ -283,6 +287,10 @@ class SimulationProperties:
 
         # these steps and the flow do not require a metallicity
         ignore_for_met = ["flow", "step_CE", "step_SN","step_dco", "step_end"]
+
+        # grab kwargs from ini file for given step
+        if os.path.isfile(from_ini):
+            step_tup = simprop_kwargs_from_ini(from_ini, only=step_name)[step_name]
 
         if (metallicity is None) and (step_name not in ignore_for_met):
             Pwarn(f"{step_name} not assigned a metallicity. Defaulting to Z = Zsun (solar).", 
