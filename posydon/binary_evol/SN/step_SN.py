@@ -262,9 +262,11 @@ class StepSN(object):
         if (self.kick_normalisation == 'asym_ej'
             or self.kick_normalisation == 'linear'):
             Pwarn("kick_normalisation 'asym_ej' and 'linear' are "
-                "deprecated, use kick_prescription instead.",
+                "deprecated, use kick_prescription instead. Setting "
+                "kick normalization to unity.",
                 "DeprecationWarning")
             self.kick_prescription = self.kick_normalisation
+            self.kick_normalisation = 'one'
 
         if self.max_neutrino_mass_loss is None:
             self.max_neutrino_mass_loss = 0
