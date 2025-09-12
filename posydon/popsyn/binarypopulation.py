@@ -49,7 +49,7 @@ from posydon.popsyn.sample_from_file import (get_samples_from_file,
 
 from posydon.popsyn.defaults import default_kwargs
 
-from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.popsyn.io import binarypop_kwargs_from_ini, simprop_kwargs_from_ini
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import POSYDONError
 from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
@@ -203,8 +203,13 @@ class BinaryPopulation:
         BinaryPopulation
             A new instance of a BinaryPopulation.
         """
-        kwargs = binarypop_kwargs_from_ini(path, verbose=verbose)
-        return cls(**kwargs)
+        pop_kwargs = binarypop_kwargs_from_ini(path, verbose=verbose)
+        # finally get the population properties
+        sim_prop_kwargs = simprop_kwargs_from_ini(path)
+        pop_kwargs['population_properties'] = SimulationProperties(
+            **sim_prop_kwargs)
+        
+        return cls(**pop_kwargs)
 
     def evolve(self, **kwargs):
         """Evolve a binary population.

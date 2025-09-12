@@ -20,6 +20,7 @@ __authors__ = [
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 __credits__ = [
@@ -239,7 +240,28 @@ class StepSN(object):
 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, mechanism = SN_MODEL['mechanism'],
+                       engine = SN_MODEL['engine'],
+                       PISN = SN_MODEL['PISN'],
+                       PISN_CO_shift = SN_MODEL['PISN_CO_shift'],
+                       PPI_extra_mass_loss = SN_MODEL['PPI_extra_mass_loss'],
+                       ECSN = SN_MODEL['ECSN'],
+                       conserve_hydrogen_envelope = SN_MODEL['conserve_hydrogen_envelope'],
+                       conserve_hydrogen_PPI = SN_MODEL['conserve_hydrogen_PPI'],
+                       max_neutrino_mass_loss = SN_MODEL['max_neutrino_mass_loss'],
+                       max_NS_mass = SN_MODEL['max_NS_mass'],
+                       use_interp_values = SN_MODEL['use_interp_values'],
+                       use_profiles = SN_MODEL['use_profiles'],
+                       use_core_masses = SN_MODEL['use_core_masses'],
+                       allow_spin_None = SN_MODEL['allow_spin_None'],
+                       approx_at_he_depletion = SN_MODEL['approx_at_he_depletion'],
+                       kick = SN_MODEL['kick'],
+                       kick_normalisation = SN_MODEL['kick_normalisation'],
+                       sigma_kick_CCSN_NS = SN_MODEL['sigma_kick_CCSN_NS'],
+                       sigma_kick_CCSN_BH = SN_MODEL['sigma_kick_CCSN_BH'],
+                       sigma_kick_ECSN = SN_MODEL['sigma_kick_ECSN'],
+                       verbose = SN_MODEL['verbose'],
+                       **kwargs):
         """Initialize a StepSN instance."""
         # read kwargs to initialize the class
         if kwargs:
@@ -250,9 +272,27 @@ class StepSN(object):
                 default_value = SN_MODEL[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
-            for varname in SN_MODEL:
-                default_value = SN_MODEL[varname]
-                setattr(self, varname, default_value)
+            self.mechanism = mechanism
+            self.engine = engine
+            self.PISN = PISN
+            self.PISN_CO_shift = PISN_CO_shift
+            self.PPI_extra_mass_loss = PPI_extra_mass_loss
+            self.ECSN = ECSN
+            self.conserve_hydrogen_envelope = conserve_hydrogen_envelope
+            self.conserve_hydrogen_PPI = conserve_hydrogen_PPI
+            self.max_neutrino_mass_loss = max_neutrino_mass_loss
+            self.max_NS_mass = max_NS_mass
+            self.use_interp_values = use_interp_values
+            self.use_profiles = use_profiles
+            self.use_core_masses = use_core_masses
+            self.allow_spin_None = allow_spin_None
+            self.approx_at_he_depletion = approx_at_he_depletion
+            self.kick = kick
+            self.kick_normalisation = kick_normalisation
+            self.sigma_kick_CCSN_NS = sigma_kick_CCSN_NS
+            self.sigma_kick_CCSN_BH = sigma_kick_CCSN_BH
+            self.sigma_kick_ECSN = sigma_kick_ECSN
+            self.verbose = verbose
 
         if self.max_neutrino_mass_loss is None:
             self.max_neutrino_mass_loss = 0
@@ -424,6 +464,19 @@ class StepSN(object):
         # do orbital_kick on the binary object
         if self.kick:
             self.orbital_kick(binary=binary)
+        else:
+            # no kick, but still need to unset the event after CC
+            # and update orbital period/separation
+            binary.event = None
+            new_separation = separation_evol_wind_loss(
+                    binary.star_1.mass, binary.star_1.mass_history[-1],
+                    binary.star_2.mass, binary.separation)
+            new_orbital_period = orbital_period_from_separation(
+                    new_separation, binary.star_1.mass, binary.star_2.mass)
+            
+            binary.separation = new_separation
+            binary.orbital_period = new_orbital_period
+            binary.state = "detached"
 
         # Checks if the binary is not disrupted to compute the
         # inspiral time due to gravitational wave emission

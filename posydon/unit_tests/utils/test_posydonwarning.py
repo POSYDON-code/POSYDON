@@ -29,7 +29,7 @@ class TestElements:
                     'InterpolationWarning', 'MissingFilesWarning',\
                     'NoPOSYDONWarnings', 'OverwriteWarning', 'SFHModelWarning',\
                     'POSYDONWarning','Pwarn', 'ReplaceValueWarning',\
-                    'SetPOSYDONWarnings', 'ValueWarning',\
+                    'SetPOSYDONWarnings', 'ValueWarning', 'StepWarning', \
                     'UnsupportedModelWarning', '_CAUGHT_POSYDON_WARNINGS',\
                     '_Caught_POSYDON_Warnings', '_POSYDONWarning_subclasses',\
                     '_POSYDON_WARNINGS_REGISTRY', '__authors__',\
@@ -534,6 +534,20 @@ class TestUnsupportedModelWarning:
                           totest.UnsupportedModelWarning)
         assert UnsupportedModelWarning.message == ''
 
+class TestStepWarning:
+    @fixture
+    def StepWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.StepWarning()
+
+    # test the UnsupportedModelWarning class
+    def test_init(self, StepWarning):
+        assert isroutine(StepWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(StepWarning,\
+                          totest.StepWarning)
+        assert StepWarning.message == ''
 
 class Test_Caught_POSYDON_Warnings:
     @fixture

@@ -10,9 +10,6 @@ import pprint
 import numpy as np
 import pandas as pd
 
-from posydon.binary_evol.simulationproperties import SimulationProperties
-
-
 """
 POSYDON Data Types are enforced when converting BinaryStar
 and SingleStar instances to Pandas DataFrames. This is done to
@@ -396,7 +393,7 @@ def parse_inifile(path, verbose=False):
     return parser
 
 
-def simprop_kwargs_from_ini(path, verbose=False):
+def simprop_kwargs_from_ini(path, only=None, verbose=False):
     """Convert an inifile into kwargs for the SimulationProperties class.
 
     Parameters
@@ -405,6 +402,10 @@ def simprop_kwargs_from_ini(path, verbose=False):
         Path to inifile. If multiple files are given,
         duplicate args are overwritten (stacked) first
         to last.
+
+    only : str
+        Name of a section to limit getting kwargs from, e.g., 
+        step_SN, step_CE, step_detached, etc. 
 
     verbose : bool
         Print helpful info.
@@ -420,6 +421,9 @@ def simprop_kwargs_from_ini(path, verbose=False):
         # skip default section
         if section == 'DEFAULT':
             continue
+        if only is not None:
+            if section != only:
+                continue
 
         # evaluate str values as literal python and put
         # into dict because parser only handles strings
@@ -567,11 +571,6 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             pop_kwargs['include_S2'] = S2_kwargs.pop('include_S2')
             if pop_kwargs['include_S2']:
                 pop_kwargs['S2_kwargs'] = S2_kwargs
-
-    # finally get the population properties
-    sim_prop_kwargs = simprop_kwargs_from_ini(path)
-    pop_kwargs['population_properties'] = SimulationProperties(
-        **sim_prop_kwargs)
 
     return pop_kwargs
 
