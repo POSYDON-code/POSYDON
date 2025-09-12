@@ -476,6 +476,7 @@ class StepSN(object):
             
             binary.separation = new_separation
             binary.orbital_period = new_orbital_period
+            binary.state = "detached"
 
         # Checks if the binary is not disrupted to compute the
         # inspiral time due to gravitational wave emission
