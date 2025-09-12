@@ -20,6 +20,7 @@ __authors__ = [
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 __credits__ = [
@@ -465,7 +466,16 @@ class StepSN(object):
             self.orbital_kick(binary=binary)
         else:
             # no kick, but still need to unset the event after CC
+            # and update orbital period/separation
             binary.event = None
+            new_separation = separation_evol_wind_loss(
+                    binary.star_1.mass, binary.star_1.mass_history[-1],
+                    binary.star_2.mass, binary.separation)
+            new_orbital_period = orbital_period_from_separation(
+                    new_separation, binary.star_1.mass, binary.star_2.mass)
+            
+            binary.separation = new_separation
+            binary.orbital_period = new_orbital_period
 
         # Checks if the binary is not disrupted to compute the
         # inspiral time due to gravitational wave emission
