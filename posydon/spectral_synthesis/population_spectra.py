@@ -166,10 +166,17 @@ class population_spectra():
             file_path: string. Defaults to None.
         """
 
+    
+        
         if type(pop_spectrum)== list:
-            labels = np.vstack(labels)
-            pop_data['S1_grid_status'] = labels[:,0]
-            pop_data['S2_grid_status'] = labels[:,1]
+            # Check if the population is empty (All of the stars are CO)
+            if labels.size == 0:
+                pop_data['S1_grid_status'] = [None]*len(pop_data)
+                pop_data['S2_grid_status'] = [None]*len(pop_data)
+            else:
+                labels = np.vstack(labels)
+                pop_data['S1_grid_status'] = labels[:,0]
+                pop_data['S2_grid_status'] = labels[:,1]
             combined_spectrum = Counter(pop_spectrum[0])
             if len(pop_spectrum) > 0: 
                 for i in range(1,len(pop_spectrum)):
@@ -179,8 +186,12 @@ class population_spectra():
             final_dict = dict(combined_spectrum)
             spectrum_data = pd.DataFrame.from_dict(final_dict)
         else:
-            pop_data['S1_grid_status'] = labels[:,0]
-            pop_data['S2_grid_status'] = labels[:,1]
+            if labels.size == 0:
+                pop_data['S1_grid_status'] = [None]*len(pop_data)
+                pop_data['S2_grid_status'] = [None]*len(pop_data)
+            else:
+                pop_data['S1_grid_status'] = labels[:,0]
+                pop_data['S2_grid_status'] = labels[:,1]
             spectrum_data = pd.DataFrame.from_dict(pop_spectrum)
 
         spectrum_data.insert(loc = 0, column='wavelength',value =self.grids.lam_c )

@@ -107,6 +107,8 @@ class spectral_grids():
         lam_min_grids = reduce(lambda x,y: x if x > y else y, map(lambda x: grids[x].lam_min,grids))
         #The max wavelength is the the min max of all of the libraries
         lam_max_grids = reduce(lambda x,y: x if x < y else y, map(lambda x: grids[x].lam_max,grids))
+        min_key = min(grids, key=lambda k: grids[k].lam_max)
+        print(f"Grid with min lam_max: key = {min_key}, lam_max = {grids[min_key].lam_max}")
         lam_min = kwargs.get('lam_min', 3000)
         lam_max = kwargs.get('lam_max', 7000)
         lam_res = kwargs.get('lam_res', 2000)
@@ -114,7 +116,7 @@ class spectral_grids():
             raise ValueError('The wavelength range chosen is out of the',
                             ' range being offer by the libraries',
                              'The available wavelength range of this collection of libraries is [',
-                             {lam_min},r'$\AA$',{lam_max},r']$\AA$')
+                             {lam_min_grids},r'$\AA$',{lam_max_grids},r']$\AA$')
         lam = np.linspace(lam_min, lam_max, lam_res)
         return lam,0.5*(lam[1:] + lam[:-1])
 
