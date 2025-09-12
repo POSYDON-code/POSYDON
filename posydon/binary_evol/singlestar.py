@@ -137,9 +137,14 @@ class SingleStar:
           List of initialization parameters for a star.
         """
 
-        # initialize composition at least
-        # this is needed to match to a star in 
-        # the first place
+        # Initialize composition and radius at least.
+        # This is needed to match to a star and for 
+        # evolution to be possible. Ideally the matcher 
+        # would check things like burning luminosity and more 
+        # elements beyong He. So, in the future we might
+        # consider making more robust matching criteria.
+
+        # (This only comes into play if a user doesn't set these)
         setattr(self, 'metallicity', kwargs.pop('metallicity', 1.0))
         Z_div_Zsun = self.metallicity
         if Z_div_Zsun in zams_table.keys():
@@ -147,31 +152,73 @@ class SingleStar:
         else:
             raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
         Z = Z_div_Zsun*Zsun        
-        X = 1 - Y - Z
+        X = 1.0 - Y - Z
 
         state = kwargs.get('state', 'H-rich_Core_H_burning')
+
+        # start by guessing a smallish radius and no He core
+        default_log_R = 0.0
+        default_He_core_mass = 0.0
+        # MAIN SEQUENCE
         if "Core_H_burning" in state:
+            # default HMS ZAMS
             default_core_X = X
             default_core_Y = Y
-        elif "Core_He_burning" in state:
-            # default to end of H burn
+        # POST-MS
+        elif "_non_burning" in state:
+            # default TAMS, either accreted He or H-rich
             default_core_X = THRESHOLD_CENTRAL_ABUNDANCE
-            default_core_Y = 1 - default_core_X - Z
+            default_core_Y = 1.0 - default_core_X - Z
+            if "stripped_He" in state:
+                default_core_X = 1e-6
+                default_core_Y = 1e-6   
+                default_He_core_mass = kwargs.get('mass')             
+
+        # ADVANCED BURNING
+        elif "Core_He_burning" in state:
+            # default to start of He burn
+            default_core_X = 1e-6
+            default_core_Y = 1.0 - default_core_X - Z
+            # make radius big to encourage match to giant
+            default_log_R = 4.0
+            if 'stripped_He' in state:
+                # unless it is a stripped He star
+                default_log_R = 0.0
+            # large He core mass to encourage maximal He core size
+            default_He_core_mass = kwargs.get('mass')
+        elif "Core_C_burning" in state:
+            # default to start of He burn
+            default_core_X = 1e-6
+            default_core_Y = 1e-6
+            # make radius big to encourage match to giant
+            default_log_R = 4.0
+            # This stays big after He core forms
+            default_He_core_mass = kwargs.get('mass')     
         elif ("Core_" in state) and ("_depleted" in state):
-            # default to end of He burn (matching doesn't check other 
-            # center_* abundances beyond he4 right now anyways)
-            default_core_X = 0.0
-            default_core_Y = THRESHOLD_CENTRAL_ABUNDANCE
-        else:
-            # this is a compact object, point mass
+            # core He or heavier depleted
+            # default to end of He burn. Matching does not check
+            # other elements havier than He, so this is best 
+            # we can do.
+            default_core_X = 1e-6
+            default_core_Y = 1e-6
+            # This stays big after He core forms
+            default_He_core_mass = kwargs.get('mass')
+        # COMPACT OBJECT
+        elif (state == "BH") or (state == "NS") or (state == "WD"):
             default_core_X = np.nan
             default_core_Y = np.nan
+            default_log_R = np.nan
+
+        # Done setting initial values, assign everything to SingleStar next
 
         for item in STARPROPERTIES:
- 
+
             # set default values when a kwarg is absent
             # matching at least needs these initiailized to non-null values
-            if item == 'center_h1':
+            if item == 'log_R':
+                # initiate log radius
+                setattr(self, item, kwargs.pop(item, default_log_R))
+            elif item == 'center_h1':
                 # initialize surface and center h1
                 setattr(self, item, kwargs.pop(item, default_core_X))
             elif item == 'center_he4':
@@ -181,7 +228,12 @@ class SingleStar:
                 # intiailize all core_mass values to 0
                 # they are used in matching, but we will rely on 
                 # abundances set above to find a good match
-                setattr(self, item, kwargs.pop(item, 0.0))
+                if 'he_' in item:
+                    default_core_mass = default_He_core_mass 
+                else:
+                    default_core_mass = 0.0
+
+                setattr(self, item, kwargs.pop(item, default_core_mass))
             elif item == 'metallicity':
                 # already set
                 pass
