@@ -656,8 +656,9 @@ class MesaGridStep:
                             getattr(star, key_h).extend(cb_bh[key_p][:-1])
                     elif key in ['state', 'lg_mdot']:
                         continue
-                    elif star.state == 'WD' and key in ['co_core_mass','he_core_mass','center_h1','center_he4','center_c12','center_n14','center_o16']:
-                        continue
+                    # DEBUG: commenting out
+                    #elif star.state == 'WD' and key in ['co_core_mass','he_core_mass','center_h1','center_he4','center_c12','center_n14','center_o16']:
+                    #    continue
                     else:
                         setattr(star, key, None)
                         if self.save_initial_conditions:

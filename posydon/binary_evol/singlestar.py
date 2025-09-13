@@ -21,12 +21,14 @@ __authors__ = [
 
 import numpy as np
 import pandas as pd
-from posydon.utils.common_functions import check_state_of_star
+from posydon.utils.common_functions import (check_state_of_star,
+                                            infer_star_state,
+                                            CO_radius)
 from posydon.grids.SN_MODELS import SN_MODELS
 from posydon.popsyn.io import STARPROPERTIES_DTYPES
 from posydon.utils.constants import Zsun, zams_table
-from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
-                                             THRESHOLD_HE_NAKED_ABUNDANCE)
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE)
+from posydon.utils.posydonwarning import Pwarn
 
 
 
@@ -153,11 +155,15 @@ class SingleStar:
             raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
         Z = Z_div_Zsun*Zsun        
         X = 1.0 - Y - Z
+        LOW_ABUNDANCE = 1e-6
+        # a low/high value to guess with, seems to work well
+        LOW_LOGR_GUESS = 0.0
+        HIGH_LOGR_GUESS = 4.0
 
         state = kwargs.get('state', 'H-rich_Core_H_burning')
 
         # start by guessing a smallish radius and no He core
-        default_log_R = 0.0
+        default_log_R = LOW_LOGR_GUESS
         default_He_core_mass = 0.0
         # MAIN SEQUENCE
         if "Core_H_burning" in state:
@@ -170,28 +176,28 @@ class SingleStar:
             default_core_X = THRESHOLD_CENTRAL_ABUNDANCE
             default_core_Y = 1.0 - default_core_X - Z
             if "stripped_He" in state:
-                default_core_X = 1e-6
-                default_core_Y = 1e-6   
+                default_core_X = LOW_ABUNDANCE
+                default_core_Y = LOW_ABUNDANCE  
                 default_He_core_mass = kwargs.get('mass')             
 
         # ADVANCED BURNING
         elif "Core_He_burning" in state:
             # default to start of He burn
-            default_core_X = 1e-6
+            default_core_X = LOW_ABUNDANCE
             default_core_Y = 1.0 - default_core_X - Z
             # make radius big to encourage match to giant
-            default_log_R = 4.0
+            default_log_R = HIGH_LOGR_GUESS
             if 'stripped_He' in state:
                 # unless it is a stripped He star
-                default_log_R = 0.0
+                default_log_R = LOW_LOGR_GUESS
             # large He core mass to encourage maximal He core size
             default_He_core_mass = kwargs.get('mass')
         elif "Core_C_burning" in state:
             # default to start of He burn
-            default_core_X = 1e-6
-            default_core_Y = 1e-6
+            default_core_X = LOW_ABUNDANCE
+            default_core_Y = LOW_ABUNDANCE
             # make radius big to encourage match to giant
-            default_log_R = 4.0
+            default_log_R = HIGH_LOGR_GUESS
             # This stays big after He core forms
             default_He_core_mass = kwargs.get('mass')     
         elif ("Core_" in state) and ("_depleted" in state):
@@ -199,15 +205,26 @@ class SingleStar:
             # default to end of He burn. Matching does not check
             # other elements havier than He, so this is best 
             # we can do.
-            default_core_X = 1e-6
-            default_core_Y = 1e-6
+            default_core_X = LOW_ABUNDANCE
+            default_core_Y = LOW_ABUNDANCE
             # This stays big after He core forms
             default_He_core_mass = kwargs.get('mass')
         # COMPACT OBJECT
         elif (state == "BH") or (state == "NS") or (state == "WD"):
             default_core_X = np.nan
             default_core_Y = np.nan
-            default_log_R = np.nan
+            default_log_R = CO_radius(kwargs.get('mass'), state)
+            # If a user gives a mass that does not comply with our 
+            # CO star state logic, you can get weird stuff like a
+            # BH or NS turning into a WD.
+            inferred_state = infer_star_state(star_mass=kwargs.get('mass'), 
+                             surface_h1=kwargs.get('surface_h1', np.nan), 
+                             center_h1=kwargs.get('center_h1', np.nan), 
+                             center_he4=kwargs.get('center_he4', np.nan), 
+                             center_c12=kwargs.get('center_c12', np.nan),
+                             star_CO=True)
+            if state != inferred_state:
+                kwargs['state'] = inferred_state
 
         # Done setting initial values, assign everything to SingleStar next
 
@@ -228,7 +245,7 @@ class SingleStar:
                 # intiailize all core_mass values to 0
                 # they are used in matching, but we will rely on 
                 # abundances set above to find a good match
-                if 'he_' in item:
+                if item == 'he_core_mass':
                     default_core_mass = default_He_core_mass 
                 else:
                     default_core_mass = 0.0
