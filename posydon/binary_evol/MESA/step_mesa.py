@@ -1034,10 +1034,10 @@ class MesaGridStep:
         # the Hubble time, and we may envounter a new binary event 
         # during that intepolation. In these cases, we still need 
         # to check if we should flush the history.
-        self.flush_entries -= 1
         if self.flush_history:
             if self.flush_entries is None:
                 raise ValueError('flush_entries cannot be None!')
+            self.flush_entries -= 1
             for key in STARPROPERTIES:
                 key_history = key + '_history'
                 for star in ['star_1', 'star_2']:
