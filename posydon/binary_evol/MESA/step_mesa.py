@@ -727,10 +727,15 @@ class MesaGridStep:
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
                 self.flush_entries = len_binary_hist   # this is needded!
+
                 # this is to prevent the flushin of the initial value which is
                 # appended twice
-                if self.save_initial_conditions:
-                    self.flush_entries += 1
+                # DEPRECATED? Is this needed? We just appended the initial state
+                # above (if save_initial_conditions is True) so are already 
+                # flushing one less than the effective history length since 
+                # len_binary_hist was assigned prior to appending the ICs a 2nd time 
+                #if self.save_initial_conditions:
+                #    self.flush_entries += 1
             else:
                 # the history is going to be flushed in self.stop
                 # append None for a faster computation
@@ -739,8 +744,12 @@ class MesaGridStep:
                 self.flush_entries = len_binary_hist
                 # this is to prevent the flushin of the initial value which is
                 # appended twice
-                if self.save_initial_conditions:
-                    self.flush_entries += 1
+                # DEPRECATED? Is this needed? We just appended the initial state
+                # above (if save_initial_conditions is True) so are already 
+                # flushing one less than the effective history length since 
+                # len_binary_hist was assigned prior to appending the ICs a 2nd time 
+                #if self.save_initial_conditions:
+                #    self.flush_entries += 1
                 binary_state = empy_h
                 binary_event = empy_h
                 MT_case = empy_h
@@ -1028,6 +1037,27 @@ class MesaGridStep:
         if binary.properties.max_simulation_time - binary.time < 0.0:
             binary.event = 'MaxTime_exceeded'
             return
+        
+        # In cases where we are using IF or kNN interpolation, 
+        # we may track interpolate if the final track time exceeds 
+        # the Hubble time, and we may envounter a new binary event 
+        # during that intepolation. In these cases, we still need 
+        # to check if we should flush the history.
+        if self.flush_history:
+            if self.flush_entries is None:
+                raise ValueError('flush_entries cannot be None!')
+            for key in STARPROPERTIES:
+                key_history = key + '_history'
+                for star in ['star_1', 'star_2']:
+                    star_obj = getattr(binary, star)
+                    # detele last N entries from history
+                    setattr(star_obj, key_history, getattr(
+                        star_obj, key_history)[:self.flush_entries])
+            for key in BINARYPROPERTIES:
+                key_history = key + '_history'
+                # detele last N entries from history
+                setattr(binary, key_history,
+                        getattr(binary, key_history)[:self.flush_entries])
 
     def stop_at_condition(self,
                           binary,
