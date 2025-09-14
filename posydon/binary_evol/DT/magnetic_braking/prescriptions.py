@@ -66,7 +66,7 @@ def M15_braking(primary, secondary, verbose = False):
     # Torque prescription from Matt et al. 2015, ApJ, 799, L23
     # Constants:
     # [erg] or [g cm^2 s^-2] -> [Msol Rsol^2 yr^-2]
-    K = 1.4e30 * const.secyer**2 / (const.msol * const.rsol**2)
+    K = -1.4e30 * const.secyer**2 / (const.msol * const.rsol**2)
     # m = 0.22
     # p = 2.6
     # Above constants were calibrated as in
@@ -147,7 +147,7 @@ def G18_braking(primary, secondary, verbose = False):
     # a = 0.03
     # b = 0.5
     # [g cm^2] -> [Msol Rsol^2]
-    c = 3e41 / (const.msol * const.rsol**2)
+    c = -3e41 / (const.msol * const.rsol**2)
     # Above are as calibrated in Gossage et al. 2021, ApJ, 912, 65
 
     Prot_pri = 2 * np.pi / omega1            # [yr]
@@ -248,4 +248,4 @@ def CARB_braking(primary, secondary, verbose = False):
         * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
     )
 
-    return dOmega_mb_sec, dOmega_mb_pri
+    return -abs(dOmega_mb_sec), -abs(dOmega_mb_pri)
