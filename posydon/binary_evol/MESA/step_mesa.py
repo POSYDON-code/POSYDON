@@ -733,12 +733,22 @@ class MesaGridStep:
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
                 self.flush_entries = len_binary_hist   # this is needded!
 
+                # this is to prevent the flushin of the initial value which is
+                # appended twice
+                if self.save_initial_conditions:
+                    self.flush_entries += 1
+
             else:
                 # the history is going to be flushed in self.stop
                 # append None for a faster computation
                 state1_hist = empy_h
                 state2_hist = empy_h
                 self.flush_entries = len_binary_hist
+
+                # this is to prevent the flushin of the initial value which is
+                # appended twice
+                if self.save_initial_conditions:
+                    self.flush_entries += 1
 
                 binary_state = empy_h
                 binary_event = empy_h
