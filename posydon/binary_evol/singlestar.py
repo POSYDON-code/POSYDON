@@ -269,8 +269,9 @@ class SingleStar:
 
             setattr(self, item + '_history', [getattr(self, item)])
 
-        for item, val in kwargs.items():
-            setattr(self, item, val)
+        for key, val in kwargs.items():
+            setattr(self, key, val)
+            setattr(self, key + '_history', [val])
 
         # store extra values in the star object without a history
 
