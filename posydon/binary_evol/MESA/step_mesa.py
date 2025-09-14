@@ -730,7 +730,7 @@ class MesaGridStep:
                 # this is to prevent the flushin of the initial value which is
                 # appended twice
                 if self.save_initial_conditions:
-                   self.flush_entries += 1
+                    self.flush_entries += 1
             else:
                 # the history is going to be flushed in self.stop
                 # append None for a faster computation
