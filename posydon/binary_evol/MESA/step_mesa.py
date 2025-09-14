@@ -727,15 +727,10 @@ class MesaGridStep:
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
                 self.flush_entries = len_binary_hist   # this is needded!
-
                 # this is to prevent the flushin of the initial value which is
                 # appended twice
-                # DEPRECATED? Is this needed? We just appended the initial state
-                # above (if save_initial_conditions is True) so are already 
-                # flushing one less than the effective history length since 
-                # len_binary_hist was assigned prior to appending the ICs a 2nd time 
-                #if self.save_initial_conditions:
-                #    self.flush_entries += 1
+                if self.save_initial_conditions:
+                   self.flush_entries += 1
             else:
                 # the history is going to be flushed in self.stop
                 # append None for a faster computation
@@ -744,12 +739,8 @@ class MesaGridStep:
                 self.flush_entries = len_binary_hist
                 # this is to prevent the flushin of the initial value which is
                 # appended twice
-                # DEPRECATED? Is this needed? We just appended the initial state
-                # above (if save_initial_conditions is True) so are already 
-                # flushing one less than the effective history length since 
-                # len_binary_hist was assigned prior to appending the ICs a 2nd time 
-                #if self.save_initial_conditions:
-                #    self.flush_entries += 1
+                if self.save_initial_conditions:
+                    self.flush_entries += 1
                 binary_state = empy_h
                 binary_event = empy_h
                 MT_case = empy_h
@@ -1043,6 +1034,7 @@ class MesaGridStep:
         # the Hubble time, and we may envounter a new binary event 
         # during that intepolation. In these cases, we still need 
         # to check if we should flush the history.
+        self.flush_entries -= 1
         if self.flush_history:
             if self.flush_entries is None:
                 raise ValueError('flush_entries cannot be None!')
