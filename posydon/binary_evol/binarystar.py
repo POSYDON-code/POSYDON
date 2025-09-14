@@ -165,17 +165,7 @@ class BinaryStar:
                                                              0.0,
                                                              0.0]))
             else:
-
-                dtype = BINARYPROPERTIES_DTYPES.get(item, '')
-                if dtype == 'float64' or dtype == 'int':
-                    default = np.nan
-                elif dtype == 'string':
-                    default = ''
-                else:
-                    # if we haven't defined a dtype for this prop
-                    default = None
-
-                setattr(self, item, binary_kwargs.pop(item, default))
+                setattr(self, item, binary_kwargs.pop(item, None))
 
             setattr(self, item + '_history', [getattr(self, item)])
 
