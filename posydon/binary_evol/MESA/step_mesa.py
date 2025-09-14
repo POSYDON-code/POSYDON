@@ -314,6 +314,11 @@ class MesaGridStep:
     def __call__(self, binary):
         """Evolve a binary using the MESA step."""
 
+        # everytime this step is called, we need to make sure to reset
+        # self.flush_sntries to a null value, otherwise entries from a previous entry
+        # may be used
+        self.flush_entries = None
+
         if not isinstance(binary, BinaryStar):
             raise ValueError("Must be an instance of BinaryStar")
         if not hasattr(self, 'step'):
@@ -727,20 +732,14 @@ class MesaGridStep:
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
                 self.flush_entries = len_binary_hist   # this is needded!
-                # this is to prevent the flushin of the initial value which is
-                # appended twice
-                if self.save_initial_conditions:
-                    self.flush_entries += 1
+
             else:
                 # the history is going to be flushed in self.stop
                 # append None for a faster computation
                 state1_hist = empy_h
                 state2_hist = empy_h
                 self.flush_entries = len_binary_hist
-                # this is to prevent the flushin of the initial value which is
-                # appended twice
-                if self.save_initial_conditions:
-                    self.flush_entries += 1
+
                 binary_state = empy_h
                 binary_event = empy_h
                 MT_case = empy_h
@@ -1034,10 +1033,7 @@ class MesaGridStep:
         # the Hubble time, and we may envounter a new binary event 
         # during that intepolation. In these cases, we still need 
         # to check if we should flush the history.
-        if self.flush_history:
-            if self.flush_entries is None:
-                raise ValueError('flush_entries cannot be None!')
-            self.flush_entries -= 1
+        if self.flush_history and self.flush_entries is not None:
             for key in STARPROPERTIES:
                 key_history = key + '_history'
                 for star in ['star_1', 'star_2']:
