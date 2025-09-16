@@ -2,27 +2,17 @@ import numpy as np
 
 def default_spin_from_winds(a, e, primary, secondary, verbose = False):
 
-    R1 = primary["R"]
-    omega1 = primary["omega"]
-    MOI_1 = primary["inertia"]
-    mdot_1 = primary["mdot"]
-    Idot_1 = primary["Idot"]
+    R1 = primary.latest["R"]
+    omega1 = primary.latest["omega"]
+    MOI_1 = primary.latest["inertia"]
+    mdot_1 = primary.latest["mdot"]
+    Idot_1 = primary.latest["Idot"]
 
-    R2 = secondary["R"]
-    omega2 = secondary["omega"]
-    MOI_2 = secondary["inertia"]
-    mdot_2 = secondary["mdot"]
-    Idot_2 = secondary["Idot"]
-    omega1 = primary["omega"]
-    MOI_1 = primary["inertia"]
-    mdot_1 = primary["mdot"]
-    Idot_1 = primary["Idot"]
-
-    R2 = secondary["R"]
-    omega2 = secondary["omega"]
-    MOI_2 = secondary["inertia"]
-    mdot_2 = secondary["mdot"]
-    Idot_2 = secondary["Idot"]
+    R2 = secondary.latest["R"]
+    omega2 = secondary.latest["omega"]
+    MOI_2 = secondary.latest["inertia"]
+    mdot_2 = secondary.latest["mdot"]
+    Idot_2 = secondary.latest["Idot"]
 
     # Due to the secondary's own evolution, we have:
     # domega_spin/dt = d(Jspin/I)/dt = dJspin/dt * 1/I + Jspin*d(1/I)/dt.
@@ -73,11 +63,11 @@ def default_sep_from_winds(a, e, primary, secondary, verbose = False):
     wind loss.
     """
 
-    m2 = secondary["mass"] # Msol
-    mdot_2 = secondary["mdot"] # Msol/yr
+    m2 = secondary.latest["mass"] # Msol
+    mdot_2 = secondary.latest["mdot"] # Msol/yr
 
-    m1 = primary["mass"] # Msol
-    mdot_1 = primary["mdot"] # Msol/yr
+    m1 = primary.latest["mass"] # Msol
+    mdot_1 = primary.latest["mdot"] # Msol/yr
 
     q1 = m2 / m1
     k11 = (1 / (1 + q1)) * (mdot_2 / m2)

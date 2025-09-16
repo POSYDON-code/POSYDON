@@ -367,8 +367,12 @@ class detached_step:
 
         max_time = secondary.interp1d["max_time"]
 
-        if (self.evo.ev_rlo1(binary.time, [binary.separation, binary.eccentricity], primary, secondary) >= 0
-            or self.evo.ev_rlo2(binary.time, [binary.separation, binary.eccentricity], primary, secondary) >= 0):
+        # store memory references of primary/secondary
+        # for detached evolution
+        self.evo.set_stars(primary, secondary, t0 = binary.time)
+
+        if (self.evo.ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
+            or self.evo.ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
             binary.state = "initial_RLOF"
             return
         else:
@@ -388,7 +392,6 @@ class detached_step:
                                     t_span=(binary.time, max_time),
                                     y0=[binary.separation, binary.eccentricity,
                                         secondary.omega0, primary.omega0],
-                                    args = (primary, secondary),
                                     dense_output=True)
                 except Exception:
                     res = solve_ivp(self.evo,
@@ -398,10 +401,15 @@ class detached_step:
                                     t_span=(binary.time, max_time),
                                     y0=[binary.separation, binary.eccentricity,
                                         secondary.omega0, primary.omega0],
-                                    args=(primary, secondary),
                                     dense_output=True)
 
             t_after_ODEsolution = time.time()
+
+            # clear dictionaries that held current properties during ODE solution
+            if hasattr(primary, "latest"):
+                del primary.latest
+            if hasattr(secondary, "latest"):
+                del secondary.latest
 
             if self.verbose:
                 ivp_tspan = t_after_ODEsolution - t_before_ODEsolution
@@ -706,12 +714,12 @@ class detached_step:
                         history = [current] * len(t[:-1])
 
                     elif secondary == s:
-                        current = self.evo.ev_rel_rlo1(t[-1], [interp1d["sep"][-1], interp1d["ecc"][-1]], primary, secondary)
-                        history = self.evo.ev_rel_rlo1(t[:-1], [interp1d["sep"][:-1], interp1d["ecc"][:-1]], primary, secondary)
+                        current = self.evo.ev_rel_rlo1(t[-1], [interp1d["sep"][-1], interp1d["ecc"][-1]])
+                        history = self.evo.ev_rel_rlo1(t[:-1], [interp1d["sep"][:-1], interp1d["ecc"][:-1]])
 
                     elif secondary == s_alt:
-                        current = self.evo.ev_rel_rlo2(t[-1], [interp1d["sep"][-1], interp1d["ecc"][-1]], primary, secondary)
-                        history = self.evo.ev_rel_rlo2(t[:-1], [interp1d["sep"][:-1], interp1d["ecc"][:-1]], primary, secondary)
+                        current = self.evo.ev_rel_rlo2(t[-1], [interp1d["sep"][-1], interp1d["ecc"][-1]])
+                        history = self.evo.ev_rel_rlo2(t[:-1], [interp1d["sep"][:-1], interp1d["ecc"][:-1]])
                         
                 elif key in ["separation", "orbital_period", "eccentricity", "time"]:
                     current = interp1d[self.translate[key]][-1].item()
@@ -821,26 +829,13 @@ class detached_evolution:
                     verbose=False):
 
         self.verbose = verbose
-        self.phys_keys = ["R", "L", "mass", "mdot", "inertia", "conv_mx1_top_r",
-                            "conv_mx1_bot_r", "surface_h1", "center_h1",
-                            "mass_conv_reg_fortides", "thickness_conv_reg_fortides",
-                            "radius_conv_reg_fortides", "Idot",
-                            "conv_env_turnover_time_l_b"]
         
-        # initialize physical properties
-        # of stars...
-        if primary is not None:
-            self.primary = {k:primary.interp1d[k](0) for k in self.phys_keys}
-        else:
-            self.primary = {k:np.nan for k in self.phys_keys}
-
-        if secondary is not None:
-            self.secondary = {k:secondary.interp1d[k](0) for k in self.phys_keys}
-        else:
-            self.secondary = {k:np.nan for k in self.phys_keys}
-
-        self.primary['omega'] = np.nan
-        self.secondary['omega'] = np.nan
+        # initially these are typically NoneType
+        # and set by set_stars()
+        self.primary = primary
+        self.secondary = secondary
+        # physical properties tracked by interpolators
+        self.phys_keys = []
 
         # also separation and eccentricity
         self.a = np.nan
@@ -857,7 +852,7 @@ class detached_evolution:
     # timing events for solve_ivp...
     # detects secondary RLO
     @event(True, 1)
-    def ev_rlo1(self, t, y, primary, secondary):
+    def ev_rlo1(self, t, y):
         """
             Difference between radius and Roche lobe at a given time. Used 
         to check if there is RLOF mass transfer during the detached binary 
@@ -887,8 +882,8 @@ class detached_evolution:
             radius in solar radii.
 
         """
-        pri_mass = primary.interp1d["mass"](t)
-        sec_mass = secondary.interp1d["mass"](t)
+        pri_mass = self.primary.interp1d["mass"](t)
+        sec_mass = self.secondary.interp1d["mass"](t)
 
         sep = y[0]
         ecc = y[1]
@@ -897,12 +892,12 @@ class detached_evolution:
         
         # 95% filling of the RL is enough to assume beginning of RLO,
         # as we do in CO-HMS_RLO grid
-        RL_diff = secondary.interp1d["R"](t) - 0.95*RL
+        RL_diff = self.secondary.interp1d["R"](t) - 0.95*RL
         return RL_diff
 
     # detects primary RLO
     @event(True, 1)
-    def ev_rlo2(self, t, y, primary, secondary):
+    def ev_rlo2(self, t, y):
         """
             Difference between radius and Roche lobe at a given time. Used 
         to check if there is RLOF mass transfer during the detached binary 
@@ -932,20 +927,20 @@ class detached_evolution:
             radius in solar radii.
 
         """
-        pri_mass = primary.interp1d["mass"](t)
-        sec_mass = secondary.interp1d["mass"](t)
+        pri_mass = self.primary.interp1d["mass"](t)
+        sec_mass = self.secondary.interp1d["mass"](t)
         
         sep = y[0]
         ecc = y[1]
         
         RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
-        RL_diff = primary.interp1d["R"](t) - 0.95*RL
+        RL_diff = self.primary.interp1d["R"](t) - 0.95*RL
 
         return RL_diff
 
     # detects secondary RLO via relative difference btwn. R and R_RL
     @event(True, 1)
-    def ev_rel_rlo1(self, t, y, primary, secondary):
+    def ev_rel_rlo1(self, t, y):
         """
             Relative difference between radius and Roche lobe. Used to 
         check if there is RLOF mass transfer during the detached binary 
@@ -975,19 +970,19 @@ class detached_evolution:
             radius.
 
         """
-        pri_mass = primary.interp1d["mass"](t)
-        sec_mass = secondary.interp1d["mass"](t)
+        pri_mass = self.primary.interp1d["mass"](t)
+        sec_mass = self.secondary.interp1d["mass"](t)
         
         sep = y[0]
         ecc = y[1]
         
         RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
-        RL_rel_diff = (secondary.interp1d["R"](t) - RL) / RL
+        RL_rel_diff = (self.secondary.interp1d["R"](t) - RL) / RL
         return RL_rel_diff
 
     # detects primary RLO via relative difference btwn. R and R_RL
     @event(True, 1)
-    def ev_rel_rlo2(self, t, y, primary, secondary):
+    def ev_rel_rlo2(self, t, y):
         """
             Relative difference between radius and Roche lobe. Used to 
         check if there is RLOF mass transfer during the detached binary 
@@ -1016,32 +1011,69 @@ class detached_evolution:
             Relative difference between stellar radius and Roche lobe
             radius.
         """
-        pri_mass = primary.interp1d["mass"](t)
-        sec_mass = secondary.interp1d["mass"](t)
+        pri_mass = self.primary.interp1d["mass"](t)
+        sec_mass = self.secondary.interp1d["mass"](t)
 
         sep = y[0]
         ecc = y[1]
         
         RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
-        RL_rel_diff = (primary.interp1d["R"](t) - RL) / RL
+        RL_rel_diff = (self.primary.interp1d["R"](t) - RL) / RL
         return RL_rel_diff
 
     # detects if the max age in track of secondary is reached
     @event(True, -1)
-    def ev_max_time1(self, t, y, primary, secondary):
-        return secondary.t_max - t + secondary.t_offset
+    def ev_max_time1(self, t, y):
+        return self.secondary.t_max - t + self.secondary.t_offset
 
     # detects if the max age in track of primary is reached
     @event(True, -1)
-    def ev_max_time2(self, t, y, primary, secondary):
-        return primary.t_max - t + primary.t_offset
+    def ev_max_time2(self, t, y):
+        return self.primary.t_max - t + self.primary.t_offset
+    
+    def set_stars(self, primary, secondary, t0=0.0):
+        """Sets memory references for primary and secondary star associated with
+        this evolution. It is expected that primary/secondary have interp1d 
+        objects already, as required for detached evolution.
 
-    def update_props(self, t, y, primary, secondary):
+        Parameters
+        ----------
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        t0 : float
+            The time at the start of detached evolution. Typically should be the 
+            binary.time prior to detached evolution.
+
+        """
+
+        self.primary = primary
+        self.secondary = secondary
+        # update list of tracked physical properties
+        self.phys_keys = list(secondary.interp1d.keys())
+        # except we don't evolve these:
+        for prop in ["t0", "m0", "t_max", "max_time"]:
+            self.phys_keys.remove(prop)
+
+        # dictionaries to track current properties during evolution
+        self.primary.latest = {}
+        self.secondary.latest = {}
+
+        self.t = t0
+
+    def update_props(self, t, y):
         """ Update properties of stars w/ current age during detached evolution."""
 
-        for k in self.phys_keys:
-            self.primary[k] = primary.interp1d[k](t)
-            self.secondary[k] = secondary.interp1d[k](t)
+        # updating star properties with interpolated values at current time
+        # TODO: update star current/history progressively here rather than after evo?
+        for key in self.phys_keys:
+                self.primary.latest[key] = self.primary.interp1d[key](t)
+                self.secondary.latest[key] = self.secondary.interp1d[key](t)
 
         # update omega, a, e, based on current diffeq solution
         y[0] = np.max([y[0], 0])  # We limit separation to non-negative values
@@ -1055,13 +1087,20 @@ class detached_evolution:
             if self.verbose and self.verbose != 1:
                 print("Negligible eccentricity became 0 for "
                     "computational stability")
+        
+        # update omega
         y[2] = np.max([y[2], 0])  # We limit omega spin to non-negative values
-        self.secondary['omega'] = y[2]  # in rad/yr
+        self.secondary.latest["omega"] = y[2]  # in rad/yr
         y[3] = np.max([y[3], 0])
-        self.primary['omega'] = y[3]
+        self.primary.latest["omega"] = y[3]
 
+        # store current delta(t)/time
+        new_t = t
+        old_t = self.t
+        self.dt = new_t - old_t
+        self.t = new_t
 
-    def __call__(self, t, y, primary, secondary):
+    def __call__(self, t, y):
         """
             Diff. equation describing the orbital evolution of a detached binary.
 
@@ -1121,7 +1160,7 @@ class detached_evolution:
         """
         
         # update star/orbital props w/ current time during integration
-        self.update_props(t, y, primary, secondary)
+        self.update_props(t, y)
                         
         # initialize deltas for this timestep
         self.da = 0.0

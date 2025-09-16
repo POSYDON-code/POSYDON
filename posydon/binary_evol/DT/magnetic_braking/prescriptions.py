@@ -4,15 +4,15 @@ import posydon.utils.constants as const
 
 def RVJ83_braking(primary, secondary, verbose = False):
         
-        m1 = primary["mass"]
-        R1 = primary["R"]
-        omega1 = primary["omega"]
-        MOI_1 = primary["inertia"]
+        m1 = primary.latest["mass"]
+        R1 = primary.latest["R"]
+        omega1 = primary.latest["omega"]
+        MOI_1 = primary.latest["inertia"]
 
-        m2 = secondary["mass"]
-        R2 = secondary["R"]
-        omega2 = secondary["omega"]
-        MOI_2 = secondary["inertia"]
+        m2 = secondary.latest["mass"]
+        R2 = secondary.latest["R"]
+        omega2 = secondary.latest["omega"]
+        MOI_2 = secondary.latest["inertia"]
 
         # Torque from Rappaport, Verbunt, and Joss 1983, ApJ, 275, 713
         # The torque is eq.36 of Rapport+1983, with γ = 4. Torque units
@@ -51,17 +51,17 @@ def RVJ83_braking(primary, secondary, verbose = False):
 
 def M15_braking(primary, secondary, verbose = False):
 
-    m1 = primary["mass"]
-    R1 = primary["R"]
-    omega1 = primary["omega"]
-    MOI_1 = primary["inertia"]
-    tau_conv_1 = primary["conv_env_turnover_time_l_b"]
+    m1 = primary.latest["mass"]
+    R1 = primary.latest["R"]
+    omega1 = primary.latest["omega"]
+    MOI_1 = primary.latest["inertia"]
+    tau_conv_1 = primary.latest["conv_env_turnover_time_l_b"]
 
-    m2 = secondary["mass"]
-    R2 = secondary["R"]
-    omega2 = secondary["omega"]
-    MOI_2 = secondary["inertia"]
-    tau_conv_2 = secondary["conv_env_turnover_time_l_b"]
+    m2 = secondary.latest["mass"]
+    R2 = secondary.latest["R"]
+    omega2 = secondary.latest["omega"]
+    MOI_2 = secondary.latest["inertia"]
+    tau_conv_2 = secondary.latest["conv_env_turnover_time_l_b"]
 
     # Torque prescription from Matt et al. 2015, ApJ, 799, L23
     # Constants:
@@ -133,15 +133,15 @@ def M15_braking(primary, secondary, verbose = False):
 
 def G18_braking(primary, secondary, verbose = False):
 
-    m1 = primary["mass"]
-    omega1 = primary["omega"]
-    MOI_1 = primary["inertia"]
-    tau_conv_1 = primary["conv_env_turnover_time_l_b"]
+    m1 = primary.latest["mass"]
+    omega1 = primary.latest["omega"]
+    MOI_1 = primary.latest["inertia"]
+    tau_conv_1 = primary.latest["conv_env_turnover_time_l_b"]
 
-    m2 = secondary["mass"]
-    omega2 = secondary["omega"]
-    MOI_2 = secondary["inertia"]
-    tau_conv_2 = secondary["conv_env_turnover_time_l_b"]
+    m2 = secondary.latest["mass"]
+    omega2 = secondary.latest["omega"]
+    MOI_2 = secondary.latest["inertia"]
+    tau_conv_2 = secondary.latest["conv_env_turnover_time_l_b"]
      
     # Torque prescription from Garraffo et al. 2018, ApJ, 862, 90
     # a = 0.03
@@ -175,19 +175,19 @@ def G18_braking(primary, secondary, verbose = False):
 
 def CARB_braking(primary, secondary, verbose = False):
 
-    m1 = primary["mass"]
-    R1 = primary["R"]
-    omega1 = primary["omega"]
-    MOI_1 = primary["inertia"]
-    tau_conv_1 = primary["conv_env_turnover_time_l_b"]
-    mdot_1 = primary["mdot"]
+    m1 = primary.latest["mass"]
+    R1 = primary.latest["R"]
+    omega1 = primary.latest["omega"]
+    MOI_1 = primary.latest["inertia"]
+    tau_conv_1 = primary.latest["conv_env_turnover_time_l_b"]
+    mdot_1 = primary.latest["mdot"]
 
-    m2 = secondary["mass"]
-    R2 = secondary["R"]
-    omega2 = secondary["omega"]
-    MOI_2 = secondary["inertia"]
-    tau_conv_2 = secondary["conv_env_turnover_time_l_b"]
-    mdot_2 = secondary["mdot"]
+    m2 = secondary.latest["mass"]
+    R2 = secondary.latest["R"]
+    omega2 = secondary.latest["omega"]
+    MOI_2 = secondary.latest["inertia"]
+    tau_conv_2 = secondary.latest["conv_env_turnover_time_l_b"]
+    mdot_2 = secondary.latest["mdot"]
 
     # Torque prescription from Van & Ivanova 2019, ApJ, 886, L31
     # Based on files hosted on Zenodo:
