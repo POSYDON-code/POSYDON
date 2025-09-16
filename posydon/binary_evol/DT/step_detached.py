@@ -655,9 +655,9 @@ class detached_step:
                 # key  = 'effective_omega' # in rad/sec
                 # current = s.y[2][-1] / 3.1558149984e7
                 # history_of_attribute = s.y[2][:-1] / 3.1558149984e7
-                elif (key in ["surf_avg_omega_div_omega_crit"] and obj != binary):#primary):
-                    if obj.co: #primary.co:
-                        current = None
+                elif (key in ["surf_avg_omega_div_omega_crit"] and obj != binary):
+                    if obj.co:
+                        current = getattr(obj, key)
                         history = [current] * len(t[:-1])
 
                     else:
@@ -679,7 +679,7 @@ class detached_step:
 
                 elif (key in ["surf_avg_omega"] and obj != binary):
                     if obj.co:
-                        current = None
+                        current = getattr(obj, key)
                         history = [current] * len(t[:-1])
                     else:
                         current = interp1d["omega"][-1] / const.secyer
@@ -692,7 +692,7 @@ class detached_step:
                     s = binary.star_1 if "_1" in key[-2:] else binary.star_2
                     s_alt = binary.star_2 if "_1" in key[-2:] else binary.star_1
                     if s.state in ("BH", "NS", "WD","massless_remnant"):
-                        current = None
+                        current = getattr(obj, key)
                         history = [current] * len(t[:-1])
 
                     elif secondary == s:
@@ -764,7 +764,7 @@ class detached_step:
 
                 elif (key in ["lg_mdot", "lg_wind_mdot"] and obj != binary):
                     if obj.co:
-                        current = None
+                        current = getattr(obj, key)
                         history = [current] * len(t[:-1])
                     else:
                         if interp1d[self.translate[key]](t[-1]) == 0:

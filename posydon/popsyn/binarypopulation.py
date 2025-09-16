@@ -50,7 +50,6 @@ from posydon.popsyn.sample_from_file import (get_samples_from_file,
 from posydon.popsyn.defaults import default_kwargs
 
 from posydon.popsyn.io import binarypop_kwargs_from_ini
-from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import POSYDONError
 from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
 from posydon.utils.common_functions import (orbital_period_from_separation, orbital_separation_from_period, 
@@ -1061,31 +1060,12 @@ class BinaryGenerator:
 
         formation_time = output['time'].item()
         m1 = output['S1_mass'].item()
-        Z_div_Zsun = kwargs.get('metallicity', 1.)
-        zams_table = {2.: 2.915e-01,
-                      1.: 2.703e-01,
-                      0.45: 2.586e-01,
-                      0.2: 2.533e-01,
-                      0.1: 2.511e-01,
-                      0.01: 2.492e-01,
-                      0.001: 2.49e-01,
-                      0.0001: 2.49e-01}
-        
-        Z_div_Zsun = self.Z_div_Zsun
-        Z = Z_div_Zsun*Zsun
-        if Z_div_Zsun in zams_table.keys():
-            Y = zams_table[Z_div_Zsun]
-        else:
-            raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
-        X = 1. - Z - Y
         kick1 = output['S1_natal_kick_array'][0]
         
         star1_params = dict(
                 mass=m1,
                 state="H-rich_Core_H_burning",
-                metallicity=Z,
-                center_h1=X,
-                center_he4=Y,
+                metallicity=kwargs.get('metallicity', 1.0),
                 natal_kick_array=kick1,
             )
 
@@ -1110,9 +1090,7 @@ class BinaryGenerator:
             star2_params = dict(
                 mass=m2,
                 state="H-rich_Core_H_burning",
-                metallicity=Z,
-                center_h1=X,
-                center_he4=Y,
+                metallicity=kwargs.get('metallicity', 1.0),
                 natal_kick_array=kick2,
             )
         #If binary_fraction not default a initially single star binary is created.
