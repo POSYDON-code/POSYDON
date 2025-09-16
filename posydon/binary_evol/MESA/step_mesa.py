@@ -465,7 +465,7 @@ class MesaGridStep:
             length_binary_hist = len(cb_bh['age']) - 1
             length_star_hist = len(cb_hs[0]['center_he4']) - 1
             length_hist = min(length_binary_hist, length_star_hist)
-            empy_h = [None] * length_hist
+            empty_h = [None] * length_hist
             MESA_history_bug_fix = False
             if length_binary_hist != length_star_hist:
                 MESA_history_bug_fix = True
@@ -481,12 +481,13 @@ class MesaGridStep:
         # update properties
         for key in BINARYPROPERTIES:
             key_h = key + "_history"
+            old_h = [getattr(binary, key)] * length_hist
             if POSYDON_TO_MESA['binary'][key] is None:
                 setattr(binary, key, None)
                 if self.save_initial_conditions:
-                    getattr(binary, key_h).append(empy_h[0])
+                    getattr(binary, key_h).append(empty_h[0])
                 if track_interpolation:
-                    getattr(binary, key_h).extend(empy_h)
+                    getattr(binary, key_h).extend(empty_h)
             elif key == 'time':
                 key_p = POSYDON_TO_MESA['binary'][key]
                 current = getattr(self.binary, key)
@@ -533,13 +534,14 @@ class MesaGridStep:
         for k, star in enumerate(stars):
             for key in STARPROPERTIES:
                 key_h = key + "_history"
+                old_h = [getattr(star, key)] * length_hist
                 if not stars_CO[k]:
                     if POSYDON_TO_MESA['star'][key] is None:
                         setattr(star, key, None)
                         if self.save_initial_conditions:
-                            getattr(star, key_h).append(empy_h[0])
+                            getattr(star, key_h).append(empty_h[0])
                         if track_interpolation:
-                            getattr(star, key_h).extend(empy_h)
+                            getattr(star, key_h).extend(empty_h)
                     elif key == 'mass':
                         key_p = 'star_%d_mass' % (k+1)
                         setattr(star, key, cb_bh[key_p][-1])
@@ -560,9 +562,9 @@ class MesaGridStep:
                     elif key == 'profile':
                         setattr(star, key, cb_fps[k])
                         if self.save_initial_conditions:
-                            getattr(star, key_h).append(empy_h[0])
+                            getattr(star, key_h).append(empty_h[0])
                         if track_interpolation:
-                            getattr(star, key_h).extend(empy_h)
+                            getattr(star, key_h).extend(empty_h)
                     elif key in ['lg_mdot', 'lg_system_mdot', 'lg_wind_mdot']:
                         key_p = POSYDON_TO_MESA['star'][key]+'_%d' % (k+1)
                         setattr(star, key, cb_bh[key_p][-1])
@@ -654,17 +656,11 @@ class MesaGridStep:
                             getattr(star, key_h).append(cb_bh[key_p][0])
                         if track_interpolation:
                             getattr(star, key_h).extend(cb_bh[key_p][:-1])
-                    elif key in ['state', 'lg_mdot']:
-                        continue
-                    # DEBUG: commenting out
-                    #elif star.state == 'WD' and key in ['co_core_mass','he_core_mass','center_h1','center_he4','center_c12','center_n14','center_o16']:
-                    #    continue
                     else:
-                        setattr(star, key, None)
                         if self.save_initial_conditions:
-                            getattr(star, key_h).append(empy_h[0])
+                            getattr(star, key_h).append(old_h[0])
                         if track_interpolation:
-                            getattr(star, key_h).extend(empy_h)
+                            getattr(star, key_h).extend(old_h)
 
 
                 if track_interpolation:
@@ -735,16 +731,16 @@ class MesaGridStep:
             else:
                 # the history is going to be flushed in self.stop
                 # append None for a faster computation
-                state1_hist = empy_h
-                state2_hist = empy_h
+                state1_hist = empty_h
+                state2_hist = empty_h
                 self.flush_entries = len_binary_hist
                 # this is to prevent the flushin of the initial value which is
                 # appended twice
                 if self.save_initial_conditions:
                     self.flush_entries += 1
-                binary_state = empy_h
-                binary_event = empy_h
-                MT_case = empy_h
+                binary_state = empty_h
+                binary_event = empty_h
+                MT_case = empty_h
                 getattr(stars[0], "state_history").extend(state1_hist)
                 getattr(stars[1], "state_history").extend(state2_hist)
                 getattr(binary, "state_history").extend(binary_state)
@@ -909,12 +905,6 @@ class MesaGridStep:
                     elif key in ['lg_mdot', 'lg_system_mdot', 'lg_wind_mdot']:
                         key_p = POSYDON_TO_MESA['star'][key]+'_%d' % (k+1)
                         setattr(star, key, fv[key_p])
-                    elif key == 'state':
-                        continue
-                    elif star.state == 'WD' and key in ['co_core_mass','he_core_mass','center_h1','center_he4','center_c12','center_n14','center_o16']:
-                        continue
-                    else:
-                        setattr(star, key, None)
 
         # infer stellar states
         interpolation_class = self.classes['interpolation_class']
