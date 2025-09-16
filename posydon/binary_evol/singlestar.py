@@ -213,7 +213,7 @@ class SingleStar:
         elif (state == "BH") or (state == "NS") or (state == "WD"):
             default_core_X = np.nan
             default_core_Y = np.nan
-            default_log_R = CO_radius(kwargs.get('mass'), state)
+            default_log_R = np.log10(CO_radius(kwargs.get('mass'), state))
             # If a user gives a mass that does not comply with our 
             # CO star state logic, you can get weird stuff like a
             # BH or NS turning into a WD.
