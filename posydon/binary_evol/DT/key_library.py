@@ -7,6 +7,9 @@ __authors__ = [
     "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
+# translates MESA stellar data column names into 
+# what we use for property names in interpolators.
+# Most are the same, a few are different.
 DEFAULT_TRANSLATION = {
     "time": "time",
     "orbital_period": "porb",

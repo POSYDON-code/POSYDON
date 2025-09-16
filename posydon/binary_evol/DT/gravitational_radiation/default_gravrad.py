@@ -2,8 +2,8 @@ import posydon.utils.constants as const
 
 def default_gravrad(a, e, primary, secondary, verbose = False):
 
-    m1 = primary["mass"]
-    m2 = secondary["mass"]
+    m1 = primary.latest["mass"]
+    m2 = secondary.latest["mass"]
 
     v = (m1 * m2 / (m1 + m2) ** 2)
     
