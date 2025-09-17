@@ -746,9 +746,16 @@ class MesaGridStep:
                 # appended twice
                 if self.save_initial_conditions:
                     self.flush_entries += 1
+<<<<<<< HEAD
                 binary_state = empty_h
                 binary_event = empty_h
                 MT_case = empty_h
+=======
+
+                binary_state = empy_h
+                binary_event = empy_h
+                MT_case = empy_h
+>>>>>>> sg_simplify_commands
                 getattr(stars[0], "state_history").extend(state1_hist)
                 getattr(stars[1], "state_history").extend(state2_hist)
                 getattr(binary, "state_history").extend(binary_state)
