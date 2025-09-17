@@ -394,12 +394,6 @@ class detached_step:
             if hasattr(secondary, "latest"):
                 del secondary.latest
 
-            # clear dictionaries that held current properties during ODE solution
-            if hasattr(primary, "latest"):
-                del primary.latest
-            if hasattr(secondary, "latest"):
-                del secondary.latest
-
             if self.verbose:
                 ivp_tspan = t_after_ODEsolution - t_before_ODEsolution
                 print(f"\nODE solver duration: {ivp_tspan:.6g} sec")
@@ -413,7 +407,7 @@ class detached_step:
             # update binary/star properties after detached evolution
             t = self.get_time_after_evo(binary)
             self.update_after_evo(t, binary, primary, secondary)
-            self.update_co_stars(t, primary, secondary):
+            self.update_co_stars(t, primary, secondary)
 
             # check primary/secondary star states
             secondary.state = check_state_of_star(secondary, star_CO=False)
@@ -689,8 +683,8 @@ class detached_step:
                                 [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
 
             # just update orbit and normal stars, COs later
-            if obj.co:
-                continue
+            if obj != binary:
+                if obj.co: continue
                                     
             interp1d = primary.interp1d if obj == primary else secondary.interp1d
 
