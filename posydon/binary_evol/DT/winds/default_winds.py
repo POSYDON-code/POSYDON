@@ -2,27 +2,53 @@ import numpy as np
 
 def default_spin_from_winds(a, e, primary, secondary, verbose = False):
 
-    R1 = primary["R"]
-    omega1 = primary["omega"]
-    MOI_1 = primary["inertia"]
-    mdot_1 = primary["mdot"]
-    Idot_1 = primary["Idot"]
+    """
+        This function calculates the change in angular rotation rates 
+    from wind loss.
 
-    R2 = secondary["R"]
-    omega2 = secondary["omega"]
-    MOI_2 = secondary["inertia"]
-    mdot_2 = secondary["mdot"]
-    Idot_2 = secondary["Idot"]
-    omega1 = primary["omega"]
-    MOI_1 = primary["inertia"]
-    mdot_1 = primary["mdot"]
-    Idot_1 = primary["Idot"]
+    Parameters
+    ----------
+        a : float
+            The current orbital separation (unused in calculation, 
+            and only present in debugging output). [Rsolar]
 
-    R2 = secondary["R"]
-    omega2 = secondary["omega"]
-    MOI_2 = secondary["inertia"]
-    mdot_2 = secondary["mdot"]
-    Idot_2 = secondary["Idot"]
+        e : float
+            The current orbital eccentricity (unused in calculation, 
+            and only present in debugging output).
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        dOmega_sec : float
+            The change in rotation rate of the secondary (less evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+        
+        dOmega_pri : float
+            The change in rotation rate of the primary (more evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+    """
+
+    R1 = primary.latest["R"]
+    omega1 = primary.latest["omega"]
+    MOI_1 = primary.latest["inertia"]
+    mdot_1 = primary.latest["mdot"]
+    Idot_1 = primary.latest["Idot"]
+
+    R2 = secondary.latest["R"]
+    omega2 = secondary.latest["omega"]
+    MOI_2 = secondary.latest["inertia"]
+    mdot_2 = secondary.latest["mdot"]
+    Idot_2 = secondary.latest["Idot"]
 
     # Due to the secondary's own evolution, we have:
     # domega_spin/dt = d(Jspin/I)/dt = dJspin/dt * 1/I + Jspin*d(1/I)/dt.
@@ -69,15 +95,48 @@ def default_spin_from_winds(a, e, primary, secondary, verbose = False):
 
 def default_sep_from_winds(a, e, primary, secondary, verbose = False):
 
-    """This function calculates the change in orbital separation from 
-    wind loss.
+    """
+        This function calculates the change in orbital separation from 
+    wind loss, as e.g., in:
+
+        Tauris, T. M., & van den Heuvel, E. 2006,
+                Compact stellar X-ray sources, 1, 623
+
+        from simple arguments regarding the balance of orbital angular 
+    momentum.
+
+    Parameters
+    ----------
+        a : float
+            The current orbital separation. [Rsolar]
+
+        e : float
+            The current orbital eccentricity.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        da_mt_tot : float
+            The change in orbital separation from both stars 
+        for a time step in step_detached's solve_ivp(). [Rsolar/yr]
+
     """
 
-    m2 = secondary["mass"] # Msol
-    mdot_2 = secondary["mdot"] # Msol/yr
+    m2 = secondary.latest["mass"] # Msol
+    mdot_2 = secondary.latest["mdot"] # Msol/yr
 
-    m1 = primary["mass"] # Msol
-    mdot_1 = primary["mdot"] # Msol/yr
+    m1 = primary.latest["mass"] # Msol
+    mdot_1 = primary.latest["mdot"] # Msol/yr
 
     q1 = m2 / m1
     k11 = (1 / (1 + q1)) * (mdot_2 / m2)

@@ -124,6 +124,11 @@ class ValueWarning(POSYDONWarning):
     def __init__(self, message=''):
         super().__init__(message)
 
+class StepWarning(POSYDONWarning):
+    """Warnings related to the SFH model."""
+    def __init__(self, message=''):
+        super().__init__(message)
+
 
 # All POSYDON warnings subclasses should be defined beforehand
 _POSYDONWarning_subclasses = {cls.__name__: cls for cls in\

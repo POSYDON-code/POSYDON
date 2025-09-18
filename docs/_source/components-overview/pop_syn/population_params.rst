@@ -204,30 +204,60 @@ It evolves the binary object in isolation until Roche lobe overflow occurs.
 
     - ``'minimize'``
 
+  * - ``matching_tolerance``
+    - | When using the "minimize" matching method, a computed square 
+      | Euclidean distance between the pre-match and post-match values 
+      | less than this must be achieved for a successful match.  
+    - ``1e-2``
+
+  * - ``matching_tolerance_hard``
+    - | This tolerance is checked after all else fails, as a last attempt 
+      | to find a solution.
+    - ``1e-1``
+
   * - ``do_wind_loss``
-    - | Enable wind loss.
+    - | Enable orbital separation and eccentricity changes from stellar wind loss.
     - ``True``
 
   * - ``do_tides``
-    - | Enable tides.
+    - | Enable tides following Hut, P. 1981, A&A, 99, 126.
     - ``True``
 
   * - ``do_gravitational_radiation``
-    - | Enable gravitational radiation.
+    - | Enable gravitational radiation following Junker, W., & Schafer, G. 1992, MNRAS, 254, 146.
     - ``True``
   
   * - ``do_magnetic_braking``
-    - | Enable magnetic braking.
+    - | Enable stellar angular momentum loss from magnetic braking.
     - ``True``
 
+  * - ``magnetic_braking_mode``
+    - | A string corresponding to the desired magnetic braking prescription.
+      * ``'RVJ83'``: Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
+      * ``'M15'``: Matt et al. 2015, ApJ, 799, L23
+      * ``'G18'``: Garraffo et al. 2018, ApJ, 862, 90
+      * ``'CARB'``: Van & Ivanova 2019, ApJ, 886, L31
+    - ``'RVJ83'``
+
   * - ``do_stellar_evolution_and_spin_from_winds``
-    - | Enable stellar evolution and spin from winds.
+    - | Enable stellar angular momentum loss from winds.
     - ``True``
 
   * - ``RLO_orbit_at_orbit_with_same_am``
-    - | Orbit at Roche lobe overflow with the same angular momentum.
-      | Relevant in eccentric systems.
+    - | Binaries are circularized instaneously when RLO occurs and this 
+      | option dictates how that is handled. If false, place 
+      | the binary in an orbit with separation equal to the binary's 
+      | separation at periastron. If true, circularize the orbit assuming 
+      | that angular momentum is conserved w.r.t. the previously (possibly) 
+      | eccentric orbit. In the latter case, the star may no longer 
+      | fill its Roche lobe after circularization, and may be further 
+      | evolved until RLO commences once again, but without changing the 
+      | orbit.
     - ``False``
+
+  * - ``record_matching``
+    - | If true, append quantities achieved from track matching to the binary history.
+    - ``True``
 
   * - ``verbose``
     - | Enables verbose mode.
@@ -252,6 +282,78 @@ This means that this step uses the single stars loaded by the detached step.
   * - ``import``
     - | The import path for the step and the name of the step class.
     - ``['posydon.binary_evol.DT.step_disrupted', 'DisruptedStep']``
+
+  * - ``absolute_import``
+    - | An absolute import of a custom step. It follows the same structure as ``import``. 
+      | ``['import.path', 'name_of_step']``
+    - ``None``
+  
+  * - ``matching_method``
+    - | The method to match the MESA single star grid to the binary object.
+      
+      * ``'minimize'`` : minimize the difference between the MESA single star grid and the binary object
+      * ``'root'`` : find the root of the difference between the MESA single star grid and the binary object
+
+    - ``'minimize'``
+
+  * - ``matching_tolerance``
+    - | When using the "minimize" matching method, a computed square 
+      | Euclidean distance between the pre-match and post-match values 
+      | less than this must be achieved for a successful match.  
+    - ``1e-2``
+
+  * - ``matching_tolerance_hard``
+    - | This tolerance is checked after all else fails, as a last attempt 
+      | to find a solution.
+    - ``1e-1``
+
+  * - ``do_wind_loss``
+    - | Enable orbital separation and eccentricity changes from stellar wind loss.
+    - ``True``
+
+  * - ``do_tides``
+    - | Enable tides following Hut, P. 1981, A&A, 99, 126.
+    - ``True``
+
+  * - ``do_gravitational_radiation``
+    - | Enable gravitational radiation following Junker, W., & Schafer, G. 1992, MNRAS, 254, 146.
+    - ``True``
+  
+  * - ``do_magnetic_braking``
+    - | Enable stellar angular momentum loss from magnetic braking.
+    - ``True``
+
+  * - ``magnetic_braking_mode``
+    - | A string corresponding to the desired magnetic braking prescription.
+      * ``'RVJ83'``: Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
+      * ``'M15'``: Matt et al. 2015, ApJ, 799, L23
+      * ``'G18'``: Garraffo et al. 2018, ApJ, 862, 90
+      * ``'CARB'``: Van & Ivanova 2019, ApJ, 886, L31
+    - ``'RVJ83'``
+
+  * - ``do_stellar_evolution_and_spin_from_winds``
+    - | Enable stellar angular momentum loss from winds.
+    - ``True``
+
+  * - ``RLO_orbit_at_orbit_with_same_am``
+    - | Binaries are circularized instaneously when RLO occurs and this 
+      | option dictates how that is handled. If false, place 
+      | the binary in an orbit with separation equal to the binary's 
+      | separation at periastron. If true, circularize the orbit assuming 
+      | that angular momentum is conserved w.r.t. the previously (possibly) 
+      | eccentric orbit. In the latter case, the star may no longer 
+      | fill its Roche lobe after circularization, and may be further 
+      | evolved until RLO commences once again, but without changing the 
+      | orbit.
+    - ``False``
+
+  * - ``record_matching``
+    - | If true, append quantities achieved from track matching to the binary history.
+    - ``True``
+
+  * - ``verbose``
+    - | Enables verbose mode.
+    - ``False``
 
 Step Merged
 ~~~~~~~~~~~
@@ -293,6 +395,66 @@ This means that this step uses the single stars loaded by the detached step.
   * - ``import``
     - | The import path for the step and the name of the step class.
     - ``['posydon.binary_evol.DT.step_initially_single','InitiallySingleStep']``
+
+  * - ``absolute_import``
+    - | An absolute import of a custom step. It follows the same structure as ``import``. 
+      | ``['import.path', 'name_of_step']``
+    - ``None``
+  
+  * - ``matching_method``
+    - | The method to match the MESA single star grid to the binary object.
+      
+      * ``'minimize'`` : minimize the difference between the MESA single star grid and the binary object
+      * ``'root'`` : find the root of the difference between the MESA single star grid and the binary object
+
+    - ``'minimize'``
+
+  * - ``matching_tolerance``
+    - | When using the "minimize" matching method, a computed square 
+      | Euclidean distance between the pre-match and post-match values 
+      | less than this must be achieved for a successful match.  
+    - ``1e-2``
+
+  * - ``matching_tolerance_hard``
+    - | This tolerance is checked after all else fails, as a last attempt 
+      | to find a solution.
+    - ``1e-1``
+
+  * - ``do_wind_loss``
+    - | Enable orbital separation and eccentricity changes from stellar wind loss.
+    - ``True``
+
+  * - ``do_tides``
+    - | Enable tides following Hut, P. 1981, A&A, 99, 126.
+    - ``True``
+
+  * - ``do_gravitational_radiation``
+    - | Enable gravitational radiation following Junker, W., & Schafer, G. 1992, MNRAS, 254, 146.
+    - ``True``
+  
+  * - ``do_magnetic_braking``
+    - | Enable stellar angular momentum loss from magnetic braking.
+    - ``True``
+
+  * - ``magnetic_braking_mode``
+    - | A string corresponding to the desired magnetic braking prescription.
+      * ``'RVJ83'``: Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
+      * ``'M15'``: Matt et al. 2015, ApJ, 799, L23
+      * ``'G18'``: Garraffo et al. 2018, ApJ, 862, 90
+      * ``'CARB'``: Van & Ivanova 2019, ApJ, 886, L31
+    - ``'RVJ83'``
+
+  * - ``do_stellar_evolution_and_spin_from_winds``
+    - | Enable stellar angular momentum loss from winds.
+    - ``True``
+
+  * - ``record_matching``
+    - | If true, append quantities achieved from track matching to the binary history.
+    - ``True``
+
+  * - ``verbose``
+    - | Enables verbose mode.
+    - ``False``
 
 
 Step Common Envelope

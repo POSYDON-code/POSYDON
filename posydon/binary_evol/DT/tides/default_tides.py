@@ -4,29 +4,74 @@ import posydon.utils.constants as const
 
 def default_tides(a, e, primary, secondary, verbose=False):
 
-    m1 = primary["mass"]
-    R1 = primary["R"]
-    m_env1 = primary["mass_conv_reg_fortides"]
-    dr_env1 = primary["thickness_conv_reg_fortides"]
-    rmid_env1 = primary["radius_conv_reg_fortides"]
-    omega1 = primary["omega"]
-    rtop_env1 = primary["conv_mx1_top_r"]
-    rbot_env1 = primary["conv_mx1_bot_r"]
-    Xsurf_1 = primary["surface_h1"]
-    L1 = primary["L"]
-    MOI_1 = primary["inertia"]
+    """
+        Calculates the change in orbital separation and eccentricity, 
+    plus change in spin of each star due to tides, according to: 
+    
+        Hut, P. 1981, A&A, 99, 126
 
-    m2 = secondary["mass"]
-    R2 = secondary["R"]
-    m_env2 = secondary["mass_conv_reg_fortides"]
-    dr_env2 = secondary["thickness_conv_reg_fortides"]
-    rmid_env2 = secondary["radius_conv_reg_fortides"]
-    omega2 = secondary["omega"]
-    rtop_env2 = secondary["conv_mx1_top_r"]
-    rbot_env2 = secondary["conv_mx1_bot_r"]
-    Xsurf_2 = secondary["surface_h1"]
-    L2 = secondary["L"]
-    MOI_2 = secondary["inertia"]
+    Parameters
+    ----------
+        a : float
+            The current orbital separation. [Rsolar]
+
+        e : float
+            The current orbital eccentricity.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        da : float
+            The change in orbital separation for a time step in 
+        step_detached's solve_ivp(). [Rsolar/yr]
+
+        de : float
+            The change in orbital eccentricity for a time step in 
+        step_detached's solve_ivp().
+
+        dOmega_sec : float
+            The change in rotation rate of the secondary (less evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+        
+        dOmega_pri : float
+            The change in rotation rate of the primary (more evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+
+    """
+
+    m1 = primary.latest["mass"]
+    R1 = primary.latest["R"]
+    m_env1 = primary.latest["mass_conv_reg_fortides"]
+    dr_env1 = primary.latest["thickness_conv_reg_fortides"]
+    rmid_env1 = primary.latest["radius_conv_reg_fortides"]
+    omega1 = primary.latest["omega"]
+    rtop_env1 = primary.latest["conv_mx1_top_r"]
+    rbot_env1 = primary.latest["conv_mx1_bot_r"]
+    Xsurf_1 = primary.latest["surface_h1"]
+    L1 = primary.latest["L"]
+    MOI_1 = primary.latest["inertia"]
+
+    m2 = secondary.latest["mass"]
+    R2 = secondary.latest["R"]
+    m_env2 = secondary.latest["mass_conv_reg_fortides"]
+    dr_env2 = secondary.latest["thickness_conv_reg_fortides"]
+    rmid_env2 = secondary.latest["radius_conv_reg_fortides"]
+    omega2 = secondary.latest["omega"]
+    rtop_env2 = secondary.latest["conv_mx1_top_r"]
+    rbot_env2 = secondary.latest["conv_mx1_bot_r"]
+    Xsurf_2 = secondary.latest["surface_h1"]
+    L2 = secondary.latest["L"]
+    MOI_2 = secondary.latest["inertia"]
 
     q1 = m1/ m2
     q2 = m2 / m1

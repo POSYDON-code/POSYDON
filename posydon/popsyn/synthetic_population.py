@@ -40,6 +40,7 @@ from matplotlib import pyplot as plt
 
 from posydon.utils.constants import Zsun
 from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.binary_evol.simulationproperties import SimulationProperties
 import posydon.visualization.plot_pop as plot_pop
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
@@ -158,6 +159,8 @@ class PopulationRunner:
                     + "_Zsun_"
                     + ini_kw["temp_directory"]
                 )
+                simprops = SimulationProperties.from_ini(path_to_ini)
+                ini_kw['population_properties'] = simprops
                 self.binary_populations.append(BinaryPopulation(**ini_kw))
 
     def evolve(self, overwrite=False):

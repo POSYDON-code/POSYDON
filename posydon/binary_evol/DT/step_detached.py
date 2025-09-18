@@ -217,6 +217,8 @@ class detached_step:
             metallicity=None,
             path=PATH_TO_POSYDON_DATA,
             matching_method="minimize",
+            matching_tolerance=1e-2,
+            matching_tolerance_hard=1e-1,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None
@@ -258,6 +260,8 @@ class detached_step:
                                           grid_name_strippedHe = grid_name_strippedHe,
                                           path=path, metallicity = metallicity,
                                           matching_method = matching_method,
+                                          matching_tolerance=matching_tolerance,
+                                          matching_tolerance_hard=matching_tolerance_hard,
                                           list_for_matching_HMS = list_for_matching_HMS,
                                           list_for_matching_HeStar = list_for_matching_HeStar,
                                           list_for_matching_postMS = list_for_matching_postMS,
@@ -355,64 +359,55 @@ class detached_step:
         for item in secondary.interp1d.values():
             if type(item) == PchipInterpolator2:
                 item.offset = secondary.t_offset
-        #secondary.interp1d.x_offset = secondary.t_offset
+
         primary.t_offset = binary.time - primary.interp1d["t0"]
         for item in primary.interp1d.values():
             if type(item) == PchipInterpolator2:
                 item.offset = primary.t_offset
-        #primary.interp1d.x_offset = primary.t_offset
 
-        max_time = secondary.interp1d["max_time"]
+        self.max_time = secondary.interp1d["max_time"]
 
-        if (self.evo.ev_rlo1(binary.time, [binary.separation, binary.eccentricity], primary, secondary) >= 0
-            or self.evo.ev_rlo2(binary.time, [binary.separation, binary.eccentricity], primary, secondary) >= 0):
+        # store memory references of primary/secondary
+        # for detached evolution
+        self.evo.set_stars(primary, secondary, t0 = binary.time)
+
+        if (self.evo.ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
+            or self.evo.ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
             binary.state = "initial_RLOF"
             return
         else:
-            if not (max_time - binary.time > 0.0):
+            if not (self.max_time - binary.time > 0.0):
                 raise ValueError("max_time is lower than the current time. "
                                 "Evolution of the detached binary will go to "
                                 "lower times.")
 
             with np.errstate(all="ignore"):
 
+                # solve ODEs for detached evolution
                 t_before_ODEsolution = time.time()
-                try:
-                    res = solve_ivp(self.evo, 
-                                    events=[self.evo.ev_rlo1, self.evo.ev_rlo2, 
-                                            self.evo.ev_max_time1, self.evo.ev_max_time2],
-                                    method="Radau", 
-                                    t_span=(binary.time, max_time),
-                                    y0=[binary.separation, binary.eccentricity,
-                                        secondary.omega0, primary.omega0],
-                                    args = (primary, secondary),
-                                    dense_output=True)
-                except Exception:
-                    res = solve_ivp(self.evo,
-                                    events=[self.evo.ev_rlo1, self.evo.ev_rlo2, 
-                                            self.evo.ev_max_time1, self.evo.ev_max_time2],
-                                    method="RK45",
-                                    t_span=(binary.time, max_time),
-                                    y0=[binary.separation, binary.eccentricity,
-                                        secondary.omega0, primary.omega0],
-                                    args=(primary, secondary),
-                                    dense_output=True)
+                self.res = self.solve_ODEs(binary, primary, secondary)
+                t_after_ODEsolution = time.time()
 
-            t_after_ODEsolution = time.time()
+            # clear dictionaries that held current properties during ODE solution
+            if hasattr(primary, "latest"):
+                del primary.latest
+            if hasattr(secondary, "latest"):
+                del secondary.latest
 
             if self.verbose:
                 ivp_tspan = t_after_ODEsolution - t_before_ODEsolution
                 print(f"\nODE solver duration: {ivp_tspan:.6g} sec")
-                print("solution of ODE", res)
+                print("solution of ODE", self.res)
 
-            if res.status == -1:
+            if self.res.status == -1:
                 failed_state = binary.state
                 set_binary_to_failed(binary)
                 raise NumericalError(f"Integration failed for {failed_state} binary.")
                          
             # update binary/star properties after detached evolution
-            t = self.get_time_after_evo(res, binary)
-            self.update_after_evo(res, t, binary, primary, secondary)
+            t = self.get_time_after_evo(binary)
+            self.update_after_evo(t, binary, primary, secondary)
+            self.update_co_stars(t, primary, secondary)
 
             # check primary/secondary star states
             secondary.state = check_state_of_star(secondary, star_CO=False)
@@ -433,30 +428,38 @@ class detached_step:
                     primary.state_history[timestep] = check_state_of_star(primary, i=timestep, star_CO=False)
 
             ## CHECK IF THE BINARY IS IN RLO
-            if res.t_events[0] or res.t_events[1]:
+            if self.res.t_events[0] or self.res.t_events[1]:
+
                 if self.RLO_orbit_at_orbit_with_same_am:
                     # final circular orbit conserves angular momentum
                     # compared to the eccentric orbit
-                    binary.separation *= (1 - res.y[1][-1]**2)
-                    binary.orbital_period *= (1 - res.y[1][-1]**2) ** 1.5
+                    binary.separation *= (1 - self.res.y[1][-1]**2)
+                    binary.orbital_period *= (1 - self.res.y[1][-1]**2) ** 1.5
                 else:
                     # final circular orbit is at periastron of the ecc. orbit
-                    binary.separation *= (1 - res.y[1][-1])
-                    binary.orbital_period *= (1 - res.y[1][-1]) ** 1.5
+                    binary.separation *= (1 - self.res.y[1][-1])
+                    binary.orbital_period *= (1 - self.res.y[1][-1]) ** 1.5
 
                 abs_diff_porb = np.abs(binary.orbital_period - orbital_period_from_separation(
                                 binary.separation, secondary.mass, primary.mass)) / binary.orbital_period
 
-                assert abs_diff_porb < 10 ** (-2),  \
-                f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
-                f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
-                "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) =" + \
-                f"{orbital_period_from_separation(binary.separation, secondary.mass, primary.mass):.4f}"
+                
+                abs_diff_porb_str = f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
+                    f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
+                    "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) = " + \
+                    f"{orbital_period_from_separation(binary.separation, secondary.mass, primary.mass):.4f}"
+
+                if self.verbose:
+                    print(abs_diff_porb_str)
+
+                assert abs_diff_porb < 1e-2, \
+                        "detached_step: abs_diff_porb >= 1e-2\n" + \
+                         abs_diff_porb_str
 
                 # instantly circularize at RLO
                 binary.eccentricity = 0
 
-                if res.t_events[0]:
+                if self.res.t_events[0]:
                     if secondary == binary.star_1:
                         binary.state = "RLO1"
                         binary.event = "oRLO1"
@@ -464,7 +467,7 @@ class detached_step:
                         binary.state = "RLO2"
                         binary.event = "oRLO2"
 
-                elif res.t_events[1]:
+                elif self.res.t_events[1]:
                     if secondary == binary.star_1:
                         binary.state = "RLO2"
                         binary.event = "oRLO2"
@@ -489,7 +492,7 @@ class detached_step:
 
 
             ## CHECK IF STARS WILL UNDERGO CC
-            elif res.t_events[2]:
+            elif self.res.t_events[2]:
                 # reached t_max of track. End of life (possible collapse) of secondary
                 if secondary == binary.star_1:
                     binary.event = "CC1"
@@ -515,7 +518,7 @@ class detached_step:
                             "(i.e. end of their life) during the detached "
                             "step, but do not have the same mass")
 
-            elif res.t_events[3]:
+            elif self.res.t_events[3]:
                 # reached t_max of track. End of life (possible collapse) of primary
                 if secondary == binary.star_1:
                     binary.event = "CC2"
@@ -530,8 +533,57 @@ class detached_step:
                     binary.event = "MaxTime_exceeded"
                 else:
                     binary.event = "maxtime"
+
+    def solve_ODEs(self, binary, primary, secondary):
+        """
+            Utilizes SciPy's solve_ivp() method to solve a set of 
+        differential equations that describe the orbital evolution 
+        (separation and eccentricity) and stellar rotation rate 
+        evolution during step_detached.
+
+        Parameters
+        ----------
+        binary : BinaryStar object
+            A binary star object, containing the binary system's properties.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        Returns
+        -------
+        res : ODESolver object
+            This is the ODESolver object produced by SciPy's 
+            solve_ivp function that contains calculated values 
+            of the stars evolution through the detached step.
+        
+        """
+
+        try:
+            res = solve_ivp(self.evo, 
+                            events=[self.evo.ev_rlo1, self.evo.ev_rlo2, 
+                                    self.evo.ev_max_time1, self.evo.ev_max_time2],
+                            method="Radau", 
+                            t_span=(binary.time, self.max_time),
+                            y0=[binary.separation, binary.eccentricity,
+                                secondary.omega0, primary.omega0],
+                            dense_output=True)
+        except Exception:
+            res = solve_ivp(self.evo,
+                            events=[self.evo.ev_rlo1, self.evo.ev_rlo2, 
+                                    self.evo.ev_max_time1, self.evo.ev_max_time2],
+                            method="RK45",
+                            t_span=(binary.time, self.max_time),
+                            y0=[binary.separation, binary.eccentricity,
+                                secondary.omega0, primary.omega0],
+                            dense_output=True)
+        return res
     
-    def get_time_after_evo(self, res, binary):
+    def get_time_after_evo(self, binary):
         """
             After detached evolution, this uses the ODESolver result 
         to determine what the current time is.
@@ -558,21 +610,21 @@ class detached_step:
         """
         
         if self.dt is not None and self.dt > 0:
-            t = np.arange(binary.time, res.t[-1] + self.dt/2.0, self.dt)[1:]
-            if t[-1] < res.t[-1]:
-                t = np.hstack([t, res.t[-1]])
+            t = np.arange(binary.time, self.res.t[-1] + self.dt/2.0, self.dt)[1:]
+            if t[-1] < self.res.t[-1]:
+                t = np.hstack([t, self.res.t[-1]])
         elif (self.n_o_steps_history is not None
                 and self.n_o_steps_history > 0):
-            t_step = (res.t[-1] - binary.time) / self.n_o_steps_history
-            t = np.arange(binary.time, res.t[-1] + t_step / 2.0, t_step)[1:]
-            if t[-1] < res.t[-1]:
-                t = np.hstack([t, res.t[-1]])
+            t_step = (self.res.t[-1] - binary.time) / self.n_o_steps_history
+            t = np.arange(binary.time, self.res.t[-1] + t_step / 2.0, t_step)[1:]
+            if t[-1] < self.res.t[-1]:
+                t = np.hstack([t, self.res.t[-1]])
         else:  # self.dt is None and self.n_o_steps_history is None
-            t = np.array([res.t[-1]])
+            t = np.array([self.res.t[-1]])
 
         return t
 
-    def update_after_evo(self, res, t, binary, primary, secondary):
+    def update_after_evo(self, t, binary, primary, secondary):
 
         """
             Update star and binary properties and interpolators with 
@@ -582,11 +634,6 @@ class detached_step:
 
         Parameters
         ----------
-        res : ODESolver object
-            This is the ODESolver object produced by SciPy's 
-            solve_ivp function that contains calculated values 
-            of the stars evolution through the detached step.
-
         t : float or array[float]
             This is the time elapsed as a result of detached 
             evolution in years. This is a float unless the 
@@ -611,7 +658,7 @@ class detached_step:
 
         """
 
-        sep_interp, ecc_interp, omega_interp_sec, omega_interp_pri = res.sol(t)
+        sep_interp, ecc_interp, omega_interp_sec, omega_interp_pri = self.res.sol(t)
         mass_interp_sec = secondary.interp1d[self.translate["mass"]]
         mass_interp_pri = primary.interp1d[self.translate["mass"]]
 
@@ -632,14 +679,14 @@ class detached_step:
             sep_interp, mass_interp_pri(t),
             mass_interp_sec(t))
 
-        secondary.interp1d["time"] = t
-        primary.interp1d["time"] = t
-
         for obj, prop in zip([secondary, primary, binary], 
                                 [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
-            
+
+            # just update orbit and normal stars, COs later
+            if obj != binary:
+                if obj.co: continue
+                                    
             interp1d = primary.interp1d if obj == primary else secondary.interp1d
-            t_offset = primary.t_offset if obj == primary else secondary.t_offset
 
             for key in prop:
                 if key in ["event",
@@ -655,53 +702,40 @@ class detached_step:
                 # key  = 'effective_omega' # in rad/sec
                 # current = s.y[2][-1] / 3.1558149984e7
                 # history_of_attribute = s.y[2][:-1] / 3.1558149984e7
-                elif (key in ["surf_avg_omega_div_omega_crit"] and obj != binary):#primary):
-                    if obj.co: #primary.co:
-                        current = None
-                        history = [current] * len(t[:-1])
+                elif (key in ["surf_avg_omega_div_omega_crit"] and obj != binary):
+                    # TODO: change `item()` to 0
+                    omega_crit_current = np.sqrt(const.standard_cgrav
+                        * interp1d[self.translate["mass"]](t[-1]).item() * const.msol
+                        / (interp1d[self.translate["R"]](t[-1]).item() * const.rsol)**3)
 
-                    else:
-                        # TODO: change `item()` to 0
-                        omega_crit_current = np.sqrt(const.standard_cgrav
-                            * interp1d[self.translate["mass"]](t[-1]).item() * const.msol
-                            / (interp1d[self.translate["R"]](t[-1]).item() * const.rsol)**3)
+                    omega_crit_hist = np.sqrt(const.standard_cgrav
+                        * interp1d[self.translate["mass"]](t[:-1]) * const.msol
+                        / (interp1d[self.translate["R"]](t[:-1]) * const.rsol)**3)
 
-                        omega_crit_hist = np.sqrt(const.standard_cgrav
-                            * interp1d[self.translate["mass"]](t[:-1]) * const.msol
-                            / (interp1d[self.translate["R"]](t[:-1]) * const.rsol)**3)
+                    current = (interp1d["omega"][-1] / const.secyer / omega_crit_current)
+                    history = (interp1d["omega"][:-1] / const.secyer / omega_crit_hist)
 
-                        current = (interp1d["omega"][-1] / const.secyer / omega_crit_current)
-                        history = (interp1d["omega"][:-1] / const.secyer / omega_crit_hist)
-
-                        # ensure positive rotation values
-                        current = zero_negative_values([current], key)[0]
-                        history = zero_negative_values(history, key)
+                    # ensure positive rotation values
+                    current = zero_negative_values([current], key)[0]
+                    history = zero_negative_values(history, key)
 
                 elif (key in ["surf_avg_omega"] and obj != binary):
-                    if obj.co:
-                        current = None
-                        history = [current] * len(t[:-1])
-                    else:
-                        current = interp1d["omega"][-1] / const.secyer
-                        history = interp1d["omega"][:-1] / const.secyer
+                    current = interp1d["omega"][-1] / const.secyer
+                    history = interp1d["omega"][:-1] / const.secyer
 
-                        current = zero_negative_values([current], key)[0]
-                        history = zero_negative_values(history, key)
+                    current = zero_negative_values([current], key)[0]
+                    history = zero_negative_values(history, key)
                         
                 elif ("rl_relative_overflow_" in key and obj == binary):
                     s = binary.star_1 if "_1" in key[-2:] else binary.star_2
                     s_alt = binary.star_2 if "_1" in key[-2:] else binary.star_1
-                    if s.state in ("BH", "NS", "WD","massless_remnant"):
-                        current = None
-                        history = [current] * len(t[:-1])
-
-                    elif secondary == s:
-                        current = self.evo.ev_rel_rlo1(t[-1], [interp1d["sep"][-1], interp1d["ecc"][-1]], primary, secondary)
-                        history = self.evo.ev_rel_rlo1(t[:-1], [interp1d["sep"][:-1], interp1d["ecc"][:-1]], primary, secondary)
+                    if secondary == s:
+                        current = self.evo.ev_rel_rlo1(t[-1], [interp1d["sep"][-1], interp1d["ecc"][-1]])
+                        history = self.evo.ev_rel_rlo1(t[:-1], [interp1d["sep"][:-1], interp1d["ecc"][:-1]])
 
                     elif secondary == s_alt:
-                        current = self.evo.ev_rel_rlo2(t[-1], [interp1d["sep"][-1], interp1d["ecc"][-1]], primary, secondary)
-                        history = self.evo.ev_rel_rlo2(t[:-1], [interp1d["sep"][:-1], interp1d["ecc"][:-1]], primary, secondary)
+                        current = self.evo.ev_rel_rlo2(t[-1], [interp1d["sep"][-1], interp1d["ecc"][-1]])
+                        history = self.evo.ev_rel_rlo2(t[:-1], [interp1d["sep"][:-1], interp1d["ecc"][:-1]])
                         
                 elif key in ["separation", "orbital_period", "eccentricity", "time"]:
                     current = interp1d[self.translate[key]][-1].item()
@@ -711,82 +745,61 @@ class detached_step:
                     history = zero_negative_values(history, key)
                     
                 elif (key in ["total_moment_of_inertia"] and obj != binary):
-                    if obj.co:
-                        current = getattr(obj, key)
-                        history = [current] * len(t[:-1])
-                    else:
+                    current = interp1d[self.translate[key]](t[-1]).item() * (const.msol * const.rsol**2)
+                    history = interp1d[self.translate[key]](t[:-1]) * (const.msol * const.rsol**2)
 
-                        current = interp1d[self.translate[key]](t[-1]).item() * (const.msol * const.rsol**2)
-                        history = interp1d[self.translate[key]](t[:-1]) * (const.msol * const.rsol**2)
-    
-                        current = zero_negative_values([current], key)[0]
-                        history = zero_negative_values(history, key)
+                    current = zero_negative_values([current], key)[0]
+                    history = zero_negative_values(history, key)
                     
                 elif (key in ["log_total_angular_momentum"] and obj != binary):
-                    if obj.co:
-                        current = getattr(obj, key)
-                        history = [current] * len(t[:-1])
-                    else:
-                        tot_j = (interp1d["omega"][-1] / const.secyer) \
-                                  * (interp1d[self.translate["total_moment_of_inertia"]](t[-1]).item() \
-                                  * (const.msol * const.rsol**2))
-                        current = np.log10(tot_j) if tot_j > 0.0 else -99
-                    
-                        tot_j_hist = (interp1d["omega"][:-1] / const.secyer) \
-                                       * (interp1d[self.translate["total_moment_of_inertia"]](t[:-1]) \
-                                       * (const.msol * const.rsol**2))
-                        history = np.where(tot_j_hist > 0, np.log10(tot_j_hist), -99)
+                    tot_j = (interp1d["omega"][-1] / const.secyer) \
+                              * (interp1d[self.translate["total_moment_of_inertia"]](t[-1]).item() \
+                              * (const.msol * const.rsol**2))
+                    current = np.log10(tot_j) if tot_j > 0.0 else -99
+                
+                    tot_j_hist = (interp1d["omega"][:-1] / const.secyer) \
+                                   * (interp1d[self.translate["total_moment_of_inertia"]](t[:-1]) \
+                                   * (const.msol * const.rsol**2))
+                    history = np.where(tot_j_hist > 0, np.log10(tot_j_hist), -99)
 
-                        current = zero_negative_values([current], key)[0]
-                        history = zero_negative_values(history, key)
+                    current = zero_negative_values([current], key)[0]
+                    history = zero_negative_values(history, key)
                     
                 elif (key in ["spin"] and obj != binary):
-                    if obj.co:
-                        current = getattr(obj, key)
-                        history = [current] * len(t[:-1])
-                    else:
-                        current = (const.clight
-                            * (interp1d["omega"][-1] / const.secyer)
-                            * interp1d[self.translate["total_moment_of_inertia"]](t[-1]).item() \
-                            * (const.msol * const.rsol**2)
-                            / (const.standard_cgrav * (interp1d[self.translate["mass"]](t[-1]).item() \
-                            * const.msol)**2))
-                        
-                        history = (const.clight 
-                            * (interp1d["omega"][:-1] / const.secyer) \
-                            * interp1d[self.translate["total_moment_of_inertia"]](t[:-1]) \
-                            * (const.msol * const.rsol**2) \
-                            / (const.standard_cgrav * (interp1d[self.translate["mass"]](t[:-1]) \
-                            * const.msol)**2))
-    
-                        current = zero_negative_values([current], key)[0]
-                        history = zero_negative_values(history, key)
+                    current = (const.clight
+                        * (interp1d["omega"][-1] / const.secyer)
+                        * interp1d[self.translate["total_moment_of_inertia"]](t[-1]).item() \
+                        * (const.msol * const.rsol**2)
+                        / (const.standard_cgrav * (interp1d[self.translate["mass"]](t[-1]).item() \
+                        * const.msol)**2))
+                    
+                    history = (const.clight 
+                        * (interp1d["omega"][:-1] / const.secyer) \
+                        * interp1d[self.translate["total_moment_of_inertia"]](t[:-1]) \
+                        * (const.msol * const.rsol**2) \
+                        / (const.standard_cgrav * (interp1d[self.translate["mass"]](t[:-1]) \
+                        * const.msol)**2))
+
+                    current = zero_negative_values([current], key)[0]
+                    history = zero_negative_values(history, key)
 
                 elif (key in ["lg_mdot", "lg_wind_mdot"] and obj != binary):
-                    if obj.co:
-                        current = None
-                        history = [current] * len(t[:-1])
+                    if interp1d[self.translate[key]](t[-1]) == 0:
+                        current = -99.0
                     else:
-                        if interp1d[self.translate[key]](t[-1]) == 0:
-                            current = -98.99
+                        current = np.log10(np.abs(interp1d[self.translate[key]](
+                                t[-1]))).item()
+                        
+                    history = np.ones_like(t[:-1])
+                    for i in range(len(t)-1):
+                        if (interp1d[self.translate[key]](t[i]) == 0):
+                            history[i] = -99.0
                         else:
-                            current = np.log10(np.abs(interp1d[self.translate[key]](
-                                    t[-1]))).item()
-                            
-                        history = np.ones_like(t[:-1])
-                        for i in range(len(t)-1):
-                            if (interp1d[self.translate[key]](t[i]) == 0):
-                                history[i] = -98.99
-                            else:
-                                history[i] = np.log10(np.abs(interp1d[self.translate[key]](t[i])))
+                            history[i] = np.log10(np.abs(interp1d[self.translate[key]](t[i])))
                     
                 elif (self.translate[key] in interp1d and obj != binary):
-                    if obj.co:
-                        current = getattr(obj, key)
-                        history = [current] * len(t[:-1])
-                    else:
-                        current = interp1d[self.translate[key]](t[-1]).item()
-                        history = interp1d[self.translate[key]](t[:-1])
+                    current = interp1d[self.translate[key]](t[-1]).item()
+                    history = interp1d[self.translate[key]](t[:-1])
                         
                 elif key in ["profile"]:
                     current = None
@@ -796,6 +809,49 @@ class detached_step:
                     current = np.nan
                     history = np.ones_like(t[:-1]) * current
 
+                setattr(obj, key, current)
+                getattr(obj, key + "_history").extend(history)
+                
+    def update_co_stars(self, t, primary, secondary):
+
+        """
+            Update compact object properties after detached 
+        evolution. The properties are updated here using the 
+        CO star properties from the last step. Often, these 
+        values are null.
+
+        Parameters
+        ----------
+        t : float or array[float]
+            This is the time elapsed as a result of detached 
+            evolution in years. This is a float unless the 
+            user specifies a timestep to use via the simulation 
+            properties ini file, in which case it is an array.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+        """
+        
+        for obj, prop in zip([secondary, primary], 
+                             [STARPROPERTIES, STARPROPERTIES]):
+            
+            # only update compact objects here
+            if ~obj.co: 
+                continue
+                
+            for key in prop:
+
+                # simply get the current attribute value and update
+                # this step's props with it. Detached evolution does not
+                # modify these properties for a CO by default, so they 
+                # typically remain unchanged from the previous step.
+                current = getattr(obj, key)
+                history = [current] * len(t[:-1])
                 setattr(obj, key, current)
                 getattr(obj, key + "_history").extend(history)
 
@@ -811,26 +867,13 @@ class detached_evolution:
                     verbose=False):
 
         self.verbose = verbose
-        self.phys_keys = ["R", "L", "mass", "mdot", "inertia", "conv_mx1_top_r",
-                            "conv_mx1_bot_r", "surface_h1", "center_h1",
-                            "mass_conv_reg_fortides", "thickness_conv_reg_fortides",
-                            "radius_conv_reg_fortides", "Idot",
-                            "conv_env_turnover_time_l_b"]
         
-        # initialize physical properties
-        # of stars...
-        if primary is not None:
-            self.primary = {k:primary.interp1d[k](0) for k in self.phys_keys}
-        else:
-            self.primary = {k:np.nan for k in self.phys_keys}
-
-        if secondary is not None:
-            self.secondary = {k:secondary.interp1d[k](0) for k in self.phys_keys}
-        else:
-            self.secondary = {k:np.nan for k in self.phys_keys}
-
-        self.primary['omega'] = np.nan
-        self.secondary['omega'] = np.nan
+        # initially these are typically NoneType
+        # and set by set_stars()
+        self.primary = primary
+        self.secondary = secondary
+        # physical properties tracked by interpolators
+        self.phys_keys = []
 
         # also separation and eccentricity
         self.a = np.nan
@@ -843,12 +886,11 @@ class detached_evolution:
         self.do_magnetic_braking = do_magnetic_braking
         self.magnetic_braking_mode = magnetic_braking_mode
         self.do_stellar_evolution_and_spin_from_winds = do_stellar_evolution_and_spin_from_winds
-        self.verbose = False
 
     # timing events for solve_ivp...
     # detects secondary RLO
     @event(True, 1)
-    def ev_rlo1(self, t, y, primary, secondary):
+    def ev_rlo1(self, t, y):
         """
             Difference between radius and Roche lobe at a given time. Used 
         to check if there is RLOF mass transfer during the detached binary 
@@ -878,8 +920,8 @@ class detached_evolution:
             radius in solar radii.
 
         """
-        pri_mass = primary.interp1d["mass"](t)
-        sec_mass = secondary.interp1d["mass"](t)
+        pri_mass = self.primary.interp1d["mass"](t)
+        sec_mass = self.secondary.interp1d["mass"](t)
 
         sep = y[0]
         ecc = y[1]
@@ -888,12 +930,12 @@ class detached_evolution:
         
         # 95% filling of the RL is enough to assume beginning of RLO,
         # as we do in CO-HMS_RLO grid
-        RL_diff = secondary.interp1d["R"](t) - 0.95*RL
+        RL_diff = self.secondary.interp1d["R"](t) - 0.95*RL
         return RL_diff
 
     # detects primary RLO
     @event(True, 1)
-    def ev_rlo2(self, t, y, primary, secondary):
+    def ev_rlo2(self, t, y):
         """
             Difference between radius and Roche lobe at a given time. Used 
         to check if there is RLOF mass transfer during the detached binary 
@@ -923,20 +965,20 @@ class detached_evolution:
             radius in solar radii.
 
         """
-        pri_mass = primary.interp1d["mass"](t)
-        sec_mass = secondary.interp1d["mass"](t)
+        pri_mass = self.primary.interp1d["mass"](t)
+        sec_mass = self.secondary.interp1d["mass"](t)
         
         sep = y[0]
         ecc = y[1]
         
         RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
-        RL_diff = primary.interp1d["R"](t) - 0.95*RL
+        RL_diff = self.primary.interp1d["R"](t) - 0.95*RL
 
         return RL_diff
 
     # detects secondary RLO via relative difference btwn. R and R_RL
     @event(True, 1)
-    def ev_rel_rlo1(self, t, y, primary, secondary):
+    def ev_rel_rlo1(self, t, y):
         """
             Relative difference between radius and Roche lobe. Used to 
         check if there is RLOF mass transfer during the detached binary 
@@ -966,19 +1008,19 @@ class detached_evolution:
             radius.
 
         """
-        pri_mass = primary.interp1d["mass"](t)
-        sec_mass = secondary.interp1d["mass"](t)
+        pri_mass = self.primary.interp1d["mass"](t)
+        sec_mass = self.secondary.interp1d["mass"](t)
         
         sep = y[0]
         ecc = y[1]
         
         RL = roche_lobe_radius(sec_mass, pri_mass, (1 - ecc) * sep)
-        RL_rel_diff = (secondary.interp1d["R"](t) - RL) / RL
+        RL_rel_diff = (self.secondary.interp1d["R"](t) - RL) / RL
         return RL_rel_diff
 
     # detects primary RLO via relative difference btwn. R and R_RL
     @event(True, 1)
-    def ev_rel_rlo2(self, t, y, primary, secondary):
+    def ev_rel_rlo2(self, t, y):
         """
             Relative difference between radius and Roche lobe. Used to 
         check if there is RLOF mass transfer during the detached binary 
@@ -1007,32 +1049,91 @@ class detached_evolution:
             Relative difference between stellar radius and Roche lobe
             radius.
         """
-        pri_mass = primary.interp1d["mass"](t)
-        sec_mass = secondary.interp1d["mass"](t)
+        pri_mass = self.primary.interp1d["mass"](t)
+        sec_mass = self.secondary.interp1d["mass"](t)
 
         sep = y[0]
         ecc = y[1]
         
         RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
-        RL_rel_diff = (primary.interp1d["R"](t) - RL) / RL
+        RL_rel_diff = (self.primary.interp1d["R"](t) - RL) / RL
         return RL_rel_diff
 
     # detects if the max age in track of secondary is reached
     @event(True, -1)
-    def ev_max_time1(self, t, y, primary, secondary):
-        return secondary.t_max - t + secondary.t_offset
+    def ev_max_time1(self, t, y):
+        return self.secondary.t_max - t + self.secondary.t_offset
 
     # detects if the max age in track of primary is reached
     @event(True, -1)
-    def ev_max_time2(self, t, y, primary, secondary):
-        return primary.t_max - t + primary.t_offset
+    def ev_max_time2(self, t, y):
+        return self.primary.t_max - t + self.primary.t_offset
+    
+    def set_stars(self, primary, secondary, t0=0.0):
+        """Sets memory references for primary and secondary star associated with
+        this evolution. It is expected that primary/secondary have interp1d 
+        objects already, as required for detached evolution.
 
-    def update_props(self, t, y, primary, secondary):
-        """ Update properties of stars w/ current age during detached evolution."""
+        Parameters
+        ----------
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
 
-        for k in self.phys_keys:
-            self.primary[k] = primary.interp1d[k](t)
-            self.secondary[k] = secondary.interp1d[k](t)
+        t0 : float
+            The time at the start of detached evolution. Typically should be the 
+            binary.time prior to detached evolution.
+
+        """
+
+        self.primary = primary
+        self.secondary = secondary
+        # update list of tracked physical properties
+        self.phys_keys = list(secondary.interp1d.keys())
+        # except we don't evolve these:
+        for prop in ["t0", "m0", "t_max", "max_time"]:
+            self.phys_keys.remove(prop)
+
+        # dictionaries to track current properties during evolution
+        self.primary.latest = {}
+        self.secondary.latest = {}
+
+        self.t = t0
+
+    def update_props(self, t, y):
+        """ 
+            Update properties of stars w/ current age during detached evolution.
+        This uses the interp1d objects (PchipInterpolator2) of the primary and 
+        secondary to interpolate stellar properties using the current time of 
+        integration, t, along a stellar track. Compact objects have no stellar 
+        track to interpolate along, and simply either have copies of the surviving 
+        star, or array-like, zeroed arrays.
+
+            The primary and secondary (SingleStar objects) are each given a new 
+        attribute called `latest` that is a dictionary containing the stellar 
+        properties of the star at the latest time of integration, t, for access 
+        in calculations during step_detached evolution.
+        
+        Parameters
+        ----------
+            t : float
+                The current time of integration during solve_ivp().
+
+            y : list
+                The current set of solutions for orbital separation [Rsol],
+            orbital eccentricity, spin of the secondary star [rad/yr], and 
+            spin of the primary star [rad/yr].
+        """
+
+        # updating star properties with interpolated values at current time
+        # TODO: update star current/history progressively here rather than after evo?
+        for key in self.phys_keys:
+                self.primary.latest[key] = self.primary.interp1d[key](t)
+                self.secondary.latest[key] = self.secondary.interp1d[key](t)
 
         # update omega, a, e, based on current diffeq solution
         y[0] = np.max([y[0], 0])  # We limit separation to non-negative values
@@ -1046,13 +1147,17 @@ class detached_evolution:
             if self.verbose and self.verbose != 1:
                 print("Negligible eccentricity became 0 for "
                     "computational stability")
+        
+        # update omega
         y[2] = np.max([y[2], 0])  # We limit omega spin to non-negative values
-        self.secondary['omega'] = y[2]  # in rad/yr
+        self.secondary.latest["omega"] = y[2]  # in rad/yr
         y[3] = np.max([y[3], 0])
-        self.primary['omega'] = y[3]
+        self.primary.latest["omega"] = y[3]
 
+        # store current delta(t)/time
+        self.t = t
 
-    def __call__(self, t, y, primary, secondary):
+    def __call__(self, t, y):
         """
             Diff. equation describing the orbital evolution of a detached binary.
 
@@ -1112,7 +1217,7 @@ class detached_evolution:
         """
         
         # update star/orbital props w/ current time during integration
-        self.update_props(t, y, primary, secondary)
+        self.update_props(t, y)
                         
         # initialize deltas for this timestep
         self.da = 0.0
