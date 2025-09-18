@@ -536,7 +536,7 @@ class TestUnsupportedModelWarning:
 
 class TestInitializationWarning:
     @fixture
-    def StepWarning(self):
+    def InitializationWarning(self):
         # initialize an instance of the class with defaults
         return totest.InitializationWarning()
 
