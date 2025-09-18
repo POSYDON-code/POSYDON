@@ -2,6 +2,42 @@ import numpy as np
 
 def default_spin_from_winds(a, e, primary, secondary, verbose = False):
 
+    """
+        This function calculates the change in angular rotation rates 
+    from wind loss.
+
+    Parameters
+    ----------
+        a : float
+            The current orbital separation (unused in calculation, 
+            and only present in debugging output). [Rsolar]
+
+        e : float
+            The current orbital eccentricity (unused in calculation, 
+            and only present in debugging output).
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        dOmega_sec : float
+            The change in rotation rate of the secondary (less evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+        
+        dOmega_pri : float
+            The change in rotation rate of the primary (more evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+    """
+
     R1 = primary.latest["R"]
     omega1 = primary.latest["omega"]
     MOI_1 = primary.latest["inertia"]
@@ -59,8 +95,41 @@ def default_spin_from_winds(a, e, primary, secondary, verbose = False):
 
 def default_sep_from_winds(a, e, primary, secondary, verbose = False):
 
-    """This function calculates the change in orbital separation from 
-    wind loss.
+    """
+        This function calculates the change in orbital separation from 
+    wind loss, as e.g., in:
+
+        Tauris, T. M., & van den Heuvel, E. 2006,
+                Compact stellar X-ray sources, 1, 623
+
+        from simple arguments regarding the balance of orbital angular 
+    momentum.
+
+    Parameters
+    ----------
+        a : float
+            The current orbital separation. [Rsolar]
+
+        e : float
+            The current orbital eccentricity.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        da_mt_tot : float
+            The change in orbital separation from both stars 
+        for a time step in step_detached's solve_ivp(). [Rsolar/yr]
+
     """
 
     m2 = secondary.latest["mass"] # Msol
