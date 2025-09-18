@@ -3,70 +3,133 @@ import posydon.utils.constants as const
 
 
 def RVJ83_braking(primary, secondary, verbose = False):
+    """
+        Calculates the change in spin of each star due 
+    to magnetic braking, according to: 
+    
+        Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
+
+    Parameters
+    ----------
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
         
-        m1 = primary["mass"]
-        R1 = primary["R"]
-        omega1 = primary["omega"]
-        MOI_1 = primary["inertia"]
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
 
-        m2 = secondary["mass"]
-        R2 = secondary["R"]
-        omega2 = secondary["omega"]
-        MOI_2 = secondary["inertia"]
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        dOmega_sec : float
+            The change in rotation rate of the secondary (less evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+        
+        dOmega_pri : float
+            The change in rotation rate of the primary (more evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
 
-        # Torque from Rappaport, Verbunt, and Joss 1983, ApJ, 275, 713
-        # The torque is eq.36 of Rapport+1983, with γ = 4. Torque units
-        # converted from cgs units to [Msol], [Rsol], [yr] as all stellar
-        # parameters are given in units of [Msol], [Rsol], [yr] and so that
-        # dOmega_mb/dt is in units of [yr^-2].
-        dOmega_mb_sec = (
-            -3.8e-30 * (const.rsol**2 / const.secyer)
-            * m2
-            * R2**4
-            * omega2**3
-            / MOI_2
-            * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
-        )
-        dOmega_mb_pri = (
-            -3.8e-30 * (const.rsol**2 / const.secyer)
-            * m1
-            * R1**4
-            * omega1**3
-            / MOI_1
-            * np.clip((1.5 - m1) / (1.5 - 1.3), 0, 1)
-        )
-        # Converting units:
-        # The constant 3.8e-30 from Rappaport+1983 has units of [cm^-2 s]
-        # which need to be converted...
-        #
-        # -3.8e-30 [cm^-2 s] * (const.rsol**2/const.secyer) -> [Rsol^-2 yr]
-        # * M [Msol]
-        # * R ** 4 [Rsol^4]
-        # * Omega ** 3 [yr^-3]
-        # / I [Msol Rsol^2 ]
-        #
-        # Thus, dOmega/dt comes out to [yr^-2]
+    """
+    
+    m1 = primary.latest["mass"]
+    R1 = primary.latest["R"]
+    omega1 = primary.latest["omega"]
+    MOI_1 = primary.latest["inertia"]
 
-        return dOmega_mb_sec, dOmega_mb_pri
+    m2 = secondary.latest["mass"]
+    R2 = secondary.latest["R"]
+    omega2 = secondary.latest["omega"]
+    MOI_2 = secondary.latest["inertia"]
+
+    # Torque from Rappaport, Verbunt, and Joss 1983, ApJ, 275, 713
+    # The torque is eq.36 of Rapport+1983, with γ = 4. Torque units
+    # converted from cgs units to [Msol], [Rsol], [yr] as all stellar
+    # parameters are given in units of [Msol], [Rsol], [yr] and so that
+    # dOmega_mb/dt is in units of [yr^-2].
+    dOmega_mb_sec = (
+        -3.8e-30 * (const.rsol**2 / const.secyer)
+        * m2
+        * R2**4
+        * omega2**3
+        / MOI_2
+        * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
+    )
+    dOmega_mb_pri = (
+        -3.8e-30 * (const.rsol**2 / const.secyer)
+        * m1
+        * R1**4
+        * omega1**3
+        / MOI_1
+        * np.clip((1.5 - m1) / (1.5 - 1.3), 0, 1)
+    )
+    # Converting units:
+    # The constant 3.8e-30 from Rappaport+1983 has units of [cm^-2 s]
+    # which need to be converted...
+    #
+    # -3.8e-30 [cm^-2 s] * (const.rsol**2/const.secyer) -> [Rsol^-2 yr]
+    # * M [Msol]
+    # * R ** 4 [Rsol^4]
+    # * Omega ** 3 [yr^-3]
+    # / I [Msol Rsol^2 ]
+    #
+    # Thus, dOmega/dt comes out to [yr^-2]
+
+    return dOmega_mb_sec, dOmega_mb_pri
 
 def M15_braking(primary, secondary, verbose = False):
+    """
+        Calculates the change in spin of each star due 
+    to magnetic braking, according to: 
+    
+        Matt et al. 2015, ApJ, 799, L23
 
-    m1 = primary["mass"]
-    R1 = primary["R"]
-    omega1 = primary["omega"]
-    MOI_1 = primary["inertia"]
-    tau_conv_1 = primary["conv_env_turnover_time_l_b"]
+        Free parameters calibrated to match the Solar rotation 
+    rate by Gossage et al. 2021, ApJ, 912, 65.
 
-    m2 = secondary["mass"]
-    R2 = secondary["R"]
-    omega2 = secondary["omega"]
-    MOI_2 = secondary["inertia"]
-    tau_conv_2 = secondary["conv_env_turnover_time_l_b"]
+    Parameters
+    ----------
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        dOmega_sec : float
+            The change in rotation rate of the secondary (less evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+        
+        dOmega_pri : float
+            The change in rotation rate of the primary (more evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+
+    """
+
+    m1 = primary.latest["mass"]
+    R1 = primary.latest["R"]
+    omega1 = primary.latest["omega"]
+    MOI_1 = primary.latest["inertia"]
+    tau_conv_1 = primary.latest["conv_env_turnover_time_l_b"]
+
+    m2 = secondary.latest["mass"]
+    R2 = secondary.latest["R"]
+    omega2 = secondary.latest["omega"]
+    MOI_2 = secondary.latest["inertia"]
+    tau_conv_2 = secondary.latest["conv_env_turnover_time_l_b"]
 
     # Torque prescription from Matt et al. 2015, ApJ, 799, L23
     # Constants:
     # [erg] or [g cm^2 s^-2] -> [Msol Rsol^2 yr^-2]
-    K = 1.4e30 * const.secyer**2 / (const.msol * const.rsol**2)
+    K = -1.4e30 * const.secyer**2 / (const.msol * const.rsol**2)
     # m = 0.22
     # p = 2.6
     # Above constants were calibrated as in
@@ -132,22 +195,55 @@ def M15_braking(primary, secondary, verbose = False):
     return dOmega_mb_sec, dOmega_mb_pri
 
 def G18_braking(primary, secondary, verbose = False):
+    """
+        Calculates the change in spin of each star due 
+    to magnetic braking, according to: 
+    
+        Garraffo et al. 2018, ApJ, 862, 90
 
-    m1 = primary["mass"]
-    omega1 = primary["omega"]
-    MOI_1 = primary["inertia"]
-    tau_conv_1 = primary["conv_env_turnover_time_l_b"]
+        Free parameters calibrated to match the Solar rotation 
+    rate by Gossage et al. 2021, ApJ, 912, 65.
 
-    m2 = secondary["mass"]
-    omega2 = secondary["omega"]
-    MOI_2 = secondary["inertia"]
-    tau_conv_2 = secondary["conv_env_turnover_time_l_b"]
+    Parameters
+    ----------
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        dOmega_sec : float
+            The change in rotation rate of the secondary (less evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+        
+        dOmega_pri : float
+            The change in rotation rate of the primary (more evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+
+    """
+
+    m1 = primary.latest["mass"]
+    omega1 = primary.latest["omega"]
+    MOI_1 = primary.latest["inertia"]
+    tau_conv_1 = primary.latest["conv_env_turnover_time_l_b"]
+
+    m2 = secondary.latest["mass"]
+    omega2 = secondary.latest["omega"]
+    MOI_2 = secondary.latest["inertia"]
+    tau_conv_2 = secondary.latest["conv_env_turnover_time_l_b"]
      
     # Torque prescription from Garraffo et al. 2018, ApJ, 862, 90
     # a = 0.03
     # b = 0.5
     # [g cm^2] -> [Msol Rsol^2]
-    c = 3e41 / (const.msol * const.rsol**2)
+    c = -3e41 / (const.msol * const.rsol**2)
     # Above are as calibrated in Gossage et al. 2021, ApJ, 912, 65
 
     Prot_pri = 2 * np.pi / omega1            # [yr]
@@ -174,20 +270,50 @@ def G18_braking(primary, secondary, verbose = False):
     return dOmega_mb_sec, dOmega_mb_pri
 
 def CARB_braking(primary, secondary, verbose = False):
+    """
+        Calculates the change in spin of each star due 
+    to magnetic braking, according to: 
+    
+        Van & Ivanova 2019, ApJ, 886, L31
 
-    m1 = primary["mass"]
-    R1 = primary["R"]
-    omega1 = primary["omega"]
-    MOI_1 = primary["inertia"]
-    tau_conv_1 = primary["conv_env_turnover_time_l_b"]
-    mdot_1 = primary["mdot"]
+    Parameters
+    ----------
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
 
-    m2 = secondary["mass"]
-    R2 = secondary["R"]
-    omega2 = secondary["omega"]
-    MOI_2 = secondary["inertia"]
-    tau_conv_2 = secondary["conv_env_turnover_time_l_b"]
-    mdot_2 = secondary["mdot"]
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        dOmega_sec : float
+            The change in rotation rate of the secondary (less evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+        
+        dOmega_pri : float
+            The change in rotation rate of the primary (more evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+
+    """
+
+    m1 = primary.latest["mass"]
+    R1 = primary.latest["R"]
+    omega1 = primary.latest["omega"]
+    MOI_1 = primary.latest["inertia"]
+    tau_conv_1 = primary.latest["conv_env_turnover_time_l_b"]
+    mdot_1 = primary.latest["mdot"]
+
+    m2 = secondary.latest["mass"]
+    R2 = secondary.latest["R"]
+    omega2 = secondary.latest["omega"]
+    MOI_2 = secondary.latest["inertia"]
+    tau_conv_2 = secondary.latest["conv_env_turnover_time_l_b"]
+    mdot_2 = secondary.latest["mdot"]
 
     # Torque prescription from Van & Ivanova 2019, ApJ, 886, L31
     # Based on files hosted on Zenodo:
@@ -248,4 +374,4 @@ def CARB_braking(primary, secondary, verbose = False):
         * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
     )
 
-    return dOmega_mb_sec, dOmega_mb_pri
+    return -abs(dOmega_mb_sec), -abs(dOmega_mb_pri)

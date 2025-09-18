@@ -15,7 +15,9 @@ __authors__ = [
 
 
 import time
+import os
 from posydon.utils.constants import age_of_universe
+from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.posydonwarning import Pwarn
 
 class NullStep:
@@ -130,14 +132,13 @@ class SimulationProperties:
                        "step_end": step_end}
 
         for key, step_tuple in step_kwargs.items():
-            
+
             step_class, _ = step_tuple
-            if isinstance(step_class, NullStep):
-                if verbose: Pwarn(f"Step {key} not provided, skipping it.",
-                                  "POSYDONWarning")
-                continue   
-            else:
-                self.kwargs[key] = step_tuple
+            if verbose and isinstance(step_class, NullStep): 
+                Pwarn(f"Step {key} not provided, skipping it.",
+                                "StepWarning")
+
+            self.kwargs[key] = step_tuple
 
         self.kwargs["extra_hooks"] = extra_hooks
 
@@ -184,12 +185,58 @@ class SimulationProperties:
                 self.all_step_names.append(key)
         self.steps_loaded = False
 
-    def load_steps(self, verbose=False):
-        """Instantiate step classes and set as instance attributes.
+    @classmethod
+    def from_ini(cls, path, metallicity = None, load_steps=False, verbose=False, **override_sim_kwargs):
+        """Create a SimulationProperties instance from an inifile.
 
         Parameters
         ----------
-        verbose: bool
+        path : str
+            Path to an inifile to load in.
+
+        metallicity : float
+            A metallicity (Z) may be provided to automatically assign
+            to steps as they are loaded. Should be one of e.g., 2.0, 1.0, 
+            4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to 
+            metallicities available in your POSYDON_DATA grids.
+
+        load_steps : bool
+            Whether or not evolution steps should be automatically loaded.
+
+        verbose : bool
+            Print useful info.
+
+        Returns
+        -------
+        SimulationProperties
+            A new instance of SimulationProperties.
+        """
+
+        sim_kwargs = simprop_kwargs_from_ini(path)
+
+        sim_kwargs = {**sim_kwargs, **override_sim_kwargs}
+
+        new_instance = cls(**sim_kwargs)
+        
+        if load_steps:
+            # Load the steps and required data
+            new_instance.load_steps(metallicity=metallicity, 
+                                    verbose=verbose)
+
+        return new_instance
+
+    def load_steps(self, metallicity=None, verbose=False):
+        """Instantiate all step classes and set as instance attributes.
+
+        Parameters
+        ----------
+        metallicity : float
+            A metallicity (Z) may be provided to automatically assign
+            to steps as they are loaded. Should be one of e.g., 2.0, 1.0, 
+            4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to 
+            metallicities available in your POSYDON_DATA grids.
+
+        verbose : bool
             Print extra information.
 
         Returns
@@ -198,13 +245,79 @@ class SimulationProperties:
         """
         if verbose:
             print('STEP NAME'.ljust(20) + 'STEP FUNCTION'.ljust(25) + 'KWARGS')
+
+        # for every other step, give it a metallicity and load each step
         for name, tup in self.kwargs.items():
             if isinstance(tup, tuple):
-                if verbose:
-                    print(name, tup, end='\n')
-                step_func, kwargs = tup
-                setattr(self, name, step_func(**kwargs))
+                self.load_a_step(name, tup, metallicity, verbose)
+
+        # track that all steps have been loaded
         self.steps_loaded = True
+
+    def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None, from_ini='', verbose=False):
+        """Instantiate one step class and set as instance attribute.
+
+        Parameters
+        ----------
+        step_name : str
+
+            This string is the name of the evolution step. See 
+            SimulationProperties.__init__ for the full standard set.
+
+        step_tup : tuple
+            A tuple whose first element is the step class and whose 
+            second is a dictionary representing the step's kwargs.
+
+        metallicity : float
+            A metallicity (Z) may be provided to automatically assign
+            to the step as it is loaded. Should be one of e.g., 2.0, 1.0, 
+            4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to 
+            metallicities available in your POSYDON_DATA grids.
+
+        from_ini : str
+            Path to a .ini file to read step options from.
+
+        verbose : bool
+            Print extra information.
+
+        Returns
+        -------
+        None
+        """
+
+        # these steps and the flow do not require a metallicity
+        ignore_for_met = ["flow", "step_CE", "step_SN","step_dco", "step_end"]
+
+        # grab kwargs from ini file for given step
+        if os.path.isfile(from_ini):
+            step_tup = simprop_kwargs_from_ini(from_ini, only=step_name)[step_name]
+
+        if (metallicity is None) and (step_name not in ignore_for_met):
+            Pwarn(f"{step_name} not assigned a metallicity. Defaulting to Z = Zsun (solar).", 
+                    "MissingValueWarning")
+            metallicity = 1.0
+
+        # This if should never trigger after __init__, unless the step is 
+        # entirely new and non-standard
+        if step_name not in self.kwargs.keys():
+            self.kwargs[step_name] = step_tup
+
+        # give step a metallicity and load it as a class attribute
+        if step_name not in ignore_for_met:
+            step_tup[1].update({'metallicity':float(metallicity)})
+        if verbose:
+            print(step_name, step_tup, end='\n')
+
+        step_func, kwargs = step_tup
+        setattr(self, step_name, step_func(**kwargs))
+
+        # check if all steps have been loaded
+        for name, tup in self.kwargs.items():
+            if isinstance(tup, tuple):
+                if hasattr(self, name):
+                    self.steps_loaded = True
+                else:
+                    self.steps_loaded = False
 
     def close(self):
         """Close hdf5 files before exiting."""
@@ -443,3 +556,4 @@ class PrintStepInfoHooks(EvolveHooks):
         """Report at the end of the evolution of each binary."""
         print("End evol for binary {}".format(binary.index), end='\n'*2)
         return binary
+    

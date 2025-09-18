@@ -1,9 +1,45 @@
 import posydon.utils.constants as const
 
 def default_gravrad(a, e, primary, secondary, verbose = False):
+    """
+        Calculates the change in orbital separation and eccentricity 
+    due to gravitational wave radiation, according to: 
+    
+        Junker, W., & Schafer, G. 1992, MNRAS, 254, 146
 
-    m1 = primary["mass"]
-    m2 = secondary["mass"]
+    Parameters
+    ----------
+        a : float
+            The current orbital separation. [Rsolar]
+
+        e : float
+            The current orbital eccentricity.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        da : float
+            The change in orbital separation for a time step in 
+        step_detached's solve_ivp(). [Rsolar/yr]
+
+        de : float
+            The change in orbital eccentricity for a time step in 
+        step_detached's solve_ivp().
+
+    """
+
+    m1 = primary.latest["mass"]
+    m2 = secondary.latest["mass"]
 
     v = (m1 * m2 / (m1 + m2) ** 2)
     
@@ -34,7 +70,7 @@ def default_gravrad(a, e, primary, secondary, verbose = False):
     # eq. (36) of Junker et al. 1992, 254, 146
 
     if verbose:
-        print("da,de_gr = ", da_gr, de_gr)
+        print("da, de_gr = ", da_gr, de_gr)
 
     da = da_gr
     de = de_gr
