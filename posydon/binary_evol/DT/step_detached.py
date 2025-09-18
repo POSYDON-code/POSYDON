@@ -1155,10 +1155,7 @@ class detached_evolution:
         self.primary.latest["omega"] = y[3]
 
         # store current delta(t)/time
-        new_t = t
-        old_t = self.t
-        self.dt = new_t - old_t
-        self.t = new_t
+        self.t = t
 
     def __call__(self, t, y):
         """
