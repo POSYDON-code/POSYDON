@@ -72,6 +72,9 @@ saved_ini_parameters = ['metallicity',
                    'orbital_period_scheme',
                    'orbital_period_min',
                    'orbital_period_max',
+                   'orbital_separation_scheme',
+                   'orbital_separation_min',
+                   'orbital_separation_max',
                    'eccentricity_scheme']
 
 

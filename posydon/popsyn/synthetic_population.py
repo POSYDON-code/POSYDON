@@ -66,32 +66,12 @@ from posydon.popsyn.binarypopulation import (
     BinaryPopulation,
     HISTORY_MIN_ITEMSIZE,
     ONELINE_MIN_ITEMSIZE,
+    saved_ini_parameters,
 )
 
 
 ###############################################################################
 
-parameter_array = [
-    "number_of_binaries",
-    "binary_fraction_scheme",
-    "binary_fraction_const",
-    "star_formation",
-    "max_simulation_time",
-    "primary_mass_scheme",
-    "primary_mass_min",
-    "primary_mass_max",
-    "secondary_mass_scheme",
-    "secondary_mass_min",
-    "secondary_mass_max",
-    "orbital_scheme",
-    "orbital_period_scheme",
-    "orbital_period_min",
-    "orbital_period_max",
-    "orbital_separation_scheme",
-    "orbital_separation_min",
-    "orbital_separation_max",
-    "eccentricity_scheme",
-]
 
 
 class PopulationRunner:
@@ -865,7 +845,7 @@ class PopulationIO:
     mass_per_metallicity : pandas.DataFrame
         A DataFrame containing mass per metallicity data.
     ini_params : dict
-        A dictionary containing some ini parameters, described in parameter_array.
+        A dictionary containing some ini parameters, described in saved_ini_parameters.
 
     """
 
@@ -935,7 +915,7 @@ class PopulationIO:
         with pd.HDFStore(filename, mode="a") as store:
             # write ini parameters to file
             tmp_df = pd.DataFrame()
-            for c in parameter_array:
+            for c in saved_ini_parameters:
                 try:
                     tmp_df[c] = [self.ini_params[c]]
                 except KeyError:
@@ -945,7 +925,7 @@ class PopulationIO:
     def _load_ini_params(self, filename):
         """Load the ini parameters from the file.
 
-        The values loaded from file are stored in the parameter_array.
+        The values loaded from file are stored in the saved_ini_parameters.
 
         Parameters
         ----------
@@ -957,7 +937,7 @@ class PopulationIO:
         with pd.HDFStore(filename,mode="r",) as store:
             tmp_df = store["ini_parameters"]
             self.ini_params = {}
-            for c in parameter_array:
+            for c in saved_ini_parameters:
                 try:
                     self.ini_params[c] = tmp_df[c][0]
                 except KeyError:
