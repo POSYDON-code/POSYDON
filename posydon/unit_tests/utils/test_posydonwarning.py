@@ -29,9 +29,10 @@ class TestElements:
                     'InterpolationWarning', 'MissingFilesWarning',\
                     'NoPOSYDONWarnings', 'OverwriteWarning', 'SFHModelWarning',\
                     'POSYDONWarning','Pwarn', 'ReplaceValueWarning',\
-                    'SetPOSYDONWarnings', 'ValueWarning', 'StepWarning', \
-                    'UnsupportedModelWarning', '_CAUGHT_POSYDON_WARNINGS',\
-                    '_Caught_POSYDON_Warnings', '_POSYDONWarning_subclasses',\
+                    'SetPOSYDONWarnings', 'ValueWarning', 'StepWarning', 
+                    'InitializationWarning','UnsupportedModelWarning',\ 
+                    '_CAUGHT_POSYDON_WARNINGS','_Caught_POSYDON_Warnings',\
+                    '_POSYDONWarning_subclasses',\
                     '_POSYDON_WARNINGS_REGISTRY', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
@@ -548,6 +549,21 @@ class TestStepWarning:
         assert isinstance(StepWarning,\
                           totest.StepWarning)
         assert StepWarning.message == ''
+class TestInitializationWarning:
+    @fixture
+    def StepWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.InitializationWarning()
+
+    # test the UnsupportedModelWarning class
+    def test_init(self, InitializationWarning):
+        assert isroutine(InitializationWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(InitializationWarning,\
+                          totest.InitializationWarning)
+        assert InitializationWarning.message == ''
+
 
 class Test_Caught_POSYDON_Warnings:
     @fixture

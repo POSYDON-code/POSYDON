@@ -171,8 +171,8 @@ class SingleStar:
             default_core_X = X
             default_core_Y = Y
         # POST-MS
-        elif "_non_burning" in state:
-            # default TAMS, either accreted He or H-rich
+        elif "burning" in state and ("_Shell_" in state or "_non_" in state):
+            # default TAMS, either accreted He or H-rich, low core X, high Y
             default_core_X = THRESHOLD_CENTRAL_ABUNDANCE
             default_core_Y = 1.0 - default_core_X - Z
             if "stripped_He" in state:
@@ -225,6 +225,15 @@ class SingleStar:
                              star_CO=True)
             if state != inferred_state:
                 kwargs['state'] = inferred_state
+        else:
+            # some state not caught above, default HMS ZAMS
+            Pwarn(f"The initial state {state} was not caught in "
+                  "SingleStar.__init__() so it was initialized " \
+                  "as an H-rich_Core_H_burning star.", 
+                  "InitializationWarning")
+            default_core_X = X
+            default_core_Y = Y
+
 
         # Done setting initial values, assign everything to SingleStar next
 
