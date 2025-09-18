@@ -16,6 +16,7 @@ __authors__ = [
 
 import os
 import numpy as np
+import pandas as pd
 
 from posydon.interpolation.interpolation import psyTrackInterp
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
@@ -328,7 +329,7 @@ class MesaGridStep:
             flip_stars(binary)
         max_MESA_sim_time = self.get_final_MESA_step_time()
 
-        if max_MESA_sim_time is None:
+        if pd.isna(max_MESA_sim_time):
             if self.flip_stars_before_step:
                 flip_stars(binary)
             binary.state = 'initial_RLOF'
