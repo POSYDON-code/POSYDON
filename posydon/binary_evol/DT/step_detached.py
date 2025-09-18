@@ -1105,7 +1105,29 @@ class detached_evolution:
         self.t = t0
 
     def update_props(self, t, y):
-        """ Update properties of stars w/ current age during detached evolution."""
+        """ 
+            Update properties of stars w/ current age during detached evolution.
+        This uses the interp1d objects (PchipInterpolator2) of the primary and 
+        secondary to interpolate stellar properties using the current time of 
+        integration, t, along a stellar track. Compact objects have no stellar 
+        track to interpolate along, and simply either have copies of the surviving 
+        star, or array-like, zeroed arrays.
+
+            The primary and secondary (SingleStar objects) are each given a new 
+        attribute called `latest` that is a dictionary containing the stellar 
+        properties of the star at the latest time of integration, t, for access 
+        in calculations during step_detached evolution.
+        
+        Parameters
+        ----------
+            t : float
+                The current time of integration during solve_ivp().
+
+            y : list
+                The current set of solutions for orbital separation [Rsol],
+            orbital eccentricity, spin of the secondary star [rad/yr], and 
+            spin of the primary star [rad/yr].
+        """
 
         # updating star properties with interpolated values at current time
         # TODO: update star current/history progressively here rather than after evo?

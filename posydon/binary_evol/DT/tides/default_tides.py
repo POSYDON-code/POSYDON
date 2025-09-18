@@ -4,6 +4,51 @@ import posydon.utils.constants as const
 
 def default_tides(a, e, primary, secondary, verbose=False):
 
+    """
+        Calculates the change in orbital separation and eccentricity, 
+    plus change in spin of each star due to tides, according to: 
+    
+        Hut, P. 1981, A&A, 99, 126
+
+    Parameters
+    ----------
+        a : float
+            The current orbital separation. [Rsolar]
+
+        e : float
+            The current orbital eccentricity.
+
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        verbose : bool
+            True if we want to print stuff.
+    
+    Returns
+    -------
+        da : float
+            The change in orbital separation for a time step in 
+        step_detached's solve_ivp(). [Rsolar/yr]
+
+        de : float
+            The change in orbital eccentricity for a time step in 
+        step_detached's solve_ivp().
+
+        dOmega_sec : float
+            The change in rotation rate of the secondary (less evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+        
+        dOmega_pri : float
+            The change in rotation rate of the primary (more evolved) 
+        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
+
+    """
+
     m1 = primary.latest["mass"]
     R1 = primary.latest["R"]
     m_env1 = primary.latest["mass_conv_reg_fortides"]
