@@ -1,0 +1,613 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.flow_chart &mdash; posydon 2.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=b3e23499"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.flow_chart</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.flow_chart</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module setting the default evolution flow and allowing alterations.</span>
+
+<span class="sd">This file contains the offical POSYDON flow chart binary evolution. To support</span>
+<span class="sd">future development and deal with complexity it is build dynamically.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Tassos Fragos &lt;Anastasios.Fragkos@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Zepei Xing &lt;Zepei.Xing@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Seth Gossage &lt;seth.gossage@northwestern.edu&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="n">STAR_STATES_ALL</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;WD&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;BH&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;massless_remnant&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_Core_He_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_Shell_H_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_Core_He_depleted&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_Shell_He_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_Core_C_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_Core_C_depleted&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_non_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;accreted_He_Core_H_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;accreted_He_Shell_H_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;accreted_He_non_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;accreted_He_Core_He_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stripped_He_Core_He_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stripped_He_Core_He_depleted&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stripped_He_Core_C_depleted&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stripped_He_non_burning&#39;</span>
+<span class="p">]</span>
+
+<span class="n">STAR_STATES_CO</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BH&#39;</span><span class="p">,</span> <span class="s1">&#39;NS&#39;</span><span class="p">,</span> <span class="s1">&#39;WD&#39;</span><span class="p">]</span>
+<span class="n">STAR_STATES_NOT_NORMALSTAR</span> <span class="o">=</span> <span class="n">STAR_STATES_CO</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">STAR_STATES_NOT_NORMALSTAR</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;massless_remnant&#39;</span><span class="p">)</span>
+
+<span class="n">STAR_STATES_NOT_CO</span> <span class="o">=</span> <span class="n">STAR_STATES_ALL</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="p">[</span><span class="n">STAR_STATES_NOT_CO</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">]</span>
+
+<span class="n">STAR_STATES_NORMALSTAR</span> <span class="o">=</span> <span class="n">STAR_STATES_ALL</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="p">[</span><span class="n">STAR_STATES_NORMALSTAR</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">STAR_STATES_NOT_NORMALSTAR</span><span class="p">]</span>
+
+<span class="n">STAR_STATES_H_RICH</span> <span class="o">=</span> <span class="n">STAR_STATES_NORMALSTAR</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="p">[</span><span class="n">STAR_STATES_H_RICH</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;stripped_He_Core_He_burning&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;stripped_He_Core_He_depleted&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;stripped_He_Core_C_depleted&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;stripped_He_non_burning&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;accreted_He_Core_He_burning&#39;</span><span class="p">]]</span>
+
+<span class="n">STAR_STATES_HE_RICH</span> <span class="o">=</span> <span class="n">STAR_STATES_NORMALSTAR</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="p">[</span><span class="n">STAR_STATES_HE_RICH</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;H-rich_Core_He_burning&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;H-rich_Shell_H_burning&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;H-rich_Core_He_depleted&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;H-rich_Shell_He_burning&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;H-rich_Core_C_burning&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;H-rich_Core_C_depleted&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;accreted_He_Core_H_burning&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;accreted_He_Shell_H_burning&#39;</span><span class="p">]]</span>
+
+<span class="n">STAR_STATES_C_DEPLETED</span> <span class="o">=</span> <span class="p">[</span><span class="n">st</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span> <span class="k">if</span> <span class="s2">&quot;C_depleted&quot;</span> <span class="ow">in</span> <span class="n">st</span><span class="p">]</span>
+
+<span class="n">STAR_STATES_POST_MS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;H-rich_Core_H_burning&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;H-rich_Shell_H_burning&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;H-rich_Core_He_burning&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;H-rich_Core_He_depleted&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;H-rich_Core_C_depleted&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;H-rich_non_burning&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;accreted_He_non_burning&quot;</span>
+<span class="p">]</span>
+
+
+<span class="n">STAR_STATES_POST_HeMS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;accreted_He_Core_He_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stripped_He_Core_He_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stripped_He_Core_He_depleted&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stripped_He_Core_C_depleted&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stripped_He_non_burning&#39;</span>
+<span class="p">]</span>
+
+<span class="c1"># these states can be evolved through MESA grids</span>
+<span class="n">STAR_STATES_H_RICH_EVOLVABLE</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">STAR_STATES_H_RICH</span><span class="p">)</span>
+                                    <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">STAR_STATES_C_DEPLETED</span><span class="p">))</span>
+
+<span class="n">STAR_STATES_HE_RICH_EVOLVABLE</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">STAR_STATES_HE_RICH</span><span class="p">)</span>
+                                     <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">STAR_STATES_C_DEPLETED</span><span class="p">))</span>
+
+<span class="c1"># CE ejection happens instantanously, so the star does not readjust before</span>
+<span class="c1"># we infer the state. If core_definition_H_fraction=0.1, then surface_h1=0.1,</span>
+<span class="c1"># and the state is H-rich_non_burning which we stil want to evolve thorugh</span>
+<span class="c1"># the step_CO_HeMS</span>
+<span class="n">STAR_STATES_HE_RICH_EVOLVABLE</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;H-rich_non_burning&#39;</span><span class="p">])</span>
+
+<span class="c1"># core collapse</span>
+<span class="n">STAR_STATES_CC</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;H-rich_Core_C_depleted&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_Core_He_depleted&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stripped_He_Core_He_depleted&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;stripped_He_Core_C_depleted&#39;</span><span class="p">,</span>
+    <span class="c1"># catch runs with gamma center limit which map to WD</span>
+    <span class="s1">&#39;stripped_He_non_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_non_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H-rich_Shell_H_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;accreted_He_Shell_H_burning&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;accreted_He_non_burning&#39;</span>
+    <span class="p">]</span>
+
+<span class="c1"># states to ID an HMS star (Xcore &gt; 0.01)</span>
+<span class="c1"># TODO: build these from the other lists to (hopefully) </span>
+<span class="c1">#       ensure consistency</span>
+<span class="n">STAR_STATES_FOR_HMS_MATCHING</span> <span class="o">=</span> <span class="p">[</span><span class="n">st</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">STAR_STATES_NORMALSTAR</span> <span class="k">if</span> \
+                                <span class="p">(</span><span class="s2">&quot;Core_H_burning&quot;</span> <span class="ow">in</span> <span class="n">st</span><span class="p">)]</span>
+
+<span class="c1"># states to ID a postMS star (Xcore &lt; 0.01, Xsurf &gt; 0.01)</span>
+<span class="n">STAR_STATES_FOR_postMS_MATCHING</span> <span class="o">=</span> <span class="p">[</span><span class="n">st</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">STAR_STATES_NORMALSTAR</span> <span class="k">if</span> \
+                                   <span class="p">((</span><span class="s2">&quot;Core_H_burning&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="s2">&quot;stripped_He&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="p">))]</span>
+
+<span class="c1"># states to ID an He star (Xcore &lt; 0.01, Xsurf &lt; 0.01)</span>
+<span class="n">STAR_STATES_FOR_Hestar_MATCHING</span> <span class="o">=</span> <span class="p">[</span><span class="n">st</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">STAR_STATES_NORMALSTAR</span> <span class="k">if</span> \
+                                   <span class="p">(</span><span class="s2">&quot;stripped_He&quot;</span> <span class="ow">in</span> <span class="n">st</span><span class="p">)]</span>
+<span class="n">STAR_STATES_FOR_Hestar_MATCHING</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;accreted_He_Core_He_burning&#39;</span><span class="p">])</span>
+
+<span class="n">BINARY_STATES_ALL</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;initially_single_star&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;detached&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;RLO1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;contact&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;disrupted&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;merged&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;initial_RLOF&#39;</span>
+<span class="p">]</span>
+
+<span class="n">BINARY_STATES_CC</span> <span class="o">=</span> <span class="n">BINARY_STATES_ALL</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="n">BINARY_EVENTS_ALL</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;CC1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CC2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ZAMS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;oRLO1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;oRLO2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;oCE1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;oCE2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;oDoubleCE1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;oDoubleCE2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CO_contact&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;redirect_from_ZAMS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;redirect_from_CO_HMS_RLO&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;redirect_from_CO_HeMS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;redirect_from_CO_HeMS_RLO&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MaxTime_exceeded&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;maxtime&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;oMerging1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;oMerging2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Match1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Match2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Match12&#39;</span>
+<span class="p">]</span>
+
+<span class="n">BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED</span> <span class="o">=</span> <span class="n">BINARY_EVENTS_ALL</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="p">[</span><span class="n">BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CC1&#39;</span><span class="p">,</span><span class="s1">&#39;CC2&#39;</span><span class="p">,</span><span class="s1">&#39;MaxTime_exceeded&#39;</span><span class="p">,</span><span class="s1">&#39;maxtime&#39;</span><span class="p">]]</span>
+
+<span class="c1">## a list of known total binary states that can occur,</span>
+<span class="c1">## but are not in the flow chart and will not be added to POSYDON</span>
+<span class="n">UNDEFINED_STATES</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;disrupted&#39;</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">]:</span>
+        <span class="n">UNDEFINED_STATES</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s1">&#39;CC2&#39;</span><span class="p">))</span>
+
+<span class="c1"># dynamically construct the flow chart</span>
+<span class="n">POSYDON_FLOW_CHART</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># mesa grid ZAMS</span>
+<span class="n">STAR_STATES_ZAMS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">]</span>
+<span class="n">BINARY_STATES_ZAMS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;detached&#39;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">BINARY_STATES_ZAMS</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_ZAMS</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_ZAMS</span><span class="p">:</span>
+            <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_HMS_HMS&#39;</span>
+
+<span class="c1"># ZAMS very wide binary that falls outside the grid</span>
+<span class="c1"># and has been returned by step_HMS_HMS</span>
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">BINARY_STATES_ZAMS</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_ZAMS</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_ZAMS</span><span class="p">:</span>
+            <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s1">&#39;redirect_from_ZAMS&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+
+
+<span class="c1"># stripped_He star in a detached binary another H- or stripped_He star</span>
+<span class="c1"># This will be the outcome of a CE.</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_NORMALSTAR</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_NORMALSTAR</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+
+
+<span class="c1"># H-rich star in a detached binary with a compact object</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_H_RICH</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+
+
+<span class="c1"># H-rich star roche-lobe overflow onto a compact object</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_H_RICH_EVOLVABLE</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;RLO1&#39;</span><span class="p">,</span> <span class="s1">&#39;oRLO1&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CO_HMS_RLO&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span> <span class="s1">&#39;oRLO2&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CO_HMS_RLO&#39;</span>
+
+<span class="c1"># H-rich star in a detached binary with a compact object</span>
+<span class="c1"># that fall outside the grid and has been returned by step_CO_HMS_RLO</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_H_RICH</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s2">&quot;redirect_from_CO_HMS_RLO&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s2">&quot;redirect_from_CO_HMS_RLO&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+
+<span class="c1"># stripped_He star in a detached binary with a compact object</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH_EVOLVABLE</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CO_HeMS&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CO_HeMS&#39;</span>
+
+<span class="c1"># stripped_He star in a detached binary with a compact object</span>
+<span class="c1"># that fall outside the grid and has been returned by step_CO_HeMS</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s2">&quot;redirect_from_CO_HeMS&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s2">&quot;redirect_from_CO_HeMS&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+
+<span class="c1"># He-rich star roche-lobe overflow onto a compact object</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH_EVOLVABLE</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;RLO1&#39;</span><span class="p">,</span> <span class="s1">&#39;oRLO1&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CO_HeMS_RLO&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span> <span class="s1">&#39;oRLO2&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CO_HeMS_RLO&#39;</span>
+
+<span class="c1"># He-rich star roche-lobe overflow onto a compact object</span>
+<span class="c1"># that fall outside the grid and has been returned by step_CO_HeMS_RLO</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s2">&quot;redirect_from_CO_HeMS_RLO&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s2">&quot;redirect_from_CO_HeMS_RLO&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+
+<span class="c1">## He-rich star roche-lobe overflow onto another He-rich star</span>
+<span class="c1">## assume these systems always merge </span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;RLO1&#39;</span><span class="p">,</span> <span class="s2">&quot;oRLO1&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_merged&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span> <span class="s2">&quot;oRLO2&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_merged&#39;</span>
+
+<span class="c1"># Binaries that go to common envelope</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_NORMALSTAR</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;RLO1&#39;</span><span class="p">,</span> <span class="s1">&#39;oCE1&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CE&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;RLO1&#39;</span><span class="p">,</span> <span class="s1">&#39;oDoubleCE1&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CE&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span> <span class="s1">&#39;oCE2&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CE&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span> <span class="s1">&#39;oDoubleCE2&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CE&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="s1">&#39;oCE1&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CE&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="s1">&#39;oCE2&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CE&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="s1">&#39;oDoubleCE1&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CE&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="s1">&#39;oDoubleCE2&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_CE&#39;</span>
+
+
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">BINARY_STATES_CC</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_CC</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+            <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s1">&#39;CC1&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_SN&#39;</span>
+            <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s1">&#39;CC2&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_SN&#39;</span>
+
+<span class="c1"># Double compact objects. These can either be sent to the orbital evolution</span>
+<span class="c1"># due to GR step, or end the evolution by setting the &#39;step_dco&#39; to end</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_dco&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_dco&#39;</span>
+
+
+<span class="c1"># catch states to be ended</span>
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;initial_RLOF&#39;</span><span class="p">]:</span>    
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">BINARY_EVENTS_ALL</span><span class="p">:</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_end&#39;</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_end&#39;</span>
+
+
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;initially_single_star&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ZAMS&#39;</span><span class="p">]:</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_initially_single&#39;</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_initially_single&#39;</span>
+
+
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;disrupted&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED</span><span class="p">:</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_disrupted&#39;</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_disrupted&#39;</span>
+
+<span class="c1"># if we have two compact objects in a disrupted binary, we stop the evolution.</span>
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;disrupted&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">BINARY_EVENTS_ALL</span><span class="p">:</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_end&#39;</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_end&#39;</span>
+
+
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;merged&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;oMerging1&#39;</span><span class="p">,</span> <span class="s1">&#39;oMerging2&#39;</span><span class="p">]:</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_merged&#39;</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_merged&#39;</span>
+
+<span class="c1"># catch initial_RLO states</span>
+<span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;initial_RLOF&#39;</span><span class="p">,</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_end&#39;</span>
+        <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="s1">&#39;initial_RLOF&#39;</span><span class="p">,</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_end&#39;</span>
+
+<span class="c1"># catch all maxtime</span>
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">BINARY_STATES_ALL</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_ALL</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;maxtime&#39;</span><span class="p">,</span> <span class="s1">&#39;MaxTime_exceeded&#39;</span><span class="p">,</span> <span class="s1">&#39;CO_contact&#39;</span><span class="p">]:</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_end&#39;</span>
+
+<span class="c1"># catch all massless remnants with compact objects</span>
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">BINARY_STATES_ALL</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_CO</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;massless_remnant&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">BINARY_EVENTS_ALL</span><span class="p">:</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_end&#39;</span>
+                <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_end&#39;</span>
+
+<span class="c1"># catch two massless remnants</span>
+<span class="c1"># separate for readability</span>
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">BINARY_STATES_ALL</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;massless_remnant&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">BINARY_EVENTS_ALL</span><span class="p">:</span>
+            <span class="n">POSYDON_FLOW_CHART</span><span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_end&#39;</span>
+            
+<div class="viewcode-block" id="flow_chart">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.flow_chart.flow_chart">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">flow_chart</span><span class="p">(</span><span class="n">FLOW_CHART</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">CHANGE_FLOW_CHART</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate the flow chart.</span>
+
+<span class="sd">    Default step nomenclature:</span>
+<span class="sd">    - step_SN :  StepSN in posydon/bianry_evol/SN/step_SN.py</span>
+<span class="sd">    - step_HMS_HMS : MS_MS_step in posydon/binary_evol/mesa_step.py</span>
+<span class="sd">    - step_CO_HMS_RLO : CO_HMS_RLO_step in posydon/binary_evol/mesa_step.py</span>
+<span class="sd">    - step_CO_HeMS : CO_HeMS_step in posydon/binary_evol/mesa_step.py</span>
+<span class="sd">    - step_detached : detached_step in posydon/binary_evol/detached_step.py</span>
+<span class="sd">    - step_CE : StepCEE in posydon/binary_evol/CE/step_CEE.py</span>
+<span class="sd">    - step_dco : DoubleCO in posydon/binary_evol/double_CO.py</span>
+<span class="sd">    - step_end</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    FLOW_CHART : dict</span>
+<span class="sd">        Flow chart that maps the tuple (star_1_state, star_1_state,</span>
+<span class="sd">        binary_state, binary_event) to a step.</span>
+<span class="sd">    CHANGE_FLOW_CHART : dict</span>
+<span class="sd">        Flow chart to change the default FLOW_CHART. E.g.</span>
+<span class="sd">        CHANGE_FLOW_CHART = {(&#39;NS&#39;, &#39;NS&#39;, &#39;detached&#39;, None) : &#39;step_end&#39;,</span>
+<span class="sd">                             (&#39;NS&#39;, &#39;HeMS&#39;, &#39;RLO1&#39;, &#39;pRLO1&#39;) : &#39;step_my_RLO1&#39;}</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Flow chart.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">FLOW_CHART</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">FLOW_CHART</span> <span class="o">=</span> <span class="n">POSYDON_FLOW_CHART</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">CHANGE_FLOW_CHART</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">CHANGE_FLOW_CHART</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">FLOW_CHART</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="c1"># this assume CHANGE_FLOW_CHART[key] = &#39;step_XXX&#39;</span>
+                <span class="n">FLOW_CHART</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">CHANGE_FLOW_CHART</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">FLOW_CHART</span></div>
+
+
+
+<div class="viewcode-block" id="initial_eccentricity_flow_chart">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.flow_chart.initial_eccentricity_flow_chart">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initial_eccentricity_flow_chart</span><span class="p">(</span><span class="n">FLOW_CHART</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">CHANGE_FLOW_CHART</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Modify POSYDON&#39;s default flow to:</span>
+<span class="sd">        ZAMS binaries -&gt; detached</span>
+<span class="sd">        oRLO1/oRLO2 -&gt; HMS-HMS RLO grid</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    FLOW_CHART : dict or None</span>
+<span class="sd">    CHANGE_FLOW_CHART : dict or None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Modified flow chart.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># get POSYDON&#39;s default flow chart</span>
+    <span class="k">if</span> <span class="n">FLOW_CHART</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">CHANGE_FLOW_CHART</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">MY_FLOW_CHART</span> <span class="o">=</span> <span class="n">flow_chart</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">MY_FLOW_CHART</span> <span class="o">=</span> <span class="n">flow_chart</span><span class="p">(</span><span class="n">CHANGE_FLOW_CHART</span><span class="o">=</span><span class="n">CHANGE_FLOW_CHART</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">CHANGE_FLOW_CHART</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">MY_FLOW_CHART</span> <span class="o">=</span> <span class="n">flow_chart</span><span class="p">(</span><span class="n">FLOW_CHART</span><span class="o">=</span><span class="n">FLOW_CHART</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">MY_FLOW_CHART</span> <span class="o">=</span> <span class="n">flow_chart</span><span class="p">(</span><span class="n">FLOW_CHART</span><span class="o">=</span><span class="n">FLOW_CHART</span><span class="p">,</span>
+                                       <span class="n">CHANGE_FLOW_CHART</span><span class="o">=</span><span class="n">CHANGE_FLOW_CHART</span><span class="p">)</span>
+    
+    <span class="c1"># modify the default flow chart</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">MY_FLOW_CHART</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">s1_state</span><span class="p">,</span> <span class="n">s2_state</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">event</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="c1"># always take ZAMS binaries to step_detached</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;ZAMS&#39;</span> <span class="ow">and</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">BINARY_STATES_ZAMS</span><span class="p">:</span> <span class="c1"># check for event</span>
+            <span class="n">MY_FLOW_CHART</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;step_detached&#39;</span>
+
+    <span class="c1"># Add two stars initating RLO (now coming from detached) into flow chart</span>
+    <span class="c1"># Add stripped stars (from winds) initating RLO</span>
+    <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">STAR_STATES_H_RICH_EVOLVABLE</span> <span class="o">+</span> <span class="n">STAR_STATES_HE_RICH_EVOLVABLE</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">STAR_STATES_H_RICH_EVOLVABLE</span> <span class="o">+</span> <span class="n">STAR_STATES_HE_RICH_EVOLVABLE</span><span class="p">:</span>
+            <span class="n">MY_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;RLO1&#39;</span><span class="p">,</span> <span class="s1">&#39;oRLO1&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_HMS_HMS_RLO&#39;</span>
+            <span class="n">MY_FLOW_CHART</span><span class="p">[(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span> <span class="s1">&#39;oRLO2&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="s1">&#39;step_HMS_HMS_RLO&#39;</span>
+    
+    <span class="k">return</span> <span class="n">MY_FLOW_CHART</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.2/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

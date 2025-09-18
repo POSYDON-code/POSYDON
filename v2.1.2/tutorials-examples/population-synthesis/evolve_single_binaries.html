@@ -1,0 +1,555 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evolve individual binaries 🐞 &mdash; posydon 2.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b3e23499"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Custom POSYDON steps and flow chart" href="custom_step_and_flow.html" />
+    <link rel="prev" title="Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖" href="one_met_pop_syn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Evolve individual binaries 🐞</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_step_and_flow.html">Custom POSYDON steps and flow chart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+      <li class="breadcrumb-item active">Evolve individual binaries 🐞</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/population-synthesis/evolve_single_binaries.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Evolve-individual-binaries-🐞">
+<h1>Evolve individual binaries 🐞<a class="headerlink" href="#Evolve-individual-binaries-🐞" title="Link to this heading"></a></h1>
+<p>It can be extremely useful to evolve a single binary from specific initial conditions or to start at a specific evolutionary state. This is useful for debugging binaries and checking if your custom steps or flow are working correctly.</p>
+<p>This tutorial will cover:</p>
+<ul class="simple">
+<li><p>How to initialise a zero-age main sequence binary (ZAMS).</p></li>
+<li><p>How to re-evolve a binary in an existing population.</p></li>
+<li><p>How to evolve a binary from specific initial states.</p></li>
+</ul>
+<section id="Evolve-a-ZAMS-binary">
+<h2>Evolve a ZAMS binary<a class="headerlink" href="#Evolve-a-ZAMS-binary" title="Link to this heading"></a></h2>
+<p>To evolve a binary from ZAMS, we will:</p>
+<ol class="arabic simple">
+<li><p>Load the standard simulation properties.</p></li>
+<li><p>Load the steps.</p></li>
+<li><p>Initialise the binary.</p></li>
+<li><p>Evolve it.</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the function to load the simulation properties from the ini file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">simprop_kwargs_from_ini</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProperties</span>
+
+<span class="c1"># Load the simulation properties from the default ini file.</span>
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">)</span>
+<span class="c1"># manually add the metallicity to each step that requires it</span>
+<span class="n">metallicity</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;metallicity&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_HMS_HMS&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HeMS&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HMS_RLO&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HeMS_RLO&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_detached&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_disrupted&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_merged&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_initially_single&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+
+<span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+<span class="c1"># Load the steps and required data</span>
+<span class="n">sim_prop</span><span class="o">.</span><span class="n">load_steps</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the binary and single star classes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.singlestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">SingleStar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.binarystar</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryStar</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">STAR1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="mf">30.782576</span><span class="p">,</span>
+                      <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">})</span>
+<span class="n">STAR2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;mass&#39;</span><span class="p">:</span><span class="mf">20.273864</span><span class="p">,</span>
+                      <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">})</span>
+
+<span class="n">BINARY</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">STAR1</span><span class="p">,</span> <span class="n">STAR2</span><span class="p">,</span>
+                    <span class="o">**</span><span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">:</span><span class="mf">3513.150157</span><span class="p">,</span> <span class="s1">&#39;eccentricity&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+                    <span class="n">properties</span> <span class="o">=</span> <span class="n">sim_prop</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: depending on the evolution of the binary, you might get some warnings about the Roche lobe calculation.</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>You’re now able to access the binary and evolutionary information. Using the function, <code class="docutils literal notranslate"><span class="pre">BinaryStar.to_df()</span></code> we can inspect the evolution of the system.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># we will add the step names to the dataframe</span>
+<span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;step_names&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span> <span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span>
+
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<section id="Re-evolving-the-Binary">
+<h3>Re-evolving the Binary<a class="headerlink" href="#Re-evolving-the-Binary" title="Link to this heading"></a></h3>
+<p>The above binary might have been disrupted in the first or second SN due to the strength of the supernova kick. You can restore the binary completely or to a specific state and re-evolve it.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># restore to the original state</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Even though we reset the binary, the natal kick properties stored in the natal kick array are not reset. This is because we want to be able to re-evolve the binary to the same final state. If you want to reset the natal kick array values, then set its elements to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># kick magnitude km/s, azimuthal angle rad, polar angle rad and mean anomaly rad (TODO check documentation)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">BINARY</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">natal_kick_array</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">BINARY</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">natal_kick_array</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will be exactly the same evolution as the previous one</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<section id="Changing-the-kick">
+<h4>Changing the kick<a class="headerlink" href="#Changing-the-kick" title="Link to this heading"></a></h4>
+<p>We will restore the <code class="docutils literal notranslate"><span class="pre">BINARY</span></code> to its initial state and increase the first kick velocity to disrupt the binary after the first supernova.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># [velocity, azimuthal angle, polar angle, phase]</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">natal_kick_array</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1000.</span><span class="p">,</span> <span class="mf">0.858129274334538</span><span class="p">,</span> <span class="mf">1.9157148786534735</span><span class="p">,</span> <span class="mf">1.8675467897282945</span><span class="p">]</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">natal_kick_array</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="c1"># default</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">BINARY</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">natal_kick_array</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">BINARY</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">natal_kick_array</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Evolve-from-specific-step">
+<h4>Evolve from specific step<a class="headerlink" href="#Evolve-from-specific-step" title="Link to this heading"></a></h4>
+<p>You can provide the row number (starting at 0), to reset the binary to that specific evolutionary phase. This can be useful for debugging a specific evolutionary state.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[69]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="Loading-a-binary-from-an-existing-population">
+<h2>Loading a binary from an existing population<a class="headerlink" href="#Loading-a-binary-from-an-existing-population" title="Link to this heading"></a></h2>
+<p>Assume we run the population somewhere else and you have the h5 file associated with it, and you want to load the population in memory and re-evolve a binary. We will have to load the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file associated with the Population file to re-evolve the binary in the same way.</p>
+<p>We will use the <code class="docutils literal notranslate"><span class="pre">BBH_contact.h5</span></code> file in the example dataset and use the standard <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> SimulationProperties from earlier in this notebook.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
+
+
+<span class="n">data_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;PATH/TO/TUTORIAL/POPULATIONS/&#39;</span>
+
+<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s1">/BBH_contact.h5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Because the original population contains two extra columns. These have to be defined manually here.</span>
+<span class="c1"># Otherwise, resetting the binaries will fail.</span>
+<span class="n">BINARY</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">,</span><span class="s1">&#39;step_times&#39;</span><span class="p">:</span><span class="s1">&#39;float&#39;</span><span class="p">})</span>
+
+<span class="c1"># you have to set the simulation properties for the binary</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">sim_prop</span>
+
+<span class="c1"># Set the natal kick arrays from the oneline to get the exact same evolution as the original binary</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">natal_kick_array</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;S1_natal_kick_array_0&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_natal_kick_array_1&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_natal_kick_array_2&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_natal_kick_array_3&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">natal_kick_array</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;S2_natal_kick_array_0&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_natal_kick_array_1&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_natal_kick_array_2&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_natal_kick_array_3&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[146]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Evolving-a-Binary-Star-starting-from-an-arbitrary-state">
+<h2>Evolving a Binary Star starting from an arbitrary state<a class="headerlink" href="#Evolving-a-Binary-Star-starting-from-an-arbitrary-state" title="Link to this heading"></a></h2>
+<p>If you want to evolve a custom binary star, you can do so by manually creating the <code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> object and providing the <code class="docutils literal notranslate"><span class="pre">SimulationProperties</span></code> object. For example, let’s evolve a neutron star with a low-mass helium star in Roche lobe overflow. And start a binary in the detached step, which requires a bit of additional input data.</p>
+<p>We will use the standard SimulationProperties, loaded earlier in this notebook.</p>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle">Caution!</p>
+<p>While you can evolve a binary from an arbitrary state, you will need to provide data on the internal structure of the star, if you’re starting in the detached step. Otherwise, the matching to a single star model will not work!</p>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># we initialise the binary to be tight and Roche lobe overflowing in a circular orbit.</span>
+<span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">star_1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;NS&#39;</span><span class="p">,</span>
+                                           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
+                                           <span class="s1">&#39;spin&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,}),</span>
+                    <span class="n">star_2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
+                                           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
+                                           <span class="s1">&#39;natal_kick_array&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]}),</span>
+                    <span class="o">**</span><span class="p">{</span><span class="s1">&#39;time&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                       <span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;event&#39;</span> <span class="p">:</span> <span class="s1">&#39;oRLO2&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;orbital_period&#39;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                       <span class="s1">&#39;eccentricity&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
+                    <span class="n">properties</span> <span class="o">=</span> <span class="n">sim_prop</span><span class="p">,</span>
+                    <span class="p">)</span>
+<span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+<span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># we perform the same evolution, but with a stripped helium star to go to the CO_HeMS_RLO grid</span>
+<span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">star_1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;NS&#39;</span><span class="p">,</span>
+                                           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
+                                           <span class="s1">&#39;spin&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,}),</span>
+                    <span class="n">star_2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;stripped_He_Core_He_burning&#39;</span><span class="p">,</span>
+                                           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
+                                           <span class="s1">&#39;natal_kick_array&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]}),</span>
+                    <span class="o">**</span><span class="p">{</span><span class="s1">&#39;time&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                       <span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;event&#39;</span> <span class="p">:</span> <span class="s1">&#39;oRLO2&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;orbital_period&#39;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                       <span class="s1">&#39;eccentricity&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
+                    <span class="n">properties</span> <span class="o">=</span> <span class="n">sim_prop</span><span class="p">,</span>
+                    <span class="p">)</span>
+<span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+<span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>We will change the binary to a much wider system and have it start in the detached state. This requires additional starting information to allow the star to be matched to the single star grids.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[163]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zsun</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbital_separation_from_period</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="c1"># Setup the central abundances</span>
+<span class="n">zams_table</span> <span class="o">=</span> <span class="p">{</span><span class="mf">2.</span><span class="p">:</span> <span class="mf">2.915e-01</span><span class="p">,</span>
+                      <span class="mf">1.</span><span class="p">:</span> <span class="mf">2.703e-01</span><span class="p">,</span>
+                      <span class="mf">0.45</span><span class="p">:</span> <span class="mf">2.586e-01</span><span class="p">,</span>
+                      <span class="mf">0.2</span><span class="p">:</span> <span class="mf">2.533e-01</span><span class="p">,</span>
+                      <span class="mf">0.1</span><span class="p">:</span> <span class="mf">2.511e-01</span><span class="p">,</span>
+                      <span class="mf">0.01</span><span class="p">:</span> <span class="mf">2.492e-01</span><span class="p">,</span>
+                      <span class="mf">0.001</span><span class="p">:</span> <span class="mf">2.49e-01</span><span class="p">,</span>
+                      <span class="mf">0.0001</span><span class="p">:</span> <span class="mf">2.49e-01</span><span class="p">}</span>
+
+<span class="n">Y</span> <span class="o">=</span> <span class="n">zams_table</span><span class="p">[</span><span class="n">Z</span><span class="p">]</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span><span class="o">*</span><span class="n">Zsun</span>
+<span class="n">X</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">Y</span> <span class="o">-</span> <span class="n">Z</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">STAR1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;mass&#39;</span><span class="p">:</span><span class="mf">1.2</span><span class="p">,</span>
+                      <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;NS&#39;</span><span class="p">})</span>
+
+<span class="n">STAR2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="mf">17.782576</span><span class="p">,</span>
+                      <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
+                      <span class="c1"># add the metallicity and central abundances</span>
+                      <span class="s1">&#39;metallicity&#39;</span><span class="p">:</span><span class="n">Z</span><span class="p">,</span>
+                      <span class="s1">&#39;center_h1&#39;</span><span class="p">:</span><span class="n">X</span><span class="p">,</span>
+                      <span class="s1">&#39;center_he4&#39;</span><span class="p">:</span><span class="n">Y</span><span class="p">,</span>
+                      <span class="c1"># add a numerical value for the radius</span>
+                      <span class="s1">&#39;log_R&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                      <span class="c1"># add the helium core mass</span>
+                      <span class="s1">&#39;he_core_mass&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                      <span class="p">})</span>
+
+<span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">STAR1</span><span class="p">,</span> <span class="n">STAR2</span><span class="p">,</span>
+                    <span class="o">**</span><span class="p">{</span><span class="s1">&#39;time&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                       <span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;event&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="s1">&#39;orbital_period&#39;</span> <span class="p">:</span> <span class="mf">5000.</span><span class="p">,</span>
+                        <span class="c1"># calculate the separation; current bug that the separation is not automatically calculated if orbital period is given</span>
+                       <span class="s1">&#39;separation&#39;</span><span class="p">:</span> <span class="n">orbital_separation_from_period</span><span class="p">(</span><span class="mf">5000.</span><span class="p">,</span> <span class="mf">17.782576</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>
+                       <span class="s1">&#39;eccentricity&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
+                    <span class="n">properties</span> <span class="o">=</span> <span class="n">sim_prop</span><span class="p">,</span>
+                    <span class="p">)</span>
+<span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+<span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="one_met_pop_syn.html" class="btn btn-neutral float-left" title="Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="custom_step_and_flow.html" class="btn btn-neutral float-right" title="Custom POSYDON steps and flow chart" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.2/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

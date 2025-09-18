@@ -1,0 +1,649 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.visualization.VH_diagram.PresenterMultiple &mdash; posydon 2.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=b3e23499"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.visualization.VH_diagram.PresenterMultiple</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.visualization.VH_diagram.PresenterMultiple</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VHdiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">DisplayMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.Presenter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Presenter</span><span class="p">,</span> <span class="n">PresenterMode</span><span class="p">,</span> <span class="n">get_max_distance</span><span class="p">,</span><span class="n">CaseInfos</span><span class="p">,</span><span class="n">equal_with_epsilon</span><span class="p">,</span><span class="n">get_event_state_filename</span><span class="p">,</span><span class="n">file_exist</span><span class="p">,</span><span class="n">get_star_state_filename</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.GraphVisualizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">columnTYPE</span><span class="p">,</span><span class="n">StateInfos</span><span class="p">,</span><span class="n">ConnectedItem</span><span class="p">,</span> <span class="n">GraphVisualizerCase</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QApplication</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">QTimer</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<div class="viewcode-block" id="VHdiagramm_m">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.PresenterMultiple.VHdiagramm_m">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VHdiagramm_m</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle a multiple or hierarchical VH diagram plot.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">filename</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">frequency</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">hierarchy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">,</span>
+        <span class="n">displayMode</span><span class="o">=</span><span class="n">DisplayMode</span><span class="o">.</span><span class="n">WINDOW</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a VHdiagram_m instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_app</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">([])</span>
+    
+        <span class="c1">#PRESENTING HIERARCHICALLY</span>
+        <span class="k">if</span> <span class="n">hierarchy</span> <span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_presenter</span> <span class="o">=</span> <span class="n">Presenter_h</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="n">frequency</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_presenter</span><span class="o">.</span><span class="n">present_h</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">presentMode</span><span class="p">)</span>
+        <span class="c1">#PRESENTING MULTIPLES SIDE BY SIDE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_presenter</span> <span class="o">=</span> <span class="n">Presenter_m</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="n">frequency</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_presenter</span><span class="o">.</span><span class="n">present_m</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">presentMode</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">displayMode</span> <span class="o">==</span> <span class="n">DisplayMode</span><span class="o">.</span><span class="n">INLINE_B</span><span class="p">:</span>
+            <span class="c1">#void	singleShot(int msec, Functor functor)</span>
+            <span class="c1">#This static function calls functor after a given time interval.</span>
+            <span class="n">QTimer</span><span class="o">.</span><span class="n">singleShot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_inline_b</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="n">displayMode</span> <span class="o">==</span> <span class="n">DisplayMode</span><span class="o">.</span><span class="n">INLINE_S</span><span class="p">:</span>
+            <span class="n">QTimer</span><span class="o">.</span><span class="n">singleShot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_inline_s</span><span class="p">(</span><span class="n">figsize</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_app</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+    
+    <span class="c1">#Return indexes witch have been sorted hierarchycally for tree view</span>
+<div class="viewcode-block" id="VHdiagramm_m.get_sorted_index">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.PresenterMultiple.VHdiagramm_m.get_sorted_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sorted_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_presenter</span><span class="p">)</span> <span class="o">==</span> <span class="n">Presenter_h</span> <span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">dataf</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">dataf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_presenter</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">]</span>
+        <span class="k">else</span> <span class="p">:</span><span class="c1">#return empty if Presenter_h has no been called</span>
+            <span class="k">return</span> <span class="p">[]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_display_inline_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_presenter</span><span class="o">.</span><span class="n">screen</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_presenter</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filepath</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_display_inline_s</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figsize</span><span class="p">):</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_presenter</span><span class="o">.</span><span class="n">screen</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_presenter</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+        <span class="c1">#Display data as an image, i.e., on a 2D regular raster.</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Presenter_m">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.PresenterMultiple.Presenter_m">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Presenter_m</span><span class="p">(</span><span class="n">Presenter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle multiple Diagram view&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Presenter_m</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">=</span> <span class="n">frequency</span>
+        
+<div class="viewcode-block" id="Presenter_m.present_m">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.PresenterMultiple.Presenter_m.present_m">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">present_m</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexes</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Preset the binary.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">options</span><span class="p">()</span><span class="o">.</span><span class="n">set_showed_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span><span class="o">==</span> <span class="kc">None</span> <span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">}</span>
+    
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexes</span> <span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_corresponding_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_visualisation_m</span><span class="p">()</span><span class="c1">#redefined</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_main_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_visualisation_m</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the display according to current_index and present_mode.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_basic_columns_m</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_detailed_presentation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">REDUCED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_basic_columns_m</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reduced_presentation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">SIMPLIFIED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_basic_columns_m</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_simplified_presentation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_diagram_columns_m</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_digram_presentation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_basic_columns_m</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span><span class="c1">#THE REST USES 3 COLUMNS COL_SPAN=1</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add columns for Detailled/Reduced/Simplified View.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">TIMELINE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span><span class="si">}</span><span class="s2"> : TIME&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_S1_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_S1_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;S1&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;EVENT/STATE&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_S2_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_S2_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;S2&quot;</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_diagram_columns_m</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add columns for multiple Diagram View.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">TIMELINE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span><span class="p">]</span><span class="w"> </span><span class="si">:</span><span class="s2"> .2f</span><span class="si">}</span><span class="s2"> %&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Presenter_h">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.PresenterMultiple.Presenter_h">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Presenter_h</span><span class="p">(</span><span class="n">Presenter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles drawing binaries as hierarchical trees&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Presenter_h</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">=</span> <span class="n">frequency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_column_width</span> <span class="o">=</span> <span class="mi">400</span> <span class="c1">#fixed but could be dynamic</span>
+        
+<div class="viewcode-block" id="Presenter_h.present_h">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.PresenterMultiple.Presenter_h.present_h">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">present_h</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexes</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Preset the binary.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">=</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span> <span class="c1">#only available mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">options</span><span class="p">()</span><span class="o">.</span><span class="n">set_showed_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span><span class="p">)</span> <span class="c1">#keep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">==</span> <span class="kc">None</span> <span class="p">:</span><span class="c1">#default uniform percentage</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="mi">100</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">}</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_columns_indexes</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#list of corresponding binaries indexes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#list of corresponding dataframes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#list of corresponding CaseInfos/StateInfos (with pictures filenames to compare)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#List of edges in final tree view</span>
+    
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexes</span> <span class="p">:</span>
+            <span class="c1">#For every index prepare dataframe, add column and record it</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_corresponding_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_visualisation_h</span><span class="p">()</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diagram_presentation_h</span><span class="p">()</span><span class="c1">#sorting removing duplicate setting edges etc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_main_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span><span class="c1">#Graphical présentation</span></div>
+
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sort_h</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Hierarchical sorting of binaries the way python natureally sort tuples.</span>
+<span class="sd">        Tuples of représentation filenames here&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">info_col</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tuple_h</span><span class="p">(</span><span class="n">info_col</span><span class="p">))</span>
+        <span class="c1">#Reajusting column_id witch may be different from when created in _prepare_diagram_line()</span>
+        <span class="n">new_col_data</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">)):</span>
+            <span class="n">new_col_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">column_id</span><span class="p">]</span>
+            <span class="p">)</span> 
+            <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>                   
+                <span class="n">info</span><span class="o">.</span><span class="n">column_id</span> <span class="o">=</span> <span class="n">i</span><span class="c1">#don&#39;t forget the column_id</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span> <span class="o">=</span> <span class="n">new_col_data</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_tuple_h</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info_col</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of filenames of the picture (or centered_text) from the list of </span>
+<span class="sd">        StateInfos/CaseInfos for a given column&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">S1_filename</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">S2_filename</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">info</span><span class="o">.</span><span class="n">event_filename</span> <span class="o">==</span> <span class="kc">None</span>
+                <span class="p">)</span><span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">event_filename</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="o">==</span><span class="n">StateInfos</span>
+        <span class="p">)</span><span class="k">else</span> <span class="n">info</span><span class="o">.</span><span class="n">centered_text</span>
+                <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">info_col</span><span class="p">]</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compareInfos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info0</span><span class="p">,</span> <span class="n">info1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Conpare two Infos objects (can be CaseInfos or StateInfos)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">info0</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">info1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">info0</span><span class="p">)</span> <span class="o">==</span> <span class="n">StateInfos</span> <span class="p">:</span>
+                <span class="k">if</span> <span class="n">info0</span><span class="o">.</span><span class="n">event_filename</span> <span class="o">==</span> <span class="kc">None</span> <span class="o">==</span> <span class="n">info1</span><span class="o">.</span><span class="n">event_filename</span> <span class="p">:</span>
+                    <span class="k">return</span> <span class="p">(</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">info0</span><span class="o">.</span><span class="n">S1_filename</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">info1</span><span class="o">.</span><span class="n">S1_filename</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">info0</span><span class="o">.</span><span class="n">S2_filename</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">info1</span><span class="o">.</span><span class="n">S2_filename</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="p">)</span>
+                <span class="k">else</span> <span class="p">:</span><span class="c1">#One of event_filenames may still be None</span>
+                    <span class="k">return</span> <span class="n">info0</span><span class="o">.</span><span class="n">event_filename</span> <span class="o">==</span> <span class="n">info1</span><span class="o">.</span><span class="n">event_filename</span>
+            <span class="k">else</span> <span class="p">:</span>
+                <span class="k">return</span> <span class="n">info0</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">==</span> <span class="n">info1</span><span class="o">.</span><span class="n">centered_text</span>
+        <span class="k">else</span> <span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_remove_duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">start_col</span><span class="p">,</span>
+                          <span class="n">end_col</span><span class="p">,</span>
+                          <span class="n">line</span><span class="p">,</span>
+                          <span class="n">parent_col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove consecutive horizontally duplicated state to get the tree view</span>
+<span class="sd">        (recursively)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">start_col</span> <span class="o">&gt;</span> <span class="n">end_col</span> <span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">start_col</span> <span class="o">==</span> <span class="n">end_col</span> <span class="p">:</span>
+            <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">start_col</span><span class="p">][</span><span class="n">line</span> <span class="p">:</span> <span class="p">]</span> <span class="p">:</span>
+                <span class="c1">#edges are now vertical except maybe the state at line</span>
+                <span class="n">info</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">column_id</span>
+                <span class="c1">#binary&#39;s relative percentage</span>
+                <span class="n">rel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="o">==</span><span class="n">StateInfos</span> <span class="p">:</span>
+                    <span class="n">info</span><span class="o">.</span><span class="n">bot_texts</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">start_col</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">rel</span><span class="si">:</span><span class="s2"> .30f</span><span class="si">}</span><span class="s2"> %&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="p">:</span>
+                    <span class="n">info</span><span class="o">.</span><span class="n">bot_left_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">start_col</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">rel</span><span class="si">:</span><span class="s2"> .30f</span><span class="si">}</span><span class="s2"> %&quot;</span>
+                    
+            <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">line</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">start_col</span><span class="p">])</span> <span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">start_col</span><span class="p">][</span><span class="n">line</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">CaseInfos</span>
+            <span class="p">)</span> <span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">start_col</span><span class="p">][</span><span class="n">line</span><span class="p">]</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">([[</span><span class="n">line</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                             <span class="n">parent_col</span><span class="p">,</span>
+                             <span class="n">line</span><span class="p">,</span> 
+                             <span class="n">start_col</span><span class="p">]</span> <span class="p">])</span>
+            
+            <span class="k">return</span>
+
+        <span class="n">shortest_col</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">start_col</span> <span class="p">:</span> <span class="n">end_col</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="p">,</span>
+                       <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">info_col</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">info_col</span><span class="p">))</span>
+        
+        <span class="c1">#if no column is shorter that the length of the line</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shortest_col</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">info_col0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">start_col</span><span class="p">]</span>
+            <span class="c1">#Range of columns with same state at current line</span>
+            <span class="n">rg_column</span> <span class="o">=</span> <span class="p">[[</span><span class="n">start_col</span><span class="p">]]</span>
+            
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_col</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">end_col</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">info_col1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compareInfos</span><span class="p">(</span><span class="n">info_col0</span><span class="p">[</span><span class="n">line</span><span class="p">],</span> <span class="n">info_col1</span><span class="p">[</span><span class="n">line</span><span class="p">]):</span>
+                    <span class="c1">#replacing by empty state</span>
+                    <span class="n">info_col0</span><span class="p">[</span><span class="n">line</span><span class="p">]</span> <span class="o">=</span> <span class="n">CaseInfos</span><span class="p">(</span>
+                        <span class="n">info_col0</span><span class="p">[</span><span class="n">line</span><span class="p">]</span><span class="o">.</span><span class="n">column_id</span><span class="p">,</span>
+                        <span class="n">centered_txt</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">info_col0</span><span class="p">[</span><span class="n">line</span><span class="p">]</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1">#recording a new range</span>
+                    <span class="n">rg_column</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">rg_column</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">j</span><span class="p">])</span>
+                <span class="c1">#righ state become comparaison basis for the loop</span>
+                <span class="n">info_col0</span> <span class="o">=</span> <span class="n">info_col1</span>
+            <span class="n">rg_column</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">end_col</span><span class="p">)</span>
+            <span class="c1">#an edge (A --&gt; B) is represented by [x1, y1, x2, y2] where A:(x1,y1) and B:(x2,y2)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="o">.</span><span class="n">extend</span><span class="p">([[</span><span class="n">line</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                                 <span class="n">parent_col</span><span class="p">,</span>
+                                 <span class="n">line</span><span class="p">,</span> 
+                                 <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">rg_column</span><span class="p">])</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_center_column</span><span class="p">(</span><span class="n">rg_column</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            
+            <span class="c1">#recursive call with line+1</span>
+            <span class="k">for</span> <span class="n">start</span><span class="p">,</span><span class="n">end</span> <span class="ow">in</span> <span class="n">rg_column</span> <span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_remove_duplicate</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">line</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+                                      <span class="n">parent_col</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+        
+        <span class="c1">#if one column is shorter than the line&#39;s length separate range in two</span>
+        <span class="k">else</span> <span class="p">:</span><span class="c1">#(there may be more than one shorter column and/or in sequence)</span>
+            <span class="n">no_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">shortest_col</span><span class="p">,</span> <span class="n">start_col</span><span class="p">,</span> <span class="n">end_col</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_duplicate</span><span class="p">(</span><span class="n">start_col</span><span class="p">,</span> <span class="n">no_col</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">parent_col</span> <span class="o">=</span> <span class="n">parent_col</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_duplicate</span><span class="p">(</span><span class="n">no_col</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">end_col</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">parent_col</span> <span class="o">=</span> <span class="n">parent_col</span><span class="p">)</span>
+            
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">_center_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">range_column</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;move states in a range of columns from far right to center</span>
+<span class="sd">        also setting the sum of same states&#39;s frequencies appearance to be printed&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">range_column</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">-</span> <span class="n">k</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="p">:</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">line</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">line</span><span class="p">]</span> <span class="o">=</span> <span class="n">CaseInfos</span><span class="p">(</span>
+                        <span class="n">info</span><span class="o">.</span><span class="n">column_id</span><span class="p">,</span>
+                        <span class="n">centered_txt</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
+                    <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">line</span><span class="p">]</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">False</span>
+                
+                <span class="n">info</span><span class="o">.</span><span class="n">column_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="n">k</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">][</span><span class="n">line</span><span class="p">]</span><span class="o">.</span><span class="n">column_id</span>
+                <span class="n">relative_freq</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="o">==</span><span class="n">StateInfos</span> <span class="p">:</span>
+                    <span class="n">info</span><span class="o">.</span><span class="n">bot_texts</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">relative_freq</span><span class="si">:</span><span class="s2"> .25f</span><span class="si">}</span><span class="s2"> %&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="p">:</span>
+                    <span class="n">info</span><span class="o">.</span><span class="n">bot_left_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">relative_freq</span><span class="si">:</span><span class="s2"> .25f</span><span class="si">}</span><span class="s2"> %&quot;</span>
+                <span class="c1">#swapping</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="n">k</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">][</span><span class="n">line</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
+            <span class="k">elif</span> <span class="n">j</span><span class="o">==</span><span class="n">k</span> <span class="p">:</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">line</span><span class="p">]</span>
+                <span class="n">relative_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="o">==</span><span class="n">StateInfos</span> <span class="p">:</span>
+                    <span class="n">info</span><span class="o">.</span><span class="n">bot_texts</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">relative_freq</span><span class="si">:</span><span class="s2"> .25f</span><span class="si">}</span><span class="s2"> %&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="p">:</span>
+                    <span class="n">info</span><span class="o">.</span><span class="n">bot_left_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">relative_freq</span><span class="si">:</span><span class="s2"> .25f</span><span class="si">}</span><span class="s2"> %&quot;</span>      
+        
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_visualisation_h</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Hierarchy PresenterMode for the moment is only PresenterMode.DIAGRAM&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_basic_columns</span><span class="p">()</span><span class="c1">#irrelevant</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">REDUCED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_basic_columns</span><span class="p">()</span><span class="c1">#irrelevant</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reduced_presentation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">SIMPLIFIED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_basic_columns</span><span class="p">()</span><span class="c1">#irrelevant</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_simplified_presentation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_diagram_columns_h</span><span class="p">()</span>
+            
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_diagram_columns_h</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add columns for Diagram view set column minimum width and add index to _columns_indexes&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">setColumnMinimumWidth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_columns_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_diagram_presentation_h</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="n">simplified_datas</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#list of columns&#39;s simplified datas</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns_indexes</span><span class="p">:</span>
+            <span class="n">simplified_datas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_simplify_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns_indexes</span><span class="p">:</span>
+            <span class="n">simplified_data</span> <span class="o">=</span> <span class="n">simplified_datas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">max_distance_data</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">simplified_data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">get_max_distance</span><span class="p">)</span>
+            <span class="n">max_distance</span> <span class="o">=</span> <span class="n">get_max_distance</span><span class="p">(</span><span class="n">max_distance_data</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">_columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">_row_index</span> <span class="o">=</span> <span class="mi">16</span><span class="c1">#forget why</span>
+            
+            <span class="c1">#Filling the list of StateInfos of each lines of the column</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">line_data</span> <span class="ow">in</span> <span class="n">simplified_data</span><span class="p">:</span>
+                <span class="n">dline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_diagram_line</span><span class="p">(</span><span class="n">line_data</span><span class="p">,</span> <span class="n">max_distance</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dline</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            
+            <span class="c1">#We add a CaseInfos according to state_after of last simplified_datas</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">simplified_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="o">==</span> <span class="s2">&quot;disrupted&quot;</span>
+                <span class="ow">or</span> <span class="n">simplified_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="o">==</span> <span class="s2">&quot;merged&quot;</span>
+            <span class="p">):</span>
+                <span class="n">aditional_info</span> <span class="o">=</span> <span class="n">CaseInfos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span><span class="p">)</span>
+                <span class="n">aditional_info</span><span class="o">.</span><span class="n">border_width</span> <span class="o">=</span> <span class="mi">2</span>
+                <span class="n">aditional_info</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">=</span> <span class="n">simplified_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span>
+                    <span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aditional_info</span><span class="p">)</span>
+                <span class="n">aditional_info</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">False</span>
+                
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sort_h</span><span class="p">()</span><span class="c1">#Sorting columns hierarchically according to pictures filenames</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_duplicate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="c1">#Removing horizontal duplicate </span>
+        
+        <span class="c1">#Setting percentage of each column to be printed (above the column)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns_indexes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">binary_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns_data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">_columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">_row_index</span> <span class="o">=</span> <span class="mi">16</span> <span class="c1">#forget why</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">binary_index</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_frequency</span><span class="p">[</span><span class="n">binary_index</span><span class="p">]</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2"> %&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">line_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_line</span><span class="p">([</span><span class="n">line_info</span><span class="p">])</span>
+           
+        <span class="bp">self</span><span class="o">.</span><span class="n">_paint_obl_edges</span><span class="p">()</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_diagram_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">max_distance</span><span class="p">):</span>
+        
+        <span class="n">state_info</span> <span class="o">=</span> <span class="n">StateInfos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance_representation</span> <span class="ow">and</span> <span class="s2">&quot;separation&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">state_info</span><span class="o">.</span><span class="n">distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_distance_representation</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">],</span> <span class="n">max_distance</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">state_info</span><span class="o">.</span><span class="n">distance</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">state_before_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+            <span class="n">get_event_state_filename</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">state_after_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+            <span class="n">get_event_state_filename</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="o">!=</span> <span class="s2">&quot;detached&quot;</span>
+                <span class="ow">and</span> <span class="n">file_exist</span><span class="p">(</span><span class="n">state_after_filename</span><span class="p">)):</span>
+            <span class="n">state_info</span><span class="o">.</span><span class="n">event_filename</span> <span class="o">=</span> <span class="n">state_after_filename</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span> <span class="o">!=</span> <span class="s2">&quot;detached&quot;</span> <span class="ow">and</span> <span class="n">file_exist</span><span class="p">(</span>
+            <span class="n">state_before_filename</span>
+        <span class="p">):</span>
+            <span class="n">state_info</span><span class="o">.</span><span class="n">event_filename</span> <span class="o">=</span> <span class="n">state_before_filename</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">state_info</span><span class="o">.</span><span class="n">S1_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+                    <span class="n">get_star_state_filename</span><span class="p">(</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state_info</span><span class="o">.</span><span class="n">S1_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+                    <span class="n">get_star_state_filename</span><span class="p">(</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">state_info</span><span class="o">.</span><span class="n">S2_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+                    <span class="n">get_star_state_filename</span><span class="p">(</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state_info</span><span class="o">.</span><span class="n">S2_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+                    <span class="n">get_star_state_filename</span><span class="p">(</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+        <span class="n">state_info</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1">#Traditionnaly returning a list with StateInfos/CaseInfos/PointInfos so we return a list  </span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">state_info</span><span class="p">]</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_paint_obl_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adding oblic edges to be painted as ConnectedItem from edges added in self._edges&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i1</span><span class="p">,</span><span class="n">j1</span><span class="p">,</span><span class="n">i2</span><span class="p">,</span><span class="n">j2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">_columns</span><span class="p">[</span><span class="n">j1</span><span class="p">]</span><span class="o">.</span><span class="n">_connected_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">ConnectedItem</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">_columns</span><span class="p">[</span><span class="n">j1</span><span class="p">]</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">i1</span><span class="p">],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">_columns</span><span class="p">[</span><span class="n">j2</span><span class="p">]</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">i2</span><span class="p">]))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.2/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

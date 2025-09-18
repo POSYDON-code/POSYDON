@@ -1,0 +1,1393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.popsyn.binarypopulation &mdash; posydon 2.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=b3e23499"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.popsyn.binarypopulation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.popsyn.binarypopulation</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Create, evolve and save a binary star population.</span>
+
+<span class="sd">Large populations are RAM limited when holding an arbitrary</span>
+<span class="sd">number of BinaryStar instances. Therefore, by default the BinaryPopulation</span>
+<span class="sd">will generate binaries, evolve, and try to save them to disk one at a time.</span>
+
+<span class="sd">Create a BinaryPopulation instance from an inifile:</span>
+<span class="sd">I. CREATING A POPULATION</span>
+<span class="sd">------------------------</span>
+<span class="sd">a) One-liner for creating a BinaryPopulation from an inifile:</span>
+
+<span class="sd">&gt; BinaryPopulation.from_ini(&#39;&lt;PATH_TO_POSYDON&gt;&#39; \</span>
+<span class="sd">            &#39;/posydon/popsyn/population_params_default.ini&#39;)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Max Briel &lt;max.briel@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Seth Gossage &lt;seth.gossage@northwestern.edu&gt;&quot;</span>
+<span class="p">]</span>
+
+
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Nam Tran &lt;tranhn03@gmail.com&gt;&quot;</span><span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">signal</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">atexit</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.binarystar</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryStar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.singlestar</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">SingleStar</span><span class="p">,</span><span class="n">properties_massless_remnant</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProperties</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.star_formation_history</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_formation_times</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.independent_sample</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_independent_samples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.sample_from_file</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">get_samples_from_file</span><span class="p">,</span>
+                                             <span class="n">get_kick_samples_from_file</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_kwargs</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">,</span> <span class="n">simprop_kwargs_from_ini</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zsun</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonerror</span><span class="w"> </span><span class="kn">import</span> <span class="n">POSYDONError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Pwarn</span><span class="p">,</span> <span class="n">Catch_POSYDON_Warnings</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">orbital_period_from_separation</span><span class="p">,</span> <span class="n">orbital_separation_from_period</span><span class="p">,</span> 
+                                            <span class="n">set_binary_to_failed</span><span class="p">)</span>
+
+<span class="n">saved_ini_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">,</span>
+                        <span class="s2">&quot;number_of_binaries&quot;</span><span class="p">,</span>
+                   <span class="s1">&#39;binary_fraction_scheme&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;binary_fraction_const&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;star_formation&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;max_simulation_time&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;primary_mass_scheme&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;primary_mass_min&#39;</span><span class="p">,</span>                              
+                   <span class="s1">&#39;primary_mass_max&#39;</span><span class="p">,</span>                                  
+                   <span class="s1">&#39;secondary_mass_scheme&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;secondary_mass_min&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;secondary_mass_max&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;orbital_scheme&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;orbital_period_scheme&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;orbital_period_min&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;orbital_period_max&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;eccentricity_scheme&#39;</span><span class="p">]</span>
+
+
+<span class="n">HISTORY_MIN_ITEMSIZE</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s1">&#39;step_names&#39;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
+                        <span class="s1">&#39;S1_state&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span> <span class="s1">&#39;S2_state&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+                        <span class="s1">&#39;mass_transfer_case&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+                        <span class="s1">&#39;S1_SN_type&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;S2_SN_type&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+<span class="n">ONELINE_MIN_ITEMSIZE</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state_i&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;state_f&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+                        <span class="s1">&#39;event_i&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;event_f&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+                        <span class="s1">&#39;step_names_i&#39;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span> <span class="s1">&#39;step_names_f&#39;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
+                        <span class="s1">&#39;S1_state_i&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span> <span class="s1">&#39;S1_state_f&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+                        <span class="s1">&#39;S2_state_i&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span> <span class="s1">&#39;S2_state_f&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+                        <span class="s1">&#39;mass_transfer_case_i&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;mass_transfer_case_f&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                        <span class="s1">&#39;S1_SN_type&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;S2_SN_type&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                        <span class="s1">&#39;interp_class_HMS_HMS&#39;</span> <span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;interp_class_CO_HeMS&#39;</span> <span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+                        <span class="s1">&#39;interp_class_CO_HMS_RLO&#39;</span> <span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;interp_class_CO_HeMS_RLO&#39;</span> <span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+                        <span class="s1">&#39;mt_history_HMS_HMS&#39;</span> <span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;mt_history_CO_HeMS&#39;</span> <span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+                        <span class="s1">&#39;mt_history_CO_HMS_RLO&#39;</span> <span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;mt_history_CO_HeMS_RLO&#39;</span> <span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+                        <span class="s1">&#39;culmulative_mt_case_HMS_HMS&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;culmulative_mt_case_CO_HeMS&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+                        <span class="s1">&#39;culmulative_mt_case_CO_HMS_RLO&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;culmulative_mt_case_CO_HeMS_RLO&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+                        <span class="p">}</span>
+
+<span class="c1"># BinaryPopulation will enforce a constant metallicity accross all steps that</span>
+<span class="c1"># load stellar or binary models by checked this list of steps.</span>
+<span class="n">STEP_NAMES_LOADING_GRIDS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;step_HMS_HMS&#39;</span><span class="p">,</span> <span class="s1">&#39;step_CO_HeMS&#39;</span><span class="p">,</span> <span class="s1">&#39;step_CO_HMS_RLO&#39;</span><span class="p">,</span> <span class="s1">&#39;step_CO_HeMS_RLO&#39;</span><span class="p">,</span> <span class="s1">&#39;step_HMS_HMS_RLO&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;step_detached&#39;</span><span class="p">,</span><span class="s1">&#39;step_isolated&#39;</span><span class="p">,</span><span class="s1">&#39;step_disrupted&#39;</span><span class="p">,</span><span class="s1">&#39;step_initially_single&#39;</span><span class="p">,</span> <span class="s1">&#39;step_merged&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="BinaryPopulation">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryPopulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BinaryPopulation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle a binary star population.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the binary population object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        number_of_binaries : int</span>
+<span class="sd">            Size of the population</span>
+<span class="sd">        population_properties : SimulationProperties</span>
+<span class="sd">            Instance of simulationproperties holding steps.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set population kwargs - first set defaults, then add updates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">default_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_binaries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_properties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;population_properties&#39;</span><span class="p">,</span>
+                                                     <span class="n">SimulationProperties</span><span class="p">())</span>
+        <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">BinaryPopulation</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metallicity&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># grab all metallicities in population or use single metallicity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metallicities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metallicities&#39;</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">])</span>
+
+        <span class="c1"># force the metallicity on to the simulation properties</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STEP_NAMES_LOADING_GRIDS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_properties</span><span class="o">.</span><span class="n">kwargs</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">population_properties</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;metallicity&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">})</span>
+                          
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_properties</span><span class="o">.</span><span class="n">max_simulation_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s1">&#39;max_simulation_time&#39;</span><span class="p">)</span>  <span class="c1"># years</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_verbose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;history_verbose&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">entropy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;entropy&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">SeedSequence</span><span class="p">(</span><span class="n">entropy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entropy</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;comm&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;JOB_ID&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;MPI and Job array runs are not compatible.&#39;</span><span class="p">)</span>
+        <span class="c1"># local MPI run</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># To guarantee reproducibility, we need to set the seed sequence</span>
+            <span class="c1"># to be the same across all processes.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">entropy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;A local MPI run requires an entropy value to be set.&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
+            <span class="c1"># Make seed sequence unique per metallicity</span>
+            <span class="n">met_shift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metallicities</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">)</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">SeedSequence</span><span class="p">(</span><span class="n">entropy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entropy</span> <span class="o">+</span> <span class="n">met_shift</span><span class="p">)</span>
+            <span class="n">seed_seq</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">seq</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)][</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">]</span>
+
+        <span class="c1"># Job array runs</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;RANK&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="c1"># Make sure each of the processes has the same entropy</span>
+            <span class="c1"># But unique per metallicity</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">entropy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">met_shift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metallicities</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">)</span>
+                <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">SeedSequence</span><span class="p">(</span><span class="n">entropy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="o">+</span> <span class="n">met_shift</span><span class="p">)</span>
+            <span class="c1"># Split the seed sequence between processes for uniqueness</span>
+            <span class="n">seed_seq</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">seq</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)][</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">seed_seq</span> <span class="o">=</span> <span class="n">seq</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed_seq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;RNG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entropy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">_seed_seq</span><span class="o">.</span><span class="n">entropy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;entropy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entropy</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">PopulationManager</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># use manager methods</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">to_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_oneline_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">to_oneline_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">find_failed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">find_failed</span>
+
+<div class="viewcode-block" id="BinaryPopulation.from_ini">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryPopulation.from_ini">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a BinaryPopulation instance from an inifile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to an inifile to load in.</span>
+
+<span class="sd">        verbose : bool</span>
+<span class="sd">            Print useful info.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        BinaryPopulation</span>
+<span class="sd">            A new instance of a BinaryPopulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pop_kwargs</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># finally get the population properties</span>
+        <span class="n">sim_prop_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;population_properties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">sim_prop_kwargs</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">pop_kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BinaryPopulation.evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryPopulation.evolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evolve a binary population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices : list, optional</span>
+<span class="sd">            Custom binary indices to use. Default is range(number_of_binaries).</span>
+<span class="sd">            If running with MPI, indices are split between processes if given.</span>
+<span class="sd">        breakdown_to_df : bool, False</span>
+<span class="sd">            Breakdown a binary after evolution, converting to dataframe and</span>
+<span class="sd">            removing the binary instance from memory.</span>
+<span class="sd">        tqdm : bool, False</span>
+<span class="sd">            Show tqdm progress bar during evolution.</span>
+<span class="sd">        optimize_ram : bool, False</span>
+<span class="sd">            If True, dump binary data during evolve to save RAM.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># combine kw defined at init and any passed here</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+        <span class="n">tqdm_bool</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tqdm&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">breakdown_to_df_bool</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;breakdown_to_df&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">optimize_ram</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;optimize_ram&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">from_hdf_bool</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;from_hdf&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>   <span class="c1"># do regular evolution</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;indices&#39;</span><span class="p">,</span>
+                             <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_binaries</span><span class="p">)))</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;indices&#39;</span><span class="p">:</span><span class="n">indices</span><span class="p">,</span>
+                      <span class="s1">&#39;tqdm&#39;</span><span class="p">:</span><span class="n">tqdm_bool</span><span class="p">,</span>
+                      <span class="s1">&#39;breakdown_to_df&#39;</span><span class="p">:</span><span class="n">breakdown_to_df_bool</span><span class="p">,</span>
+                      <span class="s1">&#39;optimize_ram&#39;</span><span class="p">:</span><span class="n">optimize_ram</span><span class="p">,</span>
+                      <span class="s1">&#39;from_hdf&#39;</span><span class="p">:</span><span class="n">from_hdf_bool</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_safe_evolve</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># do local MPI or cluster job array evolution</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;indices&#39;</span><span class="p">,</span>
+                            <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_binaries</span><span class="p">)))</span>
+            <span class="n">indices_split</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">batch_indices</span> <span class="o">=</span> <span class="n">indices_split</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">]</span>
+            <span class="n">mpi_tqdm_bool</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="p">(</span><span class="n">tqdm_bool</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>
+
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;indices&#39;</span><span class="p">:</span><span class="n">batch_indices</span><span class="p">,</span>
+                      <span class="s1">&#39;tqdm&#39;</span><span class="p">:</span><span class="n">mpi_tqdm_bool</span><span class="p">,</span>
+                      <span class="s1">&#39;breakdown_to_df&#39;</span><span class="p">:</span><span class="n">breakdown_to_df_bool</span><span class="p">,</span>
+                      <span class="s1">&#39;optimize_ram&#39;</span><span class="p">:</span><span class="n">optimize_ram</span><span class="p">,</span>
+                      <span class="s1">&#39;from_hdf&#39;</span><span class="p">:</span><span class="n">from_hdf_bool</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_safe_evolve</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_safe_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evolve binaries in a population, catching warnings/exceptions.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_properties</span><span class="o">.</span><span class="n">steps_loaded</span><span class="p">:</span>
+            <span class="c1"># Enforce the same metallicity for all grid steps</span>
+            <span class="k">for</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">tup</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_properties</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="k">if</span> <span class="n">step_name</span> <span class="ow">in</span> <span class="n">STEP_NAMES_LOADING_GRIDS</span><span class="p">:</span>
+                    <span class="n">step_function</span><span class="p">,</span> <span class="n">step_kwargs</span> <span class="o">=</span> <span class="n">tup</span> <span class="c1"># unpack params</span>
+                    <span class="n">step_kwargs</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metallicity&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+                    <span class="c1"># update the step kwargs, override metallicity</span>
+                    <span class="n">modified_tup</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_function</span><span class="p">,</span> <span class="n">step_kwargs</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">population_properties</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">step_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">modified_tup</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">population_properties</span><span class="o">.</span><span class="n">load_steps</span><span class="p">()</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;indices&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_binaries</span><span class="p">)))</span>
+
+        <span class="n">indices_for_iter</span> <span class="o">=</span> <span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tqdm&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                            <span class="k">else</span> <span class="n">indices</span><span class="p">)</span>
+        <span class="n">breakdown_to_df</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;breakdown_to_df&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">optimize_ram</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;optimize_ram&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">ram_per_cpu</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ram_per_cpu&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">optimize_ram</span><span class="p">:</span>
+            <span class="n">dump_rate</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;dump_rate&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices_for_iter</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span><span class="p">))</span>
+            <span class="n">dump_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">dump_rate</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Set temporary directory for population batches</span>
+        <span class="n">temp_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;temp_directory&quot;</span><span class="p">,</span> <span class="s2">&quot;batches&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;temp_directory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_directory</span>
+
+        <span class="n">kw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Create temporary directory if it doesn&#39;t exist</span>
+        <span class="c1"># Built to handle MPI</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Create a directory for parallel runs</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">FileExistsError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+        <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indices_for_iter</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;from_hdf&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="c1">#generator</span>
+                <span class="n">binary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">from_hdf</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">restore</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">binary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_properties</span>
+
+            <span class="c1"># catch POSYDON warnings: record them to be possibly printed at</span>
+            <span class="c1"># then and of the &quot;with&quot; context; use a new registry for this</span>
+            <span class="c1"># context instead of the global one</span>
+            <span class="k">with</span> <span class="n">Catch_POSYDON_Warnings</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">own_registry</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">cpw</span><span class="p">:</span>
+                       
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
+
+                <span class="k">except</span> <span class="n">POSYDONError</span> <span class="k">as</span> <span class="n">posydon_error</span><span class="p">:</span>
+                    <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">traceback</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;error_checking_verbose&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                        <span class="n">posydon_error</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">initial_condition_message</span><span class="p">())</span>
+                        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exception</span><span class="p">(</span><span class="n">posydon_error</span><span class="p">)</span>
+
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">traceback</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+
+                    <span class="n">e</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">initial_condition_message</span><span class="p">())</span>
+                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                
+                <span class="c1"># If a binary has failed, the signal alarm for a step duration</span>
+                <span class="c1"># will not be disabled, so we need to disable it here.</span>
+                <span class="n">signal</span><span class="o">.</span><span class="n">alarm</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                
+                <span class="c1"># record if there were warnings caught during the binary</span>
+                <span class="c1"># evolution, this is needed to update the WARNINGS column in</span>
+                <span class="c1"># the oneline dataframe; this will only be updated if POSYDON</span>
+                <span class="c1"># warnings occur, NOT general python warnings      </span>
+                <span class="k">if</span> <span class="n">cpw</span><span class="o">.</span><span class="n">got_called</span><span class="p">():</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">warnings</span> <span class="o">=</span> <span class="kc">True</span>
+                
+                <span class="c1"># if the user wants to print all POSYDON warnings to stderr</span>
+                <span class="c1"># (warnings_verbose=True), no action is needed, because it will</span>
+                <span class="c1"># be printed at the end of the &quot;with&quot; context; to avoid the</span>
+                <span class="c1"># printing clear the warnings cache before the end of the</span>
+                <span class="c1"># context</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warnings_verbose&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                    <span class="n">cpw</span><span class="o">.</span><span class="n">reset_cache</span><span class="p">()</span>
+
+
+            <span class="c1"># remove binaries from manager.binaries and store data in DataFrames</span>
+            <span class="k">if</span> <span class="n">breakdown_to_df</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">breakdown_to_df</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># Save data at some frequency</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">optimize_ram</span>
+                    <span class="ow">and</span> <span class="n">j</span> <span class="o">%</span> <span class="n">dump_rate</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ram_per_cpu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+
+                <span class="c1"># Create filenames for each batch</span>
+                <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">_evolution.batch&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span>
+                                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">_evolution.batch.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># save binaries to disk for RAM optimization</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+                <span class="c1"># if optimize RAM, clear DataFrames or remove binaries</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">breakdown_to_df</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">clear_dfs</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">binaries</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+            <span class="c1"># Check to see if used memory is greater than 99% of allowed memory</span>
+            <span class="c1"># rss gives memory usage in bytes, so divide by 2^30 to get GBs</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">optimize_ram</span> <span class="ow">and</span> <span class="n">ram_per_cpu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                  <span class="ow">and</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">()</span><span class="o">.</span><span class="n">memory_info</span><span class="p">()</span><span class="o">.</span><span class="n">rss</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+                  <span class="o">&gt;=</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">ram_per_cpu</span><span class="p">):</span>
+
+                <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">_evolution.batch&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span>
+                                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">_evolution.batch.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># save binaries to disk for RAM optimization</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+                <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+                <span class="k">if</span><span class="p">(</span><span class="n">breakdown_to_df</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">clear_dfs</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">binaries</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+
+        <span class="c1"># handling case if dump rate is not multiple of population size</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">binaries</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+                <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">history_dfs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">optimize_ram</span><span class="p">):</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span> <span class="s2">&quot;leftover_evolution.batch&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span>
+                                    <span class="sa">f</span><span class="s2">&quot;leftover_evolution.batch.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># save binaries to disk for RAM optimization</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+            <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="n">breakdown_to_df</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">clear_dfs</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">binaries</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+        <span class="c1"># save by either combining dump files if optimize_ram = True...</span>
+        <span class="k">if</span> <span class="n">optimize_ram</span><span class="p">:</span>
+            <span class="c1"># combining files</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">combine_saved_files</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span>
+                                                      <span class="s2">&quot;evolution.combined.h5&quot;</span><span class="p">),</span>
+                                         <span class="n">filenames</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">combine_saved_files</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span>
+                                 <span class="sa">f</span><span class="s2">&quot;evolution.combined.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="si">}</span><span class="s2">.h5&quot;</span><span class="p">),</span>
+                    <span class="n">filenames</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ...or just save the population to a single file if breakdown_to_df is True</span>
+        <span class="k">elif</span> <span class="n">breakdown_to_df</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span>
+                                               <span class="s2">&quot;evolution.combined.h5&quot;</span><span class="p">),</span>
+                                  <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span>
+                                  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span>
+                                 <span class="sa">f</span><span class="s2">&quot;evolution.combined.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="si">}</span><span class="s2">.h5&quot;</span><span class="p">),</span>
+                    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BinaryPopulation.save">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryPopulation.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save BinaryPopulation to hdf file.&quot;&quot;&quot;</span>
+        <span class="n">optimize_ram</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimize_ram&#39;</span><span class="p">]</span>
+        <span class="n">temp_directory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;temp_directory&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">JOB_ID</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">optimize_ram</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span> <span class="s2">&quot;evolution.combined.h5&quot;</span><span class="p">),</span>
+                          <span class="n">save_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">absolute_filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+            <span class="n">dir_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">absolute_filepath</span><span class="p">)</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">absolute_filepath</span><span class="p">)</span>
+            <span class="c1"># get the temporary files in the directory</span>
+            <span class="n">tmp_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>     \
+                         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">)</span> \
+                            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span> <span class="n">f</span><span class="p">))]</span>
+
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">absolute_filepath</span><span class="p">):</span>
+                <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;backup_save_pop_data.h5&#39;</span>
+                <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_name</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+                <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;The provided path is a directory - saving &#39;</span>
+                              <span class="s1">&#39;to </span><span class="si">{0}</span><span class="s1"> instead.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">combine_saved_files</span><span class="p">(</span><span class="n">absolute_filepath</span><span class="p">,</span> <span class="n">tmp_files</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BinaryPopulation.make_temp_fname">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryPopulation.make_temp_fname">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_temp_fname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a valid filename for the temporary file.&quot;&quot;&quot;</span>
+        <span class="n">temp_directory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;temp_directory&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_directory</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;evolution.combined.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="si">}</span><span class="s2">.h5&quot;</span><span class="p">)</span></div>
+
+        <span class="c1"># return os.path.join(dir_name, &#39;.tmp{}_&#39;.format(rank) + file_name)</span>
+
+<div class="viewcode-block" id="BinaryPopulation.combine_saved_files">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryPopulation.combine_saved_files">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">combine_saved_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">absolute_filepath</span><span class="p">,</span> <span class="n">file_names</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Combine various temporary files in a given folder.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        absolute_filepath : str</span>
+<span class="sd">            Absolute path to the file to be saved.</span>
+<span class="sd">        file_names : list</span>
+<span class="sd">            List of absolute paths to the temporary files.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">history_cols</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">file_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">oneline_cols</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">file_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span>
+
+        <span class="c1">#history_tmp = pd.read_hdf(file_names[0], key=&#39;history&#39;)</span>
+
+        <span class="n">history_min_itemsize</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span>
+                                <span class="n">HISTORY_MIN_ITEMSIZE</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">history_cols</span><span class="p">}</span>
+        <span class="n">oneline_min_itemsize</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span>
+                                <span class="n">ONELINE_MIN_ITEMSIZE</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">oneline_cols</span><span class="p">}</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">complib</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;complib&#39;</span><span class="p">,</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
+        <span class="n">complevel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;complevel&#39;</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+        
+        
+        <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="n">absolute_filepath</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">complevel</span><span class="o">=</span><span class="n">complevel</span><span class="p">,</span> <span class="n">complib</span><span class="o">=</span><span class="n">complib</span><span class="p">)</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="n">simulated_mass</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">simulated_mass_single</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">simulated_mass_binaries</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">number_of_systems</span><span class="o">=</span><span class="mi">0</span>
+            
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
+                <span class="c1"># strings itemsize set by first append max value,</span>
+                <span class="c1"># which may not be largest string</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+                    <span class="n">store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;history&#39;</span><span class="p">,</span> <span class="n">history</span><span class="p">,</span>
+                                 <span class="n">min_itemsize</span><span class="o">=</span><span class="n">history_min_itemsize</span><span class="p">)</span>
+                    
+                    <span class="n">oneline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">)</span>
+                    
+                    <span class="c1"># split weight between single and binary stars</span>
+                    <span class="n">init_step_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">history</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)</span>  <span class="c1"># indices that are NOT duplicates of the first</span>
+                    <span class="n">singles_mask</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;initially_single_star&quot;</span>
+                    <span class="n">filtered_data_single</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="n">init_step_mask</span> <span class="o">&amp;</span> <span class="n">singles_mask</span><span class="p">]</span>
+                    <span class="n">filtered_data_binaries</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="n">init_step_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">singles_mask</span><span class="p">]</span>
+                    
+                    <span class="n">simulated_mass_binaries</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">filtered_data_binaries</span><span class="p">[[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S2_mass&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+                    <span class="n">simulated_mass_single</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">filtered_data_single</span><span class="p">[[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+                    <span class="n">simulated_mass</span> <span class="o">=</span> <span class="n">simulated_mass_single</span> <span class="o">+</span> <span class="n">simulated_mass_binaries</span>
+                       
+                    <span class="k">if</span> <span class="s1">&#39;metallicity&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">oneline</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                        <span class="n">met_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;metallicity&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">oneline</span><span class="p">)},</span> <span class="n">index</span><span class="o">=</span><span class="n">oneline</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+                        <span class="n">oneline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">oneline</span><span class="p">,</span> <span class="n">met_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    
+                    <span class="n">number_of_systems</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">oneline</span><span class="p">)</span>
+                    
+                    <span class="n">store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;oneline&#39;</span><span class="p">,</span> <span class="n">oneline</span><span class="p">,</span>
+                                 <span class="n">min_itemsize</span><span class="o">=</span><span class="n">oneline_min_itemsize</span><span class="p">)</span>
+                    
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+            <span class="c1"># store population metadata</span>
+            <span class="n">tmp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">saved_ini_parameters</span><span class="p">:</span>
+                <span class="n">tmp_df</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">c</span><span class="p">]]</span>
+            <span class="n">store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ini_parameters&#39;</span><span class="p">,</span> <span class="n">tmp_df</span><span class="p">)</span>
+            
+            <span class="n">tmp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">],</span>
+                <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;simulated_mass&#39;</span><span class="p">:</span> <span class="n">simulated_mass</span><span class="p">,</span>
+                      <span class="s1">&#39;simulated_mass_single&#39;</span><span class="p">:</span> <span class="n">simulated_mass_single</span><span class="p">,</span>
+                      <span class="s1">&#39;simulated_mass_binaries&#39;</span><span class="p">:</span> <span class="n">simulated_mass_binaries</span><span class="p">,</span>
+                      <span class="s1">&#39;number_of_systems&#39;</span><span class="p">:</span> <span class="n">number_of_systems</span><span class="p">})</span>
+            <span class="n">tmp_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;metallicity&#39;</span>
+            <span class="n">store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;mass_per_metallicity&#39;</span><span class="p">,</span> <span class="n">tmp_df</span><span class="p">)</span>
+        
+        <span class="c1"># only remove the files once they&#39;ve been written to the new file</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BinaryPopulation.close">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryPopulation.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close loaded h5 files from SimulationProperties.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_properties</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare the BinaryPopulation to be &#39;pickled&#39;.&quot;&quot;&quot;</span>
+        <span class="c1"># In order to be generally picklable, we need to discard the</span>
+        <span class="c1"># communication object before picking</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;comm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">prop</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;population_properties&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">steps_loaded</span><span class="p">:</span>
+            <span class="n">prop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">d</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate the binaries.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the k-th binary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of binaries in the population.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Report key properties of the object.&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&lt;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2"> at </span><span class="si">{}</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span></div>
+
+
+
+<div class="viewcode-block" id="PopulationManager">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PopulationManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage a population of binaries.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a PopulationManager instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binaries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_dfs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oneline_dfs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;read_samples_from_file&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;read_samples_from_file&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binary_generator</span> <span class="o">=</span> <span class="n">BinaryGenerator</span><span class="p">(</span>\
+                                     <span class="n">sampler</span><span class="o">=</span><span class="n">get_samples_from_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binary_generator</span> <span class="o">=</span> <span class="n">BinaryGenerator</span><span class="p">(</span>\
+                                     <span class="n">sampler</span><span class="o">=</span><span class="n">generate_independent_samples</span><span class="p">,</span>\
+                                     <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entropy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_generator</span><span class="o">.</span><span class="n">entropy</span>
+
+        <span class="k">if</span> <span class="n">file_name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">store_file</span> <span class="o">=</span> <span class="n">file_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">store_file</span> <span class="o">=</span> <span class="n">file_name</span>
+
+<div class="viewcode-block" id="PopulationManager.append">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager.append">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a binary instance internaly.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">b</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">binary</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">binary</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">BinaryStar</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must be BinaryStar or list of BinaryStars&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PopulationManager.remove">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager.remove">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove a binary instance.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">binary</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">BinaryStar</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must be BinaryStar or list of BinaryStars&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PopulationManager.clear_dfs">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager.clear_dfs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_dfs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all dfs.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_dfs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oneline_dfs</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="PopulationManager.breakdown_to_df">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager.breakdown_to_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">breakdown_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Breakdown to a pandas DataFrame.</span>
+
+<span class="sd">        Breakdown a binary into more convenient data type, store it, and</span>
+<span class="sd">        remove the BinaryStar instance from self.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">history</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">history_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
+            <span class="n">oneline</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">to_oneline_df</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">oneline_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oneline</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error during breakdown of </span><span class="si">{0}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span>
+                  <span class="nb">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">binary</span><span class="p">),</span> <span class="n">err</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="PopulationManager.to_df">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager.to_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert all binaries to dataframe.&quot;&quot;&quot;</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history_dfs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="n">is_callable</span> <span class="o">=</span> <span class="nb">callable</span><span class="p">(</span><span class="n">selection_function</span><span class="p">)</span>
+        <span class="n">holder</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">binary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_callable</span> <span class="ow">or</span> <span class="p">(</span><span class="n">is_callable</span>
+                                       <span class="ow">and</span> <span class="n">selection_function</span><span class="p">(</span><span class="n">binary</span><span class="p">)):</span>
+                    <span class="n">holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history_dfs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">holder</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history_dfs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">holder</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">holder</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PopulationManager.to_oneline_df">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager.to_oneline_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_oneline_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert all binaries to oneline dataframe.&quot;&quot;&quot;</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">oneline_dfs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">is_callable</span> <span class="o">=</span> <span class="nb">callable</span><span class="p">(</span><span class="n">selection_function</span><span class="p">)</span>
+        <span class="n">holder</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">binary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_callable</span> <span class="ow">or</span> <span class="p">(</span><span class="n">is_callable</span>
+                                       <span class="ow">and</span> <span class="n">selection_function</span><span class="p">(</span><span class="n">binary</span><span class="p">)):</span>
+                    <span class="n">holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">to_oneline_df</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">oneline_dfs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">holder</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">oneline_dfs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">holder</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">holder</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PopulationManager.find_failed">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager.find_failed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_failed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find any failed binaries in the population.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;FAILED&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history_dfs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">failed_dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_dfs</span>
+                          <span class="k">if</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;FAILED&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">failed_dfs</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">failed_dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">failed_dfs</span></div>
+
+
+<div class="viewcode-block" id="PopulationManager.generate">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager.generate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a binary by drawing from the binary_generator.</span>
+
+<span class="sd">        This can be a callable or a generator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">binary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_generator</span><span class="o">.</span><span class="n">draw_initial_binary</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="PopulationManager.from_hdf">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager.from_hdf">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_hdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">restore</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load a BinaryStar instance from an hdf file of a saved population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices : int, list</span>
+<span class="sd">            Selects the binaries to load.</span>
+<span class="sd">        where : str</span>
+<span class="sd">            Query performed on disk to select history and oneline DataFrames.</span>
+<span class="sd">        restore : bool</span>
+<span class="sd">            If true, restore binaries back to initial conditions.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check if numpy64, since where does not support this</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">where</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must specify either the binary indices or a query string &quot;</span>
+                                 <span class="s2">&quot;to read from file.&quot;</span><span class="p">)</span>               
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">query_str</span> <span class="o">=</span> <span class="s1">&#39;index==indices&#39;</span>                
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">store_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="n">hist</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;history&#39;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">query_str</span><span class="p">)</span>
+            <span class="n">oneline</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;oneline&#39;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">query_str</span><span class="p">)</span>
+        
+        <span class="n">binary_holder</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">hist</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+            <span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span>
+                <span class="n">hist</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span>
+                <span class="n">extra_columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extra_columns&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+
+            <span class="c1"># if the binary has failed</span>
+            <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">oneline</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">i</span><span class="p">]][</span><span class="s1">&#39;FAILED&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;FAILED&#39;</span><span class="p">)</span>
+
+            <span class="n">bin_scalars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scalar_names&#39;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">s1_scalars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s1">&#39;S1_kwargs&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scalar_names&#39;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">s2_scalars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s1">&#39;S2_kwargs&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scalar_names&#39;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="nb">bool</span><span class="p">(</span><span class="n">bin_scalars</span><span class="p">),</span> <span class="nb">bool</span><span class="p">(</span><span class="n">s1_scalars</span><span class="p">),</span> <span class="nb">bool</span><span class="p">(</span><span class="n">s2_scalars</span><span class="p">)]):</span>
+                <span class="n">oline_bin</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="o">.</span><span class="n">from_oneline_df</span><span class="p">(</span>
+                        <span class="n">oneline</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span>
+                        <span class="n">extra_columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extra_columns&#39;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">bin_scalars</span><span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">oline_bin</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">s1_scalars</span><span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">oline_bin</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">s2_scalars</span><span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">oline_bin</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+                <span class="k">del</span> <span class="n">oline_bin</span>
+
+            <span class="n">binary_holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">restore</span><span class="p">:</span>
+            <span class="p">[</span><span class="n">b</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">binary_holder</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">binary_holder</span></div>
+
+
+<div class="viewcode-block" id="PopulationManager.save">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.PopulationManager.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save binaries to an hdf file using pandas HDFStore.</span>
+
+<span class="sd">        Any object dtype columns not parsed by infer_objects() is converted to</span>
+<span class="sd">        a string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fname : str</span>
+<span class="sd">            Name of hdf file saved.</span>
+<span class="sd">        mode : {&#39;a&#39;, &#39;w&#39;, &#39;r&#39;, &#39;r+&#39;}, default &#39;a&#39;</span>
+<span class="sd">            See pandas HDFStore docs</span>
+<span class="sd">        complib : {&#39;zlib&#39;, &#39;lzo&#39;, &#39;bzip2&#39;, &#39;blosc&#39;}, default &#39;zlib&#39;</span>
+<span class="sd">            Compression library. See HDFStore docs</span>
+<span class="sd">        complevel : int, 0-9, default 9</span>
+<span class="sd">            Level of compression. See HDFStore docs</span>
+<span class="sd">        kwargs : dict</span>
+<span class="sd">            Arguments for `BinaryStar` methods `to_df` and `to_oneline_df`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+
+        <span class="c1"># needed for metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_generator</span><span class="o">.</span><span class="n">Z_div_Zsun</span>
+
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">complib</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;complib&#39;</span><span class="p">,</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
+        <span class="n">complevel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;complevel&#39;</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">complevel</span><span class="o">=</span><span class="n">complevel</span><span class="p">,</span> <span class="n">complib</span><span class="o">=</span><span class="n">complib</span><span class="p">)</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+
+            <span class="n">simulated_mass</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">simulated_mass_single</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">simulated_mass_binaries</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">number_of_systems</span><span class="o">=</span><span class="mi">0</span>
+
+            <span class="c1"># read history and oneline</span>
+            <span class="n">history_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">oneline_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_oneline_df</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># get columns for saving</span>
+            <span class="n">history_cols</span> <span class="o">=</span> <span class="n">history_df</span><span class="o">.</span><span class="n">columns</span>
+            <span class="n">oneline_cols</span> <span class="o">=</span> <span class="n">oneline_df</span><span class="o">.</span><span class="n">columns</span>
+
+            <span class="n">history_min_itemsize</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span>
+                                    <span class="n">HISTORY_MIN_ITEMSIZE</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">history_cols</span><span class="p">}</span>
+            <span class="n">oneline_min_itemsize</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span>
+                                    <span class="n">ONELINE_MIN_ITEMSIZE</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">oneline_cols</span><span class="p">}</span>
+
+            <span class="c1"># store history</span>
+            <span class="n">store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;history&#39;</span><span class="p">,</span> <span class="n">history_df</span><span class="p">,</span>
+                         <span class="n">min_itemsize</span><span class="o">=</span><span class="n">history_min_itemsize</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="c1"># split weight between single and binary stars</span>
+                <span class="n">init_step_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">history_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)</span> <span class="c1"># indices that are NOT duplicates of the first</span>
+                <span class="n">singles_mask</span> <span class="o">=</span> <span class="n">history_df</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;initially_single_star&quot;</span>
+                <span class="n">filtered_data_single</span> <span class="o">=</span> <span class="n">history_df</span><span class="p">[</span><span class="n">init_step_mask</span> <span class="o">&amp;</span> <span class="n">singles_mask</span><span class="p">]</span>
+                <span class="n">filtered_data_binaries</span> <span class="o">=</span> <span class="n">history_df</span><span class="p">[</span><span class="n">init_step_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">singles_mask</span><span class="p">]</span>
+
+                <span class="n">simulated_mass_binaries</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">filtered_data_binaries</span><span class="p">[[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S2_mass&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+                <span class="n">simulated_mass_single</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">filtered_data_single</span><span class="p">[[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+                <span class="n">simulated_mass</span> <span class="o">=</span> <span class="n">simulated_mass_single</span> <span class="o">+</span> <span class="n">simulated_mass_binaries</span>
+
+                <span class="k">if</span> <span class="s1">&#39;metallicity&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">oneline_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="n">met_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;metallicity&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">)},</span> <span class="n">index</span><span class="o">=</span><span class="n">oneline_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+                    <span class="n">oneline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">oneline_df</span><span class="p">,</span> <span class="n">met_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">number_of_systems</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">)</span>
+
+                <span class="c1"># store oneline</span>
+                <span class="n">store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;oneline&#39;</span><span class="p">,</span> <span class="n">oneline_df</span><span class="p">,</span>
+                             <span class="n">min_itemsize</span><span class="o">=</span><span class="n">oneline_min_itemsize</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># store population metadata</span>
+            <span class="n">tmp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">saved_ini_parameters</span><span class="p">:</span>
+                <span class="n">tmp_df</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">c</span><span class="p">]]</span>
+            <span class="n">store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ini_parameters&#39;</span><span class="p">,</span> <span class="n">tmp_df</span><span class="p">)</span>
+            
+            <span class="n">tmp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metallicity</span><span class="p">],</span>
+                <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;simulated_mass&#39;</span><span class="p">:</span> <span class="n">simulated_mass</span><span class="p">,</span>
+                      <span class="s1">&#39;simulated_mass_single&#39;</span><span class="p">:</span> <span class="n">simulated_mass_single</span><span class="p">,</span>
+                      <span class="s1">&#39;simulated_mass_binaries&#39;</span><span class="p">:</span> <span class="n">simulated_mass_binaries</span><span class="p">,</span>
+                      <span class="s1">&#39;number_of_systems&#39;</span><span class="p">:</span> <span class="n">number_of_systems</span><span class="p">})</span>
+            <span class="n">tmp_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;metallicity&#39;</span>
+            <span class="n">store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;mass_per_metallicity&#39;</span><span class="p">,</span> <span class="n">tmp_df</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the key-th binary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate the binaries in the population.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of binaries in the population.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binaries</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate as True if binaries have been appended.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="BinaryGenerator">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryGenerator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BinaryGenerator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate binaries to be included in a BinaryPopulation.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">generate_independent_samples</span><span class="p">,</span>
+                 <span class="n">RNG</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the BinaryGenerator instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_gen</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">RNG</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entropy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">_seed_seq</span><span class="o">.</span><span class="n">entropy</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">RNG</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span> <span class="o">=</span> <span class="n">RNG</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entropy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">_seed_seq</span><span class="o">.</span><span class="n">entropy</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">star_formation</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;star_formation&#39;</span><span class="p">,</span> <span class="s1">&#39;burst&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Z_div_Zsun</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metallicity&#39;</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BinaryGenerator.reset_rng">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryGenerator.reset_rng">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_rng</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the RNG with the stored entropy.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_gen</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_original_rng</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BinaryGenerator.get_original_rng">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryGenerator.get_original_rng">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_original_rng</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the random-number generator.&quot;&quot;&quot;</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">SeedSequence</span><span class="p">(</span><span class="n">entropy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entropy</span><span class="p">)</span>
+        <span class="n">RNG</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seq</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">RNG</span></div>
+
+
+<div class="viewcode-block" id="BinaryGenerator.get_binary_by_iter">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryGenerator.get_binary_by_iter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_binary_by_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the nth binary as if n calls were made to draw_intial_binary.&quot;&quot;&quot;</span>
+        <span class="n">RNG</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_original_rng</span><span class="p">()</span>
+        <span class="n">original_num_gen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_gen</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># draw n-1 samples with new original RNG</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">(</span>
+                <span class="n">number_of_binaries</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">RNG</span><span class="o">=</span><span class="n">RNG</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">binary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_initial_binary</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">RNG</span><span class="o">=</span><span class="n">RNG</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_gen</span> <span class="o">=</span> <span class="n">original_num_gen</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="BinaryGenerator.draw_initial_samples">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_samples">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_initial_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbital_scheme</span><span class="o">=</span><span class="s1">&#39;separation&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate all random variables.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s1">&#39;RNG&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;RNG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span>
+        <span class="c1"># a, e, M_1, M_2, P</span>
+        <span class="n">sampler_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">(</span><span class="n">orbital_scheme</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">orbital_scheme</span> <span class="o">==</span> <span class="s1">&#39;separation&#39;</span><span class="p">:</span>
+            <span class="n">separation</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">=</span> <span class="n">sampler_output</span>
+            <span class="n">orbital_period</span> <span class="o">=</span> <span class="n">orbital_period_from_separation</span><span class="p">(</span><span class="n">separation</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">orbital_scheme</span> <span class="o">==</span> <span class="s1">&#39;period&#39;</span><span class="p">:</span>
+            <span class="n">orbital_period</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">=</span> <span class="n">sampler_output</span>
+            <span class="n">separation</span> <span class="o">=</span> <span class="n">orbital_separation_from_period</span><span class="p">(</span><span class="n">orbital_period</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Allowed orbital schemes: separation or period.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># formation times</span>
+        <span class="n">N_binaries</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">orbital_period</span><span class="p">)</span>
+        <span class="n">formation_times</span> <span class="o">=</span> <span class="n">get_formation_times</span><span class="p">(</span><span class="n">N_binaries</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># indices</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_gen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_gen</span><span class="o">+</span><span class="n">N_binaries</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1"># kicks</span>
+        <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;read_samples_from_file&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;read_samples_from_file&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">)):</span>
+            <span class="n">kick1</span><span class="p">,</span> <span class="n">kick2</span> <span class="o">=</span> <span class="n">get_kick_samples_from_file</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;number_of_binaries&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">number_of_binaries</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">number_of_binaries</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">kick1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">number_of_binaries</span><span class="o">*</span><span class="p">[[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]])</span>
+            <span class="n">kick2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">number_of_binaries</span><span class="o">*</span><span class="p">[[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]])</span>
+
+        <span class="c1"># Checking m2 to see if the system is a binary or initially single</span>
+        <span class="n">is_binary</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">m2</span><span class="p">)</span>
+
+        <span class="c1"># output</span>
+        <span class="n">output_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;binary_index&#39;</span><span class="p">:</span> <span class="n">indices</span><span class="p">,</span>
+            <span class="s1">&#39;is_binary&#39;</span><span class="p">:</span> <span class="n">is_binary</span><span class="p">,</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">formation_times</span><span class="p">,</span>
+            <span class="s1">&#39;separation&#39;</span><span class="p">:</span> <span class="n">separation</span><span class="p">,</span>
+            <span class="s1">&#39;eccentricity&#39;</span><span class="p">:</span> <span class="n">eccentricity</span><span class="p">,</span>
+            <span class="s1">&#39;orbital_period&#39;</span><span class="p">:</span> <span class="n">orbital_period</span><span class="p">,</span>
+            <span class="s1">&#39;S1_mass&#39;</span><span class="p">:</span> <span class="n">m1</span><span class="p">,</span>
+            <span class="s1">&#39;S2_mass&#39;</span><span class="p">:</span> <span class="n">m2</span><span class="p">,</span>
+            <span class="s1">&#39;S1_natal_kick_array&#39;</span><span class="p">:</span> <span class="n">kick1</span><span class="p">,</span>
+            <span class="s1">&#39;S2_natal_kick_array&#39;</span><span class="p">:</span> <span class="n">kick2</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_gen</span> <span class="o">+=</span> <span class="n">N_binaries</span>
+        <span class="k">return</span> <span class="n">output_dict</span></div>
+
+
+<div class="viewcode-block" id="BinaryGenerator.draw_initial_binary">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryGenerator.draw_initial_binary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_initial_binary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a binary for evolution in a population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        index : int</span>
+<span class="sd">            Sets binary index. Defaults to number of generated binaries.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary : BinaryStar</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sampler_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">sampler_kwargs</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">sampler_kwargs</span><span class="p">[</span><span class="s1">&#39;RNG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;RNG&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span><span class="p">)</span>
+        <span class="c1"># Randomly generated variables</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_initial_samples</span><span class="p">(</span><span class="o">**</span><span class="n">sampler_kwargs</span><span class="p">)</span>
+
+        <span class="n">default_index</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;binary_index&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="n">is_binary</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;is_binary&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="n">formation_time</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">Z_div_Zsun</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metallicity&#39;</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+        <span class="n">zams_table</span> <span class="o">=</span> <span class="p">{</span><span class="mf">2.</span><span class="p">:</span> <span class="mf">2.915e-01</span><span class="p">,</span>
+                      <span class="mf">1.</span><span class="p">:</span> <span class="mf">2.703e-01</span><span class="p">,</span>
+                      <span class="mf">0.45</span><span class="p">:</span> <span class="mf">2.586e-01</span><span class="p">,</span>
+                      <span class="mf">0.2</span><span class="p">:</span> <span class="mf">2.533e-01</span><span class="p">,</span>
+                      <span class="mf">0.1</span><span class="p">:</span> <span class="mf">2.511e-01</span><span class="p">,</span>
+                      <span class="mf">0.01</span><span class="p">:</span> <span class="mf">2.492e-01</span><span class="p">,</span>
+                      <span class="mf">0.001</span><span class="p">:</span> <span class="mf">2.49e-01</span><span class="p">,</span>
+                      <span class="mf">0.0001</span><span class="p">:</span> <span class="mf">2.49e-01</span><span class="p">}</span>
+        
+        <span class="n">Z_div_Zsun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_div_Zsun</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">Z_div_Zsun</span><span class="o">*</span><span class="n">Zsun</span>
+        <span class="k">if</span> <span class="n">Z_div_Zsun</span> <span class="ow">in</span> <span class="n">zams_table</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="n">zams_table</span><span class="p">[</span><span class="n">Z_div_Zsun</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Z_div_Zsun</span><span class="si">}</span><span class="s2"> is a not defined metallicity&quot;</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">Z</span> <span class="o">-</span> <span class="n">Y</span>
+        <span class="n">kick1</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;S1_natal_kick_array&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="n">star1_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">mass</span><span class="o">=</span><span class="n">m1</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="s2">&quot;H-rich_Core_H_burning&quot;</span><span class="p">,</span>
+                <span class="n">metallicity</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
+                <span class="n">center_h1</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+                <span class="n">center_he4</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span>
+                <span class="n">natal_kick_array</span><span class="o">=</span><span class="n">kick1</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_binary</span><span class="p">:</span>
+            <span class="n">separation</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;separation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">orbital_period</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">eccentricity</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;eccentricity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">m2</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">kick2</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;S2_natal_kick_array&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">binary_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="n">default_index</span><span class="p">),</span>
+                <span class="n">time</span><span class="o">=</span><span class="n">formation_time</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="s2">&quot;detached&quot;</span><span class="p">,</span>
+                <span class="n">event</span><span class="o">=</span><span class="s2">&quot;ZAMS&quot;</span><span class="p">,</span>
+                <span class="n">separation</span><span class="o">=</span><span class="n">separation</span><span class="p">,</span>
+                <span class="n">orbital_period</span><span class="o">=</span><span class="n">orbital_period</span><span class="p">,</span>
+                <span class="n">eccentricity</span><span class="o">=</span><span class="n">eccentricity</span><span class="p">,</span>
+                <span class="n">history_verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;history_verbose&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">star2_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">mass</span><span class="o">=</span><span class="n">m2</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="s2">&quot;H-rich_Core_H_burning&quot;</span><span class="p">,</span>
+                <span class="n">metallicity</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
+                <span class="n">center_h1</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+                <span class="n">center_he4</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span>
+                <span class="n">natal_kick_array</span><span class="o">=</span><span class="n">kick2</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1">#If binary_fraction not default a initially single star binary is created.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">separation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">orbital_period</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">eccentricity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+            <span class="n">binary_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="n">default_index</span><span class="p">),</span>
+                <span class="n">time</span><span class="o">=</span><span class="n">formation_time</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="s2">&quot;initially_single_star&quot;</span><span class="p">,</span>
+                <span class="n">event</span><span class="o">=</span><span class="s2">&quot;ZAMS&quot;</span><span class="p">,</span>
+                <span class="n">separation</span><span class="o">=</span><span class="n">separation</span><span class="p">,</span>
+                <span class="n">orbital_period</span><span class="o">=</span><span class="n">orbital_period</span><span class="p">,</span>
+                <span class="n">eccentricity</span><span class="o">=</span><span class="n">eccentricity</span><span class="p">,</span>
+                <span class="n">history_verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;history_verbose&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">star2_params</span> <span class="o">=</span> <span class="n">properties_massless_remnant</span><span class="p">()</span>
+
+
+        <span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="o">**</span><span class="n">binary_params</span><span class="p">,</span>
+                            <span class="n">star_1</span><span class="o">=</span><span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">star1_params</span><span class="p">),</span>
+                            <span class="n">star_2</span><span class="o">=</span><span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">star2_params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Report key properties of the BinaryGenerator instance.&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&lt;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2"> at </span><span class="si">{}</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;RNG: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RNG</span><span class="p">))</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;entropy: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entropy</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.2/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
