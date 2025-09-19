@@ -920,6 +920,8 @@ def make_executables(mesa_extras, working_directory=os.getcwd()):
                     f.write('make -f {0}\n'.format(k))
                 elif 'mesa_dir' == k:
                     continue
+                elif 'posydon_github_root' == k:
+                    continue
                 else:
                     shutil.copy(v, working_directory)
 
