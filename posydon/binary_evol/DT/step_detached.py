@@ -679,6 +679,7 @@ class detached_step:
             sep_interp, mass_interp_pri(t),
             mass_interp_sec(t))
 
+
         for obj, prop in zip([secondary, primary, binary], 
                                 [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
 
@@ -836,24 +837,23 @@ class detached_step:
             A single star object, representing the secondary (less evolved) star 
             in the binary and containing its properties.
         """
-        
-        for obj, prop in zip([secondary, primary], 
-                             [STARPROPERTIES, STARPROPERTIES]):
+
+        for obj, prop in zip([secondary, primary],
+                           [STARPROPERTIES, STARPROPERTIES]):
             
             # only update compact objects here
-            if ~obj.co: 
-                continue
-                
-            for key in prop:
+            if obj.co: 
 
-                # simply get the current attribute value and update
-                # this step's props with it. Detached evolution does not
-                # modify these properties for a CO by default, so they 
-                # typically remain unchanged from the previous step.
-                current = getattr(obj, key)
-                history = [current] * len(t[:-1])
-                setattr(obj, key, current)
-                getattr(obj, key + "_history").extend(history)
+                for key in prop:
+
+                    # simply get the current attribute value and update
+                    # this step's props with it. Detached evolution does not
+                    # modify these properties for a CO by default, so they 
+                    # typically remain unchanged from the previous step.
+                    current = getattr(obj, key)
+                    history = [current] * len(t[:-1])
+                    setattr(obj, key, current)
+                    getattr(obj, key + "_history").extend(history)
 
 class detached_evolution:
 
