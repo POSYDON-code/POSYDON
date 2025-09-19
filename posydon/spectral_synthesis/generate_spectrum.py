@@ -19,9 +19,14 @@ import pandas as pd
 from posydon.spectral_synthesis.spectral_tools import smooth_flux_negatives
 from posydon.spectral_synthesis.spectral_grids import GRID_KEYS 
 #Constants
-Lo = 3.828e33 #Solar Luminosity erg/s
+Lo = 3.828e33 #Solar Luminosity erg/ss
 Zo = 0.0142 #Solar metallicity
-
+state_to_grid = {
+    "WNE_star": "WNE_grid",
+    "WNL_star": "WNL_grid",
+    "WC_star":  "WC_grid", 
+    "stripped_star" : "stripped_grid"
+}
 def check_boundaries(grids,grid_name,**kwargs):
     """Checks if the stellar parameters in inside the boundaries of the spectral grids.
 
@@ -39,19 +44,58 @@ def check_boundaries(grids,grid_name,**kwargs):
             return True
     grid = grids.spectral_grids[grid_name]
     axis_labels = grid.axis_labels
+    tol = 0.1
     for axis_label in axis_labels:
+        if axis_label == 'log(g)':
+                tol = 0.2
         if x[axis_label] < grid.axis_x_min[axis_label]:
-            if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < 0.1:
+            if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_min[axis_label]
             else:
                 return 'failed_grid',x 
         elif x[axis_label] > grid.axis_x_max[axis_label]:
-            if abs(x[axis_label] - grid.axis_x_max[axis_label])/(grid.axis_x_max[axis_label]) < 0.1:
+            if abs(x[axis_label] - grid.axis_x_max[axis_label])/(grid.axis_x_max[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_max[axis_label]
             else: 
-                return 'failed_grid',x 
+                return 'failed_grid',x
+
     #The star is within the grid limits.
     return grid_name,x 
+
+def labels_out_of_grid(grids, grid_name,**kwargs):
+    """ Checks what labels are out of the grid and returns them. 
+
+    Args:
+        grids: grid object
+            Instance of the grids created in generate_spectrum
+    """
+    x = copy(kwargs)
+    grid = grids.spectral_grids[grid_name]
+    failed_labels = []
+
+    axis_labels = grid.axis_labels
+    for axis_label in axis_labels:
+        if x[axis_label] < grid.axis_x_min[axis_label]:
+            failed_labels.append(axis_label)
+        elif x[axis_label] > grid.axis_x_max[axis_label]:
+            failed_labels.append(axis_label)
+    return failed_grid_labels
+
+def enforce_boundaries(grids, grid_name,grid_label,**kwargs):
+    """This function enforces a value of a star to fall within the grid
+    """
+    x = copy(kwargs)
+    grid = grids.spectral_grids[grid_name]
+    min_val = grid.axis_x_min[grid_label]
+    max_val = grid.axis_x_max[grid_label]
+    if x[grid_label] < min_val:
+        x[grid_label] = min_val
+    elif x[grid_label] > max_val:
+        x[grid_label] = max_val
+    return x[grid_label]
+
+
+
 
 def point_the_grid(grids,x,label,**kwargs):
     """Assigning the write label that would point to the spectra grid needed to used
@@ -76,9 +120,10 @@ def point_the_grid(grids,x,label,**kwargs):
     """
     ostar_temp_cut_off = kwargs.get('ostar_temp_cut_off',28000)
     bstar_temp_cut_off = kwargs.get('bstar_temp_cut_off',15000)
+    state = copy(x['state'])
     #First check for stripped stars because their temp can be a lot
     # higher than the Teff of the Ostar grid limit
-    if "stripped" in x['state']:
+    if "stripped" in state:
         if (label is None):
             new_label,x = check_boundaries(grids,'stripped_grid',**x)
             if new_label == 'failed_grid':
@@ -91,16 +136,32 @@ def point_the_grid(grids,x,label,**kwargs):
         if label ==  'failed_attempt_1':
             return check_boundaries(grids,'stripped_grid',**x)
 
-    if x['state'] == "WNE_star":
+    if state in ["WNE_star","WNL_star","WC_star"]:
         if label is None or label == 'failed_attempt_1':
-            new_label,x = check_boundaries(grids,'WNE_grid',**x)
+            new_label,x = check_boundaries(grids,state_to_grid[state],**x)
+            failed_label = labels_out_of_grid(grids, state_to_grid[state],**x)
             if new_label == 'failed_grid':
-                if x['R_t'] < grids.spectral_grids['WNE_grid'].axis_x_min['R_t']:
-                    x['R_t'] = grids.spectral_grids['WNE_grid'].axis_x_min['R_t']
-                    new_label,x = check_boundaries(grids,'WNE_grid',**x)
-                    if new_label != 'failed_grid':
-                        return new_label,x
-                new_label,x =  check_boundaries(grids,'stripped_grid',**x)
+                if x['Teff'] > grids.spectral_grids[state_to_grid[state]].axis_x_max['Teff']:
+                    if state == 'WNL_star':
+                        state = 'WNE_star'
+                    elif state == 'WNE_star':
+                        state = 'WC_star'
+                if x['R_t'] < grids.spectral_grids[state_to_grid[state]].axis_x_min['R_t']:
+                    x['R_t'] = grids.spectral_grids[state_to_grid[state]].axis_x_min['R_t']
+                elif x['R_t'] > grids.spectral_grids[state_to_grid[state]].axis_x_max['R_t']:
+                    x['R_t'] = grids.spectral_grids[state_to_grid[state]].axis_x_max['R_t']
+                new_label,x = check_boundaries(grids,state_to_grid[state],**x)
+                if new_label != 'failed_grid':
+                    return new_label,x
+                if (x['surface_h1'] > 0.4) & (x['Teff'] <  grids.spectral_grids['ostar_grid'].axis_x_max['Teff']):
+                    failed_label = labels_out_of_grid('ostar_grid',**x)
+                    if failed_label == 'log(g)':
+                        x = enforce_boundaries(grids, 'ostar_grid','log(g)',**kwargs)
+                    new_label,x =  check_boundaries(grids,'ostar_grid',**x)
+
+                else: 
+                    new_label,x =  check_boundaries(grids,'stripped_grid',**x)
+
                 if new_label == 'failed_grid':
                     if x['Teff'] > ostar_temp_cut_off:
                         return check_boundaries(grids,'ostar_grid',**x)
@@ -112,42 +173,6 @@ def point_the_grid(grids,x,label,**kwargs):
                     return new_label,x
             else:
                 return new_label,x
-    
-    if x['state'] == "WNL_star":
-        if label is None or label == 'failed_attempt_1':
-            new_label,x = check_boundaries(grids,'WNL_grid',**x)
-            if new_label == 'failed_grid':
-                new_label,x =  check_boundaries(grids,'stripped_grid',**x)
-                if new_label == 'failed_grid':
-                    if x['Teff'] > ostar_temp_cut_off:
-                        return check_boundaries(grids,'ostar_grid',**x)
-                    elif x['Teff'] > bstar_temp_cut_off:
-                        return check_boundaries(grids,'bstar_grid',**x)
-                    else:
-                        return new_label,x
-                else:
-                    return new_label,x
-            else:
-                return new_label,x
-    
-    if x['state'] == "WC_star":
-        if label is None or label == 'failed_attempt_1':
-            new_label,x = check_boundaries(grids,'WC_grid',**x)
-            if new_label == 'failed_grid':
-                new_label,x =  check_boundaries(grids,'stripped_grid',**x)
-                if new_label == 'failed_grid':
-                    if x['Teff'] > ostar_temp_cut_off:
-                        return check_boundaries(grids,'ostar_grid',**x)
-                    elif x['Teff'] > bstar_temp_cut_off:
-                        return check_boundaries(grids,'bstar_grid',**x)
-                    else:
-                        return new_label,x
-                else:
-                    return new_label,x
-            else:
-                return new_label,x
-    #if isinstance(check_boundaries(grids,'global',**x),str):
-    #    return check_boundaries(grids,'global',**x)
 
     #Second check for ostar stars.
     if x['Teff'] > ostar_temp_cut_off:
@@ -297,11 +322,33 @@ def rename_star_state(star,i):
     """
     xH_surf = copy(star[f'{i}_surface_h1'])
     xHe_surf = copy(star[f'{i}_surface_he4'])
-    T = copy(star[f'{i}_Teff'])
-    lg_M_dot = copy(star[f'{i}_lg_mdot'])
-    k_e = 0.2*(1 + xH_surf)
-    logg = copy(star[f'{i}_log_g'])
-    Gamma = k_e * con.sigma_sb*T**4/(con.c * 10**logg)
+    tau = calculate_WR_wind_tau(star,i)
+    if xH_surf > 0.1: 
+        if tau <= 0.5:
+            star[f'{i}_state'] = 'stripped_He_star'
+        else:
+            star[f'{i}_state'] = 'WNL_star' 
+            if star[f'{i}_surface_h1'] < 0.2:
+                star[f'{i}_surface_h1'] = 0.2
+            elif star[f'{i}_surface_h1'] > 0.4: 
+                star[f'{i}_surface_h1'] = 0.4
+
+    elif (xH_surf <= 0.1) and (xHe_surf > 0.7):
+        if tau <= 1.0:
+            star[f'{i}_state'] = 'stripped_He_star'
+        else: 
+            star[f'{i}_state'] = 'WNE_star'
+    elif (xH_surf <= 0.1) and (xHe_surf < 0.7):
+        if tau <= 1.0:
+            star[f'{i}_state'] = 'stripped_He_star'
+        else: 
+            star[f'{i}_state'] = 'WC_star'
+    else: 
+        raise ValueError("This else shouldn't have been reached")
+    if star[f'{i}_state'] in ['WNL_star', 'WNE_star', 'WC_star']:
+        star[f'{i}_Rt'] = calculated_Rt(star,i)
+    
+    """
     if lg_M_dot < -6:
         star[f'{i}_state'] = 'stripped_He_star'
     else:
@@ -314,7 +361,7 @@ def rename_star_state(star,i):
         else:
             star[f'{i}_surface_h1'] = max(xH_surf,0.2)
             star[f'{i}_state'] = 'WNL_star' 
-        
+    """    
 
 def calculated_Rt(star,i):
     M_dot = 10**copy(star[f'{i}_lg_mdot'])
@@ -323,6 +370,22 @@ def calculated_Rt(star,i):
     R  = 10**copy(star[f'{i}_log_R'])
     Rt = R*((v_terminal/2500)/(np.sqrt(D_max)*M_dot/1e-4))**(2/3)
     return Rt
+
+def calculate_WR_wind_tau(star,i):
+    xH_surf = copy(star[f'{i}_surface_h1'])
+    v_0 = 20 *u.km * u.s**(-1)# cm *s^-1 
+    T = copy(star[f'{i}_Teff'])*u.K
+    lg_M_dot = -10**copy(star[f'{i}_lg_mdot']) *con.M_sun*u.yr**(-1)
+    R = 10**copy(star[f'{i}_log_R'])*con.R_sun
+    M = copy(star[f'{i}_mass'])*con.M_sun
+    k_e = 0.2*(1 + xH_surf) * u.cm**2 * u.g**(-1) 
+    logg = copy(star[f'{i}_log_g'])
+    Gamma = k_e * con.sigma_sb*T**4/(con.c * (10**logg*u.cm*u.s**(-2)))
+    v_esc = np.sqrt(2 * con.G * M *R**(-1)* (1 - Gamma))
+    
+    v_terminal = 1.3 * v_esc
+    tau = - k_e * lg_M_dot/(4 * np.pi * R * (v_terminal - v_0) )* np.log(v_terminal/v_0)
+    return tau
 
 def find_nearest_neighbor_stripped(**x):
     #We want a function that will find the nearest neighbor in case of a star falling
