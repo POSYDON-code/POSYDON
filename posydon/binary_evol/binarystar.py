@@ -175,18 +175,23 @@ class BinaryStar:
                 setattr(self, item, binary_kwargs.pop(item, 0.0))
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
+
             setattr(self, item + '_history', [getattr(self, item)])
 
         for key, val in binary_kwargs.items():
             setattr(self, key, val)
+            setattr(self, key + '_history', [val])
 
-        if getattr(self.star_1, "mass") is not None and getattr(self.star_2, "mass") is not None:
-            if getattr(self, "separation") is None and getattr(self, "orbital_period") is not None:
+        if pd.notna(getattr(self.star_1, "mass")) and pd.notna(getattr(self.star_2, "mass")):
+            if pd.isna(getattr(self, "separation")) and pd.notna(getattr(self, "orbital_period")):
                 setattr(self, "separation", 
                         orbital_separation_from_period(self.orbital_period, self.star_1.mass, self.star_2.mass))
-            elif getattr(self, "orbital_period") is None and getattr(self, "separation") is not None:
+                setattr(self, "separation_history", [getattr(self, "separation")])
+
+            elif pd.isna(getattr(self, "orbital_period")) and pd.notna(getattr(self, "separation")):
                 setattr(self, "orbital_period", 
                         orbital_period_from_separation(self.separation, self.star_1.mass, self.star_2.mass))
+                setattr(self, "orbital_period_history", [getattr(self, "orbital_period")])
 
         if not hasattr(self, 'inspiral_time'):
             self.inspiral_time = None

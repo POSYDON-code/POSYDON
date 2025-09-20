@@ -720,6 +720,7 @@ class detached_step:
                     history = zero_negative_values(history, key)
 
                 elif (key in ["surf_avg_omega"] and obj != binary):
+                  
                     current = interp1d["omega"][-1] / const.secyer
                     history = interp1d["omega"][:-1] / const.secyer
 
@@ -784,6 +785,7 @@ class detached_step:
                     history = zero_negative_values(history, key)
 
                 elif (key in ["lg_mdot", "lg_wind_mdot"] and obj != binary):
+
                     if interp1d[self.translate[key]](t[-1]) == 0:
                         current = -99.0
                     else:
