@@ -581,6 +581,7 @@ def create_run_script_text(ini_file):
     text=["from posydon.popsyn.binarypopulation import BinaryPopulation",
          "from posydon.popsyn.io import binarypop_kwargs_from_ini",
          "from posydon.utils.common_functions import convert_metallicity_to_string",
+         "from posydon.binary_evol.simulationproperties import SimulationProperties",
          "import argparse",
 
          'if __name__ == "__main__":',
@@ -591,7 +592,8 @@ def create_run_script_text(ini_file):
          "    ini_kw['metallicity'] = args.metallicity",
          "    str_met = convert_metallicity_to_string(args.metallicity)",
          "    ini_kw['temp_directory'] = str_met+'_Zsun_' + ini_kw['temp_directory']",
-         "    synpop = BinaryPopulation(**ini_kw)",
+        f"    sim_props = SimulationProperties.from_ini('{ini_file}')",
+         "    synpop = BinaryPopulation(population_properties=sim_props, **ini_kw)", 
          "    synpop.evolve()"]
 
     text = '\n'.join(text)
