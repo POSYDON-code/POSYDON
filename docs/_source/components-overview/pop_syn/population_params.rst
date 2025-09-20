@@ -420,34 +420,6 @@ This means that this step uses the single stars loaded by the detached step.
       | to find a solution.
     - ``1e-1``
 
-  * - ``do_wind_loss``
-    - | Enable orbital separation and eccentricity changes from stellar wind loss.
-    - ``True``
-
-  * - ``do_tides``
-    - | Enable tides following Hut, P. 1981, A&A, 99, 126.
-    - ``True``
-
-  * - ``do_gravitational_radiation``
-    - | Enable gravitational radiation following Junker, W., & Schafer, G. 1992, MNRAS, 254, 146.
-    - ``True``
-  
-  * - ``do_magnetic_braking``
-    - | Enable stellar angular momentum loss from magnetic braking.
-    - ``True``
-
-  * - ``magnetic_braking_mode``
-    - | A string corresponding to the desired magnetic braking prescription.
-      * ``'RVJ83'``: Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
-      * ``'M15'``: Matt et al. 2015, ApJ, 799, L23
-      * ``'G18'``: Garraffo et al. 2018, ApJ, 862, 90
-      * ``'CARB'``: Van & Ivanova 2019, ApJ, 886, L31
-    - ``'RVJ83'``
-
-  * - ``do_stellar_evolution_and_spin_from_winds``
-    - | Enable stellar angular momentum loss from winds.
-    - ``True``
-
   * - ``record_matching``
     - | If true, append quantities achieved from track matching to the binary history.
     - ``True``
