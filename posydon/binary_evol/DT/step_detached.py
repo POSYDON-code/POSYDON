@@ -849,14 +849,14 @@ class detached_step:
 
             for key in prop:
 
-                    # simply get the current attribute value and update
-                    # this step's props with it. Detached evolution does not
-                    # modify these properties for a CO by default, so they 
-                    # typically remain unchanged from the previous step.
-                    current = getattr(obj, key)
-                    history = [current] * len(t[:-1])
-                    setattr(obj, key, current)
-                    getattr(obj, key + "_history").extend(history)
+                # simply get the current attribute value and update
+                # this step's props with it. Detached evolution does not
+                # modify these properties for a CO by default, so they 
+                # typically remain unchanged from the previous step.
+                current = getattr(obj, key)
+                history = [current] * len(t[:-1])
+                setattr(obj, key, current)
+                getattr(obj, key + "_history").extend(history)
 
 class detached_evolution:
 
