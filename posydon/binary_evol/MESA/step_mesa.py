@@ -662,6 +662,8 @@ class MesaGridStep:
                             getattr(star, key_h).append(cb_bh[key_p][0])
                         if track_interpolation:
                             getattr(star, key_h).extend(cb_bh[key_p][:-1])
+                    elif key in ['state', 'lg_mdot']:
+                        continue
                     else:
                         if self.save_initial_conditions:
                             getattr(star, key_h).append(old_h[0])
@@ -915,6 +917,8 @@ class MesaGridStep:
                     elif key in ['lg_mdot', 'lg_system_mdot', 'lg_wind_mdot']:
                         key_p = POSYDON_TO_MESA['star'][key]+'_%d' % (k+1)
                         setattr(star, key, fv[key_p])
+                    elif key == 'state':
+                        continue
 
         # infer stellar states
         interpolation_class = self.classes['interpolation_class']
