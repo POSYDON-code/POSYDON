@@ -844,9 +844,10 @@ class detached_step:
                            [STARPROPERTIES, STARPROPERTIES]):
             
             # only update compact objects here
-            if obj.co: 
+            if not obj.co:
+                continue 
 
-                for key in prop:
+            for key in prop:
 
                     # simply get the current attribute value and update
                     # this step's props with it. Detached evolution does not
