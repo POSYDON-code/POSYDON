@@ -182,13 +182,13 @@ class BinaryStar:
             setattr(self, key, val)
             setattr(self, key + '_history', [val])
 
-        if ~pd.isna(getattr(self.star_1, "mass")) and ~pd.isna(getattr(self.star_2, "mass")):
-            if pd.isna(getattr(self, "separation")) and ~pd.isna(getattr(self, "orbital_period")):
+        if pd.notna(getattr(self.star_1, "mass")) and pd.notna(getattr(self.star_2, "mass")):
+            if pd.isna(getattr(self, "separation")) and pd.notna(getattr(self, "orbital_period")):
                 setattr(self, "separation", 
                         orbital_separation_from_period(self.orbital_period, self.star_1.mass, self.star_2.mass))
                 setattr(self, "separation_history", [getattr(self, "separation")])
 
-            elif pd.isna(getattr(self, "orbital_period")) and ~pd.isna(getattr(self, "separation")):
+            elif pd.isna(getattr(self, "orbital_period")) and pd.notna(getattr(self, "separation")):
                 setattr(self, "orbital_period", 
                         orbital_period_from_separation(self.separation, self.star_1.mass, self.star_2.mass))
                 setattr(self, "orbital_period_history", [getattr(self, "orbital_period")])
