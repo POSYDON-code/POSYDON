@@ -1119,6 +1119,7 @@ class BinaryGenerator:
                 history_verbose=self.kwargs.get("history_verbose", False)
             )
             star2_params = properties_massless_remnant()
+            star2_params.update(dict(metallicity=kwargs.get('metallicity', 1.0)))
 
 
         binary = BinaryStar(**binary_params,
