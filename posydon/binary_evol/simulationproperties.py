@@ -249,7 +249,9 @@ class SimulationProperties:
         # for every other step, give it a metallicity and load each step
         for name, tup in self.kwargs.items():
             if isinstance(tup, tuple):
-                self.load_a_step(name, tup, metallicity, verbose=verbose)
+                step_kwargs = tup[1]
+                metallicity = step_kwargs.get('metallicity', None)
+                self.load_a_step(name, tup, metallicity=metallicity, verbose=verbose)
 
         # track that all steps have been loaded
         self.steps_loaded = True
@@ -293,9 +295,15 @@ class SimulationProperties:
             step_tup = simprop_kwargs_from_ini(from_ini, only=step_name)[step_name]
 
         if (metallicity is None) and (step_name not in ignore_for_met):
-            Pwarn(f"{step_name} not assigned a metallicity. Defaulting to Z = Zsun (solar).", 
-                    "MissingValueWarning")
-            metallicity = 1.0
+            step_kwargs = step_tup[1]
+            metallicity = step_kwargs.get('metallicity', None)
+            if metallicity is not None:
+                pass
+            # if still None:
+            else:
+                Pwarn(f"{step_name} not assigned a metallicity. Defaulting to Z = Zsun (solar).", 
+                        "MissingValueWarning")
+                metallicity = 1.0
 
         # This if should never trigger after __init__, unless the step is 
         # entirely new and non-standard

@@ -148,23 +148,39 @@ class SingleStar:
 
         # (This only comes into play if a user doesn't set these)
         setattr(self, 'metallicity', kwargs.pop('metallicity', 1.0))
-        Z_div_Zsun = self.metallicity
-        if Z_div_Zsun in zams_table.keys():
-            Y = zams_table[Z_div_Zsun]
-        else:
-            raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
-        Z = Z_div_Zsun*Zsun        
-        X = 1.0 - Y - Z
-        LOW_ABUNDANCE = 1e-6
-        # a low/high value to guess with, seems to work well
-        LOW_LOGR_GUESS = 0.0
-        HIGH_LOGR_GUESS = 4.0
-
         state = kwargs.get('state', 'H-rich_Core_H_burning')
+        CO_states = ['massless_remnant', 'WD', 'NS', 'BH']
+        
+        if state in CO_states:
+            Z_div_Zsun = self.metallicity
+            Y = np.nan
+            Z = np.nan     
+            X = np.nan
+            LOW_ABUNDANCE = np.nan
+            # a low/high value to guess with, seems to work well
+            LOW_LOGR_GUESS = np.nan
+            HIGH_LOGR_GUESS = np.nan
+    
+            # start by guessing a smallish radius and no He core
+            default_log_R = np.nan
+            default_He_core_mass = np.nan
+        else:
+            Z_div_Zsun = self.metallicity
+            if Z_div_Zsun in zams_table.keys():
+                Y = zams_table[Z_div_Zsun]
+            else:
+                raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
+            Z = Z_div_Zsun*Zsun        
+            X = 1.0 - Y - Z
+            LOW_ABUNDANCE = 1e-6
+            # a low/high value to guess with, seems to work well
+            LOW_LOGR_GUESS = 0.0
+            HIGH_LOGR_GUESS = 4.0
 
-        # start by guessing a smallish radius and no He core
-        default_log_R = LOW_LOGR_GUESS
-        default_He_core_mass = 0.0
+            # start by guessing a smallish radius and no He core
+            default_log_R = LOW_LOGR_GUESS
+            default_He_core_mass = 0.0
+        
         # MAIN SEQUENCE
         if "Core_H_burning" in state:
             # default HMS ZAMS
@@ -210,10 +226,11 @@ class SingleStar:
             # This stays big after He core forms
             default_He_core_mass = kwargs.get('mass')
         # COMPACT OBJECT
-        elif (state == "BH") or (state == "NS") or (state == "WD"):
+        elif state in ['WD', 'NS', 'BH']:
             default_core_X = np.nan
             default_core_Y = np.nan
             default_log_R = np.log10(CO_radius(kwargs.get('mass'), state))
+            default_He_core_mass = np.nan
             # If a user gives a mass that does not comply with our 
             # CO star state logic, you can get weird stuff like a
             # BH or NS turning into a WD.
@@ -225,6 +242,11 @@ class SingleStar:
                              star_CO=True)
             if state != inferred_state:
                 kwargs['state'] = inferred_state
+        elif state == 'massless_remnant':
+            default_core_X = np.nan
+            default_core_Y = np.nan
+            default_log_R = np.nan
+            default_He_core_mass = np.nan
         else:
             # some state not caught above, default HMS ZAMS
             Pwarn(f"The initial state {state} was not caught in "
@@ -257,7 +279,10 @@ class SingleStar:
                 if item == 'he_core_mass':
                     default_core_mass = default_He_core_mass 
                 else:
-                    default_core_mass = 0.0
+                    if state in CO_states:
+                        default_core_mass = 0.0
+                    else:
+                        default_core_mass = np.nan
 
                 setattr(self, item, kwargs.pop(item, default_core_mass))
             elif item == 'metallicity':
