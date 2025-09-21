@@ -249,7 +249,7 @@ class SimulationProperties:
         # for every other step, give it a metallicity and load each step
         for name, tup in self.kwargs.items():
             if isinstance(tup, tuple):
-                self.load_a_step(name, tup, metallicity, verbose)
+                self.load_a_step(name, tup, metallicity, verbose=verbose)
 
         # track that all steps have been loaded
         self.steps_loaded = True

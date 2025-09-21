@@ -1407,12 +1407,12 @@ class TrackMatcher:
 
         with np.errstate(all="ignore"):
             # get the initial m0, t0 track
-            if binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
+            if star.co:
+                match_m0, match_t0 = copy_prev_m0, copy_prev_t0
+            elif binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
                 # ZAMS stars in wide (non-mass exchaging binaries) that are
                 # directed to detached step at birth
                 match_m0, match_t0 = star.mass, 0
-            elif star.co:
-                match_m0, match_t0 = copy_prev_m0, copy_prev_t0
             else:
                 t_before_matching = time.time()
                 # matching to single star grids (getting mass, age of 
