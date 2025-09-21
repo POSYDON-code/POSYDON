@@ -124,8 +124,13 @@ class ValueWarning(POSYDONWarning):
     def __init__(self, message=''):
         super().__init__(message)
 
+class InitializationWarning(POSYDONWarning):
+    """Warnings related to intializing things."""
+    def __init__(self, message=''):
+        super().__init__(message)
+        
 class StepWarning(POSYDONWarning):
-    """Warnings related to the SFH model."""
+    """Warnings related to an evolution step."""
     def __init__(self, message=''):
         super().__init__(message)
 
