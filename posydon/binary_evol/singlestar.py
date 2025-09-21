@@ -226,7 +226,7 @@ class SingleStar:
             # This stays big after He core forms
             default_He_core_mass = kwargs.get('mass')
         # COMPACT OBJECT
-        elif (state == "BH") or (state == "NS") or (state == "WD"):
+        elif state in CO_states:
             default_core_X = np.nan
             default_core_Y = np.nan
             default_log_R = np.log10(CO_radius(kwargs.get('mass'), state))
