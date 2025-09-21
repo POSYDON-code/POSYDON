@@ -230,6 +230,7 @@ class SingleStar:
             default_core_X = np.nan
             default_core_Y = np.nan
             default_log_R = np.log10(CO_radius(kwargs.get('mass'), state))
+            default_He_core_mass = np.nan
             # If a user gives a mass that does not comply with our 
             # CO star state logic, you can get weird stuff like a
             # BH or NS turning into a WD.
@@ -242,7 +243,10 @@ class SingleStar:
             if state != inferred_state:
                 kwargs['state'] = inferred_state
         elif state == 'massless_remnant':
-            pass
+            default_core_X = np.nan
+            default_core_Y = np.nan
+            default_log_R = np.nan
+            default_He_core_mass = np.nan
         else:
             # some state not caught above, default HMS ZAMS
             Pwarn(f"The initial state {state} was not caught in "
@@ -275,7 +279,10 @@ class SingleStar:
                 if item == 'he_core_mass':
                     default_core_mass = default_He_core_mass 
                 else:
-                    default_core_mass = 0.0
+                    if state in CO_states:
+                        default_core_mass = 0.0
+                    else:
+                        default_core_mass = np.nan
 
                 setattr(self, item, kwargs.pop(item, default_core_mass))
             elif item == 'metallicity':
