@@ -241,6 +241,8 @@ class SingleStar:
                              star_CO=True)
             if state != inferred_state:
                 kwargs['state'] = inferred_state
+        elif state == 'massless_remnant':
+            pass
         else:
             # some state not caught above, default HMS ZAMS
             Pwarn(f"The initial state {state} was not caught in "
