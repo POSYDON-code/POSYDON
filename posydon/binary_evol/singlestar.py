@@ -148,23 +148,39 @@ class SingleStar:
 
         # (This only comes into play if a user doesn't set these)
         setattr(self, 'metallicity', kwargs.pop('metallicity', 1.0))
-        Z_div_Zsun = self.metallicity
-        if Z_div_Zsun in zams_table.keys():
-            Y = zams_table[Z_div_Zsun]
-        else:
-            raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
-        Z = Z_div_Zsun*Zsun        
-        X = 1.0 - Y - Z
-        LOW_ABUNDANCE = 1e-6
-        # a low/high value to guess with, seems to work well
-        LOW_LOGR_GUESS = 0.0
-        HIGH_LOGR_GUESS = 4.0
-
         state = kwargs.get('state', 'H-rich_Core_H_burning')
+        CO_states = ['massless_remnant', 'WD', 'NS', 'BH']
+        
+        if state in CO_states:
+            Z_div_Zsun = self.metallicity
+            Y = np.nan
+            Z = np.nan     
+            X = np.nan
+            LOW_ABUNDANCE = np.nan
+            # a low/high value to guess with, seems to work well
+            LOW_LOGR_GUESS = np.nan
+            HIGH_LOGR_GUESS = np.nan
+    
+            # start by guessing a smallish radius and no He core
+            default_log_R = np.nan
+            default_He_core_mass = np.nan
+        else:
+            Z_div_Zsun = self.metallicity
+            if Z_div_Zsun in zams_table.keys():
+                Y = zams_table[Z_div_Zsun]
+            else:
+                raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
+            Z = Z_div_Zsun*Zsun        
+            X = 1.0 - Y - Z
+            LOW_ABUNDANCE = 1e-6
+            # a low/high value to guess with, seems to work well
+            LOW_LOGR_GUESS = 0.0
+            HIGH_LOGR_GUESS = 4.0
 
-        # start by guessing a smallish radius and no He core
-        default_log_R = LOW_LOGR_GUESS
-        default_He_core_mass = 0.0
+            # start by guessing a smallish radius and no He core
+            default_log_R = LOW_LOGR_GUESS
+            default_He_core_mass = 0.0
+        
         # MAIN SEQUENCE
         if "Core_H_burning" in state:
             # default HMS ZAMS
