@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.MESA &mdash; posydon 2.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dc13204d"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="posydon.binary_evol.SN" href="posydon.binary_evol.SN.html" />
+    <link rel="prev" title="posydon.binary_evol.DT.winds" href="posydon.binary_evol.DT.winds.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="posydon.html">posydon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="posydon.active_learning.html">posydon.active_learning</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="posydon.binary_evol.html">posydon.binary_evol</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.CE.html">posydon.binary_evol.CE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.DT.html">posydon.binary_evol.DT</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">posydon.binary_evol.MESA</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-posydon.binary_evol.MESA.step_mesa">posydon.binary_evol.MESA.step_mesa</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.SN.html">posydon.binary_evol.SN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol.binarystar">posydon.binary_evol.binarystar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol.flow_chart">posydon.binary_evol.flow_chart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol.simulationproperties">posydon.binary_evol.simulationproperties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol.singlestar">posydon.binary_evol.singlestar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.binary_evol.html#module-posydon.binary_evol.step_end">posydon.binary_evol.step_end</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.grids.html">posydon.grids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.interpolation.html">posydon.interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.popsyn.html">posydon.popsyn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.user_modules.html">posydon.user_modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.utils.html">posydon.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.html">posydon.visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="posydon.html">posydon</a></li>
+          <li class="breadcrumb-item"><a href="posydon.binary_evol.html">posydon.binary_evol</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.MESA</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/posydon.binary_evol.MESA.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-posydon.binary_evol.MESA">
+<span id="posydon-binary-evol-mesa"></span><h1>posydon.binary_evol.MESA<a class="headerlink" href="#module-posydon.binary_evol.MESA" title="Link to this heading"></a></h1>
+<section id="module-posydon.binary_evol.MESA.step_mesa">
+<span id="posydon-binary-evol-mesa-step-mesa"></span><h2>posydon.binary_evol.MESA.step_mesa<a class="headerlink" href="#module-posydon.binary_evol.MESA.step_mesa" title="Link to this heading"></a></h2>
+<p>This class evolves a binary object according to a MESA grid.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.CO_HMS_RLO_step">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.MESA.step_mesa.</span></span><span class="sig-name descname"><span class="pre">CO_HMS_RLO_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#CO_HMS_RLO_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.CO_HMS_RLO_step" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep" title="posydon.binary_evol.MESA.step_mesa.MesaGridStep"><code class="xref py py-class docutils literal notranslate"><span class="pre">MesaGridStep</span></code></a></p>
+<p>Class for performing the MESA step for a CO-HMS_RLO binary.</p>
+<p>Initialize a CO_HMS_RLO_step instance.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.CO_HeMS_RLO_step">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.MESA.step_mesa.</span></span><span class="sig-name descname"><span class="pre">CO_HeMS_RLO_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#CO_HeMS_RLO_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.CO_HeMS_RLO_step" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep" title="posydon.binary_evol.MESA.step_mesa.MesaGridStep"><code class="xref py py-class docutils literal notranslate"><span class="pre">MesaGridStep</span></code></a></p>
+<p>Class for performing the MESA step for a CO-HeMS_RLO binary.</p>
+<p>Initialize a CO_HeMS_RLO_step instance.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.CO_HeMS_step">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.MESA.step_mesa.</span></span><span class="sig-name descname"><span class="pre">CO_HeMS_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#CO_HeMS_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.CO_HeMS_step" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep" title="posydon.binary_evol.MESA.step_mesa.MesaGridStep"><code class="xref py py-class docutils literal notranslate"><span class="pre">MesaGridStep</span></code></a></p>
+<p>Class for performing the MESA step for a CO-HeMS binary.</p>
+<p>Initialize a CO_HeMS_step instance.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.HMS_HMS_RLO_step">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.MESA.step_mesa.</span></span><span class="sig-name descname"><span class="pre">HMS_HMS_RLO_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#HMS_HMS_RLO_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.HMS_HMS_RLO_step" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep" title="posydon.binary_evol.MESA.step_mesa.MesaGridStep"><code class="xref py py-class docutils literal notranslate"><span class="pre">MesaGridStep</span></code></a></p>
+<p>Class for performing the MESA step for a HMS-HMS RLO binary.
+For binaries with an initial eccentricity at ZAMS,
+we evolve them first with step detached and map to the HMS-HMS RLO grid
+using <cite>initial_eccentricity_flow_chart</cite>.</p>
+<p>Initialize a HMS_HMS_RLO_step instance.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MS_MS_step">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.MESA.step_mesa.</span></span><span class="sig-name descname"><span class="pre">MS_MS_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MS_MS_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MS_MS_step" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep" title="posydon.binary_evol.MESA.step_mesa.MesaGridStep"><code class="xref py py-class docutils literal notranslate"><span class="pre">MesaGridStep</span></code></a></p>
+<p>Class for performing the MESA step for a MS-MS binary.</p>
+<p>Initialize a MS_MS_step instance.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.MESA.step_mesa.</span></span><span class="sig-name descname"><span class="pre">MesaGridStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PATH_TO_POSYDON_DATA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear3c_kNN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_initial_conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stop_at_max_time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'star_1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_var_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_interpolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Superclass for steps using the POSYDON grids.</p>
+<p>Evolve a binary object given a MESA grid or interpolation object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interpolation_method</strong> (<em>'nearest_neighbour'</em><em>, </em><em>'linear_knn_interpolation'</em>) – <p>‘linear_NN_interpolation’
+- nearest_neighbour requires a psygrid in the h5 format
+- linear_knn_interpolation requires a pkl file trained with</p>
+<blockquote>
+<div><p>interpolation class linear inteprolation, knn classification</p>
+</div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt>linear_NN_interpolation requires a pkl file trained with</dt><dd><p>interpolation class linear inteprolation, neural network
+classification</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+<li><p><strong>track_interpolation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – <ul>
+<li><p>True requires <cite>nearest_neighbour</cite> and will append the entire
+MESA history of properties.</p></li>
+</ul>
+</p></li>
+<li><p><strong>stop_method</strong> (<em>stop_at_end</em><em> or </em><em>stop_at_max_time</em>) – <ul>
+<li><p>stop_at_end will stop the binary at the end of the MESA track</p></li>
+<li><p>stop_at_max_time binary will stop in the middle of a MESA track
+if doing so would exceed the binary’s max_time</p></li>
+<li><p>stop_at_condition will stop the binary when a five condition is
+met (see next parameters)</p></li>
+</ul>
+</p></li>
+<li><p><strong>stop_var_name</strong> (<em>keys in STARPROPERTIES and</em>) – BINARYPROPERTIES
+- key is one of the STARPROPERTIES and BINARYPROPERTIES</p></li>
+<li><p><strong>stop_star</strong> (<em>star_1</em><em> or </em><em>star_2</em>) – <ul>
+<li><p>if you choose stop_var_name from STARPROPERTIES you need to
+indicate which star you are referring too</p></li>
+</ul>
+</p></li>
+<li><p><strong>stop_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – <ul>
+<li><p>when value is reached in the next MESA history model, the binary
+will stop the evolution</p></li>
+</ul>
+</p></li>
+<li><p><strong>stop_interpolate</strong> (<em>True</em><em> or </em><em>False</em>) – <ul>
+<li><p>True can only be chosen if stop_var_name=’time’, it means that
+the binary properties will be linearly interpolated between two
+timestamp to determine their values at the arbitrary time
+stop_value</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.close" title="Link to this definition"></a></dt>
+<dd><p>Close the inteprolator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.get_final_MESA_step_time">
+<span class="sig-name descname"><span class="pre">get_final_MESA_step_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.get_final_MESA_step_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.get_final_MESA_step_time" title="Link to this definition"></a></dt>
+<dd><p>Infer the maximum MESA step time.</p>
+<p>Use the specified interpolation method to determine the maximum
+MESA simulation time about to be added to the binary. If this step
+exceeds the maximum age of the binary, a step(NN) is done.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.initial_final_interpolation">
+<span class="sig-name descname"><span class="pre">initial_final_interpolation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_1_CO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_2_CO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.initial_final_interpolation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.initial_final_interpolation" title="Link to this definition"></a></dt>
+<dd><p>Update the binary through initial-final interpolation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.interpolate_at_t">
+<span class="sig-name descname"><span class="pre">interpolate_at_t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_before</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_after</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_before</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_after</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.interpolate_at_t"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.interpolate_at_t" title="Link to this definition"></a></dt>
+<dd><p>Linear interpolation in time between two points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a>) – Description of parameter <cite>t</cite>.</p></li>
+<li><p><strong>t_before</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a>) – Description of parameter <cite>t_before</cite>.</p></li>
+<li><p><strong>t_after</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a>) – Description of parameter <cite>t_after</cite>.</p></li>
+<li><p><strong>v_before</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a>) – Description of parameter <cite>v_before</cite>.</p></li>
+<li><p><strong>v_after</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><em>type</em></a>) – Description of parameter <cite>v_after</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Description of returned object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)">type</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.load_Interp">
+<span class="sig-name descname"><span class="pre">load_Interp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.load_Interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.load_Interp" title="Link to this definition"></a></dt>
+<dd><p>Load the interpolator that has been trained on the grid.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.load_psyTrackInterp">
+<span class="sig-name descname"><span class="pre">load_psyTrackInterp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.load_psyTrackInterp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.load_psyTrackInterp" title="Link to this definition"></a></dt>
+<dd><p>Load the interpolator that has been trained on the grid.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.single_star">
+<span class="sig-name descname"><span class="pre">single_star</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.single_star"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.single_star" title="Link to this definition"></a></dt>
+<dd><p>Check if the type of the star is supported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.step" title="Link to this definition"></a></dt>
+<dd><p>Take the step by calling the appropriate interpolator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.stop_at_condition">
+<span class="sig-name descname"><span class="pre">stop_at_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'star_1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_1_CO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_2_CO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.stop_at_condition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.stop_at_condition" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.stop_at_end">
+<span class="sig-name descname"><span class="pre">stop_at_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_1_CO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_2_CO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.stop_at_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.stop_at_end" title="Link to this definition"></a></dt>
+<dd><p>Update the binary event if max time has been exceeded.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.binary_evol.MESA.step_mesa.MesaGridStep.update_properties_NN">
+<span class="sig-name descname"><span class="pre">update_properties_NN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_1_CO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_2_CO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/MESA/step_mesa.html#MesaGridStep.update_properties_NN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.MESA.step_mesa.MesaGridStep.update_properties_NN" title="Link to this definition"></a></dt>
+<dd><p>Update properites according to nearest neighbour interpolation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>star_1_CO</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – <cite>True</cite> if star_1 is a compact object.</p></li>
+<li><p><strong>star_2_CO</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – <cite>True</cite> if star_2 is a compact object.</p></li>
+<li><p><strong>track_interpolation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, uses track interpolation over initial-final interpolation</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="posydon.binary_evol.DT.winds.html" class="btn btn-neutral float-left" title="posydon.binary_evol.DT.winds" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="posydon.binary_evol.SN.html" class="btn btn-neutral float-right" title="posydon.binary_evol.SN" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.4/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

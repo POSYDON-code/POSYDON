@@ -1,0 +1,724 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom POSYDON steps and flow chart &mdash; posydon 2.1.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=dc13204d"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Van den Heuvel diagrams with POSYDON" href="VHD.html" />
+    <link rel="prev" title="Evolve individual binaries 🐞" href="evolve_single_binaries.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evolve_single_binaries.html">Evolve individual binaries 🐞</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Custom POSYDON steps and flow chart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+      <li class="breadcrumb-item active">Custom POSYDON steps and flow chart</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/population-synthesis/custom_step_and_flow.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Custom-POSYDON-steps-and-flow-chart">
+<h1>Custom POSYDON steps and flow chart<a class="headerlink" href="#Custom-POSYDON-steps-and-flow-chart" title="Link to this heading"></a></h1>
+<p>The evolution of binaries in POSYDON is determined by the flowchart. It uses the stellar states, <code class="docutils literal notranslate"><span class="pre">S1_state</span></code> and <code class="docutils literal notranslate"><span class="pre">S2_state</span></code>, the binary <code class="docutils literal notranslate"><span class="pre">state</span></code> and <code class="docutils literal notranslate"><span class="pre">event</span></code> to determine to which step the binary goes to next.</p>
+<p>For example, in the default flowchart, the state <code class="docutils literal notranslate"><span class="pre">('H-rich_Core_C_depleted','H-rich_Core_H_burning',</span> <span class="pre">'detached',</span> <span class="pre">'CC1')</span></code> will be sent to <code class="docutils literal notranslate"><span class="pre">step_SN</span></code>.</p>
+<p>If your specific needs require it, it is possible to change the flow and introduce your own steps. This is possible through:</p>
+<ol class="arabic simple">
+<li><p>Importing an additional flowchart and step from the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file.</p></li>
+<li><p>Changing a step inside a notebook.</p></li>
+</ol>
+<section id="Population_params.ini-changes">
+<h2>Population_params.ini changes<a class="headerlink" href="#Population_params.ini-changes" title="Link to this heading"></a></h2>
+<p>If you want to run large populations with an adapted flowchart or custom step, this is the location to change the loaded steps.</p>
+<section id="Importing-an-adapted-flowchart">
+<h3>Importing an adapted flowchart<a class="headerlink" href="#Importing-an-adapted-flowchart" title="Link to this heading"></a></h3>
+<p>One of the first things the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file defines is the flowchart. By default, the POSYDON default <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> is imported:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[flow]
+  import = [&#39;posydon.binary_evol.flow_chart&#39;, &#39;flow_chart&#39;]
+    # builtin posydon flow
+  absolute_import = None
+    # If given, use an absolute filepath to user defined flow: [&#39;&lt;PATH_TO_PY_FILE&gt;&#39;, &#39;&lt;NAME&gt;&#39;]
+</pre></div>
+</div>
+<p>We can change this to import our custom flow. In this tutorial, we will use the example flow named <code class="docutils literal notranslate"><span class="pre">end_flow_chart</span></code> in <a class="reference external" href="custom_step_and_flow.py">custom_step_and_flow.py</a>. This flow immediately sends the binary to <code class="docutils literal notranslate"><span class="pre">step_end</span></code> without any evolution. To use it, we need to change the path to the absolute path of the example file.</p>
+<p>Alternatively, you can put the Python file into the <code class="docutils literal notranslate"><span class="pre">user_modules</span></code> folder to make it part of the POSYDON namespace.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[flow]
+  import = None
+    # builtin posydon flow
+  absolute_import = [&#39;custom_step_and_flow.py&#39;, &#39;end_flow_chart&#39;]
+    # If given, use an absolute filepath to user defined flow: [&#39;&lt;PATH_TO_PY_FILE&gt;&#39;, &#39;&lt;NAME&gt;&#39;]
+</pre></div>
+</div>
+<p>We can check this change by loading the Simulation Property arguments. You can follow the <code class="docutils literal notranslate"><span class="pre">Evolve</span> <span class="pre">individual</span> <span class="pre">binaries</span></code> tutorial to evolve a binary with each of these flowcharts.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">simprop_kwargs_from_ini</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProperties</span>
+
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">)</span>
+<span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+<span class="n">sim_prop</span><span class="o">.</span><span class="n">flow</span><span class="p">[</span><span class="mi">0</span><span class="p">]()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sim_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params_end.ini&#39;</span><span class="p">)</span>
+<span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+<span class="n">sim_prop</span><span class="o">.</span><span class="n">flow</span><span class="p">[</span><span class="mi">0</span><span class="p">]()</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="Changing-an-existing-step-to-a-custom-step">
+<h2>Changing an existing step to a custom step<a class="headerlink" href="#Changing-an-existing-step-to-a-custom-step" title="Link to this heading"></a></h2>
+<p>Similarly, you can change one of the standard POSYDON steps to a custom one. We will replace the common envelope step with one that halves the orbital period.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[step_CE]
+  import = [&#39;posydon.binary_evol.CE.step_CEE&#39;, &#39;StepCEE&#39;]
+    # builtin posydon step
+  absolute_import = None
+    # If given, use an absolute filepath to user defined step: [&#39;&lt;PATH_TO_PY_FILE&gt;&#39;, &#39;&lt;NAME&gt;&#39;]
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[step_CE]
+  import = None
+    # builtin posydon step
+  absolute_import = [&#39;custom_step_and_flow.py&#39;, &#39;my_CE_step&#39;]
+    # If given, use an absolute filepath to user defined step: [&#39;&lt;PATH_TO_PY_FILE&gt;&#39;, &#39;&lt;NAME&gt;&#39;]
+</pre></div>
+</div>
+<p>You can see the step class in the example file <a class="reference external" href="custom_step_and_flow.py">custom_step_and_flow.py</a>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sim_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params_end.ini&#39;</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CE&#39;</span><span class="p">]</span>
+<br/></pre></div>
+</div>
+</div>
+</section>
+<section id="Adapting-the-flow-and-steps-inside-your-notebook">
+<h2>Adapting the flow and steps inside your notebook<a class="headerlink" href="#Adapting-the-flow-and-steps-inside-your-notebook" title="Link to this heading"></a></h2>
+<p>Although you can always load the population parameters file into your notebook, you may want to create a unique flow inside the notebook. To do this, you need to set up all the steps manually inside the notebook.</p>
+<p>This is definitely not the easiest way to change parameters within POSYDON.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.binarypopulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryPopulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProperties</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow_chart</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.MESA.step_mesa</span><span class="w"> </span><span class="kn">import</span> <span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="n">CO_HeMS_RLO_step</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.step_detached</span><span class="w"> </span><span class="kn">import</span> <span class="n">detached_step</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.step_disrupted</span><span class="w"> </span><span class="kn">import</span> <span class="n">DisruptedStep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.step_merged</span><span class="w"> </span><span class="kn">import</span> <span class="n">MergedStep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.CE.step_CEE</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepCEE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.SN.step_SN</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepSN</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.double_CO</span><span class="w"> </span><span class="kn">import</span> <span class="n">DoubleCO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.step_end</span><span class="w"> </span><span class="kn">import</span> <span class="n">step_end</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepNamesHooks</span>
+
+<span class="c1"># STEP CUSTOMISATION</span>
+<span class="n">MESA_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">interpolation_path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># found by default</span>
+    <span class="n">interpolation_filename</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># found by default</span>
+    <span class="n">interpolation_method</span> <span class="o">=</span> <span class="s1">&#39;nearest_neighbour&#39;</span><span class="p">,</span> <span class="c1"># &#39;nearest_neighbour&#39; &#39;linear3c_kNN&#39; &#39;1NN_1NN&#39;</span>
+    <span class="n">save_initial_conditions</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># only for interpolation_method=&#39;nearest_neighbour&#39;</span>
+    <span class="n">track_interpolation</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># True False</span>
+    <span class="n">stop_method</span> <span class="o">=</span> <span class="s1">&#39;stop_at_max_time&#39;</span><span class="p">,</span> <span class="c1"># &#39;stop_at_end&#39; &#39;stop_at_max_time&#39; &#39;stop_at_condition&#39;</span>
+    <span class="n">stop_star</span> <span class="o">=</span> <span class="s1">&#39;star_1&#39;</span><span class="p">,</span> <span class="c1"># only for stop_method=&#39;stop_at_condition&#39; &#39;star_1&#39; &#39;star_2&#39;</span>
+    <span class="n">stop_var_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># only for stop_method=&#39;stop_at_condition&#39; str</span>
+    <span class="n">stop_value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># only for stop_method=&#39;stop_at_condition&#39; float</span>
+    <span class="n">stop_interpolate</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># True False</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># True False</span>
+<span class="p">)</span>
+
+<span class="n">DETACHED_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">matching_method</span> <span class="o">=</span> <span class="s1">&#39;minimize&#39;</span><span class="p">,</span> <span class="c1">#&#39;minimize&#39; &#39;root&#39;</span>
+    <span class="n">do_wind_loss</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># True False</span>
+    <span class="n">do_tides</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># True False</span>
+    <span class="n">do_gravitational_radiation</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># True False</span>
+    <span class="n">do_magnetic_braking</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># True False</span>
+    <span class="n">do_stellar_evolution_and_spin_from_winds</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># True False</span>
+    <span class="n">RLO_orbit_at_orbit_with_same_am</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># True False</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># True False</span>
+<span class="p">)</span>
+
+<span class="n">DISRUPTED_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">grid_name_Hrich</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">grid_name_strippedHe</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">metallicity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_o_steps_history</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">matching_method</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
+    <span class="n">initial_mass</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">rootm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">do_wind_loss</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">do_tides</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">do_gravitational_radiation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">do_magnetic_braking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">magnetic_braking_mode</span><span class="o">=</span><span class="s2">&quot;RVJ83&quot;</span><span class="p">,</span>
+    <span class="n">do_stellar_evolution_and_spin_from_winds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">RLO_orbit_at_orbit_with_same_am</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">list_for_matching_HMS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">list_for_matching_postMS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">list_for_matching_HeStar</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span>
+
+<span class="n">CE_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">prescription</span><span class="o">=</span><span class="s1">&#39;alpha-lambda&#39;</span><span class="p">,</span> <span class="c1"># &#39;alpha-lambda&#39;</span>
+    <span class="n">common_envelope_efficiency</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="c1"># float in (0, inf)</span>
+    <span class="n">common_envelope_option_for_lambda</span><span class="o">=</span><span class="s1">&#39;lambda_from_grid_final_values&#39;</span><span class="p">,</span> <span class="c1"># (1) &#39;default_lambda&#39;, (2) &#39;lambda_from_grid_final_values&#39;,</span>
+                                                  <span class="c1"># (3) &#39;lambda_from_profile_gravitational&#39;,</span>
+                                                  <span class="c1"># (4) &#39;lambda_from_profile_gravitational_plus_internal&#39;,</span>
+                                                  <span class="c1"># (5) &#39;lambda_from_profile_gravitational_plus_internal_minus_recombination&#39;</span>
+    <span class="n">common_envelope_lambda_default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="c1"># float in (0, inf) used only for option (1)</span>
+    <span class="n">common_envelope_option_for_HG_star</span><span class="o">=</span><span class="s2">&quot;optimistic&quot;</span><span class="p">,</span> <span class="c1"># &#39;optimistic&#39;, &#39;pessimistic&#39;</span>
+    <span class="n">common_envelope_alpha_thermal</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="c1"># float in (0, inf) used only for option for (4), (5)</span>
+    <span class="n">core_definition_H_fraction</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="c1"># 0.01, 0.1, 0.3</span>
+    <span class="n">core_definition_He_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="c1"># 0.1</span>
+    <span class="n">CEE_tolerance_err</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="c1"># float (0, inf)</span>
+    <span class="n">common_envelope_option_after_succ_CEE</span> <span class="o">=</span> <span class="s1">&#39;two_phases_stableMT&#39;</span><span class="p">,</span> <span class="c1"># &#39;one_phase_variable_core_definition&#39; &#39;two_phases_stableMT&#39; &#39;two_phases_windloss&#39;</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># True False</span>
+<span class="p">)</span>
+
+<span class="n">SN_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">mechanism</span><span class="o">=</span><span class="s1">&#39;Patton&amp;Sukhbold20-engine&#39;</span><span class="p">,</span> <span class="c1"># &#39;direct&#39;, Fryer+12-rapid&#39;, &#39;Fryer+12-delayed&#39;, &#39;Sukhbold+16-engine&#39;, &#39;Patton&amp;Sukhbold20-engine&#39;</span>
+    <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;N20&#39;</span><span class="p">,</span> <span class="c1"># &#39;N20&#39; for &#39;Sukhbold+16-engine&#39;, &#39;Patton&amp;Sukhbold20-engine&#39; or None for the others</span>
+    <span class="n">PISN</span><span class="o">=</span><span class="s2">&quot;Marchant+19&quot;</span><span class="p">,</span> <span class="c1"># None, &quot;Marchant+19&quot;</span>
+    <span class="n">ECSN</span><span class="o">=</span><span class="s2">&quot;Podsiadlowksi+04&quot;</span><span class="p">,</span> <span class="c1"># &quot;Tauris+15&quot;, &quot;Podsiadlowksi+04&quot;</span>
+    <span class="n">conserve_hydrogen_envelope</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">max_neutrino_mass_loss</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="n">kick</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="c1"># True, False</span>
+    <span class="n">kick_normalisation</span><span class="o">=</span><span class="s1">&#39;one_over_mass&#39;</span><span class="p">,</span> <span class="c1"># &quot;one_minus_fallback&quot;, &quot;one_over_mass&quot;, &quot;NS_one_minus_fallback_BH_one&quot;, &quot;one&quot;, &quot;zero&quot;</span>
+    <span class="n">sigma_kick_CCSN_NS</span><span class="o">=</span><span class="mf">265.0</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="n">sigma_kick_CCSN_BH</span><span class="o">=</span><span class="mf">265.0</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="n">sigma_kick_ECSN</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="n">max_NS_mass</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span>  <span class="c1"># float (0,inf)</span>
+    <span class="n">use_interp_values</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># True, False</span>
+    <span class="n">use_profiles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># True, False</span>
+    <span class="n">use_core_masses</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># True, False</span>
+    <span class="n">allow_spin_None</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="c1"># True, False</span>
+    <span class="n">approx_at_he_depletion</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="c1"># True, False</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># True False</span>
+<span class="p">)</span>
+
+<span class="n">DCO_STEP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">n_o_steps_interval</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">END_STEP</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># FLOW CHART CONFIGURATION</span>
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HeMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_RLO_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="n">DETACHED_STEP</span><span class="p">),</span>
+    <span class="n">step_disrupted</span> <span class="o">=</span> <span class="p">(</span><span class="n">DisruptedStep</span><span class="p">,</span> <span class="n">DISRUPTED_STEP</span><span class="p">),</span>
+    <span class="n">step_merged</span> <span class="o">=</span> <span class="p">(</span><span class="n">MergedStep</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepCEE</span><span class="p">,</span> <span class="n">CE_STEP</span><span class="p">),</span>
+    <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepSN</span><span class="p">,</span> <span class="n">SN_STEP</span><span class="p">),</span>
+    <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="n">DCO_STEP</span><span class="p">),</span>
+    <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="n">END_STEP</span><span class="p">),</span>
+    <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">StepNamesHooks</span><span class="p">,</span> <span class="p">{})]</span>
+<span class="p">)</span>
+
+<span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+
+<span class="c1"># SIMULATION CONFIGURATION</span>
+<span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;./batches/&#39;</span><span class="p">,</span>
+    <span class="n">optimize_ram</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">ram_per_cpu</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span> <span class="c1"># limit ram usage at 3GB</span>
+    <span class="n">dump_rate</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="c1"># limit batch size</span>
+
+    <span class="n">metallicity</span> <span class="o">=</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="c1"># 1e+00, 1e-01, 1e-02, 1e-03, 1e-04</span>
+    <span class="n">number_of_binaries</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="c1"># int</span>
+    <span class="n">star_formation</span><span class="o">=</span><span class="s1">&#39;burst&#39;</span><span class="p">,</span> <span class="c1"># &#39;constant&#39; &#39;burst&#39; &#39;custom_linear&#39; &#39;custom_log10&#39; &#39;custom_linear_histogram&#39; &#39;custom_log10_histogram&#39;</span>
+    <span class="n">max_simulation_time</span><span class="o">=</span><span class="mf">13.8e9</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+
+    <span class="n">primary_mass_scheme</span><span class="o">=</span><span class="s1">&#39;Kroupa2001&#39;</span><span class="p">,</span> <span class="c1"># &#39;Salpeter&#39;, &#39;Kroupa1993&#39;, &#39;Kroupa2001&#39;</span>
+    <span class="n">primary_mass_min</span><span class="o">=</span><span class="mf">6.5</span><span class="p">,</span> <span class="c1"># float (0,130)</span>
+    <span class="n">primary_mass_max</span><span class="o">=</span><span class="mf">250.</span><span class="p">,</span> <span class="c1"># float (0,130)</span>
+    <span class="n">secondary_mass_scheme</span><span class="o">=</span><span class="s1">&#39;flat_mass_ratio&#39;</span><span class="p">,</span> <span class="c1"># &#39;flat_mass_ratio&#39;, &#39;q=1&#39;</span>
+    <span class="n">secondary_mass_min</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="c1"># float (0,130)</span>
+    <span class="n">secondary_mass_max</span><span class="o">=</span><span class="mf">250.</span><span class="p">,</span> <span class="c1"># float (0,130)</span>
+    <span class="n">orbital_scheme</span> <span class="o">=</span> <span class="s1">&#39;period&#39;</span><span class="p">,</span> <span class="c1"># &#39;separation&#39;, &#39;period&#39;</span>
+    <span class="n">orbital_period_scheme</span> <span class="o">=</span> <span class="s1">&#39;Sana+12_period_extended&#39;</span><span class="p">,</span> <span class="c1"># used only for orbital_scheme = &#39;period&#39;</span>
+    <span class="n">orbital_period_min</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="n">orbital_period_max</span> <span class="o">=</span> <span class="mf">1000.</span><span class="p">,</span> <span class="c1"># float (0,inf)</span>
+    <span class="c1">#orbital_separation_scheme=&#39;log_uniform&#39;, # used only for orbital_scheme = &#39;separation&#39;, &#39;log_uniform&#39;, &#39;log_normal&#39;</span>
+    <span class="c1">#orbital_separation_min=5., # float (0,inf)</span>
+    <span class="c1">#orbital_separation_max=1e5, # float (0,inf)</span>
+    <span class="c1">#log_orbital_separation_mean=None, # float (0,inf) used only for orbital_separation_scheme =&#39;log_normal&#39;</span>
+    <span class="c1">#log_orbital_separation_sigma=None, # float (0,inf) used only for orbital_separation_scheme =&#39;log_normal&#39;</span>
+    <span class="n">eccentricity_sche</span><span class="o">=</span><span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="c1"># &#39;zero&#39; &#39;thermal&#39; &#39;uniform&#39;</span>
+
+    <span class="c1"># IMPORT CUSTOM HOOKS</span>
+    <span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">},</span> <span class="c1"># &#39;step_times&#39; with from posydon.binary_evol.simulationproperties import TimingHooks</span>
+
+    <span class="c1"># LIST BINARY PROPERTIES TO SAVE</span>
+    <span class="n">only_select_columns</span><span class="o">=</span><span class="p">[</span>
+                        <span class="s1">&#39;state&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;event&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                        <span class="c1">#&#39;separation&#39;,</span>
+                        <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span>
+                        <span class="c1">#&#39;V_sys&#39;,</span>
+                        <span class="c1">#&#39;rl_relative_overflow_1&#39;,</span>
+                        <span class="c1">#&#39;rl_relative_overflow_2&#39;,</span>
+                        <span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">,</span>
+                        <span class="c1">#&#39;mass_transfer_case&#39;,</span>
+                        <span class="c1">#&#39;trap_radius&#39;,</span>
+                        <span class="c1">#&#39;acc_radius&#39;,</span>
+                        <span class="c1">#&#39;t_sync_rad_1&#39;,</span>
+                        <span class="c1">#&#39;t_sync_conv_1&#39;,</span>
+                        <span class="c1">#&#39;t_sync_rad_2&#39;,</span>
+                        <span class="c1">#&#39;t_sync_conv_2&#39;,</span>
+                        <span class="c1">#&#39;nearest_neighbour_distance&#39;,</span>
+                        <span class="p">],</span>
+    <span class="n">scalar_names</span><span class="o">=</span><span class="p">[</span>
+                <span class="s1">&#39;interp_class_HMS_HMS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;interp_class_CO_HMS_RLO&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;interp_class_CO_HeMS&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;interp_class_CO_HeMS_RLO&#39;</span>
+                <span class="p">],</span>
+
+    <span class="c1"># LIST STAR PROPERTIES TO SAVE</span>
+    <span class="n">include_S1</span><span class="o">=</span><span class="kc">True</span> <span class="p">,</span> <span class="c1"># True, False</span>
+    <span class="n">S1_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">only_select_columns</span><span class="o">=</span><span class="p">[</span>
+                                        <span class="s1">&#39;state&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;metallicity&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;log_R&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;log_L&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;lg_mdot&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;lg_system_mdot&#39;,</span>
+                                        <span class="c1">#&#39;lg_wind_mdot&#39;,</span>
+                                        <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;c_core_mass&#39;,</span>
+                                        <span class="c1">#&#39;c_core_radius&#39;,</span>
+                                        <span class="c1">#&#39;o_core_mass&#39;,</span>
+                                        <span class="c1">#&#39;o_core_radius&#39;,</span>
+                                        <span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;co_core_radius&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;center_h1&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;center_he4&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;center_c12&#39;,</span>
+                                        <span class="c1">#&#39;center_n14&#39;,</span>
+                                        <span class="c1">#&#39;center_o16&#39;,</span>
+                                        <span class="s1">&#39;surface_h1&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;surface_he4&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;surface_c12&#39;,</span>
+                                        <span class="c1">#&#39;surface_n14&#39;,</span>
+                                        <span class="c1">#&#39;surface_o16&#39;,</span>
+                                        <span class="c1">#&#39;log_LH&#39;,</span>
+                                        <span class="c1">#&#39;log_LHe&#39;,</span>
+                                        <span class="c1">#&#39;log_LZ&#39;,</span>
+                                        <span class="c1">#&#39;log_Lnuc&#39;,</span>
+                                        <span class="c1">#&#39;c12_c12&#39;,</span>
+                                        <span class="c1">#&#39;center_gamma&#39;,</span>
+                                        <span class="c1">#&#39;avg_c_in_c_core&#39;,</span>
+                                        <span class="c1">#&#39;surf_avg_omega&#39;,</span>
+                                        <span class="s1">&#39;surf_avg_omega_div_omega_crit&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;total_moment_of_inertia&#39;,</span>
+                                        <span class="c1">#&#39;log_total_angular_momentum&#39;,</span>
+                                        <span class="s1">&#39;spin&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;conv_env_top_mass&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_bot_mass&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_top_radius&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_bot_radius&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_g&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_l_b&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_l_t&#39;,</span>
+                                        <span class="c1">#&#39;envelope_binding_energy&#39;,</span>
+                                        <span class="c1">#&#39;mass_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;thickness_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;radius_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_1cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_10cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_30cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_pure_He_star_10cent&#39;,</span>
+                                        <span class="c1">#&#39;profile&#39;,</span>
+                                        <span class="c1">#&#39;total_mass_h1&#39;,</span>
+                                        <span class="c1">#&#39;total_mass_he4&#39;,</span>
+                                        <span class="p">],</span>
+                   <span class="n">scalar_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;SN_type&#39;</span><span class="p">,</span>
+                                 <span class="c1">#&#39;f_fb&#39;,</span>
+                                 <span class="c1">#&#39;spin_orbit_tilt&#39;,</span>
+                                <span class="p">]),</span>
+
+    <span class="c1"># LIST STAR PROPERTIES TO SAVE</span>
+    <span class="n">include_S2</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="c1"># True, False</span>
+    <span class="n">S2_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">only_select_columns</span><span class="o">=</span><span class="p">[</span>
+                                        <span class="s1">&#39;state&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;metallicity&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;log_R&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;log_L&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;lg_mdot&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;lg_system_mdot&#39;,</span>
+                                        <span class="c1">#&#39;lg_wind_mdot&#39;,</span>
+                                        <span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;c_core_mass&#39;,</span>
+                                        <span class="c1">#&#39;c_core_radius&#39;,</span>
+                                        <span class="c1">#&#39;o_core_mass&#39;,</span>
+                                        <span class="c1">#&#39;o_core_radius&#39;,</span>
+                                        <span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;co_core_radius&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;center_h1&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;center_he4&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;center_c12&#39;,</span>
+                                        <span class="c1">#&#39;center_n14&#39;,</span>
+                                        <span class="c1">#&#39;center_o16&#39;,</span>
+                                        <span class="s1">&#39;surface_h1&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;surface_he4&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;surface_c12&#39;,</span>
+                                        <span class="c1">#&#39;surface_n14&#39;,</span>
+                                        <span class="c1">#&#39;surface_o16&#39;,</span>
+                                        <span class="c1">#&#39;log_LH&#39;,</span>
+                                        <span class="c1">#&#39;log_LHe&#39;,</span>
+                                        <span class="c1">#&#39;log_LZ&#39;,</span>
+                                        <span class="c1">#&#39;log_Lnuc&#39;,</span>
+                                        <span class="c1">#&#39;c12_c12&#39;,</span>
+                                        <span class="c1">#&#39;center_gamma&#39;,</span>
+                                        <span class="c1">#&#39;avg_c_in_c_core&#39;,</span>
+                                        <span class="c1">#&#39;surf_avg_omega&#39;,</span>
+                                        <span class="s1">&#39;surf_avg_omega_div_omega_crit&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;total_moment_of_inertia&#39;,</span>
+                                        <span class="c1">#&#39;log_total_angular_momentum&#39;,</span>
+                                        <span class="s1">&#39;spin&#39;</span><span class="p">,</span>
+                                        <span class="c1">#&#39;conv_env_top_mass&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_bot_mass&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_top_radius&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_bot_radius&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_g&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_l_b&#39;,</span>
+                                        <span class="c1">#&#39;conv_env_turnover_time_l_t&#39;,</span>
+                                        <span class="c1">#&#39;envelope_binding_energy&#39;,</span>
+                                        <span class="c1">#&#39;mass_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;thickness_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;radius_conv_reg_fortides&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_1cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_10cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_30cent&#39;,</span>
+                                        <span class="c1">#&#39;lambda_CE_pure_He_star_10cent&#39;,</span>
+                                        <span class="c1">#&#39;profile&#39;,</span>
+                                        <span class="c1">#&#39;total_mass_h1&#39;,</span>
+                                        <span class="c1">#&#39;total_mass_he4&#39;,</span>
+                                        <span class="p">],</span>
+                   <span class="n">scalar_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;SN_type&#39;</span><span class="p">,</span>
+                                 <span class="c1">#&#39;f_fb&#39;,</span>
+                                 <span class="c1">#&#39;spin_orbit_tilt&#39;,</span>
+                                <span class="p">]),</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_simulation</span><span class="p">(</span><span class="n">sim_prop</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+
+    <span class="c1"># create binaries</span>
+    <span class="n">pop</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="p">(</span><span class="n">entropy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">population_properties</span><span class="o">=</span><span class="n">sim_prop</span><span class="p">,</span>
+                            <span class="n">file_name</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">sim_prop</span><span class="o">.</span><span class="n">load_steps</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># evolve binaries</span>
+    <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;from_hdf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;indices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">indices</span>
+
+    <span class="n">pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">breakdown_to_df</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># save binaries</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pop</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;./population.h5&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">pop</span>
+
+
+<span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;step_names&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span> <span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span>
+<br/></pre></div>
+</div>
+</div>
+<section id="Adapted-flowchart">
+<h3>Adapted flowchart<a class="headerlink" href="#Adapted-flowchart" title="Link to this heading"></a></h3>
+<p>You might want to use the <code class="docutils literal notranslate"><span class="pre">detached_step</span></code> instead of a MESA step. Here is how you can do it. As an example, we replace the HMS-HMS MESA step with the detached step. Note that the <code class="docutils literal notranslate"><span class="pre">detached_step</span></code> does not evolve the binary system post onset of RLO1. Hence, unless the <code class="docutils literal notranslate"><span class="pre">flow_chart</span></code> supports such binary events, binary states, and stellar states, these systems will not be further evolved.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># MODIFIED FLOW CHART CONFIGURATION</span>
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="n">DETACHED_STEP</span><span class="p">),</span> <span class="c1"># &lt;-- map this step to detached</span>
+    <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HeMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_RLO_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="n">DETACHED_STEP</span><span class="p">),</span>
+    <span class="n">step_disrupted</span> <span class="o">=</span> <span class="p">(</span><span class="n">DisruptedStep</span><span class="p">,</span> <span class="n">DISRUPTED_STEP</span><span class="p">),</span>
+    <span class="n">step_merged</span> <span class="o">=</span> <span class="p">(</span><span class="n">MergedStep</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepCEE</span><span class="p">,</span> <span class="n">CE_STEP</span><span class="p">),</span>
+    <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepSN</span><span class="p">,</span> <span class="n">SN_STEP</span><span class="p">),</span>
+    <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="n">DCO_STEP</span><span class="p">),</span>
+    <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="n">END_STEP</span><span class="p">),</span>
+    <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">StepNamesHooks</span><span class="p">,</span> <span class="p">{})]</span>
+<span class="p">)</span>
+
+<span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+
+<span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;from_hdf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">pop</span> <span class="o">=</span> <span class="n">run_simulation</span><span class="p">(</span><span class="n">sim_prop</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+<span class="c1"># output the first binary</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">pop</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Adapted-step">
+<h3>Adapted step<a class="headerlink" href="#Adapted-step" title="Link to this heading"></a></h3>
+<p>We implement a custom common envelope step, which is the same as the one in the <code class="docutils literal notranslate"><span class="pre">custom_step_and_flow.py</span></code> custom step.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">my_CE_step</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute a fake CE event.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The orbital separation post CE is half the pre-CE orbital separation!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Determine which star is the donor and which is the companion</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;oCE1&quot;</span><span class="p">,</span> <span class="s2">&quot;oDoubleCE1&quot;</span><span class="p">]:</span>
+            <span class="n">donor_star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span>
+            <span class="n">comp_star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span>
+        <span class="k">elif</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;oCE2&quot;</span><span class="p">,</span> <span class="s2">&quot;oDoubleCE2&quot;</span><span class="p">]:</span>
+            <span class="n">donor_star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span>
+            <span class="n">comp_star</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;CEE does not apply if `event` is not &quot;</span>
+                            <span class="s2">&quot;`oCE1`, `oDoubleCE1`, `oCE2`, or `oDoubleCE2`&quot;</span><span class="p">)</span>
+
+        <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span> <span class="o">/=</span> <span class="mf">2.</span>
+        <span class="n">donor_star</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">donor_star</span><span class="o">.</span><span class="n">he_core_mass</span> <span class="c1"># lose envelope</span>
+        <span class="n">donor_star</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">donor_star</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;H-rich&#39;</span><span class="p">,</span> <span class="s1">&#39;stripped_He&#39;</span><span class="p">)</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;detached&#39;</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="c1"># MODIFIED FLOW CHART CONFIGURATION</span>
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">MS_MS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HMS_RLO_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_CO_HeMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_HeMS_RLO_step</span><span class="p">,</span> <span class="n">MESA_STEP</span><span class="p">),</span>
+    <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">detached_step</span><span class="p">,</span> <span class="n">DETACHED_STEP</span><span class="p">),</span>
+    <span class="n">step_disrupted</span> <span class="o">=</span> <span class="p">(</span><span class="n">DisruptedStep</span><span class="p">,</span> <span class="n">DISRUPTED_STEP</span><span class="p">),</span>
+    <span class="n">step_merged</span> <span class="o">=</span> <span class="p">(</span><span class="n">MergedStep</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">my_CE_step</span><span class="p">,</span> <span class="p">{}),</span>  <span class="c1"># &lt;-- map this step to my fake CE step</span>
+    <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">StepSN</span><span class="p">,</span> <span class="n">SN_STEP</span><span class="p">),</span>
+    <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="n">DCO_STEP</span><span class="p">),</span>
+    <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="n">END_STEP</span><span class="p">),</span>
+    <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">StepNamesHooks</span><span class="p">,</span> <span class="p">{})]</span>
+<span class="p">)</span>
+
+<span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+
+<span class="n">pop</span> <span class="o">=</span> <span class="n">run_simulation</span><span class="p">(</span><span class="n">sim_prop</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">pop</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="evolve_single_binaries.html" class="btn btn-neutral float-left" title="Evolve individual binaries 🐞" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VHD.html" class="btn btn-neutral float-right" title="Van den Heuvel diagrams with POSYDON" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.4/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
