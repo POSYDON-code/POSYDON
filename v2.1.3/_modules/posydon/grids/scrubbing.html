@@ -1,0 +1,456 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.grids.scrubbing &mdash; posydon 2.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=179ab080"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.grids.scrubbing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.grids.scrubbing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Methods for scrubbing MESA histories from backsteps etc.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.limits_thresholds</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RL_RELATIVE_OVERFLOW_THRESHOLD</span><span class="p">,</span> <span class="n">LG_MTRANSFER_RATE_THRESHOLD</span><span class="p">,</span>
+    <span class="n">THRESHOLD_CENTRAL_ABUNDANCE</span><span class="p">,</span> <span class="n">THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+
+<div class="viewcode-block" id="scrub">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.scrubbing.scrub">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">scrub</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">ages</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scrub binary and star histories of a MESA run in one go.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tables : list</span>
+<span class="sd">        All history tables to be returned scrubbed.</span>
+<span class="sd">    models : list</span>
+<span class="sd">        Model number columns corresponding to each table in `tables`.</span>
+<span class="sd">    ages : list</span>
+<span class="sd">        Age columns corresponding to each table in `tables`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        The list of scrubbed tables, ensuring monotonicity in age, and</span>
+<span class="sd">        overlap in model numbers.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># scrub each history separately</span>
+    <span class="n">scr_tables</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">scr_models</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">table</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">age</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">ages</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">age</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">scr_tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">scr_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="n">userow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">userow</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">last_m</span><span class="p">,</span> <span class="n">last_t</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">age</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">t_i</span><span class="p">,</span> <span class="n">m_i</span> <span class="o">=</span> <span class="n">age</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">model</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">t_i</span> <span class="o">&lt;</span> <span class="n">last_t</span> <span class="ow">and</span> <span class="n">m_i</span> <span class="o">&lt;</span> <span class="n">last_m</span><span class="p">:</span>
+                    <span class="n">userow</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">last_m</span> <span class="o">=</span> <span class="n">m_i</span>
+                    <span class="n">last_t</span> <span class="o">=</span> <span class="n">t_i</span>
+            <span class="n">scr_tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">userow</span><span class="p">])</span>
+            <span class="n">scr_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="n">userow</span><span class="p">])</span>
+
+    <span class="c1"># find common models in scrubbed histories</span>
+    <span class="n">common_models</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">scr_model</span> <span class="ow">in</span> <span class="n">scr_models</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">scr_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">common_models</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">common_models</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">scr_model</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">common_models</span> <span class="o">&amp;=</span> <span class="nb">set</span><span class="p">(</span><span class="n">scr_model</span><span class="p">)</span>
+
+    <span class="c1"># return only the rows for which models appear in all histories</span>
+    <span class="n">final_tables</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">scr_table</span><span class="p">,</span> <span class="n">scr_model</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scr_tables</span><span class="p">,</span> <span class="n">scr_models</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">scr_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">final_tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">userow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">m</span> <span class="ow">in</span> <span class="n">common_models</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">scr_model</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">final_tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scr_table</span><span class="p">[</span><span class="n">userow</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">final_tables</span></div>
+
+
+
+<div class="viewcode-block" id="keep_after_RLO">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.scrubbing.keep_after_RLO">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">keep_after_RLO</span><span class="p">(</span><span class="n">bh</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scrub histories from the initial steps without RLO mass transfer.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bh : np.array</span>
+<span class="sd">        The `binary_history` array.</span>
+<span class="sd">    h1 : np.array</span>
+<span class="sd">        The `history1` array.</span>
+<span class="sd">    h2 : np.array</span>
+<span class="sd">        The `history2` array.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple or ndarrays, or None</span>
+<span class="sd">        The binary, history1 and history2 arrays after removing the leading</span>
+<span class="sd">        steps without RLO overflow mass transfer from star1 or star2. If an</span>
+<span class="sd">        RLO phase is not detected, a warning is raised, and returns `None`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">bh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">bh</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span>
+
+    <span class="n">bh_colnames</span> <span class="o">=</span> <span class="n">bh</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+
+    <span class="k">if</span> <span class="s2">&quot;lg_mtransfer_rate&quot;</span> <span class="ow">in</span> <span class="n">bh_colnames</span><span class="p">:</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">bh</span><span class="p">[</span><span class="s2">&quot;lg_mtransfer_rate&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">LG_MTRANSFER_RATE_THRESHOLD</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No `lg_mtransfer_rate` in binary history.&quot;</span><span class="p">)</span>
+
+    <span class="n">rlo1</span> <span class="o">=</span> <span class="p">(</span><span class="n">bh</span><span class="p">[</span><span class="s2">&quot;rl_relative_overflow_1&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">RL_RELATIVE_OVERFLOW_THRESHOLD</span>
+            <span class="k">if</span> <span class="s2">&quot;rl_relative_overflow_1&quot;</span> <span class="ow">in</span> <span class="n">bh_colnames</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">rlo2</span> <span class="o">=</span> <span class="p">(</span><span class="n">bh</span><span class="p">[</span><span class="s2">&quot;rl_relative_overflow_2&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">RL_RELATIVE_OVERFLOW_THRESHOLD</span>
+            <span class="k">if</span> <span class="s2">&quot;rl_relative_overflow_2&quot;</span> <span class="ow">in</span> <span class="n">bh_colnames</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rlo1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rlo_1_or_2</span> <span class="o">=</span> <span class="n">rlo2</span>
+    <span class="k">elif</span> <span class="n">rlo2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rlo_1_or_2</span> <span class="o">=</span> <span class="n">rlo1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rlo_1_or_2</span> <span class="o">=</span> <span class="n">rlo1</span> <span class="o">|</span> <span class="n">rlo2</span>
+
+    <span class="k">if</span> <span class="n">rlo_1_or_2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No `rl_relative_overflow` of any star in binary&quot;</span>
+                         <span class="s2">&quot; history.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># This needs to be aligned with run_binary_extras.f</span>
+    <span class="n">conditions_met</span> <span class="o">=</span> <span class="n">rlo_1_or_2</span> <span class="o">|</span> <span class="n">rate</span>
+    <span class="n">where_conditions_met</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">conditions_met</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_conditions_met</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">first_index</span> <span class="o">=</span> <span class="n">where_conditions_met</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">new_bh</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">bh</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">bh</span><span class="p">[</span><span class="n">first_index</span><span class="p">:]</span>
+    <span class="n">new_h1</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">h1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">h1</span><span class="p">[</span><span class="n">first_index</span><span class="p">:]</span>
+    <span class="n">new_h2</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">h2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">h2</span><span class="p">[</span><span class="n">first_index</span><span class="p">:]</span>
+
+    <span class="n">age_to_remove</span> <span class="o">=</span> <span class="n">new_bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">new_ages</span> <span class="o">=</span> <span class="n">new_bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">age_to_remove</span>
+
+    <span class="c1"># check if numerical precision was lost, and fix the issue</span>
+    <span class="c1"># TODO: we should rewrite this correction, e.g. with making use of</span>
+    <span class="c1">#       math.ulp() to shift entries in the new_ages</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_ages</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">new_ages</span><span class="p">))</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">min_dt</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">new_bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">min_dt</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">new_age_to_remove</span> <span class="o">=</span> <span class="p">(</span><span class="n">age_to_remove</span> <span class="o">//</span> <span class="n">min_dt</span><span class="p">)</span> <span class="o">*</span> <span class="n">min_dt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_age_to_remove</span> <span class="o">=</span> <span class="n">age_to_remove</span>
+        <span class="k">if</span> <span class="n">new_age_to_remove</span><span class="o">==</span><span class="n">age_to_remove</span><span class="p">:</span>
+            <span class="n">new_age_to_remove</span> <span class="o">-=</span> <span class="n">min_dt</span>
+        <span class="n">relative_error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">new_age_to_remove</span> <span class="o">-</span> <span class="n">age_to_remove</span><span class="p">)</span> <span class="o">/</span> <span class="n">age_to_remove</span>
+        <span class="k">if</span> <span class="n">relative_error</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Numerical precision fix too aggressive.&quot;</span><span class="p">)</span>
+        <span class="n">age_to_remove</span> <span class="o">=</span> <span class="n">new_age_to_remove</span>
+        <span class="n">new_ages</span> <span class="o">=</span> <span class="n">new_bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">age_to_remove</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">new_ages</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Numerical precision fix failed.&quot;</span><span class="p">)</span>
+
+    <span class="n">new_bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_ages</span>
+    <span class="k">if</span> <span class="n">new_h1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;star_age&quot;</span> <span class="ow">in</span> <span class="n">new_h1</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="n">new_h1</span><span class="p">[</span><span class="s2">&quot;star_age&quot;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">age_to_remove</span>
+    <span class="k">if</span> <span class="n">new_h2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;star_age&quot;</span> <span class="ow">in</span> <span class="n">new_h2</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="n">new_h2</span><span class="p">[</span><span class="s2">&quot;star_age&quot;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">age_to_remove</span>
+
+    <span class="k">return</span> <span class="n">new_bh</span><span class="p">,</span> <span class="n">new_h1</span><span class="p">,</span> <span class="n">new_h2</span></div>
+
+
+
+<div class="viewcode-block" id="keep_till_central_abundance_He_C">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.scrubbing.keep_till_central_abundance_He_C">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">keep_till_central_abundance_He_C</span><span class="p">(</span><span class="n">bh</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span>
+    <span class="n">Ystop</span><span class="o">=</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE</span><span class="p">,</span>
+    <span class="n">XCstop</span><span class="o">=</span><span class="n">THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scrub histories to stop when central helium and carbon abundance are</span>
+<span class="sd">    below the stopping criteria.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bh : np.array</span>
+<span class="sd">        The `binary_history` array.</span>
+<span class="sd">    h1 : np.array</span>
+<span class="sd">        The `history1` array.</span>
+<span class="sd">    h2 : np.array</span>
+<span class="sd">        The `history2` array.</span>
+<span class="sd">    Ystop : float (default: THRESHOLD_CENTRAL_ABUNDANCE)</span>
+<span class="sd">        The He abundance threshold for stopping</span>
+<span class="sd">    XCstop : float (default: THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C)</span>
+<span class="sd">        The C abundance threshold for stopping</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        The binary, history1 and history2 arrays after removing the final</span>
+<span class="sd">        steps after He depletion. If the stopping criteria are not reached</span>
+<span class="sd">        the histories will be returned unchanged. Finally, the new termination</span>
+<span class="sd">        flag 1 is returned.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">bh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">h1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">h2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1">#at least one histroy is missing</span>
+        <span class="k">return</span> <span class="n">bh</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="p">((</span><span class="s2">&quot;age&quot;</span> <span class="ow">in</span> <span class="n">bh</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="ow">or</span>
+               <span class="p">((</span><span class="s2">&quot;star_age&quot;</span> <span class="ow">in</span> <span class="n">h1</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="p">(</span><span class="s2">&quot;star_age&quot;</span> <span class="ow">in</span> <span class="n">h2</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)))):</span>
+        <span class="c1">#at least one histroy doesn&#39;t contain an age column</span>
+        <span class="k">return</span> <span class="n">bh</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+    
+    <span class="n">h1_colnames</span> <span class="o">=</span> <span class="n">h1</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;center_he4&quot;</span> <span class="ow">in</span> <span class="n">h1_colnames</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;center_c12&quot;</span> <span class="ow">in</span> <span class="n">h1_colnames</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h1</span><span class="p">[</span><span class="s2">&quot;center_he4&quot;</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h1</span><span class="p">[</span><span class="s2">&quot;center_c12&quot;</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">depleted1</span> <span class="o">=</span> <span class="p">((</span><span class="n">h1</span><span class="p">[</span><span class="s2">&quot;center_he4&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="n">Ystop</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">h1</span><span class="p">[</span><span class="s2">&quot;center_c12&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="n">XCstop</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">depleted1</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">depleted1</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">h2_colnames</span> <span class="o">=</span> <span class="n">h2</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;center_he4&quot;</span> <span class="ow">in</span> <span class="n">h2_colnames</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;center_c12&quot;</span> <span class="ow">in</span> <span class="n">h2_colnames</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h2</span><span class="p">[</span><span class="s2">&quot;center_he4&quot;</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h2</span><span class="p">[</span><span class="s2">&quot;center_c12&quot;</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">depleted2</span> <span class="o">=</span> <span class="p">((</span><span class="n">h2</span><span class="p">[</span><span class="s2">&quot;center_he4&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="n">Ystop</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">h2</span><span class="p">[</span><span class="s2">&quot;center_c12&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="n">XCstop</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">depleted2</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">depleted2</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">depleted1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">depleted2</span><span class="p">):</span>
+        <span class="c1">#none of the stars reached He depletion</span>
+        <span class="k">return</span> <span class="n">bh</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+    
+    <span class="k">if</span> <span class="n">depleted1</span><span class="p">:</span>
+<span class="c1">#        where_conditions_met1 = np.where((h1[&quot;center_he4&quot;]&lt;Ystop) and (h1[&quot;center_c12&quot;]&lt;XCstop))[0]</span>
+        <span class="n">where_conditions_met1</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h1</span><span class="p">[</span><span class="s2">&quot;center_he4&quot;</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">h1</span><span class="p">[</span><span class="s2">&quot;center_he4&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="n">Ystop</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">h1</span><span class="p">[</span><span class="s2">&quot;center_c12&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="n">XCstop</span><span class="p">):</span>
+                <span class="n">where_conditions_met1</span> <span class="o">+=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_conditions_met1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;No He depletion found in h1, while expected.&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;InappropriateValueWarning&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">bh</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">last_index</span> <span class="o">=</span> <span class="n">where_conditions_met1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">newTF1</span> <span class="o">=</span> <span class="s1">&#39;Primary got stopped before central carbon depletion&#39;</span>
+    <span class="k">if</span> <span class="n">depleted2</span><span class="p">:</span>
+<span class="c1">#        where_conditions_met2 = np.where((h2[&quot;center_he4&quot;]&lt;Ystop) and (h2[&quot;center_c12&quot;]&lt;XCstop))[0]</span>
+        <span class="n">where_conditions_met2</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h2</span><span class="p">[</span><span class="s2">&quot;center_he4&quot;</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">h2</span><span class="p">[</span><span class="s2">&quot;center_he4&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="n">Ystop</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">h2</span><span class="p">[</span><span class="s2">&quot;center_c12&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="n">XCstop</span><span class="p">):</span>
+                <span class="n">where_conditions_met2</span> <span class="o">+=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_conditions_met2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;No He depletion found in h2, while expected.&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;InappropriateValueWarning&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">bh</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">depleted1</span><span class="p">:</span>
+            <span class="c1">#both stars went beyond He depletion</span>
+            <span class="n">last_index2</span> <span class="o">=</span> <span class="n">where_conditions_met2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;star_age&quot;</span> <span class="ow">in</span> <span class="n">h1</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
+                <span class="n">age_He_depletion1</span> <span class="o">=</span> <span class="n">h1</span><span class="p">[</span><span class="s2">&quot;star_age&quot;</span><span class="p">][</span><span class="n">last_index</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">age_He_depletion1</span> <span class="o">=</span> <span class="n">bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">][</span><span class="n">last_index</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;star_age&quot;</span> <span class="ow">in</span> <span class="n">h1</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
+                <span class="n">age_He_depletion2</span> <span class="o">=</span> <span class="n">h2</span><span class="p">[</span><span class="s2">&quot;star_age&quot;</span><span class="p">][</span><span class="n">last_index2</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">age_He_depletion2</span> <span class="o">=</span> <span class="n">bh</span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">][</span><span class="n">last_index2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">age_He_depletion1</span><span class="o">&gt;</span><span class="n">age_He_depletion2</span><span class="p">:</span>
+                <span class="c1">#take star which reached He depletion first</span>
+                <span class="n">last_index</span> <span class="o">=</span> <span class="n">last_index2</span>
+                <span class="n">newTF1</span> <span class="o">=</span> <span class="s1">&#39;Secondary got stopped before central carbon depletion&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">last_index</span> <span class="o">=</span> <span class="n">where_conditions_met2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">newTF1</span> <span class="o">=</span> <span class="s1">&#39;Secondary got stopped before central carbon depletion&#39;</span>
+    
+    <span class="c1"># include the point above the stopping criteria so that the last inferred</span>
+    <span class="c1"># stellar state will be XXX_Central_He_depleted. This is essential to find</span>
+    <span class="c1"># the core mass at He depletion with the calculate_Patton20_values_at_He_depl</span>
+    <span class="c1"># method used to calculate the core collapse properties with the </span>
+    <span class="c1"># Patton&amp;Sukhbold mechanism.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bh</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">last_index</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">last_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+    <span class="n">new_bh</span> <span class="o">=</span> <span class="n">bh</span><span class="p">[:</span><span class="n">last_index</span><span class="p">]</span>
+    <span class="n">new_h1</span> <span class="o">=</span> <span class="n">h1</span><span class="p">[:</span><span class="n">last_index</span><span class="p">]</span>
+    <span class="n">new_h2</span> <span class="o">=</span> <span class="n">h2</span><span class="p">[:</span><span class="n">last_index</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">new_bh</span><span class="p">,</span> <span class="n">new_h1</span><span class="p">,</span> <span class="n">new_h2</span><span class="p">,</span> <span class="n">newTF1</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.3/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
