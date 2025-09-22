@@ -1,0 +1,459 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon_popsyn &mdash; posydon 2.1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=786ba454"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="posydon_run_grid" href="posydon_run_grid.html" />
+    <link rel="prev" title="get_posydon_data" href="get_posydon_data.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="posydon.html">posydon</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="bin.html">executables</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="compress_mesa.html">compress_mesa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_posydon_data.html">get_posydon_data</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">posydon_popsyn</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.check_SN_MODEL_validity"><code class="docutils literal notranslate"><span class="pre">check_SN_MODEL_validity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.check_batches"><code class="docutils literal notranslate"><span class="pre">check_batches()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.check_binary_counts"><code class="docutils literal notranslate"><span class="pre">check_binary_counts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.check_popsyn_function"><code class="docutils literal notranslate"><span class="pre">check_popsyn_function()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.check_population_files"><code class="docutils literal notranslate"><span class="pre">check_population_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.clear_previous_lines"><code class="docutils literal notranslate"><span class="pre">clear_previous_lines()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.create_merge_script"><code class="docutils literal notranslate"><span class="pre">create_merge_script()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.create_run_script"><code class="docutils literal notranslate"><span class="pre">create_run_script()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.create_slurm_merge"><code class="docutils literal notranslate"><span class="pre">create_slurm_merge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.create_slurm_submit"><code class="docutils literal notranslate"><span class="pre">create_slurm_submit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.generate_rescue_script"><code class="docutils literal notranslate"><span class="pre">generate_rescue_script()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.get_binary_params"><code class="docutils literal notranslate"><span class="pre">get_binary_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.get_ini_file"><code class="docutils literal notranslate"><span class="pre">get_ini_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.rescue_popsyn_function"><code class="docutils literal notranslate"><span class="pre">rescue_popsyn_function()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon_popsyn.setup_popsyn_function"><code class="docutils literal notranslate"><span class="pre">setup_popsyn_function()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon_run_grid.html">posydon_run_grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon_run_pipeline.html">posydon_run_pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon_setup_grid.html">posydon_setup_grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon_setup_pipeline.html">posydon_setup_pipeline</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="bin.html">executables</a></li>
+      <li class="breadcrumb-item active">posydon_popsyn</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/posydon_popsyn.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-posydon_popsyn">
+<span id="posydon-popsyn"></span><h1>posydon_popsyn<a class="headerlink" href="#module-posydon_popsyn" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.check_SN_MODEL_validity">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">check_SN_MODEL_validity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_on_fail</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#check_SN_MODEL_validity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.check_SN_MODEL_validity" title="Link to this definition"></a></dt>
+<dd><p>Checks if the step_SN model is valid for this script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – the path to the ini file</p></li>
+<li><p><strong>verbose_on_fail</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> (</em><em>default: True</em><em>)</em>) – if <cite>True</cite> rerun the model selection with verbose mode if this failed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model is valid or use_interp_values=False, False otherwise</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.check_batches">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">check_batches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_folder_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#check_batches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.check_batches" title="Link to this definition"></a></dt>
+<dd><p>Check batch files for a specific metallicity when the population file
+is missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the folder where the population run is located</p></li>
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Metallicity to check</p></li>
+<li><p><strong>batch_folder_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the folder containing batch files</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with batch information</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.check_binary_counts">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">check_binary_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_count</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#check_binary_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.check_binary_counts" title="Link to this definition"></a></dt>
+<dd><p>Check if each population file has the expected number of binaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the folder where the population run is located</p></li>
+<li><p><strong>metallicities</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>floats</em>) – List of metallicities to check in solar units</p></li>
+<li><p><strong>expected_count</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Expected number of binaries per file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>bool</em> – True if all counts match, False otherwise</p></li>
+<li><p><em>dict</em> – Dictionary with metallicity as key and binary count as value</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.check_popsyn_function">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">check_popsyn_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#check_popsyn_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.check_popsyn_function" title="Link to this definition"></a></dt>
+<dd><p>Function to check the status of a population run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.13)"><em>argparse.Namespace</em></a>) – The arguments passed to the function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.check_population_files">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">check_population_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicities</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#check_population_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.check_population_files" title="Link to this definition"></a></dt>
+<dd><p>Check if all merged population files exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the folder where the population run is located</p></li>
+<li><p><strong>metallicities</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>floats</em>) – List of metallicities to check in solar units</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>bool</em> – True if all files exist, False otherwise</p></li>
+<li><p><em>dict</em> – Dictionary with metallicity as key and existence status as value</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.clear_previous_lines">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">clear_previous_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#clear_previous_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.clear_previous_lines" title="Link to this definition"></a></dt>
+<dd><p>Clear the specified number of previous lines in the terminal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_lines</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of lines to clear</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.create_merge_script">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">create_merge_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#create_merge_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.create_merge_script" title="Link to this definition"></a></dt>
+<dd><p>Creates a merge script for the population synthesis run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the .ini file containing population synthesis parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.create_run_script">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">create_run_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#create_run_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.create_run_script" title="Link to this definition"></a></dt>
+<dd><p>Creates a run script for the population synthesis run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the .ini file containing population synthesis parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.create_slurm_merge">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">create_slurm_merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge_walltime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mem_per_cpu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_posydon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_posydon_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#create_slurm_merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.create_slurm_merge" title="Link to this definition"></a></dt>
+<dd><p>Creates the slurm submit script for merging population synthesis results.</p>
+<p>Creates a SLURM submission script file named
+“{str_met}_Zsun_merge_popsyn.slurm” where str_met is the metallicity
+converted to string format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The metallicity in solar units (e.g., 0.02 for Z=0.02)</p></li>
+<li><p><strong>partition</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – SLURM partition to submit the job to</p></li>
+<li><p><strong>email</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Email address for job notifications</p></li>
+<li><p><strong>merge_walltime</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Time limit for the merge job in SLURM format (e.g., “12:00:00”)</p></li>
+<li><p><strong>account</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – SLURM account to charge the job to</p></li>
+<li><p><strong>mem_per_cpu</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Memory per CPU allocation (e.g., “4G”)</p></li>
+<li><p><strong>path_to_posydon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the POSYDON installation</p></li>
+<li><p><strong>path_to_posydon_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the POSYDON_DATA directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.create_slurm_submit">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">create_slurm_submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_array_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walltime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mem_per_cpu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_posydon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_posydon_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#create_slurm_submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.create_slurm_submit" title="Link to this definition"></a></dt>
+<dd><p>Creates the slurm submit script for population synthesis job arrays.</p>
+<p>Creates a SLURM submission script file named
+“{str_met}_Zsun_slurm_array.slurm” where str_met is the metallicity
+converted to string format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The metallicity in solar units (e.g., 0.02 for Z=0.02)</p></li>
+<li><p><strong>job_array_length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The length of the job array (number of jobs)</p></li>
+<li><p><strong>partition</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – SLURM partition to submit the job to</p></li>
+<li><p><strong>email</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Email address for job notifications</p></li>
+<li><p><strong>walltime</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Time limit for the job in SLURM format (e.g., “24:00:00”)</p></li>
+<li><p><strong>account</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – SLURM account to charge the job to</p></li>
+<li><p><strong>mem_per_cpu</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Memory per CPU allocation (e.g., “4G”)</p></li>
+<li><p><strong>path_to_posydon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the POSYDON installation</p></li>
+<li><p><strong>path_to_posydon_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the POSYDON_DATA directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.generate_rescue_script">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">generate_rescue_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_status</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#generate_rescue_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.generate_rescue_script" title="Link to this definition"></a></dt>
+<dd><p>Generate a script to resubmit failed runs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.13)"><em>argparse.Namespace</em></a>) – The arguments passed to the CLI</p></li>
+<li><p><strong>batch_status</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary with batch status information</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the generated rescue script</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.get_binary_params">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">get_binary_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#get_binary_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.get_binary_params" title="Link to this definition"></a></dt>
+<dd><p>Read the binary population parameters from the INI file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path to the INI file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>int</em> – The number of metallicities</p></li>
+<li><p><em>int</em> – The number of binaries</p></li>
+<li><p><em>list of floats</em> – The list of metallicities in solar units</p></li>
+<li><p><em>dict</em> – The dictionary of population synthesis parameters from the INI file</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.get_ini_file">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">get_ini_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#get_ini_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.get_ini_file" title="Link to this definition"></a></dt>
+<dd><p>Find and select the INI file for the population synthesis run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.13)"><em>argparse.Namespace</em></a>) – Command line arguments that needs to containing the run_folder path.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the selected INI file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.13)"><strong>FileNotFoundError</strong></a> – If no INI file is found in the run folder.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.rescue_popsyn_function">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">rescue_popsyn_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#rescue_popsyn_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.rescue_popsyn_function" title="Link to this definition"></a></dt>
+<dd><p>Function to rescue a failed population run.</p>
+<p>Creates resubmission scripts for failed batch jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.13)"><em>argparse.Namespace</em></a>) – The arguments passed to the function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon_popsyn.setup_popsyn_function">
+<span class="sig-prename descclassname"><span class="pre">posydon_popsyn.</span></span><span class="sig-name descname"><span class="pre">setup_popsyn_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon_popsyn.html#setup_popsyn_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon_popsyn.setup_popsyn_function" title="Link to this definition"></a></dt>
+<dd><p>Function to setup the population synthesis run</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.13)"><em>argparse.Namespace</em></a>) – the arguments passed to the function</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="get_posydon_data.html" class="btn btn-neutral float-left" title="get_posydon_data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="posydon_run_grid.html" class="btn btn-neutral float-right" title="posydon_run_grid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.5
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.5/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

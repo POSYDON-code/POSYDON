@@ -1,0 +1,17 @@
+posydon.binary\_evol.DT.tides
+=============================
+
+.. automodule:: posydon.binary_evol.DT.tides
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+
+posydon.binary\_evol.DT.tides.default\_tides
+--------------------------------------------
+
+.. automodule:: posydon.binary_evol.DT.tides.default_tides
+   :members:
+   :show-inheritance:
+   :undoc-members:
