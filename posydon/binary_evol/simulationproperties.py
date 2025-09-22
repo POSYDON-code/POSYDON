@@ -250,7 +250,7 @@ class SimulationProperties:
         for name, tup in self.kwargs.items():
             if isinstance(tup, tuple):
                 step_kwargs = tup[1]
-                metallicity = step_kwargs.get('metallicity', None)
+                metallicity = step_kwargs.get('metallicity', metallicity)
                 self.load_a_step(name, tup, metallicity=metallicity, verbose=verbose)
 
         # track that all steps have been loaded
@@ -296,7 +296,7 @@ class SimulationProperties:
 
         if (metallicity is None) and (step_name not in ignore_for_met):
             step_kwargs = step_tup[1]
-            metallicity = step_kwargs.get('metallicity', None)
+            metallicity = step_kwargs.get('metallicity', metallicity)
             if metallicity is not None:
                 pass
             # if still None:
