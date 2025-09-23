@@ -94,7 +94,7 @@ Anaconda (Recommended)
 
     .. code-block:: bash
 
-        get-posydon-data auxillary
+        get-posydon-data auxiliary
 
     and data for at least one metallicity (the examples and tutorials typically use solar):
 
