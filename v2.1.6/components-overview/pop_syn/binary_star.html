@@ -1,0 +1,594 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The BinaryStar object &mdash; posydon 2.1.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4f932e3e"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="The Binary Population Object" href="binary_population.html" />
+    <link rel="prev" title="The SingleStar object" href="single_star.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="single_star.html">The SingleStar object</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">The BinaryStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="population_params.html">POSYDON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow_chart.html">The Flow Chart Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="star_formation_history.html">Star Formation History</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+      <li class="breadcrumb-item active">The BinaryStar object</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/pop_syn/binary_star.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="the-binarystar-object">
+<span id="binary-star"></span><h1>The BinaryStar object<a class="headerlink" href="#the-binarystar-object" title="Link to this heading"></a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">BinaryStar</span></code> object is composed of two <code class="docutils literal notranslate"><span class="pre">SingleStar</span></code> objects
+(see <a class="reference internal" href="single_star.html#single-star"><span class="std std-ref">The SingleStar object</span></a>) and contains the current and past states of
+the binary. Only parameters in the <code class="docutils literal notranslate"><span class="pre">BINARYPROPERTIES</span></code> list are stored in the
+history. The current parameter value of the star object is accessed with, e.g.
+<code class="docutils literal notranslate"><span class="pre">binary.orbital_period</span></code> and the past history via
+<code class="docutils literal notranslate"><span class="pre">binary.orbital_period_history</span></code>. The two stars are accessed with, e.g.
+(for star 1), <code class="docutils literal notranslate"><span class="pre">binary.star_1.mass</span></code> and the past history via
+<code class="docutils literal notranslate"><span class="pre">binary.star_1.mass_history</span></code>.</p>
+<p>To use BinaryStar object import it using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.singlestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">SingleStar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.binarystar</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryStar</span>
+</pre></div>
+</div>
+<section id="creating-a-binarystar-object">
+<h2>Creating a BinaryStar object<a class="headerlink" href="#creating-a-binarystar-object" title="Link to this heading"></a></h2>
+<section id="binaryproperties">
+<h3>BINARYPROPERTIES<a class="headerlink" href="#binaryproperties" title="Link to this heading"></a></h3>
+<p>The binary properties are defined as follows</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">BINARYPROPERTIES</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Properties</p></th>
+<th class="head"><p>Descriptions</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">state</span></code></p></td>
+<td><p>The state of the binary, see state options.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">event</span></code></p></td>
+<td><p>The event of the binary, see event options.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time</span></code></p></td>
+<td><p>Age of the binary system in yr.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">separation</span></code></p></td>
+<td><p>Orbital separation in R_sun.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">orbital_period</span></code></p></td>
+<td><p>Orbital period in days.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eccentricity</span></code></p></td>
+<td><p>Orbital eccentricity.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">V_sys</span></code></p></td>
+<td><p>Velocity of the center of mass of the binary [Vx, Vy, Vz] in km/s.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mass_transfer_case</span></code></p></td>
+<td><p>Mass transfer case, see MT case options.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lg_mtransfer_rate</span></code></p></td>
+<td><p>The logarithm of the mass transfer rate in Msun/yr.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step_names</span></code></p></td>
+<td><p>Names of the steps in the evolution.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">step_times</span></code></p></td>
+<td><p>Time spent in the steps in the evolution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rl_relative_overflow_1</span></code></p></td>
+<td><p>The relative overflow of the Roche Lobe of star 1.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rl_relative_overflow_2</span></code></p></td>
+<td><p>The relative overflow of the Roche Lobe of star 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">trap_radius</span></code></p></td>
+<td><p>The trapping radius of the binary in R_sun.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">acc_radius</span></code></p></td>
+<td><p>The accretion radius of the binary in R_sun.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">t_sync_rad_1</span></code></p></td>
+<td><p>The synchronization time of the radiative zone of star 1 in yr.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_sync_conv_1</span></code></p></td>
+<td><p>The synchronization time of the convective zones of star 1 in yr.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">t_sync_rad_2</span></code></p></td>
+<td><p>The synchronization time of the radiative zone of star 2 in yr.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_sync_conv_2</span></code></p></td>
+<td><p>The synchronization time of the convective zones of star 2 in yr.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">nearest_neighbour_distance</span></code></p></td>
+<td><p>The distance to the nearest neighbour for NN interpolation</p></td>
+</tr>
+</tbody>
+</table>
+<p>Additional scalar properties can be added during the evolution.</p>
+<p>Since they do not change over time, they are not stored in the history.
+These can be requested and will be stored in the output oneline (See the
+<a class="reference internal" href="synthetic_population.html#synthetic-population"><span class="std std-ref">Synthetic Population</span></a> and
+<a class="reference internal" href="population_params.html#pop-params-guide"><span class="std std-ref">Population Parameter Guide</span></a> for more information).</p>
+</section>
+<section id="additional-columns">
+<h3>Additional columns<a class="headerlink" href="#additional-columns" title="Link to this heading"></a></h3>
+<p>The additional columns are defined as follows:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Additional columns</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Properties</p></th>
+<th class="head"><p>Descriptions</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">interp_class_HMS_HMS</span></code></p></td>
+<td><p>The interpolation class for the HMS_HMS phase.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">interp_class_CO_HMS_RLO</span></code></p></td>
+<td><p>The interpolation class for the CO_HMS_RLO phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">interp_class_CO_HeMS</span></code></p></td>
+<td><p>The interpolation class for the CO_HeMS phase.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">interp_class_CO_HeMS_RLO</span></code></p></td>
+<td><p>The interpolation class for the CO_HeMS_RLO phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mt_history_HMS_HMS</span></code></p></td>
+<td><p>The mass transfer history for the HMS_HMS phase.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mt_history_CO_HMS_RLO</span></code></p></td>
+<td><p>The mass transfer history for the CO_HMS_RLO phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mt_history_CO_HeMS</span></code></p></td>
+<td><p>The mass transfer history for the CO_HeMS phase.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mt_history_CO_HeMS_RLO</span></code></p></td>
+<td><p>The mass transfer history for the CO_HeMS_RLO phase.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="state-options">
+<h3>State options<a class="headerlink" href="#state-options" title="Link to this heading"></a></h3>
+<p>Binary states are defined according to the following table:</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">States</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>State</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">initially_single_star</span></code></p></td>
+<td><p>The binary was initially a single star.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">detached</span></code></p></td>
+<td><p>The stars in the binary are in a detached state.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RLO1</span></code></p></td>
+<td><p>The binary is Roche Lobe overflowing, star 1 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RLO2</span></code></p></td>
+<td><p>The binary is Roche Lobe overflowing, star 2 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contact</span></code></p></td>
+<td><p>The stars in the binary are in contact.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">disrupted</span></code></p></td>
+<td><p>The binary was disrupted.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">merged</span></code></p></td>
+<td><p>The stars in the binary merged.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">initial_RLOF</span></code></p></td>
+<td><p>The binary is in the initial Roche Lobe overflow.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">maxtime</span></code></p></td>
+<td><p>Max time of the evolution was reached.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FAILED</span></code></p></td>
+<td><p>The evolution failed.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="event-options">
+<h3>Event options<a class="headerlink" href="#event-options" title="Link to this heading"></a></h3>
+<p>Binary events are defined according to the following table:</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Events</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Event</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ZAMS</span></code></p></td>
+<td><p>Zero Age Main Sequence</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CC1</span></code></p></td>
+<td><p>Core collapse of star 1.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CC2</span></code></p></td>
+<td><p>Core collapse of star 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oRLO1</span></code></p></td>
+<td><p>The binary is at onset of Roche Lobe overflow, star 1 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oRLO2</span></code></p></td>
+<td><p>The binary is at onset of Roche Lobe overflow, star 2 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oCE1</span></code></p></td>
+<td><p>The binary is at the onset of Common Envelope initiated by star 1.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oCE2</span></code></p></td>
+<td><p>The binary is at the onset of Common Envelope initiated by star 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oDoubleCE1</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary is at the onset of Double Common Envelope initiated by star 1.</div>
+<div class="line">Both stars are post main-sequence.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oDoubleCE2</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary is at the onset of Double Common Envelope initiated by star 2.</div>
+<div class="line">Both stars are post main-sequence.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CO_contact</span></code></p></td>
+<td><p>The binary reached contact in the compact object phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">redirect_from_ZAMS</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary was redirected from ZAMS for a variety of reasons.</div>
+<div class="line">Only recorded if history_verbose = True</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">redirect_from_CO_HMS_RLO</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary was redirected from CO_HMS_RLO for a variety of reasons.</div>
+<div class="line">Only recorded if history_verbose = True</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">redirect_from_CO_HeMS</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary was redirected from CO_HeMS for a variety of reasons.</div>
+<div class="line">Only recorded if history_verbose = True</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">redirect_from_CO_HeMS_RLO</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The binary was redirected from CO_HeMS_RLO for a variety of reasons.</div>
+<div class="line">Only recorded if <cite>history_verbose = True</cite></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MaxTime_exceeded</span></code></p></td>
+<td><p>The maximum time of the evolution was exceeded.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">maxtime</span></code></p></td>
+<td><p>The maximum time of the evolution was reached.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oMerging1</span></code></p></td>
+<td><p>The binary is at the onset of merging, star 1 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">oMerging2</span></code></p></td>
+<td><p>The binary is at the onset of merging, star 2 is overfilling the RL.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>No event occurred.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ERR</span></code></p></td>
+<td><p>An error occurred in the evolution.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">END</span></code></p></td>
+<td><p>The binary evolution was stopped.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mass-transfer-case">
+<h3>Mass Transfer case<a class="headerlink" href="#mass-transfer-case" title="Link to this heading"></a></h3>
+<p>The mass transfer cases are stored in <cite>mt_history_GRIDTYPE</cite> and are defined
+according to the following table:</p>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Mass transfer cases</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Case</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>The binary is not Roche lobe overflowing.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Stable</span> <span class="pre">contact</span> <span class="pre">phase</span></code></p></td>
+<td><p>Simultaneous Roche lobe overflow from both stars, with
+stable mass transfer between them.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">MS</span></code></p></td>
+<td><p>The binary last experienced stable RLOF during the
+main sequence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">postMS</span></code></p></td>
+<td><p>The binary last experienced stable RLOF during the
+post-main sequence.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">stripped</span> <span class="pre">He</span> <span class="pre">star</span></code></p></td>
+<td><p>The binary last experienced stable RLOF after the primary
+has become a stripped He star.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">while</span> <span class="pre">non</span> <span class="pre">burning</span></code></p></td>
+<td><p>The binary last experienced stable RLOF during a
+non-burning phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Unstable</span> <span class="pre">contact</span> <span class="pre">phase</span></code></p></td>
+<td><p>Simultaneous roche lobe overflow from both stars, with
+unstable mass transfer between them.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Unstable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">MS</span></code></p></td>
+<td><p>The binary experienced unstable RLOF during the
+main sequence.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Unstable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">postMS</span></code></p></td>
+<td><p>The binary experienced unstable RLOF during the
+post-main sequence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Unstable</span> <span class="pre">RLOF</span> <span class="pre">during</span> <span class="pre">stripped</span> <span class="pre">He</span> <span class="pre">star</span></code></p></td>
+<td><p>The binary experienced unstable RLOF after the primary
+has become a stripped He star.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">while</span> <span class="pre">non</span> <span class="pre">burning</span></code></p></td>
+<td><p>The binary experienced unstable RLOF during a
+non-burning phase.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Last</span> <span class="pre">stable</span> <span class="pre">RLOF</span> <span class="pre">while</span> <span class="pre">non</span> <span class="pre">burning</span></code></p></td>
+<td><p>The binary experienced unstable RLOF during a
+non-burning phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Initial</span> <span class="pre">RLOF</span></code></p></td>
+<td><p>The binary experienced RLOF at the start of its
+evolution step.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">RLOF</span></code></p></td>
+<td><p>The binary never experienced RLOF during its
+evolution step.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Initial</span> <span class="pre">RLOF</span></code></p></td>
+<td><p>The binary experienced RLOF at the start of its
+evolution step.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Stable</span> <span class="pre">reverse</span> <span class="pre">mass-transfer</span> <span class="pre">phase</span></code></p></td>
+<td><p>The initially less massive companion experienced
+stable RLOF.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Unstable</span> <span class="pre">reverse</span> <span class="pre">mass-transfer</span> <span class="pre">phase</span></code></p></td>
+<td><p>The initially less massive companion experienced
+unstable RLOF.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="basic-example">
+<h3>Basic example<a class="headerlink" href="#basic-example" title="Link to this heading"></a></h3>
+<p>The simplest method is to provide the two star objects and <cite>kwargs</cite> of the
+initial binary parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zsun</span>
+
+<span class="n">kwargs1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span>
+           <span class="s1">&#39;metallicity&#39;</span> <span class="p">:</span> <span class="n">Zsun</span><span class="p">}</span>
+
+<span class="n">star_1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs1</span><span class="p">)</span>
+
+<span class="n">kwargs2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+           <span class="s1">&#39;metallicity&#39;</span> <span class="p">:</span> <span class="n">Zsun</span><span class="p">}</span>
+
+<span class="n">star_2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs2</span><span class="p">)</span>
+
+<span class="n">kwargs3</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;event&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="s1">&#39;time&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">&#39;orbital_period&#39;</span> <span class="p">:</span> <span class="mf">3.</span><span class="p">,</span>
+           <span class="s1">&#39;eccentricity&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">}</span>
+
+<span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">star_1</span><span class="p">,</span> <span class="n">star_2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs3</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="single_star.html" class="btn btn-neutral float-left" title="The SingleStar object" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="binary_population.html" class="btn btn-neutral float-right" title="The Binary Population Object" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.6
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.6/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

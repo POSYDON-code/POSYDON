@@ -1,0 +1,963 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Processing Single Stars with POSYDON &mdash; posydon 2.1.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4f932e3e"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Architecting MESA Simulation Grids with POSYDON" href="../MESA-grids/running-grids.html" />
+    <link rel="prev" title="Export Rerun Grids with POSYDON Post Processing Pipeline" href="step_rerun.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="generating-datasets.html">Crafting the Core Datasets for POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="just_step_1.html">Processing MESA grids with the POSYDON pipeline API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="run_full_pipeline.html">The full POSYDON Processing Pipeline experience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_1D.html">1D Plotting Functionalities for POSYDON PSyGrids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_2D.html">2D Plotting Functionalities for POSYDON PSyGrids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_rerun.html">Export Rerun Grids with POSYDON Post Processing Pipeline</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Processing Single Stars with POSYDON</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+      <li class="breadcrumb-item active">Processing Single Stars with POSYDON</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/generating-datasets/processing_single_hms.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Processing-Single-Stars-with-POSYDON">
+<h1>Processing Single Stars with POSYDON<a class="headerlink" href="#Processing-Single-Stars-with-POSYDON" title="Link to this heading"></a></h1>
+<p>This tutorial shows you how to process the single stellar models into a PSyGrid object.</p>
+<p>WARNING: Unfortunatly, the software to resample the raw MESA histories into equivalent evolutionary points (EEPs) is not available in POSYDON yet, but we are using the standalone Fortran code of Aaron Dotter, see <a class="reference external" href="http://adsabs.harvard.edu/abs/2016ApJS..222....8D">http://adsabs.harvard.edu/abs/2016ApJS..222….8D</a> . This tutorial will be updated as soon as they are available.</p>
+<p>If you are a POSYDON developer, then you should know that you can find the EEP code we used to export the v2.0.0 single star grids on Yggdrasil HPC in <code class="docutils literal notranslate"><span class="pre">/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/single_HMS/eep_code</span></code>.</p>
+<p>The steps are the following:</p>
+<ol class="arabic simple">
+<li><p>You should create a work directory, say <code class="docutils literal notranslate"><span class="pre">eeps</span></code> where you will create two directories <code class="docutils literal notranslate"><span class="pre">grid_name</span></code> where you will copy the raw MESA history files from all your MESA single stellar models and <code class="docutils literal notranslate"><span class="pre">eeps_grid_name</span></code> where the code will export the resample EEP histories.</p></li>
+<li><p>You should create a <code class="docutils literal notranslate"><span class="pre">input.grid_name</span></code> file in the <code class="docutils literal notranslate"><span class="pre">eep_code</span></code> directory that will run the EEP code to resample the histories.</p></li>
+</ol>
+<section id="Generating-the-EEP-history-files">
+<h2>Generating the EEP history files<a class="headerlink" href="#Generating-the-EEP-history-files" title="Link to this heading"></a></h2>
+<p>The following cell shows you how to copy the histories in <code class="docutils literal notranslate"><span class="pre">./eeps/grid</span></code> where we use the 10 single HMS models we run in the step 3 tutorial (step 1).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+
+<span class="n">grid_name</span> <span class="o">=</span> <span class="s1">&#39;single_hms_1e-01_Zsun&#39;</span>
+<span class="n">dirs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="o">+</span><span class="n">grid_name</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;initial_mass&#39;</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dirs</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dirs</span><span class="p">)):</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;../&#39;</span><span class="o">+</span><span class="n">grid_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/LOGS1/history.data&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;./eeps/&#39;</span><span class="o">+</span><span class="n">grid_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.data&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.data&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">missing</span> <span class="o">+=</span> <span class="p">[</span><span class="n">filename</span><span class="p">]</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dirs</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">missing</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+10
+Zbase_0.0014_initial_mass_26.4098_initial_z_1.4200e-03_grid_index_5.data
+Zbase_0.0014_initial_mass_9.7294_initial_z_1.4200e-03_grid_index_2.data
+Zbase_0.0014_initial_mass_13.5721_initial_z_1.4200e-03_grid_index_3.data
+Zbase_0.0014_initial_mass_71.6871_initial_z_1.4200e-03_grid_index_8.data
+Zbase_0.0014_initial_mass_18.9324_initial_z_1.4200e-03_grid_index_4.data
+Zbase_0.0014_initial_mass_36.8403_initial_z_1.4200e-03_grid_index_6.data
+Zbase_0.0014_initial_mass_5.0000_initial_z_1.4200e-03_grid_index_0.data
+Zbase_0.0014_initial_mass_51.3904_initial_z_1.4200e-03_grid_index_7.data
+Zbase_0.0014_initial_mass_100.0000_initial_z_1.4200e-03_grid_index_9.data
+Zbase_0.0014_initial_mass_6.9748_initial_z_1.4200e-03_grid_index_1.data
+</pre></div></div>
+</div>
+<p>Copy the above list of file names in the <code class="docutils literal notranslate"><span class="pre">input</span></code> file below.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> input.single_hms_1e-01_Zsun
+<span class="c1">#version string, max 8 characters</span>
+<span class="n">POSYDON</span>
+<span class="c1">#initial Y,      initial Z,       [Fe/H], [alpha/Fe], v/vcrit</span>
+<span class="mf">0.2703</span>              <span class="mf">0.0142</span>           <span class="o">-</span><span class="mf">1.0</span>         <span class="mf">0.0</span>      <span class="mf">0.0</span>
+<span class="c1">#data directories: 1) history files, 2) eeps, 3) isochrones</span>
+<span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">beegfs</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">shares</span><span class="o">/</span><span class="n">astro</span><span class="o">/</span><span class="n">posydon</span><span class="o">/</span><span class="n">simone</span><span class="o">/</span><span class="n">documentation</span><span class="o">/</span><span class="n">running_mesa</span><span class="o">/</span><span class="n">processing_single_hms</span><span class="o">/</span><span class="n">eeps</span><span class="o">/</span><span class="n">single_hms_1e</span><span class="o">-</span><span class="mi">01</span><span class="n">_Zsun</span>
+<span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">beegfs</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">shares</span><span class="o">/</span><span class="n">astro</span><span class="o">/</span><span class="n">posydon</span><span class="o">/</span><span class="n">simone</span><span class="o">/</span><span class="n">documentation</span><span class="o">/</span><span class="n">running_mesa</span><span class="o">/</span><span class="n">processing_single_hms</span><span class="o">/</span><span class="n">eeps</span><span class="o">/</span><span class="n">eeps_single_hms_1e</span><span class="o">-</span><span class="mi">01</span><span class="n">_Zsun</span>
+<span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">null</span>
+<span class="c1"># read history_columns</span>
+<span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">beegfs</span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">shares</span><span class="o">/</span><span class="n">astro</span><span class="o">/</span><span class="n">posydon</span><span class="o">/</span><span class="n">POSYDON_GRIDS_v2</span><span class="o">/</span><span class="n">single_HMS</span><span class="o">/</span><span class="n">eep_code</span><span class="o">/</span><span class="n">posydon_history_columns</span><span class="o">.</span><span class="n">list</span>
+<span class="c1">#tracks 10</span>
+<span class="mi">10</span>
+<span class="n">Zbase_0</span><span class="mf">.0014</span><span class="n">_initial_mass_26</span><span class="mf">.4098</span><span class="n">_initial_z_1</span><span class="mf">.4200e-03</span><span class="n">_grid_index_5</span><span class="o">.</span><span class="n">data</span>
+<span class="n">Zbase_0</span><span class="mf">.0014</span><span class="n">_initial_mass_9</span><span class="mf">.7294</span><span class="n">_initial_z_1</span><span class="mf">.4200e-03</span><span class="n">_grid_index_2</span><span class="o">.</span><span class="n">data</span>
+<span class="n">Zbase_0</span><span class="mf">.0014</span><span class="n">_initial_mass_13</span><span class="mf">.5721</span><span class="n">_initial_z_1</span><span class="mf">.4200e-03</span><span class="n">_grid_index_3</span><span class="o">.</span><span class="n">data</span>
+<span class="n">Zbase_0</span><span class="mf">.0014</span><span class="n">_initial_mass_71</span><span class="mf">.6871</span><span class="n">_initial_z_1</span><span class="mf">.4200e-03</span><span class="n">_grid_index_8</span><span class="o">.</span><span class="n">data</span>
+<span class="n">Zbase_0</span><span class="mf">.0014</span><span class="n">_initial_mass_18</span><span class="mf">.9324</span><span class="n">_initial_z_1</span><span class="mf">.4200e-03</span><span class="n">_grid_index_4</span><span class="o">.</span><span class="n">data</span>
+<span class="n">Zbase_0</span><span class="mf">.0014</span><span class="n">_initial_mass_36</span><span class="mf">.8403</span><span class="n">_initial_z_1</span><span class="mf">.4200e-03</span><span class="n">_grid_index_6</span><span class="o">.</span><span class="n">data</span>
+<span class="n">Zbase_0</span><span class="mf">.0014</span><span class="n">_initial_mass_5</span><span class="mf">.0000</span><span class="n">_initial_z_1</span><span class="mf">.4200e-03</span><span class="n">_grid_index_0</span><span class="o">.</span><span class="n">data</span>
+<span class="n">Zbase_0</span><span class="mf">.0014</span><span class="n">_initial_mass_51</span><span class="mf">.3904</span><span class="n">_initial_z_1</span><span class="mf">.4200e-03</span><span class="n">_grid_index_7</span><span class="o">.</span><span class="n">data</span>
+<span class="n">Zbase_0</span><span class="mf">.0014</span><span class="n">_initial_mass_100</span><span class="mf">.0000</span><span class="n">_initial_z_1</span><span class="mf">.4200e-03</span><span class="n">_grid_index_9</span><span class="o">.</span><span class="n">data</span>
+<span class="n">Zbase_0</span><span class="mf">.0014</span><span class="n">_initial_mass_6</span><span class="mf">.9748</span><span class="n">_initial_z_1</span><span class="mf">.4200e-03</span><span class="n">_grid_index_1</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Writing input.single_hms_1e-01_Zsun
+</pre></div></div>
+</div>
+<p>Now run the eep code as follows.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="nb">cd</span><span class="w"> </span>/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/single_HMS/eep_code/<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>./make_eep<span class="w"> </span>/srv/beegfs/scratch/shares/astro/posydon/simone/documentation/running_mesa/processing_single_hms/input.single_hms_1e-01_Zsun
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+    1    1                      surface_mu   10
+    1    2                        star_age    8
+    1    3                       star_mass    9
+    1    4                       star_mdot    9
+    1    5                    log_abs_mdot   12
+    1    6                          log_dt    6
+    1    7      log_total_angular_momentum   26
+    1    8                  mass_conv_core   14
+    1    9                    conv_mx1_top   12
+    1   10                    conv_mx1_bot   12
+    1   11                    conv_mx2_top   12
+    1   12                    conv_mx2_bot   12
+    1   13                  conv_mx1_top_r   14
+    1   14                  conv_mx1_bot_r   14
+    1   15                  conv_mx2_top_r   14
+    1   16                  conv_mx2_bot_r   14
+    1   17                    he_core_mass   12
+    1   18                  he_core_radius   14
+    1   19                     c_core_mass   11
+    1   20                   c_core_radius   13
+    1   21                     o_core_mass   11
+    1   22                   o_core_radius   13
+    1   23                   envelope_mass   13
+    1   24                          log_LH    6
+    1   25                         log_LHe    7
+    1   26                          log_LZ    6
+    1   27                        log_Lnuc    8
+    1   28                        log_Lneu    8
+    1   29                   log_abs_Lgrav   13
+    1   30                        log_Teff    8
+    1   31                   photosphere_r   13
+    1   32        photosphere_cell_density   24
+    1   33                           log_L    5
+    1   34                           log_R    5
+    1   35                           log_g    5
+    1   36                  log_L_div_Ledd   14
+    1   37                  surf_avg_j_rot   14
+    1   38                  surf_avg_omega   14
+    1   39             surf_avg_omega_crit   19
+    1   40   surf_avg_omega_div_omega_crit   29
+    1   41                  surf_avg_v_rot   14
+    1   42                 surf_avg_v_crit   15
+    1   43          surf_avg_Lrad_div_Ledd   22
+    1   44           rotational_mdot_boost   21
+    1   45   surf_r_equatorial_div_r_polar   29
+    1   46         surf_r_equatorial_div_r   23
+    1   47              surf_r_polar_div_r   18
+    1   48                    log_center_T   12
+    1   49                  log_center_Rho   14
+    1   50                    log_center_P   12
+    1   51               center_degeneracy   17
+    1   52                    center_gamma   12
+    1   53                       center_mu    9
+    1   54                       center_ye    9
+    1   55                    center_omega   12
+    1   56                       center_h1    9
+    1   57                      center_he3   10
+    1   58                      center_he4   10
+    1   59                      center_c12   10
+    1   60                      center_n14   10
+    1   61                      center_o16   10
+    1   62                     center_ne20   11
+    1   63                     center_si28   11
+    1   64                      center_s32   10
+    1   65                     center_ca40   11
+    1   66                     center_ti44   11
+    1   67                     center_fe56   11
+    1   68                      surface_h1   10
+    1   69                     surface_he3   11
+    1   70                     surface_he4   11
+    1   71                     surface_c12   11
+    1   72                     surface_n14   11
+    1   73                     surface_o16   11
+    1   74                    surface_ne20   12
+    1   75                    surface_si28   12
+    1   76                     surface_s32   11
+    1   77                    surface_ca40   12
+    1   78                    surface_ti44   12
+    1   79                    surface_fe56   12
+    1   80                   total_mass_h1   13
+    1   81                  total_mass_he4   14
+    1   82                              pp    2
+    1   83                             cno    3
+    1   84                        tri_alfa    8
+    1   85                          burn_c    6
+    1   86                          burn_n    6
+    1   87                          burn_o    6
+    1   88                         burn_ne    7
+    1   89                         c12_c12    7
+    1   90                        delta_nu    8
+    1   91                        delta_Pg    8
+    1   92                          nu_max    6
+    1   93                 acoustic_cutoff   15
+    1   94               v_div_csound_surf   17
+    1   95                       e_thermal    9
+    1   96         max_conv_vel_div_csound   23
+    1   97             max_gradT_div_grada   19
+    1   98              surf_c12_minus_o16   18
+    1   99                  min_Pgas_div_P   14
+    1  100           total_internal_energy   21
+    1  101      total_gravitational_energy   26
+    1  102     total_radial_kinetic_energy   27
+    1  103 total_rotational_kinetic_energy   31
+    1  104                    total_energy   12
+    1  105                  total_eps_grav   14
+    1  106               conv_env_top_mass   17
+    1  107               conv_env_bot_mass   17
+    1  108             conv_env_top_radius   19
+    1  109             conv_env_bot_radius   19
+    1  110        conv_env_turnover_time_g   24
+    1  111      conv_env_turnover_time_l_b   26
+    1  112      conv_env_turnover_time_l_t   26
+    1  113         envelope_binding_energy   23
+    1  114         total_moment_of_inertia   23
+    1  115                  spin_parameter   14
+    1  116                 avg_c_in_c_core   15
+    1  117          mass_conv_reg_fortides   22
+    1  118     thickness_conv_reg_fortides   27
+    1  119        radius_conv_reg_fortides   24
+    1  120                 lambda_CE_1cent   15
+    1  121                lambda_CE_10cent   16
+    1  122                lambda_CE_30cent   16
+    1  123                    co_core_mass   12
+    1  124                  co_core_radius   14
+    1  125   lambda_CE_pure_He_star_10cent   29
+    1  126              he_core_mass_1cent   18
+    1  127             he_core_mass_10cent   19
+    1  128             he_core_mass_30cent   19
+    1  129            he_core_radius_1cent   20
+    1  130           he_core_radius_10cent   21
+    1  131           he_core_radius_30cent   21
+    2    1                      surface_mu   10
+    2    2                        star_age    8
+    2    3                       star_mass    9
+    2    4                       star_mdot    9
+    2    5                    log_abs_mdot   12
+    2    6                          log_dt    6
+    2    7      log_total_angular_momentum   26
+    2    8                  mass_conv_core   14
+    2    9                    conv_mx1_top   12
+    2   10                    conv_mx1_bot   12
+    2   11                    conv_mx2_top   12
+    2   12                    conv_mx2_bot   12
+    2   13                  conv_mx1_top_r   14
+    2   14                  conv_mx1_bot_r   14
+    2   15                  conv_mx2_top_r   14
+    2   16                  conv_mx2_bot_r   14
+    2   17                    he_core_mass   12
+    2   18                  he_core_radius   14
+    2   19                     c_core_mass   11
+    2   20                   c_core_radius   13
+    2   21                     o_core_mass   11
+    2   22                   o_core_radius   13
+    2   23                   envelope_mass   13
+    2   24                          log_LH    6
+    2   25                         log_LHe    7
+    2   26                          log_LZ    6
+    2   27                        log_Lnuc    8
+    2   28                        log_Lneu    8
+    2   29                   log_abs_Lgrav   13
+    2   30                        log_Teff    8
+    2   31                   photosphere_r   13
+    2   32        photosphere_cell_density   24
+    2   33                           log_L    5
+    2   34                           log_R    5
+    2   35                           log_g    5
+    2   36                  log_L_div_Ledd   14
+    2   37                  surf_avg_j_rot   14
+    2   38                  surf_avg_omega   14
+    2   39             surf_avg_omega_crit   19
+    2   40   surf_avg_omega_div_omega_crit   29
+    2   41                  surf_avg_v_rot   14
+    2   42                 surf_avg_v_crit   15
+    2   43          surf_avg_Lrad_div_Ledd   22
+    2   44           rotational_mdot_boost   21
+    2   45   surf_r_equatorial_div_r_polar   29
+    2   46         surf_r_equatorial_div_r   23
+    2   47              surf_r_polar_div_r   18
+    2   48                    log_center_T   12
+    2   49                  log_center_Rho   14
+    2   50                    log_center_P   12
+    2   51               center_degeneracy   17
+    2   52                    center_gamma   12
+    2   53                       center_mu    9
+    2   54                       center_ye    9
+    2   55                    center_omega   12
+    2   56                       center_h1    9
+    2   57                      center_he3   10
+    2   58                      center_he4   10
+    2   59                      center_c12   10
+    2   60                      center_n14   10
+    2   61                      center_o16   10
+    2   62                     center_ne20   11
+    2   63                     center_si28   11
+    2   64                      center_s32   10
+    2   65                     center_ca40   11
+    2   66                     center_ti44   11
+    2   67                     center_fe56   11
+    2   68                      surface_h1   10
+    2   69                     surface_he3   11
+    2   70                     surface_he4   11
+    2   71                     surface_c12   11
+    2   72                     surface_n14   11
+    2   73                     surface_o16   11
+    2   74                    surface_ne20   12
+    2   75                    surface_si28   12
+    2   76                     surface_s32   11
+    2   77                    surface_ca40   12
+    2   78                    surface_ti44   12
+    2   79                    surface_fe56   12
+    2   80                   total_mass_h1   13
+    2   81                  total_mass_he4   14
+    2   82                              pp    2
+    2   83                             cno    3
+    2   84                        tri_alfa    8
+    2   85                          burn_c    6
+    2   86                          burn_n    6
+    2   87                          burn_o    6
+    2   88                         burn_ne    7
+    2   89                         c12_c12    7
+    2   90                        delta_nu    8
+    2   91                        delta_Pg    8
+    2   92                          nu_max    6
+    2   93                 acoustic_cutoff   15
+    2   94               v_div_csound_surf   17
+    2   95                       e_thermal    9
+    2   96         max_conv_vel_div_csound   23
+    2   97             max_gradT_div_grada   19
+    2   98              surf_c12_minus_o16   18
+    2   99                  min_Pgas_div_P   14
+    2  100           total_internal_energy   21
+    2  101      total_gravitational_energy   26
+    2  102     total_radial_kinetic_energy   27
+    2  103 total_rotational_kinetic_energy   31
+    2  104                    total_energy   12
+    2  105                  total_eps_grav   14
+    2  106               conv_env_top_mass   17
+    2  107               conv_env_bot_mass   17
+    2  108             conv_env_top_radius   19
+    2  109             conv_env_bot_radius   19
+    2  110        conv_env_turnover_time_g   24
+    2  111      conv_env_turnover_time_l_b   26
+    2  112      conv_env_turnover_time_l_t   26
+    2  113         envelope_binding_energy   23
+    2  114         total_moment_of_inertia   23
+    2  115                  spin_parameter   14
+    2  116                 avg_c_in_c_core   15
+    2  117          mass_conv_reg_fortides   22
+    2  118     thickness_conv_reg_fortides   27
+    2  119        radius_conv_reg_fortides   24
+    2  120                 lambda_CE_1cent   15
+    2  121                lambda_CE_10cent   16
+    2  122                lambda_CE_30cent   16
+    2  123                    co_core_mass   12
+    2  124                  co_core_radius   14
+    2  125   lambda_CE_pure_He_star_10cent   29
+    2  126              he_core_mass_1cent   18
+    2  127             he_core_mass_10cent   19
+    2  128             he_core_mass_30cent   19
+    2  129            he_core_radius_1cent   20
+    2  130           he_core_radius_10cent   21
+    2  131           he_core_radius_30cent   21
+ process_history_columns: ncol =          131
+  number of history columns =          131
+  star_age column =            2
+  star_mass column=            3
+     main =           32
+     head =           28
+     xtra =            1
+ Zbase_0.0014_initial_mass_26.4098_initial_z_1.4200e-03_grid_index_5.data   0.0000000000000000            11701
+ number of columns:          131
+ do not have surface_mu
+ do not have photosphere_cell_density
+ Zbase_0.0014_initial_mass_26.4098_initial_z_1.4200e-03_grid_index_5.data           9       11701
+     guess =          194
+  my_guess =          194
+    ntrack =         1134
+      21     117     193     301     321     920    1134       0       0
+  track, number of p, s eeps =            0           7         700
+   6277.9927750097913
+   5287405.0672792234
+   7457780.3353313934
+   7469035.5533669619
+   7481078.8974012667
+   7967779.7210960779
+   7973760.0214983337
+     main =           32
+     head =           28
+     xtra =            1
+ Zbase_0.0014_initial_mass_9.7294_initial_z_1.4200e-03_grid_index_2.data   26.409758771088889            11701
+ number of columns:          131
+ do not have surface_mu
+ do not have photosphere_cell_density
+ Zbase_0.0014_initial_mass_9.7294_initial_z_1.4200e-03_grid_index_2.data           9       11701
+     guess =          187
+  my_guess =          187
+    ntrack =         1199
+      15     111     186     286     301     892    1199       0       0
+  track, number of p, s eeps =            0           7         700
+   24396.344533808904
+   21042522.104845978
+   28037631.964223422
+   28079495.980469674
+   28136942.251048498
+   29667168.542051919
+   29700034.195994429
+     main =           32
+     head =           28
+     xtra =            1
+ Zbase_0.0014_initial_mass_13.5721_initial_z_1.4200e-03_grid_index_3.data   9.7294385594764741            11701
+ number of columns:          131
+ do not have surface_mu
+ do not have photosphere_cell_density
+ Zbase_0.0014_initial_mass_13.5721_initial_z_1.4200e-03_grid_index_3.data           9       11701
+     guess =          196
+  my_guess =          196
+    ntrack =         1179
+      17     112     195     312     327     912    1179       0       0
+  track, number of p, s eeps =            0           7         700
+   15610.060101129055
+   12218224.667538654
+   16588094.368652388
+   16612520.250515623
+   16641397.545344574
+   17585086.263796750
+   17601144.656836938
+     main =           32
+     head =           28
+     xtra =            1
+ Zbase_0.0014_initial_mass_71.6871_initial_z_1.4200e-03_grid_index_8.data   13.572087956491831            11701
+ number of columns:          131
+ do not have surface_mu
+ do not have photosphere_cell_density
+ Zbase_0.0014_initial_mass_71.6871_initial_z_1.4200e-03_grid_index_8.data           9       11701
+     guess =          219
+  my_guess =          219
+    ntrack =         1017
+      28     126     218     254     262     847    1017       0       0
+  track, number of p, s eeps =            0           7         700
+   1882.7797692549086
+   2433136.2664018041
+   3657144.1286053685
+   3662905.7394964132
+   3666937.2754223552
+   3968981.8990034591
+   3972461.2129875328
+     main =           32
+     head =           28
+     xtra =            1
+ Zbase_0.0014_initial_mass_18.9324_initial_z_1.4200e-03_grid_index_4.data   71.687115078083323            11701
+ number of columns:          131
+ do not have surface_mu
+ do not have photosphere_cell_density
+ Zbase_0.0014_initial_mass_18.9324_initial_z_1.4200e-03_grid_index_4.data           9       11701
+     guess =          190
+  my_guess =          190
+    ntrack =         1125
+      19     115     189     295     311     907    1125       0       0
+  track, number of p, s eeps =            0           7         700
+   9921.7595238775411
+   7739637.6514137154
+   10685722.442352418
+   10700524.445156630
+   10718291.466290537
+   11364471.722192684
+   11373601.929193445
+     main =           32
+     head =           28
+     xtra =            1
+ Zbase_0.0014_initial_mass_36.8403_initial_z_1.4200e-03_grid_index_6.data   18.932394689168561            11701
+ number of columns:          131
+ do not have surface_mu
+ do not have photosphere_cell_density
+ Zbase_0.0014_initial_mass_36.8403_initial_z_1.4200e-03_grid_index_6.data           9       11701
+     guess =          193
+  my_guess =          193
+    ntrack =          986
+      23     119     192     222     229     854     986       0       0
+  track, number of p, s eeps =            0           7         700
+   3960.2690882564220
+   3851575.8069463656
+   5582710.4292462571
+   5588591.1389014870
+   5589612.3684672052
+   5991126.2522320682
+   5995772.7040485023
+     main =           32
+     head =           28
+     xtra =            1
+ Zbase_0.0014_initial_mass_5.0000_initial_z_1.4200e-03_grid_index_0.data   36.840313846957606            11701
+ number of columns:          131
+ do not have surface_mu
+ do not have photosphere_cell_density
+ Zbase_0.0014_initial_mass_5.0000_initial_z_1.4200e-03_grid_index_0.data           9       11701
+     guess =          181
+  my_guess =          181
+    ntrack =         3913
+      13     108     180     269     290     888    1020    3681    3913
+  track, number of p, s eeps =            0           9         900
+   86753.360233281302
+   64319463.355284028
+   86185376.573872104
+   86633375.415914938
+   87099149.826188803
+   96055736.197538793
+   96465309.995612055
+   96499955.970155716
+   96512030.582908586
+     main =           32
+     head =           28
+     xtra =            1
+ Zbase_0.0014_initial_mass_51.3904_initial_z_1.4200e-03_grid_index_7.data   4.9999999804196547            11701
+ number of columns:          131
+ do not have surface_mu
+ do not have photosphere_cell_density
+ Zbase_0.0014_initial_mass_51.3904_initial_z_1.4200e-03_grid_index_7.data           9       11701
+     guess =          212
+  my_guess =          212
+    ntrack =          985
+      26     123     211     231     306     912     985       0       0
+  track, number of p, s eeps =            0           7         700
+   2996.8596073236631
+   3010166.5713262074
+   4416981.4144611228
+   4418486.3517615385
+   4425592.2093049819
+   4768141.7818553476
+   4772090.7663751869
+     main =           32
+     head =           28
+     xtra =            1
+ Zbase_0.0014_initial_mass_100.0000_initial_z_1.4200e-03_grid_index_9.data   51.390425259010733            11701
+ number of columns:          131
+ do not have surface_mu
+ do not have photosphere_cell_density
+ Zbase_0.0014_initial_mass_100.0000_initial_z_1.4200e-03_grid_index_9.data           9       11701
+     guess =          218
+  my_guess =          218
+    ntrack =          975
+       1     113     217     219     234     806     975       0       0
+  track, number of p, s eeps =            0           7         700
+   100.00000000000000
+   2056224.0174175713
+   3136810.0982837169
+   3138943.4469665275
+   3145922.3057053299
+   3420158.4876993480
+   3423291.9848860670
+     main =           32
+     head =           28
+     xtra =            1
+ Zbase_0.0014_initial_mass_6.9748_initial_z_1.4200e-03_grid_index_1.data   99.999899139008136            11701
+ number of columns:          131
+ do not have surface_mu
+ do not have photosphere_cell_density
+ Zbase_0.0014_initial_mass_6.9748_initial_z_1.4200e-03_grid_index_1.data           9       11701
+     guess =          186
+  my_guess =          186
+    ntrack =         1209
+      14     109     185     286     302     893    1209       0       0
+  track, number of p, s eeps =            0           7         700
+   46075.447975750540
+   37892525.232744850
+   50239784.193855718
+   50340442.508530043
+   50473179.666073054
+   53361156.397665329
+   53451365.900661089
+</pre></div></div>
+</div>
+<p>Great! Now that we have the EEPs files we can create the PSyGrid object and compute the processed quantities with the following code.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># NOTE: to load slurm_magic commands you need to first install them with pip install git+https://github.com/NERSC/slurm-magic.git</span>
+<span class="o">%</span><span class="k">load_ext</span> slurm_magic
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pwd
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/srv/beegfs/scratch/shares/astro/posydon/simone/documentation/running_mesa/processing_single_hms
+</pre></div></div>
+</div>
+</section>
+<section id="Creating-the-PSyGrid-Object-and-Computing-the-Processed-Quantities">
+<h2>Creating the PSyGrid Object and Computing the Processed Quantities<a class="headerlink" href="#Creating-the-PSyGrid-Object-and-Computing-the-Processed-Quantities" title="Link to this heading"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> ./script.py
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">copyfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.post_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">post_process_grid</span><span class="p">,</span> <span class="n">add_post_processed_quantities</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Job array index:&#39;</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;single_hms_1e-01_Zsun&#39;</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">inpath</span> <span class="o">=</span> <span class="s2">&quot;../</span><span class="si">%s</span><span class="s2">/&quot;</span><span class="o">%</span><span class="n">name</span>
+    <span class="n">eep_path</span> <span class="o">=</span> <span class="s2">&quot;./eeps/eeps_</span><span class="si">%s</span><span class="s2">/&quot;</span><span class="o">%</span><span class="n">name</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
+    <span class="n">grid_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.h5&quot;</span><span class="o">%</span><span class="n">name</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">outpath</span><span class="o">+</span><span class="n">grid_name</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip9&quot;</span><span class="p">,</span> <span class="n">max_number_of_runs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">eep</span><span class="o">=</span><span class="n">eep_path</span><span class="p">,</span>
+               <span class="o">**</span><span class="p">{</span><span class="s1">&#39;star1_history_saved_columns&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;star_mdot&#39;</span><span class="p">,</span><span class="s1">&#39;conv_mx1_top_r&#39;</span><span class="p">,</span> <span class="s1">&#39;conv_mx1_bot_r&#39;</span><span class="p">,</span><span class="s1">&#39;mass_conv_reg_fortides&#39;</span><span class="p">,</span>
+                                                   <span class="s1">&#39;thickness_conv_reg_fortides&#39;</span><span class="p">,</span> <span class="s1">&#39;radius_conv_reg_fortides&#39;</span><span class="p">,</span> <span class="s1">&#39;surface_he3&#39;</span><span class="p">,</span>
+                                                   <span class="c1">#&#39;photosphere_cell_density&#39;, &#39;surface_mu&#39;</span>
+                                                  <span class="p">]})</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done creating grid!&#39;</span><span class="p">)</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">outpath</span>
+    <span class="n">grid_name_processed</span> <span class="o">=</span> <span class="s1">&#39;processed_&#39;</span><span class="o">+</span><span class="n">grid_name</span>
+    <span class="c1"># copy file, it will be overwritten when we add columns</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Post processed grid file alredy exist, removing it...&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
+    <span class="n">copyfile</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">grid_name</span><span class="p">,</span> <span class="n">path</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">()</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
+    <span class="n">MESA_dirs_EXTRA_COLUMNS</span><span class="p">,</span> <span class="n">EXTRA_COLUMNS</span> <span class="o">=</span> <span class="n">post_process_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">star_2_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">single_star</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">add_post_processed_quantities</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">MESA_dirs_EXTRA_COLUMNS</span><span class="p">,</span> <span class="n">EXTRA_COLUMNS</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">MESA_dirs_EXTRA_COLUMNS</span>
+    <span class="k">del</span> <span class="n">EXTRA_COLUMNS</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done appending columns!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Overwriting ./script.py
+</pre></div></div>
+</div>
+<p>Run the job array, in this case we only have one grid, so the array will go from index 0 to 0.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="k">sbatch</span>
+#!/bin/bash
+#SBATCH --account=meynet
+#SBATCH --partition=private-astro-cpu
+#SBATCH -N 1
+#SBATCH --array=0-0
+#SBATCH --cpus-per-task 1
+#SBATCH --ntasks-per-node 1
+#SBATCH --time=06:00:00
+#SBATCH --job-name=&quot;psygrid_\${SLURM_ARRAY_TASK_ID}&quot;
+#SBATCH --output=./log.out
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=simone.bavera@unige.ch
+#SBATCH --mem-per-cpu=8G
+
+srun python ./script.py $SLURM_ARRAY_TASK_ID
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;Submitted batch job 28474201\n&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>squeue<span class="w"> </span>-u<span class="w"> </span>bavera<span class="w"> </span>-j<span class="w"> </span><span class="m">28474201</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+        28474201_0 private-a psygrid_   bavera  R       0:04      1 cpu147
+</pre></div></div>
+</div>
+<p>Once the job is done we can check that the grid has been created and that the data are contained in the PSyGrid object:</p>
+<section id="Exploring-the-PSyGrid-obejct">
+<h3>Exploring the PSyGrid obejct<a class="headerlink" href="#Exploring-the-PSyGrid-obejct" title="Link to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s1">&#39;./processed_single_hms_1e-01_Zsun.h5&#39;</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span>
+<span class="c1">#grid.final_values</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([( 6277.99277501,  26.4097595 , 0., 0., 0., 0., 0., 0., 0.74661422, 0.25194858, 4.37299425e-06, 0.00052925, 0.00041712, 0.74748, 0.25107328, 0.00025117, 7.35752498e-05, 0.00060884, -71.17175117, 0.01046428, 0., 0., 0., 4.95159897, -23.39844565,  1.49499256, 4.95175071, 4.63860306, 4.93996484, 0.71603514, 7.64091423, 0.80568409, 6.59702886e+56, 0., -99.,  0.        ,  0.        , 0.        , 0.        ,  0.00000000e+00,  0.e+00,  0.e+00, -2.76560315e+50, 0.00000000e+00, 0.        , 0.        , 1.83454693, 1.83454693, 1.83454693, 0., 0., 1.83454693, -0.47392652, -2.74056706e-08, 1.82720354, 0.00768976, 2.67220936e-05, 0.74748, 0.2511, 0.00142),
+       (24396.34453381,   9.72943859, 0., 0., 0., 0., 0., 0., 0.74674423, 0.25181197, 3.20475486e-06, 0.00048611, 0.00046799, 0.74748, 0.25107328, 0.00025117, 7.35752498e-05, 0.00060884, -77.4560927 , 0.01688819, 0., 0., 0., 3.775321  , -26.64516867,  0.31740152, 3.77547228, 4.47302913, 3.75932537, 0.45686326, 7.56813577, 1.21103236, 6.61911701e+55, 0., -99.,  9.72943487,  9.72943487, 2.86147412, 2.85865442, -1.00000000e+99, -1.e+99, -1.e+99, -8.16891431e+49, 3.24145284e-10, 0.0028197 , 2.86006427, 1.5298747 , 1.5298747 , 1.5298747 , 0., 0., 1.5298747 , -0.76841313, -1.26697530e-10, 0.76372292, 0.00403775, 2.67220936e-05, 0.74748, 0.2511, 0.00142),
+       (15610.06010113,  13.57208808, 0., 0., 0., 0., 0., 0., 0.74663148, 0.25192828, 3.64972826e-06, 0.00050979, 0.00044032, 0.74748, 0.25107328, 0.00025117, 7.35752498e-05, 0.00060884, -75.14930055, 0.01414088, 0., 0., 0., 4.19391627, -25.44798894,  0.73873336, 4.19406851, 4.53347181, 4.18011152, 0.54637099, 7.59450858, 1.05877441, 1.45734769e+56, 0., -99., 13.57206965, 13.57206965, 3.51730941, 3.51503286, -1.00000000e+99, -1.e+99, -1.e+99, -1.23079422e+50, 2.49233206e-10, 0.00227656, 3.51617113, 1.60828807, 1.60828807, 1.60828807, 0., 0., 1.60828807, -0.65191396, -1.04325683e-09, 1.02329832, 0.00507219, 2.67220936e-05, 0.74748, 0.2511, 0.00142),
+       ( 1882.77976925,  71.68711644, 0., 0., 0., 0., 0., 0., 0.74667952, 0.25188536, 5.20460986e-06, 0.00054179, 0.00040168, 0.74748, 0.25107328, 0.00025117, 7.35752498e-05, 0.00060884, -66.78075539, 0.00747133, 0., 0., 0., 5.86040847, -21.18461477,  2.39959949, 5.86055875, 4.74585427, 5.85082109, 0.95696085, 7.69323666, 0.52375113, 5.60217239e+57, 0., -99., 71.68602562, 71.68602562, 9.0565095 , 9.05126109,  3.41948936e+06, -1.e+99, -1.e+99, -8.77155713e+50, 3.17655845e-07, 0.04622897, 8.98425941, 2.44823508, 2.44823508, 2.44823508, 0., 0., 2.44823508, -0.23839679, -5.65977861e-07, 4.11840915, 0.01332546, 2.67220936e-05, 0.74748, 0.2511, 0.00142),
+       ( 9921.75952388,  18.93239505, 0., 0., 0., 0., 0., 0., 0.74658466, 0.25197744, 4.05224469e-06, 0.00052508, 0.00042232, 0.74748, 0.25107328, 0.00025117, 7.35752498e-05, 0.00060884, -73.05771606, 0.01205748, 0., 0., 0., 4.58707384, -24.37010752,  1.13188125, 4.58722608, 4.5888982 , 4.57463157, 0.63277821, 7.61874639, 0.92380579, 3.13684410e+56, 0., -99.,  0.        ,  0.        , 0.        , 0.        ,  0.00000000e+00,  0.e+00,  0.e+00, -1.84962365e+50, 0.00000000e+00, 0.        , 0.        , 1.70719514, 1.70719514, 1.70719514, 0., 0., 1.70719514, -0.56236179, -6.20912789e-09, 1.37085165, 0.00628566, 2.67220936e-05, 0.74748, 0.2511, 0.00142),
+       ( 3960.26908826,  36.84031499, 0., 0., 0., 0., 0., 0., 0.74664292, 0.25192042, 4.66416978e-06, 0.00053234, 0.0004132 , 0.74748, 0.25107328, 0.00025117, 7.35752498e-05, 0.00060884, -69.51212551, 0.00923022, 0., 0., 0., 5.28402131, -22.55235342,  1.82580547, 5.28417249, 4.68138886, 5.27328834, 0.79712528, 7.66064093, 0.70138647, 1.36277262e+57, 0., -99.,  0.        ,  0.        , 0.        , 0.        ,  0.00000000e+00,  0.e+00,  0.e+00, -4.10055250e+50, 0.00000000e+00, 0.        , 0.        , 1.99792468, 1.99792468, 1.99792468, 0., 0., 1.99792468, -0.38865155, -9.20733750e-08, 2.41769015, 0.00930852, 2.67220936e-05, 0.74748, 0.2511, 0.00142),
+       (86753.36023328,   5.        , 0., 0., 0., 0., 0., 0., 0.7466874 , 0.25186564, 2.50626676e-06, 0.00046705, 0.0004907 , 0.74748, 0.25107328, 0.00025117, 7.35752498e-05, 0.00060884, -82.96464122, 0.02522663, 0., 0., 0., 2.86412353, -29.64322718, -0.62787222, 2.8642634 , 4.33588796, 2.84606574, 0.27451579, 7.50579968, 1.54682129, 1.31885098e+55, 0., -99.,  4.99999777,  4.99999777, 1.87849103, 1.8762103 , -1.00000000e+99, -1.e+99, -1.e+99, -3.56658133e+49, 2.90680305e-10, 0.00228073, 1.87735066, 1.40732829, 1.40732829, 1.40732829, 0., 0., 1.40732829, -1.18564104, -2.00383522e-11, 0.43011231, 0.00249988, 2.67220936e-05, 0.74748, 0.2511, 0.00142),
+       ( 2996.85960732,  51.39042664, 0., 0., 0., 0., 0., 0., 0.74665424, 0.25191017, 4.95851149e-06, 0.00053913, 0.00040505, 0.74748, 0.25107328, 0.00025117, 7.35752498e-05, 0.00060884, -68.06323402, 0.00825675, 0., 0., 0., 5.58586557, -21.82537327,  2.12654   , 5.58601637, 4.71695579, 5.57516733, 0.87693093, 7.67784561, 0.60779877, 2.77775974e+57, 0., -99.,  0.        ,  0.        , 0.        , 0.        ,  0.00000000e+00,  0.e+00,  0.e+00, -6.02443780e+50, 1.62812825e-07, 0.02388221, 7.46957392, 2.20229762, 2.20229762, 2.20229762, 0., 0., 2.20229762, -0.30888975, -2.47247483e-07, 3.17362128, 0.01117727, 2.67220936e-05, 0.74748, 0.2511, 0.00142),
+       (  100.        , 100.        , 0., 0., 0., 0., 0., 0., 0.74673088, 0.25183447, 6.38102280e-06, 0.00054251, 0.00039929, 0.74748, 0.25107328, 0.00025117, 7.35752498e-05, 0.00060884, -60.8579449 , 0.00682707, 0., 0., 0., 7.08396649, -17.84621136,  3.61347829, 7.08411345, 4.80210852, 6.11186526, 0.97497443, 7.76754605, 0.62921669, 8.45792890e+57, 0., -99., 99.99989914, 99.99989914, 9.44005298, 9.43531656,  1.08267993e+06, -1.e+99, -1.e+99, -1.45410256e+51, 3.49167598e-09, 0.00473642, 9.43768477, 2.75824057, 2.75824057, 2.75824057, 0., 0., 2.75824057, -0.15968088, -1.00860992e-06, 4.20260728, 0.01373076, 2.67220936e-05, 0.74748, 0.2511, 0.00142),
+       (46075.44797575,   6.97475397, 0., 0., 0., 0., 0., 0., 0.74672054, 0.25183431, 2.85789437e-06, 0.00047798, 0.00047774, 0.74748, 0.25107328, 0.00025117, 7.35752498e-05, 0.00060884, -80.07947648, 0.02050378, 0., 0., 0., 3.32814369, -28.06079619, -0.13793693, 3.32829216, 4.40681953, 3.31272289, 0.36598123, 7.53818226, 1.37391117, 2.97021072e+55, 0., -99.,  6.97475328,  6.97475328, 2.32013167, 2.31753894, -1.00000000e+99, -1.e+99, -1.e+99, -5.40027262e+49, 3.14431346e-10, 0.00259273, 2.3188353 , 1.46566002, 1.46566002, 1.46566002, 0., 0., 1.46566002, -0.96075345, -1.04179328e-11, 0.57282062, 0.00318963, 2.67220936e-05, 0.74748, 0.2511, 0.00142)],
+      dtype=[(&#39;S1_star_age&#39;, &#39;&lt;f8&#39;), (&#39;S1_star_mass&#39;, &#39;&lt;f8&#39;), (&#39;S1_he_core_mass&#39;, &#39;&lt;f8&#39;), (&#39;S1_c_core_mass&#39;, &#39;&lt;f8&#39;), (&#39;S1_o_core_mass&#39;, &#39;&lt;f8&#39;), (&#39;S1_he_core_radius&#39;, &#39;&lt;f8&#39;), (&#39;S1_c_core_radius&#39;, &#39;&lt;f8&#39;), (&#39;S1_o_core_radius&#39;, &#39;&lt;f8&#39;), (&#39;S1_center_h1&#39;, &#39;&lt;f8&#39;), (&#39;S1_center_he4&#39;, &#39;&lt;f8&#39;), (&#39;S1_center_c12&#39;, &#39;&lt;f8&#39;), (&#39;S1_center_n14&#39;, &#39;&lt;f8&#39;), (&#39;S1_center_o16&#39;, &#39;&lt;f8&#39;), (&#39;S1_surface_h1&#39;, &#39;&lt;f8&#39;), (&#39;S1_surface_he4&#39;, &#39;&lt;f8&#39;), (&#39;S1_surface_c12&#39;, &#39;&lt;f8&#39;), (&#39;S1_surface_n14&#39;, &#39;&lt;f8&#39;), (&#39;S1_surface_o16&#39;, &#39;&lt;f8&#39;), (&#39;S1_c12_c12&#39;, &#39;&lt;f8&#39;), (&#39;S1_center_gamma&#39;, &#39;&lt;f8&#39;), (&#39;S1_avg_c_in_c_core&#39;, &#39;&lt;f8&#39;), (&#39;S1_surf_avg_omega&#39;, &#39;&lt;f8&#39;), (&#39;S1_surf_avg_omega_div_omega_crit&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_LH&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_LHe&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_LZ&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_Lnuc&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_Teff&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_L&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_R&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_center_T&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_center_Rho&#39;, &#39;&lt;f8&#39;), (&#39;S1_total_moment_of_inertia&#39;, &#39;&lt;f8&#39;), (&#39;S1_spin_parameter&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_total_angular_momentum&#39;, &#39;&lt;f8&#39;), (&#39;S1_conv_env_top_mass&#39;, &#39;&lt;f8&#39;), (&#39;S1_conv_env_bot_mass&#39;, &#39;&lt;f8&#39;), (&#39;S1_conv_env_top_radius&#39;, &#39;&lt;f8&#39;), (&#39;S1_conv_env_bot_radius&#39;, &#39;&lt;f8&#39;), (&#39;S1_conv_env_turnover_time_g&#39;, &#39;&lt;f8&#39;), (&#39;S1_conv_env_turnover_time_l_b&#39;, &#39;&lt;f8&#39;), (&#39;S1_conv_env_turnover_time_l_t&#39;, &#39;&lt;f8&#39;), (&#39;S1_envelope_binding_energy&#39;, &#39;&lt;f8&#39;), (&#39;S1_mass_conv_reg_fortides&#39;, &#39;&lt;f8&#39;), (&#39;S1_thickness_conv_reg_fortides&#39;, &#39;&lt;f8&#39;), (&#39;S1_radius_conv_reg_fortides&#39;, &#39;&lt;f8&#39;), (&#39;S1_lambda_CE_1cent&#39;, &#39;&lt;f8&#39;), (&#39;S1_lambda_CE_10cent&#39;, &#39;&lt;f8&#39;), (&#39;S1_lambda_CE_30cent&#39;, &#39;&lt;f8&#39;), (&#39;S1_co_core_mass&#39;, &#39;&lt;f8&#39;), (&#39;S1_co_core_radius&#39;, &#39;&lt;f8&#39;), (&#39;S1_lambda_CE_pure_He_star_10cent&#39;, &#39;&lt;f8&#39;), (&#39;S1_log_L_div_Ledd&#39;, &#39;&lt;f8&#39;), (&#39;S1_star_mdot&#39;, &#39;&lt;f8&#39;), (&#39;S1_conv_mx1_top_r&#39;, &#39;&lt;f8&#39;), (&#39;S1_conv_mx1_bot_r&#39;, &#39;&lt;f8&#39;), (&#39;S1_surface_he3&#39;, &#39;&lt;f8&#39;), (&#39;X&#39;, &#39;&lt;f8&#39;), (&#39;Y&#39;, &#39;&lt;f8&#39;), (&#39;Z&#39;, &#39;&lt;f8&#39;)])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#grid[0].history1.dtype.names</span>
+<span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">history1</span><span class="p">[</span><span class="s1">&#39;star_mass&#39;</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([26.4095753 , 26.40956901, 26.40956272, 26.40955643, 26.40955013,
+       26.40954384, 26.40953697, 26.40952945, 26.40952193, 26.40951441])
+</pre></div></div>
+</div>
+<p>Congratulations! You created a PSyGrid object from the single star models. Explor it and check out the visualization tutorial on how to display the data and easly plot an HR diagram!</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="step_rerun.html" class="btn btn-neutral float-left" title="Export Rerun Grids with POSYDON Post Processing Pipeline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../MESA-grids/running-grids.html" class="btn btn-neutral float-right" title="Architecting MESA Simulation Grids with POSYDON" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.6
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.6/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
