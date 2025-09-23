@@ -1,0 +1,379 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Binary-Star Population Synthesis with POSYDON &mdash; posydon 2.1.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=ebebaa27"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Your First Binary Simulations with POSYDON 🌠" href="10_binaries_pop_syn.html" />
+    <link rel="prev" title="Quick Start: Your First Population" href="../../getting-started/first-population.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Binary-Star Population Synthesis with POSYDON</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evolve_single_binaries.html">Evolve individual binaries 🐞</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_step_and_flow.html">Custom POSYDON steps and flow chart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Binary-Star Population Synthesis with POSYDON</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/population-synthesis/binary-pop-syn.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="binary-star-population-synthesis-with-posydon">
+<span id="binary-pop-syn"></span><h1>Binary-Star Population Synthesis with POSYDON<a class="headerlink" href="#binary-star-population-synthesis-with-posydon" title="Link to this heading"></a></h1>
+<p>Embark on a journey into the fascinating world of binary-star population synthesis with POSYDON!
+Whether you are a budding astrophysicist or a seasoned researcher, our tutorials guide you every step of the way.
+From simulating your first binaries to running large-scale populations and diving deep into data analysis, POSYDON offers you a seamless experience.</p>
+<section id="getting-started-tutorials">
+<h2>Getting Started Tutorials<a class="headerlink" href="#getting-started-tutorials" title="Link to this heading"></a></h2>
+<blockquote>
+<div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The tutorials are designed to be followed in order, as some depend on the outputs of the previous tutorials.</p>
+</div>
+</div></blockquote>
+<p>These tutorials are created to get started with POSYDON on your local machine and on a HPC facility.</p>
+<section id="i-your-first-binary-simulations-with-posydon">
+<h3>I. Your First Binary Simulations with POSYDON 🌠<a class="headerlink" href="#i-your-first-binary-simulations-with-posydon" title="Link to this heading"></a></h3>
+<p>Simulate your first 10 binaries and experience the power of POSYDON.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html#Initialisation-File">Initialisation File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html#Running-a-BinaryPopulation-in-a-notebook">Running a BinaryPopulation in a notebook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html#Inspecting-the-population:-Population-class">Inspecting the population: Population class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html#Population.history">Population.history</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html#Population.oneline">Population.oneline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html#Population.formation_channels">Population.formation_channels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html#Selecting-a-sub-population">Selecting a sub-population</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="10_binaries_pop_syn.html#Local-MPI-runs-[Optional]">Local MPI runs [Optional]</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Now that you know how to run your first simulations, explore the different customization options reading the <a class="reference internal" href="../../components-overview/pop_syn/population_params.html#pop-params-guide"><span class="std std-ref">population parameters</span></a> documentation.</p>
+</section>
+<section id="ii-large-scale-population-synthesis-on-hpc-facilities">
+<h3>II. Large-Scale Population Synthesis on HPC Facilities 🚀<a class="headerlink" href="#ii-large-scale-population-synthesis-on-hpc-facilities" title="Link to this heading"></a></h3>
+<p>In this tutorial, you’ll learn to run massive simulations of 1 million binaries across 8 different metallicities.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html#Initialization-File-for-multi-metallicity-runs">Initialization File for multi-metallicity runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html#Setup-the-Population-Synthesis-Run">Setup the Population Synthesis Run</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pop_syn.html#Walltime-and-job_array-number-fine-tuning">Walltime and job_array number fine-tuning</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html#Population-inspection">Population inspection</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="iii-analyzing-merging-dco-populations-rates-observations">
+<h3>III. Analyzing Merging DCO Populations: Rates &amp; Observations 🔍<a class="headerlink" href="#iii-analyzing-merging-dco-populations-rates-observations" title="Link to this heading"></a></h3>
+<p>Delve into the results of your simulations learning how to analyze the results of your simulations and compute rates and observational properties of merging double compact object (DCO) populations.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html#Creating-multi-metallicity-Populations">Creating multi-metallicity Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html#Transient-population">Transient population</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bbh_analysis.html#Model-weights">Model weights</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html#Cosmic-Rate">Cosmic Rate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bbh_analysis.html#Properties-of-the-systems">Properties of the systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bbh_analysis.html#Observable-population">Observable population</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="advanced-tutorials">
+<h2>Advanced Tutorials<a class="headerlink" href="#advanced-tutorials" title="Link to this heading"></a></h2>
+<section id="computing-long-duration-gamma-ray-bursts-from-double-compact-object-populations">
+<h3>Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌<a class="headerlink" href="#computing-long-duration-gamma-ray-bursts-from-double-compact-object-populations" title="Link to this heading"></a></h3>
+<p>In this tutorial, you will learn how to compute long-duration gamma-ray bursts rates associated to the formation of merging binary black holes</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html#Creating-the-GRB-TransientPopulation">Creating the GRB TransientPopulation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="explore-the-assumption-of-star-formation-history-and-compute-dco-rates-for-one-single-metallicity">
+<h3>Explore the assumption of star-formation history and compute DCO rates for one single metallicity 📖<a class="headerlink" href="#explore-the-assumption-of-star-formation-history-and-compute-dco-rates-for-one-single-metallicity" title="Link to this heading"></a></h3>
+<p>In this tutorial, you will learn how to change the assumption of star-formation history and how to analysise and compute rates for a population synthesis model consisting of one single metallicity.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html#Creating-the-Synthetic-Population-DataFrame">Creating the Synthetic Population DataFrame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html#Single-metallicity-population">Single metallicity population</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html#Transient-Population">Transient Population</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html#Compute-the-BBH-Merger-Rates-for-Z\in-[0.5Z_\odot,2Z_\odot]">Compute the BBH Merger Rates for <span class="math notranslate nohighlight">\(Z\in [0.5Z_\odot,2Z_\odot]\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html#Visualize-the-BBH-Population-Properties">Visualize the BBH Population Properties</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="x-ray-binaries-computing-the-x-ray-luminosity-function">
+<h3>X-ray binaries: computing the X-ray luminosity function 🩻<a class="headerlink" href="#x-ray-binaries-computing-the-x-ray-luminosity-function" title="Link to this heading"></a></h3>
+<p>TODO: bring v1 tutorial to v2 leveraging the SyntheticPopulation class</p>
+</section>
+<section id="evolving-single-binaries">
+<h3>Evolving Single Binaries 🐞<a class="headerlink" href="#evolving-single-binaries" title="Link to this heading"></a></h3>
+<p>This notebook shows you how to evolve a single binary using POSYDON.
+It allows you to test and to quickly understand the evolution of a single binary in detail.
+Moreover, it shows you how re-evolve binaries and change their properties, such as the natal kicks.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="evolve_single_binaries.html">Evolve individual binaries 🐞</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="evolve_single_binaries.html#Evolve-a-ZAMS-binary">Evolve a ZAMS binary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="evolve_single_binaries.html#Re-evolving-the-Binary">Re-evolving the Binary</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="evolve_single_binaries.html#Changing-the-kick">Changing the kick</a></li>
+<li class="toctree-l4"><a class="reference internal" href="evolve_single_binaries.html#Evolve-from-specific-step">Evolve from specific step</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="evolve_single_binaries.html#Loading-a-binary-from-an-existing-population">Loading a binary from an existing population</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evolve_single_binaries.html#Evolving-a-Binary-Star-starting-from-an-arbitrary-state">Evolving a Binary Star starting from an arbitrary state</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="creating-custom-steps-and-flow-chart-for-the-evolution-of-a-binary">
+<h3>Creating custom steps and flow chart for the evolution of a binary 📊<a class="headerlink" href="#creating-custom-steps-and-flow-chart-for-the-evolution-of-a-binary" title="Link to this heading"></a></h3>
+<p>In this tutorial, we show you how to import your own custom steps and flow chart for a population and in a Jupyter notebook.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="custom_step_and_flow.html">Custom POSYDON steps and flow chart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_step_and_flow.html#Population_params.ini-changes">Population_params.ini changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="custom_step_and_flow.html#Importing-an-adapted-flowchart">Importing an adapted flowchart</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="custom_step_and_flow.html#Changing-an-existing-step-to-a-custom-step">Changing an existing step to a custom step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_step_and_flow.html#Adapting-the-flow-and-steps-inside-your-notebook">Adapting the flow and steps inside your notebook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="custom_step_and_flow.html#Adapted-flowchart">Adapted flowchart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom_step_and_flow.html#Adapted-step">Adapted step</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="advanced-visualization-with-van-den-heuvel-diagrams">
+<h3>Advanced Visualization with Van den Heuvel Diagrams 🎨<a class="headerlink" href="#advanced-visualization-with-van-den-heuvel-diagrams" title="Link to this heading"></a></h3>
+<p>Dive deeper into POSYDON’s visualization capabilities. This tutorial explores the intricacies of the Van den Heuvel diagrams, allowing users to intuitively visualize and analyze individual or multiple binaries from the population synthesis models. Discover multiple visualization modes, interactive features, and binary analysis tools to enhance your understanding of the synthesized data. Perfect for those looking to gain a richer visual perspective on their simulations.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html#visualizing-a-specific-binary">Visualizing a Specific Binary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VHD.html#simple-usage">Simple Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VHD.html#predefined-views">Predefined Views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VHD.html#display-modes">Display Modes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html#advanced-visualization-techniques">Advanced Visualization Techniques</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VHD.html#visualizing-multiple-binaries">Visualizing Multiple Binaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VHD.html#hierarchical-visualization">Hierarchical Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html#binary-analysis-tools">Binary Analysis Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VHD.html#counting-binaries">Counting Binaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VHD.html#sorting-binaries">Sorting Binaries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="deep-dive-behind-the-scenes-customizations">
+<h2>Deep Dive: Behind the Scenes Customizations<a class="headerlink" href="#deep-dive-behind-the-scenes-customizations" title="Link to this heading"></a></h2>
+<p>Dive into the nitty-gritty of POSYDON’s inner workings. Customize, extend, and tweak the system to fit your unique requirements:</p>
+<section id="customizing-the-population-synthesis-class">
+<h3>Customizing the Population Synthesis Class 🛠️<a class="headerlink" href="#customizing-the-population-synthesis-class" title="Link to this heading"></a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p>Understand the foundational class driving our binary-star population synthesis. Learn to modify and adapt it to your needs.</p></li>
+<li><p>🔗 [Delve into class customizations](link-to-customization-notebook1)</p></li>
+</ul>
+</div></blockquote>
+<p>(Add other in-depth customization tutorials here…)</p>
+<p>Remember, mastering POSYDON is a journey, not a destination. As you progress through these tutorials, you’ll uncover layers of capabilities and functionalities. Keep exploring and happy simulating!</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../../getting-started/first-population.html" class="btn btn-neutral float-left" title="Quick Start: Your First Population" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="10_binaries_pop_syn.html" class="btn btn-neutral float-right" title="Your First Binary Simulations with POSYDON 🌠" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.7
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

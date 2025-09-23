@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run your first MESA HMS-HMS binary simulation with POSYDON &mdash; posydon 2.1.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=ebebaa27"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Run one binary on your laptop for debugging" href="laptop.html" />
+    <link rel="prev" title="Architecting MESA Simulation Grids with POSYDON" href="running-grids.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="running-grids.html">Architecting MESA Simulation Grids with POSYDON</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Run your first MESA HMS-HMS binary simulation with POSYDON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="laptop.html">Run one binary on your laptop for debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="running_a_grid.html">Running a real POSYDON MESA HMS-HMS grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="running_single_hms.html">Running Single Stars with POSYDON</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+      <li class="breadcrumb-item active">Run your first MESA HMS-HMS binary simulation with POSYDON</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/MESA-grids/1_hms_hms.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Run-your-first-MESA-HMS-HMS-binary-simulation-with-POSYDON">
+<h1>Run your first MESA HMS-HMS binary simulation with POSYDON<a class="headerlink" href="#Run-your-first-MESA-HMS-HMS-binary-simulation-with-POSYDON" title="Link to this heading"></a></h1>
+<p>If you haven’t done it already, export all the relevant POSYDON and MESA environment variables.</p>
+<p>Tip: create a file called <code class="docutils literal notranslate"><span class="pre">.bash_POSYDON_MESA</span></code> with the following content (please adapt the PATHs to your system):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PATH_TO_POSYDON</span><span class="o">=</span>~/software/POSYDON/
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH_TO_POSYDON_DATA</span><span class="o">=</span>~/software/POSYDON/data/
+
+<span class="nb">export</span><span class="w"> </span><span class="nv">MESA_DIR</span><span class="o">=</span>~/software/mesa-r11701_witheoschange_andwithreverseMTchange_fiximplicitmdot
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="m">4</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MESASDK_ROOT</span><span class="o">=</span>~/software/mesasdk
+<span class="nb">source</span><span class="w"> </span><span class="nv">$MESASDK_ROOT</span>/bin/mesasdk_init.sh
+</pre></div>
+</div>
+<p>so that every time you open a new terminal you can just run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>.bash_POSYDON_MESA
+</pre></div>
+</div>
+<p>If you haven’t done it already, please download the <code class="docutils literal notranslate"><span class="pre">development</span></code> branch of the <code class="docutils literal notranslate"><span class="pre">POSYDON-MESA-INLISTS</span></code> submodule, see <a class="reference internal" href="running-grids.html"><span class="doc">Architecting MESA Simulation Grids with POSYDON</span></a>. This is the branch that contains the simulation properties of all POSYDON MESA grids.</p>
+<section id="Creating-the-Initialization-File-for-the-POSYDON-MESA-Submission-Script">
+<h2>Creating the Initialization File for the POSYDON MESA Submission Script<a class="headerlink" href="#Creating-the-Initialization-File-for-the-POSYDON-MESA-Submission-Script" title="Link to this heading"></a></h2>
+<p>You can now copy in your working directory the API ini file configuration of HMS-HMS binaries, which is stored on Github as part of the POSYDON repository. The cell below will download the file for you.</p>
+<p>Note: in the <code class="docutils literal notranslate"><span class="pre">POSYDON-MESA-INLISTS</span></code> submodule we have more example ini files at <code class="docutils literal notranslate"><span class="pre">POSYDON-MESA_INLISTS/r11701/running_scripts/</span></code>. For each grid we support two ini file configured to the Northwestern and UNIGE HPC clusters.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
+
+<span class="c1"># Download the grid_params.ini file from GitHub</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/POSYDON-code/POSYDON/refs/heads/main/grid_params/grid_params.ini&quot;</span>
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="s1">&#39;./HMS-HMS.ini&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Download completerd&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Open the file and edit the following parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">user=your_username</span> <span class="pre">(can</span> <span class="pre">be</span> <span class="pre">skipped</span> <span class="pre">if</span> <span class="pre">not</span> <span class="pre">run</span> <span class="pre">via</span> <span class="pre">SLURM)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">partition=the_slurm_partition_to_run_on</span></code> (can be skipped if not run via SLURM)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">account=your_slurm_account</span></code> (can be skipped if not run via SLURM)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">email=your_email</span></code> (can be skipped if not run via SLURM)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">posydon_github_root=your_path_to_POSYDON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">grid=your_grid_csv_file</span></code> (will get created in the next section)</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">scenario</span></code> parameter of the ini file is the main parameter that controls the simulation setup. This parameter let’s us decide which simulation we want to run. The syntax is the following:</p>
+<ul class="simple">
+<li><p>the first argument is the name of the submodule <code class="docutils literal notranslate"><span class="pre">posydon</span></code> which points to the POSYDON-MESA-INLISTS submodule (other options are available, e.g. <code class="docutils literal notranslate"><span class="pre">user</span></code> which points to a private submodule)</p></li>
+<li><p>the second argument is the name of the branch and commit of the submodule we want to use connected by a dash <code class="docutils literal notranslate"><span class="pre">-</span></code>. In this case we want to use the <code class="docutils literal notranslate"><span class="pre">development</span></code> branch of the submodule and it’s latest commit, so we write <code class="docutils literal notranslate"><span class="pre">development-c1f75acacc3bd645197c5d3e920a121e94d95a80</span></code></p></li>
+<li><p>the third argument is the name of the simulation grid we want to run, in this case we want to run a HMS-HMS grid. The name of the grid is <code class="docutils literal notranslate"><span class="pre">HMS-HMS</span></code>.</p></li>
+</ul>
+<p>To summarize, you should have <code class="docutils literal notranslate"><span class="pre">scenario</span> <span class="pre">=</span> <span class="pre">['posydon',</span> <span class="pre">'development-c1f75acacc3bd645197c5d3e920a121e94d95a80',</span> <span class="pre">'HMS-HMS']</span></code></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">zams_file</span></code> points to the ZAMS model used to generate the HMS stars in the binary system. POSYDON v2.0.0 supports 8 different metallicities, here we would like to use the 0.1Zsun POSYDON MESA ZAMS model <code class="docutils literal notranslate"><span class="pre">${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/ZAMS_models/zams_z1.42m3_y0.2511.data</span></code></p>
+<p>The last parameter of this file is <code class="docutils literal notranslate"><span class="pre">grid</span></code> and points to the <code class="docutils literal notranslate"><span class="pre">csv</span></code> file containing the initial conditions of the grid. In this case we want to run a <code class="docutils literal notranslate"><span class="pre">HMS-HMS</span></code> grid consisting of one system, so we set <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">=</span> <span class="pre">grid_test.csv</span></code> and generate such file specifying the metallicity, the two star masses and the initial orbital period.</p>
+</section>
+<section id="Creating-the-Initial-Simulation-Points-CSV-File">
+<h2>Creating the Initial Simulation Points CSV File<a class="headerlink" href="#Creating-the-Initial-Simulation-Points-CSV-File" title="Link to this heading"></a></h2>
+<p>Note: a notebook showing you how all the grid points of v2.0.0 are generated is available in the <code class="docutils literal notranslate"><span class="pre">POSYDON-MESA-INLISTS</span></code> submodule at <code class="docutils literal notranslate"><span class="pre">$PATH_TO_POSYDON/grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts/parameter_space_v2/create_csv.ipynb</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./grid_test.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">&#39;initial_z&#39;</span><span class="p">,</span><span class="s1">&#39;Zbase&#39;</span><span class="p">,</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span><span class="s1">&#39;m2&#39;</span><span class="p">,</span><span class="s1">&#39;initial_period_in_days&#39;</span><span class="p">])</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="mf">0.00142</span><span class="p">,</span> <span class="mf">0.00142</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">21.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>The above script will create a .csv file for the parameters of a MESA ‘grid’ with one row, i.e. practically with one binary system. You should now have the following files in your working directory:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls
+</pre></div>
+</div>
+</div>
+<p>Let’s now use POSYDON to set up the MESA simulation. In your terminal run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>posydon-setup-grid<span class="w"> </span>--grid-type<span class="w"> </span>fixed<span class="w"> </span>--inifile<span class="w"> </span>HMS-HMS.ini<span class="w"> </span>--submission-type<span class="w"> </span>slurm
+</pre></div>
+</div>
+<p>The following files will be created:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Running-the-MESA-Model-and-Exploring-the-Simulation-Output">
+<h2>Running the MESA Model and Exploring the Simulation Output<a class="headerlink" href="#Running-the-MESA-Model-and-Exploring-the-Simulation-Output" title="Link to this heading"></a></h2>
+<p>You are now ready to submit the simulation to the cluster with the following command:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>./run_grid.sh
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>squeue<span class="w"> </span>-u<span class="w"> </span>kruckow
+</pre></div>
+</div>
+</div>
+<p>After the job is finished, we can check the output files:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>ls<span class="w"> </span>Zbase_0.0014_m1_30.0000_m2_21.0000_initial_z_1.4200e-03_initial_period_in_days_1.0000e+01_grid_index_0
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>gzip<span class="w"> </span>-cd<span class="w"> </span>Zbase_0.0014_m1_30.0000_m2_21.0000_initial_z_1.4200e-03_initial_period_in_days_1.0000e+01_grid_index_0/out.txt.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><span class="m">320</span>
+</pre></div>
+</div>
+</div>
+<p>The above output is standard output of the beginning of a MESA binary run. Congratulations, you now know how to leverage POSYDON to run a grid of MESA simulations on a computer cluster!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="running-grids.html" class="btn btn-neutral float-left" title="Architecting MESA Simulation Grids with POSYDON" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="laptop.html" class="btn btn-neutral float-right" title="Run one binary on your laptop for debugging" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.7
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

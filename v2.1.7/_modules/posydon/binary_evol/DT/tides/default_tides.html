@@ -1,0 +1,507 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.DT.tides.default_tides &mdash; posydon 2.1.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=ebebaa27"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.DT.tides.default_tides</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.DT.tides.default_tides</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">const</span>
+
+<div class="viewcode-block" id="default_tides">
+<a class="viewcode-back" href="../../../../../api_reference/posydon.binary_evol.DT.tides.html#posydon.binary_evol.DT.tides.default_tides.default_tides">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">default_tides</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the change in orbital separation and eccentricity, </span>
+<span class="sd">    plus change in spin of each star due to tides, according to: </span>
+<span class="sd">    </span>
+<span class="sd">        Hut, P. 1981, A&amp;A, 99, 126</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        a : float</span>
+<span class="sd">            The current orbital separation. [Rsolar]</span>
+
+<span class="sd">        e : float</span>
+<span class="sd">            The current orbital eccentricity.</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star </span>
+<span class="sd">            in the binary and containing its properties.</span>
+<span class="sd">        </span>
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star </span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        verbose : bool</span>
+<span class="sd">            True if we want to print stuff.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        da : float</span>
+<span class="sd">            The change in orbital separation for a time step in </span>
+<span class="sd">        step_detached&#39;s solve_ivp(). [Rsolar/yr]</span>
+
+<span class="sd">        de : float</span>
+<span class="sd">            The change in orbital eccentricity for a time step in </span>
+<span class="sd">        step_detached&#39;s solve_ivp().</span>
+
+<span class="sd">        dOmega_sec : float</span>
+<span class="sd">            The change in rotation rate of the secondary (less evolved) </span>
+<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">        </span>
+<span class="sd">        dOmega_pri : float</span>
+<span class="sd">            The change in rotation rate of the primary (more evolved) </span>
+<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+    <span class="n">R1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
+    <span class="n">m_env1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass_conv_reg_fortides&quot;</span><span class="p">]</span>
+    <span class="n">dr_env1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;thickness_conv_reg_fortides&quot;</span><span class="p">]</span>
+    <span class="n">rmid_env1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;radius_conv_reg_fortides&quot;</span><span class="p">]</span>
+    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
+    <span class="n">rtop_env1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;conv_mx1_top_r&quot;</span><span class="p">]</span>
+    <span class="n">rbot_env1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;conv_mx1_bot_r&quot;</span><span class="p">]</span>
+    <span class="n">Xsurf_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;surface_h1&quot;</span><span class="p">]</span>
+    <span class="n">L1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">]</span>
+    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
+
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+    <span class="n">R2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
+    <span class="n">m_env2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass_conv_reg_fortides&quot;</span><span class="p">]</span>
+    <span class="n">dr_env2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;thickness_conv_reg_fortides&quot;</span><span class="p">]</span>
+    <span class="n">rmid_env2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;radius_conv_reg_fortides&quot;</span><span class="p">]</span>
+    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
+    <span class="n">rtop_env2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;conv_mx1_top_r&quot;</span><span class="p">]</span>
+    <span class="n">rbot_env2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;conv_mx1_bot_r&quot;</span><span class="p">]</span>
+    <span class="n">Xsurf_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;surface_h1&quot;</span><span class="p">]</span>
+    <span class="n">L2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">]</span>
+    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
+
+    <span class="n">q1</span> <span class="o">=</span> <span class="n">m1</span><span class="o">/</span> <span class="n">m2</span>
+    <span class="n">q2</span> <span class="o">=</span> <span class="n">m2</span> <span class="o">/</span> <span class="n">m1</span>
+    <span class="c1"># P_orb in years. From 3rd Kepler&#39;s law, transforming separation from</span>
+    <span class="c1"># Rsolar to AU, to avoid using constants</span>
+    <span class="c1"># TODO: we aleady have this function!</span>
+    <span class="n">P_orb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">a</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">aursun</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="n">m1</span> <span class="o">+</span> <span class="n">m2</span><span class="p">))</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">P_orb</span>  <span class="c1"># mean orbital ang. vel. in rad/year</span>
+    <span class="n">f1</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mi">1</span>
+            <span class="o">+</span> <span class="p">(</span><span class="mi">31</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="o">+</span> <span class="p">(</span><span class="mi">255</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">4</span>
+            <span class="o">+</span> <span class="p">(</span><span class="mi">185</span> <span class="o">/</span> <span class="mi">16</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">6</span>
+            <span class="o">+</span> <span class="p">(</span><span class="mi">25</span> <span class="o">/</span> <span class="mi">64</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">8</span>
+    <span class="p">)</span>
+    <span class="n">f2</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">15</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">45</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">16</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">6</span>
+    <span class="n">f3</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">15</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">15</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">64</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">6</span>
+    <span class="n">f4</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">4</span>
+    <span class="n">f5</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">4</span>
+
+    <span class="c1"># equilibrium timecale</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">m_env2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">m_env2</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">dr_env2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dr_env2</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">rmid_env2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rmid_env2</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)):</span>
+        <span class="c1"># eq. (31) of Hurley et al. 2002, generalized for convective layers</span>
+        <span class="c1"># not on surface too</span>
+        <span class="n">tau_conv_2</span> <span class="o">=</span> <span class="mf">0.431</span> <span class="o">*</span> <span class="p">((</span><span class="n">m_env2</span> <span class="o">*</span> <span class="n">dr_env2</span> <span class="o">*</span> <span class="n">rmid_env2</span>
+                                <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">L2</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">verbose</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;something wrong with M_env/DR_env/Renv_middle&quot;</span><span class="p">,</span>
+                <span class="n">m_env2</span><span class="p">,</span> <span class="n">dr_env2</span><span class="p">,</span> <span class="n">rmid_env2</span><span class="p">)</span>
+        <span class="n">tau_conv_2</span> <span class="o">=</span> <span class="mf">1.0e99</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">m_env1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">m_env1</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">dr_env1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dr_env1</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">rmid_env1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rmid_env1</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">)):</span>
+        <span class="c1"># eq. (31) of Hurley et al. 2002, generalized for convective layers</span>
+        <span class="c1"># not on surface too</span>
+        <span class="n">tau_conv_1</span> <span class="o">=</span> <span class="mf">0.431</span> <span class="o">*</span> <span class="p">((</span><span class="n">m_env1</span> <span class="o">*</span> <span class="n">dr_env1</span> <span class="o">*</span> <span class="n">rmid_env1</span>
+                                <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">L1</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;something wrong with M_env/DR_env/Renv_middle&quot;</span><span class="p">,</span>
+                <span class="n">m_env1</span><span class="p">,</span> <span class="n">dr_env1</span><span class="p">,</span> <span class="n">rmid_env1</span><span class="p">)</span>
+        <span class="n">tau_conv_1</span> <span class="o">=</span> <span class="mf">1.0e99</span>
+    <span class="n">P_spin_sec</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">omega2</span>
+    <span class="n">P_spin_pri</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">omega1</span>
+    <span class="n">P_tid_sec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">P_orb</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">P_spin_sec</span><span class="p">))</span>
+    <span class="n">P_tid_pri</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">P_orb</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">P_spin_pri</span><span class="p">))</span>
+    <span class="n">f_conv_sec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">P_tid_sec</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">tau_conv_2</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="n">f_conv_pri</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">P_tid_pri</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">tau_conv_1</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="n">F_tid</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># not 50 as before</span>
+    <span class="n">kT_conv_sec</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="mf">2.</span> <span class="o">/</span> <span class="mi">21</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">f_conv_sec</span> <span class="o">/</span> <span class="n">tau_conv_2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">m_env2</span> <span class="o">/</span> <span class="n">m2</span><span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># eq. (30) of Hurley et al. 2002</span>
+    <span class="n">kT_conv_pri</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="mf">2.</span> <span class="o">/</span> <span class="mi">21</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">f_conv_pri</span> <span class="o">/</span> <span class="n">tau_conv_1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">m_env1</span> <span class="o">/</span> <span class="n">m1</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">kT_conv_sec</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">kT_conv_sec</span><span class="p">):</span>
+        <span class="n">kT_conv_sec</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="n">kT_conv_pri</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">kT_conv_pri</span><span class="p">):</span>
+        <span class="n">kT_conv_pri</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;kT_conv_sec is&quot;</span><span class="p">,</span> <span class="n">kT_conv_sec</span><span class="p">,</span> <span class="s2">&quot;, set to 0.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;kT_conv_pri is&quot;</span><span class="p">,</span> <span class="n">kT_conv_pri</span><span class="p">,</span> <span class="s2">&quot;, set to 0.&quot;</span><span class="p">)</span>
+    <span class="c1"># this is the 1/timescale of all d/dt calculted below in yr^-1</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Equilibrium tides in deep convective envelope&quot;</span><span class="p">,</span>
+            <span class="n">m_env2</span><span class="p">,</span>
+            <span class="n">dr_env2</span><span class="p">,</span>
+            <span class="n">rmid_env2</span><span class="p">,</span>
+            <span class="n">R2</span><span class="p">,</span>
+            <span class="n">m2</span><span class="p">,</span>
+            <span class="n">m_env1</span><span class="p">,</span>
+            <span class="n">dr_env1</span><span class="p">,</span>
+            <span class="n">rmid_env1</span><span class="p">,</span>
+            <span class="n">R1</span><span class="p">,</span>
+            <span class="n">m1</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;convective tiimescales and efficiencies&quot;</span><span class="p">,</span>
+            <span class="n">tau_conv_2</span><span class="p">,</span> <span class="n">P_orb</span><span class="p">,</span> <span class="n">P_spin_sec</span><span class="p">,</span> <span class="n">P_tid_sec</span><span class="p">,</span>
+            <span class="n">f_conv_sec</span><span class="p">,</span>
+            <span class="n">F_tid</span><span class="p">,</span>
+            <span class="n">tau_conv_1</span><span class="p">,</span> <span class="n">P_orb</span><span class="p">,</span> <span class="n">P_spin_pri</span><span class="p">,</span> <span class="n">P_tid_pri</span><span class="p">,</span>
+            <span class="n">f_conv_pri</span><span class="p">,</span>
+            <span class="n">F_tid</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="c1"># dynamical timecale</span>
+    <span class="n">F_tid</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1"># E2 = 1.592e-9*M**(2.84) # eq. (43) of Hurley et al. 2002. Deprecated</span>
+    <span class="n">R_conv_sec</span> <span class="o">=</span> <span class="n">rtop_env2</span> <span class="o">-</span> <span class="n">rbot_env2</span>
+    <span class="n">R_conv_pri</span> <span class="o">=</span> <span class="n">rtop_env1</span> <span class="o">-</span> <span class="n">rbot_env1</span>  <span class="c1"># convective core</span>
+    <span class="c1"># R_conv = conv_mx1_top_r  # convective core</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">R_conv_sec</span> <span class="o">&gt;</span> <span class="n">R2</span> <span class="ow">or</span> <span class="n">R_conv_sec</span> <span class="o">&lt;=</span> <span class="mf">0.0</span>
+            <span class="ow">or</span> <span class="n">rbot_env2</span> <span class="o">/</span> <span class="n">R2</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">):</span>
+        <span class="c1"># R_conv = 0.5*R</span>
+        <span class="c1"># if verbose:</span>
+        <span class="c1">#     print(</span>
+        <span class="c1">#         &quot;R_conv of the convective core is not behaving well or &quot;</span>
+        <span class="c1">#         &quot;we are not calculating the convective core, we make it &quot;</span>
+        <span class="c1">#         &quot;equal to half of Rstar&quot;,</span>
+        <span class="c1">#         R_conv,</span>
+        <span class="c1">#         R,</span>
+        <span class="c1">#         conv_mx1_top_r,</span>
+        <span class="c1">#         conv_mx1_bot_r,</span>
+        <span class="c1">#     )</span>
+        <span class="c1"># we switch to Zahn+1975 calculation of E2</span>
+        <span class="n">E21</span> <span class="o">=</span> <span class="mf">1.592e-9</span> <span class="o">*</span> <span class="n">m2</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.84</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">R2</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">E21</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">Xsurf_2</span> <span class="o">&gt;</span> <span class="mf">0.4</span><span class="p">:</span>
+            <span class="n">E21</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.42</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">R_conv_sec</span> <span class="o">/</span> <span class="n">R2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span>
+                <span class="mf">7.5</span>
+            <span class="p">)</span>  <span class="c1"># eq. (9) of Qin et al. 2018, 616, A28</span>
+        <span class="k">elif</span> <span class="n">Xsurf_2</span> <span class="o">&lt;=</span> <span class="mf">0.4</span><span class="p">:</span>  <span class="c1"># &quot;HeStar&quot;:</span>
+            <span class="n">E21</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.93</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">R_conv_sec</span> <span class="o">/</span> <span class="n">R2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span>
+                <span class="mf">6.7</span>
+            <span class="p">)</span>  <span class="c1"># eq. (9) of Qin et al. 2018, 616, A28</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># in principle we should not go here</span>
+            <span class="n">E21</span> <span class="o">=</span> <span class="mf">1.592e-9</span> <span class="o">*</span> <span class="n">m2</span> <span class="o">**</span> <span class="p">(</span>
+                <span class="mf">2.84</span>
+            <span class="p">)</span>  <span class="c1"># eq. (43) of Hurley et al. 2002 from Zahn+1975 Depreciated</span>
+    <span class="c1"># kT = 1.9782e4 * np.sqrt(M * R**2 / a**5) * (1 + q)**(5. / 6) * E2</span>
+    <span class="c1"># eq. (42) of Hurley et al. 2002. Depreciated</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">R_conv_pri</span> <span class="o">&gt;</span> <span class="n">R1</span> <span class="ow">or</span> <span class="n">R_conv_pri</span> <span class="o">&lt;=</span> <span class="mf">0.0</span>
+            <span class="ow">or</span> <span class="n">rbot_env1</span> <span class="o">/</span> <span class="n">R1</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">):</span>
+        <span class="n">E22</span> <span class="o">=</span> <span class="mf">1.592e-9</span> <span class="o">*</span> <span class="n">m1</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.84</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;R_conv of the convective core is not behaving well or we &quot;</span>
+                <span class="s2">&quot;are not calculating the convective core, we switch to &quot;</span>
+                <span class="s2">&quot;Zahn+1975 calculation of E2&quot;</span><span class="p">,</span>
+                <span class="n">R_conv_sec</span><span class="p">,</span>
+                <span class="n">R2</span><span class="p">,</span>
+                <span class="n">rtop_env2</span><span class="p">,</span>
+                <span class="n">rbot_env2</span><span class="p">,</span>
+                <span class="n">E21</span><span class="p">,</span>
+                <span class="n">R_conv_pri</span><span class="p">,</span>
+                <span class="n">R1</span><span class="p">,</span>
+                <span class="n">rtop_env1</span><span class="p">,</span>
+                <span class="n">rbot_env1</span><span class="p">,</span>
+                <span class="n">E22</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">R1</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">E22</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">Xsurf_1</span> <span class="o">&gt;</span> <span class="mf">0.4</span><span class="p">:</span>
+            <span class="n">E22</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.42</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">R_conv_pri</span> <span class="o">/</span> <span class="n">R1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span>
+                <span class="mf">7.5</span>
+            <span class="p">)</span>  <span class="c1"># eq. (9) of Qin et al. 2018, 616, A28</span>
+        <span class="k">elif</span> <span class="n">Xsurf_1</span> <span class="o">&lt;=</span> <span class="mf">0.4</span><span class="p">:</span>  <span class="c1"># &quot;HeStar&quot;:</span>
+            <span class="n">E22</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.93</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">R_conv_pri</span> <span class="o">/</span> <span class="n">R1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span>
+                <span class="mf">6.7</span>
+            <span class="p">)</span>  <span class="c1"># eq. (9) of Qin et al. 2018, 616, A28</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># in principle we should not go here</span>
+            <span class="n">E22</span> <span class="o">=</span> <span class="mf">1.592e-9</span> <span class="o">*</span> <span class="n">m1</span> <span class="o">**</span> <span class="p">(</span>
+                <span class="mf">2.84</span>
+            <span class="p">)</span>
+    <span class="n">kT_rad_sec</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span> <span class="o">*</span> <span class="p">(</span><span class="n">m2</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">msol</span><span class="p">)</span>
+                <span class="o">*</span> <span class="p">(</span><span class="n">R2</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">rsol</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">rsol</span><span class="p">)</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span>
+        <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">E21</span>
+        <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">secyer</span><span class="p">)</span>
+    <span class="n">kT_rad_pri</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span> <span class="o">*</span> <span class="p">(</span><span class="n">m1</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">msol</span><span class="p">)</span>
+                <span class="o">*</span> <span class="p">(</span><span class="n">R1</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">rsol</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">rsol</span><span class="p">)</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span>
+        <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">E22</span>
+        <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">secyer</span><span class="p">)</span>
+    <span class="c1"># this is the 1/timescale of all d/dt calculted below in yr^-1</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Dynamical tides in radiative envelope&quot;</span><span class="p">,</span>
+            <span class="n">rtop_env2</span><span class="p">,</span>
+            <span class="n">rbot_env2</span><span class="p">,</span>
+            <span class="n">R_conv_sec</span><span class="p">,</span>
+            <span class="n">E21</span><span class="p">,</span>
+            <span class="n">rtop_env1</span><span class="p">,</span>
+            <span class="n">rbot_env1</span><span class="p">,</span>
+            <span class="n">R_conv_pri</span><span class="p">,</span>
+            <span class="n">E22</span><span class="p">,</span>
+            <span class="n">F_tid</span>
+        <span class="p">)</span>
+    <span class="n">kT_sec</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">kT_conv_sec</span><span class="p">,</span> <span class="n">kT_rad_sec</span><span class="p">)</span>
+    <span class="n">kT_pri</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">kT_conv_pri</span><span class="p">,</span> <span class="n">kT_rad_pri</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;kT_conv/rad of tides is &quot;</span><span class="p">,</span> <span class="n">kT_conv_sec</span><span class="p">,</span> <span class="n">kT_rad_sec</span><span class="p">,</span>
+            <span class="n">kT_conv_pri</span><span class="p">,</span> <span class="n">kT_rad_pri</span><span class="p">,</span> <span class="s2">&quot;in 1/yr, and we picked the &quot;</span><span class="p">,</span>
+            <span class="n">kT_sec</span><span class="p">,</span> <span class="n">kT_pri</span><span class="p">)</span>
+
+    <span class="n">da_tides_sec</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="mi">6</span>
+            <span class="o">*</span> <span class="n">F_tid</span>
+            <span class="o">*</span> <span class="n">kT_sec</span>
+            <span class="o">*</span> <span class="n">q1</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q1</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">R2</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">8</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">15</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">f1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">f2</span> <span class="o">*</span> <span class="n">omega2</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># eq. (9) of Hut 1981, 99, 126</span>
+
+    <span class="n">da_tides_pri</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="mi">6</span>
+            <span class="o">*</span> <span class="n">F_tid</span>
+            <span class="o">*</span> <span class="n">kT_pri</span>
+            <span class="o">*</span> <span class="n">q2</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q2</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">R1</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">8</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">15</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">f1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">f2</span> <span class="o">*</span> <span class="n">omega1</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">de_tides_sec</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="mi">27</span>
+            <span class="o">*</span> <span class="n">F_tid</span>
+            <span class="o">*</span> <span class="n">kT_sec</span>
+            <span class="o">*</span> <span class="n">q1</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q1</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">R2</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">8</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">e</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">13</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">f3</span> <span class="o">-</span> <span class="p">(</span><span class="mi">11</span> <span class="o">/</span> <span class="mi">18</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">f4</span> <span class="o">*</span> <span class="n">omega2</span><span class="o">/</span><span class="n">n</span><span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># eq. (10) of Hut 1981, 99, 126</span>
+
+    <span class="n">de_tides_pri</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="mi">27</span>
+            <span class="o">*</span> <span class="n">F_tid</span>
+            <span class="o">*</span> <span class="n">kT_pri</span>
+            <span class="o">*</span> <span class="n">q2</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q2</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">R1</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">8</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">e</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">13</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">f3</span> <span class="o">-</span> <span class="p">(</span><span class="mi">11</span> <span class="o">/</span> <span class="mi">18</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">f4</span> <span class="o">*</span> <span class="n">omega1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">dOmega_tides_sec</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">F_tid</span> <span class="o">*</span> <span class="n">kT_sec</span> <span class="o">*</span> <span class="n">q1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">m2</span> <span class="o">*</span> <span class="n">R2</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">MOI_2</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">R2</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">6</span>
+            <span class="o">*</span> <span class="n">n</span>
+            <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">6</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">f2</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">f5</span> <span class="o">*</span> <span class="n">omega2</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># eq. (11) of Hut 1981, 99, 126</span>
+    <span class="n">dOmega_tides_pri</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">F_tid</span> <span class="o">*</span> <span class="n">kT_pri</span> <span class="o">*</span> <span class="n">q2</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">m1</span> <span class="o">*</span> <span class="n">R1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">MOI_1</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">R1</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">6</span>
+            <span class="o">*</span> <span class="n">n</span>
+            <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">6</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">f2</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">f5</span> <span class="o">*</span> <span class="n">omega1</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;da,de,dOmega_tides = &quot;</span><span class="p">,</span>
+            <span class="n">da_tides_sec</span><span class="p">,</span> <span class="n">de_tides_sec</span><span class="p">,</span> <span class="n">dOmega_tides_sec</span><span class="p">,</span>
+            <span class="n">da_tides_pri</span><span class="p">,</span> <span class="n">de_tides_pri</span><span class="p">,</span> <span class="n">dOmega_tides_pri</span><span class="p">)</span>
+        
+    <span class="n">da</span> <span class="o">=</span> <span class="n">da_tides_sec</span> <span class="o">+</span> <span class="n">da_tides_pri</span>
+    <span class="n">de</span> <span class="o">=</span> <span class="n">de_tides_sec</span> <span class="o">+</span> <span class="n">de_tides_pri</span>
+    <span class="n">dOmega_sec</span> <span class="o">=</span> <span class="n">dOmega_tides_sec</span>
+    <span class="n">dOmega_pri</span> <span class="o">=</span> <span class="n">dOmega_tides_pri</span>
+
+    <span class="k">return</span> <span class="n">da</span><span class="p">,</span> <span class="n">de</span><span class="p">,</span> <span class="n">dOmega_sec</span><span class="p">,</span> <span class="n">dOmega_pri</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.7
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

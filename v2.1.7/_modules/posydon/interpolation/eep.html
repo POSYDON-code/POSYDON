@@ -1,0 +1,432 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.interpolation.eep &mdash; posydon 2.1.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=ebebaa27"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.interpolation.eep</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.interpolation.eep</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for converting a MESA history file to an EEP track.</span>
+
+<span class="sd">Reference: Dotter, Aaron (2016), AJSS, 222, 1.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Aaron Dotter &lt;aaron.dotter@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">pchip</span>
+
+<span class="c1"># suggested lists of EEPs</span>
+<span class="n">ZAMSlo</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ZAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;IAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;TAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;TRGB&#39;</span><span class="p">,</span> <span class="s1">&#39;ZACHEB&#39;</span><span class="p">,</span> <span class="s1">&#39;TACHEB&#39;</span><span class="p">]</span>
+<span class="n">ZAMShi</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ZAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;IAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;TAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;ZACHEB&#39;</span><span class="p">,</span> <span class="s1">&#39;TACHEB&#39;</span><span class="p">,</span> <span class="s1">&#39;CBURN&#39;</span><span class="p">]</span>
+<span class="n">HeZAMS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ZACHEB&#39;</span><span class="p">,</span> <span class="s1">&#39;TACHEB&#39;</span><span class="p">,</span> <span class="s1">&#39;CBURN&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="EEP">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.eep.EEP">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EEP</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a MESA history file to Equivalent Evolutionary Phase track.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">EEP_NAMES</span><span class="o">=</span><span class="n">ZAMShi</span><span class="p">,</span> <span class="n">EEP_INTERVAL</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load an MESA history file and construct the EEP instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">header1</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header2</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header3</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="c1"># this is compatible with `.gz` files</span>
+            <span class="n">tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to open: &quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c1"># this section attempts to find each of the EEPs for the track</span>
+        <span class="n">prems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PreMS</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span>
+        <span class="n">zams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ZAMS</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span>
+        <span class="n">iams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IAMS</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">Xc</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="n">zams</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">tams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TAMS</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="n">iams</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">trgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TRGB</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="n">tams</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">zacheb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ZACHEB</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="n">trgb</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">tacheb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TACHEB</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="n">zacheb</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">tpagb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TPAGB</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="n">tacheb</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pagb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PAGB</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="n">tpagb</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">wdcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WDCS</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="n">pagb</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cburn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CBurn</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="n">zacheb</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># compute the distance metric along the track that is used to assign</span>
+        <span class="c1"># secondary EEPs</span>
+        <span class="n">metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_function</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span>
+
+        <span class="n">eep_index</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># if the EEP is in the input list, and it exists (&gt;0)</span>
+        <span class="c1"># then add it to the official list of EEPs</span>
+        <span class="k">for</span> <span class="n">eep</span> <span class="ow">in</span> <span class="n">EEP_NAMES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;PreMS&#39;</span> <span class="ow">and</span> <span class="n">prems</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prems</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;ZAMS&#39;</span> <span class="ow">and</span> <span class="n">zams</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zams</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;IAMS&#39;</span> <span class="ow">and</span> <span class="n">iams</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iams</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;TAMS&#39;</span> <span class="ow">and</span> <span class="n">tams</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tams</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;TRGB&#39;</span> <span class="ow">and</span> <span class="n">trgb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trgb</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;ZACHEB&#39;</span> <span class="ow">and</span> <span class="n">zacheb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zacheb</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;TACHEB&#39;</span> <span class="ow">and</span> <span class="n">tacheb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tacheb</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;TPAGB&#39;</span> <span class="ow">and</span> <span class="n">tpagb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tpagb</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;PAGB&#39;</span> <span class="ow">and</span> <span class="n">pagb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pagb</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;WDCS&#39;</span> <span class="ow">and</span> <span class="n">wdcs</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wdcs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;CBURN&#39;</span> <span class="ow">and</span> <span class="n">cburn</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cburn</span><span class="p">)</span>
+
+        <span class="c1"># some bookkeeping</span>
+        <span class="n">eep_counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_primary</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">eep_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_secondary</span> <span class="o">=</span> <span class="n">EEP_INTERVAL</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eep_index</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_eeps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_primary</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_secondary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eeps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_eeps</span><span class="p">),</span> <span class="n">tr</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">descr</span><span class="p">)</span>
+
+        <span class="c1"># assign the primary EEPs in the correct location for the EEP track</span>
+        <span class="k">for</span> <span class="n">eep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_primary</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eeps</span><span class="p">[</span><span class="n">eep_counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="n">eep_index</span><span class="p">[</span><span class="n">eep</span><span class="p">]]</span>
+            <span class="n">eep_counter</span> <span class="o">+=</span> <span class="n">EEP_INTERVAL</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># assign the secondary EEPs in the correct location for the EEP track</span>
+        <span class="k">for</span> <span class="n">eep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_primary</span><span class="p">):</span>
+            <span class="n">eep_counter</span> <span class="o">=</span> <span class="p">(</span><span class="n">eep</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">EEP_INTERVAL</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># fill in secondary</span>
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">eep_index</span><span class="p">[</span><span class="n">eep</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">eep_index</span><span class="p">[</span><span class="n">eep</span><span class="p">]</span>
+            <span class="n">dm</span> <span class="o">=</span> <span class="p">(</span><span class="n">metric</span><span class="p">[</span><span class="n">hi</span><span class="p">]</span> <span class="o">-</span> <span class="n">metric</span><span class="p">[</span><span class="n">lo</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">EEP_INTERVAL</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">metric</span><span class="p">[</span><span class="n">lo</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">EEP_INTERVAL</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">m</span> <span class="o">+=</span> <span class="n">dm</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+                    <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pchip</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">metric</span><span class="p">[</span><span class="n">lo</span><span class="p">:</span><span class="n">hi</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">tr</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">lo</span><span class="p">:</span><span class="n">hi</span><span class="p">])(</span><span class="n">m</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eeps</span><span class="p">[</span><span class="n">eep_counter</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># the following function definitions are for primary EEP determinations</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_PreMS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">Dfrac</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">PreMS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h2&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Dfrac</span><span class="o">*</span><span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h2&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">PreMS</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">PreMS</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ZAMS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">dXc</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">ZAMS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h1&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h1&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">dXc</span><span class="p">:</span>
+                <span class="n">ZAMS</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">ZAMS</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_IAMS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">Xc</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">IAMS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h1&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Xc</span><span class="p">:</span>
+                <span class="n">IAMS</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">IAMS</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_TAMS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">Xc</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">TAMS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h1&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Xc</span><span class="p">:</span>
+                <span class="n">TAMS</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">TAMS</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_TRGB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">Yc_min</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">guess</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.01</span>
+        <span class="n">L_He_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99.</span>
+        <span class="n">Tc_min</span> <span class="o">=</span> <span class="mf">99.</span>
+        <span class="n">TRGB</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">TRGB1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">TRGB2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Yc_min</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_LHe&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">L_He_max</span><span class="p">:</span>
+                    <span class="n">L_He_max</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_LHe&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">TRGB1</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Tc_min</span><span class="p">:</span>
+                    <span class="n">Tc_min</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">TRGB2</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">TRGB</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">TRGB1</span><span class="p">,</span> <span class="n">TRGB2</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ZACHEB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">ZACHEB</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">Yc_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">guess</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.03</span><span class="p">)</span>
+        <span class="n">L_He_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99.</span>
+        <span class="n">Tc_min</span> <span class="o">=</span> <span class="mf">99.</span>
+        <span class="n">ZACHEB1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">ZACHEB</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Yc_min</span> <span class="ow">and</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_LHe&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">L_He_max</span><span class="p">:</span>
+                <span class="n">L_He_max</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_LHe&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">ZACHEB1</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ZACHEB1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Yc_min</span> <span class="ow">and</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Tc_min</span><span class="p">:</span>
+                <span class="n">Tc_min</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">ZACHEB</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">return</span> <span class="n">ZACHEB</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_TACHEB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">Yc_min</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">TACHEB</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Yc_min</span><span class="p">:</span>
+                <span class="n">TACHEB</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">TACHEB</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_TPAGB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">TPAGB</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">He_shell_min</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">Yc_min</span> <span class="o">=</span> <span class="mf">1.0e-6</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="n">He_shell_mass</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;he_core_mass&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;c_core_mass&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Yc_min</span> <span class="ow">and</span> <span class="n">He_shell_mass</span> <span class="o">&lt;</span> <span class="n">He_shell_min</span><span class="p">:</span>
+                <span class="n">TPAGB</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">TPAGB</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_PAGB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">PAGB</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">core_mass_frac_min</span> <span class="o">=</span> <span class="mf">0.8</span>
+        <span class="n">Tc_now</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="n">guess</span><span class="p">]</span>
+        <span class="n">Tc_end</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># check for low-inter / high mass split</span>
+        <span class="k">if</span> <span class="n">Tc_now</span> <span class="o">&gt;</span> <span class="n">Tc_end</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+                <span class="n">core_mass_frac</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;c_core_mass&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;star_mass&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">core_mass_frac</span> <span class="o">&gt;</span> <span class="n">core_mass_frac_min</span><span class="p">:</span>
+                    <span class="n">PAGB</span> <span class="o">=</span> <span class="n">i</span>
+                    <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">PAGB</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_WDCS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">WDCS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_gamma&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">gamma</span><span class="p">:</span>
+                <span class="n">WDCS</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">WDCS</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_CBurn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">XC12</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">CBURN</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">XY_min</span> <span class="o">=</span> <span class="mf">1.0E-6</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="n">Xc</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h1&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">Yc</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">C12</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_c12&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">Xc</span> <span class="o">&lt;</span> <span class="n">XY_min</span> <span class="ow">and</span> <span class="n">Yc</span> <span class="o">&lt;</span> <span class="n">XY_min</span> <span class="ow">and</span> <span class="n">C12</span> <span class="o">&lt;</span> <span class="n">XC12</span><span class="p">:</span>
+                <span class="n">CBURN</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">CBURN</span>
+
+    <span class="c1"># this function computes the distance metric along the evolutionary track</span>
+    <span class="c1"># it is made up of several terms whose weights can be adjusted.  Currently</span>
+    <span class="c1"># use the H-R and age information only.</span>
+    <span class="c1"># other terms can be added, must be &quot;monotonic increasing&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_metric_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">):</span>
+        <span class="n">term1</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_Teff&#39;</span><span class="p">]</span>
+        <span class="n">term2</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_L&#39;</span><span class="p">]</span>
+        <span class="n">term3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="s1">&#39;star_age&#39;</span><span class="p">])</span>
+        <span class="n">term4</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_Rho&#39;</span><span class="p">]</span>
+        <span class="n">weight1</span> <span class="o">=</span> <span class="mf">2.0</span>
+        <span class="n">weight2</span> <span class="o">=</span> <span class="mf">0.125</span>
+        <span class="n">weight3</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">weight4</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="c1"># etc.</span>
+
+        <span class="n">metric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
+            <span class="n">metric</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> \
+                <span class="n">weight1</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">term1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">term1</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> \
+                <span class="n">weight2</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">term2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">term2</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> \
+                <span class="n">weight3</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">term3</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">term3</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> \
+                <span class="n">weight4</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="n">term4</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">term4</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">metric</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.7
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

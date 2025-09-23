@@ -1,0 +1,1702 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.interpolation &mdash; posydon 2.1.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d66fa8e6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=ebebaa27"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="posydon.popsyn" href="posydon.popsyn.html" />
+    <link rel="prev" title="posydon.grids" href="posydon.grids.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="posydon.html">posydon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="posydon.active_learning.html">posydon.active_learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.html">posydon.binary_evol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.grids.html">posydon.grids</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">posydon.interpolation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.interpolation.IF_interpolation">posydon.interpolation.IF_interpolation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#i-loading-a-pretrained-interpolator">I. Loading a Pretrained Interpolator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ii-training-the-interpolator">II. Training the Interpolator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#iii-using-the-interpolator">III. Using the Interpolator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator"><code class="docutils literal notranslate"><span class="pre">BaseIFInterpolator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.Classifier"><code class="docutils literal notranslate"><span class="pre">Classifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.IFInterpolator"><code class="docutils literal notranslate"><span class="pre">IFInterpolator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.Interpolator"><code class="docutils literal notranslate"><span class="pre">Interpolator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.KNNClassifier"><code class="docutils literal notranslate"><span class="pre">KNNClassifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.LinInterpolator"><code class="docutils literal notranslate"><span class="pre">LinInterpolator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.MC_Interpolator"><code class="docutils literal notranslate"><span class="pre">MC_Interpolator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.MatrixScaler"><code class="docutils literal notranslate"><span class="pre">MatrixScaler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.NNInterpolator"><code class="docutils literal notranslate"><span class="pre">NNInterpolator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.Scaler"><code class="docutils literal notranslate"><span class="pre">Scaler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.analize_nans"><code class="docutils literal notranslate"><span class="pre">analize_nans()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.analize_nones"><code class="docutils literal notranslate"><span class="pre">analize_nones()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.assess_models"><code class="docutils literal notranslate"><span class="pre">assess_models()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.heatmap"><code class="docutils literal notranslate"><span class="pre">heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.is_in_ball"><code class="docutils literal notranslate"><span class="pre">is_in_ball()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.plot_conf_matrix"><code class="docutils literal notranslate"><span class="pre">plot_conf_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.plot_interp_error"><code class="docutils literal notranslate"><span class="pre">plot_interp_error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.plot_interpolation"><code class="docutils literal notranslate"><span class="pre">plot_interpolation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.plot_mc_classifier"><code class="docutils literal notranslate"><span class="pre">plot_mc_classifier()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.test_mesh"><code class="docutils literal notranslate"><span class="pre">test_mesh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.train_and_assess"><code class="docutils literal notranslate"><span class="pre">train_and_assess()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.IF_interpolation.xval_indices"><code class="docutils literal notranslate"><span class="pre">xval_indices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.interpolation.constraints">posydon.interpolation.constraints</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.Lnuc_func"><code class="docutils literal notranslate"><span class="pre">Lnuc_func()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.boltzman_constraint_func"><code class="docutils literal notranslate"><span class="pre">boltzman_constraint_func()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.check_order_of_constraints"><code class="docutils literal notranslate"><span class="pre">check_order_of_constraints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.correct_inequality"><code class="docutils literal notranslate"><span class="pre">correct_inequality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.correct_sum"><code class="docutils literal notranslate"><span class="pre">correct_sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.find_constraints_to_apply"><code class="docutils literal notranslate"><span class="pre">find_constraints_to_apply()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.get_thickness_n_radius"><code class="docutils literal notranslate"><span class="pre">get_thickness_n_radius()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.kepler_3rd_law_func"><code class="docutils literal notranslate"><span class="pre">kepler_3rd_law_func()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.lg_system_mdot_func"><code class="docutils literal notranslate"><span class="pre">lg_system_mdot_func()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.sanitize_interpolated_quantities"><code class="docutils literal notranslate"><span class="pre">sanitize_interpolated_quantities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.constraints.xfer_fraction_func"><code class="docutils literal notranslate"><span class="pre">xfer_fraction_func()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.interpolation.data_scaling">posydon.interpolation.data_scaling</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.data_scaling.DataScaler"><code class="docutils literal notranslate"><span class="pre">DataScaler</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.interpolation.eep">posydon.interpolation.eep</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.eep.EEP"><code class="docutils literal notranslate"><span class="pre">EEP</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.interpolation.interpolation">posydon.interpolation.interpolation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.interpolation.GRIDInterpolator"><code class="docutils literal notranslate"><span class="pre">GRIDInterpolator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.interpolation.fscale"><code class="docutils literal notranslate"><span class="pre">fscale()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.interpolation.inv_scaler"><code class="docutils literal notranslate"><span class="pre">inv_scaler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.interpolation.psyTrackInterp"><code class="docutils literal notranslate"><span class="pre">psyTrackInterp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.interpolation.interpolation.scaler"><code class="docutils literal notranslate"><span class="pre">scaler()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#posydon-interpolation-profile-interpolation">posydon.interpolation.profile_interpolation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.popsyn.html">posydon.popsyn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.user_modules.html">posydon.user_modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.utils.html">posydon.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.html">posydon.visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="posydon.html">posydon</a></li>
+      <li class="breadcrumb-item active">posydon.interpolation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/posydon.interpolation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-posydon.interpolation">
+<span id="posydon-interpolation"></span><h1>posydon.interpolation<a class="headerlink" href="#module-posydon.interpolation" title="Link to this heading"></a></h1>
+<section id="module-posydon.interpolation.IF_interpolation">
+<span id="posydon-interpolation-if-interpolation"></span><h2>posydon.interpolation.IF_interpolation<a class="headerlink" href="#module-posydon.interpolation.IF_interpolation" title="Link to this heading"></a></h2>
+<p>Module for performing initial-final interpolation.</p>
+<p>We showcase the initial-final interpolator which plays a critical role in the
+evolving binary populations. To use the initial-final interpolator we first
+import the IFInterpolator class from the POSYDON library.</p>
+<blockquote>
+<div><p># importing interpolator
+from posydon.interpolation.IF_interpolation import IFInterpolator</p>
+</div></blockquote>
+<section id="i-loading-a-pretrained-interpolator">
+<h3>I. Loading a Pretrained Interpolator<a class="headerlink" href="#i-loading-a-pretrained-interpolator" title="Link to this heading"></a></h3>
+<p>To load a pretrained interpolator we need to
+pass in the filename argument into the IFInterpolator
+constructor which specifies the path to a .pkl file where
+the pretrained interpolator can be loaded from. POSYDON provides
+various pretrained models whose corresponding .pkl files
+can be found in the data directory of the POSYDON repository.</p>
+<blockquote>
+<div><p>model = IFInterpolator()</p>
+<p>model.load(“path/to/file.pkl”)</p>
+</div></blockquote>
+</section>
+<section id="ii-training-the-interpolator">
+<h3>II. Training the Interpolator<a class="headerlink" href="#ii-training-the-interpolator" title="Link to this heading"></a></h3>
+<p>The interpolator can be trained using an instance of the PSyGrid
+class which can be constructed by running ones own simulations or
+by loading a simulation from an h5 file stored in the data directory
+of the POSYDON repository. For more details on the PSyGrid class
+please visit the PSyGrid documentation. The IFInterpolator
+class relies on the BaseIFInterpolator class to perform the interpolation
+so parameters to construct instances of the BaseIFInterpolator classes are
+required to construct the IFInterpolator. These parameters are:</p>
+<p>1. interp_method: the interpolation method to be used can be either
+linear, 1NN, or a list specifying which interpolation method to
+be used for each type of track. If interp_classes is specified and this
+parameter is not a list then the interpolator will use the specified method
+for all classes.</p>
+<p>2. interp_classes: a list of classes that the simulation tracks can
+fall into. Usually specified as the mass transfer type. This only needs
+be specified if interp_method is a list. Note that when using class-wise normalization
+only classes in interp_classes are normalized. This is the behavior for interpolation normalization
+but not classification normalization.</p>
+<p>3. class_method: the classification method to be used, either kNN or
+1NN.</p>
+<p>4. in_keys: the keys to be used as the input to the interpolator, by default
+these are star_1_mass, star_2_mass, and period_days.</p>
+<p>5. out_keys: the keys for which the interpolator is supposed to provide values,
+by default all keys are used.</p>
+<p>6. in_scaling: The scalings for the input keys, by default these scalings are
+optimized through Monte Carlo Cross Validation.</p>
+<p>7. out_scaling: The scalings for the output keys, by default these scalings
+are optimized through Monte Carlo Cross Validation.</p>
+<ol class="arabic simple" start="8">
+<li><p>c_keys: A list of strings specifying which classifiers are to be trained</p></li>
+</ol>
+<p>9. c_key: A string specifying by which class the interpolator should
+interpolate binaries. Only to be specified in the MCInterpolator case.</p>
+<p>For most applications specifying only the first four parameters is recommended.</p>
+<blockquote>
+<div><p>from posydon.grids.psygrid import PSyGrid
+from posydon.interpolation.IF_interpolation import IFInterpolator</p>
+<p>grid = PSyGrid(“path/to/h5/file.h5”) # loading grid from h5 file</p>
+<dl>
+<dt>interp = IFInterpolator(grid = grid, interpolators = [</dt><dd><dl class="simple">
+<dt>{</dt><dd><p>“interp_method”: [“linear”, “linear”, “linear”, “linear”],
+“interp_classes”: [“no_MT”, “stable_MT”, “unstable_MT”, “stable_reverse_MT”], # classes not in this array will not be normalized in class-wise normalization
+“out_keys”: first,
+“class_method”: “kNN”,
+“c_keys”: [“interpolation_class”],
+“c_key”: “interpolation_class”</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“interp_method”: [“linear”, “linear”, “linear”, “linear”],
+“interp_classes”: [“None”, “BH”, “WD”, “NS”], # classes not in this array will not be normalized in class-wise normalization
+“out_keys”: second,
+“class_method”: “kNN”,
+“c_keys”: [‘S1_direct_state’],
+“c_key”: ‘S1_direct_state’</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“interp_method”: [“linear”, “linear”, “linear”, “linear”],
+“interp_classes”: [“None”, “BH”, “WD”, “NS”], # classes not in this array will not be normalized in class-wise normalization
+“out_keys”: third,
+“class_method”: “kNN”,
+“c_keys”: [‘S1_Fryer+12-rapid_state’],
+“c_key”: ‘S1_Fryer+12-rapid_state’</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“interp_method”: [“linear”, “linear”, “linear”, “linear”],
+“interp_classes”: [“None”, “BH”, “WD”, “NS”], # classes not in this array will not be normalized in class-wise normalization
+“out_keys”: fourth,
+“class_method”: “kNN”,
+“c_keys”: [‘S1_Fryer+12-delayed_state’],
+“c_key”: ‘S1_Fryer+12-delayed_state’</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“interp_method”: [“linear”, “linear”, “linear”, “linear”],
+“interp_classes”: [“None”, “BH”, “WD”, “NS”], # classes not in this array will not be normalized in class-wise normalization
+“out_keys”: fifth,
+“class_method”: “kNN”,
+“c_keys”: [‘S1_Sukhbold+16-engineN20_state’],
+“c_key”: ‘S1_Sukhbold+16-engineN20_state’</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“interp_method”: [“linear”, “linear”, “linear”, “linear”],
+“interp_classes”: [“None”, “BH”, “WD”, “NS”], # classes not in this array will not be normalized in class-wise normalization
+“out_keys”: sixth,
+“class_method”: “kNN”,
+“c_keys”: [‘S1_Patton&amp;Sukhbold20-engineN20_state’],
+“c_key”: ‘S1_Patton&amp;Sukhbold20-engineN20_state’</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>]) # constructing IFInterpolator</p>
+<p>interp.train() # training interpolator</p>
+</div></blockquote>
+</section>
+<section id="iii-using-the-interpolator">
+<h3>III. Using the Interpolator<a class="headerlink" href="#iii-using-the-interpolator" title="Link to this heading"></a></h3>
+<p>Once the interpolator has been trained or loaded from a .pkl file it can be
+used to accomplish various tasks which most commonly are to classify a track
+into its class given an input vector and or to approximate a final vector given
+an input vector.</p>
+<blockquote>
+<div><p>from posydon.binary_evol.binarystar import BinaryStar
+from posydon.binary_evol.singlestar import SingleStar</p>
+<p># creating binary, refer to BinaryStar documentation
+binary = BinaryStar(<a href="#id1"><span class="problematic" id="id2">**</span></a>binary_params,</p>
+<blockquote>
+<div><p>star_1=SingleStar(<a href="#id3"><span class="problematic" id="id4">**</span></a>star1_params),
+star_2=SingleStar(<a href="#id5"><span class="problematic" id="id6">**</span></a>star2_params))</p>
+</div></blockquote>
+<p># evaluating returns a tuple of dictionaries
+interpolation, classification = interp.evaluate(binary)</p>
+</div></blockquote>
+<p>Finally a trained interpolator can be easily saved by specifying a path to a
+.pkl file where the interpolator will be saved to.</p>
+<blockquote>
+<div><p>model.save(“path/to/file.pkl”) # saving interpolator</p>
+</div></blockquote>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">BaseIFInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_nan_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kNN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class handling the initial-final interpolation for POSYDON.</p>
+<p>Initialize the BaseIFInterpolation.</p>
+<p>Initialize the BaseIFInterpolation and if ‘filename’ is provided load
+a pretrained interpolator. If no filename is provided, the
+interpolator(s) and classifier(s) are trained upon initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<a class="reference internal" href="posydon.grids.html#posydon.grids.psygrid.PSyGrid" title="posydon.grids.psygrid.PSyGrid"><em>PSyGrid</em></a>) – An instance of the PSyGrid class.</p></li>
+<li><p><strong>in_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The keys to be used as the input to the interpolator, by default
+these are star_1_mass, star_2_mass, and period_days.</p></li>
+<li><p><strong>out_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The keys for which the interpolator is supposed to provide values,
+by default all keys are used.</p></li>
+<li><p><strong>out_nan_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The keys for which the interpolator is supposed to provide values,
+but are all nan in the grid.</p></li>
+<li><p><strong>in_scaling</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The scalings for the input keys, by default these scalings are
+optimized through Monte Carlo Cross Validation.</p></li>
+<li><p><strong>out_scaling</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The scalings for the output keys, by default these scalings
+are optimized through Monte Carlo Cross Validation.</p></li>
+<li><p><strong>filename</strong> (<em>string</em>) – A path to a .pkl file containing a saved interpolator</p></li>
+<li><p><strong>interp_method</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The interpolation method to be used can be either
+linear, 1NN, or a list specifying which interpolation method to be
+used for each type of track. If interp_classes is specified and
+this parameter is not a list then the interpolator will use the
+specified method for all classes.</p></li>
+<li><p><strong>interp_classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – A list of classes that the simulation tracks can
+fall into. Usually specified as the mass transfer type. This only
+needs be specified if interp_method is a list.</p></li>
+<li><p><strong>class_method</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The classification method to be used, either kNN or
+1NN.</p></li>
+<li><p><strong>c_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The keys for which a classifier should be trained. At a minimum
+should contain the keys needed for multi-class interpolation if it
+is requested</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sanitization_verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Get the output vector approximation.</p>
+<p>Get the output vector approximation as well as all of the
+classifications given a Binary Star.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>binary</strong> (<a class="reference internal" href="posydon.binary_evol.html#posydon.binary_evol.binarystar.BinaryStar" title="posydon.binary_evol.binarystar.BinaryStar"><em>BinaryStar</em></a>) – A class which is an input vector which are to be classified and for
+which an output vector will be approximated.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as a tuple containing two dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.evaluate_mat">
+<span class="sig-name descname"><span class="pre">evaluate_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.evaluate_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.evaluate_mat" title="Link to this definition"></a></dt>
+<dd><p>Get the output vector approximation.</p>
+<p>Get the output vector approximation as well as all of the
+classifications given an input vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Xt</strong> (<em>numpy array</em>) – A list of input vectors which are to be classified and for which
+output vectors are to be approximated.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximations as numpy arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.load" title="Link to this definition"></a></dt>
+<dd><p>Load interpolation model, which can only be used for predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – path/name of pickle file to be loaded.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.save" title="Link to this definition"></a></dt>
+<dd><p>Save complete interpolation model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – path/name of ‘.pkl’ file where the model will be saved.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_classifier">
+<span class="sig-name descname"><span class="pre">test_classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.test_classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_classifier" title="Link to this definition"></a></dt>
+<dd><p>Use just one specific classifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>string</em>) – Name of the classifier</p></li>
+<li><p><strong>Xt</strong> (<em>numpy array</em>) – A list of input vectors which are to be classified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_classifier_prob">
+<span class="sig-name descname"><span class="pre">test_classifier_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.test_classifier_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_classifier_prob" title="Link to this definition"></a></dt>
+<dd><p>Test the classifier.</p>
+<p>Use just one specific classifier to get the probabilities of the input
+being in a class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>string</em>) – Name of the classifier</p></li>
+<li><p><strong>Xt</strong> (<em>numpy array</em>) – A list of input vectors which are to be classified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_classifiers">
+<span class="sig-name descname"><span class="pre">test_classifiers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.test_classifiers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_classifiers" title="Link to this definition"></a></dt>
+<dd><p>Use the classifiers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Xt</strong> (<em>numpy array</em>) – A list of input vectors which are to be classified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_interpolator">
+<span class="sig-name descname"><span class="pre">test_interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.test_interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.test_interpolator" title="Link to this definition"></a></dt>
+<dd><p>Use the interpolator to approximate output vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Xt</strong> (<em>numpy array</em>) – A list of input vectors for which the output vectors are
+to be approximated.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.train_classifier">
+<span class="sig-name descname"><span class="pre">train_classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kNN'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.train_classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.train_classifier" title="Link to this definition"></a></dt>
+<dd><p>Train a specific classifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.train_classifiers">
+<span class="sig-name descname"><span class="pre">train_classifiers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kNN'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.train_classifiers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.train_classifiers" title="Link to this definition"></a></dt>
+<dd><p>Train the classifiers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator.train_interpolator">
+<span class="sig-name descname"><span class="pre">train_interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator.train_interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator.train_interpolator" title="Link to this definition"></a></dt>
+<dd><p>Train the interpolator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ic</strong> (<em>numpy array</em>) – Contains the interpolation class for each track in the grid used
+for training the interpolator.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Classifier">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Classifier</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Classifier" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class used as a shell parent class for all classifiers.</p>
+<p>Initialize the Classifier.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Classifier.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Classifier.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Classifier.predict" title="Link to this definition"></a></dt>
+<dd><p>Classify and approximate classes given input vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Classifier.predict_prob">
+<span class="sig-name descname"><span class="pre">predict_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Classifier.predict_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Classifier.predict_prob" title="Link to this definition"></a></dt>
+<dd><p>Classify and get probability of input vector belonging to any class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Classifier.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Classifier.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Classifier.train" title="Link to this definition"></a></dt>
+<dd><p>Train the classifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>YT</strong> (<em>numpy array</em>) – List of corresponding classes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Classifier.train_error">
+<span class="sig-name descname"><span class="pre">train_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Classifier.train_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Classifier.train_error" title="Link to this definition"></a></dt>
+<dd><p>Calculate approximation error given testing data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>YT</strong> (<em>numpy array</em>) – List of corresponding classes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.IFInterpolator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">IFInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#IFInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.IFInterpolator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class handling initial-final interpolation.</p>
+<p>Class handling initial-final interpolation with support to interpolate
+certain keys by differing classes.</p>
+<p>Initialize the IFInterpolator class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<a class="reference internal" href="posydon.grids.html#posydon.grids.psygrid.PSyGrid" title="posydon.grids.psygrid.PSyGrid"><em>PSyGrid</em></a>) – The training grid</p></li>
+<li><p><strong>interpolators</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>dictionaries</em>) – Contain parameters for the BaseIFIneterpolators to be constructed</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.IFInterpolator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sanitization_verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#IFInterpolator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.IFInterpolator.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Get the output vector approximation.</p>
+<p>Get the output vector approximation as well as all of the
+classifications given a Binary Star</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>binary</strong> (<a class="reference internal" href="posydon.binary_evol.html#posydon.binary_evol.binarystar.BinaryStar" title="posydon.binary_evol.binarystar.BinaryStar"><em>BinaryStar</em></a>) – A class which is an input vector which are to be classified and for
+which an output vector will be approximated.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as a tuple containing two dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.IFInterpolator.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#IFInterpolator.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.IFInterpolator.load" title="Link to this definition"></a></dt>
+<dd><p>Load a saved IFInterpolator from a .pkl file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string</em>) – Path to the .pkl file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.IFInterpolator.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#IFInterpolator.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.IFInterpolator.save" title="Link to this definition"></a></dt>
+<dd><p>Save the interpolator to a .pkl file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string</em>) – Path where .pkl file will be saved</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.IFInterpolator.test_classifiers">
+<span class="sig-name descname"><span class="pre">test_classifiers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#IFInterpolator.test_classifiers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.IFInterpolator.test_classifiers" title="Link to this definition"></a></dt>
+<dd><p>Method that can take in a 2-D numpy array for more efficient use of classifiers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initial_values</strong> (<em>numpy array</em>) – A numpy array containing the in-key values of the binaries to be classified</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Classified values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.IFInterpolator.test_interpolator">
+<span class="sig-name descname"><span class="pre">test_interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sanitization_verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#IFInterpolator.test_interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.IFInterpolator.test_interpolator" title="Link to this definition"></a></dt>
+<dd><p>Method that can take in a 2-D numpy array for more efficient use of the interpolator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initial_values</strong> (<em>numpy array</em>) – A numpy array containing the in-key values of the binaries to be evolved</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Interpolated values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.IFInterpolator.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#IFInterpolator.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.IFInterpolator.train" title="Link to this definition"></a></dt>
+<dd><p>Train the interpolator(s) on the PSyGrid used for construction.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Interpolator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Interpolator</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Interpolator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class used as a shell parent class for all Interpolators.</p>
+<p>Initialize the Interpolator.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Interpolator.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Interpolator.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Interpolator.predict" title="Link to this definition"></a></dt>
+<dd><p>Interpolate and approximate output vectors given input vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Interpolator.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Interpolator.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Interpolator.train" title="Link to this definition"></a></dt>
+<dd><p>Train the interpolator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>YT</strong> (<em>numpy array</em>) – List of corresponding output vectors</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Interpolator.train_error">
+<span class="sig-name descname"><span class="pre">train_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Interpolator.train_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Interpolator.train_error" title="Link to this definition"></a></dt>
+<dd><p>Calculate approximation error given testing data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>YT</strong> (<em>numpy array</em>) – List of corresponding output vectors</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.KNNClassifier">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">KNNClassifier</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#KNNClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.KNNClassifier" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.interpolation.IF_interpolation.Classifier" title="posydon.interpolation.IF_interpolation.Classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Classifier</span></code></a></p>
+<p>Class implementing K - Nearest Neighbors classifier.</p>
+<p>Initialize the Classifier.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.KNNClassifier.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#KNNClassifier.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.KNNClassifier.predict" title="Link to this definition"></a></dt>
+<dd><p>Classify and approximate classes given input vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.KNNClassifier.predict_prob">
+<span class="sig-name descname"><span class="pre">predict_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#KNNClassifier.predict_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.KNNClassifier.predict_prob" title="Link to this definition"></a></dt>
+<dd><p>Classify and get probability of input vector belonging to any class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.KNNClassifier.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#KNNClassifier.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.KNNClassifier.train" title="Link to this definition"></a></dt>
+<dd><p>Train the classifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>YT</strong> (<em>numpy array</em>) – List of corresponding classes</p></li>
+<li><p><strong>K</strong> (<em>#TODO</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.KNNClassifier.xtrain">
+<span class="sig-name descname"><span class="pre">xtrain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yT</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">opts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#KNNClassifier.xtrain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.KNNClassifier.xtrain" title="Link to this definition"></a></dt>
+<dd><p>Perform cross validation to find optimal k to use in classification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>YT</strong> (<em>numpy array</em>) – List of corresponding classes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.LinInterpolator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">LinInterpolator</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#LinInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.LinInterpolator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.interpolation.IF_interpolation.Interpolator" title="posydon.interpolation.IF_interpolation.Interpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interpolator</span></code></a></p>
+<p>Class implementing Linear Interpolation.</p>
+<p>Initialize the Interpolator.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.LinInterpolator.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">klass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#LinInterpolator.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.LinInterpolator.predict" title="Link to this definition"></a></dt>
+<dd><p>Interpolate and approximate output vectors given input vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>scaler</strong> (<em>#TODO</em>)</p></li>
+<li><p><strong>klass</strong> (<em>#TODO</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.LinInterpolator.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#LinInterpolator.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.LinInterpolator.train" title="Link to this definition"></a></dt>
+<dd><p>Train the interpolator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>YT</strong> (<em>numpy array</em>) – List of corresponding output vectors</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MC_Interpolator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">MC_Interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MC_Interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MC_Interpolator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class implementing class-wise interpolation.</p>
+<p>Initialize the class-wise interpolation.</p>
+<dl class="simple">
+<dt>classifier<span class="classifier">KNNClassifier</span></dt><dd><p>The classifier that is used to classify input vectors</p>
+</dd>
+<dt>classes<span class="classifier">List of strings</span></dt><dd><p>The classes in question</p>
+</dd>
+<dt>methods<span class="classifier">List of strings</span></dt><dd><p>The methods to be used to interpolate between each class of tracks</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MC_Interpolator.classifier">
+<span class="sig-name descname"><span class="pre">classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MC_Interpolator.classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MC_Interpolator.classifier" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MC_Interpolator.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zpred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MC_Interpolator.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MC_Interpolator.predict" title="Link to this definition"></a></dt>
+<dd><p>Interpolate and approximate output vectors given input vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>zpred</strong> (<em>#TODO</em>)</p></li>
+<li><p><strong>scaler</strong> (<em>#TODO</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MC_Interpolator.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MC_Interpolator.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MC_Interpolator.train" title="Link to this definition"></a></dt>
+<dd><p>Train the interpolator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>YT</strong> (<em>numpy array</em>) – List of corresponding output vectors</p></li>
+<li><p><strong>z</strong> (<em>#TODO</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MatrixScaler">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">MatrixScaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MatrixScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MatrixScaler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class used to scale input and output space.</p>
+<p>Initialize the Scaler with desired scalings.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MatrixScaler.denormalize">
+<span class="sig-name descname"><span class="pre">denormalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xn</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MatrixScaler.denormalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MatrixScaler.denormalize" title="Link to this definition"></a></dt>
+<dd><p>Unscale input X.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MatrixScaler.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MatrixScaler.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MatrixScaler.normalize" title="Link to this definition"></a></dt>
+<dd><p>Scale input X.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.NNInterpolator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">NNInterpolator</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#NNInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.NNInterpolator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#posydon.interpolation.IF_interpolation.Interpolator" title="posydon.interpolation.IF_interpolation.Interpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interpolator</span></code></a></p>
+<p>Class implementing Nearest Neighbor interpolation.</p>
+<p>Initialize the Interpolator.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.NNInterpolator.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">klass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#NNInterpolator.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.NNInterpolator.predict" title="Link to this definition"></a></dt>
+<dd><p>Interpolate and approximate output vectors given input vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>scaler</strong> (<em>#TODO</em>)</p></li>
+<li><p><strong>klass</strong> (<em>#TODO</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output space approximation as numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.NNInterpolator.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#NNInterpolator.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.NNInterpolator.train" title="Link to this definition"></a></dt>
+<dd><p>Train the interpolator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>XT</strong> (<em>numpy array</em>) – List of input vectors</p></li>
+<li><p><strong>YT</strong> (<em>numpy array</em>) – List of corresponding output vectors</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Scaler">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Scaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Scaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Scaler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Scaler.denormalize">
+<span class="sig-name descname"><span class="pre">denormalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">klass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Scaler.denormalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Scaler.denormalize" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Scaler.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">klass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Scaler.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Scaler.normalize" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.analize_nans">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">analize_nans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#analize_nans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.analize_nans" title="Link to this definition"></a></dt>
+<dd><p>Find nans in input numerical variables.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.analize_nones">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">analize_nones</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifiers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#analize_nones"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.analize_nones" title="Link to this definition"></a></dt>
+<dd><p>Find None values in input categorical variables.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.assess_models">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">assess_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ux2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#assess_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.assess_models" title="Link to this definition"></a></dt>
+<dd><p>Assess models using a grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>models</strong> (<em>psi.Interpolator</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>psi.Interpolator</em>) – Models to be evaluated.</p></li>
+<li><p><strong>grid_T</strong> (<em>psg.PSyGrid</em>) – Train grid</p></li>
+<li><p><strong>grid_t</strong> (<em>psg.PSyGrid</em>) – Test grid</p></li>
+<li><p><strong>ux2</strong> (<em>#TODO</em>)</p></li>
+<li><p><strong>path</strong> (<em>#TODO</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.heatmap">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">heat_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.heatmap" title="Link to this definition"></a></dt>
+<dd><p>Plot confusion matrix as heatmap.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.is_in_ball">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">is_in_ball</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#is_in_ball"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.is_in_ball" title="Link to this definition"></a></dt>
+<dd><p>Helper function for plot_mc_classifier.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.plot_conf_matrix">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">plot_conf_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#plot_conf_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.plot_conf_matrix" title="Link to this definition"></a></dt>
+<dd><p>Plot confusion matrix for classification assessment.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.plot_interp_error">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">plot_interp_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ygt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind_MT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#plot_interp_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.plot_interp_error" title="Link to this definition"></a></dt>
+<dd><p>Make violin plots for the error distributions of each of the variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ygt</strong> (<em>numpy array</em>) – Ground truth of the final values of testing tracks</p></li>
+<li><p><strong>Ys</strong> (<em>numpy array</em>) – Model’s approximation of the final values of testing tracks</p></li>
+<li><p><strong>ind_MT</strong> (<em>#TODO</em>)</p></li>
+<li><p><strong>methods</strong> (<em>List</em><em> of </em><em>strings</em>) – List that indicates the interpolation methods</p></li>
+<li><p><strong>keys</strong> (<em>List</em><em> of </em><em>strings</em>) – List indicating for which variables error distributions will be plotted</p></li>
+<li><p><strong>path</strong> (<em>#TODO</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.plot_interpolation">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">plot_interpolation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ux2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">pltargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#plot_interpolation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.plot_interpolation" title="Link to this definition"></a></dt>
+<dd><p>Plot the interpolation errors by key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> (<a class="reference internal" href="#posydon.interpolation.IF_interpolation.IFInterpolator" title="posydon.interpolation.IF_interpolation.IFInterpolator"><em>IFInterpolator</em></a>) – A trained instance of the IFInterpolator</p></li>
+<li><p><strong>keys</strong> (<em>List</em><em> of </em><em>strings</em>) – Variables for which interpolation errors will be plotted</p></li>
+<li><p><strong>v2</strong> (<em>#TODO</em>)</p></li>
+<li><p><strong>ux2</strong> (<em>#TODO</em>)</p></li>
+<li><p><strong>scales</strong> (<em>#TODO</em>)</p></li>
+<li><p><strong>path</strong> (<em>#TODO</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.plot_mc_classifier">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">plot_mc_classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ux2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt_pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">pltargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#plot_mc_classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.plot_mc_classifier" title="Link to this definition"></a></dt>
+<dd><p>Plot slices illustrating decision boundaries and classification prob.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.test_mesh">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">test_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#test_mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.test_mesh" title="Link to this definition"></a></dt>
+<dd><p>Helper function for plot_mc_classifier creating mesh for test data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.train_and_assess">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">train_and_assess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ux2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#train_and_assess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.train_and_assess" title="Link to this definition"></a></dt>
+<dd><p>Train interpolators and classes and create assesment plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_train</strong> (<em>string</em>) – Path to training grid</p></li>
+<li><p><strong>grid_test</strong> (<em>string</em>) – Path to testing grid</p></li>
+<li><p><strong>ux2</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>floats</em>) – List containing the slices at which plots are to be generated. Slices
+are the 3rd variable in the input space, that is the mass of the second
+star for CO-HeMS and CO-HMS_RLO grids and the mass ratio for the
+HMS-HMS grid</p></li>
+<li><p><strong>path</strong> (<em>string</em>) – The path where assesment plots will be saved</p></li>
+<li><p><strong>classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – List containing the classes to be used in the MC-Interpolator</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.xval_indices">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">xval_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#xval_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.xval_indices" title="Link to this definition"></a></dt>
+<dd><p>Perform Monte Carlo Cross Validation; stratified if labels are provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – number of samples in the data set.</p></li>
+<li><p><strong>percent_test</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Percentage of samples to be in the test sets. (0 &lt; percent_test &lt; 0.5)</p></li>
+<li><p><strong>labels</strong> (<em>#TODO</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>1D int vectors containing the indices for train and test splits,
+respectively.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(np.ndarray, np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-posydon.interpolation.constraints">
+<span id="posydon-interpolation-constraints"></span><h2>posydon.interpolation.constraints<a class="headerlink" href="#module-posydon.interpolation.constraints" title="Link to this heading"></a></h2>
+<p>Module to enforce constraints on interpolated quantities.</p>
+<p>Constraints are split up into 3 types:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Astrophysical laws that must hold</p></li>
+<li><p>Inequalities between values interpolated upon which must hold</p></li>
+<li><p>Sums of values interpolated upon which must satisfy some inequality</p></li>
+</ol>
+</div></blockquote>
+<p>For each type of constraint, different parameter dictionaries are required.</p>
+<p>For type 1 constraints a dictionary with the following fields is required:</p>
+<blockquote>
+<div><p>type - the type of constraint
+name - the name of the constraint
+dependent - the field for which the constraint must be calculated
+independent - the field names which are used to compute the dependent
+function - a function that computes the dependent from the independent</p>
+</div></blockquote>
+<p>For type 2 constraints a dictionary with the following fields is required:</p>
+<blockquote>
+<div><p>type - the type of constraint
+name - the name of the constraint
+fields - a multi dimensional array containing the field names in the</p>
+<blockquote>
+<div><p>desired descending order (if usage with default enforcer is
+wanted)</p>
+</div></blockquote>
+<dl class="simple">
+<dt>log - a boolean denoting whether or not the largest (first) field in</dt><dd><p>each constraint list is in log scale (by default false)</p>
+</dd>
+<dt>function - a function that enforces the desired constraint (by default</dt><dd><p>inequality is corrected)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>For type 3 constraints a dictionary with the following fields is required:</p>
+<blockquote>
+<div><p>type - the type of constraint
+name - the name of the constraint
+sum - an array of fields whose sum needs to satisfy some inequality
+constraint - either a real number or fieldname that the sum needs to be</p>
+<blockquote>
+<div><p>constrained by</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.Lnuc_func">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">Lnuc_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_LH</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_LHe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_LZ</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#Lnuc_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.Lnuc_func" title="Link to this definition"></a></dt>
+<dd><p>Total nuclear luminosity should be the sum of H, He and the rest.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.boltzman_constraint_func">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">boltzman_constraint_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_R</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#boltzman_constraint_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.boltzman_constraint_func" title="Link to this definition"></a></dt>
+<dd><p>Boltzmann law constraint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.check_order_of_constraints">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">check_order_of_constraints</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#check_order_of_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.check_order_of_constraints" title="Link to this definition"></a></dt>
+<dd><p>Report possible issues with the order of application of constraints.</p>
+<p>TODO: this needs to be updated for the new types of constraints.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.correct_inequality">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">correct_inequality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fv_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_sets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#correct_inequality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.correct_inequality" title="Link to this definition"></a></dt>
+<dd><p>Apply an “unequality constraint” (type 2) if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The final values dictionary.</p></li>
+<li><p><strong>key_sets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>lists</em>) – List of collections of keys connected with &gt;= inequalities (descending
+order). E.g., if one constraint is <cite>a &gt;= b &gt;= c</cite>, then key_sets is
+[[a, b, c], …].</p></li>
+<li><p><strong>star</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – For which star (1 or 2), the constraint will be applied. E.g.,
+<cite>star_{}_mass</cite> will be either <cite>star_1_mass</cite> or <cite>star_2_mass</cite>.</p></li>
+<li><p><strong>log</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, then the largest parameter (first key), is given in log10
+scale, while all the rest are in linear scale.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sanitized version of <cite>fv_dict</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.correct_sum">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">correct_sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fv_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sum_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#correct_sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.correct_sum" title="Link to this definition"></a></dt>
+<dd><p>Normalize quantities should their sum does not have the expected value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The final values dictionary.</p></li>
+<li><p><strong>sum_keys</strong> (<em>array-like</em>) – Which quantities should add up to a specific value.</p></li>
+<li><p><strong>constraint</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – If float, then the sum of the quantities should be eqaul to that.
+If str, the fieldname of the quanity that the sum is constrained by.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sanitized version of the final values dictionary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.find_constraints_to_apply">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">find_constraints_to_apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#find_constraints_to_apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.find_constraints_to_apply" title="Link to this definition"></a></dt>
+<dd><p>Find out which constraints can be applied.</p>
+<p>Find out which constraints can be applied based on the out_keys
+specified by the user. This function assumes that the keys for star 1
+have a corresponding key in star 2 when applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>out_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The keys specified in the IFInterpolator</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of constraints that can and will be applied</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a> of dicts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.get_thickness_n_radius">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">get_thickness_n_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fv_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#get_thickness_n_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.get_thickness_n_radius" title="Link to this definition"></a></dt>
+<dd><p>Corrects thickness and radius constraint violation of one is present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The final values dictionary</p></li>
+<li><p><strong>constraint</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The dictionary specifying the constraint to be applied</p></li>
+<li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – A list of formatted key names</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sanitized version of the final values dictionary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.kepler_3rd_law_func">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">kepler_3rd_law_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">period_days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#kepler_3rd_law_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.kepler_3rd_law_func" title="Link to this definition"></a></dt>
+<dd><p>Kepler’s 3rd law constraint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.lg_system_mdot_func">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">lg_system_mdot_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lg_system_mdot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lg_mtransfer_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#lg_system_mdot_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.lg_system_mdot_func" title="Link to this definition"></a></dt>
+<dd><p>System mdot must be less than the total mass-transfer rate.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.sanitize_interpolated_quantities">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">sanitize_interpolated_quantities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraints</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#sanitize_interpolated_quantities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.sanitize_interpolated_quantities" title="Link to this definition"></a></dt>
+<dd><p>Apply constraints in final values returned from the IF interpolator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fvalues</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary containing the final values returned from the initial-final
+interpolator evaluation method.</p></li>
+<li><p><strong>constraints</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>dicts</em>) – A list of constraints that are to be applied. Can be computed using the
+find_constraints_to_apply function</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, report the actions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dictionary of sanitized final values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.constraints.xfer_fraction_func">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.constraints.</span></span><span class="sig-name descname"><span class="pre">xfer_fraction_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lg_system_mdot_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lg_mtransfer_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/constraints.html#xfer_fraction_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.constraints.xfer_fraction_func" title="Link to this definition"></a></dt>
+<dd><p>Infer the xfer_fraction from the system and mass-transfer rate.</p>
+</dd></dl>
+
+</section>
+<section id="module-posydon.interpolation.data_scaling">
+<span id="posydon-interpolation-data-scaling"></span><h2>posydon.interpolation.data_scaling<a class="headerlink" href="#module-posydon.interpolation.data_scaling" title="Link to this heading"></a></h2>
+<p>Module for scaling data before and after interpolation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.data_scaling.DataScaler">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.data_scaling.</span></span><span class="sig-name descname"><span class="pre">DataScaler</span></span><a class="reference internal" href="../_modules/posydon/interpolation/data_scaling.html#DataScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.data_scaling.DataScaler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Data Normalization class.</p>
+<p>This class provides normalizing tools for float 1D arrays. Features can be
+standarized or scaled to a range depending on the method chosen when
+calling the fit ot fit_and_transform functions.</p>
+<p>Initialize the data scaler.</p>
+<p>No parameters are expected. After instantiation use methods <cite>fit</cite> or
+<cite>fit_and_transform</cite> first to fit a scaling object to a given vector of
+values.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span> <span class="o">=</span> <span class="n">DataScaler</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.data_scaling.DataScaler.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/data_scaling.html#DataScaler.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.data_scaling.DataScaler.fit" title="Link to this definition"></a></dt>
+<dd><p>Fit a transform of 1D numpy array x.</p>
+<p>Computes the parameters that define the transform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – expects a 1D array and finds norm values of columns</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Scaling method. Possible values: ‘min_max’, ‘max_abs’, ‘standarize’
+and their log versions ‘log_min_max’, ‘neg_log_min_max’,
+‘log_max_abs’, ‘log_standarize’, ‘neg_log_standarize’.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – lower range value of x_t after (<a href="#id7"><span class="problematic" id="id8">log_</span></a>)min_max scaling</p></li>
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – upper range value of x_t after (<a href="#id9"><span class="problematic" id="id10">log_</span></a>)min_max scaling</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.data_scaling.DataScaler.fit_and_transform">
+<span class="sig-name descname"><span class="pre">fit_and_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/data_scaling.html#DataScaler.fit_and_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.data_scaling.DataScaler.fit_and_transform" title="Link to this definition"></a></dt>
+<dd><p>Fit and transform the array x according to the chosen scaling.</p>
+<p>lower/upper will only be taken into account for (<a href="#id11"><span class="problematic" id="id12">log_</span></a>)min_max
+normalization. In this case, the transformed x will have
+min(x_transf) = lower, max(x_transf) = upper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – expects a 1D array and finds norm values of columns</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – scaling method. Possible values: ‘min_max’, ‘max_abs’, ‘standarize’
+and the log versions ‘log_min_max’, ‘log_max_abs’, ‘log_standarize’</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – lower range value of x_t after (<a href="#id13"><span class="problematic" id="id14">log_</span></a>)min_max scaling</p></li>
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – upper range value of x_t after (<a href="#id15"><span class="problematic" id="id16">log_</span></a>)min_max scaling</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>transformed version of x</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.data_scaling.DataScaler.inv_transform">
+<span class="sig-name descname"><span class="pre">inv_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/data_scaling.html#DataScaler.inv_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.data_scaling.DataScaler.inv_transform" title="Link to this definition"></a></dt>
+<dd><p>Revert the scaling using the stored transform parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x_t</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – expects a 1D array to unnormalize given the fitted transform.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>denormalized x using the stored parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.data_scaling.DataScaler.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/data_scaling.html#DataScaler.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.data_scaling.DataScaler.transform" title="Link to this definition"></a></dt>
+<dd><p>Transform x using the already obtained normalization values.</p>
+<p><cite>self.fit()`</cite> must be called first.
+lower/upper will only be taken into account for (<a href="#id17"><span class="problematic" id="id18">log_</span></a>)min_max
+normalization. In this case, the transformed x will have
+min(x_transf) = lower, max(x_transf) = upper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – values to normalize</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>transformed version of x</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-posydon.interpolation.eep">
+<span id="posydon-interpolation-eep"></span><h2>posydon.interpolation.eep<a class="headerlink" href="#module-posydon.interpolation.eep" title="Link to this heading"></a></h2>
+<p>Module for converting a MESA history file to an EEP track.</p>
+<p>Reference: Dotter, Aaron (2016), AJSS, 222, 1.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.eep.EEP">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.eep.</span></span><span class="sig-name descname"><span class="pre">EEP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EEP_NAMES</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ZAMShi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EEP_INTERVAL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/eep.html#EEP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.eep.EEP" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Convert a MESA history file to Equivalent Evolutionary Phase track.</p>
+<p>Load an MESA history file and construct the EEP instance.</p>
+</dd></dl>
+
+</section>
+<section id="module-posydon.interpolation.interpolation">
+<span id="posydon-interpolation-interpolation"></span><h2>posydon.interpolation.interpolation<a class="headerlink" href="#module-posydon.interpolation.interpolation" title="Link to this heading"></a></h2>
+<p>Definition of the psyTackInterp class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">GRIDInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class to interpolate between single star MESA tracks.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator.path">
+<span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator.path" title="Link to this definition"></a></dt>
+<dd><p>The path to the directory that contains the h5 grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator.keys">
+<span class="sig-name descname"><span class="pre">keys</span></span><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator.keys" title="Link to this definition"></a></dt>
+<dd><p>Contains valid keys for accessing the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialize the GRIDInterpolator.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator.close" title="Link to this definition"></a></dt>
+<dd><p>Close any loaded psygrids.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_new</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator.get" title="Link to this definition"></a></dt>
+<dd><p>Perform linear interpolation between specific time-series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The specific time-series described by the key.
+Valid keys are in the <cite>keys</cite> attribute.</p></li>
+<li><p><strong>M_new</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The associated initial mass
+which time-series requires interpolation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The interpolated ZAMS time-series specified by <cite>key</cite>
+associated with the initial mass <cite>M_new</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator.get_final_state">
+<span class="sig-name descname"><span class="pre">get_final_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_new</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator.get_final_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator.get_final_state" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator.get_final_values">
+<span class="sig-name descname"><span class="pre">get_final_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_new</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator.get_final_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator.get_final_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator.get_masses_gridfiles">
+<span class="sig-name descname"><span class="pre">get_masses_gridfiles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator.get_masses_gridfiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator.get_masses_gridfiles" title="Link to this definition"></a></dt>
+<dd><p>Return the masses of the grid files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a> of floats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator.get_profile">
+<span class="sig-name descname"><span class="pre">get_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_new</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator.get_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator.get_profile" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator.load_grid">
+<span class="sig-name descname"><span class="pre">load_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator.load_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator.load_grid" title="Link to this definition"></a></dt>
+<dd><p>Load the requested data to <cite>grid_data</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Associated initial masses
+which corresponding data should be loaded.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.fscale">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">fscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#fscale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.fscale" title="Link to this definition"></a></dt>
+<dd><p>Successively perform min-max rescaling on the last dimension of <cite>u</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (<em>array_like</em>) – The array which last dimension requires min-max rescaling.</p></li>
+<li><p><strong>lim</strong> (<em>sequence</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a>) – The tuples have length 2 and contains the limits on
+the min-max rescaling.
+There should be one tuple for each array in the last dimension.</p></li>
+<li><p><strong>inv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>False</cite> then the standard min-max rescaling will be performed.
+If <cite>True</cite> then the inverse min-max rescaling
+to restore and array will be performed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rescaled/original array with the same shape as <cite>u</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.inv_scaler">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">inv_scaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#inv_scaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.inv_scaler" title="Link to this definition"></a></dt>
+<dd><p>Restore the original array of min-max rescaled array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em>) – The array which have been min-max rescaled.</p></li>
+<li><p><strong>xmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The lower limit of the min-max range.</p></li>
+<li><p><strong>xmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The upper limit of the min-max range.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The original array of <cite>x</cite> that have been min-max rescaled.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.psyTrackInterp">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">psyTrackInterp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_in_q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#psyTrackInterp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.psyTrackInterp" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Perform track interpolation for POSYDON.</p>
+<p>Initialize the psyTrackInterp class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>string</em>) – The path to the training grid for the interpolator</p></li>
+<li><p><strong>in_keys</strong> (<em>List</em><em> of </em><em>strings</em>) – A list indicating the variables used for defining the
+input space, default is None</p></li>
+<li><p><strong>interp_in_q</strong> (<em>boolean</em>) – Indicates whether or not mass ratio is to be used, default is false</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em>) – Indicates whether functionality should be run in verbose mode,
+default is false</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.psyTrackInterp.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#psyTrackInterp.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.psyTrackInterp.close" title="Link to this definition"></a></dt>
+<dd><p>Close any loaded psygrids.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.psyTrackInterp.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#psyTrackInterp.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.psyTrackInterp.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluate given a binary object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.psyTrackInterp.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#psyTrackInterp.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.psyTrackInterp.load" title="Link to this definition"></a></dt>
+<dd><p>Load interpolation model to be used for predictions.</p>
+<dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>path/name of pickle file to be loaded.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.psyTrackInterp.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#psyTrackInterp.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.psyTrackInterp.save" title="Link to this definition"></a></dt>
+<dd><p>Save complete interpolation model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – path/name of ‘.pkl’ file where the model will be saved.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.psyTrackInterp.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NearestNeighbor'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#psyTrackInterp.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.psyTrackInterp.train" title="Link to this definition"></a></dt>
+<dd><p>Training method.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.interpolation.interpolation.scaler">
+<span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">scaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#scaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.scaler" title="Link to this definition"></a></dt>
+<dd><p>Perform min-max scaling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em>) – The array that requires min-max rescaling.</p></li>
+<li><p><strong>xmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The lower limit of the range to scale.</p></li>
+<li><p><strong>xmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The upper limit of the range to scale.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rescaled array of <cite>x</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="posydon-interpolation-profile-interpolation">
+<h2>posydon.interpolation.profile_interpolation<a class="headerlink" href="#posydon-interpolation-profile-interpolation" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="posydon.grids.html" class="btn btn-neutral float-left" title="posydon.grids" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="posydon.popsyn.html" class="btn btn-neutral float-right" title="posydon.popsyn" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.1.7
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
