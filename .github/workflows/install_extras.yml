@@ -7,12 +7,15 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -el {0}
 
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [macos-13, macos-latest, ubuntu-latest]
         python-version: ['3.11']  # can add more if we want to support
-
+    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -22,7 +25,14 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install conda (via Miniconda)
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-activate-base: true
+
     - name: Install POSYDON with extras
       run: |
+        conda create -n test-env python=3.11 mpi4py conda-forge::qt -y
         python -m pip install --upgrade pip
-        pip install ".[doc,vis,ml,hpc]" 
+        conda activate test-env
+        pip install ".[doc,vis,ml,hpc]"

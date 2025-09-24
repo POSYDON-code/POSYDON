@@ -53,7 +53,7 @@ from posydon.binary_evol.SN.profile_collapse import (do_core_collapse_BH,
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
                                             STAR_STATES_C_DEPLETION)
 
-from posydon.grids.MODELS import MODELS
+from posydon.grids.SN_MODELS import get_SN_MODEL_NAME, DEFAULT_SN_MODEL
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 from posydon.utils.common_functions import set_binary_to_failed
@@ -73,23 +73,7 @@ path_to_Patton_datasets = os.path.join(PATH_TO_POSYDON_DATA,
 path_to_Couch_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                       "Couch+2020/")
 
-MODEL = {
-    # core collapse physics
-    "mechanism": 'Patton&Sukhbold20-engine',
-    "engine": 'N20',
-    "PISN": "Marchant+19",
-    "PISN_CO_shift": 0.0,
-    "PPI_extra_mass_loss": 0.0,
-    "ECSN": "Podsiadlowski+04",
-    "conserve_hydrogen_envelope" : False,
-    "conserve_hydrogen_PPI" : False,
-    "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
-    "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
-    "use_interp_values": True,
-    "use_profiles": True,
-    "use_core_masses": True,
-    "allow_spin_None" : False,
-    "approx_at_he_depletion": False,
+SN_MODEL = {
     # kick physics
     "kick": True,
     "kick_normalisation": 'one_over_mass',
@@ -99,6 +83,8 @@ MODEL = {
     # other
     "verbose": False,
 }
+# add core collapse physics
+SN_MODEL.update(DEFAULT_SN_MODEL)
 
 
 class StepSN(object):
@@ -258,14 +244,14 @@ class StepSN(object):
         # read kwargs to initialize the class
         if kwargs:
             for key in kwargs:
-                if key not in MODEL:
+                if key not in SN_MODEL:
                     raise ValueError(key + " is not a valid parameter name!")
-            for varname in MODEL:
-                default_value = MODEL[varname]
+            for varname in SN_MODEL:
+                default_value = SN_MODEL[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
-            for varname in MODEL:
-                default_value = MODEL[varname]
+            for varname in SN_MODEL:
+                default_value = SN_MODEL[varname]
                 setattr(self, varname, default_value)
 
         if self.max_neutrino_mass_loss is None:
@@ -518,41 +504,26 @@ class StepSN(object):
             # if no profile is avaiable but interpolation quantities are,
             # use those, else continue with or without profile.
             if self.use_interp_values:
-                # find MODEL_NAME corresponding to class variable
-                MODEL_NAME_SEL = None
-                for MODEL_NAME, MODEL in MODELS.items():
-                    tmp = MODEL_NAME
-                    for key, val in MODEL.items():
-                        if "use_" in key or key=="ECSN":
-                            # escape values, which are allowed to differ
-                            continue
-                        if getattr(self, key) != val:
-                            if self.verbose:
-                                print(tmp, 'mismatch:', key,
-                                      getattr(self, key), val)
-                            tmp = None
-                            break
-                    if tmp is not None:
-                        if self.verbose:
-                            print('matched to model:', tmp)
-                        MODEL_NAME_SEL = tmp
+                # find SN_MODEL_NAME corresponding to class variable
+                SN_MODEL_NAME_SEL = get_SN_MODEL_NAME(vars(self),
+                                                      verbose=self.verbose)
 
-                # check if selected MODEL is supported
-                if MODEL_NAME_SEL is None:
+                # check if selected model is supported
+                if SN_MODEL_NAME_SEL is None:
                     raise ValueError('Your model assumptions are not'
                                      'supported!')
-                elif getattr(star, MODEL_NAME_SEL) is None:
+                elif getattr(star, SN_MODEL_NAME_SEL) is None:
                     # NOTE: this option is needed to do the collapse
                     # for stars evolved with the step_detached or
                     # step_disrupted.
                     # allow to continue with the collapse with profile
                     # or core masses
-                    Pwarn(f'{MODEL_NAME_SEL}: The collapsed star was not '
+                    Pwarn(f'{SN_MODEL_NAME_SEL}: The collapsed star was not '
                           'interpolated! If use_profiles or use_core_masses '
                           'is set to True, continue with the collapse.',
                           "InterpolationWarning")
                 else:
-                    MODEL_properties = getattr(star, MODEL_NAME_SEL)
+                    SN_MODEL_properties = getattr(star, SN_MODEL_NAME_SEL)
 
                     SN_type = self.check_SN_type(m_core=star.co_core_mass,
                                                  m_He_core=star.he_core_mass,
@@ -566,9 +537,9 @@ class StepSN(object):
                     else:
                         alternative = ""
 
-                    if MODEL_properties['SN_type'] == "ECSN":
+                    if SN_MODEL_properties['SN_type'] == "ECSN":
                         # overwrite ECSN in SN MODEL
-                        MODEL_properties['SN_type'] = SN_type
+                        SN_MODEL_properties['SN_type'] = SN_type
                         Pwarn(f"ECSN in SN_MODEL replaced by {SN_type}",
                               "ReplaceValueWarning")
 
@@ -576,24 +547,24 @@ class StepSN(object):
                         # do not use interpolated values for ECSN range instead
                         # behave like use_core_masses=True
                         pass
-                    ## star's SN_type mismatches one from the MODEL
-                    elif SN_type != MODEL_properties['SN_type']:
+                    ## star's SN_type mismatches one from the model
+                    elif SN_type != SN_MODEL_properties['SN_type']:
                         Pwarn(f"The SN_type does not match the star: {SN_type}"
-                              f"!={MODEL_properties['SN_type']}."+alternative,
-                              "ApproximationWarning")
-                    ## Check if SN_type mismatches the CO_type in MODEL
-                    elif not check_SN_CO_match(MODEL_properties['SN_type'],
-                                               MODEL_properties['state']):
-                        Pwarn(f"{MODEL_NAME_SEL}: The SN_type does not match "
-                              "the predicted CO."+alternative,
+                              f"!={SN_MODEL_properties['SN_type']}."
+                              +alternative, "ApproximationWarning")
+                    ## Check if SN_type mismatches the CO_type in the model
+                    elif not check_SN_CO_match(SN_MODEL_properties['SN_type'],
+                                               SN_MODEL_properties['state']):
+                        Pwarn(f"{SN_MODEL_NAME_SEL}: The SN_type does not "
+                              "match the predicted CO."+alternative,
                               "ApproximationWarning")
                     ## Check if there is no interpolated remnant mass
-                    elif pd.isna(MODEL_properties['mass']):
+                    elif pd.isna(SN_MODEL_properties['mass']):
                         Pwarn(f"There is no interpolated remnant mass."
                               +alternative, "ApproximationWarning")
                     ## Otherwise interpolated values can be used for this SN
                     else:
-                        for key, value in MODEL_properties.items():
+                        for key, value in SN_MODEL_properties.items():
                             setattr(star, key, value)
 
                         if star.state == 'WD':
@@ -1654,6 +1625,27 @@ class StepSN(object):
             binary.orbital_period = np.nan
             binary.mass_transfer_case = 'None'
             binary.first_SN_already_occurred = True
+
+        elif ((binary.star_1.state == 'massless_remnant') or
+              (binary.star_2.state == 'massless_remnant')):
+            # the binary should be disrupted when a massless_remnant formed
+            # update the tilt
+            if not binary.first_SN_already_occurred:
+                binary.star_1.spin_orbit_tilt_first_SN = np.nan
+                binary.star_2.spin_orbit_tilt_first_SN = np.nan
+                binary.first_SN_already_occurred = True
+            else:
+                binary.star_1.spin_orbit_tilt_second_SN = np.nan
+                binary.star_2.spin_orbit_tilt_second_SN = np.nan
+
+            binary.state = "disrupted"
+            binary.event = None
+            binary.separation = np.nan
+            binary.eccentricity = np.nan
+            binary.V_sys = np.array([0, 0, 0])
+            binary.time = binary.time_history[-1]
+            binary.orbital_period = np.nan
+            binary.mass_transfer_case = 'None'
 
         else:
 

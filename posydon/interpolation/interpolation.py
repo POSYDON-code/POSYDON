@@ -12,7 +12,7 @@ import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 from .data_scaling import DataScaler
 from posydon.grids.psygrid import PSyGrid
-from posydon.grids.MODELS import MODELS
+from posydon.grids.SN_MODELS import SN_MODELS
 from posydon.utils.interpolators import interp1d
 
 
@@ -391,7 +391,9 @@ class GRIDInterpolator():
                      'lambda_CE_30cent',
                      'co_core_mass',
                      'co_core_radius',
-                     'lambda_CE_pure_He_star_10cent')
+                     'lambda_CE_pure_He_star_10cent',
+                     'total_mass_h1',
+                     'total_mass_he4')
 
         self.translate = {
             'age': 'star_age',
@@ -451,6 +453,8 @@ class GRIDInterpolator():
             'thickness_conv_reg_fortides': 'thickness_conv_reg_fortides',
             'radius_conv_reg_fortides': 'radius_conv_reg_fortides',
             'surface_he3': 'surface_he3',
+            'total_mass_h1': 'total_mass_h1',
+            'total_mass_he4': 'total_mass_he4',
             }
 
         # processed keys
@@ -469,11 +473,11 @@ class GRIDInterpolator():
 
         # core collapse keys
         keys = []
-        for MODEL_NAME in MODELS.keys():
+        for SN_MODEL_NAME in SN_MODELS.keys():
             for key in ['CO_type', 'SN_type', 'f_fb', 'mass', 'spin',
                         'm_disk_accreted', 'm_disk_radiated','M4', 'mu4',
                         'h1_mass_ej', 'he4_mass_ej']:
-                keys.append('S1_' + MODEL_NAME + '_' + key )
+                keys.append('S1_' + SN_MODEL_NAME + '_' + key )
         self.final_keys += tuple(keys)
 
         self.profile_keys = (

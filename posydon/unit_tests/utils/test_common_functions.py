@@ -62,7 +62,7 @@ def star_profile():
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['ALL_RLO_CASES', 'ALL_STAR_STATES', 'BURNING_STATES',\
+        elements = {'ALL_RLO_CASES', 'ALL_STAR_STATES', 'BURNING_STATES',\
                     'CEE_parameters_from_core_abundance_thresholds',\
                     'COMPACT_OBJECTS', 'CO_radius',\
                     'DEFAULT_CE_OPTION_FOR_LAMBDA', 'He_MS_lifetime',\
@@ -107,12 +107,24 @@ class TestElements:
                     'period_change_stable_MT', 'period_evol_wind_loss',\
                     'profile_recomb_energy', 'quad',\
                     'read_histogram_from_file', 'rejection_sampler',\
-                    'roche_lobe_radius', 'rotate', 'rzams',\
-                    'separation_evol_wind_loss', 'set_binary_to_failed',\
-                    'spin_stable_mass_transfer', 'stefan_boltzmann_law']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'roche_lobe_radius', 'check_for_RLO', 'rotate',\
+                    'rzams', 'separation_evol_wind_loss',\
+                    'set_binary_to_failed', 'spin_stable_mass_transfer',\
+                    'stefan_boltzmann_law'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_STATE_UNDETERMINED(self):
         assert isinstance(totest.STATE_UNDETERMINED, str)
@@ -179,6 +191,9 @@ class TestElements:
 
     def test_instance_roche_lobe_radius(self):
         assert isroutine(totest.roche_lobe_radius)
+
+    def test_instance_check_for_RLO(self):
+        assert isroutine(totest.check_for_RLO)
 
     def test_instance_orbital_separation_from_period(self):
         assert isroutine(totest.orbital_separation_from_period)
@@ -544,6 +559,24 @@ class TestFunctions:
         for m in [1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7]:
             assert totest.roche_lobe_radius(m, 1.0)\
                    + totest.roche_lobe_radius(1.0, m) < 1.0
+
+    def test_check_for_RLO(self):
+        # missing argument
+        with raises(TypeError, match="missing 5 required positional "\
+                                     +"arguments: 'm1', 'r1', 'm2', 'r2', "\
+                                     +"and 'separation'"):
+            totest.check_for_RLO()
+
+        # examples
+        tests = [(1.0, 1.0, 1.0, 1.0, 1.0, 1e-3, True),
+                 (2.0, 1.0, 1.0, 1.0, 2.5, 1e-3, True),
+                 (1.0, 1.0, 2.0, 1.0, 2.5, 1e-3, True),
+                 (1.0, 1.0, 1.0, 1.0, 4.0, 1e-3, False)]
+
+        for (m1, r1, m2, r2, separation, tolerance, RLO) in tests:
+            assert totest.check_for_RLO(m1, r1, m2, r2, separation) == RLO
+            assert totest.check_for_RLO(m1, r1, m2, r2, separation, tolerance)\
+                   == RLO
 
     def test_orbital_separation_from_period(self):
         # missing argument
