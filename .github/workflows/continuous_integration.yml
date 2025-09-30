@@ -20,6 +20,10 @@ jobs:
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
 
+      - name: Commit pre-commit results
+        uses: pre-commit-ci/lite-action@v1.1.0
+        if: always()
+
   test:
     needs: lint
     runs-on: ${{ matrix.os }}
