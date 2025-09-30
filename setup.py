@@ -114,7 +114,6 @@ extras_require = {
     'dev': [
         'pre-commit >= 3.7.0',
         'isort >= 5.13.2',
-        'ruff >= 0.6.0',
     ],
 }
 
