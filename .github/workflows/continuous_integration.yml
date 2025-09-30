@@ -5,27 +5,7 @@ on:
     branches: [main, v2.1-dev]
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Run pre-commit
-        uses: pre-commit/action@v3.0.1
-
-      - name: Commit pre-commit results
-        uses: pre-commit-ci/lite-action@v1.1.0
-        if: always()
-
   test:
-    needs: lint
     runs-on: ${{ matrix.os }}
 
     strategy:
