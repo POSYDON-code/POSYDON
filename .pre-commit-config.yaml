@@ -19,7 +19,6 @@ repos:
       - id: check-illegal-windows-names
       - id: check-toml
       - id: debug-statements
-      - id: double-quote-string-fixer
       - id: end-of-file-fixer
       - id: requirements-txt-fixer
       - id: trailing-whitespace
