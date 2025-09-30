@@ -79,7 +79,7 @@ def labels_out_of_grid(grids, grid_name,**kwargs):
             failed_labels.append(axis_label)
         elif x[axis_label] > grid.axis_x_max[axis_label]:
             failed_labels.append(axis_label)
-    return failed_grid_labels
+    return failed_labels
 
 def enforce_boundaries(grids, grid_name,grid_label,**kwargs):
     """This function enforces a value of a star to fall within the grid
