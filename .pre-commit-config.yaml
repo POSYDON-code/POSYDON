@@ -1,0 +1,31 @@
+fail_fast: false
+
+default_language_version:
+  python: python3.11
+
+exclude: |
+  (?x)(
+    ^data/
+    |^posydon/unit_tests/_data/
+  )
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-docstring-first
+      - id: check-illegal-windows-names
+      - id: check-toml
+      - id: debug-statements
+      - id: double-quote-string-fixer
+      - id: end-of-file-fixer
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args:
+          - "--profile=black"

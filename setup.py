@@ -1,9 +1,11 @@
 """Setup the posydon package."""
 
 from __future__ import print_function
+
 import glob
-import sys
 import os.path
+import sys
+
 sys.path.insert(0, os.path.dirname(__file__))
 
 import versioneer
@@ -25,13 +27,13 @@ if WRAP_C_CPP_OR_FORTRAN:
     from distutils.command.sdist import sdist
 
     try:
-        from numpy.distutils.core import setup, Extension
+        from numpy.distutils.core import Extension, setup
     except ImportError:
-        raise ImportError("Building fortran extensions requires numpy.")
+        raise ImportError('Building fortran extensions requires numpy.')
 
-    cmdclass["sdist"] = sdist
+    cmdclass['sdist'] = sdist
 else:
-    from setuptools import setup, find_packages
+    from setuptools import find_packages, setup
 
 
 # DOCUMENTATION
@@ -42,11 +44,11 @@ try:
 except ImportError:
     pass
 else:
-    cmdclass["build_sphinx"] = BuildDoc
+    cmdclass['build_sphinx'] = BuildDoc
 
 # read description
-with open("README.md", "rb") as f:
-    longdesc = "f.read().decode().strip()"
+with open('README.md', 'rb') as f:
+    longdesc = 'f.read().decode().strip()'
 
 
 # DEPENDENCIES
@@ -85,29 +87,35 @@ install_requires = [
 ]
 
 tests_require = [
-    "pytest >= 7.3.1",
-    "pytest-cov >= 4.0.0",
+    'pytest >= 7.3.1',
+    'pytest-cov >= 4.0.0',
 ]
 
 # For documentation
 extras_require = {
     # to build documentation
-    "doc": [
-        "ipython",
-        "sphinx >= 8.2.2",
-        "numpydoc",
-        "sphinx_rtd_theme",
-        "sphinxcontrib_programoutput",
-        "PSphinxTheme",
-        "nbsphinx",
-        "pandoc",
+    'doc': [
+        'ipython',
+        'sphinx >= 8.2.2',
+        'numpydoc',
+        'sphinx_rtd_theme',
+        'sphinxcontrib_programoutput',
+        'PSphinxTheme',
+        'nbsphinx',
+        'pandoc',
     ],
     # for experimental visualization features, e.g. VDH diagrams
-    "vis": ["PyQt5 >= 5.15.9, <= 5.15.11"],
+    'vis': ['PyQt5 >= 5.15.9, <= 5.15.11'],
     # for profile machine learning features, e.g. profile interpolation
-    "ml": ["tensorflow >= 2.13.0"],
+    'ml': ['tensorflow >= 2.13.0'],
     # for running population synthesis on HPC facilities
-    "hpc": ["mpi4py >= 3.0.3"],
+    'hpc': ['mpi4py >= 3.0.3'],
+    # development tooling
+    'dev': [
+        'pre-commit >= 3.7.0',
+        'isort >= 5.13.2',
+        'ruff >= 0.6.0',
+    ],
 }
 
 # RUN SETUP
@@ -115,15 +123,15 @@ extras_require = {
 packagenames = find_packages()
 
 # Executables go in a folder called bin
-scripts = glob.glob(os.path.join("bin", "*"))
+scripts = glob.glob(os.path.join('bin', '*'))
 
-PACKAGENAME = "posydon"
-DISTNAME = "posydon"
-AUTHOR = "POSYDON Collaboration"
-AUTHOR_EMAIL = "posydon.team@gmail.com"
-LICENSE = "GPLv3+"
-DESCRIPTION = "POSYDON the Next Generation of Population Synthesis"
-GITHUBURL = "https://github.com/POSYDON-code/POSYDON"
+PACKAGENAME = 'posydon'
+DISTNAME = 'posydon'
+AUTHOR = 'POSYDON Collaboration'
+AUTHOR_EMAIL = 'posydon.team@gmail.com'
+LICENSE = 'GPLv3+'
+DESCRIPTION = 'POSYDON the Next Generation of Population Synthesis'
+GITHUBURL = 'https://github.com/POSYDON-code/POSYDON'
 
 # Additional included files via include_package_data are defined in MANIFEST.in
 
@@ -133,7 +141,7 @@ setup(
     version=__version__,
     description=DESCRIPTION,
     long_description=longdesc,
-    long_description_content_type="text/markdown",
+    long_description_content_type='text/markdown',
     ext_modules=[wrapper] if WRAP_C_CPP_OR_FORTRAN else [],
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
@@ -147,21 +155,21 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,
-    python_requires=">=3.11, <3.12",
+    python_requires='>=3.11, <3.12',
     use_2to3=False,
     classifiers=[
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Science/Research",
-        "Intended Audience :: End Users/Desktop",
-        "Topic :: Scientific/Engineering",
-        "Topic :: Scientific/Engineering :: Astronomy",
-        "Topic :: Scientific/Engineering :: Physics",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3.11",
-        "Operating System :: POSIX",
-        "Operating System :: Unix",
-        "Operating System :: MacOS",
-        "Natural Language :: English",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3+)",
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Science/Research',
+        'Intended Audience :: End Users/Desktop',
+        'Topic :: Scientific/Engineering',
+        'Topic :: Scientific/Engineering :: Astronomy',
+        'Topic :: Scientific/Engineering :: Physics',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3.11',
+        'Operating System :: POSIX',
+        'Operating System :: Unix',
+        'Operating System :: MacOS',
+        'Natural Language :: English',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3+)',
     ],
 )
