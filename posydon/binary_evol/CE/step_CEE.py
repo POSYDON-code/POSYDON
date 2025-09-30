@@ -86,6 +86,14 @@ MODEL = {"prescription": 'alpha-lambda',
 # in the profile)
 # the mass fraction of an element which is used as threshold to define a core,
 
+list_for_matching_HMS = [
+                ["mass", "center_h1", "he_core_mass"],
+                [20.0, 1.0, 10.0],
+                ["log_min_max", "min_max", "min_max"],
+                [m_min_H, m_max_H], [t_min_H, t_max_H]
+            ]
+
+
 class StepCEE(object):
     """Compute supernova final remnant mass, fallback fraction & stellar state.
 
@@ -169,7 +177,17 @@ class StepCEE(object):
 
         self.verbose = verbose
         self.path_to_posydon = PATH_TO_POSYDON
-
+        self.track_matcher = TrackMatcher(grid_name_Hrich = None,
+                                    grid_name_strippedHe = None,
+                                    path=self.path_to_posydon, metallicity = None,
+                                    matching_method = "minimize",
+                                    matching_tolerance=1e-2,
+                                    matching_tolerance_hard=1e-1,
+                                    list_for_matching_HMS = list_for_matching_HMS,
+                                    list_for_matching_HeStar = None,
+                                    list_for_matching_postMS = None,
+                                    record_matching = False,
+                                    verbose = self.verbose)
     def __call__(self, binary):
         """Perform the CEE step for a BinaryStar object."""
         # Determine which star is the donor and which is the companion
@@ -928,6 +946,20 @@ class StepCEE(object):
             print("DEorb", eorb_postCEE - eorb_i)
             print("separation_i in Rsun", separation_i/const.Rsun)
             print("separation_postCEE in Rsun", separation_postCEE/const.Rsun)
+
+        #Check if the star 2 radius needs to be re-adjusted. 
+        RL1 = cf.roche_lobe_radius(mc1_i/mc2_i, separation_postCEE/const.Rsun)
+        RL2 = cf.roche_lobe_radius(mc2_i/mc1_i, separation_postCEE/const.Rsun)
+
+        if ((rc1_i - RL1) < self.CEE_tolerance_err
+                and (rc2_i - RL2) > self.CEE_tolerance_err):
+
+                t0 = binary.time
+                rc2_f = 10**(track_matcher.get_track_val('log_R', htrack, m0, t))
+                print(t0,rc2_f)
+                #DO the matching 
+                # track_matcher.get_track_val(key, htrack, m0, t) for the radius of the desired
+                #track in the time of
 
 
         # Calculate the post-CE binary properties
