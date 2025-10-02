@@ -526,4 +526,3 @@ Based on the components and the user given identifiers, the data is stored in th
       - The weights of each event based on their birth redshifts and their population weight.
     * - `transiens/{transient_name}/rates/{SFH_identifier}/intrinsic_rate_density`
       - The intrinsic rate density of the events in the population, calculated with :func:`~Rates.calculate_intrinsic_rate_density`.
-

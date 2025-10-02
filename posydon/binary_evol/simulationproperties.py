@@ -566,4 +566,3 @@ class PrintStepInfoHooks(EvolveHooks):
         """Report at the end of the evolution of each binary."""
         print("End evol for binary {}".format(binary.index), end='\n'*2)
         return binary
-

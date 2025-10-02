@@ -2525,4 +2525,3 @@
       ! until it is set to `.false.`.  This way people will hopefully not be
       ! confused as to why their `run_star_extras` functions are not being called.
       warn_run_star_extras = .true.
-

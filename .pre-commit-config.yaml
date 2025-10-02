@@ -40,4 +40,3 @@ repos:
       - id: isort
         args:
           - "--profile=black"
-

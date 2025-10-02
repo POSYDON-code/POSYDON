@@ -119,4 +119,3 @@ out of the ``ProfileInterpolator`` class as follows:
   test_density_profiles = model.test_profiles[:,model.names.index("logRho")]
   test_H_profiles = model.test_profiles[:,model.names.index("x_mass_fraction_H")]
   test_He_profiles = model.test_profiles[:,model.names.index("y_mass_fraction_He")]
-

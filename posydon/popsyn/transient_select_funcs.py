@@ -298,5 +298,3 @@ def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
             detectable_weights[mask, i] = detectable_weights[mask, i] * sel_eff.predict_pdet(data_slice[mask])
 
     return pd.DataFrame(detectable_weights, index=z_events_chunk.index, columns=z_events_chunk.columns)
-
-
