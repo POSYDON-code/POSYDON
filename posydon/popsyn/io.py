@@ -1,4 +1,12 @@
-"""Handle I/O operations for the population synthesis code."""
+"""Handle I/O operations for the population synthesis code.
+
+POSYDON Data Types are enforced when converting BinaryStar
+and SingleStar instances to Pandas DataFrames. This is done to
+ensure memory efficient data storage and to solve problems
+combining temp batch files.
+
+Check Pandas docs for allowed data types in DataFrames.
+"""
 
 import ast
 import errno
@@ -9,15 +17,6 @@ from configparser import ConfigParser
 
 import numpy as np
 import pandas as pd
-
-"""
-POSYDON Data Types are enforced when converting BinaryStar
-and SingleStar instances to Pandas DataFrames. This is done to
-ensure memory efficient data storage and to solve problems
-combining temp batch files.
-
-Check Pandas docs for allowed data types in DataFrames.
-"""
 
 BINARYPROPERTIES_DTYPES = {
     # The state and event of the system. For more information, see
