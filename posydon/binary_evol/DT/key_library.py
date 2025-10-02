@@ -7,7 +7,7 @@ __authors__ = [
     "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
-# translates MESA stellar data column names into 
+# translates MESA stellar data column names into
 # what we use for property names in interpolators.
 # Most are the same, a few are different.
 DEFAULT_TRANSLATION = {
@@ -164,7 +164,7 @@ DEFAULT_PROFILE_KEYS = (
 
 """
 # states to ID an HMS star
-# TODO: build these from the other lists to (hopefully) 
+# TODO: build these from the other lists to (hopefully)
 #       ensure consistency
 STAR_STATES_FOR_HMS_MATCHING = ["H-rich_Core_H_burning",
                                 "accreted_He_Core_H_burning"]

@@ -8,9 +8,12 @@ __authors__ = [
 
 
 import numpy as np
+
 from posydon.utils.limits_thresholds import (
-    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD,
-    THRESHOLD_CENTRAL_ABUNDANCE, THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C
+    LG_MTRANSFER_RATE_THRESHOLD,
+    RL_RELATIVE_OVERFLOW_THRESHOLD,
+    THRESHOLD_CENTRAL_ABUNDANCE,
+    THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C,
 )
 from posydon.utils.posydonwarning import Pwarn
 
@@ -204,7 +207,7 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
                 ("star_age" in h2.dtype.names)))):
         #at least one histroy doesn't contain an age column
         return bh, h1, h2, ''
-    
+
     h1_colnames = h1.dtype.names
     if ("center_he4" in h1_colnames) and ("center_c12" in h1_colnames):
         if (len(h1["center_he4"])>0) and (len(h1["center_c12"])>0):
@@ -225,7 +228,7 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
     if (not depleted1) and (not depleted2):
         #none of the stars reached He depletion
         return bh, h1, h2, ''
-    
+
     if depleted1:
 #        where_conditions_met1 = np.where((h1["center_he4"]<Ystop) and (h1["center_c12"]<XCstop))[0]
         where_conditions_met1 = []
@@ -266,15 +269,15 @@ def keep_till_central_abundance_He_C(bh, h1, h2,
         else:
             last_index = where_conditions_met2[0]
             newTF1 = 'Secondary got stopped before central carbon depletion'
-    
+
     # include the point above the stopping criteria so that the last inferred
     # stellar state will be XXX_Central_He_depleted. This is essential to find
     # the core mass at He depletion with the calculate_Patton20_values_at_He_depl
-    # method used to calculate the core collapse properties with the 
+    # method used to calculate the core collapse properties with the
     # Patton&Sukhbold mechanism.
     if len(bh) >= last_index+2:
         last_index += 1
-        
+
     new_bh = bh[:last_index]
     new_h1 = h1[:last_index]
     new_h2 = h2[:last_index]

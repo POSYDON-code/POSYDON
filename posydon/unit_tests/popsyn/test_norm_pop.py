@@ -4,19 +4,21 @@ __authors__ = [
     "Max Briel <max.briel@gmail.com>"
 ]
 
-import numpy as np
 import os
+
+import numpy as np
 import pandas as pd
 import pytest
 from pytest import fixture, mark
 
 import posydon.popsyn.IMFs as IMFs
-from posydon.popsyn.independent_sample import generate_independent_samples
 from posydon.config import PATH_TO_POSYDON
-from posydon.utils.posydonwarning import UnsupportedModelWarning
 
 # file to test
 from posydon.popsyn import norm_pop
+from posydon.popsyn.independent_sample import generate_independent_samples
+from posydon.utils.posydonwarning import UnsupportedModelWarning
+
 
 # Dummy IMF to simulate a valid IMF pdf
 class DummyIMF:
@@ -39,12 +41,12 @@ class TestGetIMFPdf:
         result = pdf_func(m_test)
         expected = np.ones_like(m_test) / (kwargs['primary_mass_max'] - kwargs['primary_mass_min'])
         assert np.allclose(result, expected)
-    
-    
+
+
     def test_valid_imf_returns_dummy_pdf(self, monkeypatch):
         # Use monkeypatch to add DummyIMF to IMFs module
         monkeypatch.setattr(IMFs, 'DummyIMF', DummyIMF, raising=False)
-        
+
         kwargs = {
             'primary_mass_scheme': 'DummyIMF',
             'primary_mass_min': 1,
@@ -67,13 +69,13 @@ class TestGetIMFPdf:
             def pdf(self, m):
                 # Return custom_param if set, otherwise 1
                 return self.custom_param if self.custom_param is not None else 1
-        
+
         # Use monkeypatch to add SchemeKwargsIMF to IMFs module
         monkeypatch.setattr(IMFs,
                             'SchemeKwargsIMF',
                             SchemeKwargsIMF,
                             raising=False)
-        
+
         # Create kwargs with scheme-specific parameters
         kwargs = {
             'primary_mass_scheme': 'SchemeKwargsIMF',
@@ -81,16 +83,16 @@ class TestGetIMFPdf:
             'primary_mass_max': 100,
             'SchemeKwargsIMF': {'custom_param': 3.5}  # Scheme-specific kwargs
         }
-        
+
         # Get the PDF function
         pdf_func = norm_pop.get_IMF_pdf(kwargs)
-        
+
         # Test that the custom parameter was used
         m_test = np.array([1, 10, 50])
         result = pdf_func(m_test)
         expected = kwargs['SchemeKwargsIMF']['custom_param']  # The value of custom_param
         assert np.allclose(result, expected)
-        
+
 
 
 class TestGetMassRatioPdf:
@@ -123,7 +125,7 @@ class TestGetMassRatioPdf:
             'q_max': 0.8,
         }
         q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
-        # In alternative branch, pdf returns 1/(q_max-q_min) for q in [q_min,q_max] 
+        # In alternative branch, pdf returns 1/(q_max-q_min) for q in [q_min,q_max]
         result = q_pdf(0.5*(kwargs['q_min']+kwargs['q_max']), None)
         assert np.all(result == 1.0/(kwargs['q_max']-kwargs['q_min']))
         result = q_pdf(0.5*kwargs['q_min'], None)
@@ -135,17 +137,17 @@ class TestGetMassRatioPdf:
         kwargs = {
             'secondary_mass_scheme': 'invalid'
         }
-        
+
         with pytest.warns(UnsupportedModelWarning) as warning_info:
             q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
-        
+
         assert ("The secondary_mass_scheme is not defined use a flat mass ratio"
                 " distribution in (0,1]." in str(warning_info[0].message))
         results = q_pdf(0.4)
         assert np.all(results == 1)
 
 class TestGetBinaryFractionPdf:
-    
+
     def test_const_binary_fraction_pdf(self):
         kwargs = {
             'binary_fraction_scheme': 'const',
@@ -158,14 +160,14 @@ class TestGetBinaryFractionPdf:
         # For single stars, expected = 1 - 0.7 = 0.3
         result = pdf_func(False)
         assert np.allclose(result, np.asarray(0.3))
-        
+
     def test_invalid_binary_fraction_scheme(self):
         kwargs = {
             'binary_fraction_scheme': 'invalid'
         }
         with pytest.raises(ValueError) as excinfo:
             norm_pop.get_binary_fraction_pdf(kwargs)
-        
+
         assert "Binary fraction scheme not recognized" in str(excinfo.value)
 
 class TestGetPeriodPdf:
@@ -181,7 +183,7 @@ class TestGetPeriodPdf:
         result = period_pdf_func(10.0, 15.0)  # P=10 days, m1=15 Msun
         assert isinstance(result, (float, np.ndarray))
         assert np.all(result >= 0)
-    
+
     def test_power_law_period(self):
         kwargs = {
             'orbital_scheme': 'period',
@@ -198,7 +200,7 @@ class TestGetPeriodPdf:
         result2 = period_pdf_func(100.0, 20.0, 1.0)
         assert isinstance(result2, (float, np.ndarray))
         assert np.all(result2 >= 0)
-        
+
     def test_log_uniform_separation(self):
         kwargs = {
             'orbital_scheme': 'separation',
@@ -210,7 +212,7 @@ class TestGetPeriodPdf:
         result = separation_pdf_func(10.0, 15.0, 0.8)  # a=10 Rsun, m1=15 Msun
         assert isinstance(result, (float, np.ndarray))
         assert np.all(result >= 0)
-    
+
     def test_invalid_period_scheme(self):
         kwargs = {
             'orbital_scheme': 'period',
@@ -220,25 +222,25 @@ class TestGetPeriodPdf:
         }
         with pytest.raises(ValueError) as excinfo:
             norm_pop.get_period_pdf(kwargs)
-        
+
         assert "Orbital period scheme not recognized" in str(excinfo.value)
-        
+
         kwargs = {
             'orbital_scheme' : 'invalid_scheme',
         }
-        
+
         with pytest.raises(ValueError) as excinfo:
             norm_pop.get_period_pdf(kwargs)
-        
+
         assert "Orbital scheme not recognized" in str(excinfo.value)
-        
+
         kwargs = {
             'orbital_scheme': 'separation',
             'orbital_separation_scheme': 'invalid_scheme',
         }
         with pytest.raises(ValueError) as excinfo:
             norm_pop.get_period_pdf(kwargs)
-        
+
         assert "Orbital separation scheme not recognized" in str(excinfo.value)
 
 
@@ -259,12 +261,12 @@ class TestGetMeanMass:
             'q_min': 0.8,  # Greater than q_max
             'q_max': 0.2,
         }
-        
+
         with pytest.raises(ValueError) as excinfo:
             norm_pop.get_mean_mass(params)
-        
+
         assert "q_min must be less than q_max" in str(excinfo.value)
-    
+
     def test_mean_mass_without_q_bounds(self):
         # Test the branch where q_min and q_max are computed from secondary masses
         params = {
@@ -281,7 +283,7 @@ class TestGetMeanMass:
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
         }
-        
+
         # This should not raise an error and should return a valid mean mass
         result = norm_pop.get_mean_mass(params)
         assert isinstance(result, (float, np.floating))
@@ -311,7 +313,7 @@ class TestGetPdf:
         expected = 0.5 * imf_val
         result = pdf_func(m1_val, binary=False)
         assert np.allclose(result, expected)
-    
+
     def test_binary_pdf(self):
         # Using alternative mass ratio branch (q_min and q_max provided)
         kwargs = {
@@ -327,7 +329,7 @@ class TestGetPdf:
             'orbital_period_scheme': 'Sana+12_period_extended',
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
-            
+
         }
         pdf_func = norm_pop.get_pdf(kwargs, mass_pdf=True)
         m1_val = 10
@@ -344,7 +346,7 @@ class TestGetPdf:
     def test_dummy_imf_pdf(self, monkeypatch):
         # Use monkeypatch fixture to add DummyIMF to IMFs module
         monkeypatch.setattr(IMFs, 'DummyIMF', DummyIMF, raising=False)
-        
+
         kwargs = {
             'primary_mass_scheme': 'DummyIMF',
             'primary_mass_min': 1,
@@ -414,7 +416,7 @@ def pop_data(kwargs):
     return pop_data
 
 class TestReweighting():
-    
+
     def test_population_larger_sample_space(self, base_simulation_kwargs):
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
@@ -424,13 +426,13 @@ class TestReweighting():
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = small_sample_primary_mass_max
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['primary_mass_min'] = 7.
         expanded_kwargs['primary_mass_max'] = 40
-        
+
         expanded_sample = pop_data(expanded_kwargs)
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
@@ -443,13 +445,13 @@ class TestReweighting():
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
+
         mask = expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max
         selection = expanded_weights[mask]
         assert np.isclose(np.nansum(selection), np.nansum(small_weights), atol=1e-3)
-        
+
     def test_population_larger_sample_space_binary(self, base_simulation_kwargs):
         base_simulation_kwargs['number_of_binaries'] =  100000
         base_simulation_kwargs['binary_fraction_const'] = 1.
@@ -458,33 +460,33 @@ class TestReweighting():
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = small_sample_primary_mass_max
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['primary_mass_min'] = 7.
         expanded_kwargs['primary_mass_max'] = 40
-        
+
         expanded_sample = pop_data(expanded_kwargs)
-        
-        M_sim = (small_sample['S1_mass_i'].sum() 
+
+        M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
                                                          M_sim,
                                                          base_simulation_kwargs,
                                                          expanded_kwargs)
-        
+
         M_sim = (expanded_sample['S1_mass_i'].sum()
                  + expanded_sample['S2_mass_i'].sum())
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample,
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
+
         mask = expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max
         selection = expanded_weights[mask]
         assert np.isclose(np.nansum(selection), np.nansum(small_weights), atol=1e-3)
-        
+
     def test_population_larger_sample_space_mixed(self, base_simulation_kwargs):
         base_simulation_kwargs['number_of_binaries'] =  100000
         base_simulation_kwargs['binary_fraction_const'] = 0.7
@@ -493,36 +495,36 @@ class TestReweighting():
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = small_sample_primary_mass_max
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['primary_mass_min'] = 7.
         expanded_kwargs['primary_mass_max'] = 40
-        
+
         expanded_sample = pop_data(expanded_kwargs)
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
                                                          M_sim,
                                                          base_simulation_kwargs,
                                                          expanded_kwargs)
-        
+
         M_sim = (expanded_sample['S1_mass_i'].sum()
                  + expanded_sample['S2_mass_i'].sum())
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample,
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
+
         mask = expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max
         selection = expanded_weights[mask]
         assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
-        
+
     def test_population_larger_sample_space_binary_fraction_change(self,
                                                         base_simulation_kwargs):
-        
+
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
         base_simulation_kwargs['binary_fraction_const'] = 1.
@@ -531,38 +533,38 @@ class TestReweighting():
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = small_sample_primary_mass_max
         small_sample = pop_data(base_simulation_kwargs)
-        
-        
+
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['primary_mass_min'] = 7.
         expanded_kwargs['primary_mass_max'] = 40
         expanded_kwargs['binary_fraction_const'] = 0.7
-        
+
         expanded_sample = pop_data(expanded_kwargs)
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
                                                          M_sim,
                                                          base_simulation_kwargs,
                                                          expanded_kwargs)
-        
+
         M_sim = (expanded_sample['S1_mass_i'].sum()
                  + expanded_sample['S2_mass_i'].sum())
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample,
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
-        mask = ((expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max) 
+
+        mask = ((expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max)
                 & (expanded_sample['state_i'] != 'initially_single_star'))
         selection = expanded_weights[mask]
         assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
-        
-    def test_population_single_stars_binary_fraction(self, 
-                                                    base_simulation_kwargs): 
+
+    def test_population_single_stars_binary_fraction(self,
+                                                    base_simulation_kwargs):
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
         base_simulation_kwargs['binary_fraction_const'] = 0
@@ -571,35 +573,35 @@ class TestReweighting():
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = small_sample_primary_mass_max
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['primary_mass_min'] = 7.
         expanded_kwargs['primary_mass_max'] = 20
         expanded_kwargs['binary_fraction_const'] = 0.7
-        
+
         expanded_sample = pop_data(expanded_kwargs)
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
                                                          M_sim,
                                                          base_simulation_kwargs,
                                                          expanded_kwargs)
-        
+
         M_sim = (expanded_sample['S1_mass_i'].sum()
                  + expanded_sample['S2_mass_i'].sum())
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample,
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
+
         mask = ((expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max)
                 & (expanded_sample['state_i'] == 'initially_single_star'))
         selection = expanded_weights[mask]
-        assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)    
-        
+        assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
+
     def test_Salpeter_IMF_single(self, base_simulation_kwargs):
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
@@ -610,34 +612,34 @@ class TestReweighting():
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = small_sample_primary_mass_max
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['primary_mass_min'] = 7.
         expanded_kwargs['primary_mass_max'] = 20
         expanded_kwargs['primary_mass_scheme'] = 'Salpeter'
-        
+
         expanded_sample = pop_data(expanded_kwargs)
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
                                                          M_sim,
                                                          base_simulation_kwargs,
                                                          expanded_kwargs)
-        
+
         M_sim = (expanded_sample['S1_mass_i'].sum()
                  + expanded_sample['S2_mass_i'].sum())
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample,
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
+
         mask = expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max
         selection = expanded_weights[mask]
         assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
-        
+
     def test_changing_IMF_single(self, base_simulation_kwargs):
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
@@ -648,34 +650,34 @@ class TestReweighting():
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = small_sample_primary_mass_max
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['primary_mass_min'] = 7.
         expanded_kwargs['primary_mass_max'] = 20
         expanded_kwargs['primary_mass_scheme'] = 'Kroupa2001'
-        
+
         expanded_sample = pop_data(expanded_kwargs)
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
                                                          M_sim,
                                                          base_simulation_kwargs,
                                                          expanded_kwargs)
-        
+
         M_sim = (expanded_sample['S1_mass_i'].sum()
                  + expanded_sample['S2_mass_i'].sum())
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample,
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
+
         mask = expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max
         selection = expanded_weights[mask]
         assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
-        
+
     def test_changing_IMF_binary(self, base_simulation_kwargs):
         base_simulation_kwargs['number_of_binaries'] =  100000
         base_simulation_kwargs['binary_fraction_const'] = 1
@@ -685,30 +687,30 @@ class TestReweighting():
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = small_sample_primary_mass_max
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['primary_mass_min'] = 7.
         expanded_kwargs['primary_mass_max'] = 20
         expanded_kwargs['primary_mass_scheme'] = 'Kroupa2001'
-        
+
         expanded_sample = pop_data(expanded_kwargs)
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
                                                          M_sim,
                                                          base_simulation_kwargs,
                                                          expanded_kwargs)
-        
+
         M_sim = (expanded_sample['S1_mass_i'].sum()
                  + expanded_sample['S2_mass_i'].sum())
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample,
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
+
         mask = expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max
         selection = expanded_weights[mask]
         assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
@@ -722,39 +724,39 @@ class TestReweighting():
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = small_sample_primary_mass_max
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['primary_mass_min'] = 7.
         expanded_kwargs['primary_mass_max'] = 40
         expanded_kwargs['primary_mass_scheme'] = 'Kroupa2001'
-        
+
         expanded_sample = pop_data(expanded_kwargs)
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
                                                          M_sim,
                                                          base_simulation_kwargs,
                                                          expanded_kwargs)
-        
+
         M_sim = (expanded_sample['S1_mass_i'].sum()
                  + expanded_sample['S2_mass_i'].sum())
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample,
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
+
         mask = expanded_sample['S1_mass_i'] <= small_sample_primary_mass_max
         selection = expanded_weights[mask]
         assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
-    
+
     def test_same_sample_space(self, base_simulation_kwargs):
         '''Same sample space the weights should be the same as the simulation'''
-        
+
         base_pop_data = pop_data(base_simulation_kwargs)
-        M_sim = (base_pop_data['S1_mass_i'].sum() 
+        M_sim = (base_pop_data['S1_mass_i'].sum()
                  + base_pop_data['S2_mass_i'].sum())
         weights = norm_pop.calculate_model_weights(base_pop_data,
                                                    M_sim,
@@ -763,13 +765,13 @@ class TestReweighting():
         assert len(weights) == len(base_pop_data)
         assert np.all(weights >= 0)
         assert np.allclose(weights, 1/M_sim)
-        
-    
+
+
     def test_mass_ratio_extension(self,
                                   base_simulation_kwargs,
                                   base_population_kwargs,):
         '''Sample space for mass ratio extension'''
-        
+
         base_pop_data = pop_data(base_simulation_kwargs)
         M_sim = (base_pop_data['S1_mass_i'].sum()
                  + base_pop_data['S2_mass_i'].sum())
@@ -779,39 +781,39 @@ class TestReweighting():
                                                    base_population_kwargs)
         assert len(weights) == len(base_pop_data)
         assert np.all(weights >= 0)
-        
+
 
 class TestBinaryFractions():
-    
+
     def test_single_star_population(self, base_simulation_kwargs):
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
         base_simulation_kwargs['binary_fraction_const'] = 0
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = 20
-        
+
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['binary_fraction_const'] = 0.7
         expanded_sample = pop_data(expanded_kwargs)
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
                                                          M_sim,
                                                          base_simulation_kwargs,
                                                          expanded_kwargs)
-        
+
         M_sim = (expanded_sample['S1_mass_i'].sum()
                  + expanded_sample['S2_mass_i'].sum())
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample,
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
+
         # Check just single stars in the population.
         mask = (expanded_sample['state_i'] == 'initially_single_star')
         selection = expanded_weights[mask]
@@ -823,12 +825,12 @@ class TestBinaryFractions():
         base_simulation_kwargs['binary_fraction_const'] = 0
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = 20
-        
+
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['binary_fraction_const'] = 1.0
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         with pytest.raises(ValueError) as e:
@@ -838,18 +840,18 @@ class TestBinaryFractions():
                                                     base_simulation_kwargs,
                                                     expanded_kwargs)
         assert 'No binaries simulated, but requested' in str(e.value)
-        
+
     def test_binary_star_population_error(self, base_simulation_kwargs):
         base_simulation_kwargs['number_of_binaries'] =  100000
         base_simulation_kwargs['binary_fraction_const'] = 1.0
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = 20
-        
+
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['binary_fraction_const'] = 0
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         with pytest.raises(ValueError) as e:
@@ -859,41 +861,41 @@ class TestBinaryFractions():
                                                         base_simulation_kwargs,
                                                         expanded_kwargs)
         assert 'No single stars simulated, but requested' in str(e.value)
-        
-    
+
+
     def test_mixed_population(self, base_simulation_kwargs):
         base_simulation_kwargs['number_of_binaries'] =  100000
         base_simulation_kwargs['binary_fraction_const'] = 0.3
         base_simulation_kwargs['primary_mass_min'] = 7.
         base_simulation_kwargs['primary_mass_max'] = 20
-        
+
         small_sample = pop_data(base_simulation_kwargs)
-        
+
         expanded_kwargs = base_simulation_kwargs.copy()
         expanded_kwargs['binary_fraction_const'] = 0.5
         expanded_sample = pop_data(expanded_kwargs)
-        
+
         M_sim = (small_sample['S1_mass_i'].sum()
                  + small_sample['S2_mass_i'].sum())
         small_weights = norm_pop.calculate_model_weights(small_sample,
                                                          M_sim,
                                                          base_simulation_kwargs,
                                                          expanded_kwargs)
-        
+
         M_sim = (expanded_sample['S1_mass_i'].sum()
                  + expanded_sample['S2_mass_i'].sum())
         expanded_weights = norm_pop.calculate_model_weights(expanded_sample,
                                                             M_sim,
                                                             expanded_kwargs,
                                                             expanded_kwargs)
-        
+
         assert len(expanded_weights)  == len(expanded_sample)
-        
+
         # Check just single stars in the population; need selection on both.
         mask = ((expanded_sample['S1_mass_i'] <= 20)
                 & (expanded_sample['state_i'] == 'initially_single_star'))
         selection = expanded_weights[mask]
-        
+
         mask2 = ((small_sample['S1_mass_i'] <= 20)
                  & (small_sample['state_i'] == 'initially_single_star'))
         assert np.isclose(np.sum(selection),

@@ -12,15 +12,18 @@ __authors__ = [
 ]
 
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from labellines import labelLine
 from matplotlib.collections import LineCollection
 from matplotlib.lines import Line2D
+
 import posydon.utils.constants as const
-from labellines import labelLine
-from posydon.visualization.plot_defaults import PLOT_PROPERTIES
-from posydon.visualization.plot_defaults import DEFAULT_LABELS
-from posydon.visualization.plot_defaults import DEFAULT_MARKERS_COLORS_LEGENDS
+from posydon.visualization.plot_defaults import (
+    DEFAULT_LABELS,
+    DEFAULT_MARKERS_COLORS_LEGENDS,
+    PLOT_PROPERTIES,
+)
 
 
 class plot1D(object):

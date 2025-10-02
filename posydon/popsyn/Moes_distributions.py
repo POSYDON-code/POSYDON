@@ -25,7 +25,7 @@ from scipy.integrate import newton_cotes, quad
 
 class Moe_17_PsandQs():
     """Generate initial parameters following Moe & Di Stefano (2017) [1]_.
-    
+
     References
     ----------
     .. [1] Moe, M. and Di Stefano, R., “Mind Your Ps and Qs: The Interrelation
@@ -298,7 +298,7 @@ class Moe_17_PsandQs():
                     # maximum eccentricity for given P
                     e_max = 1.0 - (10**mylogP/2.0)**(-2.0/3.0)
                     # set distribution = 0 for e > e_max
-                    fe[self.ev >= e_max] = 0.0                         
+                    fe[self.ev >= e_max] = 0.0
                     # Assume e distribution has power-law slope eta for
                     # 0.0 < e / e_max < 0.8 and then linear turnover between
                     # 0.8 < e / e_max < 1.0 so that distribution is continuous
@@ -466,5 +466,3 @@ class Moe_17_PsandQs():
             es.append(mye)
             Zs.append(Z)
         return np.array(M2s), np.array(logPs), np.array(es), np.array(Zs)
-
-

@@ -15,8 +15,9 @@ __authors__ = [
 
 import numpy as np
 from scipy.stats import truncnorm
-from posydon.utils.common_functions import rejection_sampler
+
 from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
+from posydon.utils.common_functions import rejection_sampler
 
 _gen_Moe_17_PsandQs = None
 
@@ -95,7 +96,7 @@ def use_Moe_17_PsandQs(secondary_mass_scheme='', orbital_scheme='',
                        **kwargs):
     """Check whether Moe & Di Stefano (2017) [1]_ should be used for the
     initial sampling.
-    
+
     References
     ----------
     .. [1] Moe, M. and Di Stefano, R., “Mind Your Ps and Qs: The Interrelation
@@ -414,24 +415,24 @@ def generate_binary_fraction(m1=None, binary_fraction_const=1,
     """
     Getting the binary fraction depending on the scheme. The two possible
     option are a constant binary fraction and a binary fraction based on the
-    values given in Moe and Di Stefano (2017). 
+    values given in Moe and Di Stefano (2017).
 
     Parameters:
     --------------------
     binary scheme: string
         Determines if the value of the binary fraction will be constant or not
-    binary fraction const: int 
+    binary fraction const: int
         Gives the value the constant value of the binary if the constant scheme
-        is choosen. 
+        is choosen.
 
-    Returns 
+    Returns
     ------------------
     binary fraction: int
 
     """
     binary_fraction_scheme_options = ['const','Moe+17-massdependent']
 
-    if m1 is None: 
+    if m1 is None:
         raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
     elif not isinstance(m1,np.ndarray):
         m1 = np.asarray(m1)
@@ -439,10 +440,10 @@ def generate_binary_fraction(m1=None, binary_fraction_const=1,
     # Input parameter checks
     if binary_fraction_scheme not in binary_fraction_scheme_options:
         raise ValueError("You must provide an allowed binary fraction scheme.")
-    
-    if binary_fraction_scheme == 'const': 
+
+    if binary_fraction_scheme == 'const':
         binary_fraction = binary_fraction_const
-    
+
     elif binary_fraction_scheme == 'Moe+17-massdependent':
         binary_fraction[(m1 > 16)] = 0.94
         binary_fraction[(m1 <= 16) & (m1 > 9)] = 0.84
@@ -450,8 +451,7 @@ def generate_binary_fraction(m1=None, binary_fraction_const=1,
         binary_fraction[(m1 <= 5) & (m1 > 2)] = 0.59
         binary_fraction[(m1 <= 2)] = 0.4
 
-    else: 
+    else:
         pass
 
     return binary_fraction
-

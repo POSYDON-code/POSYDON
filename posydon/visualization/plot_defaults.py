@@ -18,8 +18,10 @@ __authors__ = [
 ]
 
 
-from matplotlib import rcParams
 import shutil
+
+from matplotlib import rcParams
+
 from posydon.grids.SN_MODELS import SN_MODELS
 
 PLOT_PROPERTIES = {

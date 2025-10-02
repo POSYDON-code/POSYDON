@@ -99,17 +99,17 @@
 !----------------------------------------------------------------------------------------------
 
    !# output
-   
-   
+
+
          !### echo_at_start
-         
+
       echo_at_start = ''
-   
-   
+
+
          !### echo_at_end
-         
+
       echo_at_end = ''
-      
+
 
          !### save_star_job_namelist
          ! dumps all values for &star_job controls to file
@@ -257,9 +257,9 @@
          !### stella_mdot_for_wind
          !### stella_v_wind
          !### stella_show_headers
-         
+
          ! write stella info for the model
-   
+
          ! the mesa/star routine for creating stella files knows about the following species:
          !    h1, he3, he4, c12, n14, o16, ne20, na23, mg24, al27, si28,
          !    s32, ar36, ca40, ti44, cr48, cr60, fe52, fe54, fe56, co56, ni56
@@ -750,7 +750,7 @@
       relax_initial_mass_scale = .false.
       dlgm_per_step = 1d-3
       change_mass_years_for_dt = 1
-      
+
 
          !### relax_initial_angular_momentum
          !### max_steps_to_relax_angular_momentum
@@ -786,7 +786,7 @@
       max_dt_for_relax_angular_momentum = 1d-9 ! in years
       num_timescales_for_relax_angular_momentum = 1000
       relax_angular_momentum_filename = ''
-      
+
 
          !### relax_initial_entropy
          !### max_steps_to_relax_entropy
@@ -1351,7 +1351,7 @@
          !### change_am_nu_rot_flag
          !### change_initial_am_nu_rot_flag
          !### use_D_omega_for_am_nu_rot
-         
+
          ! if `am_nu_rot_flag` is true, use time and space smoothed `am_nu_rot` like `D_omega`
          ! else if `D_omega_flag` and `use_D_omega_for_am_nu_rot`, use `D_omega` for `am_nu_rot`
          ! else use `am_nu_rot` from current model with no smoothing
@@ -1425,7 +1425,7 @@
       dlgR_per_step = 3d-3
       relax_R_center_dt = 3.1558149984d1
 
- 
+
          !### zero_alpha_RTI
          !### zero_initial_alpha_RTI
 
@@ -1565,17 +1565,17 @@
       remove_initial_center_at_inner_max_abs_v = .false.
       remove_center_at_inner_max_abs_v = .false.
       remove_center_set_zero_v_center = .false. ! previously 'fallback_set_zero_v_center'
-      
-      
+
+
          !### remove_fallback_at_each_step
          !### fallback_check_total_energy
          !### remove_fallback_speed_limit
-         
+
          ! if fallback_check_total_energy is false,
-         ! starting at innermost cell, remove the region of cells 
+         ! starting at innermost cell, remove the region of cells
          ! that all have infall speed greater than
          ! remove_fallback_speed_limit in units of sound speed.
-         
+
          ! if fallback_check_total_energy is true,
          ! integrate total energy outward from innermost cell.
          ! if integral goes negative, then have bound inner region.
@@ -1586,26 +1586,26 @@
       fallback_check_total_energy = .false.
       remove_fallback_speed_limit = 0.1d0
 
-      
+
          !### remove_center_adjust_L_center
 
       remove_center_adjust_L_center = .true.
-      
+
          !### limit_center_logP_at_each_step
-         
+
          ! at start of each step
          ! remove center cells if necessary to keep logP at innermost cell >= this limit.
 
-      limit_center_logP_at_each_step = -1d99 
+      limit_center_logP_at_each_step = -1d99
 
 
          !### zero_initial_inner_v_by_mass_msun
          !### zero_inner_v_by_mass_Msun
-         
+
       zero_initial_inner_v_by_mass_Msun = 0
       zero_inner_v_by_mass_Msun = 0
-      
-      
+
+
          !### remove_center_logRho_limit
 
       remove_center_logRho_limit = -1d99
@@ -1872,7 +1872,7 @@
       HELM_include_radiation = .true.
       HELM_always_skip_elec_pos = .false.
       HELM_always_include_elec_pos = .false.
-      
+
          !### eosDT_use_linear_interp_for_X
 
       eosDT_use_linear_interp_for_X = .false.
@@ -1988,10 +1988,10 @@
       ! `data/rates_data/rate_tables` rather than a local directory,
       ! your custom tabulated rate will override the rate for that reaction
       ! for all future MESA runs.
-      
+
       ! If the reaction you wish to control does not already have a
       ! name that MESA will recognize, you will also need to add it to
-      ! the file speficed by `net_reaction_filename` (defaults to reactions.list).  
+      ! the file speficed by `net_reaction_filename` (defaults to reactions.list).
       ! The default version of this file is located
       ! in `data/rates_data`.  If you place a modified copy of this file
       ! in your work directory, it will take precedence.
@@ -2073,7 +2073,7 @@
          ! Empty string means use current standard version.
          ! Which is defined in rates/public/rates_def.f90  as reaclib_filename
          ! and is currently 'jina_reaclib_results_20171020_default'
-         
+
          ! Else give name of file in directory `mesa/data/rates_data`,
          ! e.g., `jina_reaclib_results_20130213default2`
          ! (which is an 18.8 MB file of rates data).
@@ -2147,8 +2147,8 @@
 
       T9_weaklib_full_off_hi_Z = 0.063d0
       T9_weaklib_full_on_hi_Z = 0.073d0
-      
-      
+
+
    !## use small net for newton iterations only
 
          !### change_small_net
@@ -2167,7 +2167,7 @@
 
       !### use_suzuki_weak_rates
       ! If this is true, use the A=17-28 weak reaction rates from
-      ! 
+      !
       !     Suzuki, Toki, and Nomoto (2016)
       !     Electron-capture and $\beta$-decay rates for sd-shell nuclei in stellar environments relevant to high-density O-Ne-Mg cores
       !     http://adsabs.harvard.edu/abs/2016ApJ...817..163S
@@ -2300,7 +2300,7 @@
          ! you can generate your own tables with their web interface
          ! http://stev.oapd.inaf.it/cgi-bin/aesopus
          ! see kap/preprocessor/README_AESOPUS for information on preparing the tables for MESA
-         ! 
+         !
          ! specify which file using `kappa_lowT_prefix`
          ! to use provided tables set `kappa_lowT_prefix = 'AESOPUS_GS98'`
          ! this will load the file `AESOPUS_GS98.h5`
@@ -2312,7 +2312,7 @@
          ! set `show_kap_info = .true.
 
       kappa_lowT_prefix = 'lowT_fa05_gs98'
-      
+
          !### kappa_blend_logT_upper_bdy
          ! <= 0 means use default.
          ! Actual upper boundary will be min of this and max logT for lowT tables.
@@ -2345,7 +2345,7 @@
 
          !### kappa_min_logRho
          ! >= 100 means use default in mesa/kap
-         ! otherwise if actual logRho < this, clip and set partial wrt logRho to zero 
+         ! otherwise if actual logRho < this, clip and set partial wrt logRho to zero
 
       kappa_min_logRho = 1d99
 
@@ -2410,7 +2410,7 @@
          !### color_num_files
          !### color_file_names
          !### color_num_colors
-         
+
          !     Filenames for each bolometric correction (BC) table to load
          !     Must set the number of files to load
          !     Must be <= `max_num_color_files` (defined in `colors_def.f90`).
@@ -2481,10 +2481,10 @@
 
           ! For now this primarily targets the EOS data structures.
        num_steps_for_garbage_collection = 1000
-          
+
           !### report_garbage_collection
           ! Whether to print debug information about the garbage collector, output is printed both
-          ! when mod(model_number,num_steps_for_garbage_collection)==0 and when 
+          ! when mod(model_number,num_steps_for_garbage_collection)==0 and when
           ! mod(model_number-1,num_steps_for_garbage_collection)==0  (the next step)
           ! only runs if `num_steps_for_garbage_collection` > 0
        report_garbage_collection = .false.
@@ -2525,4 +2525,4 @@
       ! until it is set to `.false.`.  This way people will hopefully not be
       ! confused as to why their `run_star_extras` functions are not being called.
       warn_run_star_extras = .true.
-      
+
