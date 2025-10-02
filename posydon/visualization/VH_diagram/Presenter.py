@@ -350,7 +350,6 @@ class Presenter:
             self._set_visualisation_diagram)
         self._visualizer.distance_representation_required().connect(
             self._set_distance_representation)
-        breakpoint()
         self._visualizer.save_required().connect(self.screen)
 
         self._present_mode = PresenterMode.DETAILED
