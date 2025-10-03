@@ -46,8 +46,12 @@ from posydon.utils.common_functions import (calculate_lambda_from_profile,
                                             calculate_Mejected_for_integrated_binding_energy)
 from posydon.utils.posydonwarning import Pwarn
 from posydon.binary_evol.flow_chart import (STAR_STATES_POST_MS, 
-                                            STAR_STATES_POST_HeMS)
-
+                                            STAR_STATES_POST_HeMS,
+                                            STAR_STATES_CO,
+                                            STAR_STATES_HE_RICH,
+                                            STAR_STATES_H_RICH)
+from posydon.binary_evol.DT.track_match import TrackMatcher
+from posydon.config import PATH_TO_POSYDON_DATA
 
 MODEL = {"prescription": 'alpha-lambda',
          "common_envelope_efficiency": 1.0,
@@ -60,11 +64,11 @@ MODEL = {"prescription": 'alpha-lambda',
          "CEE_tolerance_err": 0.001,
          "verbose": False,
          "common_envelope_option_after_succ_CEE": 'two_phases_stableMT',
-         "mass_loss_during_CEE_merged": False # If False, then no mass loss from this step for a merged star
+         "mass_loss_during_CEE_merged": False, # If False, then no mass loss from this step for a merged star
                                               # If True, then we remove mass according to the alpha-lambda prescription
                                               # assuming a final separation where the inner core RLOF starts.
          # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
-
+         "metallicity": None,
          }
 
 
@@ -85,14 +89,6 @@ MODEL = {"prescription": 'alpha-lambda',
 # "neutral_fraction_H", "neutral_fraction_He", and "avg_charge_He" as column
 # in the profile)
 # the mass fraction of an element which is used as threshold to define a core,
-
-list_for_matching_HMS = [
-                ["mass", "center_h1", "he_core_mass"],
-                [20.0, 1.0, 10.0],
-                ["log_min_max", "min_max", "min_max"],
-                [m_min_H, m_max_H], [t_min_H, t_max_H]
-            ]
-
 
 class StepCEE(object):
     """Compute supernova final remnant mass, fallback fraction & stellar state.
@@ -148,6 +144,7 @@ class StepCEE(object):
             CEE_tolerance_err=MODEL['CEE_tolerance_err'],
             mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged'],
             verbose=MODEL['verbose'],
+            metallicity = MODEL['metallicity'],
             **kwargs):
         """Initialize a StepCEE instance."""
         # read kwargs to initialize the class
@@ -174,12 +171,23 @@ class StepCEE(object):
             self.common_envelope_option_after_succ_CEE = \
                 common_envelope_option_after_succ_CEE
             self.mass_loss_during_CEE_merged = mass_loss_during_CEE_merged
-
+        self.metallicity = metallicity
         self.verbose = verbose
         self.path_to_posydon = PATH_TO_POSYDON
+        
+        
+        #m_min_H = np.min(self.grid_Hrich.grid_mass)
+        #m_max_H = np.max(self.grid_Hrich.grid_mass)
+        list_for_matching_HMS = [
+                        ["mass", "center_h1", "he_core_mass"],
+                        [20.0, 1.0, 10.0],
+                        ["log_min_max", "min_max", "min_max"],
+                        [0.1, 300], [0.0, None]
+                    ]
         self.track_matcher = TrackMatcher(grid_name_Hrich = None,
                                     grid_name_strippedHe = None,
-                                    path=self.path_to_posydon, metallicity = None,
+                                    path=PATH_TO_POSYDON_DATA, 
+                                    metallicity = metallicity,
                                     matching_method = "minimize",
                                     matching_tolerance=1e-2,
                                     matching_tolerance_hard=1e-1,
@@ -946,20 +954,9 @@ class StepCEE(object):
             print("DEorb", eorb_postCEE - eorb_i)
             print("separation_i in Rsun", separation_i/const.Rsun)
             print("separation_postCEE in Rsun", separation_postCEE/const.Rsun)
-
-        #Check if the star 2 radius needs to be re-adjusted. 
-        RL1 = cf.roche_lobe_radius(mc1_i/mc2_i, separation_postCEE/const.Rsun)
-        RL2 = cf.roche_lobe_radius(mc2_i/mc1_i, separation_postCEE/const.Rsun)
-
-        if ((rc1_i - RL1) < self.CEE_tolerance_err
-                and (rc2_i - RL2) > self.CEE_tolerance_err):
-
-                t0 = binary.time
-                rc2_f = 10**(track_matcher.get_track_val('log_R', htrack, m0, t))
-                print(t0,rc2_f)
-                #DO the matching 
-                # track_matcher.get_track_val(key, htrack, m0, t) for the radius of the desired
-                #track in the time of
+            
+        if ((not double_CE) and (comp_star.state not in STAR_STATES_CO)):
+            rc2_i = self.adjust_secondary_radius(comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE)
 
 
         # Calculate the post-CE binary properties
@@ -1439,3 +1436,60 @@ class StepCEE(object):
             comp_star.he_core_radius = np.nan
 
         return
+    
+    def adjust_secondary_radius(self,comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE):
+        """
+        Check and adjust the radius of the companion star if the star overfills its Roche 
+        lobe due to inflated radius from short accretion prior to CE. 
+        If so, the star's evolutionary track is adjusted 
+        and the radius is re-matched to a corresponding single-star track. 
+
+        Parameters
+        ----------
+        comp_star : SingleStar object
+            The companion star
+        binary : BinaryStar object
+            The binary system
+        mc1_i : float
+            Core mass of the donor star upon entering the CEE (in Msun).
+        mc2_i : float
+            Core mass of the companion star upon entering the CEE (in Msun).
+        rc1_i : float
+            Radius of the donor star at the onset of the CEE (in Rsun).
+        rc2_i : float
+            Radius of the companion star at the onset of the CEE (in Rsun).
+        separation_postCEE : float
+            Post CE orbital separation of the binary (in cm)
+
+        Returns
+        -------
+        rc2_i : float
+            Updated radius of the companion star (in Rsun). If no adjustment is needed, 
+            the input `rc2_i` is returned unchanged.
+
+        """
+        comp_star.co = False
+        RL1 = cf.roche_lobe_radius(mc1_i,mc2_i, separation_postCEE/const.Rsun)
+        RL2 = cf.roche_lobe_radius(mc2_i,mc1_i, separation_postCEE/const.Rsun)
+        
+        if ((rc1_i - RL1) < self.CEE_tolerance_err
+                and (rc2_i - RL2) > self.CEE_tolerance_err):
+            
+            if comp_star in STAR_STATES_H_RICH:
+                comp_star.htrack = True        
+            elif comp_star in STAR_STATES_HE_RICH:
+                comp_star.htrack = True
+            else: 
+                raise ValueError("state = %s of donor of CEE not recognized"
+                           % comp_star.state)
+            if self.verbose:
+                print(f"The binary overfilled its RL due to the companion's inflated radius \n"
+                      f"The Roche lobe of the companion is: {RL2}, The radius is: {rc2_i}")
+            t_i = binary.time
+            m0, t0 =self.track_matcher.get_star_match_data(binary, comp_star)
+            rc2_i = 10**comp_star.interp1d['log_R'](t_i)
+            print('Time,radius of sec:',t0,rc2_i,comp_star.interp1d['log_R'](t_i))
+        if self.verbose: 
+            print(f"After matching to single star the radius of the done is : {rc2_i} ")
+                  
+        return rc2_i
