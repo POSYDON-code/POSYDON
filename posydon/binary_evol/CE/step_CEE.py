@@ -1478,7 +1478,7 @@ class StepCEE(object):
             if comp_star in STAR_STATES_H_RICH:
                 comp_star.htrack = True        
             elif comp_star in STAR_STATES_HE_RICH:
-                comp_star.htrack = True
+                comp_star.htrack = False
             else: 
                 raise ValueError("state = %s of donor of CEE not recognized"
                            % comp_star.state)
