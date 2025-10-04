@@ -361,7 +361,7 @@ If the energy budget is less than the binding energy, the system is merged.
       * ``0.01``
       * ``0.1``
       * ``0.3``
-    - ``0.1``
+    - ``0.3``
 
   * - ``core_definition_He_fraction``
     - | The helium fraction for defining the core.
@@ -374,11 +374,10 @@ If the energy budget is less than the binding energy, the system is merged.
   * - ``common_envelope_option_after_succ_CEE``
     - | The option for handling the system after a successful common envelope ejection.
      
-      * ``'core_not_replaced_noMT'`` : core not replaced, no mass transfer
-      * ``'core_replaced_noMT'`` : core replaced, no mass transfer
-      * ``'core_not_replaced_stableMT'`` : core not replaced, stable mass transfer
-      * ``'core_not_replaced_windloss'`` : core not replaced, wind loss
-    - ``'core_not_replaced_noMT'``
+      * ``'one_phase_variable_core_definition'`` : lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; no mass transfer (use this defined core mass as the stripped remnant mass)
+      * ``'two_phases_stableMT'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second have a stable and fully non-conservative mass transfer from the core to the companion until stripped to the core defined in MESA; in the case of a double CE redirect to ``'two_phases_windloss'``
+      * ``'two_phases_windloss'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second lose the mass remaining mass above the core defined in MESA as a fast wind
+    - ``'two_phases_stableMT'``
 
   * - ``verbose``
     - | Enables verbose mode.
@@ -428,12 +427,19 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``'Fryer+12-delayed'``
       * ``'Sukhbold+16-engine'``
       * ``'Patton&Sukhbold20-engine'``
-    - ``'Patton&Sukhbold20-engine'``
+    - ``'Fryer+12-delayed'``
 
   * - ``engine``
     - | The engine used for the supernova.
       | Relevant for ``'Sukhbold+16-engine'`` and ``'Patton&Sukhbold20-engine'`` mechanisms.
-    - ``'N20'``
+     
+      * ``''``
+      * ``'N20'``
+      * ``'S19.8'``
+      * ``'W15'``
+      * ``'W20'``
+      * ``'W18'``
+    - ``''``
 
   * - ``PISN``
     - | The prescription used for pair-instability supernova.
@@ -441,7 +447,7 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``None``
       * ``'Marchant+19'``
       * ``'Hendriks+23'``
-    - ``'Marchant+19'``
+    - ``'Hendriks+23'``
 
   * - ``PISN_CO_shift``
     - | The shift in CO core mass for the start of the Hendriks+23 PPI prescription
@@ -449,18 +455,18 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
 
   * - ``PPI_extra_mass_loss``
     - | Additional PPI mass loss for the Hendriks+23 prescription
-    - ``0.0``
+    - ``-20.0``
 
   * - ``ECSN``
     - | The prescription used for electron-capture supernova.
      
       * ``'Tauris+15'``
       * ``'Podsiadlowksi+04'``
-    - ``'Podsiadlowksi+04'``
+    - ``'Tauris+15'``
 
   * - ``conserve_hydrogen_envelope``
     - | Conserve the hydrogen envelope during the supernova.
-    - ``True``
+    - ``False``
 
   *  - ``conserve_hydrogen_PPI``
      - | Include the hydrogen envelope during the calculation of the 
@@ -486,6 +492,10 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
   * - ``use_core_masses``
     - | Use core masses for the supernova.
     - ``True``
+
+  * - ``allow_spin_None``
+    - | Allow compact objects to have undetermined spin values in the lack of profile data.
+    - ``False``
 
   * - ``approx_at_he_depletion``
     - | Approximate at helium depletion.
@@ -994,6 +1004,8 @@ This dictionary contains the parameters that will be saved in the output of the 
       * ``'lambda_CE_30cent'``: The lambda parameter for common envelope evolution (30%).
       * ``'lambda_CE_pure_He_star_10cent'``: The lambda parameter for common envelope evolution for pure helium stars (10%).
       * ``'profile [not currently supported]'``: The profile (not currently supported).
+      * ``'total_mass_h1'``: The total Hydrogen mass.
+      * ``'total_mass_he4'``: The total Helium mass.
     - .. code:: python
 
         ['state',

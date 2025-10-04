@@ -8,7 +8,7 @@ __authors__ = [
 # ensure that python forgets about previous imports of posydonwarning, e.g. in
 # other tests, before importing it here
 from sys import modules as sys_modules
-sys_modules.pop('posydon.utils.posydonwarning')
+sys_modules.pop('posydon.utils.posydonwarning', None)
 
 # import the module which will be tested
 import posydon.utils.posydonwarning as totest
@@ -22,13 +22,14 @@ from inspect import isclass, isroutine
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['AllPOSYDONWarnings', 'ApproximationWarning',\
+        elements = {'AllPOSYDONWarnings', 'ApproximationWarning',\
                     'BinaryParsingWarning', 'Catch_POSYDON_Warnings',\
                     'ClassificationWarning', 'EvolutionWarning',\
                     'InappropriateValueWarning', 'IncompletenessWarning',\
                     'InterpolationWarning', 'MissingFilesWarning',\
-                    'NoPOSYDONWarnings', 'OverwriteWarning', 'POSYDONWarning',\
-                    'Pwarn', 'ReplaceValueWarning', 'SetPOSYDONWarnings',\
+                    'NoPOSYDONWarnings', 'OverwriteWarning', 'SFHModelWarning',\
+                    'POSYDONWarning','Pwarn', 'ReplaceValueWarning',\
+                    'SetPOSYDONWarnings',\
                     'UnsupportedModelWarning', '_CAUGHT_POSYDON_WARNINGS',\
                     '_Caught_POSYDON_Warnings', '_POSYDONWarning_subclasses',\
                     '_POSYDON_WARNINGS_REGISTRY', '__authors__',\
@@ -36,10 +37,21 @@ class TestElements:
                     '__loader__', '__name__', '__package__', '__spec__',\
                     '_apply_POSYDON_filter', '_get_POSYDONWarning_class',\
                     '_issue_warn', 'copy', 'get_stats', 'print_stats', 'sys',\
-                    'warnings']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'warnings'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_POSYDONWarning(self):
         assert isclass(totest.POSYDONWarning)
@@ -90,6 +102,10 @@ class TestElements:
         assert isclass(totest.UnsupportedModelWarning)
         assert issubclass(totest.UnsupportedModelWarning,\
                           totest.POSYDONWarning)
+        
+    def test_instance_SFHModelWarning(self):
+        assert isclass(totest.SFHModelWarning)
+        assert issubclass(totest.SFHModelWarning, totest.POSYDONWarning)
 
     def test_instance_POSYDONWarning_subclasses(self):
         assert isinstance(totest._POSYDONWarning_subclasses, (dict))

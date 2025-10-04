@@ -102,6 +102,11 @@ class UnsupportedModelWarning(POSYDONWarning):
     """Warnings related to selecting a model that is not supported."""
     def __init__(self, message=''):
         super().__init__(message)
+        
+class SFHModelWarning(POSYDONWarning):
+    """Warnings related to the SFH model."""
+    def __init__(self, message=''):
+        super().__init__(message)
 
 
 # All POSYDON warnings subclasses should be defined beforehand

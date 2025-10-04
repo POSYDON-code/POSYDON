@@ -152,6 +152,13 @@ class population_spectra():
                     pop_spectrum[label2] += spectrum_2
             pop = pop.drop(i)
             labels.append([label1,label2])
+        pop_spectrum['Total'] = np.zeros(len(self.grids.lam_c))
+        if spectral_type:
+            for key in spectral_types:
+                pop_spectrum['Total'] += pop_spectrum[key]
+        else: 
+            for key in state_list:
+                pop_spectrum['Total'] += pop_spectrum[key]
 
         if self.save_data:
             return pop_spectrum,labels
@@ -166,10 +173,17 @@ class population_spectra():
             file_path: string. Defaults to None.
         """
 
+    
+        
         if type(pop_spectrum)== list:
-            labels = np.vstack(labels)
-            pop_data['S1_grid_status'] = labels[:,0]
-            pop_data['S2_grid_status'] = labels[:,1]
+            # Check if the population is empty (All of the stars are CO)
+            if labels.size == 0:
+                pop_data['S1_grid_status'] = [None]*len(pop_data)
+                pop_data['S2_grid_status'] = [None]*len(pop_data)
+            else:
+                labels = np.vstack(labels)
+                pop_data['S1_grid_status'] = labels[:,0]
+                pop_data['S2_grid_status'] = labels[:,1]
             combined_spectrum = Counter(pop_spectrum[0])
             if len(pop_spectrum) > 0: 
                 for i in range(1,len(pop_spectrum)):
@@ -179,8 +193,12 @@ class population_spectra():
             final_dict = dict(combined_spectrum)
             spectrum_data = pd.DataFrame.from_dict(final_dict)
         else:
-            pop_data['S1_grid_status'] = labels[:,0]
-            pop_data['S2_grid_status'] = labels[:,1]
+            if labels.size == 0:
+                pop_data['S1_grid_status'] = [None]*len(pop_data)
+                pop_data['S2_grid_status'] = [None]*len(pop_data)
+            else:
+                pop_data['S1_grid_status'] = labels[:,0]
+                pop_data['S2_grid_status'] = labels[:,1]
             spectrum_data = pd.DataFrame.from_dict(pop_spectrum)
 
         spectrum_data.insert(loc = 0, column='wavelength',value =self.grids.lam_c )
@@ -260,7 +278,7 @@ class  sub_population_spectra(population_spectra):
         else:
             for state in state_list:
                 pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
-
+        pop_spectrum['Total'] = np.zeros(len(self.grids.lam_c))
         for i,binary in pop.iterrows():
             spectrum_1,state_1,label1 = regenerate_spectrum(self.grids,binary,'S1',**self.kwargs)
             spectrum_2,state_2,label2 = regenerate_spectrum(self.grids,binary,'S2',**self.kwargs)
@@ -279,6 +297,14 @@ class  sub_population_spectra(population_spectra):
                     pop_spectrum[state_2] += spectrum_2
                
             pop = pop.drop(i)
+
+        if spectral_type:
+            for key in spectral_types:
+                pop_spectrum['Total'] += pop_spectrum[key]
+        else: 
+            for key in state_list:
+                pop_spectrum['Total'] += pop_spectrum[key]
+
         return pop_spectrum,labels_S1,labels_S2
 
     
