@@ -7,12 +7,13 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
+import datetime
 import os
 import re
-import datetime
+import sys
 
 from PSphinxTheme import utils
+
 from posydon import __version__ as posydon_version
 
 # Rewrite posydon_version for docs developement
@@ -29,10 +30,11 @@ author = u'POSYDON Collaboration'
 # INJECTION GRAB START
 import subprocess
 
+
 # Get versions from github tags
 def get_github_tags():
     '''Get the tags from the github repository
-    
+
     Returns
     -------
     list of str
@@ -43,7 +45,7 @@ def get_github_tags():
         # Get the tags from the github repository
         # this looks
         tags = subprocess.check_output(['git', 'tag'], universal_newlines=True).strip().split('\n')
-        
+
         version_tags = []
         for tag in tags:
             # Skip tags that don't look like versions
@@ -54,7 +56,7 @@ def get_github_tags():
                 continue
         version_tags.sort()
         return version_tags
-    
+
     except Exception as e:
         print(f"Error getting tags from github: {e}")
         return []
@@ -65,13 +67,13 @@ def group_per_major_minor(tags):
     ----------
     tags : list of str
         A list of tags to group
-        
+
     Returns
     -------
     dict
         A dictionary with the major and minor version as keys and a list of tags as values
     '''
-    
+
     grouped_tags = {}
     for tag in tags:
         # Split the tag into major and minor version
@@ -83,7 +85,7 @@ def group_per_major_minor(tags):
         if major_minor not in grouped_tags:
             grouped_tags[major_minor] = []
         grouped_tags[major_minor].append(tag)
-        
+
     return grouped_tags
 
 github_tags = get_github_tags()
@@ -105,7 +107,7 @@ elif 'dirty' in posydon_version and posydon_version.split('+')[0] in old_tags:
     posydon_version = posydon_version.split('+')[0]
 else:
     current_version = posydon_version
-    
+
 # latest per minor version
 group_tags = group_per_major_minor(github_tags)
 # remove pre-release tags
@@ -113,7 +115,7 @@ for k, v in group_tags.items():
     group_tags[k] = list(set([i.split('-')[0] for i in v]))
 # get the latest tag per minor version
 latest_tags = {k: sorted(v)[-1] for k, v in group_tags.items()}
-    
+
 # absolute path to the documentation
 base_url = 'https://posydon.org/POSYDON'
 
@@ -317,7 +319,7 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 
-html_static_path = ['_static'] 
+html_static_path = ['_static']
 # html_static_path is added before the below files.
 html_css_files = ['custom.css']
 

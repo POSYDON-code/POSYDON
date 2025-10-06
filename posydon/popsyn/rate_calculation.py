@@ -3,16 +3,15 @@ __author__ = [
     "Max Briel <max.briel@unige.ch>",
 ]
 
-from posydon.utils.constants import Zsun
-
-from astropy.cosmology import Planck15 as cosmology
-from astropy import constants as const
 import numpy as np
 import scipy as sp
+from astropy import constants as const
+from astropy import units as u
+from astropy.cosmology import Planck15 as cosmology
 from astropy.cosmology import z_at_value
 from scipy.interpolate import CubicSpline
-from astropy import units as u
 
+from posydon.utils.constants import Zsun
 
 DEFAULT_SFH_MODEL = {
     "delta_t": 100,  # Myr

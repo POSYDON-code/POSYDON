@@ -1,9 +1,11 @@
-import unittest
 import os
+import unittest
+
 import numpy as np
-from posydon.config import PATH_TO_POSYDON
-from posydon.binary_evol.singlestar import SingleStar
+
 from posydon.binary_evol.binarystar import BinaryStar
+from posydon.binary_evol.singlestar import SingleStar
+from posydon.config import PATH_TO_POSYDON
 from posydon.grids.psygrid import PSyGrid
 
 PATH_TO_GRID = os.path.join(

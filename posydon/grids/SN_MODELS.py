@@ -15,8 +15,10 @@ __authors__ = [
     "Max Briel <max.briel@gmail.com>",
 ]
 
-from posydon.utils.limits_thresholds import (STATE_NS_STARMASS_UPPER_LIMIT,
-                                             NEUTRINO_MASS_LOSS_UPPER_LIMIT)
+from posydon.utils.limits_thresholds import (
+    NEUTRINO_MASS_LOSS_UPPER_LIMIT,
+    STATE_NS_STARMASS_UPPER_LIMIT,
+)
 
 DEFAULT_SN_MODEL = {
     "mechanism": "Fryer+12-delayed",
@@ -463,7 +465,7 @@ def get_SN_MODEL(name):
         Dictionary with the properties of the supernova model. If the given
         name does not exist in the pre-defined models, the default supernova
         model is returned.
-    
+
     """
     if name in SN_MODELS:
         SN_MODEL = DEFAULT_SN_MODEL.copy()
@@ -510,5 +512,5 @@ def get_SN_MODEL_NAME(input_SN_MODEL, verbose=False):
             if verbose:
                 print('matched to supernova model:', tmp)
             SN_MODEL_NAME_SEL = tmp
-            
+
     return SN_MODEL_NAME_SEL
