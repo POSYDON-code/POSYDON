@@ -116,7 +116,7 @@ STAR_STATES_CC = [
     ]
 
 # states to ID an HMS star (Xcore > 0.01)
-# TODO: build these from the other lists to (hopefully) 
+# TODO: build these from the other lists to (hopefully)
 #       ensure consistency
 STAR_STATES_FOR_HMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
                                 ("Core_H_burning" in st)]
@@ -253,7 +253,7 @@ for s1 in STAR_STATES_HE_RICH:
         POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect_from_CO_HeMS_RLO")] = 'step_detached'
 
 ## He-rich star roche-lobe overflow onto another He-rich star
-## assume these systems always merge 
+## assume these systems always merge
 for s1 in STAR_STATES_HE_RICH:
     for s2 in STAR_STATES_HE_RICH:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', "oRLO1")] = 'step_merged'
@@ -287,7 +287,7 @@ for s1 in STAR_STATES_CO:
 
 
 # catch states to be ended
-for b in ['initial_RLOF']:    
+for b in ['initial_RLOF']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in BINARY_EVENTS_ALL:
@@ -353,7 +353,7 @@ for b in BINARY_STATES_ALL:
     for s in ['massless_remnant']:
         for e in BINARY_EVENTS_ALL:
             POSYDON_FLOW_CHART[(s, s, b, e)] = 'step_end'
-            
+
 def flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     """Generate the flow chart.
 
@@ -386,7 +386,7 @@ def flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     """
     if FLOW_CHART is None:
         FLOW_CHART = POSYDON_FLOW_CHART.copy()
-    
+
     if CHANGE_FLOW_CHART is not None:
         for key in CHANGE_FLOW_CHART.keys():
             if key in FLOW_CHART.keys():
@@ -424,7 +424,7 @@ def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
         else:
             MY_FLOW_CHART = flow_chart(FLOW_CHART=FLOW_CHART,
                                        CHANGE_FLOW_CHART=CHANGE_FLOW_CHART)
-    
+
     # modify the default flow chart
     for key in MY_FLOW_CHART.keys():
         s1_state, s2_state, state, event = key
@@ -438,5 +438,5 @@ def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
         for s2 in STAR_STATES_H_RICH_EVOLVABLE + STAR_STATES_HE_RICH_EVOLVABLE:
             MY_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_HMS_HMS_RLO'
             MY_FLOW_CHART[(s1, s2, 'RLO2', 'oRLO2')] = 'step_HMS_HMS_RLO'
-    
+
     return MY_FLOW_CHART

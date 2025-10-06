@@ -7,15 +7,18 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.configfile as totest
+
 # aliases
 np = totest.np
 os = totest.os
 
+from ast import AST, parse
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises
-from inspect import isclass, isroutine
-from ast import AST, parse
+
 
 # define test classes collecting several test functions
 class TestElements:

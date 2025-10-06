@@ -7,14 +7,14 @@ __authors__ = [
 ]
 
 
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
-import pandas as pd
 import math
 import time
-
 from collections import OrderedDict
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from matplotlib.lines import Line2D
 from sklearn.neighbors import NearestNeighbors
 
 

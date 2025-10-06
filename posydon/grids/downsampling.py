@@ -41,10 +41,11 @@ __authors__ = [
 ]
 
 
-import numpy as np
 import sys
-from posydon.utils.posydonwarning import Pwarn
 
+import numpy as np
+
+from posydon.utils.posydonwarning import Pwarn
 
 sys.setrecursionlimit(100000)
 

@@ -7,8 +7,9 @@ __authors__ = [
 ]
 
 
-import pandas as pd
 import os
+
+import pandas as pd
 
 
 class SimulationModel:

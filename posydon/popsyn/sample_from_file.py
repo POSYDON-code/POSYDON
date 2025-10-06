@@ -7,13 +7,17 @@ __authors__ = [
 
 
 import os
+
 import numpy as np
 import pandas as pd
-from posydon.popsyn.independent_sample import (generate_orbital_periods,
-                                               generate_orbital_separations,
-                                               generate_eccentricities,
-                                               generate_primary_masses,
-                                               generate_secondary_masses)
+
+from posydon.popsyn.independent_sample import (
+    generate_eccentricities,
+    generate_orbital_periods,
+    generate_orbital_separations,
+    generate_primary_masses,
+    generate_secondary_masses,
+)
 from posydon.utils.posydonwarning import Pwarn
 
 PRIMARY_MASS_NAMES = ['s1_mass', 'primary_mass', 'mass_1', 'm_1', 'm1']
@@ -100,7 +104,7 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
 
     # Get number of data frame entries
     set_n = len(df)
-    
+
     # Get eccentricities
     key = infer_key(available_keys=df.keys(), allowed_keys=ECCENTRICITY_NAMES)
     if key=='':
@@ -210,7 +214,7 @@ def get_kick_samples_from_file(**kwargs):
 
     # Get number of data frame entries
     set_n = len(df)
-    
+
     ## Get primary kick
     # Velocity
     key = infer_key(available_keys=df.keys(),\
@@ -306,4 +310,3 @@ def get_kick_samples_from_file(**kwargs):
                kick_2_set[index:index+number_of_binaries]
     else:
         return kick_1_set, kick_2_set
-

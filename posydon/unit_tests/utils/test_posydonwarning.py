@@ -8,15 +8,18 @@ __authors__ = [
 # ensure that python forgets about previous imports of posydonwarning, e.g. in
 # other tests, before importing it here
 from sys import modules as sys_modules
+
 sys_modules.pop('posydon.utils.posydonwarning', None)
 
-# import the module which will be tested
-import posydon.utils.posydonwarning as totest
+from inspect import isclass, isroutine
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises, warns
-from inspect import isclass, isroutine
+
+# import the module which will be tested
+import posydon.utils.posydonwarning as totest
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -103,7 +106,7 @@ class TestElements:
         assert isclass(totest.UnsupportedModelWarning)
         assert issubclass(totest.UnsupportedModelWarning,\
                           totest.POSYDONWarning)
-        
+
     def test_instance_SFHModelWarning(self):
         assert isclass(totest.SFHModelWarning)
         assert issubclass(totest.SFHModelWarning, totest.POSYDONWarning)

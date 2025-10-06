@@ -8,7 +8,6 @@ __authors__ = [
 
 import pandas as pd
 
-
 CHUNKSIZE = 100000
 CHUNKSIZE_SMALL = 1000
 

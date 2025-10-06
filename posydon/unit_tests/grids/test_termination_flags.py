@@ -7,16 +7,20 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.grids.termination_flags as totest
+
 # aliases
 np = totest.np
 os = totest.os
 
+from inspect import isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises, warns
-from inspect import isroutine
+
 from posydon.grids.psygrid import PSyGrid
 from posydon.utils.posydonwarning import InappropriateValueWarning
+
 
 # define test classes collecting several test functions
 class TestElements:

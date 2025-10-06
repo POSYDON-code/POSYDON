@@ -84,11 +84,11 @@ A more powerful feature is the :func:`History.select` function, which allows you
 
     # using where with a string column
     mass_ZAMS = pop.history.select(columns=['S1_mass'], where='event == "ZAMS"')
-    
+
 If you want to have a peak, you can use the :meth:`~Population.head` or :meth:`~Population.tail` functions.
 
 .. code-block:: python
-  
+
     pop.history.head(10)
     pop.history.tail(10)
 
@@ -170,7 +170,7 @@ The length and indices of the oneline table can be found with :attr:`Population.
     print(pop.oneline.number_of_systems)
     print(pop.oneline.lengths)
     print(pop.oneline.indices)
-  
+
 
 formation_channels
 ------------------
@@ -184,7 +184,7 @@ Two columns are available in the formation channels table:
 
 - `debug_channel` : A longer description of the formation channel, where additional events are included.
 
-- `channel` : A cleaned-up version of the history events, where events are separated by a `-`. 
+- `channel` : A cleaned-up version of the history events, where events are separated by a `-`.
 
 
 Additional Attributes
@@ -194,10 +194,10 @@ Additional Attributes
 - :attr:`~Population.ini_parameters`: The parameters for the initial sampling conditions of the population synthesis run.
 
 
-- :attr:`~Population.mass_per_metallicity`: The mass per metallicity bin for the population synthesis run. 
+- :attr:`~Population.mass_per_metallicity`: The mass per metallicity bin for the population synthesis run.
   The `underlying_mass` is calculated with the assumption that binary fraction == 1.
 
-- :attr:`~Population.history_lengths`: The length of the history of each system in the population. 
+- :attr:`~Population.history_lengths`: The length of the history of each system in the population.
         This is created the first time the file is opened with the :class:`~Population` object.
 
 
@@ -250,7 +250,7 @@ It loops over all the systems in the population in chunks and applies the given 
 The :func:`Population.create_transient_population` function takes a function as an argument: :code:`selection_function`.
 
 The :code:`selection_function` takes 3 arguments: :code:`history_chunk`, :code:`oneline_chunk`, and :code:`formation_channels_chunk` (optional).
-These chunks are cut based on a given chunksize, which is set to 1000000 by default, and are cut on system. 
+These chunks are cut based on a given chunksize, which is set to 1000000 by default, and are cut on system.
 This means that a complete history of a system is always passed to the function by :func:`Population.create_transient_population`.
 
 :code:`selection_function` is a function you can adapt to your own needs, and
@@ -275,7 +275,7 @@ Now, you can access the transient data of the population using :attr:`Trannsient
 
 
 .. code-block:: python
-  
+
     print(trans_pop.population)
 
 
@@ -285,7 +285,7 @@ Calculating Efficiencies
 With this population, you can calculate additional information, such as the efficiency over metallicity.
 
 .. code-block:: python
-  
+
     trans_pop.calculate_efficiency_over_metallicity(channels=True)
 
 :code:`channels=True` includes the formation channels in the efficiency calculation.
@@ -294,7 +294,7 @@ Plotting
 --------
 
 The :class:`~TransientPopulation` contains a few plotting functions for ease.
-    
+
 .. code-block:: python
 
     # plots the efficiency over metallicity per channel
@@ -319,7 +319,7 @@ It allows you to overplot properties of your TransienPopulation onto the grids.
 If you like to write to a folder, you can use :code:`plot_dir='path/to/dir'` and use :code:`save_fig=True`.
 
 .. code-block:: python
-  
+
     # plot the HMS-HMS grid at 1e-4 with S1_spin and q=0.7
     plot_popsyn_over_grid_slice('HMS-HMS', 1e-4, slices=[0.7], prop='S1_spin', prop_range=[0,0.3], save_fig=False, channel='ZAMS_oRLO1_CC1_oRLO2_CC2_END')
 
@@ -327,7 +327,7 @@ If you like to write to a folder, you can use :code:`plot_dir='path/to/dir'` and
 Rates
 =====
 
-The :class:`~Rates` object inherits from the :class:`~TransientPopulation` object 
+The :class:`~Rates` object inherits from the :class:`~TransientPopulation` object
 and is used to access the cosmic rate data of the transient population.
 
 It also allows the user to calculate the intrinsic rate density of the events in the population, and apply observational effects to the population.
@@ -420,7 +420,7 @@ The ``observable_func`` you give the function should take 3 arguments:
 The ``observable_func`` should take these arguments and use them to determine the detection efficiency of the event.
 We have included an example in the :func:`posydon.popsyn.transient_select_funcs.DCO_detactability`.
 
-However, since that function requires a detection argument, it requires a wrapper to work with our function here. 
+However, since that function requires a detection argument, it requires a wrapper to work with our function here.
 
 .. code-block:: python
 
@@ -466,11 +466,11 @@ If you like to overplot multiple properties, you can set ``show=False`` and manu
     rates.plot_hist_properties('S1_mass', intrinsice=True, observable='design_H1L1V1', bins=bins, ax = ax, label='S1', show=False)
     rates.plot_hist_properties('S2_mass', intrinsice=True, observable='design_H1L1V1', bins=bins, ax = ax, label='S1', show=False)
 
-    
+
 
 .. _population-file-structure:
 
-The Structure of Generated Population Files 
+The Structure of Generated Population Files
 ###########################################
 
 The main output of a population synthesis run is a HDF5 population file.
@@ -496,7 +496,7 @@ If you use the :meth:`~Population` object, you can access the data directly from
     * - `ini_parameters`
       - The parameters for the initial sampling conditions of the population synthesis run.
     * - `mass_per_metallicity`
-      - The mass per metallicity bin for the population synthesis run. 
+      - The mass per metallicity bin for the population synthesis run.
         The `underlying_mass` is calculated with the assumption that binary fraction == 1.
 
 As you work with your population, you can add additional components to the population file.
@@ -526,6 +526,3 @@ Based on the components and the user given identifiers, the data is stored in th
       - The weights of each event based on their birth redshifts and their population weight.
     * - `transiens/{transient_name}/rates/{SFH_identifier}/intrinsic_rate_density`
       - The intrinsic rate density of the events in the population, calculated with :func:`~Rates.calculate_intrinsic_rate_density`.
-    
-
-

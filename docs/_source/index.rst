@@ -64,7 +64,7 @@ How is this Documentation Structured?
 
 .. toctree::
    :maxdepth: 1
-   :titlesonly: 
+   :titlesonly:
    :caption: In-Depth Components Overview
 
    components-overview/mesa-grids
@@ -86,7 +86,7 @@ How is this Documentation Structured?
 
    Releases <https://github.com/POSYDON-code/POSYDON/releases>
    Datasets <https://zenodo.org/communities/posydon/>
-   
+
 
 .. toctree::
    :maxdepth: 1

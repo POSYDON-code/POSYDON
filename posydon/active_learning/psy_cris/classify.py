@@ -8,16 +8,16 @@ __authors__ = [
 
 
 import collections
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
 import time
 from collections import OrderedDict
 
-# -------- classifiers --------
-from scipy.interpolate import LinearNDInterpolator
-from scipy.interpolate import Rbf
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import sklearn.gaussian_process as gp
+
+# -------- classifiers --------
+from scipy.interpolate import LinearNDInterpolator, Rbf
 
 # -----------------------------
 

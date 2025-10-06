@@ -1,16 +1,5 @@
-"""Handle I/O operations for the population synthesis code."""
+"""Handle I/O operations for the population synthesis code.
 
-from configparser import ConfigParser
-import ast
-import importlib
-import os
-import errno
-import pprint
-
-import numpy as np
-import pandas as pd
-
-"""
 POSYDON Data Types are enforced when converting BinaryStar
 and SingleStar instances to Pandas DataFrames. This is done to
 ensure memory efficient data storage and to solve problems
@@ -18,6 +7,16 @@ combining temp batch files.
 
 Check Pandas docs for allowed data types in DataFrames.
 """
+
+import ast
+import errno
+import importlib
+import os
+import pprint
+from configparser import ConfigParser
+
+import numpy as np
+import pandas as pd
 
 BINARYPROPERTIES_DTYPES = {
     'binary_index' : 'int64',
@@ -405,8 +404,8 @@ def simprop_kwargs_from_ini(path, only=None, verbose=False):
         to last.
 
     only : str
-        Name of a section to limit getting kwargs from, e.g., 
-        step_SN, step_CE, step_detached, etc. 
+        Name of a section to limit getting kwargs from, e.g.,
+        step_SN, step_CE, step_detached, etc.
 
     verbose : bool
         Print helpful info.
@@ -594,7 +593,7 @@ def create_run_script_text(ini_file):
          "    str_met = convert_metallicity_to_string(args.metallicity)",
          "    ini_kw['temp_directory'] = str_met+'_Zsun_' + ini_kw['temp_directory']",
         f"    sim_props = SimulationProperties.from_ini('{ini_file}')",
-         "    synpop = BinaryPopulation(population_properties=sim_props, **ini_kw)", 
+         "    synpop = BinaryPopulation(population_properties=sim_props, **ini_kw)",
          "    synpop.evolve()"]
 
     text = '\n'.join(text)

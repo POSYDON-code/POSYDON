@@ -8,14 +8,18 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.compress_mesa_files as totest
+
 # aliases
 os = totest.os
+
+from inspect import isroutine
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises, warns
-from inspect import isroutine
+
 from posydon.unit_tests._helper_functions_for_tests.MESA import get_MESA_dir
+
 
 # define test classes collecting several test functions
 class TestElements:

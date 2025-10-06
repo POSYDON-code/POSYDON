@@ -45,13 +45,12 @@ __authors__ = [
 ]
 
 
-import os
 import glob
 import gzip
+import os
 
 from posydon.utils.gridutils import read_MESA_data_file
 from posydon.utils.posydonwarning import Pwarn
-
 
 POSYDON_FORMAT_OPTIONS = {
     # subfolders in the grid parent folder that are unnecessary
@@ -254,7 +253,7 @@ class GridReader:
 
     def _get_input_folders(self):
         """Get a list of all the folders with MESA runs.
-        
+
         Returns
         -------
         dict view
