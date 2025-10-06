@@ -256,6 +256,15 @@ Our tutorials are provided as Jupyter notebooks. If you want to run these notebo
     .. note::
         Remember to navigate to the directory containing the Jupyter notebooks or you won't see them listed in the Jupyter interface.
 
+.. note::
+    You might need to install a iPython kernel for the conda environment you are using.
+    You can do this by running inside your conda environment:
+
+    .. code-block:: bash
+
+        conda install -c conda-forge ipykernel
+        python -m ipykernel install --name=posydon_env
+
 
 
 Installing additional dependencies (Optional)
