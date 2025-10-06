@@ -24,7 +24,7 @@ Software Dependencies
 Hardware Requirements
 ~~~~~~~~~~~~~~~~~~~~~
 
-**Storage**: 
+**Storage**:
 
 In order to run a population synthesis model with POSYDON, you must ensure that you have enough free storage space. It depends on the dataset how much free space you need:
 
@@ -62,4 +62,3 @@ Final Notes
 Ensure all the above prerequisites are met before initiating the setup for POSYDON to ensure a seamless and hassle-free experience.
 
 If you encounter any issues, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or :ref:`contact us <contact_info>`.
-

@@ -5,13 +5,14 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-# import the module which will be tested
-import posydon.grids.SN_MODELS as totest
+from inspect import isroutine
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises
-from inspect import isroutine
+
+# import the module which will be tested
+import posydon.grids.SN_MODELS as totest
 
 
 # define test classes collecting several test functions

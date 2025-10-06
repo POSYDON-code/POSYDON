@@ -3,17 +3,19 @@
 #  IMPORT ALL NECESSARY PYTHON PACKAGES
 ##############################################################################
 import argparse
+import glob
 import os
 import shutil
-import pandas
 import subprocess
-import glob
 
+import pandas
+
+from posydon.active_learning.psy_cris.utils import parse_inifile
+from posydon.grids.psygrid import PSyGrid
 from posydon.utils import configfile
 from posydon.utils import gridutils as utils
 from posydon.utils.posydonwarning import Pwarn
-from posydon.grids.psygrid import PSyGrid
-from posydon.active_learning.psy_cris.utils import parse_inifile
+
 
 ###############################################################################
 # DEFINE COMMANDLINE ARGUMENTS
@@ -134,7 +136,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                  stdout = subprocess.PIPE,
                                  stderr = subprocess.PIPE
                              )
-    
+
 
     print("checking out commit/tag: {0}".format(githash))
 
@@ -787,7 +789,7 @@ def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.
     # update the controls for star1 star2 for the binary with the precomputed zams model
     if mesa_inlists['zams_filename_1'] is not None:
         final_star1_binary_controls['zams_filename'] = "'{0}'".format(mesa_inlists['zams_filename_1'])
-    if mesa_inlists['zams_filename_2'] is not None:    
+    if mesa_inlists['zams_filename_2'] is not None:
         final_star2_binary_controls['zams_filename'] = "'{0}'".format(mesa_inlists['zams_filename_2'])
 
     ##########################################
@@ -1072,7 +1074,7 @@ if __name__ == '__main__':
     # first, creating a directory
     column_lists_folder = os.path.join(args.run_directory, 'column_lists')
     if os.path.exists(column_lists_folder):  shutil.rmtree(column_lists_folder)
-    os.makedirs(column_lists_folder)    
+    os.makedirs(column_lists_folder)
     # second, getting new location
     star_history_columns = os.path.join(column_lists_folder, 'history_columns.list')
     binary_history_columns = os.path.join(column_lists_folder, 'binary_history_columns.list')
@@ -1215,7 +1217,7 @@ if __name__ == '__main__':
             Pwarn('Replace cleanup.slurm', "OverwriteWarning")
         with open('cleanup.slurm', 'w') as f:
             f.write('#!/bin/bash\n')
-            
+
             f.write('#SBATCH --account={0}\n'.format(slurm['account']))
             f.write('#SBATCH --partition={0}\n'.format(slurm['partition']))
             f.write('#SBATCH -N 1\n')
@@ -1227,7 +1229,7 @@ if __name__ == '__main__':
             f.write('#SBATCH --mail-type=ALL\n')
             f.write('#SBATCH --mail-user={0}\n'.format(slurm['email']))
             f.write('#SBATCH --mem-per-cpu=4G\n\n')
-            
+
             f.write('compress-mesa .\n')
             if 'newgroup' in slurm.keys():
                 f.write('echo \"Change group to {0}\"\n'.format(slurm['newgroup']))

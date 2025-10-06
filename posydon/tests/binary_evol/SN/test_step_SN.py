@@ -1,15 +1,15 @@
+import os
 import unittest
 
-from posydon.config import PATH_TO_POSYDON
-from posydon.binary_evol.SN.step_SN import StepSN
-from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.singlestar import SingleStar
-
+import matplotlib.cm as cm
 import numpy as np
-import os
 import pandas as pd
 from scipy.stats import maxwell
-import matplotlib.cm as cm
+
+from posydon.binary_evol.binarystar import BinaryStar
+from posydon.binary_evol.singlestar import SingleStar
+from posydon.binary_evol.SN.step_SN import StepSN
+from posydon.config import PATH_TO_POSYDON
 
 # github action are not cloning the data submoule, data for unit testing
 # are therefore stored to the unit test submodule

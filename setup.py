@@ -1,9 +1,11 @@
 """Setup the posydon package."""
 
 from __future__ import print_function
+
 import glob
-import sys
 import os.path
+import sys
+
 sys.path.insert(0, os.path.dirname(__file__))
 
 import versioneer
@@ -25,13 +27,13 @@ if WRAP_C_CPP_OR_FORTRAN:
     from distutils.command.sdist import sdist
 
     try:
-        from numpy.distutils.core import setup, Extension
+        from numpy.distutils.core import Extension, setup
     except ImportError:
         raise ImportError("Building fortran extensions requires numpy.")
 
     cmdclass["sdist"] = sdist
 else:
-    from setuptools import setup, find_packages
+    from setuptools import find_packages, setup
 
 
 # DOCUMENTATION
@@ -108,6 +110,11 @@ extras_require = {
     "ml": ["tensorflow >= 2.13.0"],
     # for running population synthesis on HPC facilities
     "hpc": ["mpi4py >= 3.0.3"],
+    # development tooling
+    'dev': [
+        'pre-commit >= 3.7.0',
+        'isort >= 5.13.2',
+    ],
 }
 
 # RUN SETUP

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-  
+
     - name: Get pip cache dir
       id: pip-cache
       run: |
@@ -62,14 +62,14 @@ jobs:
 
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
         cd $PATH_TO_POSYDON
-        
+
         # build the documentation for the development branch
         git checkout -f development
 
         # clean the repo & install
         git clean -fdx
         python -m pip install .[doc,vis]
-      
+
         # build the documentation
         cd docs && make html
 

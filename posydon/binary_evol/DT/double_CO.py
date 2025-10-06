@@ -10,13 +10,17 @@ __authors__ = [
 
 import numpy as np
 from scipy.integrate import solve_ivp
+
 import posydon.utils.constants as constants
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.utils.common_functions import orbital_period_from_separation
-from posydon.utils.common_functions import CO_radius
-from posydon.utils.common_functions import set_binary_to_failed
+from posydon.utils.common_functions import (
+    CO_radius,
+    orbital_period_from_separation,
+    set_binary_to_failed,
+)
 from posydon.utils.posydonerror import NumericalError
+
 
 class DoubleCO:
     """The double compact-object step class."""
@@ -60,7 +64,7 @@ class DoubleCO:
         e = self.eccentricity
         # solve the equations at most 6 times
         while(status == -1 and n < 6):
-            try: 
+            try:
                 s = solve_ivp(
                 lambda t, y: gr(t, y, self.m1, self.m2,),
                 t_span=[0, max_time - t_inspiral],

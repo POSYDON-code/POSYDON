@@ -15,22 +15,25 @@ __authors__ = [
 
 
 import os
+
 import numpy as np
 import pandas as pd
 
-from posydon.interpolation.interpolation import psyTrackInterp
-from posydon.binary_evol.binarystar import BINARYPROPERTIES
+from posydon.binary_evol.binarystar import BINARYPROPERTIES, BinaryStar
 from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.utils import common_functions as cf
-from posydon.binary_evol.binarystar import BinaryStar
-from posydon.interpolation.IF_interpolation import IFInterpolator
-from posydon.utils.common_functions import (flip_stars,
-                                            convert_metallicity_to_string,
-                                            CO_radius, infer_star_state,
-                                            set_binary_to_failed,)
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.utils.data_download import data_download
 from posydon.grids.SN_MODELS import SN_MODELS
+from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.interpolation.interpolation import psyTrackInterp
+from posydon.utils import common_functions as cf
+from posydon.utils.common_functions import (
+    CO_radius,
+    convert_metallicity_to_string,
+    flip_stars,
+    infer_star_state,
+    set_binary_to_failed,
+)
+from posydon.utils.data_download import data_download
 from posydon.utils.posydonerror import FlowError, GridError
 from posydon.utils.posydonwarning import Pwarn
 
@@ -309,7 +312,7 @@ class MesaGridStep:
             max_MESA_sim_time = self.final_values[POSYDON_TO_MESA['binary']['time']]
         else:
             raise ValueError("unknown interpolation method: {}".format(self.interpolation_method))
-        
+
         return max_MESA_sim_time
 
     def __call__(self, binary):
@@ -324,7 +327,7 @@ class MesaGridStep:
             raise ValueError("Must be an instance of BinaryStar")
         if not hasattr(self, 'step'):
             raise ValueError("No step defined for {}".format(self.__name__))
-        
+
         if self.flip_stars_before_step:
             flip_stars(binary)
         max_MESA_sim_time = self.get_final_MESA_step_time()
@@ -339,7 +342,7 @@ class MesaGridStep:
                                     > binary.properties.max_simulation_time)
         if (step_will_exceed_max_time
                 and self.stop_method == 'stop_at_max_time'):
-            
+
             if self.interpolation_method != 'nearest_neighbour':
                 self.closest_binary, self.nearest_neighbour_distance, \
                     self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
@@ -385,7 +388,7 @@ class MesaGridStep:
                              interpolate=self.stop_interpolate,
                              star_1_CO=self.star_1_CO,
                              star_2_CO=self.star_2_CO)
-            
+
         if self.flip_stars_before_step:
             flip_stars(binary)
         if binary.time > binary.properties.max_simulation_time:
@@ -449,7 +452,7 @@ class MesaGridStep:
         cb_bh = cb.binary_history
         cb_hs = [cb.history1, cb.history2]
         cb_fps = [cb.final_profile1, cb.final_profile2]
-        
+
         if (cb_bh['age'].size <= 1 or cb_bh['star_1_mass'].size <= 1):
             setattr(binary, "state", "initial_RLOF")
             return
@@ -458,7 +461,7 @@ class MesaGridStep:
         interpolation_class = self.termination_flags[0]
         binary_state, binary_event, MT_case = (
             cf.get_binary_state_and_event_and_mt_case(
-                binary, interpolation_class, verbose=self.verbose))       
+                binary, interpolation_class, verbose=self.verbose))
         setattr(binary, 'state', binary_state)
         setattr(binary, 'event', binary_event)
         setattr(binary, 'mass_transfer_case', MT_case)
@@ -727,7 +730,7 @@ class MesaGridStep:
                 getattr(stars[1], "state_history").extend(state2_hist)
                 binary_state, binary_event, MT_case = (
                     cf.get_binary_state_and_event_and_mt_case_array(
-                        binary, N=length_hist, verbose=self.verbose))               
+                        binary, N=length_hist, verbose=self.verbose))
                 getattr(binary, "state_history").extend(binary_state)
                 getattr(binary, "event_history").extend(binary_event)
                 getattr(binary, "mass_transfer_case_history").extend(MT_case)
@@ -904,7 +907,7 @@ class MesaGridStep:
                         # calculate new spin based on masses
                         spin = cf.spin_stable_mass_transfer(current, prev_mass[k], fv[key_p])
                         setattr(star, key, spin)
-                        
+
                     elif key == 'log_R':
                         mass = fv['star_%d_mass' % (k+1)]
                         st = infer_star_state(star_mass=mass, star_CO=True)
@@ -945,7 +948,7 @@ class MesaGridStep:
         setattr(self.binary, 'event', binary_event)
         setattr(self.binary, 'mass_transfer_case', MT_case)
 
-        
+
         if binary.state == 'initial_RLOF':
             return
 
@@ -1033,11 +1036,11 @@ class MesaGridStep:
         if binary.properties.max_simulation_time - binary.time < 0.0:
             binary.event = 'MaxTime_exceeded'
             return
-        
-        # In cases where we are using IF or kNN interpolation, 
-        # we may track interpolate if the final track time exceeds 
-        # the Hubble time, and we may envounter a new binary event 
-        # during that intepolation. In these cases, we still need 
+
+        # In cases where we are using IF or kNN interpolation,
+        # we may track interpolate if the final track time exceeds
+        # the Hubble time, and we may envounter a new binary event
+        # during that intepolation. In these cases, we still need
         # to check if we should flush the history.
         if self.flush_history and self.flush_entries is not None:
             for key in STARPROPERTIES:
