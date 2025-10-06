@@ -6,8 +6,8 @@ This script is based on the physics explained in Appendix D of Bavera+2020.
 
 import numpy as np
 from scipy import integrate
-import posydon.utils.constants as const
 
+import posydon.utils.constants as const
 from posydon.utils.gridutils import find_index_nearest_neighbour
 from posydon.utils.limits_thresholds import NEUTRINO_MASS_LOSS_UPPER_LIMIT
 from posydon.utils.posydonwarning import Pwarn
@@ -268,10 +268,10 @@ def get_initial_BH_properties(star, mass_collapsing, mass_central_BH,
     #        = iint 2pi Omega(r) r^4 sin^3(t) rho(r) dt dr
     #        = 2pi int_0^pi sin^3(t) dt int_0^M_core Omega(r) r^4 rho(r) dr
     #        =: 2pi * temp1 * temp2
-    
+
     # Analytic integral of int_0^pi sin^3(t) dt is 4/3
     temp1 = 4 / 3
-    
+
     # f_nu_AM is a rescaling the J_initial_BH. This account for the
     # angular momentum lost thorugh neutrinos, which under the assumption
     # of efficient AM transport is really low.
@@ -393,7 +393,7 @@ def do_core_collapse_BH(star,
             The mass of the disk radiated away in M_sun.
         'BZ_jet_power_total' : float
             The total Blandford-Znajek jet power in erg/s.
-            
+
         # Additional keys that are not used in the current implementation:
         # 'BZ_jet_power_array' : np.array(BZ_jet_power_array),
         #       Blandford-Znajek jet power at each shell collapse in erg/s
@@ -634,7 +634,7 @@ def do_core_collapse_BH(star,
             raise ValueError(
                 "We got a={:.5g} from shell {} containing {:.5g} M_sun".format(
                     a_BH, i, dm_shell / Mo))
-               
+
         # calculate the potential BZ jet power at this moment of the collapse
         # We assume full efficiency for the magnetic flux and a BH spin
         # dependence of a^2 for the BH spin efficiency.
@@ -722,11 +722,11 @@ def BZ_jet_power(M_dot, eta_phi, eta_a):
     efficiency factor for the BH spin.
     This is based on the decomposition of the jet power in terms of the
     magnetic flux and the BH spin, see Gottlieb et al. (2023, 2024).
-    We do not assume any disk state in this calculation, i.e. 
+    We do not assume any disk state in this calculation, i.e.
     magnetically arrested disk (MAD), Neutrino dominated accretion flow (NDAF),
     or advection dominated accretion flow (ADAF).
-    However, the functions for eta_phi and eta_a can be dependent on the disk 
-    type. Moreover, the efficiency factors are not constant and 
+    However, the functions for eta_phi and eta_a can be dependent on the disk
+    type. Moreover, the efficiency factors are not constant and
     can change with the magnetic field and BH spin.
 
     Parameters
@@ -737,7 +737,7 @@ def BZ_jet_power(M_dot, eta_phi, eta_a):
         Efficiency factor for the magnetic flux.
     eta_a : float
         Efficiency factor for the BH spin.
-    
+
     Returns
     -------
     P_jet : float

@@ -17,24 +17,29 @@ __authors__ = [
 ]
 
 
+import copy
 import os
+
 import numpy as np
 import pandas as pd
-from scipy.optimize import newton
 from scipy.integrate import quad
-from posydon.utils import constants as const
-from posydon.utils.posydonwarning import Pwarn
-import copy
-from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
-    THRESHOLD_HE_NAKED_ABUNDANCE, REL_LOG10_BURNING_THRESHOLD,
-    LOG10_BURNING_THRESHOLD, STATE_WD_STARMASS_UPPER_LIMIT,
-    STATE_NS_STARMASS_LOWER_LIMIT, STATE_NS_STARMASS_UPPER_LIMIT,
-    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
-)
-from posydon.utils.interpolators import interp1d
-from posydon.binary_evol.flow_chart import (STAR_STATES_H_RICH,
-                                            STAR_STATES_HE_RICH)
+from scipy.optimize import newton
 
+from posydon.binary_evol.flow_chart import STAR_STATES_H_RICH, STAR_STATES_HE_RICH
+from posydon.utils import constants as const
+from posydon.utils.interpolators import interp1d
+from posydon.utils.limits_thresholds import (
+    LG_MTRANSFER_RATE_THRESHOLD,
+    LOG10_BURNING_THRESHOLD,
+    REL_LOG10_BURNING_THRESHOLD,
+    RL_RELATIVE_OVERFLOW_THRESHOLD,
+    STATE_NS_STARMASS_LOWER_LIMIT,
+    STATE_NS_STARMASS_UPPER_LIMIT,
+    STATE_WD_STARMASS_UPPER_LIMIT,
+    THRESHOLD_CENTRAL_ABUNDANCE,
+    THRESHOLD_HE_NAKED_ABUNDANCE,
+)
+from posydon.utils.posydonwarning import Pwarn
 
 # Constants related to inferring star states
 STATE_UNDETERMINED = "undetermined_evolutionary_state"
@@ -115,7 +120,7 @@ def zero_negative_values(arr, key): # pragma no cover
     arr = np.array(arr)
 
     if np.any(arr < 0):
-        Pwarn("A " + key + " value is negative. Setting to zero.", 
+        Pwarn("A " + key + " value is negative. Setting to zero.",
               "ReplaceValueWarning")
 
     arr[arr < 0] = 0.0
@@ -247,19 +252,19 @@ def roche_lobe_radius(m1, m2, a_orb=1):
                   " separation", "EvolutionWarning")
             a_orb = np.full([1 if s==0 else s for s in a_orb.shape], np.nan,
                             dtype=np.float64)
-        ## if array contains invalid values, replace with NaN 
+        ## if array contains invalid values, replace with NaN
         elif np.any(a_orb < 0):
             Pwarn("Trying to compute RL radius for binary with invalid"
                   " separation", "EvolutionWarning")
             a_orb[a_orb < 0] = np.nan
     ## catching if a_orb is a float with invalid separation value
-    elif a_orb < 0: 
+    elif a_orb < 0:
         Pwarn("Trying to compute RL radius for binary with invalid separation",
               "EvolutionWarning")
         a_orb = np.nan
 
     if isinstance(m1, np.ndarray):
-        if m1.size == 0:                  
+        if m1.size == 0:
             Pwarn("Trying to compute RL radius for nonexistent object",
                   "EvolutionWarning")
             m1 = np.full([1 if s==0 else s for s in m1.shape], np.nan,
@@ -272,9 +277,9 @@ def roche_lobe_radius(m1, m2, a_orb=1):
         Pwarn("Trying to compute RL radius for nonexistent object",
               "EvolutionWarning")
         m1 = np.nan
-    
+
     if isinstance(m2, np.ndarray):
-        if m2.size == 0:                  
+        if m2.size == 0:
             Pwarn("Trying to compute RL radius for nonexistent companion",
                   "EvolutionWarning")
             m2 = np.full([1 if s==0 else s for s in m2.shape], np.nan,
@@ -287,7 +292,7 @@ def roche_lobe_radius(m1, m2, a_orb=1):
         Pwarn("Trying to compute RL radius for nonexistent companion",
               "EvolutionWarning")
         m2 = np.nan
-   
+
     q = m1/m2
     RL = a_orb * (0.49 * q**(2. / 3.)) / (
         0.6 * q**(2. / 3.) + np.log(1 + q**(1. / 3))
@@ -1484,7 +1489,7 @@ def infer_star_state(star_mass=None, surface_h1=None,
             burning = "Shell_H_burning"
         else:
             burning = "non_burning"
-        
+
     return "{}_{}".format(rich_in, burning)
 
 
@@ -1658,7 +1663,7 @@ def cumulative_mass_transfer_string(cumulative_integers):
 
 def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     """Get the cumulative MT string from a list of integer MT casses.
-    
+
     Arguments
     ----------
     MT_cases: list of integers
@@ -1670,7 +1675,7 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     -------
     str
         A string summarizing the mass transfer cases.
-    
+
     """
     if shift_cases:
         case_1_min = MT_CASE_NO_RLO
@@ -1709,12 +1714,12 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
 
 def get_i_He_depl(history):
     """Get the index of He depletion in the history
-    
+
     Arguments
     ---------
     history: numpy-array
         Stellar history from MESA
-    
+
     Return
     ------
     int
@@ -1738,7 +1743,7 @@ def get_i_He_depl(history):
                                      log_Lnuc=history['log_Lnuc'][i],
                                      star_CO=False)
             if "Core_He_depleted" in state:
-                return i 
+                return i
     return -1
 
 
@@ -2077,7 +2082,7 @@ def calculate_core_boundary(donor_mass,
         ind_core = np.argmin(donor_mass >= mc1_i)
     else:
         raise ValueError("Not possible to calculate the core boundary of the donor in CE")
-    
+
     return ind_core
 
 
@@ -2442,7 +2447,7 @@ def get_mass_radius_dm_from_profile(profile, m1_i=0.0,
         if np.abs(donor_mass[0] - m1_i) > tolerance:
             Pwarn("Donor mass from the binary class object "
                           "and the profile do not agree", "ClassificationWarning")
-            
+
         # checking if radius of profile agrees with the radius of the binary
         if np.abs(donor_radius[0] - radius1) > tolerance:
             Pwarn("Donor radius from the binary class object "
@@ -2726,7 +2731,7 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
     # (thermal+radiation) for
     # "lambda_from_profile_gravitational_plus_internal_minus_recombination"
     U_i = 0.0
-    
+
     # sum from surface to the core. Your core boundary is in element [ind_core]
     # in a normal MESA (and POSYDON) profile
     for i in range(ind_core):
@@ -2741,7 +2746,7 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
         if not (Grav_energy < tolerance):
             raise ValueError("CEE problem calculating gravitational energy, "
                             "giving positive values.")
-        
+
     # binding energy of the enevelope equals its gravitational energy +
     # an a_th fraction of its internal energy
     Ebind_i = Grav_energy + factor_internal_energy * U_i
@@ -2808,7 +2813,7 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
     ind_threshold = i-1
 
     if donor_mass[ind_threshold]< mc1_i or  donor_radius[ind_threshold]<rc1_i:
-        Pwarn("partial mass ejected is greater than the envelope mass", "EvolutionWarning")   
+        Pwarn("partial mass ejected is greater than the envelope mass", "EvolutionWarning")
         mass_threshold = mc1_i
     else:
         mass_threshold = donor_mass[ind_threshold]
@@ -2850,7 +2855,7 @@ def rotate(axis, angle):
     if norm==0:
         raise ValueError("axis is a point")
     axis = axis / norm
-        
+
     # calculate the cosine and sine of the angle
     cos_theta = np.cos(angle)
     sin_theta = np.sin(angle)

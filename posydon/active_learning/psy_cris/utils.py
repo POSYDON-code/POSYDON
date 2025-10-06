@@ -6,28 +6,32 @@ __authors__ = [
 ]
 
 
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-import time
 import copy
 import random
-from scipy.spatial.distance import cdist
-from sklearn.neighbors import NearestNeighbors
-
-from posydon.active_learning.psy_cris.data import TableData
-from posydon.active_learning.psy_cris.classify import Classifier
-from posydon.active_learning.psy_cris.regress import Regressor
-from posydon.active_learning.psy_cris.sample import Sampler
-
-from posydon.active_learning.psy_cris.synthetic_data.synth_data_2D import (
-    get_output_2D, get_raw_output_2D)
-from posydon.active_learning.psy_cris.synthetic_data.synth_data_3D import (
-    get_output_3D, get_raw_output_3D)
+import time
+from ast import literal_eval
 
 # for parsing ini files
 from configparser import ConfigParser
-from ast import literal_eval
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy.spatial.distance import cdist
+from sklearn.neighbors import NearestNeighbors
+
+from posydon.active_learning.psy_cris.classify import Classifier
+from posydon.active_learning.psy_cris.data import TableData
+from posydon.active_learning.psy_cris.regress import Regressor
+from posydon.active_learning.psy_cris.sample import Sampler
+from posydon.active_learning.psy_cris.synthetic_data.synth_data_2D import (
+    get_output_2D,
+    get_raw_output_2D,
+)
+from posydon.active_learning.psy_cris.synthetic_data.synth_data_3D import (
+    get_output_3D,
+    get_raw_output_3D,
+)
 
 
 def parse_inifile(path, verbose=False):

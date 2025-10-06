@@ -10,11 +10,15 @@ __authors__ = [
 ]
 
 import os
-from posydon.grids.io import SINGLE_OUTPUT_FILE, BINARY_OUTPUT_FILE
-from posydon.grids.psygrid import (DEFAULT_BINARY_HISTORY_COLS,
-                                   DEFAULT_STAR_HISTORY_COLS,
-                                   DEFAULT_SINGLE_HISTORY_COLS,
-                                   DEFAULT_PROFILE_COLS)
+
+from posydon.grids.io import BINARY_OUTPUT_FILE, SINGLE_OUTPUT_FILE
+from posydon.grids.psygrid import (
+    DEFAULT_BINARY_HISTORY_COLS,
+    DEFAULT_PROFILE_COLS,
+    DEFAULT_SINGLE_HISTORY_COLS,
+    DEFAULT_STAR_HISTORY_COLS,
+)
+
 
 # helper functions
 def add_MESA_run_files(path, idx, binary_run=True, with_histories=True,\

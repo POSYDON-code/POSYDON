@@ -6,7 +6,8 @@ __authors__ = [
 ]
 
 import posydon.binary_evol.flow_chart as fc
-from posydon.binary_evol.flow_chart import (flow_chart, STAR_STATES_NORMALSTAR)
+from posydon.binary_evol.flow_chart import STAR_STATES_NORMALSTAR, flow_chart
+
 
 def modified_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     """Derive a flow chart from POSYDON's standard one and modify it.

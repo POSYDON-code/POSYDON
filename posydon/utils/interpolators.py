@@ -7,9 +7,10 @@ __authors__ = [
 ]
 
 
+import copy
+
 import numpy as np
 from scipy.interpolate import PchipInterpolator
-import copy
 
 
 class interp1d:
@@ -41,7 +42,7 @@ class interp1d:
                     - size 1 : use y-value for below and above
                     - size 2 : use first y-value for below and second for above
 
-        """ 
+        """
         if kind not in ['linear']:
             raise NotImplementedError(f"kind = {kind} is not supported")
         self.kind = kind
@@ -58,7 +59,7 @@ class interp1d:
                 indices = np.argsort(self.x)
                 self.x = self.x[indices]
                 self.y = self.y[indices]
-                
+
         self.below = None
         self.above = None
         self.extrapolate = False
@@ -142,7 +143,7 @@ class PchipInterpolator2:
             self.interpolator = PchipInterpolator(*args, **kwargs).derivative()
         else:
             self.interpolator = PchipInterpolator(*args, **kwargs)
-            
+
         self.positive = positive
 
         # potential offset (for example, we've matched a MESA sim to another
@@ -176,4 +177,3 @@ class PchipInterpolator2:
         if self.positive:
             result = np.maximum(result, 0.0)
         return result
-

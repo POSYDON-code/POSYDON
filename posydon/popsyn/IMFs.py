@@ -4,16 +4,19 @@ __authors__ = [
     "Max Briel <max.briel@gmail.com>"
 ]
 
+from abc import ABC, abstractmethod
+
 import numpy as np
 from scipy.integrate import quad
-from abc import ABC, abstractmethod
+
 from posydon.utils.posydonwarning import Pwarn
+
 
 class IMFBase(ABC):
     '''Base class for Initial Mass Functions (IMFs)'''
     def __init__(self, m_min, m_max):
         """Initialize the IMF with minimum and maximum mass limits.
-        
+
         Parameters
         ----------
         m_min : float
@@ -23,14 +26,14 @@ class IMFBase(ABC):
         """
         if m_min >= m_max:
             raise ValueError("m_min must be less than m_max.")
-        
+
         self.m_min = m_min
         self.m_max = m_max
         self.norm = self._calculate_normalization()
-        
+
     def _check_valid(self, array):
         """Checks if input array falls within m_min and m_max of the IMF.
-        
+
         Parameters
         -----------
         array : numpy.ndarray floats
@@ -50,7 +53,7 @@ class IMFBase(ABC):
         """Calculate the normalization constant for the IMF.
         This is done by integrating the IMF over the mass range
         [m_min, m_max] and taking the inverse of the integral.
-        
+
         Returns
         -------
         float:
@@ -63,24 +66,24 @@ class IMFBase(ABC):
         return 1.0 / integral
 
     def pdf(self, m):
-        """Compute the probability density function (PDF) values 
+        """Compute the probability density function (PDF) values
         for the input mass(es).
 
         Parameters
         ----------
-        m  : (scalar or array-like): 
+        m  : (scalar or array-like):
             The mass or masses at which to evaluate the PDF [Msun].
 
         Returns
         -------
-        numpy.ndarray: 
-            An array of PDF values corresponding to each entry in m, 
+        numpy.ndarray:
+            An array of PDF values corresponding to each entry in m,
             with invalid masses (outside [self.m_min, self.m_max])
             assigned a value of zero.
         """
         m = np.asarray(m)
         valid = self._check_valid(m)
-            
+
         pdf_values = np.zeros_like(m, dtype=float)
         pdf_values[valid] = self.imf(m[valid]) * self.norm
         return pdf_values
@@ -90,25 +93,25 @@ class IMFBase(ABC):
     @abstractmethod
     def imf(self, m): # pragma: no cover
         '''Computes the IMF value for a given mass or array of masses 'm'.
-        
+
         Raises
         -------
-        Raises a NotImplementedError if the method is not 
+        Raises a NotImplementedError if the method is not
         implemented in a subclass.
-        ''' 
+        '''
         pass
 
 class Salpeter(IMFBase):
     """
     Initial Mass Function based on Salpeter (1955), which is defined as:
-    
+
         dN/dM = m^-2.35
-    
+
     References
     ----------
     Salpeter, 1955, ApJ, 121, 161
     https://ui.adsabs.harvard.edu/abs/1955ApJ...121..161S/abstract
-    
+
     Parameters
     ----------
     alpha : float, optional
@@ -117,7 +120,7 @@ class Salpeter(IMFBase):
         The minimum allowable mass (default is 0.01) [Msun].
     m_max : float, optional
         The maximum allowable mass (default is 200.0) [Msun].
-        
+
     Attributes
     ----------
     alpha : float
@@ -127,31 +130,31 @@ class Salpeter(IMFBase):
     m_max : float
         Maximum stellar mass for the IMF [Msun].
     """
-    
+
     def __init__(self, alpha=2.35, m_min=0.01, m_max=200.0):
         self.alpha = alpha
         super().__init__(m_min, m_max)
-        
+
     def __repr__(self):
         return (f"Salpeter(alpha={self.alpha}, "
                 f"m_min={self.m_min}, "
                 f"m_max={self.m_max})")
-    
+
     def _repr_html_(self):
         return (f"<h3>Salpeter IMF</h3>"
                 f"<p>alpha = {self.alpha}</p>"
                 f"<p>m_min = {self.m_min}</p>"
                 f"<p>m_max = {self.m_max}</p>")
-    
+
     def imf(self, m):
         '''Computes the IMF value for a given mass or array of masses 'm'.
         Raises a ValueError if any value in 'm' is less than or equal to zero.
-        
+
         Parameters
         ----------
         m : float or array_like
             Stellar mass or array of stellar masses [Msun].
-            
+
         Returns
         -------
         float or ndarray
@@ -164,13 +167,13 @@ class Salpeter(IMFBase):
         return m ** (-self.alpha)
 
 class Kroupa2001(IMFBase):
-    """Initial Mass Function based on Kroupa (2001), which is 
+    """Initial Mass Function based on Kroupa (2001), which is
     defined as a broken power-law:
-    
+
         dN/dM = m^-0.3 for 0.01 <= m < 0.08
         dN/dM = m^-1.3 for 0.08 <= m < 0.5
         dN/dM = m^-2.3 for 0.5 <= m <= 200.0
-        
+
     References
     ----------
     Kroupa, 2001, MNRAS, 322, 231
@@ -192,7 +195,7 @@ class Kroupa2001(IMFBase):
         The minimum allowable mass (default is 0.01) [Msun].
     m_max : float, optional
         The maximum allowable mass (default is 200.0) [Msun].
-        
+
     Attributes
     ----------
     alpha1 : float
@@ -208,10 +211,10 @@ class Kroupa2001(IMFBase):
     m_min : float
         Minimum stellar mass for the IMF [Msun].
     m_max : float
-        Maximum stellar mass for the IMF [Msun].        
-   
+        Maximum stellar mass for the IMF [Msun].
+
     """
-    
+
     def __init__(self,
                  alpha1=0.3, alpha2=1.3, alpha3=2.3,
                  m1break=0.08, m2break=0.5,
@@ -222,13 +225,13 @@ class Kroupa2001(IMFBase):
         self.m1break = m1break
         self.m2break = m2break
         super().__init__(m_min, m_max)
-        
+
     def __repr__(self):
         return (f"Kroupa2001(alpha1={self.alpha1}, "
                 f"alpha2={self.alpha2}, alpha3={self.alpha3}, "
                 f"m1break={self.m1break}, m2break={self.m2break}, "
                 f"m_min={self.m_min}, m_max={self.m_max})")
-        
+
     def _repr_html_(self):
         return (f"<h3>Kroupa (2001) IMF</h3>"
                 f"<p>alpha1 = {self.alpha1}</p>"
@@ -238,16 +241,16 @@ class Kroupa2001(IMFBase):
                 f"<p>m2break = {self.m2break}</p>"
                 f"<p>m_min = {self.m_min}</p>"
                 f"<p>m_max = {self.m_max}</p>")
-        
+
     def imf(self, m):
         '''Computes the IMF value for a given mass or array of masses 'm'.
         Raises a ValueError if any value in 'm' is less than or equal to zero.
-        
+
         Parameters
         ----------
         m : float or array_like
             Stellar mass or array of stellar masses [Msun].
-            
+
         Returns
         -------
         float or ndarray
@@ -257,7 +260,7 @@ class Kroupa2001(IMFBase):
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
         self._check_valid(m)
-        
+
         mask1 = m < self.m1break
         mask2 = (m >= self.m1break) & (m < self.m2break)
         mask3 = m >= self.m2break
@@ -273,19 +276,19 @@ class Kroupa2001(IMFBase):
         return out
 
 class Chabrier2003(IMFBase):
-    """Chabrier2003 Initial Mass Function (IMF), which is defined as 
+    """Chabrier2003 Initial Mass Function (IMF), which is defined as
     a lognormal distribution for low-mass stars and a power-law distribution
     for high-mass stars:
-    
-        dN/dM = 1/(m * sqrt(2*pi) * sigma) 
+
+        dN/dM = 1/(m * sqrt(2*pi) * sigma)
               * exp(- (log10(m) - log10(m_c))^2 / (2 * sigma^2)) for m < m_break
         dN/dM = C * (m / m_break)^(-alpha) for m >= m_break
-        
+
     Reference
     ----------
     Chabrier, (2003). PASP, 115(809), 763-795.
     https://ui.adsabs.harvard.edu/abs/2003PASP..115..763C/abstract
-        
+
     Parameters
     ----------
     m_c : float, optional
@@ -297,22 +300,22 @@ class Chabrier2003(IMFBase):
         The power-law index governing the high-mass end of the IMF
         (default: 2.3).
     m_break : float, optional
-        The mass at which the IMF transitions from a lognormal 
+        The mass at which the IMF transitions from a lognormal
         to a power-law behavior (default: 1.0) [Msun].
     m_min : float, optional
         The minimum mass considered in the IMF (default: 0.01) [Msun].
     m_max : float, optional
         The maximum mass considered in the IMF (default: 200.0) [Msun].
     """
-    
-    def __init__(self, m_c=0.22, sigma=0.57, alpha=2.3, 
+
+    def __init__(self, m_c=0.22, sigma=0.57, alpha=2.3,
                  m_break=1.0, m_min=0.01, m_max=200.0):
         self.m_c = m_c
         self.sigma = sigma
         self.alpha = alpha
         self.m_break = m_break
         super().__init__(m_min, m_max)
-    
+
     def __repr__(self):
         return (f"Chabrier(m_c={self.m_c}, "
                 f"sigma={self.sigma}, alpha={self.alpha}, "
@@ -331,12 +334,12 @@ class Chabrier2003(IMFBase):
     def imf(self, m):
         '''Computes the IMF value for a given mass or array of masses 'm'.
         Raises a ValueError if any value in 'm' is less than or equal to zero.
-        
+
         Parameters
         ----------
         m : float or array_like
             Stellar mass or array of stellar masses [Msun].
-            
+
         Returns
         -------
         float or ndarray
@@ -348,13 +351,13 @@ class Chabrier2003(IMFBase):
         self._check_valid(m)
         # Calculate common terms for the lognormal function
         sqrt_2pi_sigma = np.sqrt(2 * np.pi) * self.sigma
-        
+
         # Calculate lognormal component for masses below the break point
         log_term_m = (np.log10(m) - np.log10(self.m_c))**2 / (2 * self.sigma**2)
         lognormal = (1.0 / (m * sqrt_2pi_sigma)) * np.exp(-log_term_m)
-        
+
         # Calculate normalization constant for the power-law component
-        log_term_break = ((np.log10(self.m_break) - np.log10(self.m_c))**2 / 
+        log_term_break = ((np.log10(self.m_break) - np.log10(self.m_c))**2 /
                   (2 * self.sigma**2))
         C = (1.0 / (self.m_break * sqrt_2pi_sigma)) * np.exp(-log_term_break)
         powerlaw = C * (m / self.m_break) ** (-self.alpha)

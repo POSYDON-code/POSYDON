@@ -9,13 +9,16 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
-import os
-import sys
-import shutil
-import random
 import argparse
+import os
+import random
+import shutil
+import sys
+
 from tqdm import tqdm
+
 from posydon.utils.posydonwarning import Pwarn
+
 
 def _parse_commandline():
     """Parse the arguments given on the command line
@@ -283,7 +286,7 @@ def compress_dir(args):
 
 def _compress_MESA():
     """Run the compression of MESA files
-    
+
     """
     args = _parse_commandline()
     if args.test_dir is not None:
