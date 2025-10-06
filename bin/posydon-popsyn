@@ -493,59 +493,73 @@ def check_batches(run_folder, metallicity, batch_folder_name):
         # Get the jobID
         jobIDs = glob.glob(os.path.join(run_folder,
                                         f'{str_met}_logs/popsyn_*.out'))
-        jobIDs = [
-            int(os.path.basename(job).split('_')[1].split('.')[0])
-            for job in jobIDs]
 
-        jobIDs = np.unique(jobIDs)
-        if len(jobIDs) > 1:
-            print("Please select a job ID to use: ")
-            for i, job_id in enumerate(jobIDs):
-                print(f"{i}: {job_id}")
-
-            selected_job_idx = None
-            while selected_job_idx is None:
-                try:
-                    idx = int(input("\nEnter the index to the job ID: "))
-                    if 0 <= idx < len(jobIDs):
-                        selected_job_idx = idx
-                        jobID = jobIDs[idx]  # Filter to only the selected job ID
-                    else:
-                        print("Invalid selection. Please try again.")
-                except ValueError:
-                    print("Please enter a valid number.")
+        # Check if any log files exist
+        if len(jobIDs) == 0:
+            print("\n\033[33mNo log files found. Cannot determine failure reasons.\033[0m")
+            print("This may indicate that the jobs were never submitted or the log directory is missing.")
         else:
-            jobID = jobIDs[0]
+            jobIDs = [
+                int(os.path.basename(job).split('_')[1].split('.')[0])
+                for job in jobIDs]
 
-        print(f"\nREADING THE LOGS OF {jobID} ....")
-        print("Reasons for missing files:")
+            jobIDs = np.unique(jobIDs)
+            if len(jobIDs) > 1:
+                print("Please select a job ID to use: ")
+                for i, job_id in enumerate(jobIDs):
+                    print(f"{i}: {job_id}")
 
-        for index in missing_indices:
-            with open(
-                os.path.join(run_folder,
-                            f'{str_met}_logs/popsyn_{jobID}_{index}.out'),
-                'r') as f:
-                lines = f.readlines()
-                if lines:
-                    if len(lines) >= 3:
-                        last_3_lines = [line.strip() for line in lines[-3:]]
-                        if "DUE TO TIME LIMIT" in str(last_3_lines):
-                            print(F"Batch {index}: Wall time exceeded")
+                selected_job_idx = None
+                while selected_job_idx is None:
+                    try:
+                        idx = int(input("\nEnter the index to the job ID: "))
+                        if 0 <= idx < len(jobIDs):
+                            selected_job_idx = idx
+                            jobID = jobIDs[idx]  # Filter to only the selected job ID
                         else:
-                            print(f"{str_met}_logs/popsyn_{jobID}_{index}.out:")
-                            for i, line in enumerate(last_3_lines):
-                                print(f"  {i+1}: {line}")
-                    elif len(lines) > 0:
-                        print(f"Batch {index}: "
-                              "File contains {len(lines)} line(s):")
-                        if "DUE TO TIME LIMIT" in lines[0]:
-                            print("  Wall time exceeded")
+                            print("Invalid selection. Please try again.")
+                    except ValueError:
+                        print("Please enter a valid number.")
+            else:
+                jobID = jobIDs[0]
+
+            print(f"\nREADING THE LOGS OF {jobID} ....")
+            print("Reasons for missing files:")
+
+            for index in missing_indices:
+                log_file_path = os.path.join(run_folder,
+                                            f'{str_met}_logs/popsyn_{jobID}_{index}.out')
+
+                # Check if the log file exists before trying to open it
+                if not os.path.exists(log_file_path):
+                    print(f"Batch {index}: Log file not found")
+                    continue
+
+                try:
+                    with open(log_file_path, 'r') as f:
+                        lines = f.readlines()
+                        if lines:
+                            if len(lines) >= 3:
+                                last_3_lines = [line.strip() for line in lines[-3:]]
+                                if "DUE TO TIME LIMIT" in str(last_3_lines):
+                                    print(F"Batch {index}: Wall time exceeded")
+                                else:
+                                    print(f"{str_met}_logs/popsyn_{jobID}_{index}.out:")
+                                    for i, line in enumerate(last_3_lines):
+                                        print(f"  {i+1}: {line}")
+                            elif len(lines) > 0:
+                                print(f"Batch {index}: "
+                                      "File contains {len(lines)} line(s):")
+                                if "DUE TO TIME LIMIT" in lines[0]:
+                                    print("  Wall time exceeded")
+                                else:
+                                    print(f"{str_met}_logs/popsyn_{jobID}_{index}.out:")
+                                    for i, line in enumerate(lines):
+                                        print(f"  {i+1}: {line.strip()}")
                         else:
-                            print(f"{str_met}_logs/popsyn_{jobID}_{index}.out:")
-                            for i, line in enumerate(lines):
-                                print(f"  {i+1}: {line.strip()}")
-                else:
-                    print(f"Batch {index}: <empty file>")
+                            print(f"Batch {index}: <empty file>")
+                except Exception as e:
+                    print(f"Batch {index}: Error reading log file - {str(e)}")
 
     return {
         "status": status,
@@ -760,7 +774,27 @@ def check_popsyn_function(args):
     """
     print(f"Checking the status of the population run in {args.run_folder}\n")
 
-    ini_file = get_ini_file(args)
+    # Check if the run folder exists
+    if not os.path.exists(args.run_folder):
+        print(f"\033[31mERROR: Run folder '{args.run_folder}' does not exist.\033[0m")
+        print("\nPlease provide a valid path to a population run folder.")
+        return
+
+    # Check if the run folder is empty
+    folder_contents = os.listdir(args.run_folder)
+    if not folder_contents:
+        print(f"\033[31mERROR: Run folder '{args.run_folder}' is empty.\033[0m")
+        print("\nThis folder does not contain any population run files.")
+        return
+
+    try:
+        ini_file = get_ini_file(args)
+    except FileNotFoundError as e:
+        print(f"\033[31mERROR: {str(e)}\033[0m")
+        print("\nThis folder does not appear to contain a valid population run.")
+        print("Please ensure that you are checking the correct folder")
+        return
+
     print(f"\nUsing INI file:\n{ini_file}")
 
     num_metallicities, number_of_binaries,\
@@ -848,8 +882,29 @@ def rescue_popsyn_function(args):
         The arguments passed to the function
     """
 
-    # 1. Check status of the run
-    ini_file = get_ini_file(args)
+    # Check if the run folder exists
+    if not os.path.exists(args.run_folder):
+        print(f"\033[31mERROR: Run folder '{args.run_folder}' does not exist.\033[0m")
+        print("\nPlease provide a valid path to a population run folder.")
+        return
+
+    # Check if the run folder is empty
+    folder_contents = os.listdir(args.run_folder)
+    if not folder_contents:
+        print(f"\033[31mERROR: Run folder '{args.run_folder}' is empty.\033[0m")
+        print("\nThis folder does not contain any population run files.")
+        print("There are no jobs to rescue.")
+        return
+
+    # Check status of the run
+    try:
+        ini_file = get_ini_file(args)
+    except FileNotFoundError as e:
+        print(f"\033[31mERROR: {str(e)}\033[0m")
+        print("\nThis folder does not appear to contain a valid population run.")
+        print("Cannot generate rescue script without an INI file.")
+        return
+
     print(f"\nUsing INI file:\n{ini_file}")
 
     num_metallicities, number_of_binaries,\
@@ -893,6 +948,35 @@ def rescue_popsyn_function(args):
                                 met,
                                 synpop_params.get('temp_directory', 'batches')
                                 )
+            batch_error = any(status["status"] != "complete"
+                    for status in batch_status.values())
+            if not batch_error:
+                print("\nAll batch files are complete.")
+                print("Please resubmit the merge jobs to generate the population files.")
+                print("Would you like to resubmit the merge jobs?")
+                choice = input("Enter 'yes'  or 'y' to resubmit the merge jobs: ")
+                if choice.lower() == 'yes' or choice.lower() == 'y':
+                    for met in missing_files:
+                        str_met = convert_metallicity_to_string(met)
+
+                        os.system(
+                            f'sbatch {args.run_folder}/{str_met}_Zsun_merge_popsyn.slurm'
+                        )
+                    print("Merge jobs resubmitted.")
+                else:
+                    print("Merge jobs not resubmitted.")
+                return
+            else:
+                print("\nOne or more batch files are incomplete.\n")
+                if any(
+                    status["status"] == "folder_missing"
+                    for status in batch_status.values()
+                ):
+                    print("\033[31mERROR: One or more batch folders are missing.\033[0m")
+                    print("Cannot generate rescue scripts without the batch folders.")
+                    print("Please ensure that the batch folders exist and try again.")
+                    return
+
 
             print("#"*80)
             print("\nGENERATING A RESCUE SCRIPT ....................")
