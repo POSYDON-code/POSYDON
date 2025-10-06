@@ -2,7 +2,10 @@ name: POSYDON Continuous Integration
 
 on:
   pull_request:
-    branches: [main, v2.1-dev]
+    branches: 
+      - main
+      - 'v2.*'
+      - 'v2.**'
 
 jobs:
   test:
