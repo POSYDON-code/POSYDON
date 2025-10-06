@@ -270,7 +270,7 @@ class StepSN(object):
             for varname in SN_MODEL:
                 default_value = SN_MODEL[varname]
                 setattr(self, varname, default_value)
-                
+
         # backward compatibility for kick
         if (self.kick_normalisation == 'asym_ej'
             or self.kick_normalisation == 'linear'):
