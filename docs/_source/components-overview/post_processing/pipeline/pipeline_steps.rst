@@ -13,7 +13,7 @@ The script to run the pipeline takes four arguments:
 
     posydon-run-pipeline PATH_TO_GRIDS PATH_TO_CSV_FILE DATA_ID VERBOSE
 
-1. [path] The path to the grids main directory (currently not used)
+1. [path] The path to the grids main directory (this is a required input, but is not used when the ``PATH_TO_CSV_FILE`` is given)
 2. [path] The path to the :samp:`csv` file
 3. [int] An index indicating the data entry to read from the :samp:`csv` file
 4. [int] Whether one wants verbose output (1) or not (0)
