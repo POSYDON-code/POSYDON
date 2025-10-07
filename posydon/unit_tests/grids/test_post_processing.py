@@ -7,22 +7,29 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.grids.post_processing as totest
+
 # aliases
 np = totest.np
+
+import json
+import os
+from inspect import isclass, isroutine
+
+import h5py
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises, warns
-from inspect import isclass, isroutine
-import h5py
-import json
-import os
-from posydon.utils.posydonwarning import InappropriateValueWarning,\
-                                         ReplaceValueWarning,\
-                                         POSYDONWarning
-from posydon.grids.psygrid import PSyGrid
+
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
+from posydon.grids.psygrid import PSyGrid
 from posydon.unit_tests._helper_functions_for_tests.psygrid import get_PSyGrid
+from posydon.utils.posydonwarning import (
+    InappropriateValueWarning,
+    POSYDONWarning,
+    ReplaceValueWarning,
+)
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -327,7 +334,7 @@ class TestFunctions:
                         assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
         def check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, n_runs, keys):
             """Function to check the EXTRA_COLUMNS of single star girds
-            
+
             Note: The non-core collapse runs 0 and 6 will be skipped.
 
             Parameters
@@ -493,13 +500,13 @@ class TestFunctions:
         assert "The error was raised by" in output
         assert "in CEE_parameters_from_core_abundance_thresholds" in output
         assert "The exception was raised by" in output
-        with warns(POSYDONWarning): 
+        with warns(POSYDONWarning):
             with warns(ReplaceValueWarning, match="While accessing "
                                                    +"abundances in star"):
                 MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
                                             test_PSyGrid,\
                                             verbose=True)
-                
+
         assert "in check_state_of_star(star_2) with IC=" in output
         # examples: single and verbose
         with warns(POSYDONWarning): # warnings from SN
@@ -515,7 +522,7 @@ class TestFunctions:
         assert "core collapse prescrition!" in output
         assert "in CEE_parameters_from_core_abundance_thresholds" in output
         assert "The exception was raised by" in output
-        with warns(POSYDONWarning): 
+        with warns(POSYDONWarning):
             with warns(ReplaceValueWarning, match="While accessing "
                                                    +"abundances in star"):
                 MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\

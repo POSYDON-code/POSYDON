@@ -7,8 +7,8 @@ __authors__ = [
 
 try:
     from PyQt5 import QtGui, QtWidgets
-    from PyQt5.QtWidgets import QVBoxLayout
     from PyQt5.QtCore import Qt
+    from PyQt5.QtWidgets import QVBoxLayout
 except ImportError:
     raise ImportError('PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory')
 

@@ -7,13 +7,16 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.interpolators as totest
+
 # aliases
 np = totest.np
 
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isroutine, isclass
+from pytest import approx, fixture, raises, warns
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -93,11 +96,11 @@ class Testinterp1d:
         test_interp1d = totest.interp1d(example_data[0], example_data[1])
         assert np.array_equal(test_interp1d.x, [0.0, 0.5, 1.0])
         assert np.array_equal(test_interp1d.y, [0.0, 1.0, 0.5])
-        
+
         # examples: reversible data
         test_interp1d = totest.interp1d(data[0][::-1], data[1][::-1])
         assert np.array_equal(test_interp1d.x, np.array(data[0]))
-        assert np.array_equal(test_interp1d.y, np.array(data[1]))        
+        assert np.array_equal(test_interp1d.y, np.array(data[1]))
         # examples
         kinds = ['linear']
         for k in kinds:
@@ -166,7 +169,7 @@ class TestPchipInterpolator2:
         # initialize an instance of the class with defaults
         return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
                                          positive=False)
-    
+
     @fixture
     def PchipInterpolator2_Deriv(self):
         # initialize an instance of the class with defaults
@@ -202,4 +205,3 @@ class TestPchipInterpolator2:
                            np.array([0.0, 0.3]))
         assert np.allclose(PchipInterpolator2_False([0.1, 0.8]),\
                            np.array([-0.4, 0.3]))
-

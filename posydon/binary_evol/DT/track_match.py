@@ -14,43 +14,46 @@ __authors__ = [
 
 import os
 import time
+import types
+
 import numpy as np
 import pandas as pd
-import types
 import scipy
-from scipy.optimize import root
-from scipy.optimize import minimize
 from scipy.interpolate import PchipInterpolator
+from scipy.optimize import minimize, root
 
 import posydon.utils.constants as const
+from posydon.binary_evol.DT.key_library import (
+    DEFAULT_PROFILE_KEYS,
+    DEFAULT_TRANSLATED_KEYS,
+    KEYS_POSITIVE,
+)
+from posydon.binary_evol.flow_chart import (
+    STAR_STATES_CO,
+    STAR_STATES_FOR_HMS_MATCHING,
+    STAR_STATES_H_RICH,
+    STAR_STATES_FOR_Hestar_MATCHING,
+    STAR_STATES_FOR_postMS_MATCHING,
+)
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.utils.posydonwarning import Pwarn
 from posydon.interpolation.data_scaling import DataScaler
 from posydon.interpolation.interpolation import GRIDInterpolator
+from posydon.utils.common_functions import (
+    convert_metallicity_to_string,
+    set_binary_to_failed,
+)
 from posydon.utils.interpolators import PchipInterpolator2
-from posydon.utils.posydonerror import (NumericalError, MatchingError,
-                                        POSYDONError)
-from posydon.utils.common_functions import (convert_metallicity_to_string,
-                                            set_binary_to_failed)
-
-from posydon.binary_evol.DT.key_library import (DEFAULT_TRANSLATED_KEYS,
-                                                KEYS_POSITIVE,
-                                                DEFAULT_PROFILE_KEYS)
-
-from posydon.binary_evol.flow_chart import (STAR_STATES_CO,
-                                            STAR_STATES_H_RICH,
-                                            STAR_STATES_FOR_HMS_MATCHING,
-                                            STAR_STATES_FOR_postMS_MATCHING,
-                                            STAR_STATES_FOR_Hestar_MATCHING)
+from posydon.utils.posydonerror import MatchingError, NumericalError, POSYDONError
+from posydon.utils.posydonwarning import Pwarn
 
 MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
 
 
 val_names = [" ", "mass", "log_R", "center_h1", "surface_h1",
-                "he_core_mass", "center_he4", "surface_he4", 
+                "he_core_mass", "center_he4", "surface_he4",
                 "center_c12"]
-str_fmts = ["{:>14}", "{:>9}","{:>9}", 
-            "{:>9}",  "{:>10}",  "{:>12}",  
+str_fmts = ["{:>14}", "{:>9}","{:>9}",
+            "{:>9}",  "{:>10}",  "{:>12}",
             "{:>10}",  "{:>11}",  "{:>10}"]
 row_str = " ".join(str_fmts)
 DIVIDER_STR = "_"*len(row_str.format(*[""]*len(str_fmts)))
@@ -59,159 +62,159 @@ SCIPY_VER = float('.'.join(scipy.__version__.split('.')[:2]))
 
 class TrackMatcher:
     """
-        This class contains the functionality to match binary star components 
-    to single star models for detached evolution. Typically, this is so that 
-    the binary star can continue evolving in a detached (non-interacting) 
+        This class contains the functionality to match binary star components
+    to single star models for detached evolution. Typically, this is so that
+    the binary star can continue evolving in a detached (non-interacting)
     state.
 
-        Several matching methods may be used, and metrics (physical 
-    quantities) that are used to determine the quality of the match may be 
+        Several matching methods may be used, and metrics (physical
+    quantities) that are used to determine the quality of the match may be
     customized. By default, the metrics are as follows:
 
       Initial stellar matching metrics
       ========================================
-        
+
       MS:          mass,                      center X, radius, He core mass
       post-MS:     mass,                      center Y, radius, He core mass
       stripped He: He core mass (mass proxy), center Y, radius
 
-        If an initial match can not be found, alternative sets of metrics are 
-    used. For example, stars after mass transfer could swell up so that log_R 
-    is not appropriate for matching. Lists for HMS and postMS stars drop 
+        If an initial match can not be found, alternative sets of metrics are
+    used. For example, stars after mass transfer could swell up so that log_R
+    is not appropriate for matching. Lists for HMS and postMS stars drop
     radius as a matching metric in these alternatives:
-    
+
       Alternative stellar matching metrics
       ========================================
-        
+
       MS:          total mass,                      center X, He core mass
       post-MS:     total mass,                      center Y, He core mass
       stripped He: He core mass (total mass proxy), center Y, radius
-    
+
     The available matching methods are:
 
-        "root":     This method invokes a modified Powell's method to 
-                    minimize the difference between stellar mass and 
-                    central hydrogen abundance (if the star is H-rich), 
+        "root":     This method invokes a modified Powell's method to
+                    minimize the difference between stellar mass and
+                    central hydrogen abundance (if the star is H-rich),
                     or He core mass (if the star is He-rich). The function
                     used is scipy.optimize.root with the 'hybr' method.
 
-        "minimize": This method minimizes the Euclidean distance between 
-                    several matching metrics (the same mentioned above). 
+        "minimize": This method minimizes the Euclidean distance between
+                    several matching metrics (the same mentioned above).
                     This is the default matching method.
-        
-        Stellar tracks in either the H- or He-rich single star grids will 
-    be searched until a match is found within an acceptable tolerance. If 
-    no match can be found, the binary star will be marked as a failed 
+
+        Stellar tracks in either the H- or He-rich single star grids will
+    be searched until a match is found within an acceptable tolerance. If
+    no match can be found, the binary star will be marked as a failed
     binary as its evolution can progress no further.
 
-        If an acceptable match is found, then we were able to find a star 
-    within the single star grids that suitably represents the given star(s) 
-    at their current point in evolution. This class will return interpolator 
-    objects that may be used to calculate quantities along the matched stellar 
-    track so that the binary's stars may be evolved further, such as through 
+        If an acceptable match is found, then we were able to find a star
+    within the single star grids that suitably represents the given star(s)
+    at their current point in evolution. This class will return interpolator
+    objects that may be used to calculate quantities along the matched stellar
+    track so that the binary's stars may be evolved further, such as through
     detached evolution.
 
     Attributes
     ----------
     KEYS : list[str]
-        Contains valid keywords which are used to extract quantities from 
+        Contains valid keywords which are used to extract quantities from
         the grids.
 
     KEYS_POSITIVE : list[str]
-        Keys in this list are forced to be positive or else 0 by the 
-        posydon.utils.PchipInterpolator2 class following interpolation 
+        Keys in this list are forced to be positive or else 0 by the
+        posydon.utils.PchipInterpolator2 class following interpolation
         of the associated quantity.
 
     path : str
-        Path to the directory that contains POSYDON data HDF5 files. Defaults 
+        Path to the directory that contains POSYDON data HDF5 files. Defaults
         to the PATH_TO_POSYDON_DATA environment variable.
 
     metallicity : str
-        The metallicity of the grid. This should be one of the eight 
+        The metallicity of the grid. This should be one of the eight
         supported metallicities, stored as a string (e.g.,
         1e+00 as "1e+00_Zsun").
 
     matching_method : str
-        Method to find the best match between a star from a previous step and a 
-        point in a single star evolution track. Options: 
-        
-            "root": Tries to find a root of two matching quantities. It is 
+        Method to find the best match between a star from a previous step and a
+        point in a single star evolution track. Options:
+
+            "root": Tries to find a root of two matching quantities. It is
                     possible to not find one, causing the evolution to fail.
 
-            "minimize": Minimizes the sum of squares of differences of 
-                        various quantities between the previous evolution step 
-                        and a stellar evolution track. 
+            "minimize": Minimizes the sum of squares of differences of
+                        various quantities between the previous evolution step
+                        and a stellar evolution track.
 
     root_keys : numpy.ndarray
-        An array of keys corresponding to possible matching metrics. These 
-        keys should exist as MESA history data column names. In practice, 
+        An array of keys corresponding to possible matching metrics. These
+        keys should exist as MESA history data column names. In practice,
         we match using only a subset of these.
-           
+
     rootm : numpy.ndarray
-        A 3D matrix to hold roots with dimensions 
-            
-            DIM = [N(initial_masses), 
-                   N(max_evolution_track_length), 
+        A 3D matrix to hold roots with dimensions
+
+            DIM = [N(initial_masses),
+                   N(max_evolution_track_length),
                    N(matching_metrics)]
 
-        Structured to hold the matching metrics along the entire evolution 
-        track of each stellar evolution track of a given initial mass in 
-        a single star grid. Assigned after loading a grid and before 
+        Structured to hold the matching metrics along the entire evolution
+        track of each stellar evolution track of a given initial mass in
+        a single star grid. Assigned after loading a grid and before
         storing matching metrics.
 
     grid_name_Hrich : str
-        Name of the single star H-rich grid h5 file, 
-        including its parent directory. This is set to 
+        Name of the single star H-rich grid h5 file,
+        including its parent directory. This is set to
         (w/ Z = 1e+00, for example):
 
-            grid_name_Hrich = 'single_HMS/1e+00_Zsun.h5'  
+            grid_name_Hrich = 'single_HMS/1e+00_Zsun.h5'
 
         by default if not specified.
 
     grid_name_strippedHe : str
-        Name of the single star He-rich grid h5 file. This is 
+        Name of the single star He-rich grid h5 file. This is
         set to (w/ Z = 1e+00, for example):
 
             grid_name_strippedHe = 'single_HeMS/1e+00_Zsun.h5'
-        
+
         by default if not specified.
-        
+
     grid_Hrich : GRIDInterpolator object
-        Object to interpolate between the time-series (i.e., along the 
+        Object to interpolate between the time-series (i.e., along the
         evolutionary track) in the H-rich single star h5 grid.
 
     grid_strippedHe : GRIDInterpolator object
-        Object to interpolate between the time-series (i.e., along the 
+        Object to interpolate between the time-series (i.e., along the
         evolutionary track) in the He-rich single star h5 grid.
 
     initial_mass : list[float]
-            Contains the initial masses of the stars in the single star 
-            grid in which we are searching for a match. Assigned after 
+            Contains the initial masses of the stars in the single star
+            grid in which we are searching for a match. Assigned after
             loading a grid to match to.
 
     list_for_matching_HMS : list
-        A list of mixed type that specifies properties of the matching 
-        process for HMS stars. This list has the following structure: 
-        
+        A list of mixed type that specifies properties of the matching
+        process for HMS stars. This list has the following structure:
+
             list_for_matching = [[matching attr. names], [rescale_factors],
                                  [scaling method], [mass_bnds], [age_bnds]]
 
     list_for_matching_postMS : list
-        A list of mixed type that specifies properties of the matching 
-        process for postMS stars. This list has the following structure: 
-        
+        A list of mixed type that specifies properties of the matching
+        process for postMS stars. This list has the following structure:
+
             list_for_matching = [[matching attr. names], [rescale_factors],
                                  [scaling method], [mass_bnds], [age_bnds]]
 
     list_for_matching_HeStar : list
-        A list of mixed type that specifies properties of the matching 
-        process for He stars. This list has the following structure: 
-        
+        A list of mixed type that specifies properties of the matching
+        process for He stars. This list has the following structure:
+
             list_for_matching = [[matching attr. names], [rescale_factors],
                                  [scaling method], [mass_bnds], [age_bnds]]
 
     stored_scalers : dict
-        Mapping a combination of (key, htrack, scaling_method) to a 
+        Mapping a combination of (key, htrack, scaling_method) to a
         pre-trained DataScaler instance.
 
     final_keys : tuple
@@ -221,15 +224,15 @@ class TrackMatcher:
         Contains keys for profile interpolation.
 
     matching_tolerance : float
-        When using the "minimize" matching method, a computed square 
-        Euclidean distance between the pre-match and post-match values 
+        When using the "minimize" matching method, a computed square
+        Euclidean distance between the pre-match and post-match values
         less than this must be achieved for a successful match.
 
     matching_tolerance_hard : float
-        When using the "minimize" matching method, a computed square 
-        Euclidean distance between the pre-match and post-match values 
-        less than at most this must be achieved for a successful match. 
-        This tolerance is checked after all else fails, as a last attempt 
+        When using the "minimize" matching method, a computed square
+        Euclidean distance between the pre-match and post-match values
+        less than at most this must be achieved for a successful match.
+        This tolerance is checked after all else fails, as a last attempt
         to find a solution.
 
     record_matching : bool
@@ -266,9 +269,9 @@ class TrackMatcher:
     ):
 
         # MESA history column names used as matching metrics
-        # TODO: should this be singlestar.STARPROPERTIES? An 
-        #       error is thrown when (possibly user defined) 
-        #       matching metrics don't exist in this array. 
+        # TODO: should this be singlestar.STARPROPERTIES? An
+        #       error is thrown when (possibly user defined)
+        #       matching metrics don't exist in this array.
         #       That's not very flexible...
         self.root_keys = np.array(
             [
@@ -327,13 +330,13 @@ class TrackMatcher:
 
         # should grids just get passed to this?
         if grid_name_Hrich is None:
-            grid_name_Hrich = os.path.join('single_HMS', 
+            grid_name_Hrich = os.path.join('single_HMS',
                                            self.metallicity+'_Zsun.h5')
         grid_path_Hrich = os.path.join(path, grid_name_Hrich)
         self.grid_Hrich = GRIDInterpolator(grid_path_Hrich)
 
         if grid_name_strippedHe is None:
-            grid_name_strippedHe = os.path.join('single_HeMS', 
+            grid_name_strippedHe = os.path.join('single_HeMS',
                                                 self.metallicity+'_Zsun.h5')
         grid_path_strippedHe = os.path.join(path, grid_name_strippedHe)
         self.grid_strippedHe = GRIDInterpolator(grid_path_strippedHe)
@@ -402,40 +405,40 @@ class TrackMatcher:
         ]
 
         self.record_matching = record_matching
-    
+
     def get_root0(self, attr_names, attr_vals, htrack, rescale_facs=None):
         """
-            Get the stellar evolution track in the single star grid with values 
-        closest to the requested ones. This calculates the difference in 
-        stellar properties between a given track and those in the single star 
-        grids. It then returns the mass of and age along the track where the 
+            Get the stellar evolution track in the single star grid with values
+        closest to the requested ones. This calculates the difference in
+        stellar properties between a given track and those in the single star
+        grids. It then returns the mass of and age along the track where the
         minimum difference occurs.
 
         Parameters
         ----------
         attr_names : list[str]
-            Contains the keys of the requested specific quantities that will 
+            Contains the keys of the requested specific quantities that will
             be matched in the single star track.
 
         attr_vals : list[float]
-            Contains the latest values (from a previous POSYDON step) of the 
-            quantities of "keys" in the POSYDON SingleStar object. This should 
+            Contains the latest values (from a previous POSYDON step) of the
+            quantities of "keys" in the POSYDON SingleStar object. This should
             be the same length as "keys".
 
         htrack : bool
-            Set True to search the single star H-rich grids, or False to 
+            Set True to search the single star H-rich grids, or False to
             search the He-rich grids.
-            
+
         rescale_facs : list[float]
-            Contains normalization factors to be divided for rescaling 
-            attribute values. This should be the same length as attr_names. 
+            Contains normalization factors to be divided for rescaling
+            attribute values. This should be the same length as attr_names.
 
         Returns
         -------
         m0 : float
-            Initial mass (in solar units) of the minimum diff model for initial 
+            Initial mass (in solar units) of the minimum diff model for initial
             guess.
-    
+
         t0 : float
             Age (in years) of the minimum diff model for initial guess.
 
@@ -453,11 +456,11 @@ class TrackMatcher:
             track_length = len(grid.get("age", mass))
             max_track_length = max(max_track_length, track_length)
 
-        # intialize root matrix 
+        # intialize root matrix
         # (DIM = [N(Mi), N(max_track_length), N(root_keys)])
         self.rootm = np.inf * np.ones((len(grid.grid_mass),
                                     max_track_length, len(self.root_keys)))
-        
+
         # for each mass, get matching metrics and store in matrix
         for i, mass in enumerate(grid.grid_mass):
             for j, key in enumerate(self.root_keys):
@@ -477,22 +480,22 @@ class TrackMatcher:
                         axis=1)
 
         # Slice out just the matching metric data for all stellar tracks
-        # grid_attr_vals now has shape 
+        # grid_attr_vals now has shape
         # (N(Mi), N(max_track_len), N(matching_metrics))
         grid_attr_vals = self.rootm[:, :, idx]
 
         # For all stellar tracks in grid:
         # Take difference btwn. grid track and given star values...
         grid_diff = grid_attr_vals - star_attr_vals[None, None, :]
-        # rescale... 
+        # rescale...
         grid_diff /= rescale_facs[None, None, :]
         # and take (Frobenius) norm.
         grid_diff = np.linalg.norm(grid_diff, axis=-1)
 
-        # indices where minimum difference occurs (i.e., of 
-        # closest matching track). This contains the indices at 
+        # indices where minimum difference occurs (i.e., of
+        # closest matching track). This contains the indices at
         # position of (min diff mass, min diff age)
-        min_diff_inds = np.unravel_index(grid_diff.argmin(), 
+        min_diff_inds = np.unravel_index(grid_diff.argmin(),
                                          grid_attr_vals.shape[:-1])
 
         mass_i = min_diff_inds[0]
@@ -503,12 +506,12 @@ class TrackMatcher:
         t0 = self.rootm[mass_i][age_i][np.argmax("age" == self.root_keys)]
 
         return m0, t0
-    
+
     def get_track_val(self, key, htrack, m0, t):
         """
-        
-            Return a single value of a stellar property from the 
-        interpolated time-series along a requested stellar track 
+
+            Return a single value of a stellar property from the
+        interpolated time-series along a requested stellar track
         of mass `m0` at an age of `t`.
 
         Parameters
@@ -550,10 +553,10 @@ class TrackMatcher:
             val = np.interp(t, x, y)
 
         return val
-    
+
     def scale(self, attr_name, htrack, scaler_method):
         """
-        
+
             Normalize quantities in the single star grids to (0,1).
 
         Parameters
@@ -562,19 +565,19 @@ class TrackMatcher:
             Keyword of the requested quantity.
 
         htrack : bool
-            A boolean that specifies whether the star would be found in the 
+            A boolean that specifies whether the star would be found in the
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
 
         scaler_method : str
-            Scaling method in the DataScaler class. See 
-            posydon.interpolation.data_scaling.DataScaler().fit() for more 
+            Scaling method in the DataScaler class. See
+            posydon.interpolation.data_scaling.DataScaler().fit() for more
             details.
 
         Returns
         -------
         scaler : DataScaler object
-            This is a DataScaler object, trained to rescale the requested  
+            This is a DataScaler object, trained to rescale the requested
             attribute to the range (0, 1).
 
         """
@@ -608,11 +611,11 @@ class TrackMatcher:
     def match_to_single_star(self, star):
         """
             Get the track in the grid that matches the time and mass of a star,
-        that has typically undergone prior binary star evolution. A match is 
-        made according to a given algorithm that minimizes the difference 
-        amongst several physical properties, e.g., mass, central hydrogen 
-        abundance, radius, and core helium mass, depending on the type of star 
-        being matched. However, these properties may also be customized by the 
+        that has typically undergone prior binary star evolution. A match is
+        made according to a given algorithm that minimizes the difference
+        amongst several physical properties, e.g., mass, central hydrogen
+        abundance, radius, and core helium mass, depending on the type of star
+        being matched. However, these properties may also be customized by the
         user.
 
         Parameters
@@ -624,35 +627,35 @@ class TrackMatcher:
         -------
         match_m0 : float
             Initial mass (in solar units) of the matched model.
-        
+
         match_t0 : float
             Age (in years) of the matched model.
 
         Warns
         -----
         EvolutionWarning
-            If attempting to match an He-star with an H-rich grid or post-MS 
-            star with a stripped-He grid. This can happen if an initial 
-            matching attempt fails; alternative grids are checked for a match 
+            If attempting to match an He-star with an H-rich grid or post-MS
+            star with a stripped-He grid. This can happen if an initial
+            matching attempt fails; alternative grids are checked for a match
             in such cases.
 
         Raises
         ------
         AttributeError
-            If a matching parameter does not exist in the single star 
+            If a matching parameter does not exist in the single star
             grid options
-        
+
         NumericalError
-            If SciPy numerical differentiation occured outside boundary 
+            If SciPy numerical differentiation occured outside boundary
             while matching to single star track.
 
         MatchingError
-            If the initial mass to be matched is out of the single star grid 
+            If the initial mass to be matched is out of the single star grid
             range, thereby preventing a possible match.
 
         """
 
-        # setting whether to match to track from H-rich 
+        # setting whether to match to track from H-rich
         # or stripped He star grid
         if star.htrack:
             self.grid = self.grid_Hrich
@@ -675,14 +678,14 @@ class TrackMatcher:
 
         # matching via root method (ultimately modified Powell's method)
         if self.matching_method == "root":
-            match_vals, best_sol = self.match_through_root(star, 
-                                                            get_root0, 
+            match_vals, best_sol = self.match_through_root(star,
+                                                            get_root0,
                                                             get_track_val)
 
         # matching using minimize method (Newton or Powell method)
         elif self.matching_method == "minimize":
-            match_vals, best_sol = self.match_through_minimize(star, 
-                                                                get_root0, 
+            match_vals, best_sol = self.match_through_minimize(star,
+                                                                get_root0,
                                                                 get_track_val)
 
         if self.verbose:
@@ -705,7 +708,7 @@ class TrackMatcher:
                 percent_diff_str = ["% difference"]+\
                                    [f"{pcntd:.1e}%" for pcntd in pcntd_vals]
 
-                output_table = [val_names, init_val_str, sol_val_str, 
+                output_table = [val_names, init_val_str, sol_val_str,
                                 percent_diff_str]
 
                 print("\nMatching completed for", star.state, "star!\n")
@@ -735,16 +738,16 @@ class TrackMatcher:
 
     def match_through_root(self, star, get_root0, get_track_val):
         """Match the star through a root method.
-        
+
         Parameters
         ----------
         star : SingleStar object
-            This is a SingleStar object, typically representing 
-            a member of a binary star system that we are trying 
+            This is a SingleStar object, typically representing
+            a member of a binary star system that we are trying
             to match to a single star track.
 
         get_root0 : function
-            Function that is used to get an initial guess for a 
+            Function that is used to get an initial guess for a
             closely matching stellar track.
 
         get_track_val : function
@@ -755,13 +758,13 @@ class TrackMatcher:
         Returns
         -------
         match_vals : array
-            Mass and age of the star found through matching. These serve 
+            Mass and age of the star found through matching. These serve
             as starting points for subsequent (post-match) evolution.
 
         best_sol : OptimizeResult object
-            The OptimizeResult object that contains attributes of the 
+            The OptimizeResult object that contains attributes of the
             closest matching stellar track. Produced by SciPy's `root()`.
-                        
+
         """
 
         htrack = star.htrack
@@ -774,8 +777,8 @@ class TrackMatcher:
                             [star.center_h1, star.mass],
                             htrack, rescale_facs=[0.7, 300])
 
-            # Using modified Powell method to find match starting 
-            # from time series from above (in x0) using difference 
+            # Using modified Powell method to find match starting
+            # from time series from above (in x0) using difference
             # of center X and stellar mass to find match
             sol = root(
                         lambda x: [
@@ -788,7 +791,7 @@ class TrackMatcher:
                                     ],
                         x0, method="hybr"
                         )
-            
+
         # or if not an HMS star
         else:
 
@@ -802,11 +805,11 @@ class TrackMatcher:
 
             sol = root(
                         lambda x: [
-                                    get_track_val("he_core_mass", 
-                                                    htrack, 
+                                    get_track_val("he_core_mass",
+                                                    htrack,
                                                     *x) - star.he_core_mass,
-                                    get_track_val("mass", 
-                                                    htrack, 
+                                    get_track_val("mass",
+                                                    htrack,
                                                     *x) - star.mass],
                         x0, method="hybr"
                         )
@@ -821,21 +824,21 @@ class TrackMatcher:
 
     def match_through_minimize(self, star, get_root0, get_track_val):
         """
-            Match the star through a minimization method. An initial 
+            Match the star through a minimization method. An initial
         match is found using the `get_root0()` function. Then, those
-        initial values are used in SciPy's minimize method to find 
-        the closest matching point in evolution, based on several 
+        initial values are used in SciPy's minimize method to find
+        the closest matching point in evolution, based on several
         physical matching metrics.
-        
+
         Parameters
         ----------
         star : SingleStar object
-            This is a SingleStar object, typically representing 
-            a member of a binary star system that we are trying 
+            This is a SingleStar object, typically representing
+            a member of a binary star system that we are trying
             to match to a single star track.
 
         get_root0 : function
-            Function that is used to get an initial guess for a 
+            Function that is used to get an initial guess for a
             closely matching stellar track.
 
         get_track_val : function
@@ -846,34 +849,34 @@ class TrackMatcher:
         Returns
         -------
         match_vals : array
-            Mass and age of the star found through matching. These serve 
+            Mass and age of the star found through matching. These serve
             as starting points for subsequent (post-match) evolution.
 
         best_sol : OptimizeResult object
-            The OptimizeResult object that contains attributes of the 
+            The OptimizeResult object that contains attributes of the
             closest matching stellar track. Produced by SciPy's `minimize()`.
-                        
+
         """
         # START SUBFUNCTION DEFIITIONS
         def get_attr_values(attr_names):
 
             """
-                Given a set of attribute names, gets attribute values 
-            from a given SingleStar object. These values correspond 
+                Given a set of attribute names, gets attribute values
+            from a given SingleStar object. These values correspond
             to the last evolution step of the SingleStar object.
 
             Parameters
             ----------
             attr_names : list[str]
-                This list contains strings that are the names of 
-                data columns (attributes) to be used as matching 
+                This list contains strings that are the names of
+                data columns (attributes) to be used as matching
                 metrics.
 
             Returns
             -------
             attr_values : list[float]
-                This is a list of the values associated with the 
-                provided attribute names at the last evolution 
+                This is a list of the values associated with the
+                provided attribute names at the last evolution
                 step experienced by `star`.
 
             """
@@ -885,48 +888,48 @@ class TrackMatcher:
 
             return attr_values
 
-        def square_difference(x, new_htrack, attr_names, attr_vals, 
+        def square_difference(x, new_htrack, attr_names, attr_vals,
                               attr_scalers):
             """
-                Compute the square difference between values along a single 
-            star evolution track and a given set of values. To find a 'good 
-            match', between the given values and the single star track, we 
-            ultimately seek to minimize these differences. This is the function 
-            used by the minimization algoritms when using matching_method = 
-            `minimize`. The minimize function passes values of mass and age 
-            that are used to search either the H-rich or He-rich single star 
+                Compute the square difference between values along a single
+            star evolution track and a given set of values. To find a 'good
+            match', between the given values and the single star track, we
+            ultimately seek to minimize these differences. This is the function
+            used by the minimization algoritms when using matching_method =
+            `minimize`. The minimize function passes values of mass and age
+            that are used to search either the H-rich or He-rich single star
             grid tracks for a match.
 
             Parameters
             ----------
             x : list[float]
-                Contains a mass and time. These are used to get the square 
-                difference between a track of that mass at that time and 
-                the given star values from prior evolution. 
-            
+                Contains a mass and time. These are used to get the square
+                difference between a track of that mass at that time and
+                the given star values from prior evolution.
+
             new_htrack : bool
-                Set True to search the single star H-rich grids, or False to 
-                search the He-rich grids. This is determined primarily 
+                Set True to search the single star H-rich grids, or False to
+                search the He-rich grids. This is determined primarily
                 through the current `match_type`.
 
             attr_names : list[str]
-                Names of SingleStar object attributes that this will calculate 
+                Names of SingleStar object attributes that this will calculate
                 the square differences of.
 
             attr_vals : list[float]
-                Associated values of provided SingleStar object attribute names. 
-                These values should correspond to the prior point in evolution 
+                Associated values of provided SingleStar object attribute names.
+                These values should correspond to the prior point in evolution
                 to which we are finding the stellar track match.
 
             scalers : list[DataScaler object]
-                DataScaler objects that have been trained previously. These are 
+                DataScaler objects that have been trained previously. These are
                 used to scale given star attributes to the range (0, 1).
 
             Returns
             -------
             result : float
-                The square difference between a single star track with mass and 
-                age taken from `x` and the given attributes of a SingleStar 
+                The square difference between a single star track with mass and
+                age taken from `x` and the given attributes of a SingleStar
                 object.
 
             """
@@ -934,10 +937,10 @@ class TrackMatcher:
             result = 0.0
             zip_attr_props = zip(attr_names, attr_vals, attr_scalers)
             for attr_name, star_val, attr_scaler in zip_attr_props:
-                
-                # get interpolated attribute value from grid at 
+
+                # get interpolated attribute value from grid at
                 # proposed x (m0, t) values
-                # TODO: can this be sped up? w/o this call, 
+                # TODO: can this be sped up? w/o this call,
                 #       execution time lowers by a factor of 100
                 grid_track_val = get_track_val(attr_name, new_htrack, *x)
 
@@ -956,51 +959,51 @@ class TrackMatcher:
         def get_attr_props(new_htrack, list_for_matching):
 
             """
-               This unpacks a list_for_matching which has the following 
+               This unpacks a list_for_matching which has the following
             structure:
 
                 list_for_matching = [[matching attr. names], [rescale_factors],
                                     [scaling method], [mass_bnds], [age_bnds]]
-            
-               This also trains DataScaler objects for each provided matching 
+
+               This also trains DataScaler objects for each provided matching
             attribute, such that the values are scaled to the range (0, 1).
 
             Parameters
             ----------
             new_htrack : bool
-                Set True to search the single star H-rich grids, or False to 
-                search the He-rich grids. This is determined primarily 
+                Set True to search the single star H-rich grids, or False to
+                search the He-rich grids. This is determined primarily
                 through the current `match_type`.
 
             list_for_matching : list
-                This is a list that contains sublists of types, str, float, 
-                str, float, float. The first sublist holds the names for 
-                star attributes that will be used to quantify a match. The 
-                second holds rescaling factors for those attributes. The 
-                third holds DataScaler scaling methods (see 
-                posydon.interpolation.data_scaling.DataScaler.fit() for more). 
-                The fourth and fifth hold bounds for the minimization 
+                This is a list that contains sublists of types, str, float,
+                str, float, float. The first sublist holds the names for
+                star attributes that will be used to quantify a match. The
+                second holds rescaling factors for those attributes. The
+                third holds DataScaler scaling methods (see
+                posydon.interpolation.data_scaling.DataScaler.fit() for more).
+                The fourth and fifth hold bounds for the minimization
                 algorithms on the stellar mass and age.
 
             Returns
             -------
             match_attr_names : list[str]
-                The names of the attributes that will be used for matching. 
+                The names of the attributes that will be used for matching.
                 These should be SingleStar STARPROPERTIES keys.
-            
+
             rescale_facs : list[float]
-                Contains normalization factors to be used for rescaling match 
-                attribtue values. This should be the same length as 
+                Contains normalization factors to be used for rescaling match
+                attribtue values. This should be the same length as
                 match_attr_names.
 
             bnds : list[list[float], list[float]]
-                Lower and upper bounds on initial stellar mass and age to be 
+                Lower and upper bounds on initial stellar mass and age to be
                 used in minimization algorithms.
-            
+
             scalers : list[DataScaler object]
-                DataScaler objects for each attribute, trained to rescale 
+                DataScaler objects for each attribute, trained to rescale
                 quantities to the range (0, 1).
-                
+
             """
 
             match_attr_names = list_for_matching[0]
@@ -1033,39 +1036,39 @@ class TrackMatcher:
             """
                 Gather the attribute names and values for matching
             a given star, plus the attribute bounds and scalings.
-                
+
             Parameters
             ----------
             match_type : str
-                A string that sets which matching list to use when obtaining 
+                A string that sets which matching list to use when obtaining
                 attributes. The defined options are:
 
-                    "default" :     This gets the set default list of 
-                                    attributes, which are dependent on the 
+                    "default" :     This gets the set default list of
+                                    attributes, which are dependent on the
                                     star's evolutionary state.
 
-                    "alt" :         This selects alternate lists of attributes 
-                                    that are meant to ease the match finding 
-                                    process, ignoring certain parameters like 
+                    "alt" :         This selects alternate lists of attributes
+                                    that are meant to ease the match finding
+                                    process, ignoring certain parameters like
                                     stellar radius.
 
-                    "alt_evolved" : This switches the grids that are searched 
-                                    for a match for evolved stars, meaning 
-                                    post-MS and stripped He stars as a last 
-                                    ditch effort to find a match. 
+                    "alt_evolved" : This switches the grids that are searched
+                                    for a match for evolved stars, meaning
+                                    post-MS and stripped He stars as a last
+                                    ditch effort to find a match.
 
             Returns
             -------
             match_attrs : tuple(list[str], list[float])
-                A tuple that contains the match_attr_names, which are the 
-                data column names of the match attributes and the 
+                A tuple that contains the match_attr_names, which are the
+                data column names of the match attributes and the
                 match_attr_vals, which are the associated values.
 
             scls_bnds : tuple(float, float, DataScaler)
                 A tuple that contains the associated rescaling factors,
-                boundaries, and DataScaler objects of the matching 
+                boundaries, and DataScaler objects of the matching
                 attributes.
-                    
+
             """
 
             # set matching metrics based on star state
@@ -1079,7 +1082,7 @@ class TrackMatcher:
                     match_list = self.list_for_matching_HeStar
                 else:
                     raise ValueError(f"{star.state} invalid for matching step")
-                    
+
             elif match_type == "alt":
                 if self.verbose:
                     print("(Now trying to match with alternative parameters)")
@@ -1093,7 +1096,7 @@ class TrackMatcher:
                     match_list = (self.list_for_matching_HeStar_alternative)
                 else:
                     raise ValueError(f"{star.state} invalid for matching step")
-                    
+
             elif match_type == "evolved_alt":
                 Pwarn("Attempting to match an He-star with an H-rich grid or " \
                       "post-MS star with a stripped-He grid","EvolutionWarning")
@@ -1135,53 +1138,53 @@ class TrackMatcher:
 
         def get_match_params(match_type, match_ok=True):
             """
-                Get initial guess for minimization and matching specs. 
-            The initial guess is found via the `get_root0()` function (see 
-            that function for further details). The other specs gathered 
-            by this function are the function arguments needed for the 
-            square_difference function matching attribute boundaries 
+                Get initial guess for minimization and matching specs.
+            The initial guess is found via the `get_root0()` function (see
+            that function for further details). The other specs gathered
+            by this function are the function arguments needed for the
+            square_difference function matching attribute boundaries
             used by SciPy's minimization function.
-            
+
             Parameters
             ----------
             match_type :str
-                This string sets the type of matching to be done. This can 
-                be 'default', 'alt', or 'alt_evolved'. This string will 
-                dictate which matching parameters to use when considering 
-                which stellar track is the closest match. (See 
+                This string sets the type of matching to be done. This can
+                be 'default', 'alt', or 'alt_evolved'. This string will
+                dictate which matching parameters to use when considering
+                which stellar track is the closest match. (See
                 get_match_attrs() for more details.)
 
             match_ok : bool
-                This boolean tracks whether something went wrong or not. If 
-                this is False, the matching is considered failed and will 
+                This boolean tracks whether something went wrong or not. If
+                this is False, the matching is considered failed and will
                 abort.
-            
+
             Returns
             -------
             x0 : list[float]
-                A list that contains the initial stellar mass and age of a 
-                stellar track. Used as an initial guess for 
+                A list that contains the initial stellar mass and age of a
+                stellar track. Used as an initial guess for
                 `scipy.optimize.minimize()`.
 
             fnc_args : tuple(bool, list[str], list[float], list[DataScaler])
-                This tuple contains the arguments that will be passed to the 
-                minimization function. The minimization function uses the 
+                This tuple contains the arguments that will be passed to the
+                minimization function. The minimization function uses the
                 square_difference function. See that function for more details.
 
             bnds : list[float]
-                Lower and upper bounds on initial stellar mass and age to be 
+                Lower and upper bounds on initial stellar mass and age to be
                 used in minimization algorithms.
 
             match_ok : bool
-                This boolean tracks whether something went wrong or not. If 
-                this is False, the matching is considered failed and will 
+                This boolean tracks whether something went wrong or not. If
+                this is False, the matching is considered failed and will
                 abort.
             """
-            # get names, values, bounds, and scalings of 
+            # get names, values, bounds, and scalings of
             # attributes to be matched
-            match_attrs, scls_bnds = get_match_attrs(match_type, 
+            match_attrs, scls_bnds = get_match_attrs(match_type,
                                                      match_ok=match_ok)
-            
+
             # unpack matching properties
             match_attr_names, match_attr_vals = match_attrs[:2]
             new_htrack, match_ok = match_attrs[2:]
@@ -1191,9 +1194,9 @@ class TrackMatcher:
                 fnc_args = (new_htrack, None, None, None)
                 return None, fnc_args, None, match_ok
 
-            # Get closest matching point along track single star grids. x0 
+            # Get closest matching point along track single star grids. x0
             # contains the corresponding initial guess for mass and age
-            x0 = get_root0(match_attr_names, match_attr_vals, 
+            x0 = get_root0(match_attr_names, match_attr_vals,
                            new_htrack, rescale_facs=rescale_facs)
             fnc_args = (new_htrack, match_attr_names, match_attr_vals, scalers)
 
@@ -1201,39 +1204,39 @@ class TrackMatcher:
 
         def do_minimization(method='TNC', match_type="default"):
             """
-                Perform minimization procedure with a given method and 
+                Perform minimization procedure with a given method and
             match type, using SciPy's minimize function.
 
             Parameters
             ----------
             method : str
-               This sets the desired solver to be used by SciPy's minimize 
-               function. The default is 'TNC', but we also use 'Powell' as 
+               This sets the desired solver to be used by SciPy's minimize
+               function. The default is 'TNC', but we also use 'Powell' as
                an alternative.
 
             match_type :str
-                This string sets the type of matching to be done. This can 
-                be 'default', 'alt', or 'alt_evolved'. This string will 
-                dictate which matching parameters to use when considering 
-                which stellar track is the closest match. (See 
+                This string sets the type of matching to be done. This can
+                be 'default', 'alt', or 'alt_evolved'. This string will
+                dictate which matching parameters to use when considering
+                which stellar track is the closest match. (See
                 get_match_attrs() for more details.)
 
             Returns
             -------
             sol : OptimizeResult object
-                This is the OptimizeResult object returned by SciPy's 
-                minimize function. It contains the mass and age of the 
-                closest matching stellar track, found through 
+                This is the OptimizeResult object returned by SciPy's
+                minimize function. It contains the mass and age of the
+                closest matching stellar track, found through
                 minimization.
 
             new_htrack : bool
-                This boolean tracks whether the star should be matched to 
-                the H- or He-rich single star grid. This can change in the 
+                This boolean tracks whether the star should be matched to
+                the H- or He-rich single star grid. This can change in the
                 match finding process.
-            
+
             match_ok : bool
-                This boolean tracks whether something went wrong or not. If 
-                this is False, the matching is considered failed and will 
+                This boolean tracks whether something went wrong or not. If
+                this is False, the matching is considered failed and will
                 abort.
             """
 
@@ -1255,13 +1258,13 @@ class TrackMatcher:
                 # Minimize sq, Euclidean dist. w/ Newton's method (TNC)
                 sol = minimize(square_difference, x0, args=fnc_args,
                                 method=method, bounds=bounds)
-            
+
                 # guard against NaN solutions, ensuring they will fail
                 sol.fun = 1e99 if np.isnan(sol.fun) else sol.fun
 
                 if self.verbose:
                     print (f"Matching attempt completed:"
-                            f"\nBest solution: {np.abs(sol.fun)} " 
+                            f"\nBest solution: {np.abs(sol.fun)} "
                             f"(tol = {self.matching_tolerance})"
                             f"\nsol.success = {sol.success}")
             except:
@@ -1290,28 +1293,28 @@ class TrackMatcher:
             return sol, new_htrack, match_ok
 
         # END SUBFUNCTION DEFIITIONS
-        
+
         if self.verbose:
             print(DIVIDER_STR)
 
         # defined sequence of matching attempt types and methods
         match_sequence = {
-                            1: {"type":"default", 
+                            1: {"type":"default",
                                 "method":"TNC"},
-                            2: {"type":"default", 
+                            2: {"type":"default",
                                 "method":"Powell"},
-                            3: {"type":"alt", 
+                            3: {"type":"alt",
                                 "method":"TNC"},
-                            4: {"type":"evolved_alt", 
+                            4: {"type":"evolved_alt",
                                 "method":"TNC"}
                             }
-        
+
         # dummy
         failed_sol = types.SimpleNamespace()
         failed_sol.success = False
         failed_sol.fun = 1e99
         failed_sol.message = "This is a dummy SciPy OptimizeResult object."
-        
+
         best_sol = failed_sol
         for attempt_num in match_sequence.keys():
 
@@ -1350,7 +1353,7 @@ class TrackMatcher:
                     print ("\nReason: Optimizer failed, "
                            "sol.success = {best_sol.success}"
                            "\nOptimizer termination reason: "
-                           f"{best_sol.message}") 
+                           f"{best_sol.message}")
 
             match_vals = np.array([np.nan, np.nan])
 
@@ -1359,7 +1362,7 @@ class TrackMatcher:
             if self.verbose:
                 print("\nFinal matching result: SUCCESS"
                         f"\nBest solution within hard tolerance: "
-                        f"{np.abs(best_sol.fun):.8f}", "<", 
+                        f"{np.abs(best_sol.fun):.8f}", "<",
                         self.matching_tolerance_hard)
 
             match_vals = best_sol.x
@@ -1370,13 +1373,13 @@ class TrackMatcher:
     def get_star_match_data(self, binary, star,
                             copy_prev_m0=None, copy_prev_t0=None):
         """
-            Match a given component of a binary (i.e., a star) to a 
+            Match a given component of a binary (i.e., a star) to a
         single star model. This then creates and returns interpolator
         objects that may be used to calculate properties of the star
         as a function of time.
 
-            In the case of a compact object, radius, mdot, and Idot are 
-        set to zero. One may use another star, e.g., the companion of 
+            In the case of a compact object, radius, mdot, and Idot are
+        set to zero. One may use another star, e.g., the companion of
         the compact object to provide a mass and age.
 
         Parameters
@@ -1399,7 +1402,7 @@ class TrackMatcher:
         -------
         match_m0 : float
             Initial mass (in solar units) of the matched model.
-        
+
         match_t0 : float
             Age (in years) of the matched model.
 
@@ -1415,7 +1418,7 @@ class TrackMatcher:
                 match_m0, match_t0 = star.mass, 0
             else:
                 t_before_matching = time.time()
-                # matching to single star grids (getting mass, age of 
+                # matching to single star grids (getting mass, age of
                 # closest track)
                 match_m0, match_t0 = self.match_to_single_star(star)
                 t_after_matching = time.time()
@@ -1461,7 +1464,7 @@ class TrackMatcher:
             for key in self.KEYS[1:]:
                 if key in self.KEYS_POSITIVE:
                     positive = True
-                    interp1d[key] = PchipInterpolator2(age, kvalue[key], 
+                    interp1d[key] = PchipInterpolator2(age, kvalue[key],
                                                        positive=positive)
                 else:
                     interp1d[key] = PchipInterpolator2(age, kvalue[key])
@@ -1476,15 +1479,15 @@ class TrackMatcher:
             for key in self.KEYS[1:]:
                 if key in self.KEYS_POSITIVE:
                     positive = True
-                    interp1d[key] = PchipInterpolator2(age, kvalue[key], 
+                    interp1d[key] = PchipInterpolator2(age, kvalue[key],
                                                        positive=positive)
                 else:
                     interp1d[key] = PchipInterpolator2(age, kvalue[key])
 
-        interp1d["inertia"] = PchipInterpolator2(age, 
+        interp1d["inertia"] = PchipInterpolator2(age,
                                                 kvalue["inertia"] / (const.msol * const.rsol**2))
 
-        interp1d["Idot"] = PchipInterpolator2(age, 
+        interp1d["Idot"] = PchipInterpolator2(age,
                                               kvalue["inertia"] / (const.msol * const.rsol**2),
                                               derivative=True)
 
@@ -1514,10 +1517,10 @@ class TrackMatcher:
 
     def calc_omega(self, star):
         """
-        
+
             Calculate the spin of a star from its (pre-match) moment
-        of inertia and angular momentum (or rotation rates). This is 
-        required because we match a rotating model (from the binary grids) 
+        of inertia and angular momentum (or rotation rates). This is
+        required because we match a rotating model (from the binary grids)
         to a non-rotating model (from the single star grids).
 
         Parameters
@@ -1528,15 +1531,15 @@ class TrackMatcher:
         Returns
         -------
         omega_in_rad_per_year: float
-            The rotation rate of the star in radians per year, 
+            The rotation rate of the star in radians per year,
             calculated from the star's (pre-match) angular momentum
             and moment of inertia.
 
         Warns
         -----
         InappropriateValueWarning
-            If the pre-match rotation quantities are NaN or None and can 
-            not calculate a the post-match rotation rate, we setting the 
+            If the pre-match rotation quantities are NaN or None and can
+            not calculate a the post-match rotation rate, we setting the
             post-match rotation rate to zero.
         """
 
@@ -1552,7 +1555,7 @@ class TrackMatcher:
                       "pre-match angular momentum and moment of inertia")
 
             # the last factor converts rad/s to rad/yr
-            omega_in_rad_per_yr = (10.0 ** log_total_J 
+            omega_in_rad_per_yr = (10.0 ** log_total_J
                                      / total_MOI * const.secyer)
 
         else:
@@ -1565,7 +1568,7 @@ class TrackMatcher:
                     print("Calculating post-match omega using " \
                           "pre-match surf_avg_omega")
 
-                omega_in_rad_per_yr = omega * const.secyer                    
+                omega_in_rad_per_yr = omega * const.secyer
 
             elif pd.notna(omega_div_omega_c):
 
@@ -1575,7 +1578,7 @@ class TrackMatcher:
 
                 if pd.notna(star.log_R):
                     numerator = const.standard_cgrav * star.mass * const.msol
-                    denominator = (10.0 ** (star.log_R) * const.rsol) ** 3 
+                    denominator = (10.0 ** (star.log_R) * const.rsol) ** 3
                     omega_c = np.sqrt(numerator / denominator) # rad/s
                     omega_c *= const.secyer # rad/yr
                     omega_in_rad_per_yr = omega_div_omega_c * omega_c
@@ -1585,7 +1588,7 @@ class TrackMatcher:
                     mass_interp = star.interp1d["mass"](star.interp1d["t0"])
 
                     numerator = const.standard_cgrav * mass_interp * const.msol
-                    denominator = (radius_interp * const.rsol) ** 3 
+                    denominator = (radius_interp * const.rsol) ** 3
                     omega_c = np.sqrt(numerator / denominator) # rad/s
                     omega_c *= const.secyer # rad/yr
                     omega_in_rad_per_yr = omega_div_omega_c * omega_c
@@ -1597,9 +1600,9 @@ class TrackMatcher:
                           "pre-match values are None or NaN.")
                     print("Pre-match rotation rates:")
                     print("surf_avg_omega = ", omega)
-                    print("surf_avg_omega_div_omega_crit = ", 
+                    print("surf_avg_omega_div_omega_crit = ",
                           omega_div_omega_c)
-                    Pwarn("Setting (post-match) rotation rate to zero.", 
+                    Pwarn("Setting (post-match) rotation rate to zero.",
                           "InappropriateValueWarning")
 
         if self.verbose and omega is not None and (omega_in_rad_per_yr != 0):
@@ -1608,7 +1611,7 @@ class TrackMatcher:
             pcdiff = 100.0*(omega_in_rad_per_yr-omega * const.secyer) \
                                                 / omega_in_rad_per_yr
             omega_percent_diff = np.nan_to_num(pcdiff, 0)
-            print("omega [rad/yr] % difference = ", 
+            print("omega [rad/yr] % difference = ",
                     f"{omega_percent_diff:.1f}%")
 
         return omega_in_rad_per_yr
@@ -1616,32 +1619,32 @@ class TrackMatcher:
     def update_rotation_info(self, primary, secondary):
 
         """
-            Once we have matched to a non-rotating single star, we need to 
-        calculate what the single star's spin should be, based the star's 
-        rotation before matching. This calculates a new rotation rate for the 
-        matched star from the previous moment of inertia and angular 
-        momentum (or rotation rate in lieu of those). This also updates the 
+            Once we have matched to a non-rotating single star, we need to
+        calculate what the single star's spin should be, based the star's
+        rotation before matching. This calculates a new rotation rate for the
+        matched star from the previous moment of inertia and angular
+        momentum (or rotation rate in lieu of those). This also updates the
         stars in the binary with the newly calculated values to reflect this.
 
         Parameters
         ----------
         primary: SingleStar object
-            A single star object, representing the primary (more evolved) star 
+            A single star object, representing the primary (more evolved) star
             in the binary and containing its properties.
-        
+
         secondary: SingleStar object
-            A single star object, representing the secondary (less evolved) 
-            star in the binary and containing its properties. 
+            A single star object, representing the secondary (less evolved)
+            star in the binary and containing its properties.
 
         Returns
         -------
-        omega0_pri: float 
-            The rotation rate of the primary star in radians per year, 
+        omega0_pri: float
+            The rotation rate of the primary star in radians per year,
             calculated from the star's (pre-match) angular momentum
             and moment of inertia.
 
-        omega0_sec: float 
-            The rotation rate of the secondary star in radians per year, 
+        omega0_sec: float
+            The rotation rate of the secondary star in radians per year,
             calculated from the star's (pre-match) angular momentum
             and moment of inertia.
 
@@ -1649,8 +1652,8 @@ class TrackMatcher:
 
         omega0_sec = self.calc_omega(secondary)
 
-        # recalculate rotation quantities using the newly calculated 
-        # omega [rad/s] here. Need to be careful about case where 
+        # recalculate rotation quantities using the newly calculated
+        # omega [rad/s] here. Need to be careful about case where
         # omega was made/is 0 to avoid div by zero errors or None * float
         surf_avg_omega = secondary.surf_avg_omega
         if pd.notna(surf_avg_omega) and surf_avg_omega > 0.0:
@@ -1689,7 +1692,7 @@ class TrackMatcher:
                 primary.surf_avg_omega = 0.0
                 primary.log_total_angular_momentum = 0.0
         else:
-            # omega of compact objects or massless remnant 
+            # omega of compact objects or massless remnant
             # (won't be used for integration)
             omega0_pri = omega0_sec
 
@@ -1699,66 +1702,66 @@ class TrackMatcher:
 
         """
             Perform binary to single star grid matching. This is currently
-        used when transitioning to detached star evolution from binary but 
+        used when transitioning to detached star evolution from binary but
         may be used in other steps. This performs several actions:
 
             a. Determines which star is primary/secondary in the evolution
-               and their evolutionary states. If evolvable, matching will 
+               and their evolutionary states. If evolvable, matching will
                proceed.
-            b. Match either one or both stars to a (non-rotating) single 
+            b. Match either one or both stars to a (non-rotating) single
                star evolution track.
-            c. Calculate the matched star's rotation using the pre-match 
+            c. Calculate the matched star's rotation using the pre-match
                step's angular momentum-related properties.
-            d. Returns the primary/secondary stars with interpolator 
-               objects that may be used to calculate quantities along the 
+            d. Returns the primary/secondary stars with interpolator
+               objects that may be used to calculate quantities along the
                time series of each star for further evolution.
-        
+
         Parameters
         ----------
         binary : BinaryStar object
             A binary star object, containing the binary system's properties.
 
         step_name : str
-            If self.record_matching is True, then the matched quantities of 
-            the star will be appended to the history. This is a string that 
-            can be used as a custom label in the BinaryStar object's history, 
-            meant to indicate the relevant evolution step's name. This should 
-            normally match the name of the step in which the matching was 
+            If self.record_matching is True, then the matched quantities of
+            the star will be appended to the history. This is a string that
+            can be used as a custom label in the BinaryStar object's history,
+            meant to indicate the relevant evolution step's name. This should
+            normally match the name of the step in which the matching was
             made, e.g., "step_detached".
 
         Returns
         -------
         primary_out : tuple(SingleStar, PchipInterpolator, float)
-            The first element is the SingleStar object of the primary 
-            (more evolved) star. The second element is the primary's 
-            PchipInterpolator object, used to interpolate values along 
-            this star's time series. The third is the primary's 
-            calculated (post-match) rotation rate, using angular 
+            The first element is the SingleStar object of the primary
+            (more evolved) star. The second element is the primary's
+            PchipInterpolator object, used to interpolate values along
+            this star's time series. The third is the primary's
+            calculated (post-match) rotation rate, using angular
             momentum-related quantites from the pre-match step.
-        
+
         secondary_out :  tuple(SingleStar, PchipInterpolator, float)
-            The first element is the SingleStar object of the secondary 
-            (less evolved) star. The second element is the secondary's 
-            PchipInterpolator object, used to interpolate values along 
-            this star's time series. The third is the secondary's 
-            calculated (post-match) rotation rate, using angular 
+            The first element is the SingleStar object of the secondary
+            (less evolved) star. The second element is the secondary's
+            PchipInterpolator object, used to interpolate values along
+            this star's time series. The third is the secondary's
+            calculated (post-match) rotation rate, using angular
             momentum-related quantites from the pre-match step.
-        
+
         only_CO : bool
-            A boolean indicating whether the binary system contains only a 
-            single compact object (True) or not (False). As in the detached 
-            step, it may be desirable to use this flag to exit an evolution 
-            step, as a single compact obejct (point mass) can not be evolved 
+            A boolean indicating whether the binary system contains only a
+            single compact object (True) or not (False). As in the detached
+            step, it may be desirable to use this flag to exit an evolution
+            step, as a single compact obejct (point mass) can not be evolved
             further.
 
         Raises
         ------
         ValueError
-            If the `primary_normal` and `primary_not_normal` flags are 
+            If the `primary_normal` and `primary_not_normal` flags are
             both determined to be False. One or the other should be True.
 
         MatchingError
-            If the stellar matching to a single star model fails, or the 
+            If the stellar matching to a single star model fails, or the
             PchipInterpolator object returned from matching is None.
 
         """
@@ -1837,7 +1840,7 @@ class TrackMatcher:
         if (secondary.interp1d == None) or (primary.interp1d == None):
             failed_state = binary.state
             set_binary_to_failed(binary)
-            raise MatchingError("Grid matching failed for " 
+            raise MatchingError("Grid matching failed for "
                                 f"{failed_state} binary.")
 
         # recalculate rotation quantities after matching
@@ -1871,8 +1874,8 @@ class TrackMatcher:
     def determine_star_states(self, binary):
 
         """
-            Determines which star is primary (further evolved) and which is 
-        secondary (less evolved). Determines whether stars should be 
+            Determines which star is primary (further evolved) and which is
+        secondary (less evolved). Determines whether stars should be
         matched to the H- or He-rich grid, whether they exist, or if they
         are compact objects/massless remnants. This is used to determine
         how to match the stars.
@@ -1885,40 +1888,40 @@ class TrackMatcher:
         Returns
         -------
         primary : SingleStar object
-            A single star object, representing the primary (more evolved) star 
+            A single star object, representing the primary (more evolved) star
             in the binary and containing its properties.
-        
+
         secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) 
-            star in the binary and containing its properties. 
-        
+            A single star object, representing the secondary (less evolved)
+            star in the binary and containing its properties.
+
         only_CO : bool
-            A boolean indicating whether the binary system contains only a 
-            single compact object (True) or not (False). As in the detached 
-            step, it may be desirable to use this flag to exit an evolution 
-            step, as a single compact obejct (point mass) can not be evolved 
+            A boolean indicating whether the binary system contains only a
+            single compact object (True) or not (False). As in the detached
+            step, it may be desirable to use this flag to exit an evolution
+            step, as a single compact obejct (point mass) can not be evolved
             further.
 
         Raises
         ------
         POSYDONError
-            If there is no star to evolve (both are massless remnants), then 
-            evolution can no continue and detached step should not have been 
+            If there is no star to evolve (both are massless remnants), then
+            evolution can no continue and detached step should not have been
             called.
 
         ValueError
             If the State of star 1 or 2 is not recognized.
 
         POSYDONError
-            If the `non_existent_companion` of the binary is determined to 
-            be not equal to 0 (both stars exist), 1 (only star 2 exists), 
+            If the `non_existent_companion` of the binary is determined to
+            be not equal to 0 (both stars exist), 1 (only star 2 exists),
             or 2 (only star 1 exists), something has gone wrong.
-        
+
         """
 
         only_CO = False
 
-        # update BinaryStar instance with attributes storing whether star 1/2 
+        # update BinaryStar instance with attributes storing whether star 1/2
         # exists or not
         binary.check_who_exists()
         if binary.non_existent_companion == -1:
@@ -2027,22 +2030,22 @@ class TrackMatcher:
     def update_star_properties(self, star, htrack):
 
         """
-            This updates a SingleStar object (`star`) with the 
-        values from a single star track that has initial mass `m0` 
-        and age `t0`. This can be used after matching finds the 
-        closest `m0`, `t0` to update the SingleStar object with the 
-        values of the best matching single star track. This will 
-        not update the `log_total_angular_momentum` or 
-        `surf_avg_omega` because the single star track is non-rotating 
+            This updates a SingleStar object (`star`) with the
+        values from a single star track that has initial mass `m0`
+        and age `t0`. This can be used after matching finds the
+        closest `m0`, `t0` to update the SingleStar object with the
+        values of the best matching single star track. This will
+        not update the `log_total_angular_momentum` or
+        `surf_avg_omega` because the single star track is non-rotating
         and those quantities are poorly defined.
 
         Parameters
         ----------
         star : SingleStar object
             A single star object that contains the star's properties.
-        
+
         htrack : bool
-            A boolean that specifies whether the star would be found in the 
+            A boolean that specifies whether the star would be found in the
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
         """
@@ -2068,21 +2071,21 @@ class TrackMatcher:
     def get_star_final_values(self, star):
         """
             This updates the final values of a SingleStar object,
-        given an initial stellar mass `m0`, typically found from 
+        given an initial stellar mass `m0`, typically found from
         matching to a single star track.
 
         Parameters
         ----------
         star : SingleStar object
             A single star object that contains the star's properties.
-        
+
         htrack : bool
-            A boolean that specifies whether the star would be found in the 
+            A boolean that specifies whether the star would be found in the
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
 
         m0 : float
-            Initial stellar mass (in solar units) of the single star track 
+            Initial stellar mass (in solar units) of the single star track
             that we will grab values from and update `star` with.
 
         """
@@ -2099,23 +2102,23 @@ class TrackMatcher:
     def get_star_profile(self, star):
         """
             This updates the stellar profile of a SingleStar object,
-        given an initial stellar mass `m0`, typically found from 
-        matching to a single star track. The profile of the SingleStar 
-        object is updated to become the profile of the (matched) single 
+        given an initial stellar mass `m0`, typically found from
+        matching to a single star track. The profile of the SingleStar
+        object is updated to become the profile of the (matched) single
         star track.
 
         Parameters
         ----------
         star : SingleStar object
             A single star object that contains the star's properties.
-        
+
         htrack : bool
-            A boolean that specifies whether the star would be found in the 
+            A boolean that specifies whether the star would be found in the
             hydrogen rich single star grid or not (in which case it is
             matched to the helium rich single star grid).
 
         m0 : float
-            Initial stellar mass (in solar units) of the single star track 
+            Initial stellar mass (in solar units) of the single star track
             that we will grab values from and update `star` with.
 
         """

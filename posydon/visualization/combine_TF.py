@@ -76,7 +76,7 @@ TF2_POOL_UNKNOWN = [
 TF2_POOL_CONT = [
     'contact_during_MS'
     ]
-                        
+
 TF2_POOL_A = [
     'case_A1',
     'case_A2'
