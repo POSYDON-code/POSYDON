@@ -233,10 +233,12 @@ It evolves the binary object in isolation until Roche lobe overflow occurs.
 
   * - ``magnetic_braking_mode``
     - | A string corresponding to the desired magnetic braking prescription.
+
       * ``'RVJ83'``: Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
       * ``'M15'``: Matt et al. 2015, ApJ, 799, L23
       * ``'G18'``: Garraffo et al. 2018, ApJ, 862, 90
       * ``'CARB'``: Van & Ivanova 2019, ApJ, 886, L31
+
     - ``'RVJ83'``
 
   * - ``do_stellar_evolution_and_spin_from_winds``
@@ -244,7 +246,7 @@ It evolves the binary object in isolation until Roche lobe overflow occurs.
     - ``True``
 
   * - ``RLO_orbit_at_orbit_with_same_am``
-    - | Binaries are circularized instaneously when RLO occurs and this
+    - | Binaries are circularized instantaneously when RLO occurs and this
       | option dictates how that is handled. If false, place
       | the binary in an orbit with separation equal to the binary's
       | separation at periastron. If true, circularize the orbit assuming
@@ -325,10 +327,12 @@ This means that this step uses the single stars loaded by the detached step.
 
   * - ``magnetic_braking_mode``
     - | A string corresponding to the desired magnetic braking prescription.
+
       * ``'RVJ83'``: Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
       * ``'M15'``: Matt et al. 2015, ApJ, 799, L23
       * ``'G18'``: Garraffo et al. 2018, ApJ, 862, 90
       * ``'CARB'``: Van & Ivanova 2019, ApJ, 886, L31
+
     - ``'RVJ83'``
 
   * - ``do_stellar_evolution_and_spin_from_winds``
