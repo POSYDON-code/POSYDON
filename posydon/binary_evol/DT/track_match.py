@@ -1404,11 +1404,11 @@ class TrackMatcher:
             Age (in years) of the matched model.
 
         """
-
+        print("get_star_match_data: ", star.mass)
         with np.errstate(all="ignore"):
             # get the initial m0, t0 track
             if star.co:
-                match_m0, match_t0 = copy_prev_m0, copy_prev_t0
+                match_m0, match_t0 = star.mass, copy_prev_t0
             elif binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
                 # ZAMS stars in wide (non-mass exchaging binaries) that are
                 # directed to detached step at birth
@@ -1765,21 +1765,40 @@ class TrackMatcher:
 
         # determine star states for matching
         primary, secondary, only_CO = self.determine_star_states(binary)
-        if only_CO:
-            return (None, None, None), (None, None, None), only_CO
+        #if only_CO:
+        #    return binary.star_1, binary.star_2, only_CO
 
         # record which star we performed matching on for reporting purposes
         self.matched_s1 = False
         self.matched_s2 = False
 
+        self.secondary_not_normal = secondary.co
+        self.secondary_normal = not secondary.co
+
         # get the matched data of binary components
         # match secondary:
-        m0, t0 = self.get_star_match_data(binary, secondary)
-        # record which star got matched
-        if secondary == binary.star_2:
-            self.matched_s2 = True
-        elif secondary == binary.star_1:
-            self.matched_s1 = True
+        if self.secondary_not_normal:
+            m0, t0 = self.get_star_match_data(binary, secondary,
+                                     copy_prev_m0 = secondary.mass,
+                                     copy_prev_t0 = binary.time)
+        elif self.secondary_normal:
+            m0, t0 = self.get_star_match_data(binary, secondary)
+            # record which star got matched
+            if secondary == binary.star_2:
+                self.matched_s2 = True
+            elif secondary == binary.star_1:
+                self.matched_s1 = True
+        else:
+            raise ValueError("During matching, the secondary should either be "
+                             "normal (stellar object) or "
+                             "not normal (a CO or nonexistent companion).",
+                            f"\nsecondary.co = {secondary.co}",
+                            "\nnon_existent_companion = "
+                            f"{binary.non_existent_companion}",
+                            "\ncompanion_1_exists = "
+                            f"{binary.companion_1_exists}",
+                            "\ncompanion_2_exists = "
+                            f"{binary.companion_2_exists}")
 
         # primary is a CO or massless remnant, or else it is "normal"
         # TODO: should these be star properties? also, do we only really need one?
@@ -1792,7 +1811,7 @@ class TrackMatcher:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             self.get_star_match_data(binary, primary,
-                                     copy_prev_m0 = m0,
+                                     copy_prev_m0 = primary.mass,
                                      copy_prev_t0 = t0)
         elif self.primary_normal:
             # match primary
@@ -1827,7 +1846,8 @@ class TrackMatcher:
         # update binary history with matched values
         # (only shown in history if record_matching = True)
         # (this gets overwritten after detached evolution)
-        self.update_star_properties(secondary, secondary.htrack)
+        if self.secondary_normal:
+            self.update_star_properties(secondary, secondary.htrack)
         if self.primary_normal:
             self.update_star_properties(primary, primary.htrack)
 
@@ -1958,8 +1978,13 @@ class TrackMatcher:
 
             else:
                 # both stars are compact objects, should redirect to step_dco
-                only_CO = True
-                return None, None, only_CO
+                primary = s_arr[0]
+                primary.co = s_CO[0]
+                primary.htrack = s_htrack[0]
+
+                secondary = s_arr[1]
+                secondary.co = s_CO[1]
+                secondary.htrack = s_htrack[1]
 
         # In case a star is a massless remnant:
         # We force primary.co = True for all isolated evolution

@@ -17,243 +17,160 @@ from posydon.utils.common_functions import orbital_period_from_separation
 from posydon.utils.common_functions import CO_radius
 from posydon.utils.common_functions import set_binary_to_failed
 from posydon.utils.posydonerror import NumericalError
-
-class DoubleCO:
-    """The double compact-object step class."""
-
-    def __init__(self, n_o_steps_interval=None):
-        """Initialize a DoubleCO instance."""
-        self.n_o_steps_interval = n_o_steps_interval
-
-    def __call__(self, binary):
-        """Apply the double CO step on a BinaryStar object."""
-        solt = []
-        sol = []
-        t_final = []
-        a_final = []
-        e_final = []
-
-        self.m1 = binary.star_1.mass
-        self.m2 = binary.star_2.mass
-        self.eccentricity = binary.eccentricity
-        self.separation = binary.separation * constants.Rsun / 100000   # in km
-
-        self.state1 = binary.star_1.state
-        self.state2 = binary.star_2.state
-
-        t_inspiral = binary.time
-        max_time = binary.properties.max_simulation_time
-        assert (
-                max_time - binary.time > 0.0
-        ), "max_time is loXer than the current time."
-        r1 = CO_radius(self.m1, self.state1) * constants.Rsun / 100000  # in km
-        r2 = CO_radius(self.m2, self.state2) * constants.Rsun / 100000  # in km
-
-        @event(True, -1)
-        def ev_contact(t, y):
-            # stop when binary separation = r1+r2 km
-            return y[0] - (r1 + r2)
-
-        status = -1
-        n = 0
-        a = self.separation
-        e = self.eccentricity
-        # solve the equations at most 6 times
-        while(status == -1 and n < 6):
-            try: 
-                s = solve_ivp(
-                lambda t, y: gr(t, y, self.m1, self.m2,),
-                t_span=[0, max_time - t_inspiral],
-                y0=[a, e],
-                method='BDF',
-                events=ev_contact,
-                rtol=1e-10,
-                atol=1e-10,
-                dense_output=True)
-            except:
-                set_binary_to_failed(binary)
-                raise NumericalError("SciPy encountered termination edge case while solving GR equations")
-            t_inspiral += s.t[-1]
-            status = s.status
-            n += 1
-            a = s.y[0][-1]
-            e = s.y[1][-1]
-            solt.append(s.t)
-            sol.append(s)
-        if self.n_o_steps_interval is not None:
-            for i in range(len(solt)):
-                # solt[-1] = [0]
-                t_step = (solt[i][-1] - solt[i][0]) / self.n_o_steps_interval
-                t = np.arange(
-                    solt[i][0], solt[i][-1] + t_step / 2.0, t_step)[1:]
-                a = sol[i].sol(t)[0]
-                e = sol[i].sol(t)[1]
-                if i == 0:
-                    t = t + binary.time
-                if i == 1:
-                    t = t + binary.time + solt[0][-1]
-                elif i == 2:
-                    t = t + binary.time + solt[0][-1] + solt[1][-1]
-                for k in range(len(a)):
-                    a_final.append(a[k])
-                    e_final.append(e[k])
-                    t_final.append(t[k])
-        else:
-            a_final = [s.y[0][-1]]
-            e_final = [s.y[1][-1]]
-            t_final = [t_inspiral]
-
-        if s.status == -1:
-            failed_state = binary.state
-            set_binary_to_failed(binary)
-            raise NumericalError(f"Integration failed for {failed_state} DCO ({self.state1}, {self.state2}): ", s.message)
-
-        elif s.status == 1:
-
-            if self.n_o_steps_interval is not None:
-                p_history = []
-                a_history = []
-                for i in range(len(a_final)-1):
-                    a_history.append(a_final[i] * 100000 / constants.Rsun)
-                for i in range(len(a_history)):
-                    p_history.append(orbital_period_from_separation(
-                        a_history[i], binary.star_1.mass, binary.star_2.mass
-                    ))
-                for i in range(len(a_history)):
-                    binary.time_history.append(t_final[i])
-                    binary.separation_history.append(a_history[i])
-                    binary.eccentricity_history.append(e_final[i])
-                    binary.orbital_period_history.append(p_history[i])
-
-                for key in BINARYPROPERTIES:
-                    if key not in ["eccentricity", "time",
-                                   "orbital_period", "separation"]:
-                        current = getattr(binary, key)
-                        history = [current] * len(a_history)
-                        getattr(binary, key + "_history").extend(history)
-                for key in STARPROPERTIES:
-                    current1 = getattr(binary.star_1, key)
-                    history1 = [current1] * len(a_history)
-                    getattr(binary.star_1, key + "_history").extend(history1)
-                    current2 = getattr(binary.star_2, key)
-                    history2 = [current2] * len(a_history)
-                    getattr(binary.star_2, key + "_history").extend(history2)
-            binary.state = "contact"
-            binary.separation = s.y[0][-1] * 100000 / constants.Rsun
-            binary.time = t_inspiral
-            binary.eccentricity = 0.0
-            binary.orbital_period = orbital_period_from_separation(
-                binary.separation, binary.star_1.mass, binary.star_2.mass)
-            binary.V_sys = binary.V_sys_history[-1]
-            binary.event = "CO_contact"
-
-            for key in BINARYPROPERTIES:
-                if key not in ["eccentricity", "time",
-                               "orbital_period", "separation"]:
-                    current = getattr(binary, key)
-                    setattr(binary, key, current)
-            for key in STARPROPERTIES:
-                current1 = getattr(binary.star_1, key)
-                current2 = getattr(binary.star_2, key)
-                setattr(binary.star_1, key, current1)
-                setattr(binary.star_2, key, current2)
-
-        else:
-            if self.n_o_steps_interval is not None:
-                p_history = []
-                a_history = []
-                for i in range(len(a_final)-1):
-                    a_history.append(a_final[i] * 100000 / constants.Rsun)
-                for i in range(len(a_history)):
-                    p_history.append(orbital_period_from_separation(
-                        a_history[i], binary.star_1.mass, binary.star_2.mass
-                    ))
-                for i in range(len(a_history)):
-                    binary.time_history.append(t_final[i])
-                    binary.separation_history.append(a_history[i])
-                    binary.eccentricity_history.append(e_final[i])
-                    binary.orbital_period_history.append(p_history[i])
-
-                for key in BINARYPROPERTIES:
-                    if key not in [
-                        "eccentricity",
-                        "time",
-                        "orbital_period",
-                        "separation"
-                    ]:
-                        current = getattr(binary, key)
-                        history = [current] * len(a_history)
-                        getattr(binary, key + "_history").extend(history)
-                for key in STARPROPERTIES:
-                    current1 = getattr(binary.star_1, key)
-                    history1 = [current1] * len(a_history)
-                    getattr(binary.star_1, key + "_history").extend(history1)
-                    current2 = getattr(binary.star_2, key)
-                    history2 = [current2] * len(a_history)
-                    getattr(binary.star_2, key + "_history").extend(history2)
-            binary.state = "detached"
-            binary.time = max_time
-            binary.separation = s.y[0][-1] * 100000 / constants.Rsun
-            binary.eccentricity = s.y[1][-1]
-            binary.orbital_period = orbital_period_from_separation(
-                binary.separation, binary.star_1.mass, binary.star_2.mass
-            )
-            binary.V_sys = binary.V_sys_history[-1]
-            binary.event = "maxtime"
-
-            for key in BINARYPROPERTIES:
-                if key not in [
-                    "eccentricity",
-                    "time",
-                    "orbital_period",
-                    "separation"
-                ]:
-                    current = getattr(binary, key)
-                    setattr(binary, key, current)
-            for key in STARPROPERTIES:
-                current1 = getattr(binary.star_1, key)
-                current2 = getattr(binary.star_2, key)
-                setattr(binary.star_1, key, current1)
-                setattr(binary.star_2, key, current2)
-
-
-def gr(t, y, M_acc, M):
-    """TODO: add description and reference for the equations."""
-    g = constants.standard_cgrav
-    c = constants.clight
-
-    y[0] = np.max(y[0], 0)
-    a = y[0]
-    y[1] = np.max(y[1], 0)
-    e = y[1]
-
-    da = 0
-    de = 0
-    M_acc = M_acc * constants.msol
-    M = M * constants.msol
-    a = a * 100000
-    da_gr = ((-64 / 5)
-             * (g ** 3 * (M_acc + M) * M_acc * M)
-             / (1 - e ** 2) ** (7 / 2) / a ** 3 / c ** 5
-             * (1 + (73 / 24) * e ** 2 + (37 / 96) * e ** 4)
-             * (constants.secyer / 100000))
-    de_gr = ((-304 / 15)
-             * e * (g ** 3 * (M_acc + M) * M_acc * M)
-             / (1 - e ** 2) ** (5 / 2) / a ** 4 / c ** 5
-             * (1 + (121 / 304) * e ** 2)
-             * constants.secyer)
-
-    da = da_gr
-    de = de_gr
-
-    return [da, de]
-
+from posydon.binary_evol.DT.step_detached import detached_step, detached_evolution
 
 def event(terminal, direction=0):
-    """Return a helper function to set attributes for `solve_ivp` events."""
+    """Return a helper function to set attributes for solve_ivp events."""
     def dec(f):
         f.terminal = terminal
         f.direction = direction
         return f
-
     return dec
+
+class DoubleCO(detached_step):
+    """Evolve a double compact-object binary due to gravitational radiation.
+
+    The binary will be evolved until the two compact objects come into contact
+    or until maximum simulation time, based on the quadrupole approximation
+    of gravitational radiation.
+
+    """
+
+    def __init__(self, **kwargs):
+
+        super().__init__(**kwargs)
+        self.evo = double_CO_evolution(**self.evo_kwargs)
+
+    def __call__(self, binary):
+        print("BEFORE: ", binary.star_1.mass, binary.star_2.mass)
+        super().__call__(binary)
+        print("AFTER: ", binary.star_1.mass, binary.star_2.mass)
+        binary.state = "detached"
+        binary.time = self.max_time
+        binary.separation = self.res.y[0][-1] * 100000 / constants.Rsun
+        binary.eccentricity = self.res.y[1][-1]
+        binary.orbital_period = orbital_period_from_separation(
+            binary.separation, binary.star_1.mass, binary.star_2.mass
+        )
+        binary.V_sys = binary.V_sys_history[-1]
+        binary.event = "maxtime"
+
+    def solve_ODEs(self, binary, primary, secondary):
+
+        self.max_time = binary.properties.max_simulation_time
+
+        print("!!", primary.mass)
+        print("!!", secondary.mass)
+        #primary.omega0 = 0.0
+        #secondary.omega0 = 0.0
+        print(binary.separation, binary.eccentricity, primary.omega0, secondary.omega0)
+
+        #try:
+        res = solve_ivp(self.evo, 
+                            events=self.evo.ev_contact,
+                            method="BDF", 
+                        t_span=(0, self.max_time - binary.time),
+                        y0=[binary.separation * constants.Rsun / 100000, 
+                            binary.eccentricity,
+                            secondary.omega0, primary.omega0],
+                        rtol=1e-10,
+                        atol=1e-10,
+                        dense_output=True)
+        #except Exception as e:
+        #    set_binary_to_failed(binary)
+        #    raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
+
+        #print(res.sol[0])
+        print(primary.mass)
+        print(secondary.mass)
+        
+        #res.y[0] = res.y[0] * 100000 / constants.Rsun  # convert back to Rsun
+        #print("!!!", res.y[0][-1])
+
+        binary.state = "detached"
+        binary.time = self.max_time
+        #binary.separation = res.y[0][-1] * 100000 / constants.Rsun
+        #binary.eccentricity = res.y[1][-1]
+        #binary.orbital_period = orbital_period_from_separation(
+        #    binary.separation, binary.star_1.mass, binary.star_2.mass
+        #)
+        #binary.V_sys = binary.V_sys_history[-1]
+        binary.event = "maxtime"
+            
+        return res
+    
+
+
+class double_CO_evolution(detached_evolution):
+
+    def __init__(self, **kwargs):
+
+        super().__init__(**kwargs)
+        self.do_magnetic_braking = False
+        self.do_tides = False
+        self.do_wind_loss = False
+        self.do_stellar_evolution_and_spin_from_winds = False
+        self.do_gravitational_radiation = True
+
+    #def __call__(self, t, y):
+    #    print("CALL")
+    #    result = super().__call__(t, y)
+
+    #    return [self.da, self.de]
+
+    def set_stars(self, primary, secondary, t0=0.0):
+        """Sets memory references for primary and secondary star associated with
+        this evolution. It is expected that primary/secondary have interp1d 
+        objects already, as required for detached evolution.
+
+        Parameters
+        ----------
+        primary : SingleStar object
+            A single star object, representing the primary (more evolved) star 
+            in the binary and containing its properties.
+        
+        secondary : SingleStar object
+            A single star object, representing the secondary (less evolved) star 
+            in the binary and containing its properties.
+
+        t0 : float
+            The time at the start of detached evolution. Typically should be the 
+            binary.time prior to detached evolution.
+
+        """
+
+        super().set_stars(primary, secondary, t0)
+        self.r1 = CO_radius(self.primary.mass, self.primary.state) * constants.Rsun / 100_000 # [km]
+        self.r2 = CO_radius(self.secondary.mass, self.secondary.state) * constants.Rsun / 100_000 # [km]
+
+    @event(True, -1)
+    def ev_contact(self, t, y):
+        # stop when binary separation = r1+r2 [km]
+        return y[0] - (self.r1 + self.r2)
+    
+    def gravitational_radiation(self):
+        """TODO: add description and reference for the equations."""
+        g = constants.standard_cgrav
+        c = constants.clight
+
+        a = self.a
+        e = self.e
+
+        m1 = self.primary.latest["mass"] * constants.msol
+        m2 = self.secondary.latest["mass"] * constants.msol
+        a = a * 100_000
+
+        da_gr = ((-64 / 5)
+                * (g ** 3 * (m1 + m2) * m1 * m2)
+                / (1 - e ** 2) ** (7 / 2) / a ** 3 / c ** 5
+                * (1 + (73 / 24) * e ** 2 + (37 / 96) * e ** 4)
+                * (constants.secyer / 100_000))
+        de_gr = ((-304 / 15)
+                * e * (g ** 3 * (m1 + m2) * m1 * m2)
+                / (1 - e ** 2) ** (5 / 2) / a ** 4 / c ** 5
+                * (1 + (121 / 304) * e ** 2)
+                * constants.secyer)
+
+        self.da += da_gr
+        self.de += de_gr
+
