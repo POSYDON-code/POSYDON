@@ -358,12 +358,12 @@ class detached_step:
         # (in the event that the total_state is not in the flow, this will be None,
         #  and the binary will be set to fail in BinaryStar().run_step()).
         next_step_name = binary.get_next_step_name()
-        
+
         print("BEFORE matching: ", binary.star_1.mass, binary.star_2.mass)
         # match stars to single star models for detached evolution
         primary, secondary, only_CO = self.track_matcher.do_matching(binary, next_step_name)
         print("AFTER matching: ", primary.mass, secondary.mass)
-        
+
         #if only_CO:
         #    if self.verbose:
         #        print("Binary system only contains compact objects."
@@ -467,7 +467,7 @@ class detached_step:
                     abs_diff_porb = np.abs(binary.orbital_period - orbital_period_from_separation(
                                     binary.separation, secondary.mass, primary.mass)) / binary.orbital_period
 
-                    
+
                     abs_diff_porb_str = f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
                         f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
                         "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) = " + \
@@ -500,19 +500,19 @@ class detached_step:
                             binary.event = "oRLO1"
 
                     if ('step_HMS_HMS_RLO' not in all_step_names):
-                        if ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE 
+                        if ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE
                             and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE)
                         or (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
                             and binary.star_2.state in STAR_STATES_HE_RICH_EVOLVABLE)):
                             set_binary_to_failed(binary)
-                            raise FlowError("Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after " 
-                                        "HMS-HMS not yet supported.") 
+                            raise FlowError("Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after "
+                                        "HMS-HMS not yet supported.")
 
                         elif (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
                             and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE):
                             set_binary_to_failed(binary)
                             raise ClassificationError("Binary is in the detached step but has stable RLO with two HMS stars - "
-                                                "should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)") 
+                                                "should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)")
 
 
                 ## CHECK IF STARS WILL UNDERGO CC
