@@ -467,7 +467,7 @@ class BinaryStar:
                 # check type of data and determine what to fill data column with
                 if dtype == 'string':
                     filler_value = ''
-                elif dtype == 'float64':
+                elif dtype == 'float64' or dtype == 'int64':
                     filler_value = np.nan
                 # array-like data
                 elif dtype == 'object':
@@ -525,7 +525,7 @@ class BinaryStar:
             # If a binary fails, usually history cols have diff lengths.
             # This should append NAN to create even columns.
             if len(set(col_lengths)) != 1:
-                equalize_columns(data_to_save, all_keys, properties_dtypes,
+                equalize_columns(data_to_save, keys_to_save, properties_dtypes,
                                  max_col_length)
 
             where_none = np.array([[True if var is None else False
