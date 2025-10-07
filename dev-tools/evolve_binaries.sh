@@ -8,8 +8,12 @@
 BRANCH=${1:-main}
 REPO_URL="https://github.com/POSYDON-code/POSYDON"
 
-WORK_DIR="POSYDON_$BRANCH"
-
+if [[ -n "$2" ]]; then
+    SHA=$2
+    WORK_DIR="POSYDON_${BRANCH}_${SHA}"
+else
+    WORK_DIR="POSYDON_$BRANCH"
+fi
 
 # Remove existing directory if it exists
 if [ -d "$WORK_DIR" ]; then
@@ -49,6 +53,17 @@ echo "🔄 Cloning POSYDON repository (branch: $BRANCH)"
 if ! git clone -b "$BRANCH" "$REPO_URL" "$CLONE_DIR" 2>&1 | sed 's/^/  /'; then
     echo -e "\033[31mError: Failed to clone branch '$BRANCH'. Please check if the branch exists.\033[0m"
     exit 1
+fi
+
+# if SHA is provided, checkout that commit
+if [[ -n "$SHA" ]]; then
+    echo "🔄 Checking out commit: $SHA"
+    cd "$CLONE_DIR"
+    if ! git checkout "$SHA" 2>&1 | sed 's/^/  /'; then
+        echo -e "\033[31mError: Failed to checkout commit '$SHA'. Please check if the commit exists.\033[0m"
+        exit 1
+    fi
+    cd -
 fi
 
 # Create conda environment for POSYDON v2
