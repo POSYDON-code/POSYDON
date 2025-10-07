@@ -55,7 +55,7 @@ Anaconda (Recommended)
             import posydon
             print(posydon.__file__)
 
-        Use the path up to (but not including) ``/posydon/__init__.py`` as the value for the environment variable
+        Use the parent directory of ``/posydon/__init__.py`` as the value for the environment variable
         :code:`PATH_TO_POSYDON` in the next step, e.g. ``/Users/Documents/POSYDON/conda/site-packages/posydon/__init__.py``
         becomes ``/Users/Documents/POSYDON/conda/site-packages``.
 
