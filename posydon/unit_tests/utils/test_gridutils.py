@@ -7,16 +7,20 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.gridutils as totest
+
 # aliases
 np = totest.np
 os = totest.os
 pd = totest.pd
 
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isclass, isroutine
+from pytest import approx, fixture, raises, warns
+
 from posydon.utils.posydonwarning import MissingFilesWarning
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -802,4 +806,3 @@ class TestFunctions:
         assert totest.get_new_grid_name(grid_dir, "TEST_COMPRESSION",\
                                         create_missing_directories=True) ==\
                os.path.join(compression_dir, "test_grid.h5")
-

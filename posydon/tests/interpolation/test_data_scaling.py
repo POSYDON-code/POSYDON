@@ -1,7 +1,9 @@
 from unittest import TestCase
 
 import numpy as np
+
 from posydon.interpolation.data_scaling import DataScaler
+
 
 class DataScaler_test(TestCase):
     def setUp(self):

@@ -5,18 +5,18 @@
 Star Formation History
 ======================
 
-The star formation history is a key component in population synthesis, since it 
-determined the amount of stars that are formed at each moment in time. 
+The star formation history is a key component in population synthesis, since it
+determined the amount of stars that are formed at each moment in time.
 POSYDON implements two methods for the consideration of the star formation history:
 
-1. As part of the initial sampling, where a star formation history is used to 
+1. As part of the initial sampling, where a star formation history is used to
 determine the number of stars that are formed at each time step. This is especially
 useful for simulations of "living" stars in a cluster or galaxy, where the star formation
-history can be continuous, instead of a burst. Together with a maximum age, it 
+history can be continuous, instead of a burst. Together with a maximum age, it
 provides a way to generate a realistic distribution of stars in a specific environment.
 
 2. During post-processing step, where the star formation history is used to distribute
-transient events, "instantaneous" events, such as supernovae, that cover a 
+transient events, "instantaneous" events, such as supernovae, that cover a
 large metallicity range. In this case, the star formation history is used to place
 the events at different birth times across cosmic time. This approach is described
 in `Andrews et al. 2025 <https://ui.adsabs.harvard.edu/abs/2024arXiv241102376A/abstract>`_
@@ -32,16 +32,16 @@ When calculating the cosmic_weights of events in the
 This model is given as a dictionary to the function.
 
 .. code-block:: python
-    
+
     SFH_model = {
         "SFR": "IllustrisTNG",
     }
 
-In the example above, we used the "IllustrisTNG" model (similar to in the tutorial), which is a star formation history model that includes metallicity evolution, 
-but other models are available. 
+In the example above, we used the "IllustrisTNG" model (similar to in the tutorial), which is a star formation history model that includes metallicity evolution,
+but other models are available.
 
 .. note::
-    To use a star formation history model, the population needs to be created with 
+    To use a star formation history model, the population needs to be created with
     a burst star formation in the population synthesis.
 
 
@@ -62,11 +62,11 @@ Cosmic star formation rate densities
     - IMF assumption
     - Additional required parameters
   * - ``Madau+Dickinson14``
-    - `Madau & Dickinson (2014) <https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M>`_ 
+    - `Madau & Dickinson (2014) <https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M>`_
     - Salpeter
     - ``sigma`` (float; string) the standard deviation of the log-normal distribution.
   * - ``Madau+Fragos17``
-    - `Madau & Fragos (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M/>`_ 
+    - `Madau & Fragos (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M/>`_
     - Kroupa 2001
     - ``sigma`` (float; string) the standard deviation of the log-normal distribution.
   * - ``Fujimoto+24``
@@ -74,7 +74,7 @@ Cosmic star formation rate densities
     - Kroupa 2001
     - ``sigma`` (float; string) the standard deviation of the log-normal distribution.
   * - ``Neijssel+19``
-    -  `Neijssel et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019MNRAS.490.3740N>`_ 
+    -  `Neijssel et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019MNRAS.490.3740N>`_
     - Kroupa 2001
     - | ``sigma`` (float; string) the standard deviation of the log-normal distribution.
       | Note that this models uses a log10 scaling instead of a natural logarithm scaling for the metallicity, which
@@ -140,7 +140,7 @@ history model. Additionally, specific options can be provided to the function:
       - | The maximum metallicity to consider in the distribution (in absolute units).
         | If not provided, the highest bin edge of the metallicity distribution will be used.
 
-    
+
 .. note::
     For ``Z_min`` and ``Z_max``, the boundaries can be placed inside the considered metallicity bins.
     This removes any contribution from the bins (and part of bins) outside the range.
@@ -183,7 +183,7 @@ Example
 -------
 
 .. code-block:: python
-    
+
     SFH_model = {
         "SFR": "Madau+Dickinson14",
         "sigma": 0.39,
