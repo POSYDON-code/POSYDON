@@ -37,15 +37,15 @@ def create_env_and_kernel():
     run("conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main")
     run("conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r")
     run("conda config --add channels posydon")
-    
+
     run(f"conda create --name {ENV_NAME} -c conda-forge -c posydon python=3.11 git posydon ipykernel --yes")
-    
+
     activate_cmd = f"conda activate {ENV_NAME} && python -c \"import posydon; print(posydon.__version__)\""
     result = subprocess.run(activate_cmd, shell=True, capture_output=True, text=True, executable="/bin/bash")
     version = result.stdout.strip()
-    
+
     run(f"conda activate {ENV_NAME} && python -m ipykernel install --user --name {ENV_NAME} --display-name \"POSYDON ({version})\"", executable="/bin/bash")
-    
+
     return version
 
 def set_conda_env_vars(posydon_dir):
@@ -98,5 +98,5 @@ def _run_install():
     setup_dotenv(posydon_dir)
     update_bashrc()
     setup_ipython_config(posydon_dir)
-    
+
     print(f"\n✅ Successfully installed POSYDON version {version}")
