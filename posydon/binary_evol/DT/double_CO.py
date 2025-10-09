@@ -45,9 +45,8 @@ class DoubleCO(detached_step):
         self.evo = double_CO_evolution(**self.evo_kwargs)
 
     def __call__(self, binary):
-        print("BEFORE: ", binary.star_1.mass, binary.star_2.mass)
         super().__call__(binary)
-        print("AFTER: ", binary.star_1.mass, binary.star_2.mass)
+
         binary.state = "detached"
         binary.time = self.max_time
         binary.separation = self.res.y[0][-1] * 100000 / constants.Rsun
@@ -62,14 +61,8 @@ class DoubleCO(detached_step):
 
         self.max_time = binary.properties.max_simulation_time
 
-        print("!!", primary.mass)
-        print("!!", secondary.mass)
-        #primary.omega0 = 0.0
-        #secondary.omega0 = 0.0
-        print(binary.separation, binary.eccentricity, primary.omega0, secondary.omega0)
-
-        #try:
-        res = solve_ivp(self.evo, 
+        try:
+            res = solve_ivp(self.evo, 
                             events=self.evo.ev_contact,
                             method="BDF", 
                         t_span=(0, self.max_time - binary.time),
@@ -79,26 +72,23 @@ class DoubleCO(detached_step):
                         rtol=1e-10,
                         atol=1e-10,
                         dense_output=True)
-        #except Exception as e:
-        #    set_binary_to_failed(binary)
-        #    raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
+        except Exception as e:
+            set_binary_to_failed(binary)
+            raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
 
-        #print(res.sol[0])
-        print(primary.mass)
-        print(secondary.mass)
         
         #res.y[0] = res.y[0] * 100000 / constants.Rsun  # convert back to Rsun
         #print("!!!", res.y[0][-1])
 
-        binary.state = "detached"
-        binary.time = self.max_time
+        #binary.state = "detached"
+        #binary.time = self.max_time
         #binary.separation = res.y[0][-1] * 100000 / constants.Rsun
         #binary.eccentricity = res.y[1][-1]
         #binary.orbital_period = orbital_period_from_separation(
         #    binary.separation, binary.star_1.mass, binary.star_2.mass
         #)
         #binary.V_sys = binary.V_sys_history[-1]
-        binary.event = "maxtime"
+        #binary.event = "maxtime"
             
         return res
     

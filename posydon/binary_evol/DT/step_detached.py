@@ -359,10 +359,8 @@ class detached_step:
         #  and the binary will be set to fail in BinaryStar().run_step()).
         next_step_name = binary.get_next_step_name()
         
-        print("BEFORE matching: ", binary.star_1.mass, binary.star_2.mass)
         # match stars to single star models for detached evolution
         primary, secondary, only_CO = self.track_matcher.do_matching(binary, next_step_name)
-        print("AFTER matching: ", primary.mass, secondary.mass)
         
         #if only_CO:
         #    if self.verbose:
@@ -390,7 +388,6 @@ class detached_step:
         # store memory references of primary/secondary
         # for detached evolution
         self.evo.set_stars(primary, secondary, t0 = binary.time)
-        print("AFTER set_stars: ", primary.mass, secondary.mass)
 
         if (self.evo.ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
             or self.evo.ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0) \

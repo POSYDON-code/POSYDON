@@ -1407,7 +1407,7 @@ class TrackMatcher:
             Age (in years) of the matched model.
 
         """
-        print("get_star_match_data: ", star.mass)
+
         with np.errstate(all="ignore"):
             # get the initial m0, t0 track
             if star.co:
