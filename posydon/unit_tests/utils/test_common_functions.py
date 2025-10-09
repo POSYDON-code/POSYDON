@@ -7,20 +7,29 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.common_functions as totest
+
 # aliases
 np = totest.np
 os = totest.os
 
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isroutine, isclass
+from pytest import approx, fixture, raises, warns
+
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
-from posydon.utils.posydonwarning import (EvolutionWarning,\
-    InappropriateValueWarning, ApproximationWarning, InterpolationWarning,\
-    ReplaceValueWarning, ClassificationWarning)
 from posydon.utils.interpolators import interp1d
+from posydon.utils.posydonwarning import (
+    ApproximationWarning,
+    ClassificationWarning,
+    EvolutionWarning,
+    InappropriateValueWarning,
+    InterpolationWarning,
+    ReplaceValueWarning,
+)
+
 
 @fixture
 def binary():
@@ -1692,7 +1701,7 @@ class TestFunctions:
         star.log_R = 0.0
         star.profile = np.array([(1.0), (1.0), (1.0)],\
                                 dtype=([('mass', 'f8')]))
-        
+
         assert np.isnan(star.m_core_CE_1cent)
         # examples: missing state with profile and verbose
         star.state = "test_state"
@@ -2412,4 +2421,3 @@ class TestFunctions:
                            np.array([[0.54030231,-0.59500984, 0.59500984],\
                                      [0.59500984, 0.77015115, 0.22984885],\
                                      [-0.59500984, 0.22984885, 0.77015115]]))
-

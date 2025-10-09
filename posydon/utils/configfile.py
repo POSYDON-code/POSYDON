@@ -87,13 +87,14 @@ __authors__ = [
 ]
 
 
-import os
-import copy
-import numpy as np
-import json
 import ast
 import configparser
+import copy
+import json
 import operator
+import os
+
+import numpy as np
 
 
 class ConfigFile:

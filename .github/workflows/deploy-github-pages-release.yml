@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.7'
-  
+
     - name: Get pip cache dir
       id: pip-cache
       run: |
@@ -62,12 +62,12 @@ jobs:
         output_folder=$GITHUB_WORKSPACE/_build/
         echo "Output folder: $output_folder"
         mkdir -p $output_folder
-        
+
         # move to the repository folder
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
         cd $PATH_TO_POSYDON
 
-        # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF 
+        # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF
         # THe _templatse folder and versioning code.
         # get the _templates folder and move it out of the POSYDON folder
         cp -r $PATH_TO_POSYDON/docs/_source/_templates $GITHUB_WORKSPACE
@@ -97,7 +97,7 @@ jobs:
           cd docs
           make html
           touch _build/html/.nojekyll
-          
+
           # move and copy docs out of the POSYDON folder
           mv _build/html/ $output_folder/$tag
 
@@ -115,12 +115,12 @@ jobs:
         keep_history: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   build_v2:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -134,7 +134,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-  
+
     - name: Get pip cache dir
       id: pip-cache
       run: |
@@ -176,7 +176,7 @@ jobs:
         export PATH_TO_POSYDON=$GITHUB_WORKSPACE/POSYDON
         cd $PATH_TO_POSYDON
 
-        # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF 
+        # REQUIRED FOR OLDER VERSIONS OF POSYDON BEFORE THE INCLUSION OF
         # THe _templates folder and versioning code.
         # get the _templates folder and move it out of the POSYDON folder
         cp -r $PATH_TO_POSYDON/docs/_source/_templates $GITHUB_WORKSPACE
@@ -217,7 +217,7 @@ jobs:
           cd docs
           make html
           touch _build/html/.nojekyll
-          
+
           # move and copy docs out of the POSYDON folder
           mv _build/html/ $output_folder/$tag
 
@@ -225,7 +225,7 @@ jobs:
           make clean
           cd ../
         done
-        
+
     - name: Deploy to GitHub Pages
       if: success()
       uses: crazy-max/ghaction-github-pages@v4
@@ -246,49 +246,49 @@ jobs:
       with:
         ref: gh-pages
         path: '_build'
-        
+
     - name: Find latest version and create symlink
       run: |
         cd _build
-        
+
         # List all version directories
         echo "All directories:"
         ls -la
-        
+
         # Find all version directories that match our version pattern
         VERSIONS=$(ls -d v[0-9]* 2>/dev/null || echo "")
-        
+
         if [ -z "$VERSIONS" ]; then
           echo "No version directories found!"
           exit 1
         fi
-        
+
         echo "Found versions: $VERSIONS"
-        
+
         # First try to find the overall latest
         LATEST=$(echo "$VERSIONS" | sort -V | tail -n 1)
-        
+
         # Second try to find the latest non-pre-release version
         LATESTNOPRE=$(echo "$VERSIONS" | grep -v "pre" | sort -V | tail -n 1)
-        
+
         # Third get the main version part of $LATEST
         LATESTWITHOUTPRE=$(echo "$LATEST" | awk -F "-pre" '{print $1}')
-        
+
         # If there is a version release after the last pre-release version, use the non pre-release
         if [[ "$LATESTNOPRE" == "$LATESTWITHOUTPRE" ]]; then
           LATEST=$LATESTNOPRE
         fi
-        
+
         echo "Latest version: $LATEST"
-        
+
         # Remove existing latest symlink or directory if it exists
         if [ -e "latest" ]; then
           rm -rf latest
         fi
-        
+
         # Create symlink to the latest version
         ln -s "$LATEST" latest
-        
+
         # Verify the symlink
         ls -la latest
 

@@ -11,18 +11,20 @@ __authors__ = [
 
 import numpy as np
 
-from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massless_remnant
-from posydon.utils.common_functions import check_state_of_star
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
-from posydon.utils.posydonerror import ModelError
-from posydon.utils.posydonwarning import Pwarn
-
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_H_RICH,
     STAR_STATES_HE_RICH,
-    STAR_STATES_NOT_CO
-    )
+    STAR_STATES_NOT_CO,
+)
+from posydon.binary_evol.singlestar import (
+    STARPROPERTIES,
+    convert_star_to_massless_remnant,
+)
+from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.common_functions import check_state_of_star
+from posydon.utils.posydonerror import ModelError
+from posydon.utils.posydonwarning import Pwarn
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 LIST_ACCEPTABLE_STATES_FOR_HeMS = ["stripped_He_Core_He_burning"]
@@ -98,7 +100,7 @@ class MergedStep(IsolatedStep):
                   "star_2.surface_he4: ", binary.star_1.center_he4,
                   binary.star_2.center_he4, binary.star_1.surface_he4,
                   binary.star_2.surface_he4)
-        
+
         if binary.state == "merged":
             if binary.event == 'oMerging1':
                 binary.star_1, binary.star_2 = merged_star_properties(binary.star_1, binary.star_2)
@@ -107,7 +109,7 @@ class MergedStep(IsolatedStep):
             else:
                 raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
 
-        ## assume that binaries in RLO with two He-rich stars always merge   
+        ## assume that binaries in RLO with two He-rich stars always merge
         elif binary.star_1.state in STAR_STATES_HE_RICH and binary.star_2.state in STAR_STATES_HE_RICH:
             binary.state = "merged"
             if binary.event == 'oRLO1':
@@ -229,7 +231,7 @@ class MergedStep(IsolatedStep):
         # as above but opposite stars
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS):
-            
+
                 merged_star.mass = star_base.mass + comp.mass
 
                 merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight2="H-rich_envelope_mass", mass_weight1="mass")
@@ -366,7 +368,7 @@ class MergedStep(IsolatedStep):
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
-                            
+
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
                 massless_remnant = convert_star_to_massless_remnant(comp)
 

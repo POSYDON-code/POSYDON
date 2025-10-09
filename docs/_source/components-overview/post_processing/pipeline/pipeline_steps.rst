@@ -3,8 +3,8 @@
 ##############
 Pipeline steps
 ##############
-The post-processing pipeline is divided into several steps which build on each 
-other. Each step will take a :samp:`csv` file as input. The name of this 
+The post-processing pipeline is divided into several steps which build on each
+other. Each step will take a :samp:`csv` file as input. The name of this
 file determines which pipeline step should be performed.
 
 The script to run the pipeline takes four arguments:
@@ -38,7 +38,7 @@ grid type, and whether to crop the history for some certain runs. Hence, the
 
 And the lines below contain the data for each unique combination of the three
 parameters to be processed. Here the :samp:`DATA_ID` simply refers to the line
-below the header starting by 0. Thus, the second line in the file has the 
+below the header starting by 0. Thus, the second line in the file has the
 index 0, the third one has index 1, and so on.
 
 The currently supported compression types are:
@@ -59,11 +59,11 @@ Step 2: Combining `PSyGrid` objects
 -----------------------------------
 
 Often, grids are split into batches, or reruns are done. In those cases,
-there will be individual :samp:`PSyGrid` objects created for each batch or 
-rerun. This step will join them into a single combined :samp:`PSyGrid` object 
-representing the complete grid. The :samp:`step_2.csv` file should have a 
-matrix structure. The columns contain the grids which should be combined to 
-the one specified in the header (first) row. The :samp:`DATA_ID` corresponds 
+there will be individual :samp:`PSyGrid` objects created for each batch or
+rerun. This step will join them into a single combined :samp:`PSyGrid` object
+representing the complete grid. The :samp:`step_2.csv` file should have a
+matrix structure. The columns contain the grids which should be combined to
+the one specified in the header (first) row. The :samp:`DATA_ID` corresponds
 here to the column number (starting with 0). Here is an example:
 
 .. code-block::
@@ -125,8 +125,8 @@ Step 4: Training the interpolators
 
 To get interpolated data from our grids, in this step we train an interpolator
 on the :samp:`PSyGrid` object. The file :samp:`step_4.csv` therefore has to
-contain the following pieces of information: First, the grid containing the 
-data, second, the grid type, third, the interpolation method (inlcuding whether 
+contain the following pieces of information: First, the grid containing the
+data, second, the grid type, third, the interpolation method (inlcuding whether
 the grid starts at RLO), and finally, the name of the interpolator object.
 
 .. code-block::
@@ -170,21 +170,21 @@ addressed by this step.
 Step R: Exporting a rerun
 -------------------------
 
-Often, a grid will not successfully converge every binary on the first go. So 
-we may need to export reruns which use modified conditions to fix 
-non-converged models. This step is therefore only needed to build 
-a new grid. Usually, one would run the steps to the point where the need of a 
-fix arises. Additionally, before exporting a rerun, the logic for how to select 
-a system to be included in the rerun and what should be changed needs to be 
+Often, a grid will not successfully converge every binary on the first go. So
+we may need to export reruns which use modified conditions to fix
+non-converged models. This step is therefore only needed to build
+a new grid. Usually, one would run the steps to the point where the need of a
+fix arises. Additionally, before exporting a rerun, the logic for how to select
+a system to be included in the rerun and what should be changed needs to be
 implemented first.
 
-For this step the :samp:`csv` file is called :samp:`rerun.csv` to avoid too 
-much confusion with other steps. It clearly has to run after another step in 
-the post-processing pipeline, but it is not a usual step itself. It requires 
-the path to a :samp:`PSyGrid` object to get the models to rerun from, the 
-path to which the rerun should be stored (it creates the :samp:`grid.csv` 
+For this step the :samp:`csv` file is called :samp:`rerun.csv` to avoid too
+much confusion with other steps. It clearly has to run after another step in
+the post-processing pipeline, but it is not a usual step itself. It requires
+the path to a :samp:`PSyGrid` object to get the models to rerun from, the
+path to which the rerun should be stored (it creates the :samp:`grid.csv`
 and the :samp:`ini` file needed to :ref:`setup a new run <mesa-grids-api>`),
-the grid type, the metallicity, the type of the rerun specifying the logic 
+the grid type, the metallicity, the type of the rerun specifying the logic
 and changes, and the cluster name.
 
 .. code-block::
@@ -212,4 +212,3 @@ and changes, and the cluster name.
     LBV_wind+hepulse       caution         Contains the LBV_wind+dedt_energy_rerun; additionally, at stripped HeZAMS, the thresholds to trigger MLT++ are relaxed, and several timestep controls limiting the allowed variation of lgTeff and (cell-wise) T, as well as controls limiting the allowed variation of donor envelope mass are relaxed during mass transfer to improve convergence during envelope stripping. Also removes stopping conditions for Hubble time and TAMS that would be enforced for models less massive than roughly G-type stars, relevant to single_* and CO_* grids.
 
     =====================  ==============  ===========
-

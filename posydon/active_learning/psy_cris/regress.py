@@ -8,18 +8,18 @@ __authors__ = [
 
 
 import collections
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
 import time
 from collections import OrderedDict
 
-# -------- regressors --------
-from scipy.interpolate import LinearNDInterpolator
-from scipy.spatial.qhull import QhullError
-from scipy.interpolate import Rbf
-
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import sklearn.gaussian_process as gp
+
+# -------- regressors --------
+from scipy.interpolate import LinearNDInterpolator, Rbf
+from scipy.spatial.qhull import QhullError
+
 # from sklearn.gaussian_process import GaussianProcessRegressor
 # from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
 

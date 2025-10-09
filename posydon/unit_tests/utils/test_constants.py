@@ -5,12 +5,13 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-# import the module which will be tested
-import posydon.utils.constants as totest
-
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import approx
+
+# import the module which will be tested
+import posydon.utils.constants as totest
+
 
 # define test classes collecting several test functions
 class TestElements:
