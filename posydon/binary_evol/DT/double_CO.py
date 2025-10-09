@@ -67,7 +67,7 @@ class DoubleCO(detached_step):
         self.max_time = binary.properties.max_simulation_time
 
         try:
-            res = solve_ivp(self.evo, 
+            res = solve_ivp(self.evo,
                             events=self.evo.ev_contact,
                             method="BDF",
                         t_span=(0, self.max_time - binary.time),
