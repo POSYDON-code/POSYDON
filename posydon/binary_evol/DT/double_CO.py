@@ -63,7 +63,7 @@ class DoubleCO(detached_step):
         self.max_time = binary.properties.max_simulation_time
 
         try:
-            res = solve_ivp(self.evo, 
+            res = solve_ivp(self.evo,
                             events=self.evo.ev_contact,
                             method="BDF",
                         t_span=(0, self.max_time - binary.time),
@@ -77,7 +77,7 @@ class DoubleCO(detached_step):
             set_binary_to_failed(binary)
             raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
 
-        
+
         #res.y[0] = res.y[0] * 100000 / constants.Rsun  # convert back to Rsun
         #print("!!!", res.y[0][-1])
 
@@ -90,7 +90,7 @@ class DoubleCO(detached_step):
         #)
         #binary.V_sys = binary.V_sys_history[-1]
         #binary.event = "maxtime"
-            
+
         return res
 
 
