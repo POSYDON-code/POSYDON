@@ -8,15 +8,18 @@ __authors__ = [
 # ensure that python forgets about previous imports of posydonwarning, e.g. in
 # other tests, before importing it here
 from sys import modules as sys_modules
+
 sys_modules.pop('posydon.utils.posydonwarning', None)
 
-# import the module which will be tested
-import posydon.utils.posydonwarning as totest
+from inspect import isclass, isroutine
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises, warns
-from inspect import isclass, isroutine
+
+# import the module which will be tested
+import posydon.utils.posydonwarning as totest
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -29,7 +32,7 @@ class TestElements:
                     'InterpolationWarning', 'MissingFilesWarning',\
                     'NoPOSYDONWarnings', 'OverwriteWarning', 'SFHModelWarning',\
                     'POSYDONWarning','Pwarn', 'ReplaceValueWarning',\
-                    'SetPOSYDONWarnings', 'ValueWarning',\
+                    'SetPOSYDONWarnings', 'ValueWarning', 'DeprecationWarning', \
                     'InitializationWarning','StepWarning',\
                     'UnsupportedModelWarning', '_CAUGHT_POSYDON_WARNINGS',\
                     '_Caught_POSYDON_Warnings', '_POSYDONWarning_subclasses',\
@@ -103,10 +106,14 @@ class TestElements:
         assert isclass(totest.UnsupportedModelWarning)
         assert issubclass(totest.UnsupportedModelWarning,\
                           totest.POSYDONWarning)
-        
+
     def test_instance_SFHModelWarning(self):
         assert isclass(totest.SFHModelWarning)
         assert issubclass(totest.SFHModelWarning, totest.POSYDONWarning)
+
+    def test_instance_DeprecationWarning(self):
+        assert isclass(totest.DeprecationWarning)
+        assert issubclass(totest.DeprecationWarning, totest.POSYDONWarning)
 
     def test_instance_POSYDONWarning_subclasses(self):
         assert isinstance(totest._POSYDONWarning_subclasses, (dict))
@@ -564,6 +571,36 @@ class TestStepWarning:
         assert isinstance(StepWarning,\
                           totest.StepWarning)
         assert StepWarning.message == ''
+
+class TestSFHModelWarning:
+    @fixture
+    def SFHModelWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.SFHModelWarning()
+
+    # test the SFHModelWarning class
+    def test_init(self, SFHModelWarning):
+        assert isroutine(SFHModelWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(SFHModelWarning, totest.SFHModelWarning)
+        assert SFHModelWarning.message == ''
+
+
+class TestDeprecationWarning:
+    @fixture
+    def DeprecationWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.DeprecationWarning()
+
+    # test the DeprecationWarning class
+    def test_init(self, DeprecationWarning):
+        assert isroutine(DeprecationWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(DeprecationWarning, totest.DeprecationWarning)
+        assert DeprecationWarning.message == ''
+
 
 class Test_Caught_POSYDON_Warnings:
     @fixture

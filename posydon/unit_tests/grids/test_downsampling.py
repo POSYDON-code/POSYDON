@@ -7,14 +7,18 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.grids.downsampling as totest
+
 # aliases
 np = totest.np
+
+from inspect import isclass, isroutine
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises, warns
-from inspect import isclass, isroutine
+
 from posydon.utils.posydonwarning import InappropriateValueWarning
+
 
 # define test classes collecting several test functions
 class TestElements:

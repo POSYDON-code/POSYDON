@@ -1,10 +1,15 @@
-import unittest
 import os
-from posydon.config import PATH_TO_POSYDON
-from posydon.grids.psygrid import PSyGrid
+import unittest
+
 import posydon.utils.constants as const
 from posydon.binary_evol.singlestar import SingleStar
-from posydon.binary_evol.SN.profile_collapse import do_core_collapse_BH, get_initial_BH_properties, compute_isco_properties
+from posydon.binary_evol.SN.profile_collapse import (
+    compute_isco_properties,
+    do_core_collapse_BH,
+    get_initial_BH_properties,
+)
+from posydon.config import PATH_TO_POSYDON
+from posydon.grids.psygrid import PSyGrid
 
 PATH_TO_GRID = os.path.join(
     PATH_TO_POSYDON, "posydon/tests/data/POSYDON-UNIT-TESTS/"

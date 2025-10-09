@@ -13,9 +13,9 @@ Creating plots
 --------------
 
 Plots can be created after each step with the data available from the previous
-step. Hence, each corresponding :samp:`csv` file is called 
-:samp:`step_?_plots.csv`, where the question mark will be the number of the step 
-the plots take the final :samp:`PSyGrid` object from. All the :samp:`csv` files 
+step. Hence, each corresponding :samp:`csv` file is called
+:samp:`step_?_plots.csv`, where the question mark will be the number of the step
+the plots take the final :samp:`PSyGrid` object from. All the :samp:`csv` files
 for plotting have the same structure:
 
 .. code-block::
@@ -47,7 +47,7 @@ are stored as pages in a single PDF.
     'lg_mtransfer_rate'       'debug'               'lg_mtransfer_rate'       -8      -1      False
     ========================  ====================  ========================  ======  ======  ======
 
-After :ref:`Step3: calculating extra values from detailed data 
+After :ref:`Step3: calculating extra values from detailed data
 <pipeline_step3>`, the supernova model quantities get available, too.
 
 .. table:: Supernova predefined plots
@@ -91,4 +91,3 @@ After each step one can perform some checks with the data from that step.
     'CO_type'       gets counts of compact object types
     'SN_type'       gets counts of supernova types
     ==============  ===========
-

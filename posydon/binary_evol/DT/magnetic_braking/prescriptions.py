@@ -1,39 +1,40 @@
 import numpy as np
+
 import posydon.utils.constants as const
 
 
 def RVJ83_braking(primary, secondary, verbose = False):
     """
-        Calculates the change in spin of each star due 
-    to magnetic braking, according to: 
-    
+        Calculates the change in spin of each star due
+    to magnetic braking, according to:
+
         Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
 
     Parameters
     ----------
         primary : SingleStar object
-            A single star object, representing the primary (more evolved) star 
+            A single star object, representing the primary (more evolved) star
             in the binary and containing its properties.
-        
+
         secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star 
+            A single star object, representing the secondary (less evolved) star
             in the binary and containing its properties.
 
         verbose : bool
             True if we want to print stuff.
-    
+
     Returns
     -------
         dOmega_sec : float
-            The change in rotation rate of the secondary (less evolved) 
+            The change in rotation rate of the secondary (less evolved)
         star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-        
+
         dOmega_pri : float
-            The change in rotation rate of the primary (more evolved) 
+            The change in rotation rate of the primary (more evolved)
         star for a time step in step_detached's solve_ivp(). [rad/yr^2]
 
     """
-    
+
     m1 = primary.latest["mass"]
     R1 = primary.latest["R"]
     omega1 = primary.latest["omega"]
@@ -81,35 +82,35 @@ def RVJ83_braking(primary, secondary, verbose = False):
 
 def M15_braking(primary, secondary, verbose = False):
     """
-        Calculates the change in spin of each star due 
-    to magnetic braking, according to: 
-    
+        Calculates the change in spin of each star due
+    to magnetic braking, according to:
+
         Matt et al. 2015, ApJ, 799, L23
 
-        Free parameters calibrated to match the Solar rotation 
+        Free parameters calibrated to match the Solar rotation
     rate by Gossage et al. 2021, ApJ, 912, 65.
 
     Parameters
     ----------
         primary : SingleStar object
-            A single star object, representing the primary (more evolved) star 
+            A single star object, representing the primary (more evolved) star
             in the binary and containing its properties.
-        
+
         secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star 
+            A single star object, representing the secondary (less evolved) star
             in the binary and containing its properties.
 
         verbose : bool
             True if we want to print stuff.
-    
+
     Returns
     -------
         dOmega_sec : float
-            The change in rotation rate of the secondary (less evolved) 
+            The change in rotation rate of the secondary (less evolved)
         star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-        
+
         dOmega_pri : float
-            The change in rotation rate of the primary (more evolved) 
+            The change in rotation rate of the primary (more evolved)
         star for a time step in step_detached's solve_ivp(). [rad/yr^2]
 
     """
@@ -196,35 +197,35 @@ def M15_braking(primary, secondary, verbose = False):
 
 def G18_braking(primary, secondary, verbose = False):
     """
-        Calculates the change in spin of each star due 
-    to magnetic braking, according to: 
-    
+        Calculates the change in spin of each star due
+    to magnetic braking, according to:
+
         Garraffo et al. 2018, ApJ, 862, 90
 
-        Free parameters calibrated to match the Solar rotation 
+        Free parameters calibrated to match the Solar rotation
     rate by Gossage et al. 2021, ApJ, 912, 65.
 
     Parameters
     ----------
         primary : SingleStar object
-            A single star object, representing the primary (more evolved) star 
+            A single star object, representing the primary (more evolved) star
             in the binary and containing its properties.
-        
+
         secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star 
+            A single star object, representing the secondary (less evolved) star
             in the binary and containing its properties.
 
         verbose : bool
             True if we want to print stuff.
-    
+
     Returns
     -------
         dOmega_sec : float
-            The change in rotation rate of the secondary (less evolved) 
+            The change in rotation rate of the secondary (less evolved)
         star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-        
+
         dOmega_pri : float
-            The change in rotation rate of the primary (more evolved) 
+            The change in rotation rate of the primary (more evolved)
         star for a time step in step_detached's solve_ivp(). [rad/yr^2]
 
     """
@@ -238,7 +239,7 @@ def G18_braking(primary, secondary, verbose = False):
     omega2 = secondary.latest["omega"]
     MOI_2 = secondary.latest["inertia"]
     tau_conv_2 = secondary.latest["conv_env_turnover_time_l_b"]
-     
+
     # Torque prescription from Garraffo et al. 2018, ApJ, 862, 90
     # a = 0.03
     # b = 0.5
@@ -271,32 +272,32 @@ def G18_braking(primary, secondary, verbose = False):
 
 def CARB_braking(primary, secondary, verbose = False):
     """
-        Calculates the change in spin of each star due 
-    to magnetic braking, according to: 
-    
+        Calculates the change in spin of each star due
+    to magnetic braking, according to:
+
         Van & Ivanova 2019, ApJ, 886, L31
 
     Parameters
     ----------
         primary : SingleStar object
-            A single star object, representing the primary (more evolved) star 
+            A single star object, representing the primary (more evolved) star
             in the binary and containing its properties.
-        
+
         secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star 
+            A single star object, representing the secondary (less evolved) star
             in the binary and containing its properties.
 
         verbose : bool
             True if we want to print stuff.
-    
+
     Returns
     -------
         dOmega_sec : float
-            The change in rotation rate of the secondary (less evolved) 
+            The change in rotation rate of the secondary (less evolved)
         star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-        
+
         dOmega_pri : float
-            The change in rotation rate of the primary (more evolved) 
+            The change in rotation rate of the primary (more evolved)
         star for a time step in step_detached's solve_ivp(). [rad/yr^2]
 
     """

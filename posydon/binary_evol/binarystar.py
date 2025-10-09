@@ -28,20 +28,28 @@ __authors__ = [
 ]
 
 
-import signal
 import copy
+import signal
+
 import numpy as np
 import pandas as pd
-from posydon.binary_evol.simulationproperties import SimulationProperties
-from posydon.binary_evol.singlestar import SingleStar, STARPROPERTIES
-from posydon.utils.common_functions import (
-    check_state_of_star, orbital_period_from_separation,
-    orbital_separation_from_period, get_binary_state_and_event_and_mt_case)
-from posydon.popsyn.io import (clean_binary_history_df, clean_binary_oneline_df, 
-                               BINARYPROPERTIES_DTYPES, OBJECT_FIXED_SUB_DTYPES)
-from posydon.binary_evol.flow_chart import UNDEFINED_STATES
-from posydon.utils.posydonerror import FlowError 
 
+from posydon.binary_evol.flow_chart import UNDEFINED_STATES
+from posydon.binary_evol.simulationproperties import SimulationProperties
+from posydon.binary_evol.singlestar import STARPROPERTIES, SingleStar
+from posydon.popsyn.io import (
+    BINARYPROPERTIES_DTYPES,
+    OBJECT_FIXED_SUB_DTYPES,
+    clean_binary_history_df,
+    clean_binary_oneline_df,
+)
+from posydon.utils.common_functions import (
+    check_state_of_star,
+    get_binary_state_and_event_and_mt_case,
+    orbital_period_from_separation,
+    orbital_separation_from_period,
+)
+from posydon.utils.posydonerror import FlowError
 
 # star property: column names in binary history for star 1 and star 2
 STAR_ATTRIBUTES_FROM_BINARY_HISTORY = {
@@ -184,12 +192,12 @@ class BinaryStar:
 
         if pd.notna(getattr(self.star_1, "mass")) and pd.notna(getattr(self.star_2, "mass")):
             if pd.isna(getattr(self, "separation")) and pd.notna(getattr(self, "orbital_period")):
-                setattr(self, "separation", 
+                setattr(self, "separation",
                         orbital_separation_from_period(self.orbital_period, self.star_1.mass, self.star_2.mass))
                 setattr(self, "separation_history", [getattr(self, "separation")])
 
             elif pd.isna(getattr(self, "orbital_period")) and pd.notna(getattr(self, "separation")):
-                setattr(self, "orbital_period", 
+                setattr(self, "orbital_period",
                         orbital_period_from_separation(self.separation, self.star_1.mass, self.star_2.mass))
                 setattr(self, "orbital_period_history", [getattr(self, "orbital_period")])
 
@@ -216,7 +224,7 @@ class BinaryStar:
                 setattr(self, f'mt_history_{grid_type}', None)
             if not hasattr(self, f'culmulative_mt_case_{grid_type}'):
                 setattr(self, f'culmulative_mt_case_{grid_type}', None)
-        
+
         # SimulationProperties object - parameters & parameterizations
         if isinstance(properties, SimulationProperties):
             self.properties = properties
@@ -250,10 +258,10 @@ class BinaryStar:
                 if max_n_steps is not None:
                     if n_steps > max_n_steps:
                         raise RuntimeError("Exceeded maximum number of steps ({})".format(max_n_steps))
-                    
+
         finally:
             signal.alarm(0)     # turning off alarm
-            
+
         self.properties.post_evolve(self)
 
     def run_step(self):
@@ -273,18 +281,18 @@ class BinaryStar:
 
         self.properties.pre_step(self, next_step_name)
         next_step(self)
-        
+
         self.append_state()
         self.properties.post_step(self, next_step_name)
-    
+
     def get_total_state(self):
         """Return the total state of the binary (star1.state, star2.state, binary.state, binary.event)."""
         return (self.star_1.state, self.star_2.state, self.state, self.event)
-    
+
     def get_next_step_name(self):
         """Return the name of the next step based on the current total state."""
         return self.properties.flow.get(self.get_total_state())
-    
+
     def get_next_step(self):
         """Get the next step class object based on the current total state."""
         return getattr(self.properties, self.get_next_step_name(), None)
@@ -296,7 +304,7 @@ class BinaryStar:
         if not self.history_verbose and getattr(self, "event") is not None:
             if "redirect" in getattr(self, "event"):
                 return
-        
+
         # Append to the binary history lists
         for item in BINARYPROPERTIES:
             getattr(self, item + '_history').append(getattr(self, item))
@@ -311,25 +319,25 @@ class BinaryStar:
 
     def check_who_exists(self):
         """
-            Check and store which binary components exist (are not 
-        massless remnants). This sets additional class attributes 
+            Check and store which binary components exist (are not
+        massless remnants). This sets additional class attributes
 
             self.non_existent_companion with the following values:
                -1 if neither star exists
                 0 if both stars exist
                 1 if Star 2 exists, Star 1 is a massless remnant
                 2 if Star 1 exists, Star 2 is a massless remnant
-        
+
         and
 
-            self.companion_1_exists = True if Star 1 exists (is not 
+            self.companion_1_exists = True if Star 1 exists (is not
                                       None or a massless remnant)
 
-            self.companion_2_exists = True if Star 2 exists (is not 
+            self.companion_2_exists = True if Star 2 exists (is not
                                       None or a massless remnant)
 
         """
-            
+
         self.companion_1_exists = (self.star_1 is not None
                             and self.star_1.state != "massless_remnant")
         self.companion_2_exists = (self.star_2 is not None
@@ -357,24 +365,24 @@ class BinaryStar:
 
         """
         # Move current binary properties to the ith step, using its history
-        for p in BINARYPROPERTIES:            
+        for p in BINARYPROPERTIES:
             setattr(self, p, getattr(self, '{}_history'.format(p))[i])
 
             ## delete the binary history after the i-th index
             setattr(self, p + '_history', getattr(self, p + '_history')[0:i+1])
-                       
+
         ## if running with extra hooks, restore any extra hook columns
         for hook in self.properties.all_hooks_classes:
-            
+
             if hasattr(hook, 'extra_binary_col_names'):
                 extra_columns = getattr(hook, 'extra_binary_col_names')
 
                 for col in extra_columns:
-                    setattr(self, col, getattr(self, col)[0:i+1])                    
-        
+                    setattr(self, col, getattr(self, col)[0:i+1])
+
         for star in (self.star_1, self.star_2):
             star.restore(i, hooks=self.properties.all_hooks_classes)
-                             
+
 
     def reset(self, properties=None):
         """Reset the binary to its ZAMS state.
@@ -439,7 +447,7 @@ class BinaryStar:
         def equalize_columns(data_to_save, all_keys, properties_dtypes,
                              max_col_length):
             """Iterate through data_to_save to append null values.
-            
+
             Parameters
             -----------
             data_to_save : list[str]
@@ -449,7 +457,7 @@ class BinaryStar:
            properties_dtypes : dict
                Types of all available keys
            max_col_length: int
-               The maximum length of columns.  
+               The maximum length of columns.
             """
             for i, col in enumerate(data_to_save):
 
@@ -459,7 +467,7 @@ class BinaryStar:
                 # check type of data and determine what to fill data column with
                 if dtype == 'string':
                     filler_value = ''
-                elif dtype == 'float64':
+                elif dtype == 'float64' or dtype == 'int64':
                     filler_value = np.nan
                 # array-like data
                 elif dtype == 'object':
@@ -477,7 +485,7 @@ class BinaryStar:
                     # default to array of NoneTypes
                     else:
                         filler_value = np.array([None] * max_ele_length)
-                        
+
                 # defaulting to NoneType value (gets converted to np.nan below)
                 else:
                     filler_value = None
@@ -517,7 +525,7 @@ class BinaryStar:
             # If a binary fails, usually history cols have diff lengths.
             # This should append NAN to create even columns.
             if len(set(col_lengths)) != 1:
-                equalize_columns(data_to_save, all_keys, properties_dtypes, 
+                equalize_columns(data_to_save, keys_to_save, properties_dtypes,
                                  max_col_length)
 
             where_none = np.array([[True if var is None else False
@@ -777,7 +785,7 @@ class BinaryStar:
                                             extra_binary_dtypes_user=extra_binary_cols_dict,
                                             extra_S1_dtypes_user=extra_s1_cols_dict,
                                             extra_S2_dtypes_user=extra_s2_cols_dict)
-        
+
         # remove any columns duplicated from user keys/full star properties
         oneline_df = oneline_df.loc[:,~oneline_df.columns.duplicated()].copy()
 
@@ -1043,7 +1051,7 @@ class BinaryStar:
                     attr = colname
                     final_value = run.final_values[colname]
                     setattr(binary, attr, final_value)
-        
+
         # update eccentricity
         binary.eccentricity = 0.0
         binary.eccentricity_history = [0.0] * n_steps
@@ -1072,15 +1080,15 @@ class BinaryStar:
         if profiles:
             binary.star_1.profile = run.final_profile1
             binary.star_2.profile = run.final_profile2
-            
+
         return binary
-    
+
     def initial_condition_message(self, ini_params=None):
         """Generate a message with the initial conditions.
 
         Parameters
         ----------
-       
+
         ini_params : None or iterable of str
             If None take the initial conditions from the binary, otherwise add
             each item of it to the message.
@@ -1090,7 +1098,7 @@ class BinaryStar:
         string
             The message with the binary initial conditions.
         """
-    
+
         if ini_params is None:
             ini_params = ["\nFailed Binary Initial Conditions:\n",
                     f"S1 mass: {self.star_1.mass_history[0]} \n",
@@ -1103,10 +1111,9 @@ class BinaryStar:
                     f"binary event: {self.state_history[0] }\n",
                     f"S1 natal kick array: {self.star_1.natal_kick_array }\n",
                     f"S2 natal kick array: {self.star_2.natal_kick_array}\n"]
-            
+
         message = ""
         for i in ini_params:
-            message += i 
+            message += i
 
         return message
-

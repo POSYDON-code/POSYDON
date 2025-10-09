@@ -7,13 +7,16 @@ __authors__ = [
 
 
 import pickle
+
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
-from .data_scaling import DataScaler
+
 from posydon.grids.psygrid import PSyGrid
 from posydon.grids.SN_MODELS import SN_MODELS
 from posydon.utils.interpolators import interp1d
+
+from .data_scaling import DataScaler
 
 
 class psyTrackInterp:

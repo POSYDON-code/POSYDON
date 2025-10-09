@@ -46,10 +46,13 @@ __authors__ = [
 
 
 import math
-import numpy as np
-from posydon.utils.common_functions import (stefan_boltzmann_law,
-                                            orbital_separation_from_period)
 
+import numpy as np
+
+from posydon.utils.common_functions import (
+    orbital_separation_from_period,
+    stefan_boltzmann_law,
+)
 
 # toggle this flag to enable/disable constraints (used for debugging)
 INTERPOLATION_CONSTRAINTS_ON = True
