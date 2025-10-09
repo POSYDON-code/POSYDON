@@ -43,14 +43,18 @@ class DoubleCO(detached_step):
     def __init__(self, **kwargs):
 
         super().__init__(**kwargs)
+
+        # Reassign detached_evolution to handle 
+        # special DCO evolution
         self.evo = double_CO_evolution(**self.evo_kwargs)
 
     def __call__(self, binary):
+
         super().__call__(binary)
 
         binary.state = "detached"
         binary.time = self.max_time
-        binary.separation = self.res.y[0][-1] * 100000 / constants.Rsun
+        binary.separation = self.res.y[0][-1] * 100_000 / constants.Rsun
         binary.eccentricity = self.res.y[1][-1]
         binary.orbital_period = orbital_period_from_separation(
             binary.separation, binary.star_1.mass, binary.star_2.mass
@@ -76,20 +80,6 @@ class DoubleCO(detached_step):
         except Exception as e:
             set_binary_to_failed(binary)
             raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
-
-        
-        #res.y[0] = res.y[0] * 100000 / constants.Rsun  # convert back to Rsun
-        #print("!!!", res.y[0][-1])
-
-        #binary.state = "detached"
-        #binary.time = self.max_time
-        #binary.separation = res.y[0][-1] * 100000 / constants.Rsun
-        #binary.eccentricity = res.y[1][-1]
-        #binary.orbital_period = orbital_period_from_separation(
-        #    binary.separation, binary.star_1.mass, binary.star_2.mass
-        #)
-        #binary.V_sys = binary.V_sys_history[-1]
-        #binary.event = "maxtime"
             
         return res
 
@@ -100,40 +90,20 @@ class double_CO_evolution(detached_evolution):
     def __init__(self, **kwargs):
 
         super().__init__(**kwargs)
+
+        # For DCO system, only gravitational radiation is considered
         self.do_magnetic_braking = False
         self.do_tides = False
         self.do_wind_loss = False
         self.do_stellar_evolution_and_spin_from_winds = False
         self.do_gravitational_radiation = True
 
-    #def __call__(self, t, y):
-    #    print("CALL")
-    #    result = super().__call__(t, y)
-
-    #    return [self.da, self.de]
 
     def set_stars(self, primary, secondary, t0=0.0):
-        """Sets memory references for primary and secondary star associated with
-        this evolution. It is expected that primary/secondary have interp1d
-        objects already, as required for detached evolution.
-
-        Parameters
-        ----------
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star
-            in the binary and containing its properties.
-
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star
-            in the binary and containing its properties.
-
-        t0 : float
-            The time at the start of detached evolution. Typically should be the
-            binary.time prior to detached evolution.
-
-        """
 
         super().set_stars(primary, secondary, t0)
+
+        # calculate CO radii in kilometers (km rather than Rsol for better scaling in ODE solutions)
         self.r1 = CO_radius(self.primary.mass, self.primary.state) * constants.Rsun / 100_000 # [km]
         self.r2 = CO_radius(self.secondary.mass, self.secondary.state) * constants.Rsun / 100_000 # [km]
 
