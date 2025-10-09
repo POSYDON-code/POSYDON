@@ -464,7 +464,7 @@ class detached_step:
                     abs_diff_porb = np.abs(binary.orbital_period - orbital_period_from_separation(
                                     binary.separation, secondary.mass, primary.mass)) / binary.orbital_period
 
-                    
+
                     abs_diff_porb_str = f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
                         f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
                         "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) = " + \
@@ -497,19 +497,19 @@ class detached_step:
                             binary.event = "oRLO1"
 
                     if ('step_HMS_HMS_RLO' not in all_step_names):
-                        if ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE 
+                        if ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE
                             and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE)
                         or (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
                             and binary.star_2.state in STAR_STATES_HE_RICH_EVOLVABLE)):
                             set_binary_to_failed(binary)
-                            raise FlowError("Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after " 
-                                        "HMS-HMS not yet supported.") 
+                            raise FlowError("Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after "
+                                        "HMS-HMS not yet supported.")
 
                         elif (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
                             and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE):
                             set_binary_to_failed(binary)
                             raise ClassificationError("Binary is in the detached step but has stable RLO with two HMS stars - "
-                                                "should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)") 
+                                                "should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)")
 
 
                 ## CHECK IF STARS WILL UNDERGO CC

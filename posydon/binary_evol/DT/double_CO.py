@@ -13,6 +13,7 @@ from scipy.integrate import solve_ivp
 
 import posydon.utils.constants as constants
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
+from posydon.binary_evol.DT.step_detached import detached_evolution, detached_step
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils.common_functions import (
     CO_radius,
@@ -20,7 +21,7 @@ from posydon.utils.common_functions import (
     set_binary_to_failed,
 )
 from posydon.utils.posydonerror import NumericalError
-from posydon.binary_evol.DT.step_detached import detached_step, detached_evolution
+
 
 def event(terminal, direction=0):
     """Return a helper function to set attributes for solve_ivp events."""
@@ -64,9 +65,9 @@ class DoubleCO(detached_step):
         try:
             res = solve_ivp(self.evo, 
                             events=self.evo.ev_contact,
-                            method="BDF", 
+                            method="BDF",
                         t_span=(0, self.max_time - binary.time),
-                        y0=[binary.separation * constants.Rsun / 100000, 
+                        y0=[binary.separation * constants.Rsun / 100000,
                             binary.eccentricity,
                             secondary.omega0, primary.omega0],
                         rtol=1e-10,
@@ -91,7 +92,7 @@ class DoubleCO(detached_step):
         #binary.event = "maxtime"
             
         return res
-    
+
 
 
 class double_CO_evolution(detached_evolution):
@@ -113,21 +114,21 @@ class double_CO_evolution(detached_evolution):
 
     def set_stars(self, primary, secondary, t0=0.0):
         """Sets memory references for primary and secondary star associated with
-        this evolution. It is expected that primary/secondary have interp1d 
+        this evolution. It is expected that primary/secondary have interp1d
         objects already, as required for detached evolution.
 
         Parameters
         ----------
         primary : SingleStar object
-            A single star object, representing the primary (more evolved) star 
+            A single star object, representing the primary (more evolved) star
             in the binary and containing its properties.
-        
+
         secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star 
+            A single star object, representing the secondary (less evolved) star
             in the binary and containing its properties.
 
         t0 : float
-            The time at the start of detached evolution. Typically should be the 
+            The time at the start of detached evolution. Typically should be the
             binary.time prior to detached evolution.
 
         """
@@ -140,7 +141,7 @@ class double_CO_evolution(detached_evolution):
     def ev_contact(self, t, y):
         # stop when binary separation = r1+r2 [km]
         return y[0] - (self.r1 + self.r2)
-    
+
     def gravitational_radiation(self):
         """TODO: add description and reference for the equations."""
         g = constants.standard_cgrav
@@ -166,4 +167,3 @@ class double_CO_evolution(detached_evolution):
 
         self.da += da_gr
         self.de += de_gr
-
