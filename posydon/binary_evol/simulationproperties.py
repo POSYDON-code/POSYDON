@@ -319,7 +319,17 @@ class SimulationProperties:
             print(step_name, step_tup, end='\n')
 
         step_func, kwargs = step_tup
-        setattr(self, step_name, step_func(**kwargs))
+
+        # steps like step_end do not take kwargs, so try loading with
+        # kwargs first, then without if that fails. This mostly matters
+        # if a user has re-mapped a step to one that does not take kwargs.
+        try:
+            setattr(self, step_name, step_func(**kwargs))
+
+        except TypeError as e:
+            Pwarn(f"Error loading step {step_name}: {e}", "StepWarning")
+            print(f"Loading {step_name} without arguments.")
+            setattr(self, step_name, step_func())
 
         # check if all steps have been loaded
         for name, tup in self.kwargs.items():
