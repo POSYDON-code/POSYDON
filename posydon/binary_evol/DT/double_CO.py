@@ -44,7 +44,7 @@ class DoubleCO(detached_step):
 
         super().__init__(**kwargs)
 
-        # Reassign detached_evolution to handle 
+        # Reassign detached_evolution to handle
         # special DCO evolution
         self.evo = double_CO_evolution(**self.evo_kwargs)
 
@@ -80,7 +80,7 @@ class DoubleCO(detached_step):
         except Exception as e:
             set_binary_to_failed(binary)
             raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
-            
+
         return res
 
 
