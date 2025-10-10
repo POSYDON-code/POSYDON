@@ -73,6 +73,7 @@ MODEL = {"prescription": 'alpha-lambda',
                                               # assuming a final separation where the inner core RLOF starts.
          # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
          "metallicity": None,
+         "record_matching": False
          }
 
 
