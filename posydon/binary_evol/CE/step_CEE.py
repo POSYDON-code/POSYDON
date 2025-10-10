@@ -178,6 +178,7 @@ class StepCEE(object):
                 common_envelope_option_after_succ_CEE
             self.mass_loss_during_CEE_merged = mass_loss_during_CEE_merged
         self.metallicity = metallicity
+        self.record_matching = record_matching
         self.verbose = verbose
         self.path_to_posydon = PATH_TO_POSYDON
 
