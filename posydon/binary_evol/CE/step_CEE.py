@@ -1495,7 +1495,6 @@ class StepCEE(object):
             t_i = binary.time
             m0, t0 =self.track_matcher.get_star_match_data(binary, comp_star)
             rc2_i = 10**comp_star.interp1d['log_R'](t_i)
-            print('Time,radius of sec:',t0,rc2_i,comp_star.interp1d['log_R'](t_i))
         if self.verbose:
             print(f"After matching to single star the radius of the done is : {rc2_i} ")
 
