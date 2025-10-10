@@ -16,9 +16,9 @@ Welcome to the official documentation of **POSYDON** - *POpulation SYnthesis wit
 About POSYDON
 -------------
 
-POSYDON is a next-generation single- and binary-star population synthesis tool. Our vision is to provide researchers and enthusiasts with a state-of-the-art platform to delve into the intricacies of stellar structures and binary evolutions using MESA. With full stellar structure modeling, advanced machine learning techniques, and a modular architecture, POSYDON stands at the forefront of astrophysical simulations.
+POSYDON is a next-generation single and binary-star population synthesis tool. Our vision is to provide researchers and enthusiasts with a state-of-the-art platform to delve into the intricacies of stellar structures and binary evolutions using MESA. With full stellar structure modeling, advanced machine learning techniques, and a modular architecture, POSYDON stands at the forefront of astrophysical simulations.
 
-To stay up-to-date with the latest news about POSYDON, check out our `official website <https://www.posydon.org>`_ for more details.
+To stay up to date with the latest news about POSYDON, check out our `official website <https://www.posydon.org>`_ for more details.
 
 How is this Documentation Structured?
 -------------------------------------
@@ -26,8 +26,7 @@ How is this Documentation Structured?
 - **Introductions** Discover what POSYDON is, its objectives, and its science scope.
 - **Getting Started:** A quick guide to get POSYDON up and running on your machine.
 - **User Guides:** Detailed guides on using various features.
-- **Tutorials and Examples:** Step-by-step walk-throughs of typical use-cases.
-- **POSYDON School Materials:** Access resources from the POSYDON school.
+- **Tutorials and Examples:** Step-by-step walkthroughs of typical use-cases.
 - **In-Depth Components Overview:** Delve deep into the core components of POSYDON.
 - **API Reference:** A comprehensive reference for developers.
 - **Troubleshooting and FAQs:** Answers to common questions and problems.
@@ -42,8 +41,8 @@ How is this Documentation Structured?
    :caption: Introduction
 
    introduction-acknowledgements/intro
-   Collaborative Team <https://posydon.org/team.html>
-   Publications <https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA>
+   introduction-acknowledgements/collaborative-team
+   Publications <https://posydon.org/papers.html>
 
 .. toctree::
    :maxdepth: 1
@@ -51,8 +50,17 @@ How is this Documentation Structured?
 
    getting-started/prerequisites
    getting-started/installation-guide
-   getting-started/first-grids
-   getting-started/first-population
+   getting-started/verification
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: User Guides
+
+   user-guides/user-roadmap
+   user-guides/web-application
+   user-guides/database-query-system
+
 
 .. toctree::
    :maxdepth: 1
@@ -63,22 +71,26 @@ How is this Documentation Structured?
    tutorials-examples/generating-datasets/generating-datasets
    tutorials-examples/MESA-grids/running-grids
 
-.. toctree::
-   :maxdepth: 1
-   :titlesonly:
-   :caption: POSYDON school material
-
-   POSYDON School 2025 <https://github.com/POSYDON-code/POSYDON-class-materials-2025>
 
 .. toctree::
    :maxdepth: 1
-   :titlesonly:
+   :titlesonly: 
    :caption: In-Depth Components Overview
 
    components-overview/mesa-grids
    components-overview/processing-pipeline
    components-overview/machine-learning-components
    components-overview/stellar-binary-simulation
+
+.. .. toctree::
+..    :maxdepth: 1
+..    :caption: POSYDON Workflow
+
+..    posydon-workflow/population-specification
+..    posydon-workflow/stellar-evolution-choices
+..    posydon-workflow/mesa-evolutionary-tracks
+..    posydon-workflow/interacting-binary-grids
+..    posydon-workflow/running-simulations
 
 .. toctree::
    :maxdepth: 1
@@ -87,29 +99,42 @@ How is this Documentation Structured?
    api_reference/posydon
    api_reference/bin
 
-
 .. toctree::
    :maxdepth: 1
-   :caption: Releases and Datasets
+   :caption: Troubleshooting and FAQs
 
-   Releases <https://github.com/POSYDON-code/POSYDON/releases>
-   Datasets <https://zenodo.org/communities/posydon/>
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Support and Contact
-
-   contact-support/contact-information
    troubleshooting-faqs/installation-issues
    troubleshooting-faqs/code-questions
-   Report an Issue <https://github.com/POSYDON-code/POSYDON/issues/new/choose>
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Contributing to POSYDON
+
    contributing/how-to-contribute
+   contributing/code-style-guidelines
+   contributing/reporting-issues
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Release Notes and Changelog
+
+   release-notes/version-history
+   release-notes/major-updates
+   
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Contact and Support
+
+   contact-support/contact-information
+
 
 Acknowledgments
 ---------------
 
-**Team Members:** POSYDON is being led and developed by a dedicated team of astrophysicists and computer scientists. At the helm are Principal Investigators Tassos Fragos (Université de Genève) and Vicky Kalogera (Northwestern University), along with many talented individuals. You can read more about the team on the `Collaborative Team <https://posydon.org/team.html>`_ page.
+**Team Members:** POSYDON is being led and developed by a dedicated team of astrophysicists and computer scientists. At the helm are Principal Investigators Tassos Fragos (Université de Genève) and Vicky Kalogera (Northwestern University), along with many talented individuals. You can read more about the team and they research on :ref:`Collaborative Team <team-page>` page.
 
 **Funding Agencies:** The POSYDON project is supported primarily by two sources: the Swiss National Science Foundation Professorship grant (PI Fragos) and the Gordon and Betty Moore Foundation (PI Kalogera).
 
