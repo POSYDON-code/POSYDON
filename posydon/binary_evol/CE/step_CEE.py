@@ -1479,9 +1479,9 @@ class StepCEE(object):
         if ((rc1_i - RL1) < self.CEE_tolerance_err
                 and (rc2_i - RL2) > self.CEE_tolerance_err):
 
-            if comp_star in STAR_STATES_H_RICH:
+            if comp_star.state in STAR_STATES_H_RICH:
                 comp_star.htrack = True
-            elif comp_star in STAR_STATES_HE_RICH:
+            elif comp_star.state in STAR_STATES_HE_RICH:
                 comp_star.htrack = False
             else:
                 raise ValueError("state = %s of donor of CEE not recognized"
