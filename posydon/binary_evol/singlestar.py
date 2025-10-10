@@ -15,13 +15,20 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Devina Misra <devina.misra@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
 import numpy as np
 import pandas as pd
-from posydon.utils.common_functions import check_state_of_star
+from posydon.utils.common_functions import (check_state_of_star,
+                                            infer_star_state,
+                                            CO_radius)
 from posydon.grids.SN_MODELS import SN_MODELS
+from posydon.popsyn.io import STARPROPERTIES_DTYPES
+from posydon.utils.constants import Zsun, zams_table
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE)
+from posydon.utils.posydonwarning import Pwarn
 
 
 
@@ -131,12 +138,174 @@ class SingleStar:
         **kwargs : dict
           List of initialization parameters for a star.
         """
-        # Set the initial star properties
+
+        # Initialize composition and radius at least.
+        # This is needed to match to a star and for 
+        # evolution to be possible. Ideally the matcher 
+        # would check things like burning luminosity and more 
+        # elements beyong He. So, in the future we might
+        # consider making more robust matching criteria.
+
+        # (This only comes into play if a user doesn't set these)
+        setattr(self, 'metallicity', kwargs.pop('metallicity', 1.0))
+        state = kwargs.get('state', 'H-rich_Core_H_burning')
+        CO_states = ['massless_remnant', 'WD', 'NS', 'BH']
+        
+        if state in CO_states:
+            Z_div_Zsun = self.metallicity
+            Y = np.nan
+            Z = np.nan     
+            X = np.nan
+            LOW_ABUNDANCE = np.nan
+            # a low/high value to guess with, seems to work well
+            LOW_LOGR_GUESS = np.nan
+            HIGH_LOGR_GUESS = np.nan
+    
+            # start by guessing a smallish radius and no He core
+            default_log_R = np.nan
+            default_He_core_mass = np.nan
+        else:
+            Z_div_Zsun = self.metallicity
+            if Z_div_Zsun in zams_table.keys():
+                Y = zams_table[Z_div_Zsun]
+            else:
+                raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
+            Z = Z_div_Zsun*Zsun        
+            X = 1.0 - Y - Z
+            LOW_ABUNDANCE = 1e-6
+            # a low/high value to guess with, seems to work well
+            LOW_LOGR_GUESS = 0.0
+            HIGH_LOGR_GUESS = 4.0
+
+            # start by guessing a smallish radius and no He core
+            default_log_R = LOW_LOGR_GUESS
+            default_He_core_mass = 0.0
+        
+        # MAIN SEQUENCE
+        if "Core_H_burning" in state:
+            # default HMS ZAMS
+            default_core_X = X
+            default_core_Y = Y
+        # POST-MS
+        elif "burning" in state and ("_Shell_" in state or "_non_" in state):
+            # default TAMS, either accreted He or H-rich, low core X, high Y
+            default_core_X = THRESHOLD_CENTRAL_ABUNDANCE
+            default_core_Y = 1.0 - default_core_X - Z
+            if "stripped_He" in state:
+                default_core_X = LOW_ABUNDANCE
+                default_core_Y = LOW_ABUNDANCE  
+                default_He_core_mass = kwargs.get('mass')             
+
+        # ADVANCED BURNING
+        elif "Core_He_burning" in state:
+            # default to start of He burn
+            default_core_X = LOW_ABUNDANCE
+            default_core_Y = 1.0 - default_core_X - Z
+            # make radius big to encourage match to giant
+            default_log_R = HIGH_LOGR_GUESS
+            if 'stripped_He' in state:
+                # unless it is a stripped He star
+                default_log_R = LOW_LOGR_GUESS
+            # large He core mass to encourage maximal He core size
+            default_He_core_mass = kwargs.get('mass')
+        elif "Core_C_burning" in state:
+            # default to start of He burn
+            default_core_X = LOW_ABUNDANCE
+            default_core_Y = LOW_ABUNDANCE
+            # make radius big to encourage match to giant
+            default_log_R = HIGH_LOGR_GUESS
+            # This stays big after He core forms
+            default_He_core_mass = kwargs.get('mass')     
+        elif ("Core_" in state) and ("_depleted" in state):
+            # core He or heavier depleted
+            # default to end of He burn. Matching does not check
+            # other elements havier than He, so this is best 
+            # we can do.
+            default_core_X = LOW_ABUNDANCE
+            default_core_Y = LOW_ABUNDANCE
+            # This stays big after He core forms
+            default_He_core_mass = kwargs.get('mass')
+        # COMPACT OBJECT
+        elif state in ['WD', 'NS', 'BH']:
+            default_core_X = np.nan
+            default_core_Y = np.nan
+            default_log_R = np.log10(CO_radius(kwargs.get('mass'), state))
+            default_He_core_mass = np.nan
+            # If a user gives a mass that does not comply with our 
+            # CO star state logic, you can get weird stuff like a
+            # BH or NS turning into a WD.
+            inferred_state = infer_star_state(star_mass=kwargs.get('mass'), 
+                             surface_h1=kwargs.get('surface_h1', np.nan), 
+                             center_h1=kwargs.get('center_h1', np.nan), 
+                             center_he4=kwargs.get('center_he4', np.nan), 
+                             center_c12=kwargs.get('center_c12', np.nan),
+                             star_CO=True)
+            if state != inferred_state:
+                kwargs['state'] = inferred_state
+        elif state == 'massless_remnant':
+            default_core_X = np.nan
+            default_core_Y = np.nan
+            default_log_R = np.nan
+            default_He_core_mass = np.nan
+        else:
+            # some state not caught above, default HMS ZAMS
+            Pwarn(f"The initial state {state} was not caught in "
+                  "SingleStar.__init__() so it was initialized " \
+                  "as an H-rich_Core_H_burning star.", 
+                  "InitializationWarning")
+            default_core_X = X
+            default_core_Y = Y
+
+
+        # Done setting initial values, assign everything to SingleStar next
+
         for item in STARPROPERTIES:
-            setattr(self, item, kwargs.pop(item, None))
+
+            # set default values when a kwarg is absent
+            # matching at least needs these initiailized to non-null values
+            if item == 'log_R':
+                # initiate log radius
+                setattr(self, item, kwargs.pop(item, default_log_R))
+            elif item == 'center_h1':
+                # initialize surface and center h1
+                setattr(self, item, kwargs.pop(item, default_core_X))
+            elif item == 'center_he4':
+                # initialize surface and center he4
+                setattr(self, item, kwargs.pop(item, default_core_Y))
+            elif 'core_mass' in item:
+                # intiailize all core_mass values to 0
+                # they are used in matching, but we will rely on 
+                # abundances set above to find a good match
+                if item == 'he_core_mass':
+                    default_core_mass = default_He_core_mass 
+                else:
+                    if state in CO_states:
+                        default_core_mass = 0.0
+                    else:
+                        default_core_mass = np.nan
+
+                setattr(self, item, kwargs.pop(item, default_core_mass))
+            elif item == 'metallicity':
+                # already set
+                pass
+
+            # everything else, set it according to stored dtype:
+            else:
+                dtype = STARPROPERTIES_DTYPES.get(item, '')
+                if dtype == 'float64' or dtype == 'int':
+                    default = np.nan
+                elif dtype == 'string':
+                    default = ''
+                else:
+                    # if we haven't defined a dtype for this prop
+                    default = None
+                setattr(self, item, kwargs.pop(item, default))
+
             setattr(self, item + '_history', [getattr(self, item)])
-        for item, val in kwargs.items():
-            setattr(self, item, val)
+
+        for key, val in kwargs.items():
+            setattr(self, key, val)
+            setattr(self, key + '_history', [val])
 
         # store extra values in the star object without a history
 
@@ -163,7 +332,8 @@ class SingleStar:
             self.M4 = None
         if not hasattr(self, 'mu4'):
             self.mu4 = None
-
+        if not hasattr(self, 'interp1d'):
+            self.interp1d = None
 
         # the following quantities are updated in mesa_step.py
 

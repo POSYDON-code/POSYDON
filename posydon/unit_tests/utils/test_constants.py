@@ -30,7 +30,11 @@ class TestElements:
                     'mn', 'mp', 'msol', 'pc', 'pi', 'planck_h', 'qe',\
                     'r_earth', 'r_jupiter', 'rad2a', 'rbohr', 'rhonuc',\
                     'rsol', 'secyer', 'semimajor_axis_jupiter', 'ssol',\
+<<<<<<< HEAD
                     'standard_cgrav', 'weinfre', 'weinlam'}
+=======
+                    'standard_cgrav', 'weinfre', 'weinlam', 'zams_table'}
+>>>>>>> eirini_CE_fix
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\

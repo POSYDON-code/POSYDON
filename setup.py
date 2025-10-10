@@ -3,8 +3,10 @@
 from __future__ import print_function
 import glob
 import sys
-import versioneer
 import os.path
+sys.path.insert(0, os.path.dirname(__file__))
+
+import versioneer
 
 cmdclass = {}
 
@@ -102,11 +104,10 @@ extras_require = {
     ],
     # for experimental visualization features, e.g. VDH diagrams
     "vis": ["PyQt5 >= 5.15.9, <= 5.15.11"],
-    # for profile macjhine learning features, e.g. profile interpolation
+    # for profile machine learning features, e.g. profile interpolation
     "ml": ["tensorflow >= 2.13.0"],
     # for running population synthesis on HPC facilities
     "hpc": ["mpi4py >= 3.0.3"],
-    # "spec":["pymsg"],
 }
 
 # RUN SETUP

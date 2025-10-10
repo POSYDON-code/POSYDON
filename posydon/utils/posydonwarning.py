@@ -30,13 +30,24 @@ caught warnings after it is copy to be returned:
 __authors__ = [
     "Monica Gallegos-Garcia <monicagallegosgarcia@u.northwestern.edu>",
     "Camille Liotine <cliotine@u.northwestern.edu>",
-    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",   
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"   
 ]
 
 
 import copy
 import sys
 import warnings
+
+
+def nosrc_code_format(message, category, filename, lineno, line=None):
+    """
+    This sets the warning format to not include the source code line.
+    """
+    return f"{filename}:{lineno}: {category.__name__}: {message}\n"
+
+# Setting the warning format to use the above format function
+warnings.formatwarning = nosrc_code_format
 
 
 class POSYDONWarning(Warning):
@@ -105,6 +116,21 @@ class UnsupportedModelWarning(POSYDONWarning):
         
 class SFHModelWarning(POSYDONWarning):
     """Warnings related to the SFH model."""
+    def __init__(self, message=''):
+        super().__init__(message)
+        
+class ValueWarning(POSYDONWarning):
+    """Warnings related to a ValueError."""
+    def __init__(self, message=''):
+        super().__init__(message)
+
+class InitializationWarning(POSYDONWarning):
+    """Warnings related to intializing things."""
+    def __init__(self, message=''):
+        super().__init__(message)
+        
+class StepWarning(POSYDONWarning):
+    """Warnings related to an evolution step."""
     def __init__(self, message=''):
         super().__init__(message)
 

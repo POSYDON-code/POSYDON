@@ -29,7 +29,12 @@ class TestElements:
                     'InterpolationWarning', 'MissingFilesWarning',\
                     'NoPOSYDONWarnings', 'OverwriteWarning', 'SFHModelWarning',\
                     'POSYDONWarning','Pwarn', 'ReplaceValueWarning',\
+<<<<<<< HEAD
                     'SetPOSYDONWarnings',\
+=======
+                    'SetPOSYDONWarnings', 'ValueWarning',\
+                    'InitializationWarning','StepWarning',\
+>>>>>>> eirini_CE_fix
                     'UnsupportedModelWarning', '_CAUGHT_POSYDON_WARNINGS',\
                     '_Caught_POSYDON_Warnings', '_POSYDONWarning_subclasses',\
                     '_POSYDON_WARNINGS_REGISTRY', '__authors__',\
@@ -37,7 +42,11 @@ class TestElements:
                     '__loader__', '__name__', '__package__', '__spec__',\
                     '_apply_POSYDON_filter', '_get_POSYDONWarning_class',\
                     '_issue_warn', 'copy', 'get_stats', 'print_stats', 'sys',\
+<<<<<<< HEAD
                     'warnings'}
+=======
+                    'warnings', 'nosrc_code_format'}
+>>>>>>> eirini_CE_fix
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -474,6 +483,23 @@ class TestMissingFilesWarning:
         assert isinstance(MissingFilesWarning, totest.MissingFilesWarning)
         assert MissingFilesWarning.message == ''
 
+<<<<<<< HEAD
+=======
+class TestValueWarning:
+    @fixture
+    def ValueWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.ValueWarning()
+
+    # test the ValueWarning class
+    def test_init(self, ValueWarning):
+        assert isroutine(ValueWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(ValueWarning, totest.ValueWarning)
+        assert ValueWarning.message == ''
+
+>>>>>>> eirini_CE_fix
 
 class TestOverwriteWarning:
     @fixture
@@ -520,6 +546,38 @@ class TestUnsupportedModelWarning:
                           totest.UnsupportedModelWarning)
         assert UnsupportedModelWarning.message == ''
 
+<<<<<<< HEAD
+=======
+class TestInitializationWarning:
+    @fixture
+    def InitializationWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.InitializationWarning()
+
+    # test the UnsupportedModelWarning class
+    def test_init(self, InitializationWarning):
+        assert isroutine(InitializationWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(InitializationWarning,\
+                          totest.InitializationWarning)
+        assert InitializationWarning.message == ''
+
+class TestStepWarning:
+    @fixture
+    def StepWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.StepWarning()
+
+    # test the UnsupportedModelWarning class
+    def test_init(self, StepWarning):
+        assert isroutine(StepWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(StepWarning,\
+                          totest.StepWarning)
+        assert StepWarning.message == ''
+>>>>>>> eirini_CE_fix
 
 class Test_Caught_POSYDON_Warnings:
     @fixture

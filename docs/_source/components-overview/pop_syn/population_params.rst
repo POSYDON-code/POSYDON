@@ -1,7 +1,7 @@
 .. _pop-params-guide:
 
 ================================================
-POSDYON Population Synthesis Configuration Guide
+POSYDON Population Synthesis Configuration Guide
 ================================================
 
 This documentation provides a detailed overview of the configuration options available in the Posydon software package.
@@ -35,7 +35,7 @@ SimulationProperties
 After the environment variables, the next part of the ``population_params.ini`` file
 contains how systems will move through the simulation steps [Flow Chart](flow_chart.rst) and the parameters for each step.
 
-These parameters are read in and used to create a :class:`~posydon.binary_evol.simulationproperties.SimulationProperties`` object.
+These parameters are read in and used to create a :class:`~posydon.binary_evol.simulationproperties.SimulationProperties` object.
 
 It allows for the addition of hooks before and after each step, and the evolution of a system (see :ref:`Custom Hooks <custom-hooks>`).
 The ``SimulationProperties`` can be manually read and loaded in.
@@ -47,7 +47,7 @@ Note that the loading of the simulation steps is separate from creating the obje
     from posydon.popsyn.io import simprop_kwargs_from_ini
 
     # read from file
-    sim_props = simprop_kwargs_from_ini('population_params.ini', vebose=False)
+    sim_props = simprop_kwargs_from_ini('population_params.ini', verbose=False)
     
     # create SimulationProperties object
     sim = SimulationProperties(**sim_props)
@@ -66,7 +66,6 @@ It controls the mapping between a POSYDON binary object and its step evolution, 
   :widths: 10 80 10
   :class: population-params-table
   :header-rows: 1
-  
 
   * - Parameter
     - Description
@@ -205,30 +204,60 @@ It evolves the binary object in isolation until Roche lobe overflow occurs.
 
     - ``'minimize'``
 
+  * - ``matching_tolerance``
+    - | When using the "minimize" matching method, a computed square 
+      | Euclidean distance between the pre-match and post-match values 
+      | less than this must be achieved for a successful match.  
+    - ``1e-2``
+
+  * - ``matching_tolerance_hard``
+    - | This tolerance is checked after all else fails, as a last attempt 
+      | to find a solution.
+    - ``1e-1``
+
   * - ``do_wind_loss``
-    - | Enable wind loss.
+    - | Enable orbital separation and eccentricity changes from stellar wind loss.
     - ``True``
 
   * - ``do_tides``
-    - | Enable tides.
+    - | Enable tides following Hut, P. 1981, A&A, 99, 126.
     - ``True``
 
   * - ``do_gravitational_radiation``
-    - | Enable gravitational radiation.
+    - | Enable gravitational radiation following Junker, W., & Schafer, G. 1992, MNRAS, 254, 146.
     - ``True``
   
   * - ``do_magnetic_braking``
-    - | Enable magnetic braking.
+    - | Enable stellar angular momentum loss from magnetic braking.
     - ``True``
 
+  * - ``magnetic_braking_mode``
+    - | A string corresponding to the desired magnetic braking prescription.
+      * ``'RVJ83'``: Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
+      * ``'M15'``: Matt et al. 2015, ApJ, 799, L23
+      * ``'G18'``: Garraffo et al. 2018, ApJ, 862, 90
+      * ``'CARB'``: Van & Ivanova 2019, ApJ, 886, L31
+    - ``'RVJ83'``
+
   * - ``do_stellar_evolution_and_spin_from_winds``
-    - | Enable stellar evolution and spin from winds.
+    - | Enable stellar angular momentum loss from winds.
     - ``True``
 
   * - ``RLO_orbit_at_orbit_with_same_am``
-    - | Orbit at Roche lobe overflow with the same angular momentum.
-      | Relevant in eccentric systems.
+    - | Binaries are circularized instaneously when RLO occurs and this 
+      | option dictates how that is handled. If false, place 
+      | the binary in an orbit with separation equal to the binary's 
+      | separation at periastron. If true, circularize the orbit assuming 
+      | that angular momentum is conserved w.r.t. the previously (possibly) 
+      | eccentric orbit. In the latter case, the star may no longer 
+      | fill its Roche lobe after circularization, and may be further 
+      | evolved until RLO commences once again, but without changing the 
+      | orbit.
     - ``False``
+
+  * - ``record_matching``
+    - | If true, append quantities achieved from track matching to the binary history.
+    - ``True``
 
   * - ``verbose``
     - | Enables verbose mode.
@@ -237,7 +266,7 @@ It evolves the binary object in isolation until Roche lobe overflow occurs.
 Step Disrupted
 ~~~~~~~~~~~~~~
 
-The dirtupted step evolves a system when a supernova has unbound the binary components.
+The disrupted step evolves a system when a supernova has unbound the binary components.
 This class inherits from the detached step, but only evolves the remaining star in isolation.
 This means that this step uses the single stars loaded by the detached step.
 
@@ -253,6 +282,78 @@ This means that this step uses the single stars loaded by the detached step.
   * - ``import``
     - | The import path for the step and the name of the step class.
     - ``['posydon.binary_evol.DT.step_disrupted', 'DisruptedStep']``
+
+  * - ``absolute_import``
+    - | An absolute import of a custom step. It follows the same structure as ``import``. 
+      | ``['import.path', 'name_of_step']``
+    - ``None``
+  
+  * - ``matching_method``
+    - | The method to match the MESA single star grid to the binary object.
+      
+      * ``'minimize'`` : minimize the difference between the MESA single star grid and the binary object
+      * ``'root'`` : find the root of the difference between the MESA single star grid and the binary object
+
+    - ``'minimize'``
+
+  * - ``matching_tolerance``
+    - | When using the "minimize" matching method, a computed square 
+      | Euclidean distance between the pre-match and post-match values 
+      | less than this must be achieved for a successful match.  
+    - ``1e-2``
+
+  * - ``matching_tolerance_hard``
+    - | This tolerance is checked after all else fails, as a last attempt 
+      | to find a solution.
+    - ``1e-1``
+
+  * - ``do_wind_loss``
+    - | Enable orbital separation and eccentricity changes from stellar wind loss.
+    - ``True``
+
+  * - ``do_tides``
+    - | Enable tides following Hut, P. 1981, A&A, 99, 126.
+    - ``True``
+
+  * - ``do_gravitational_radiation``
+    - | Enable gravitational radiation following Junker, W., & Schafer, G. 1992, MNRAS, 254, 146.
+    - ``True``
+  
+  * - ``do_magnetic_braking``
+    - | Enable stellar angular momentum loss from magnetic braking.
+    - ``True``
+
+  * - ``magnetic_braking_mode``
+    - | A string corresponding to the desired magnetic braking prescription.
+      * ``'RVJ83'``: Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
+      * ``'M15'``: Matt et al. 2015, ApJ, 799, L23
+      * ``'G18'``: Garraffo et al. 2018, ApJ, 862, 90
+      * ``'CARB'``: Van & Ivanova 2019, ApJ, 886, L31
+    - ``'RVJ83'``
+
+  * - ``do_stellar_evolution_and_spin_from_winds``
+    - | Enable stellar angular momentum loss from winds.
+    - ``True``
+
+  * - ``RLO_orbit_at_orbit_with_same_am``
+    - | Binaries are circularized instaneously when RLO occurs and this 
+      | option dictates how that is handled. If false, place 
+      | the binary in an orbit with separation equal to the binary's 
+      | separation at periastron. If true, circularize the orbit assuming 
+      | that angular momentum is conserved w.r.t. the previously (possibly) 
+      | eccentric orbit. In the latter case, the star may no longer 
+      | fill its Roche lobe after circularization, and may be further 
+      | evolved until RLO commences once again, but without changing the 
+      | orbit.
+    - ``False``
+
+  * - ``record_matching``
+    - | If true, append quantities achieved from track matching to the binary history.
+    - ``True``
+
+  * - ``verbose``
+    - | Enables verbose mode.
+    - ``False``
 
 Step Merged
 ~~~~~~~~~~~
@@ -294,6 +395,38 @@ This means that this step uses the single stars loaded by the detached step.
   * - ``import``
     - | The import path for the step and the name of the step class.
     - ``['posydon.binary_evol.DT.step_initially_single','InitiallySingleStep']``
+
+  * - ``absolute_import``
+    - | An absolute import of a custom step. It follows the same structure as ``import``. 
+      | ``['import.path', 'name_of_step']``
+    - ``None``
+  
+  * - ``matching_method``
+    - | The method to match the MESA single star grid to the binary object.
+      
+      * ``'minimize'`` : minimize the difference between the MESA single star grid and the binary object
+      * ``'root'`` : find the root of the difference between the MESA single star grid and the binary object
+
+    - ``'minimize'``
+
+  * - ``matching_tolerance``
+    - | When using the "minimize" matching method, a computed square 
+      | Euclidean distance between the pre-match and post-match values 
+      | less than this must be achieved for a successful match.  
+    - ``1e-2``
+
+  * - ``matching_tolerance_hard``
+    - | This tolerance is checked after all else fails, as a last attempt 
+      | to find a solution.
+    - ``1e-1``
+
+  * - ``record_matching``
+    - | If true, append quantities achieved from track matching to the binary history.
+    - ``True``
+
+  * - ``verbose``
+    - | Enables verbose mode.
+    - ``False``
 
 
 Step Common Envelope
@@ -513,6 +646,9 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``'NS_one_minus_fallback_BH_one'``
       * ``'one'``
       * ``'zero'``
+      * ``'asym_ej'``
+      * ``'linear'``
+      * ``'log_normal'``
     - ``'one_over_mass'``
 
   * - ``sigma_kick_CCSN_NS``
@@ -635,8 +771,7 @@ such as the masses and orbital parameters.
 Moreover, it contains the parameters for metallicity and the practicality of running populations.
 This includes, the number of binaries, the metallicity, how often to save the population to file. 
 
-When reading the binary population arguments from a ``population_params.ini`` file, the
- :class:`~posydon.binary_evol.simulationproperties.SimulationProperties` are read in automatically.
+When reading the binary population arguments from a ``population_params.ini`` file, the :class:`~posydon.binary_evol.simulationproperties.SimulationProperties` are read in automatically.
 
 .. code-block:: python
 
@@ -644,7 +779,7 @@ When reading the binary population arguments from a ``population_params.ini`` fi
     from posydon.popsyn.io import binarypop_kwargs_from_ini
 
     # read from file
-    pop_params = binarypop_kwargs_from_ini('population_params.ini', vebose=False)
+    pop_params = binarypop_kwargs_from_ini('population_params.ini', verbose=False)
     
     # create BinaryPopulation object
     pop = BinaryPopulation(**pop_params)
@@ -676,7 +811,7 @@ It also contains which sampling distributions to use for the initial conditions 
 
   * - ``dump_rate``
     - | Batch save after evolving N binaries.
-    - | To facilitate I/O performance, this should be at least 500 for populations of 100.000 binaries or more.
+      | To facilitate I/O performance, this should be at least 500 for populations of 100.000 binaries or more.
     - ``2000``
 
   * - ``temp_directory``
@@ -709,7 +844,7 @@ It also contains which sampling distributions to use for the initial conditions 
     
   * - ``history_verbose``
     - | If True, record extra functional steps in the output DataFrames
-    - | (These extra steps represent internal workings of POSYDON rather than physical phases of evolution)
+      | (These extra steps represent internal workings of POSYDON rather than physical phases of evolution)
     - ``False``
 
   * - ``entropy``
@@ -763,14 +898,17 @@ It also contains which sampling distributions to use for the initial conditions 
     - | Options:
     
       * ``'flat_mass_ratio'``: flat mass ratio distribution
-      * ``'q=1'``: mass ratio of 1. Ignores ``secondary_mass_min/max`` and sets the secondary mass to the primary mass. 
+      * ``'q=1'``: mass ratio of 1. Ignores ``secondary_mass_min/max`` and sets the secondary mass to the primary mass.
+      * ``'Moe2017'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``orbital_period_scheme`` and ``eccentricity_scheme`` to be ignored)
     - ``'flat_mass_ratio'``
 
   * - ``secondary_mass_min``
     - | Minimum secondary mass (in solar masses).
       | Is required to be smaller than the minimum primary mass.
       | limits: 0-270
-    - ``0.35``
+      | DR2 HMS-HMS grid has a minimum M2 mass of 0.5.
+      | We always check if q>=0.05 and M2>=secondary_mass_min are satisfied in the initial sampling.
+    - ``0.5``
 
   * - ``secondary_mass_max``
     - | Maximum secondary mass (in solar masses).
@@ -790,6 +928,7 @@ It also contains which sampling distributions to use for the initial conditions 
       | Options:
     
       * ``Sana+12_period_extended``: `Sana et al. 2012 <https://ui.adsabs.harvard.edu/abs/2012Sci...337..444S/abstract>`_
+      * ``'Moe2017'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``secondary_mass_scheme`` and ``eccentricity_scheme`` to be ignored)
     - ``'Sana+12_period_extended'``
 
   * - ``orbital_period_min``
@@ -831,6 +970,7 @@ It also contains which sampling distributions to use for the initial conditions 
       * ``'zero'`` : zero eccentricity
       * ``'thermal'``: thermal distribution
       * ``'uniform'``: uniform distribution
+      * ``'Moe2017'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``secondary_mass_scheme`` and ``orbital_period_scheme`` to be ignored)
     
     - ``'zero'``
 
@@ -839,7 +979,7 @@ Saving Output
 -------------
 
 You can decide on your own output parameters for the population file.
-The data is split in two different tables: the ``history`` table and the ``oneline`` table.
+The data are split in two different tables: the ``history`` table and the ``oneline`` table.
 
 The ``history`` table contains values that change throughout the evolution of the system, 
 while the ``oneline`` table contains values that are constant throughout the evolution of the system or only occur once.

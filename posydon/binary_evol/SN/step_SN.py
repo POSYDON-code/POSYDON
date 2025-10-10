@@ -20,6 +20,7 @@ __authors__ = [
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 __credits__ = [
@@ -51,7 +52,12 @@ from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massl
 from posydon.binary_evol.SN.profile_collapse import (do_core_collapse_BH,
                                         get_ejecta_element_mass_at_collapse)
 from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
-                                            STAR_STATES_C_DEPLETION)
+                                            STAR_STATES_C_DEPLETED)
+
+from posydon.grids.SN_MODELS import get_SN_MODEL_NAME, DEFAULT_SN_MODEL
+from posydon.utils.posydonerror import ModelError
+from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.common_functions import set_binary_to_failed
 
 from posydon.grids.SN_MODELS import get_SN_MODEL_NAME, DEFAULT_SN_MODEL
 from posydon.utils.posydonerror import ModelError
@@ -330,8 +336,7 @@ class StepSN(object):
                     filename = os.path.join(self.path_to_Patton_datasets,
                                             file_name)
                     if not os.path.exists(filename):
-                        #TODO: specify dataset, e.g. 'auxiliary' when it exists
-                        data_download()
+                        data_download(set_name='auxiliary')
 
                     # Reading the dataset
                     data = np.loadtxt(filename, skiprows=6, dtype='str')
@@ -380,7 +385,9 @@ class StepSN(object):
 
     def __repr__(self):
         """Get the string representation of the class and any parameters."""
-        return "SN step (kick distribution: {})".format(self.kick_distribution)
+        return "StepSN:\n" + \
+            "\n".join([f"{key} = {getattr(self, key)}" for key in SN_MODEL])
+
 
     def _reset_other_star_properties(self, star):
         """Reset the properties of the star that is not being collapsed."""
@@ -423,6 +430,19 @@ class StepSN(object):
         # do orbital_kick on the binary object
         if self.kick:
             self.orbital_kick(binary=binary)
+        else:
+            # no kick, but still need to unset the event after CC
+            # and update orbital period/separation
+            binary.event = None
+            new_separation = separation_evol_wind_loss(
+                    binary.star_1.mass, binary.star_1.mass_history[-1],
+                    binary.star_2.mass, binary.separation)
+            new_orbital_period = orbital_period_from_separation(
+                    new_separation, binary.star_1.mass, binary.star_2.mass)
+            
+            binary.separation = new_separation
+            binary.orbital_period = new_orbital_period
+            binary.state = "detached"
 
         # Checks if the binary is not disrupted to compute the
         # inspiral time due to gravitational wave emission
@@ -437,9 +457,9 @@ class StepSN(object):
                 binary.eccentricity,
             )
         # Cover the case where CC of the companion is immediately followed
-        elif state1 in STAR_STATES_CO and state2 in STAR_STATES_C_DEPLETION:
+        elif state1 in STAR_STATES_CO and state2 in STAR_STATES_C_DEPLETED:
             binary.event = "CC2"
-        elif state1 in STAR_STATES_C_DEPLETION and state2 in STAR_STATES_CO:
+        elif state1 in STAR_STATES_C_DEPLETED and state2 in STAR_STATES_CO:
             binary.event = "CC1"
 
         if self.verbose:
@@ -1429,7 +1449,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged" and binary.state != 'low_mass_binary':
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
                     binary.state = "detached"
 
                 binary.event = None
@@ -1529,7 +1549,7 @@ class StepSN(object):
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
-                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged" and binary.state != 'low_mass_binary':
+                if binary.state != "disrupted" and binary.state != "initially_single_star" and binary.state != "merged":
                     binary.state = "detached"
                 binary.event = None
                 binary.time = binary.time_history[-1]
@@ -1967,6 +1987,31 @@ class StepSN(object):
         Vkick : double
             Natal orbital kick in km/s.
 
+        -------------------------------------------------------------------------------------
+
+        The following natal kick prescriptions are based on the mass of the 
+        ejected envelope during the supernova explosion:
+
+        "asym_ej" - reference [1]
+        "linear" - reference [2]
+
+        References
+        ----------
+
+        [1] Neutron Star Kicks by the Gravitational Tug-boat Mechanism in Asymmetric
+            Supernova Explosions: Progenitor and Explosion Dependence, Janka H.T., 2017, 
+            ApJ 837(1):84, arXiv:1611.07562 [astro-ph.HE]
+
+        [2] New constraints on the Bray conservation-of-momentum natal kick model from 
+            multiple distinct observations, Richards S. M., Eldridge J. J., Briel M. M., 
+            Stevance H. F., Willcox R., 2022, arXiv e-prints, p. arXiv:2208.02407
+
+        -------------------------------------------------------------------------------------
+
+        The "log_normal" precription draws kicks from a log-normal distribution, 
+        based on Disberg P., Mandel I., 2025, arXiv e-prints, p. arXiv:2505.22102v1
+
+
         """
         if self.kick_normalisation == 'one_minus_fallback':
             # Normalization from Eq. 21, Fryer, C. L., Belczynski, K., Wiktorowicz,
@@ -1977,6 +2022,34 @@ class StepSN(object):
                 norm = 1.4/star.mass
             else:
                 norm = 1.0
+
+        elif self.kick_normalisation == 'log_normal':
+            if star.state == 'BH':
+                norm = 1.4/star.mass
+            else:
+                norm = 1.0
+
+        elif self.kick_normalisation == 'asym_ej':
+           
+            f_kin = 0.1         # Fraction of SN explosion energy that is kinetic energy of the gas
+            beta = 0.1          # Fraction of ejecta mass that is neutrino heated
+            epsilon = 1    
+            alpha_ej = 0.01
+            M_NS = star.mass                                    # Neutron star mass
+            M_rembar=(((3*M_NS/20 + 1)**2) - 1)/0.3             # Remnant baryonic mass 
+            M_ej=abs(star.mass_history[-1] - M_rembar)          # Ejecta mass
+
+            Vkick_ej = 211*(f_kin*beta*epsilon)**(1/2)*(alpha_ej/0.1)*(M_ej/0.1)*(M_NS/1.5)**(-1)
+        
+        elif self.kick_normalisation == 'linear':
+            
+            M_ej = star.co_core_mass_history[-1]-star.mass        # Ejecta mass
+            M_rem = star.mass                                     # Neutron star mass
+            alpha = 115                                           # alpha and beta are best-fit parameters
+            beta = 15                                             
+
+            Vkick_ej = alpha * (M_ej/M_rem) + beta
+
         elif self.kick_normalisation == 'NS_one_minus_fallback_BH_one':
             if star.state == 'BH':
                 norm = 1.
@@ -1994,7 +2067,13 @@ class StepSN(object):
         if sigma is not None:
             # f_fb = self.compute_m_rembar(star, None)[1]
 
-            Vkick = norm * sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
+            if self.kick_normalisation in ['asym_ej', 'linear']:
+                Vkick = Vkick_ej
+            elif self.kick_normalisation == 'log_normal':
+                Vkick = norm * sp.stats.lognorm.rvs(s=0.68, scale=np.exp(5.60), size=1)[0]
+            else:
+                Vkick = norm * sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
+            
         else:
             Vkick = 0.0
 
@@ -2238,8 +2317,7 @@ class Sukhbold16_corecollapse(object):
             filename = os.path.join(path_engine_dataset,
                                     "results_" + self.engine + "_table.csv")
             if not os.path.exists(filename):
-                #TODO: specify dataset, e.g. 'auxiliary' when it exists
-                data_download()
+                data_download(set_name='auxiliary')
 
             Engine_data = read_csv(filename)
 
@@ -2432,8 +2510,7 @@ class Couch20_corecollapse(object):
             # Check if interpolation files exist
             filename = os.path.join(path_to_Couch_datasets, 'explDatsSTIR2.json')
             if not os.path.exists(filename):
-                #TODO: specify dataset, e.g. 'auxiliary' when it exists
-                data_download()
+                data_download(set_name='auxiliary')
 
             Couch_data_file = open(filename)
             Couch_data = json.load(Couch_data_file)

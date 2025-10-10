@@ -2,9 +2,12 @@
 
 .. py:currentmodule:: posydon.popsyn.synthetic_population
 
+Synthetic Populations
+#####################
 
-The Population Object 
-===============================
+
+Population
+==========
 
 The :class:`~Population` object is an interface for the population data, which is stored in a HDF5 file.
 You can find more information about the file structure here: :ref:`population-file-structure`.
@@ -32,7 +35,7 @@ The :code:`formation_channels` is not immediately available, but can be created 
 :func:`~Population.calculate_formation_channels` function of the :class:`~Population` object.
 
 
-Additionally, :meth:`Population.mass_per_metallicity<Population.mass_per_metallicity>` contains some essential metadata calculated from the populaiton synthesis run.
+Additionally, :meth:`Population.mass_per_metallicity<Population.mass_per_metallicity>` contains some essential metadata calculated from the population synthesis run.
 It is a pandas.DataFrame with the metallicity (in solar units) as the index and 3 columns:
 
 1. :code:`count`, the number of systems at that metallicity in the file.
@@ -85,11 +88,12 @@ A more powerful feature is the :func:`History.select` function, which allows you
 If you want to have a peak, you can use the :meth:`~Population.head` or :meth:`~Population.tail` functions.
 
 .. code-block:: python
+  
     pop.history.head(10)
     pop.history.tail(10)
 
 
-Additional functions are made available for easy of use.
+Additional functions are made available for ease of use.
 
 If you want to check the length of the history of a system, you can use :attr:`Population.history.lengths<History.lengths>` or :attr:`Population.history_lengths<Population.history_lengths>`.
 
@@ -136,6 +140,10 @@ Additionally, ``WARNING``, ``FAILED``, and metallicity columns are available in 
 .. csv-table:: Additional columns
   :header: "Properties", "Descriptions"
   :widths: 50, 150
+<<<<<<< HEAD
+=======
+
+>>>>>>> eirini_CE_fix
   ``FAILED``, Indicates if the system failed during the population synthesis run.
   ``WARNING``, Indicates if there were any warnings for the system during the population synthesis run.
   ``metallicity``, The metallicity of the system.
@@ -236,8 +244,7 @@ The :class:`~TransientPopulation` class has been designed to handle these events
 
 
 Creating a TransientPopulation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+------------------------------
 
 The transient population is created using the :func:`Population.create_transient_population` function of the :class:`~Population` object.
 This function creates a separate table with each transient in the population file.
@@ -247,9 +254,11 @@ The :func:`Population.create_transient_population` function takes a function as 
 
 The :code:`selection_function` takes 3 arguments: :code:`history_chunk`, :code:`oneline_chunk`, and :code:`formation_channels_chunk` (optional).
 These chunks are cut based on a given chunksize, which is set to 1000000 by default, and are cut on system. 
-This means that always a complete history of a system is passed to the function by :func:`Population.create_transient_population`.
+This means that a complete history of a system is always passed to the function by :func:`Population.create_transient_population`.
 
-:code:`selection_function` is a function you can adapt to your own needs, and examples of building one are given in the :ref:`tutorial-examples.population-synthesis.bbh-analysis` or :ref:`tutorial-examples.population-synthesis.lgrb_pop_syn`.
+:code:`selection_function` is a function you can adapt to your own needs, and
+examples of building one are given in the `BBH <../../tutorials-examples/population-synthesis/bbh_analysis.html>`_ or `LGRB tutorial <../../tutorials-examples/population-synthesis/lgrb_pop_syn.html>`_.
+
 
 .. note::
 
@@ -262,7 +271,7 @@ These functions are available in the :mod:`posydon.popsyn.transient_select_funcs
 
 
 Accessing TransientPopulation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 After loading a transient population, you keep access to the history and oneline data of the population.
 Now, you can access the transient data of the population using :attr:`TrannsientPopulation.population<TransientPopulation>`.
@@ -274,7 +283,7 @@ Now, you can access the transient data of the population using :attr:`Trannsient
 
 
 Calculating Efficiencies
-~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 With this population, you can calculate additional information, such as the efficiency over metallicity.
 
@@ -285,7 +294,7 @@ With this population, you can calculate additional information, such as the effi
 :code:`channels=True` includes the formation channels in the efficiency calculation.
 
 Plotting
-~~~~~~~~~~
+--------
 
 The :class:`~TransientPopulation` contains a few plotting functions for ease.
     
@@ -333,7 +342,7 @@ It also allows the user to calculate the intrinsic rate density of the events in
 
 
 Creating a Rates object
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Cosmic weights are added to the population file using the :func:`~TransientPopulation.calculate_cosmic_weights` function.
 This function calculates the cosmic weights of the events in the population based on the birth redshifts and the population weight.
@@ -356,7 +365,7 @@ The table below shows the Default values and the supported values.
 
 
 Accessing rates data
-~~~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 The cosmic rate data is stored in 3 different tables in the population file:
 
@@ -385,7 +394,7 @@ The :class:`~Rates` object also contains information about the metallicity and r
     print(rates.edges_redshift_bins)
 
 Plotting Rates
-~~~~~~~~~~~~~~~~~~~~~~
+--------------
 
 Besides plotting the intrinsic rate, you can plot the distribution of properties of the population.
 You can use any property in the TransientPopulation table.
@@ -396,7 +405,7 @@ You can use any property in the TransientPopulation table.
 
 
 Applying observational effects
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 Although the intrinsic rate density is a useful quantity, it is not directly observable, especially for binary black holes.
 
@@ -427,10 +436,10 @@ However, since that function requires a detection argument, it requires a wrappe
 
 
 Accessing Observable Population data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 The observable population is accesed through the :code:`observable_population` attribute of the :class:`~Rates` object.
-You require to know the observable_identifier to access the data, which can be accessed with :attr:`Rates.observable_population_names<Rates.observable_population_names>`
+You need the observable_identifier to access the data, which can be accessed with :attr:`Rates.observable_population_names<Rates.observable_population_names>`
 
 .. code-block:: python
 
@@ -438,10 +447,10 @@ You require to know the observable_identifier to access the data, which can be a
     print(rates.observable_population('design_H1L1V1'))
 
 Plotting the observable population
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------
 
 The observable population can be plotted in the same way as the intrinsic rate density.
-However, you require to define which observable population you want to plot.
+However, you need to define which observable population you want to plot.
 
 .. code-block:: python
 
@@ -463,8 +472,8 @@ If you like to overplot multiple properties, you can set ``show=False`` and manu
 
 .. _population-file-structure:
 
-The Structure of Population Files 
-=================================
+The Structure of Generated Population Files 
+###########################################
 
 The main output of a population synthesis run is a HDF5 population file.
 

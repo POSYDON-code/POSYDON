@@ -110,7 +110,13 @@ class TestElements:
                     'roche_lobe_radius', 'check_for_RLO', 'rotate',\
                     'rzams', 'separation_evol_wind_loss',\
                     'set_binary_to_failed', 'spin_stable_mass_transfer',\
+<<<<<<< HEAD
                     'stefan_boltzmann_law'}
+=======
+                    'stefan_boltzmann_law', 'STAR_STATES_H_RICH',\
+                    'STAR_STATES_HE_RICH', 'zero_negative_values'}
+
+>>>>>>> eirini_CE_fix
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -339,7 +345,11 @@ class TestValues:
 
     def test_value_BURNING_STATES(self):
         for v in ["Core_H_burning", "Core_He_burning", "Shell_H_burning",\
+<<<<<<< HEAD
                   "Central_He_depleted", "Central_C_depletion"]:
+=======
+                  "Core_He_depleted", "Core_C_depleted"]:
+>>>>>>> eirini_CE_fix
             # check required values
             assert v in totest.BURNING_STATES, "missing entry"
 
@@ -1098,10 +1108,13 @@ class TestFunctions:
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'binary'"):
             totest.get_binary_state_and_event_and_mt_case()
+<<<<<<< HEAD
         # bad input
         with raises(TypeError, match="argument of type 'NoneType' is not "\
                                      +"iterable"):
             totest.get_binary_state_and_event_and_mt_case(binary)
+=======
+>>>>>>> eirini_CE_fix
         # examples: no binary
         assert totest.get_binary_state_and_event_and_mt_case(None) ==\
                [None, None, 'None']
@@ -1201,10 +1214,13 @@ class TestFunctions:
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'binary'"):
             totest.get_binary_state_and_event_and_mt_case_array()
+<<<<<<< HEAD
         # bad input
         with raises(TypeError, match="argument of type 'NoneType' is not "\
                                      +"iterable"):
             totest.get_binary_state_and_event_and_mt_case_array(binary)
+=======
+>>>>>>> eirini_CE_fix
         with raises(IndexError, match="list index out of range"):
             totest.get_binary_state_and_event_and_mt_case_array(binary, N=10)
         # examples: no binary
@@ -1397,10 +1413,17 @@ class TestFunctions:
                                     rich = "stripped_He"
                                 if ((cH1<=TCA) and (cHe4<=TCA) and\
                                     (cC12<=TCA)):
+<<<<<<< HEAD
                                     burn = "Central_C_depletion"
                                 elif ((cH1<=TCA) and (cHe4<=TCA) and\
                                       (cC12>TCA)):
                                     burn = "Central_He_depleted"
+=======
+                                    burn = "Core_C_depleted"
+                                elif ((cH1<=TCA) and (cHe4<=TCA) and\
+                                      (cC12>TCA)):
+                                    burn = "Core_He_depleted"
+>>>>>>> eirini_CE_fix
                                 elif ((cH1>TCA) and (lgLH>LBT)):
                                     burn = "Core_H_burning"
                                 elif ((cH1>TCA) and (lgLH<=LBT)):
@@ -1451,12 +1474,21 @@ class TestFunctions:
                  ("H-rich_Core_H_burning", totest.MT_CASE_A),\
                  ("H-rich_Core_He_burning", totest.MT_CASE_B),\
                  ("H-rich_Shell_H_burning", totest.MT_CASE_B),\
+<<<<<<< HEAD
                  ("H-rich_Central_He_depleted", totest.MT_CASE_C),\
                  ("H-rich_Central_C_depletion", totest.MT_CASE_C),\
                  ("H-rich_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("stripped_He_Core_He_burning", totest.MT_CASE_BA),\
                  ("stripped_He_Central_He_depleted", totest.MT_CASE_BB),\
                  ("stripped_He_Central_C_depletion", totest.MT_CASE_BB),\
+=======
+                 ("H-rich_Core_He_depleted", totest.MT_CASE_C),\
+                 ("H-rich_Core_C_depleted", totest.MT_CASE_C),\
+                 ("H-rich_undetermined", totest.MT_CASE_UNDETERMINED),\
+                 ("stripped_He_Core_He_burning", totest.MT_CASE_BA),\
+                 ("stripped_He_Core_He_depleted", totest.MT_CASE_BB),\
+                 ("stripped_He_Core_C_depleted", totest.MT_CASE_BB),\
+>>>>>>> eirini_CE_fix
                  ("stripped_He_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("test_undetermined", totest.MT_CASE_UNDETERMINED)]
         for (ds, c) in tests:
@@ -1644,17 +1676,28 @@ class TestFunctions:
         star.co_core_mass_at_He_depletion = 0.5
         star.avg_c_in_c_core_at_He_depletion = 0.5
         for s in ["test", "H-rich_Core_H_burning", "H-rich_Core_He_burning",\
+<<<<<<< HEAD
                   "H-rich_Shell_H_burning", "H-rich_Central_C_depletion",\
                   "H-rich_undetermined", "stripped_He_Core_He_burning",\
                   "stripped_He_Central_C_depletion",\
+=======
+                  "H-rich_Shell_H_burning", "H-rich_Core_C_depleted",\
+                  "H-rich_undetermined", "stripped_He_Core_He_burning",\
+                  "stripped_He_Core_C_depleted",\
+>>>>>>> eirini_CE_fix
                   "stripped_He_undetermined"]:
             star.state_history = [s]
             totest.calculate_Patton20_values_at_He_depl(star)
             assert star.co_core_mass_at_He_depletion is None
             assert star.avg_c_in_c_core_at_He_depletion is None
         # examples: loop through star types with He depletion
+<<<<<<< HEAD
         tests = [("H-rich_Central_He_depleted", 0.1),\
                  ("stripped_He_Central_He_depleted", 0.2)]
+=======
+        tests = [("H-rich_Core_He_depleted", 0.1),\
+                 ("stripped_He_Core_He_depleted", 0.2)]
+>>>>>>> eirini_CE_fix
         for (s, v) in tests:
             star.state_history = ["test", s, s]
             star.co_core_mass_history = [0.0, v, 1.0]
@@ -1692,6 +1735,7 @@ class TestFunctions:
         with raises(AttributeError, match="'NoneType' object has no "\
                                           +"attribute 'mass'"):
             totest.CEE_parameters_from_core_abundance_thresholds(None)
+<<<<<<< HEAD
         with raises(TypeError) as error_info:
             totest.CEE_parameters_from_core_abundance_thresholds(star)
         assert error_info.value.args[0] == "unsupported operand type(s) for "\
@@ -1703,6 +1747,16 @@ class TestFunctions:
         with raises(TypeError, match="argument of type 'NoneType' is not "\
                                      +"iterable"):
             totest.CEE_parameters_from_core_abundance_thresholds(star)
+=======
+
+        totest.CEE_parameters_from_core_abundance_thresholds(star)
+        assert np.isnan(star.m_core_CE_1cent)
+        star.log_R = 0.0
+        star.profile = np.array([(1.0), (1.0), (1.0)],\
+                                dtype=([('mass', 'f8')]))
+        
+        assert np.isnan(star.m_core_CE_1cent)
+>>>>>>> eirini_CE_fix
         # examples: missing state with profile and verbose
         star.state = "test_state"
         totest.CEE_parameters_from_core_abundance_thresholds(star,\
@@ -1742,7 +1796,11 @@ class TestFunctions:
                     assert np.isnan(getattr(star, attr))
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("m_core" in attr)):
+<<<<<<< HEAD
                     assert getattr(star, attr) == star.mass
+=======
+                    assert np.isnan(getattr(star, attr)) and np.isnan(star.mass)
+>>>>>>> eirini_CE_fix
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("r_core" in attr)):
                     assert getattr(star, attr) == 10 ** star.log_R

@@ -22,6 +22,7 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
@@ -37,21 +38,19 @@ from tqdm import tqdm
 import psutil
 import sys
 
-if 'posydon.binary_evol.binarystar' not in sys.modules.keys():
-    from posydon.binary_evol.binarystar import BinaryStar
+from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
 from posydon.binary_evol.simulationproperties import SimulationProperties
 
 from posydon.popsyn.star_formation_history import get_formation_times
 
-from posydon.popsyn.independent_sample import (generate_independent_samples,
-                                               binary_fraction_value)
+from posydon.popsyn.independent_sample import generate_independent_samples
 from posydon.popsyn.sample_from_file import (get_samples_from_file,
                                              get_kick_samples_from_file)
-from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
+
 from posydon.popsyn.defaults import default_kwargs
 
-from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.popsyn.io import binarypop_kwargs_from_ini, simprop_kwargs_from_ini
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import POSYDONError
 from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
@@ -74,6 +73,9 @@ saved_ini_parameters = ['metallicity',
                    'orbital_period_scheme',
                    'orbital_period_min',
                    'orbital_period_max',
+                   'orbital_separation_scheme',
+                   'orbital_separation_min',
+                   'orbital_separation_max',
                    'eccentricity_scheme']
 
 
@@ -100,7 +102,7 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
     'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_HMS_HMS_RLO',
-    'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged','step_low_mass_binary'
+    'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged','step_low_mass_binary','step_CE'
 ]
 
 
@@ -205,8 +207,13 @@ class BinaryPopulation:
         BinaryPopulation
             A new instance of a BinaryPopulation.
         """
-        kwargs = binarypop_kwargs_from_ini(path, verbose=verbose)
-        return cls(**kwargs)
+        pop_kwargs = binarypop_kwargs_from_ini(path, verbose=verbose)
+        # finally get the population properties
+        sim_prop_kwargs = simprop_kwargs_from_ini(path)
+        pop_kwargs['population_properties'] = SimulationProperties(
+            **sim_prop_kwargs)
+        
+        return cls(**pop_kwargs)
 
     def evolve(self, **kwargs):
         """Evolve a binary population.
@@ -216,11 +223,13 @@ class BinaryPopulation:
         indices : list, optional
             Custom binary indices to use. Default is range(number_of_binaries).
             If running with MPI, indices are split between processes if given.
-        breakdown_to_df : bool, True
+        breakdown_to_df : bool, False
             Breakdown a binary after evolution, converting to dataframe and
             removing the binary instance from memory.
         tqdm : bool, False
             Show tqdm progress bar during evolution.
+        optimize_ram : bool, False
+            If True, dump binary data during evolve to save RAM.
 
         Returns
         -------
@@ -229,7 +238,8 @@ class BinaryPopulation:
         # combine kw defined at init and any passed here
         kw = {**self.kwargs, **kwargs}
         tqdm_bool = kw.get('tqdm', False)
-        breakdown_to_df_bool = kw.get('breakdown_to_df', True)
+        breakdown_to_df_bool = kw.get('breakdown_to_df', False)
+        optimize_ram = kw.get('optimize_ram', False)
         from_hdf_bool = kw.get('from_hdf', False)
 
         if self.JOB_ID is None and self.comm is None:   # do regular evolution
@@ -238,8 +248,10 @@ class BinaryPopulation:
             params = {'indices':indices,
                       'tqdm':tqdm_bool,
                       'breakdown_to_df':breakdown_to_df_bool,
+                      'optimize_ram':optimize_ram,
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
+
             self._safe_evolve(**self.kwargs)
         else:
             # do local MPI or cluster job array evolution
@@ -252,10 +264,10 @@ class BinaryPopulation:
             params = {'indices':batch_indices,
                       'tqdm':mpi_tqdm_bool,
                       'breakdown_to_df':breakdown_to_df_bool,
+                      'optimize_ram':optimize_ram,
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
             self._safe_evolve(**self.kwargs)
-            
 
     def _safe_evolve(self, **kwargs):
         """Evolve binaries in a population, catching warnings/exceptions."""
@@ -277,10 +289,8 @@ class BinaryPopulation:
 
         indices_for_iter = (tqdm(indices) if kwargs.get('tqdm', False)
                             else indices)
-        breakdown_to_df = kwargs.get('breakdown_to_df', True)
+        breakdown_to_df = kwargs.get('breakdown_to_df', False)
         optimize_ram = kwargs.get("optimize_ram", True)
-        self.kwargs['optimize_ram'] = optimize_ram
-
         ram_per_cpu = kwargs.get("ram_per_cpu", None)
 
         if optimize_ram:
@@ -326,6 +336,7 @@ class BinaryPopulation:
                        
                 try:
                     binary.evolve()
+
                 except POSYDONError as posydon_error:
                     set_binary_to_failed(binary)
                     binary.traceback = traceback.format_exc()
@@ -360,7 +371,8 @@ class BinaryPopulation:
                 if not self.kwargs.get("warnings_verbose", False):
                     cpw.reset_cache()
 
-        
+
+            # remove binaries from manager.binaries and store data in DataFrames
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)
 
@@ -379,6 +391,7 @@ class BinaryPopulation:
                 self.manager.save(path, mode="w", **kw)
                 filenames.append(path)
 
+                # if optimize RAM, clear DataFrames or remove binaries
                 if(breakdown_to_df):
                     self.manager.clear_dfs()
                 else:
@@ -426,28 +439,30 @@ class BinaryPopulation:
             else:
                 self.manager.remove(self.manager.binaries.copy())
 
+        # save by either combining dump files if optimize_ram = True...
         if optimize_ram:
             # combining files
             if self.JOB_ID is None and self.comm is None:
                 self.combine_saved_files(os.path.join(temp_directory,
-                                                      "evolution.combined"),
+                                                      "evolution.combined.h5"),
                                          filenames, mode = "w")
             else:
                 self.combine_saved_files(
                     os.path.join(temp_directory,
-                                 f"evolution.combined.{self.rank}"),
+                                 f"evolution.combined.{self.rank}.h5"),
                     filenames, mode = "w")
 
-        else:
+        # ...or just save the population to a single file if breakdown_to_df is True
+        elif breakdown_to_df:
             if self.JOB_ID is None and self.comm is None:
                 self.manager.save(os.path.join(temp_directory,
-                                               "evolution.combined"),
+                                               "evolution.combined.h5"),
                                   mode='w',
                                   **kwargs)
             else:
                 self.manager.save(
                     os.path.join(temp_directory,
-                                 f"evolution.combined.{self.rank}"),
+                                 f"evolution.combined.{self.rank}.h5"),
                     mode='w', **kwargs)
 
     def save(self, save_path, **kwargs):
@@ -458,10 +473,10 @@ class BinaryPopulation:
 
         if self.JOB_ID is None and self.comm is None:
             if optimize_ram:
-                os.rename(os.path.join(temp_directory, "evolution.combined"),
+                os.rename(os.path.join(temp_directory, "evolution.combined.h5"),
                           save_path)
             else:
-                self.manager.save(save_path, mode=mode, **kwargs)
+                self.manager.save(save_path, **kwargs)
         else:
             absolute_filepath = os.path.abspath(save_path)
             dir_name = os.path.dirname(absolute_filepath)
@@ -482,7 +497,7 @@ class BinaryPopulation:
     def make_temp_fname(self):
         """Get a valid filename for the temporary file."""
         temp_directory = self.kwargs['temp_directory']
-        return os.path.join(temp_directory, f"evolution.combined.{self.rank}")
+        return os.path.join(temp_directory, f"evolution.combined.{self.rank}.h5")
         # return os.path.join(dir_name, '.tmp{}_'.format(rank) + file_name)
 
     def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
@@ -496,7 +511,6 @@ class BinaryPopulation:
             List of absolute paths to the temporary files.
 
         """
-        dir_name = os.path.dirname(absolute_filepath)
 
         history_cols = pd.read_hdf(file_names[0], key='history').columns
         oneline_cols = pd.read_hdf(file_names[0], key='oneline').columns
@@ -509,7 +523,7 @@ class BinaryPopulation:
         oneline_min_itemsize = {key: val for key, val in
                                 ONELINE_MIN_ITEMSIZE.items()
                                 if key in oneline_cols}
-        mode = kwargs.get('mode', 'a')
+        mode = kwargs.get('mode', 'w')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
         
@@ -524,18 +538,20 @@ class BinaryPopulation:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
                 try:
-                    store.append('history', pd.read_hdf(f, key='history'),
+                    history = pd.read_hdf(f, key='history')
+                    store.append('history', history,
                                  min_itemsize=history_min_itemsize)
                     
                     oneline = pd.read_hdf(f, key='oneline')
                     
                     # split weight between single and binary stars
-                    mask = oneline["state_i"] == "initially_single_star"
-                    filtered_data_single = oneline[mask]
-                    filtered_data_binaries = oneline[~mask]
+                    init_step_mask = ~history.index.duplicated(keep="first")  # indices that are NOT duplicates of the first
+                    singles_mask = history["state"] == "initially_single_star"
+                    filtered_data_single = history[init_step_mask & singles_mask]
+                    filtered_data_binaries = history[init_step_mask & ~singles_mask]
                     
-                    simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
-                    simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                    simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass", "S2_mass"]].to_numpy())
+                    simulated_mass_single += np.nansum(filtered_data_single[["S1_mass"]].to_numpy())
                     simulated_mass = simulated_mass_single + simulated_mass_binaries
                        
                     if 'metallicity' not in oneline.columns:
@@ -652,6 +668,7 @@ class PopulationManager:
         elif isinstance(binary, BinaryStar):
             self.binaries.remove(binary)
             self.indices.remove(binary.index)
+
         else:
             raise ValueError('Must be BinaryStar or list of BinaryStars')
 
@@ -667,27 +684,37 @@ class PopulationManager:
         remove the BinaryStar instance from self.
 
         """
+
+        kwargs = {**self.kwargs, **kwargs}
+
         try:
             history = binary.to_df(**kwargs)
             self.history_dfs.append(history)
             oneline = binary.to_oneline_df(**kwargs)
             self.oneline_dfs.append(oneline)
             self.remove(binary)
+
         except Exception as err:
             print("Error during breakdown of {0}:\n{1}".
                   format(str(binary), err))
 
     def to_df(self, selection_function=None, **kwargs):
         """Convert all binaries to dataframe."""
+
+        kwargs = {**self.kwargs, **kwargs}
+        
         if len(self.binaries) == 0 and len(self.history_dfs) == 0:
             return
+        
         is_callable = callable(selection_function)
         holder = []
+        
         if len(self.binaries) > 0:
             for binary in self.binaries:
                 if not is_callable or (is_callable
                                        and selection_function(binary)):
                     holder.append(binary.to_df(**kwargs))
+        
         elif len(self.history_dfs) > 0:
             holder.extend(self.history_dfs)
 
@@ -696,6 +723,9 @@ class PopulationManager:
 
     def to_oneline_df(self, selection_function=None, **kwargs):
         """Convert all binaries to oneline dataframe."""
+
+        kwargs = {**self.kwargs, **kwargs}
+
         if len(self.binaries) == 0 and len(self.oneline_dfs) == 0:
             return
         is_callable = callable(selection_function)
@@ -705,13 +735,14 @@ class PopulationManager:
                 if not is_callable or (is_callable
                                        and selection_function(binary)):
                     holder.append(binary.to_oneline_df(**kwargs))
+
         elif len(self.oneline_dfs) > 0:
             holder.extend(self.oneline_dfs)
 
         if len(holder) > 0:
             return pd.concat(holder, axis=0, ignore_index=False)
 
-    def find_failed(self,):
+    def find_failed(self):
         """Find any failed binaries in the population."""
         if len(self) > 0:
             return [b for b in self if b.event == 'FAILED']
@@ -825,17 +856,82 @@ class PopulationManager:
         -------
         None
         """
-        mode = kwargs.get('mode', 'a')
+        
+        kwargs = {**self.kwargs, **kwargs}
+
+        # needed for metadata
+        self.metallicity = self.binary_generator.Z_div_Zsun
+
+        mode = kwargs.get('mode', 'w')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
 
         with pd.HDFStore(fname, mode=mode, complevel=complevel, complib=complib) as store:
-            history_df = self.to_df(**kwargs)
-            store.append('history', history_df)
 
-            online_df = self.to_oneline_df(**kwargs)
-            store.append('oneline', online_df)
-        
+            simulated_mass = 0.0
+            simulated_mass_single = 0.0
+            simulated_mass_binaries = 0.0
+            number_of_systems=0
+
+            # read history and oneline
+            history_df = self.to_df(**kwargs)
+            oneline_df = self.to_oneline_df(**kwargs)
+
+            # get columns for saving
+            history_cols = history_df.columns
+            oneline_cols = oneline_df.columns
+
+            history_min_itemsize = {key: val for key, val in
+                                    HISTORY_MIN_ITEMSIZE.items()
+                                    if key in history_cols}
+            oneline_min_itemsize = {key: val for key, val in
+                                    ONELINE_MIN_ITEMSIZE.items()
+                                    if key in oneline_cols}
+
+            # store history
+            store.append('history', history_df,
+                         min_itemsize=history_min_itemsize)
+
+            try:
+
+                # split weight between single and binary stars
+                init_step_mask = ~history_df.index.duplicated(keep="first") # indices that are NOT duplicates of the first
+                singles_mask = history_df["state"] == "initially_single_star"
+                filtered_data_single = history_df[init_step_mask & singles_mask]
+                filtered_data_binaries = history_df[init_step_mask & ~singles_mask]
+
+                simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass", "S2_mass"]].to_numpy())
+                simulated_mass_single += np.nansum(filtered_data_single[["S1_mass"]].to_numpy())
+                simulated_mass = simulated_mass_single + simulated_mass_binaries
+
+                if 'metallicity' not in oneline_df.columns:
+                    met_df = pd.DataFrame(data={'metallicity': [self.metallicity] * len(oneline_df)}, index=oneline_df.index)
+                    oneline_df = pd.concat([oneline_df, met_df], axis=1)
+
+                number_of_systems += len(oneline_df)
+
+                # store oneline
+                store.append('oneline', oneline_df,
+                             min_itemsize=oneline_min_itemsize)
+
+            except Exception:
+                print(traceback.format_exc(), flush=True)
+
+            # store population metadata
+            tmp_df = pd.DataFrame()
+            for c in saved_ini_parameters:
+                tmp_df[c] = [self.kwargs[c]]
+            store.append('ini_parameters', tmp_df)
+            
+            tmp_df = pd.DataFrame(
+                index=[self.metallicity],
+                data={'simulated_mass': simulated_mass,
+                      'simulated_mass_single': simulated_mass_single,
+                      'simulated_mass_binaries': simulated_mass_binaries,
+                      'number_of_systems': number_of_systems})
+            tmp_df.index.name = 'metallicity'
+            store.append('mass_per_metallicity', tmp_df)
+
         return
 
 
@@ -874,7 +970,7 @@ class BinaryGenerator:
         self.kwargs = kwargs.copy()
         self.sampler = sampler
         self.star_formation = kwargs.get('star_formation', 'burst')
-        self.binary_fraction_generator =  binary_fraction_value
+        self.Z_div_Zsun = kwargs.get('metallicity', 1.)
 
     def reset_rng(self):
         """Reset the RNG with the stored entropy."""
@@ -899,7 +995,7 @@ class BinaryGenerator:
         return binary
 
     def draw_initial_samples(self, orbital_scheme='separation', **kwargs):
-        """Generate all random varibles."""
+        """Generate all random variables."""
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
         # a, e, M_1, M_2, M_0, P 
@@ -933,11 +1029,14 @@ class BinaryGenerator:
                 number_of_binaries = 1
             kick1 = np.array(number_of_binaries*[[None, None, None, None]])
             kick2 = np.array(number_of_binaries*[[None, None, None, None]])
-        
+
+        # Checking m2 to see if the system is a binary or initially single
+        is_binary = ~np.isnan(m2)
+
         # output
         output_dict = {
             'binary_index': indices,
-            'binary_fraction': binary_fraction,
+            'is_binary': is_binary,
             'time': formation_times,
             'separation': separation,
             'eccentricity': eccentricity,
@@ -970,93 +1069,21 @@ class BinaryGenerator:
         output = self.draw_initial_samples(**sampler_kwargs)
 
         default_index = output['binary_index'].item()
-        binary_fraction = output['binary_fraction']
+
+        is_binary = output['is_binary'].item()
 
         formation_time = output['time'].item()
         m1 = output['S1_mass'].item()
-        Z_div_Zsun = kwargs.get('metallicity', 1.)
-        zams_table = {2.: 2.915e-01,
-                      1.: 2.703e-01,
-                      0.45: 2.586e-01,
-                      0.2: 2.533e-01,
-                      0.1: 2.511e-01,
-                      0.01: 2.492e-01,
-                      0.001: 2.49e-01,
-                      0.0001: 2.49e-01}
-        Z = Z_div_Zsun*Zsun
-        if Z_div_Zsun in zams_table.keys():
-            Y = zams_table[Z_div_Zsun]
-        else:
-            raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
-        X = 1. - Z - Y
         kick1 = output['S1_natal_kick_array'][0]
+        
+        star1_params = dict(
+                mass=m1,
+                state="H-rich_Core_H_burning",
+                metallicity=kwargs.get('metallicity', 1.0),
+                natal_kick_array=kick1,
+            )
 
-        if (('read_samples_from_file' in kwargs) and (kwargs['read_samples_from_file'] != '')):
-            m2 = output['S2_mass'].item()
-            if m2 == 0:
-                separation = np.nan
-                orbital_period = np.nan
-                eccentricity = np.nan
-
-                binary_params = dict(
-                    index=kwargs.get('index', default_index),
-                    time=formation_time,
-                    state="initially_single_star",
-                    event="ZAMS",
-                    separation=separation,
-                    orbital_period=orbital_period,
-                    eccentricity=eccentricity,
-                    history_verbose=self.kwargs.get("history_verbose", False)
-                )
-                star1_params = dict(
-                    mass = m1,
-                    state="H-rich_Core_H_burning",
-                    metallicity=Z,
-                    center_h1=X,
-                    center_he4=Y,
-                    natal_kick_array=kick1,
-                )
-                star2_params = properties_massless_remnant()
-            else:
-                separation = output['separation'].item()
-                orbital_period = output['orbital_period'].item()
-                eccentricity = output['eccentricity'].item()
-                kick2 = output['S2_natal_kick_array'][0]
-
-                binary_params = dict(
-                    index=kwargs.get('index', default_index),
-                    time=formation_time,
-                    state="detached",
-                    event="ZAMS",
-                    separation=separation,
-                    orbital_period=orbital_period,
-                    eccentricity=eccentricity,
-                    history_verbose=self.kwargs.get("history_verbose", False)
-                )
-                star1_params = dict(
-                    mass=m1,
-                    state="H-rich_Core_H_burning",
-                    metallicity=Z,
-                    center_h1=X,
-                    center_he4=Y,
-                    natal_kick_array=kick1,
-                )
-                star2_params = dict(
-                    mass=m2,
-                    state="H-rich_Core_H_burning",
-                    metallicity=Z,
-                    center_h1=X,
-                    center_he4=Y,
-                    natal_kick_array=kick2,
-                )
-                if m1 < 4.0: 
-                    binary_params['state'] = 'low_mass_binary'
-            binary = BinaryStar(**binary_params,
-                            star_1=SingleStar(**star1_params),
-                            star_2=SingleStar(**star2_params))
-            return binary
-
-        if self.RNG.uniform() < binary_fraction:
+        if is_binary:
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
             eccentricity = output['eccentricity'].item()
@@ -1073,22 +1100,14 @@ class BinaryGenerator:
                 eccentricity=eccentricity,
                 history_verbose=self.kwargs.get("history_verbose", False)
             )
-            star1_params = dict(
-                mass=m1,
-                state="H-rich_Core_H_burning",
-                metallicity=Z,
-                center_h1=X,
-                center_he4=Y,
-                natal_kick_array=kick1,
-            )
+
             star2_params = dict(
                 mass=m2,
                 state="H-rich_Core_H_burning",
-                metallicity=Z,
-                center_h1=X,
-                center_he4=Y,
+                metallicity=kwargs.get('metallicity', 1.0),
                 natal_kick_array=kick2,
             )
+            #Detached low mass binaries 
             if m1 < 4.0: 
                 binary_params['state'] = 'low_mass_binary'
         #If binary_fraction not default a initially single star binary is created.
@@ -1106,14 +1125,6 @@ class BinaryGenerator:
                 orbital_period=orbital_period,
                 eccentricity=eccentricity,
                 history_verbose=self.kwargs.get("history_verbose", False)
-            )
-            star1_params = dict(
-                mass = m1,
-                state="H-rich_Core_H_burning",
-                metallicity=Z,
-                center_h1=X,
-                center_he4=Y,
-                natal_kick_array=kick1,
             )
             star2_params = properties_massless_remnant()
 

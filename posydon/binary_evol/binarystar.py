@@ -23,7 +23,8 @@ __authors__ = [
     "Philipp Moura Srivastava <philipp.msrivastava@gmail.com>",
     "Devina Misra <devina.misra@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
+    "Seth Gossage <seth.gossage@northwestern.edu>",
+    "Max Briel <max.briel@gmail.com>"
 ]
 
 
@@ -143,8 +144,20 @@ class BinaryStar:
         self.index = index
 
         # Create the two stars
-        self.star_1 = star_1 if star_1 is not None else SingleStar()
-        self.star_2 = star_2 if star_2 is not None else SingleStar()
+        if star_1 is not None:
+            self.star_1 = copy.deepcopy(star_1)
+        else:
+            self.star_1 = SingleStar()
+
+        if star_2 is not None:
+            self.star_2 = copy.deepcopy(star_2)
+        else:
+            self.star_2 = SingleStar()
+
+        # Stars now exist
+        self.companion_1_exists = True
+        self.companion_2_exists = True
+        self.non_existent_companion = 0
 
         # Set the initial binary properties
         for item in BINARYPROPERTIES:
@@ -158,20 +171,27 @@ class BinaryStar:
                 setattr(self, item, binary_kwargs.pop(item, [0.0,
                                                              0.0,
                                                              0.0]))
+            elif item == 'eccentricity':
+                setattr(self, item, binary_kwargs.pop(item, 0.0))
             else:
                 setattr(self, item, binary_kwargs.pop(item, None))
+
             setattr(self, item + '_history', [getattr(self, item)])
 
         for key, val in binary_kwargs.items():
             setattr(self, key, val)
+            setattr(self, key + '_history', [val])
 
-        if getattr(self.star_1, "mass") is not None and getattr(self.star_2, "mass") is not None:
-            if getattr(self, "separation") is None and getattr(self, "orbital_period") is not None:
+        if pd.notna(getattr(self.star_1, "mass")) and pd.notna(getattr(self.star_2, "mass")):
+            if pd.isna(getattr(self, "separation")) and pd.notna(getattr(self, "orbital_period")):
                 setattr(self, "separation", 
                         orbital_separation_from_period(self.orbital_period, self.star_1.mass, self.star_2.mass))
-            elif getattr(self, "orbital_period") is None and getattr(self, "separation") is not None:
+                setattr(self, "separation_history", [getattr(self, "separation")])
+
+            elif pd.isna(getattr(self, "orbital_period")) and pd.notna(getattr(self, "separation")):
                 setattr(self, "orbital_period", 
                         orbital_period_from_separation(self.separation, self.star_1.mass, self.star_2.mass))
+                setattr(self, "orbital_period_history", [getattr(self, "orbital_period")])
 
         if not hasattr(self, 'inspiral_time'):
             self.inspiral_time = None
@@ -217,34 +237,36 @@ class BinaryStar:
 
         max_n_steps = self.properties.max_n_steps_per_binary
         n_steps = 0
-    
-        while (self.event != 'END' and self.event != 'FAILED'
+
+        try:
+            while (self.event != 'END' and self.event != 'FAILED'
                 and self.event not in self.properties.end_events
                 and self.state not in self.properties.end_states):
-            
-            signal.alarm(MAXIMUM_STEP_TIME)
-            self.run_step()
 
-            n_steps += 1
-            if max_n_steps is not None:
-                if n_steps > max_n_steps:
-                    raise RuntimeError("Exceeded maximum number of steps ({})".format(max_n_steps))
-        
-        signal.alarm(0)     # turning off alarm
+                signal.alarm(MAXIMUM_STEP_TIME)
+                self.run_step()
+
+                n_steps += 1
+                if max_n_steps is not None:
+                    if n_steps > max_n_steps:
+                        raise RuntimeError("Exceeded maximum number of steps ({})".format(max_n_steps))
+                    
+        finally:
+            signal.alarm(0)     # turning off alarm
+            
         self.properties.post_evolve(self)
 
     def run_step(self):
         """Evolve the binary through one evolutionary step."""
-        
-        total_state = (self.star_1.state, self.star_2.state, self.state, self.event)
+        total_state = self.get_total_state()
         if total_state in UNDEFINED_STATES:
             raise FlowError(f"Binary failed with a known undefined state in the flow:\n{total_state}")
 
-        next_step_name = self.properties.flow.get(total_state)
+        next_step_name = self.get_next_step_name()
         if next_step_name is None:
             raise ValueError("Undefined next step given stars/binary states {}.".format(total_state))
-        
-        next_step = getattr(self.properties, next_step_name, None)
+
+        next_step = self.get_next_step()
         if next_step is None:
             raise ValueError("Next step name '{}' does not correspond to a function in "
                              "SimulationProperties.".format(next_step_name))
@@ -254,6 +276,18 @@ class BinaryStar:
         
         self.append_state()
         self.properties.post_step(self, next_step_name)
+    
+    def get_total_state(self):
+        """Return the total state of the binary (star1.state, star2.state, binary.state, binary.event)."""
+        return (self.star_1.state, self.star_2.state, self.state, self.event)
+    
+    def get_next_step_name(self):
+        """Return the name of the next step based on the current total state."""
+        return self.properties.flow.get(self.get_total_state())
+    
+    def get_next_step(self):
+        """Get the next step class object based on the current total state."""
+        return getattr(self.properties, self.get_next_step_name(), None)
 
     def append_state(self):
         """Update the history of the binaries' properties."""
@@ -274,6 +308,43 @@ class BinaryStar:
     def switch_star(self):
         """Switch stars."""
         self.star_1, self.star_2 = self.star_2, self.star_1
+
+    def check_who_exists(self):
+        """
+            Check and store which binary components exist (are not 
+        massless remnants). This sets additional class attributes 
+
+            self.non_existent_companion with the following values:
+               -1 if neither star exists
+                0 if both stars exist
+                1 if Star 2 exists, Star 1 is a massless remnant
+                2 if Star 1 exists, Star 2 is a massless remnant
+        
+        and
+
+            self.companion_1_exists = True if Star 1 exists (is not 
+                                      None or a massless remnant)
+
+            self.companion_2_exists = True if Star 2 exists (is not 
+                                      None or a massless remnant)
+
+        """
+            
+        self.companion_1_exists = (self.star_1 is not None
+                            and self.star_1.state != "massless_remnant")
+        self.companion_2_exists = (self.star_2 is not None
+                            and self.star_2.state != "massless_remnant")
+
+        if self.companion_1_exists:
+            if self.companion_2_exists:             # both stars exist
+                self.non_existent_companion = 0
+            else:                                   # only star 1 exists
+                self.non_existent_companion = 2
+        else:
+            if self.companion_2_exists:             # only star 2 exists
+                self.non_existent_companion = 1
+            else:
+                self.non_existent_companion = -1    # no stars exist
 
     def restore(self, i=0):
         """Restore the BinaryStar() object to its i-th state, keeping the binary history before the i-th state.
@@ -364,10 +435,61 @@ class BinaryStar:
         pandas DataFrame
 
         """
+
+        def equalize_columns(data_to_save, all_keys, properties_dtypes,
+                             max_col_length):
+            """Iterate through data_to_save to append null values.
+            
+            Parameters
+            -----------
+            data_to_save : list[str]
+                Columns to save to the final dataframe
+            all_keys : list[str]
+                All available keys to store.
+           properties_dtypes : dict
+               Types of all available keys
+           max_col_length: int
+               The maximum length of columns.  
+            """
+            for i, col in enumerate(data_to_save):
+
+                dkey = all_keys[i]
+                dtype = properties_dtypes.get(dkey, '')
+
+                # check type of data and determine what to fill data column with
+                if dtype == 'string':
+                    filler_value = ''
+                elif dtype == 'float64':
+                    filler_value = np.nan
+                # array-like data
+                elif dtype == 'object':
+                    # get the max length that data elements have
+                    ele_lengths = [len(x) for x in col]
+                    max_ele_length = np.max(ele_lengths)
+                    sub_dtype = OBJECT_FIXED_SUB_DTYPES.get(dkey, '')
+
+                    # array of strings
+                    if sub_dtype == 'string':
+                        filler_value = np.array([''] * max_ele_length)
+                    # array of float64's
+                    elif sub_dtype == 'float64':
+                        filler_value = np.array([np.nan] * max_ele_length)
+                    # default to array of NoneTypes
+                    else:
+                        filler_value = np.array([None] * max_ele_length)
+                        
+                # defaulting to NoneType value (gets converted to np.nan below)
+                else:
+                    filler_value = None
+
+                # extend data column with determined filler values
+                col.extend([filler_value] * abs(max_col_length - len(col)))
+
+
         extra_binary_cols_dict = kwargs.get('extra_columns', {})
         extra_columns = list(extra_binary_cols_dict.keys())
 
-        # dictionary mapping binary properties (plus extras) to their dtypes
+        # Dictionary mapping binary properties (plus extras) to their dtypes
         properties_dtypes = {**BINARYPROPERTIES_DTYPES, **extra_binary_cols_dict}
 
         all_keys = (["binary_index"]
@@ -384,7 +506,6 @@ class BinaryStar:
                             + [key+'_history' for key in user_keys_to_save]
                             + extra_columns)
 
-
         try:
             data_to_save = [getattr(self, key) for key in keys_to_save[1:]]
             col_lengths = [len(x) for x in data_to_save]
@@ -395,42 +516,9 @@ class BinaryStar:
 
             # If a binary fails, usually history cols have diff lengths.
             # This should append NAN to create even columns.
-            all_equal_length_cols = len(set(col_lengths)) == 1
-
-            if not all_equal_length_cols:
-                for i, col in enumerate(data_to_save):
-
-                    dkey = all_keys[i]
-                    dtype = properties_dtypes.get(dkey, '')
-
-                    # check type of data and determine what to fill data column with
-                    if dtype == 'string':
-                        filler_value = ''
-                    elif dtype == 'float64':
-                        filler_value = np.nan
-                    # array-like data
-                    elif dtype == 'object':
-                        # get the max length that data elements have
-                        ele_lengths = [len(x) for x in col]
-                        max_ele_length = np.max(ele_lengths)
-                        sub_dtype = OBJECT_FIXED_SUB_DTYPES.get(dkey, '')
-
-                        # array of strings
-                        if sub_dtype == 'string':
-                            filler_value = np.array([''] * max_ele_length)
-                        # array of float64's
-                        elif sub_dtype == 'float64':
-                            filler_value = np.array([np.nan] * max_ele_length)
-                        # default to array of NoneTypes
-                        else:
-                            filler_value = np.array([None] * max_ele_length)
-                            
-                    # defaulting to NoneType value (gets converted to np.nan below)
-                    else:
-                        filler_value = None
-
-                    # extend data column with determined filler values
-                    col.extend([filler_value] * abs(max_col_length - len(col)))
+            if len(set(col_lengths)) != 1:
+                equalize_columns(data_to_save, all_keys, properties_dtypes, 
+                                 max_col_length)
 
             where_none = np.array([[True if var is None else False
                                     for var in column]
@@ -467,6 +555,23 @@ class BinaryStar:
 
             # Lose the V_sys list
             bin_df = bin_df.drop(['V_sys'], axis=1)
+
+        # Add 3 columns for nearest_neighbour_distance
+        if 'nearest_neighbour_distance' in column_names:
+            NN_dist_x = np.zeros(len(bin_df))
+            NN_dist_y = np.zeros(len(bin_df))
+            NN_dist_z = np.zeros(len(bin_df))
+            for i in range(len(bin_df)):
+                NN_dist_x[i] = bin_df.iloc[i]['nearest_neighbour_distance'][0]
+                NN_dist_y[i] = bin_df.iloc[i]['nearest_neighbour_distance'][1]
+                NN_dist_z[i] = bin_df.iloc[i]['nearest_neighbour_distance'][2]
+
+            bin_df['NN_dist_x'] = copy.deepcopy(NN_dist_x)
+            bin_df['NN_dist_y'] = copy.deepcopy(NN_dist_y)
+            bin_df['NN_dist_z'] = copy.deepcopy(NN_dist_z)
+
+            # Lose the nearest_neighbour_distance list
+            bin_df = bin_df.drop(['nearest_neighbour_distance'], axis=1)
 
         frames = [bin_df]
         if kwargs.get('include_S1', True):
@@ -557,8 +662,8 @@ class BinaryStar:
         # set some orbital parameters that should exist by hand
         bp_keys = binary_params.keys()
         if 'eccentricity_history' not in bp_keys:
-            setattr(binary, 'eccentricity_history', [0]*history_length)
-            setattr(binary, 'eccentricity', 0)
+            setattr(binary, 'eccentricity_history', [0.0]*history_length)
+            setattr(binary, 'eccentricity', 0.0)
         if ('separation_history' not in bp_keys
                 and 'orbital_period_history' in bp_keys):
             separation = orbital_separation_from_period(
@@ -615,8 +720,6 @@ class BinaryStar:
         """Convert binary into a single row DataFrame."""
         if history:
             bin_kwargs = kwargs.copy()
-            bin_kwargs['include_S1'] = False
-            bin_kwargs['include_S2'] = False
             output_df = self.to_df(**bin_kwargs)
             initial_final_data = output_df.values[[0, -1], :]  # first/last row
             col_names = list(output_df.columns)
@@ -674,6 +777,9 @@ class BinaryStar:
                                             extra_binary_dtypes_user=extra_binary_cols_dict,
                                             extra_S1_dtypes_user=extra_s1_cols_dict,
                                             extra_S2_dtypes_user=extra_s2_cols_dict)
+        
+        # remove any columns duplicated from user keys/full star properties
+        oneline_df = oneline_df.loc[:,~oneline_df.columns.duplicated()].copy()
 
         return oneline_df
 
@@ -775,8 +881,8 @@ class BinaryStar:
         # set some orbital parameters that should exist by hand
         bp_keys = binary_params.keys()
         if 'eccentricity_history' not in bp_keys:
-            setattr(binary, 'eccentricity_history', [0])
-            setattr(binary, 'eccentricity', 0)
+            setattr(binary, 'eccentricity_history', [0.0])
+            setattr(binary, 'eccentricity', 0.0)
         if ('separation_history' not in bp_keys
                 and 'orbital_period_history' in bp_keys):
             separation = orbital_separation_from_period(

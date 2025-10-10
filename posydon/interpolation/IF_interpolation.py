@@ -1004,7 +1004,6 @@ class BaseIFInterpolator:
 
         return in_scaling, (out_scaling, cout_scaling)
 
-
     def _fillNans(self, ic):
         """Fill nan values i numerical magnitudes with 1NN."""
         for i in range(self.n_out):
@@ -1235,6 +1234,7 @@ class MC_Interpolator:
             for j in range(len(self.classes[i])):
                 which += z == self.classes[i][j]
             self.interpolators[i].train(XT[which, :], YT[which, :])
+
     def classifier(self, Xt):
 
         return self.classifier.predict(Xt)

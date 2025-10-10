@@ -333,7 +333,11 @@ class TestFunctions:
         return path
 
     @fixture
+<<<<<<< HEAD
     def out_path_C_depletion(self, tmp_path):
+=======
+    def out_path_C_depleted(self, tmp_path):
+>>>>>>> eirini_CE_fix
         # a temporary path of out file for testing
         # it contains 5 header lines and the statement of carbon depletion
         path = os.path.join(tmp_path, "out5.txt")
@@ -344,7 +348,11 @@ class TestFunctions:
         return path
 
     @fixture
+<<<<<<< HEAD
     def out_path_CE_C_depletion(self, tmp_path):
+=======
+    def out_path_CE_C_depleted(self, tmp_path):
+>>>>>>> eirini_CE_fix
         # a temporary path of out file for testing
         # it contains 5 header lines and the statement of entering CE and
         # carbon depletion
@@ -610,8 +618,13 @@ class TestFunctions:
                                      out_gz_path, out_path_CE,\
                                      out_path_strong_RLO,\
                                      out_path_CE_strong_RLO,\
+<<<<<<< HEAD
                                      out_path_C_depletion,\
                                      out_path_CE_C_depletion):
+=======
+                                     out_path_C_depleted,\
+                                     out_path_CE_C_depleted):
+>>>>>>> eirini_CE_fix
         # missing argument
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'output_file'"):
@@ -684,7 +697,11 @@ class TestFunctions:
                pd.DataFrame({'CE_flag': [1], 'result': ["CE_merger"],\
                              'Test': ["-"]}))
         # check carbon depletion: stable_MT_to_merger
+<<<<<<< HEAD
         out_table = totest.convert_output_to_table(out_path_C_depletion,\
+=======
+        out_table = totest.convert_output_to_table(out_path_C_depleted,\
+>>>>>>> eirini_CE_fix
                                                    binary_history_file=\
                                                    BH_path_tight_orbit,\
                                                    star1_history_file=H1_path,\
@@ -709,7 +726,11 @@ class TestFunctions:
                MESA_BH_data_tight_orbit['period_days'][-1]
         assert 'tmerge(Gyr)' in out_table.columns
         # check carbon depletion: no_interaction
+<<<<<<< HEAD
         out_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+=======
+        out_table = totest.convert_output_to_table(out_path_CE_C_depleted,\
+>>>>>>> eirini_CE_fix
                                                    column_names=["Test"])
         assert out_table.at[0, 'CE_flag'] == 1
         assert out_table.at[0, 'result'] == "no_interaction"
@@ -724,7 +745,11 @@ class TestFunctions:
         assert 'Porb_f(d)' not in out_table.columns
         assert 'tmerge(Gyr)' not in out_table.columns
         # check carbon depletion: CE_ejection_m
+<<<<<<< HEAD
         out_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+=======
+        out_table = totest.convert_output_to_table(out_path_CE_C_depleted,\
+>>>>>>> eirini_CE_fix
                                                    binary_history_file=\
                                                    BH_path_tight_orbit,\
                                                    column_names=["Test"])
@@ -739,7 +764,11 @@ class TestFunctions:
                MESA_BH_data_tight_orbit['period_days'][-1]
         assert 'tmerge(Gyr)' in out_table.columns
         # check carbon depletion: stable_MT_to_wide_binary
+<<<<<<< HEAD
         out_table = totest.convert_output_to_table(out_path_C_depletion,\
+=======
+        out_table = totest.convert_output_to_table(out_path_C_depleted,\
+>>>>>>> eirini_CE_fix
                                                    binary_history_file=\
                                                    BH_path_wide_orbit,\
                                                    column_names=["Test"])
@@ -754,7 +783,11 @@ class TestFunctions:
                MESA_BH_data_wide_orbit['period_days'][-1]
         assert 'tmerge(Gyr)' in out_table.columns
         # check carbon depletion: CE_ejection
+<<<<<<< HEAD
         out_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+=======
+        out_table = totest.convert_output_to_table(out_path_CE_C_depleted,\
+>>>>>>> eirini_CE_fix
                                                    binary_history_file=\
                                                    BH_path_wide_orbit,\
                                                    column_names=["Test"])
