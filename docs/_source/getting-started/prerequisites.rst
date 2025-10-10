@@ -32,7 +32,7 @@ Software Dependencies
 Hardware Requirements
 ~~~~~~~~~~~~~~~~~~~~~
 
-**Storage**: 
+**Storage**:
 
 <<<<<<< HEAD
 In order to run a population synthesis model with POSYDON, you must ensure that you have approximately **40GB** of free storage space. This is crucial for downloading the lite MESA simulation library, interpolation objects, and other auxiliary files used by the code.
@@ -74,4 +74,3 @@ Final Notes
 Ensure all the above prerequisites are met before initiating the setup for POSYDON to ensure a seamless and hassle-free experience.
 
 If you encounter any issues, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or :ref:`contact us <contact_info>`.
-

@@ -1,29 +1,18 @@
 .. _installation-guide:
 
 Installation Guide
-<<<<<<< HEAD
-------------------
-
-This guide will help you step by step in installing POSYDON. We recommend using Anaconda, a package manager, to manage the installation and dependencies, ensuring a smooth setup process.
-=======
 ******************
 
 This guide will help you install POSYDON step-by-step. We recommend using Anaconda, a package manager, to manage the installation and dependencies, ensuring a smooth setup process.
->>>>>>> eirini_CE_fix
 
 .. contents:: Table of Contents
    :local:
 
-<<<<<<< HEAD
-Using Anaconda (Recommended)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-=======
 Installing POSYDON
 ==================
 
 Anaconda (Recommended)
 ----------------------
->>>>>>> eirini_CE_fix
 
 1. **Install Anaconda**
 
@@ -51,23 +40,22 @@ Anaconda (Recommended)
 
 3. **Install POSYDON**
 
-<<<<<<< HEAD
-    .. warning::
-        This documentation describes the POSYDON v2.0.0 code which is not yet available on Anaconda. Please use the development version for now. See :ref:`Using the Development Version <dev-version>` for more details.
-
-=======
->>>>>>> eirini_CE_fix
     With the environment activated, install the POSYDON code from the POSYDON channel using (by default the installation will take place in the current directory, hence please navigate to your desired location first or use the ``-p`` option to specify a path):
 
     .. code-block:: bash
 
         conda install -c posydon posydon
 
+<<<<<<< HEAD
     .. note:: 
 <<<<<<< HEAD
         Please remember the current path (get it via :code:`pwd`) or the one you specified for the next step.
 =======
         In the next step you will need to know where this package was installed. You can find it by running the following 
+=======
+    .. note::
+        In the next step you will need to know where this package was installed. You can find it by running the following
+>>>>>>> 3f7abf318aa4134dc64cf9a8e267fc2640b1d128
         commands in Python:
 
         .. code-block:: python
@@ -75,6 +63,10 @@ Anaconda (Recommended)
             import posydon
             print(posydon.__file__)
 >>>>>>> eirini_CE_fix
+
+        Use the parent directory of ``/posydon/__init__.py`` as the value for the environment variable
+        :code:`PATH_TO_POSYDON` in the next step, e.g. ``/Users/Documents/POSYDON/conda/site-packages/posydon/__init__.py``
+        becomes ``/Users/Documents/POSYDON/conda/site-packages``.
 
 .. _posydon-env:
 
@@ -105,12 +97,12 @@ Anaconda (Recommended)
 
     The path for the data location is up to you, but keeping the data separate from the code is recommended for organization.
 
-    .. note:: 
-        So that your new `conda` environment is loaded whenever you open a new terminal, you can add the following line to 
+    .. note::
+        So that your new `conda` environment is loaded whenever you open a new terminal, you can add the following line to
         your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent:
-        
+
         .. code-block:: bash
-            
+
             conda activate posydon_env
 
 5. **Download the Dataset**
@@ -118,8 +110,8 @@ Anaconda (Recommended)
     You can use POSYDON's built-in API command (the downloaded data will be downloaded to the directory specified by :code:`PATH_TO_POSYDON_DATA`):
 
     .. warning::
-        Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for 
-        all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each 
+        Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for
+        all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each
         metallicity requires about 10 GB of disk space. In total, the DR2  dataset requires 103 GB of disk space.
 >>>>>>> eirini_CE_fix
 
@@ -167,7 +159,7 @@ For users interested in the latest features and developments, you can install PO
 =======
     In your terminal or command prompt execute one of the following command to clone the repo with the ``https`` protocol:
 
-    .. warning:: 
+    .. warning::
         By default, the repository will be placed in the current directory, so navigate to your desired location before proceeding.
 >>>>>>> eirini_CE_fix
 
@@ -323,8 +315,8 @@ Installing Jupyter for Tutorials
 =======
 3. **Set Environment Variables**
 
-    Next, export the required paths as environment variables. From the ``POSYDON`` directory that you just performed the installation in, 
-    you can execute ``pwd`` if you are unsure of the path name. Please change the location names accordingly below to your installation 
+    Next, export the required paths as environment variables. From the ``POSYDON`` directory that you just performed the installation in,
+    you can execute ``pwd`` if you are unsure of the path name. Please change the location names accordingly below to your installation
     path:
 
     .. code-block:: bash
@@ -332,10 +324,10 @@ Installing Jupyter for Tutorials
         export PATH_TO_POSYDON=/path/to/your/posydon/installation
         export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
-    The path for the data location is up to you, but keeping the data separate 
+    The path for the data location is up to you, but keeping the data separate
     from the code is recommended for organization.
 
-    .. note:: 
+    .. note::
         You can add these lines to your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
 
 4. **Download the Dataset**
@@ -343,8 +335,8 @@ Installing Jupyter for Tutorials
     You can use POSYDON's built-in API command (the downloaded data will be downloaded to the directory specified by :code:`PATH_TO_POSYDON_DATA`):
 
     .. warning::
-        Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for 
-        all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each 
+        Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for
+        all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each
         metallicity requires about 10 GB of disk space. In total, the DR2  dataset requires 103 GB of disk space.
 
     .. code-block:: bash
@@ -426,6 +418,14 @@ Our tutorials are provided as Jupyter notebooks. If you want to run these notebo
     .. note::
         Remember to navigate to the directory containing the Jupyter notebooks or you won't see them listed in the Jupyter interface.
 
+.. note::
+    You might need to install a iPython kernel for the conda environment you are using.
+    You can do this by running inside your conda environment:
+
+    .. code-block:: bash
+
+        conda install -c conda-forge ipykernel
+        python -m ipykernel install --name=posydon_env
 
 <<<<<<< HEAD
 Additional Notes
@@ -437,7 +437,8 @@ Additional Notes
 
 =======
 
-Installing additional dependencies (Optional) 
+
+Installing additional dependencies (Optional)
 =============================================
 
 For some specific functionalities, you may need to install additional dependencies.
@@ -463,8 +464,8 @@ You do not need to have ``mpi4py`` installed if you are only running population 
 
 
 .. warning::
-    Users have reported issues when trying to install ``mpi4py`` via pip. If you encounter any issues, try installing ``mpi4py`` through 
-    Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from 
+    Users have reported issues when trying to install ``mpi4py`` via pip. If you encounter any issues, try installing ``mpi4py`` through
+    Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from
     the community or developers, see the :ref:`contact us <contact_info>` page.
 
 
@@ -482,7 +483,7 @@ If you're interested in building the POSYDON documentation locally:
         pip install ".[doc]"
 
     .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install ``pandoc`` separately through brew with 
+        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install ``pandoc`` separately through brew with
         ``brew install pandoc``.
 
 2. **Compile the Documentation**:
@@ -512,7 +513,7 @@ If you're interested in building the POSYDON documentation locally:
 Machine Learning Dependencies
 ---------------------------------------
 
-For users who wish to utilize POSYDON's latest machine learning features. 
+For users who wish to utilize POSYDON's latest machine learning features.
 This is specifically used in the active learning module and profile interpolation.
 You do not require these dependencies if you are using the provided Initial-Final interpolators.
 
@@ -533,7 +534,7 @@ To install these experimental visualization libraries
 1. **Navigate to your POSYDON directory** (where the `setup.py` is located) and run:
 
     .. code-block:: bash
-   
+
         pip install ".[vis]"
 
     After installing these libraries, you can access various visualization tools and features integrated within POSYDON. Ensure to consult the documentation or any guides associated with these features for their optimal usage.

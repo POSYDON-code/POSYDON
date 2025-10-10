@@ -31,7 +31,7 @@ __authors__ = [
     "Monica Gallegos-Garcia <monicagallegosgarcia@u.northwestern.edu>",
     "Camille Liotine <cliotine@u.northwestern.edu>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"   
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
@@ -54,7 +54,7 @@ class POSYDONWarning(Warning):
     """General POSYDON warning class."""
     def __init__(self, message=''):
         self.message = message
-    
+
     def __str__(self):
         return repr(self.message)
 
@@ -78,7 +78,7 @@ class EvolutionWarning(POSYDONWarning):
     the evolution is able to continue (binary did not fail)."""
     def __init__(self, message=''):
         super().__init__(message)
-        
+
 class InappropriateValueWarning(POSYDONWarning):
     """Warnings that a strange value is used."""
     def __init__(self, message=''):
@@ -113,12 +113,17 @@ class UnsupportedModelWarning(POSYDONWarning):
     """Warnings related to selecting a model that is not supported."""
     def __init__(self, message=''):
         super().__init__(message)
-        
+
 class SFHModelWarning(POSYDONWarning):
     """Warnings related to the SFH model."""
     def __init__(self, message=''):
         super().__init__(message)
-        
+
+class DeprecationWarning(POSYDONWarning):
+    """Warnings related to deprecated features."""
+    def __init__(self, message=''):
+        super().__init__(message)
+
 class ValueWarning(POSYDONWarning):
     """Warnings related to a ValueError."""
     def __init__(self, message=''):
@@ -128,7 +133,7 @@ class InitializationWarning(POSYDONWarning):
     """Warnings related to intializing things."""
     def __init__(self, message=''):
         super().__init__(message)
-        
+
 class StepWarning(POSYDONWarning):
     """Warnings related to an evolution step."""
     def __init__(self, message=''):
@@ -331,7 +336,7 @@ class _Caught_POSYDON_Warnings:
             raise TypeError("filter_first must be a boolean.")
         if not isinstance(self.registry, dict):
             raise TypeError("registry must be a dictionary.")
-    
+
     def __str__(self):
         """Return the status of the object as a string."""
         if self.catch_warnings:
@@ -432,7 +437,7 @@ class _Caught_POSYDON_Warnings:
                 # Issue warning
                 new_warning["stacklevel"] += 2
                 _issue_warn(new_warning, self.registry)
-    
+
     def __del__(self):
         """Destructor of the object. It will issue still recorded warnings."""
         if len(self.caught_warnings)>0:
@@ -445,11 +450,11 @@ class _Caught_POSYDON_Warnings:
                     warnings.warn(**w)
                 else:
                     _issue_warn(w, self.registry)
-    
+
     def got_called(self):
         """Returns, whether the object got called."""
         return self._got_called
-    
+
     def has_records(self):
         """Checks whether there are records of caught warnings.
 
@@ -458,7 +463,7 @@ class _Caught_POSYDON_Warnings:
         True if there are recorded warnings otherwise False.
         """
         return len(self.caught_warnings)>0
-    
+
     def get_cache(self, empty_cache=False):
         """Get caught warnings.
 
@@ -475,7 +480,7 @@ class _Caught_POSYDON_Warnings:
         if empty_cache:
             self.reset_cache()
         return cache
-    
+
     def reset_cache(self):
         """Resets the caught warnings."""
         self.caught_warnings = []
@@ -537,7 +542,7 @@ class Catch_POSYDON_Warnings:
             # enter catch of python as well (should be done last)
             self.python_catch.__enter__()
         return _CAUGHT_POSYDON_WARNINGS
-    
+
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """Disable catching."""
         if isinstance(self.python_catch, warnings.catch_warnings):
@@ -646,7 +651,7 @@ def AllPOSYDONWarnings(category=POSYDONWarning):
 # SyntaxWarning: Base category for warnings about dubious syntactic features.
 # UnicodeWarning: Base category for warnings related to Unicode.
 # UserWarning: The default category for warn().
-# 
+#
 # for more details see https://docs.python.org/3/library/exceptions.html#warnings
 # and https://docs.python.org/3/library/warnings.html
 # https://github.com/python/cpython/blob/3.11/Lib/warnings.py

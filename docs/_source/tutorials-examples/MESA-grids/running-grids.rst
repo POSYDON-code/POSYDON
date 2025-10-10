@@ -8,26 +8,30 @@ You can use POSYDON framework to run your own, customized MESA simulations of si
 Getting Started Tutorials
 -------------------------
 
-The POSYDON MESA simulation parameters are stored in `POSYDON-MESA-INLISTS <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS>`_ GitHub submodule. To obtain the submodule, clone the POSYDON repository with the following command in your terminal:
+The POSYDON MESA simulation parameters are stored in `POSYDON-MESA-INLISTS <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS>`_ Github repository.
+To get the latest version of the POSYDON-MESA-INLISTS repository, you need to clone the POSYDON-MESA-INLISTS repository.
 
 .. code-block:: bash
 
-    cd $PATH_TO_POSYDON
-    git submodule init
-    git submodule update grid_params/POSYDON-MESA-INLISTS/
+    git clone https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git
+    cd POSYDON-MESA-INLISTS
 
-Similarly to the POSYDON code repository, there is a `main` branch that points to the latest stable version of the POSYDON-MESA-INLISTS repository associated to a POSYDON code release and a `development` branch that contains the latest stable version of our fiducial MESA configurations, run the following command to get the lates development version of the sumodule:
 
-.. code-block:: bash
+This repository contains the MESA inlists used by POSYDON to run single and binary star simulations.
+At the time of writing, the POSYDON v2.0.0 code is compatible with MESA r11701 and the inlists are formatted as such.
+Additionally, multiple changes were made to the MESA source code to fix bugs, including reverse mass transfer in binaries (where the secondary star fills its Roche lobe).
 
-    cd grid_params/POSYDON-MESA-INLISTS/
-    git checkout development
+.. warning::
+
+    Please contact us if you want to run MESA grids with this adapted version of MESA.
+
+Each branch and commit in the  POSYDON-MESA-INLISTS repository contains a specific set of MESA inlists associated to a POSYDON rerun.
 
 To follow the next step of the tutorial, you will need to have a MESA version compatible with POSYDON installed on your machine. If you do not have MESA installed, please follow the instructions on the `MESA website <https://docs.mesastar.org/en/release-r23.05.1/>`_.
 
 .. warning::
 
-    The POSYDON v2.0.0 code is compatible with MESA r11701. Support might not be available for the latest MacOS version.
+    The POSYDON v2.0.0 code is compatible with MESA r11701 inlists. Support might not be available for the latest MacOS version.
 
 
 I. Running your first MESA simulation using POSYDON

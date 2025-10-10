@@ -9,11 +9,14 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-import os
-import numpy as np
-import h5py
 import json
-from posydon.grids.psygrid import PSyGrid, H5_UNICODE_DTYPE
+import os
+
+import h5py
+import numpy as np
+
+from posydon.grids.psygrid import H5_UNICODE_DTYPE, PSyGrid
+
 
 # helper functions
 def get_PSyGrid(dir_path, idx, binary_history, star_history, profile,\

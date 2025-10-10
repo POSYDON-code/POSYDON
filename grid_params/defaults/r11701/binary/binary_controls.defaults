@@ -1,4 +1,4 @@
-         
+
 ! binary_controls.defaults
 
 
@@ -146,7 +146,7 @@
       ! Here's a dictionary mapping those terminal strings to the corresponding control parameters.
       ! These only include limits from binary, to see the limits from star refer to
       ! star/default/controls.defaults
-      
+
             !           terminal output       related parameter
             !          'b_companion'          timestep limited by companion
             !          'b_RL'                 fr
@@ -155,8 +155,8 @@
             !          'b_separation'         fa
             !          'b_eccentricity'       fe
             !          'b_deltam'             fdm
-      
-      
+
+
 
          !### fm
          !### fm_hard
@@ -188,7 +188,7 @@
          ! then a retry is made.
 
       fm = 0.01d0 ! change of envelope mass of donot
-      fm_hard = -1d0 
+      fm_hard = -1d0
       fa = 0.01d0 ! change of binary separation
       fa_hard = 0.02
       fr = 0.10d0 ! change of relative Roche lobe gap
@@ -276,7 +276,7 @@
 
          ! terminate evolution if (r-rl)/rl is bigger than this for accretor
 
-      accretor_overflow_terminate = 0.0d0 
+      accretor_overflow_terminate = 0.0d0
 
          !### terminate_if_initial_overflow
 
@@ -343,7 +343,7 @@
          ! for Mbh < sqrt(6) Mbh0. For BHs with initial spins different from zero, an effective
          ! Mbh0 can be computed, corresponding to the mass the black hole would have needed to
          ! have with zero spin to reach the current mass and spin.
-      
+
       limit_retention_by_mdot_edd = .false.
 
          !### use_es_opacity_for_mdot_edd
@@ -528,9 +528,9 @@
          report_rlo_solver_progress = .false.
 
       !## Tidal wind enhancement
-      
+
             !### do_enhance_wind_*
-            
+
             ! Use the Tout & Eggleton mechanism to tidally enhance the wind mass
             ! loss from one or both components according to:
             !
@@ -539,49 +539,49 @@
             ! Tout & Eggleton 1988,MNRAS,231,823 (eq. 2)
             !
             ! "\_1" refers to first star, "\_2" to the second one.
-            
+
          do_enhance_wind_1 = .false.
          do_enhance_wind_2 = .false.
-         
+
             !### tout_B_wind_*
-            
+
             ! The `B_wind` parameter from the previous equation. Default value is
             ! taken from Tout & Eggleton 1988,MNRAS,231,823
             !
             ! "\_1" refers to first star, "\_2" to the second one.
-            
+
          tout_B_wind_1 = 1d4
          tout_B_wind_2 = 1d4
 
       !## Wind mass accretion
-      
+
             !### do_wind_mass_transfer_*
-            
+
             ! transfer part of the mass lost due to stellar winds from the mass losing
             ! component to its companion. Using the Bondy-Hoyle mechanism.
             ! "\_1" refers to first star, "\_2" to the second one.
-            
+
          do_wind_mass_transfer_1 = .false.
          do_wind_mass_transfer_2 = .false.
-      
+
             !### wind_BH_alpha_*
-            
+
             ! Bondy-Hoyle accretion parameter for each star. The default is 3/2 taken
             ! from Hurley et al. 2002, MNRAS, 329, 897, in agreement with
             ! Boffin & Jorissen 1988, A&A, 205, 155
             ! "\_1" refers to first star, "\_2" to the second one.
-            
+
          wind_BH_alpha_1 = 1.5d0
          wind_BH_alpha_2 = 1.5d0
-      
+
             !### max_wind_transfer_fraction_*
-            
+
             ! Upper limit on the wind transfer fraction for star *
             ! "\_1" refers to first star, "\_2" to the second one.
-            
+
          max_wind_transfer_fraction_1 = 0.5d0
          max_wind_transfer_fraction_2 = 0.5d0
-      
+
 
 !----------------------------------------------------------------------------------------------
 
@@ -660,7 +660,7 @@
 
          !### do_j_accretion
 
-         ! If true, compute accretion of angular momentum following A.3.3 of 
+         ! If true, compute accretion of angular momentum following A.3.3 of
          ! de Mink et al. 2013, ApJ, 764, 166. Otherwise, incoming  material is
          ! assumed to have the specific angular momentum of the surface of the accretor.
 
@@ -812,7 +812,7 @@
 
          !### col_depth_for_eps_extra
 
-         ! Energy from irradiation will be deposited in the outer 
+         ! Energy from irradiation will be deposited in the outer
          ! `4*Pi*R^2*col_depth_for_eps_extra` grams of the star.
 
          col_depth_for_eps_extra = -1
@@ -998,4 +998,3 @@
       use_other_CE_rlo_mdot = .false.
       use_other_CE_binary_evolve_step = .false.
       use_other_CE_binary_finish_step = .false.
-   

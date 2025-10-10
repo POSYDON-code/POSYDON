@@ -10,7 +10,7 @@ Stellar & Binary-star Simulation
 POSYDON: Building Populations with Object-Oriented Design
 =========================================================
 
-POSYDON provides a fully customizable framework to population synthesis modeling. By leveraging the power and flexibility of object-oriented design, it offers a modular and scalable architecture that enables researchers to customize, extend, and integrate various astrophysical processes with ease. This section delves into the intricacies of the POSYDON hierarchy, outlining the key classes, their interrelationships, and their roles in crafting sophisticated population synthesis models. 
+POSYDON provides a fully customizable framework to population synthesis modeling. By leveraging the power and flexibility of object-oriented design, it offers a modular and scalable architecture that enables researchers to customize, extend, and integrate various astrophysical processes with ease. This section delves into the intricacies of the POSYDON hierarchy, outlining the key classes, their interrelationships, and their roles in crafting sophisticated population synthesis models.
 
 The Single Star Object
 ----------------------
@@ -52,7 +52,7 @@ The `BinaryPopulation` object contains a list of `BinaryStar` objects and the `S
 ----
 
 
-The Simulation Properties object 
+The Simulation Properties object
 --------------------------------
 
 
@@ -63,8 +63,8 @@ POSYDON Population Synthesis Configuration Guide
 The `SimulationProperties` objects contains the POSYDON population synthesis parameter configurations determining the evolution of each binaries in the `BinaryPopulation` class. The following guide will walk you through the configuration parameters of a POSYDON binary population synthesis model.
 
 .. toctree::
-    :maxdepth: 1  
-    
+    :maxdepth: 1
+
     pop_syn/population_params
 
 
@@ -117,7 +117,7 @@ The `SyntheticPopulation` object contains a collection of `BinaryPopulation` obj
 The Star Formation History
 ---------------------------
 
-The star formation history is a key component in population synthesis, since it 
+The star formation history is a key component in population synthesis, since it
 determined the amount of stars that are formed at each moment in time.
 
 .. toctree::

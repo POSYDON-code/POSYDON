@@ -4,7 +4,7 @@
 Binary-Star Population Synthesis with POSYDON
 ==============================================
 
-Embark on a journey into the fascinating world of binary-star population synthesis with POSYDON! 
+Embark on a journey into the fascinating world of binary-star population synthesis with POSYDON!
 Whether you are a budding astrophysicist or a seasoned researcher, our tutorials guide you every step of the way.
 From simulating your first binaries to running large-scale populations and diving deep into data analysis, POSYDON offers you a seamless experience.
 
@@ -69,7 +69,7 @@ In this tutorial, you will learn how to change the assumption of star-formation 
 
     one_met_pop_syn
 
-X-ray binaries: computing the X-ray luminosity function 🩻 
+X-ray binaries: computing the X-ray luminosity function 🩻
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TODO: bring v1 tutorial to v2 leveraging the SyntheticPopulation class
@@ -82,7 +82,7 @@ This notebook shows you how to evolve a single binary using POSYDON.
 It allows you to test and to quickly understand the evolution of a single binary in detail.
 Moreover, it shows you how re-evolve binaries and change their properties, such as the natal kicks.
 
-.. toctree:: 
+.. toctree::
 
     evolve_single_binaries
 
