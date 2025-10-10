@@ -149,6 +149,7 @@ class StepCEE(object):
             mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged'],
             verbose=MODEL['verbose'],
             metallicity = MODEL['metallicity'],
+            record_matching = MODEL['record_matching'],
             **kwargs):
         """Initialize a StepCEE instance."""
         # read kwargs to initialize the class
