@@ -194,7 +194,7 @@ class StepCEE(object):
         self.track_matcher = TrackMatcher(grid_name_Hrich = None,
                                     grid_name_strippedHe = None,
                                     path=PATH_TO_POSYDON_DATA,
-                                    metallicity = metallicity,
+                                    metallicity = self.metallicity,
                                     matching_method = "minimize",
                                     matching_tolerance=1e-2,
                                     matching_tolerance_hard=1e-1,
