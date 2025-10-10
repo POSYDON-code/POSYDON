@@ -201,7 +201,7 @@ class StepCEE(object):
                                     list_for_matching_HMS = list_for_matching_HMS,
                                     list_for_matching_HeStar = None,
                                     list_for_matching_postMS = None,
-                                    record_matching = False,
+                                    record_matching = self.record_matching,
                                     verbose = self.verbose)
     def __call__(self, binary):
         """Perform the CEE step for a BinaryStar object."""
