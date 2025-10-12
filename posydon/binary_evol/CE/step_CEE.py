@@ -1507,7 +1507,7 @@ class StepCEE(object):
                                                            match_s1=match_s1,
                                                            match_s2=match_s2)
             print(binary.star_1.surf_avg_omega)
-            
+
             rc2_i = 10**comp_star.interp1d['log_R'](t_i)
         if self.verbose:
             print(f"After matching to single star the radius of the done is : {rc2_i} ")
