@@ -84,21 +84,21 @@ STARPROPERTIES = [
     'spin',                         # the dimesionless spin of the star, if it
                                     # is a compact object, which is equal to
                                     # c*J/(GM^2).
-    'conv_env_top_mass',            #The mass at the top of the convective envelope
-    'conv_env_bot_mass',            #bottom
-    'conv_env_top_radius',          #The radius at the top of the convective envelope
-    'conv_env_bot_radius',          #The radius at the bottom of the convective envelope  
-    'conv_env_turnover_time_g',     
+    'conv_env_top_mass',
+    'conv_env_bot_mass',
+    'conv_env_top_radius',
+    'conv_env_bot_radius',
+    'conv_env_turnover_time_g',
     'conv_env_turnover_time_l_b',
     'conv_env_turnover_time_l_t',
-    'envelope_binding_energy',     
-    'mass_conv_reg_fortides',      #Total mass of convective regions
-    'thickness_conv_reg_fortides', #The total thickness of convective regions
-    'radius_conv_reg_fortides',    #
-    'lambda_CE_1cent',           #The lambda_CE using a core definition of hydrogen fraction 1%
-    'lambda_CE_10cent',          #
+    'envelope_binding_energy',
+    'mass_conv_reg_fortides',
+    'thickness_conv_reg_fortides',
+    'radius_conv_reg_fortides',
+    'lambda_CE_1cent',
+    'lambda_CE_10cent',
     'lambda_CE_30cent',
-    'lambda_CE_pure_He_star_10cent', #
+    'lambda_CE_pure_He_star_10cent',
     'profile',  # the profile of the star, including extended information of
                 # its internal structure, for a specific timestep, usually for
                 # the end of the previous step including MESA psygrid.

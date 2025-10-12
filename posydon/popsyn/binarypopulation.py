@@ -470,7 +470,6 @@ class BinaryPopulation:
         """Save BinaryPopulation to hdf file."""
         optimize_ram = self.kwargs['optimize_ram']
         temp_directory = self.kwargs['temp_directory']
-        mode = self.kwargs.get('mode', 'a')
 
         if self.JOB_ID is None and self.comm is None:
             if optimize_ram:
@@ -999,7 +998,7 @@ class BinaryGenerator:
         """Generate all random variables."""
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
-        # a, e, M_1, M_2, M_0, P 
+        # a, e, M_1, M_2, P
         sampler_output = self.sampler(orbital_scheme, **kwargs)
         if orbital_scheme == 'separation':
             separation, eccentricity, m1, m2 = sampler_output
@@ -1014,8 +1013,6 @@ class BinaryGenerator:
         N_binaries = len(orbital_period)
         formation_times = get_formation_times(N_binaries, **kwargs)
 
-        #Get the binary_fraction
-        binary_fraction = self.binary_fraction_generator(m1=m1, **{k: v for k, v in kwargs.items() if k != 'm1'})
 
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
