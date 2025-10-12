@@ -1408,6 +1408,11 @@ class TrackMatcher:
 
         """
 
+        if star == binary.star_1 and not self.match_s1:
+            return None, None
+        elif star == binary.star_2 and not self.match_s2:
+            return None, None
+
         with np.errstate(all="ignore"):
             # get the initial m0, t0 track
             if star.co:
@@ -1512,6 +1517,13 @@ class TrackMatcher:
 
         # update star with interp1d object built from matched values
         star.interp1d = interp1d
+
+        if star == binary.star_1 and not star.co:
+            self.matched_s1 = True
+        elif star == binary.star_2 and not star.co:
+            self.matched_s2 = True
+
+        star.matched = True if not star.co else False
 
         return match_m0, match_t0
 
@@ -1663,9 +1675,15 @@ class TrackMatcher:
             old_omega_c = old_omega / old_ratio
             new_ratio = new_omega / old_omega_c
             new_lgJ = np.log10(new_omega * secondary.total_moment_of_inertia)
-            setattr(secondary, "surf_avg_omega_div_omega_crit", new_ratio)
-            setattr(secondary, "surf_avg_omega", new_omega)
-            setattr(secondary, "log_total_angular_momentum", new_lgJ)
+            old_lgJ = secondary.log_total_angular_momentum
+            if secondary.matched:
+                setattr(secondary, "surf_avg_omega_div_omega_crit", new_ratio)
+                setattr(secondary, "surf_avg_omega", new_omega)
+                setattr(secondary, "log_total_angular_momentum", new_lgJ)
+            else:
+                setattr(secondary, "surf_avg_omega_div_omega_crit", old_ratio)
+                setattr(secondary, "surf_avg_omega", old_omega)
+                setattr(secondary, "log_total_angular_momentum", old_lgJ)
 
         else:
             secondary.surf_avg_omega_div_omega_crit = 0.0
@@ -1683,22 +1701,25 @@ class TrackMatcher:
                 old_omega_c = old_omega / old_ratio
                 new_ratio = new_omega / old_omega_c
                 new_lgJ = np.log10(new_omega * primary.total_moment_of_inertia)
-                setattr(primary, "surf_avg_omega_div_omega_crit", new_ratio)
-                setattr(primary, "surf_avg_omega", new_omega)
-                setattr(primary, "log_total_angular_momentum", new_lgJ)
+                old_lgJ = primary.log_total_angular_momentum
+                if primary.matched:
+                    setattr(primary, "surf_avg_omega_div_omega_crit", new_ratio)
+                    setattr(primary, "surf_avg_omega", new_omega)
+                    setattr(primary, "log_total_angular_momentum", new_lgJ)
+                else:
+                    setattr(primary, "surf_avg_omega_div_omega_crit", old_ratio)
+                    setattr(primary, "surf_avg_omega", old_omega)
+                    setattr(primary, "log_total_angular_momentum", old_lgJ)
 
             else:
                 primary.surf_avg_omega_div_omega_crit = 0.0
                 primary.surf_avg_omega = 0.0
                 primary.log_total_angular_momentum = 0.0
-        else:
-            # omega of compact objects or massless remnant
-            # (won't be used for integration)
-            omega0_pri = omega0_sec
+
 
         return omega0_pri, omega0_sec
 
-    def do_matching(self, binary, step_name="step_match"):
+    def do_matching(self, binary, step_name="step_match", match_s1=True, match_s2=True):
 
         """
             Perform binary to single star grid matching. This is currently
@@ -1772,17 +1793,16 @@ class TrackMatcher:
             return (None, None, None), (None, None, None), only_CO
 
         # record which star we performed matching on for reporting purposes
+        self.match_s1 = match_s1
+        self.match_s2 = match_s2
         self.matched_s1 = False
         self.matched_s2 = False
+        primary.matched = False
+        secondary.matched = False
 
         # get the matched data of binary components
         # match secondary:
         m0, t0 = self.get_star_match_data(binary, secondary)
-        # record which star got matched
-        if secondary == binary.star_2:
-            self.matched_s2 = True
-        elif secondary == binary.star_1:
-            self.matched_s1 = True
 
         # primary is a CO or massless remnant, or else it is "normal"
         # TODO: should these be star properties? also, do we only really need one?
@@ -1801,11 +1821,7 @@ class TrackMatcher:
             # match primary
             self.get_star_match_data(binary, primary)
 
-            if primary == binary.star_1:
-                self.matched_s1 = True
-            elif primary == binary.star_2:
-                self.matched_s2 = True
-        else:
+        elif not (self.primary_normal or self.primary_not_normal):
             raise ValueError("During matching, the primary should either be "
                              "normal (stellar object) or "
                              "not normal (a CO or nonexistent companion).",
@@ -1818,7 +1834,7 @@ class TrackMatcher:
                             f"{binary.companion_2_exists}")
 
 
-        if (secondary.interp1d == None) or (primary.interp1d == None):
+        if (secondary.interp1d == None and secondary.matched) or (primary.interp1d == None and primary.matched):
             failed_state = binary.state
             set_binary_to_failed(binary)
             raise MatchingError("Grid matching failed for "
@@ -1830,8 +1846,9 @@ class TrackMatcher:
         # update binary history with matched values
         # (only shown in history if record_matching = True)
         # (this gets overwritten after detached evolution)
-        self.update_star_properties(secondary, secondary.htrack)
-        if self.primary_normal:
+        if secondary.matched:
+            self.update_star_properties(secondary, secondary.htrack)
+        if self.primary_normal and primary.matched:
             self.update_star_properties(primary, primary.htrack)
 
         if self.record_matching:
