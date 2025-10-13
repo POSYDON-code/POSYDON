@@ -1715,6 +1715,10 @@ class TrackMatcher:
                 primary.surf_avg_omega_div_omega_crit = 0.0
                 primary.surf_avg_omega = 0.0
                 primary.log_total_angular_momentum = 0.0
+        else:
+            # omega of compact objects or massless remnant
+            # (won't be used for integration)
+            omega0_pri = omega0_sec
 
 
         return omega0_pri, omega0_sec
