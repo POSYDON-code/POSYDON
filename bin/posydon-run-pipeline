@@ -836,7 +836,8 @@ def logic_rerun(grid, rerun_type):
         termination_flags = TF1_POOL_ERROR
         new_mesa_flag = {'thermohaline_coeff' : 17.5}
     elif ((rerun_type == 'HeMB_MLTp_mesh')
-#          or (rerun_type == 'LBV_wind+HeMB_MLTp_mesh')
+#          or (rerun_type == 'LBV_wind+HeMB_MLTp_mesh') 
+           or (rerun_type == 'zepei_mt_mesh')
          ):
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'more_mesh':
