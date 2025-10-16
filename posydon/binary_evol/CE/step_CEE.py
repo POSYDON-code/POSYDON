@@ -1492,8 +1492,9 @@ class StepCEE(object):
             if self.verbose:
                 print(f"The binary overfilled its RL due to the companion's inflated radius \n"
                       f"The Roche lobe of the companion is: {RL2}, The radius is: {rc2_i}")
+                print("Adjusting the companion's radius by matching to single star.")
             t_i = binary.time
-            #m0, t0 =self.track_matcher.get_star_match_data(binary, comp_star)
+            #m0, t0 = self.track_matcher.get_star_match_data(binary, comp_star)
             if comp_star == binary.star_1:
                 match_s1 = True
                 match_s2 = False
@@ -1501,15 +1502,13 @@ class StepCEE(object):
                 match_s1 = False
                 match_s2 = True
 
-            print(binary.star_1.surf_avg_omega)
-
             _, _, only_CO = self.track_matcher.do_matching(binary, step_name="step_CE",
                                                            match_s1=match_s1,
                                                            match_s2=match_s2)
-            print(binary.star_1.surf_avg_omega)
 
             rc2_i = 10**comp_star.interp1d['log_R'](t_i)
+
         if self.verbose:
-            print(f"After matching to single star the radius of the done is : {rc2_i} ")
+            print(f"After matching to single star the companion's radius is : {rc2_i} ")
 
         return rc2_i
