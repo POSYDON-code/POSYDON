@@ -534,11 +534,18 @@ class SingleStar:
                                       columns=oneline_names)
         else:
             oneline_df = pd.DataFrame()
-
         for name in scalar_names:
             if hasattr(self, name):
                 # Handle legacy natal_kick_array for backward compatibility
                 if name == 'natal_kick_array':
+                    Pwarn("The 'natal_kick_array' attribute will be deprecated. "
+                            "Please use 'natal_kick_velocity', "
+                            "'natal_kick_azimuthal_angle', "
+                            "'natal_kick_polar_angle', and "
+                            "'natal_kick_mean_anomaly' instead. "
+                            "Adding both properties to the DataFrame.",
+                            "DeprecationWarning"
+                    )
                     # Create array from individual properties
                     natal_kick_array = [
                         getattr(self, 'natal_kick_velocity', None),
@@ -548,7 +555,13 @@ class SingleStar:
                     ]
                     for i in range(4):
                         col_name = prefix+name+'_{}'.format(int(i))
-                        oneline_df[col_name] = [natal_kick_array[i]]
+                        oneline_df[col_name] = natal_kick_array[i]
+
+                    # also output better named columns
+                    oneline_df[prefix+'natal_kick_velocity'] = natal_kick_array[0]
+                    oneline_df[prefix+'natal_kick_azimuthal_angle'] = natal_kick_array[1]
+                    oneline_df[prefix+'natal_kick_polar_angle'] = natal_kick_array[2]
+                    oneline_df[prefix+'natal_kick_mean_anomaly'] = natal_kick_array[3]
                 else:
                     oneline_df[prefix+name] = [getattr(self, name)]
         return oneline_df
