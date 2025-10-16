@@ -35,7 +35,7 @@ class TestSalpeterIMF:
         integral, _ = quad(default_imf.imf,
                            default_imf.m_min,
                            default_imf.m_max)
-        assert np.isclose(integral*default_imf.norm, 1.0, rel=1e-5)
+        assert np.isclose(integral*default_imf.norm, 1.0, rtol=1e-5)
 
     def test_initialization_custom(self, custom_imf):
         """Test custom initialization of SalpeterIMF."""
@@ -44,7 +44,7 @@ class TestSalpeterIMF:
         assert custom_imf.m_max == 100.0
         # Verify normalization
         integral, _ = quad(custom_imf.imf, custom_imf.m_min, custom_imf.m_max)
-        assert np.isclose(integral*custom_imf.norm, 1.0, rel=1e-5)
+        assert np.isclose(integral*custom_imf.norm, 1.0, rtol=1e-5)
 
     def test_salepeter_imf(self, default_imf):
         """Test the imf method for correct values."""
@@ -134,7 +134,7 @@ class TestSalpeterIMF:
         approximately 1.
         """
         integral, _ = quad(custom_imf.pdf, custom_imf.m_min, custom_imf.m_max)
-        assert np.isclose(integral, 1.0, rel=1e-4)
+        assert np.isclose(integral, 1.0, rtol=1e-4)
 
     def test_repr(self, default_imf):
         rep_str = default_imf.__repr__()
@@ -178,7 +178,7 @@ class TestKroupa2001IMF:
         integral, _ = quad(default_kroupa.imf,
                            default_kroupa.m_min,
                            default_kroupa.m_max)
-        assert np.isclose(integral*default_kroupa.norm, 1.0, rel=1e-5)
+        assert np.isclose(integral*default_kroupa.norm, 1.0, rtol=1e-5)
 
     def test_initialization_custom(self, custom_kroupa):
         assert custom_kroupa.alpha1 == 0.5
@@ -191,7 +191,7 @@ class TestKroupa2001IMF:
         integral, _ = quad(custom_kroupa.imf,
                            custom_kroupa.m_min,
                            custom_kroupa.m_max)
-        assert np.isclose(integral*custom_kroupa.norm, 1.0, rel=1e-5)
+        assert np.isclose(integral*custom_kroupa.norm, 1.0, rtol=1e-5)
 
     def test_pdf_within_range(self, default_kroupa):
         m = np.linspace(default_kroupa.m_min, default_kroupa.m_max, 100)
@@ -243,7 +243,7 @@ class TestKroupa2001IMF:
         integral, _ = quad(default_kroupa.pdf,
                            default_kroupa.m_min,
                            default_kroupa.m_max)
-        assert np.isclose(integral, 1.0, rel=1e-4)
+        assert np.isclose(integral, 1.0, rtol=1e-4)
 
     def test_invalid_initialization(self):
         with pytest.raises(ValueError, match='m_min must be less than m_max.'):
@@ -260,7 +260,7 @@ class TestKroupa2001IMF:
         integral, _ = quad(custom_kroupa.pdf,
                            custom_kroupa.m_min,
                            custom_kroupa.m_max)
-        assert np.isclose(integral, 1.0, rel=1e-4)
+        assert np.isclose(integral, 1.0, rtol=1e-4)
 
     def test_negative_mass(self, default_kroupa):
         with pytest.raises(ValueError, match="Mass must be positive."):
@@ -300,7 +300,7 @@ class TestChabrierIMF:
         integral, _ = quad(default_chabrier.imf,
                            default_chabrier.m_min,
                            default_chabrier.m_max)
-        assert np.isclose(integral*default_chabrier.norm, 1.0, rel=1e-5)
+        assert np.isclose(integral*default_chabrier.norm, 1.0, rtol=1e-5)
 
     def test_initialization_custom(self, custom_chabrier):
         """Test custom initialization of Chabrier2003 IMF."""
@@ -313,7 +313,7 @@ class TestChabrierIMF:
         integral, _ = quad(custom_chabrier.imf,
                            custom_chabrier.m_min,
                            custom_chabrier.m_max)
-        assert np.isclose(integral*custom_chabrier.norm, 1.0, rel=1e-5)
+        assert np.isclose(integral*custom_chabrier.norm, 1.0, rtol=1e-5)
 
     def test_pdf_within_range(self, default_chabrier):
         """Test that PDF returns correct values within the mass range."""
@@ -376,7 +376,7 @@ class TestChabrierIMF:
         integral, _ = quad(default_chabrier.pdf,
                            default_chabrier.m_min,
                            default_chabrier.m_max)
-        assert np.isclose(integral, 1.0, rel=1e-5)
+        assert np.isclose(integral, 1.0, rtol=1e-5)
 
     def test_vectorization(self, default_chabrier):
         """Test that the pdf method correctly handles array inputs."""
