@@ -1077,21 +1077,6 @@ class BinaryGenerator:
 
         formation_time = output['time'].item()
         m1 = output['S1_mass'].item()
-        Z_div_Zsun = kwargs.get('metallicity', 1.)
-        zams_table = {2.: 2.915e-01,
-                      1.: 2.703e-01,
-                      0.45: 2.586e-01,
-                      0.2: 2.533e-01,
-                      0.1: 2.511e-01,
-                      0.01: 2.492e-01,
-                      0.001: 2.49e-01,
-                      0.0001: 2.49e-01}
-        Z = Z_div_Zsun*Zsun
-        if Z_div_Zsun in zams_table.keys():
-            Y = zams_table[Z_div_Zsun]
-        else:
-            raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
-        X = 1. - Z - Y
 
         # Extract individual kick components for star 1
         kick1_velocity = output['S1_natal_kick_velocity'].item()
@@ -1102,9 +1087,7 @@ class BinaryGenerator:
         star1_params = dict(
             mass=m1,
             state="H-rich_Core_H_burning",
-            metallicity=Z,
-            center_h1=X,
-            center_he4=Y,
+            metallicity=kwargs.get('metallicity', 1.0),
             natal_kick_velocity=kick1_velocity,
             natal_kick_azimuthal_angle=kick1_azimuthal,
             natal_kick_polar_angle=kick1_polar,
@@ -1137,9 +1120,7 @@ class BinaryGenerator:
             star2_params = dict(
                 mass=m2,
                 state="H-rich_Core_H_burning",
-                metallicity=Z,
-                center_h1=X,
-                center_he4=Y,
+                metallicity=kwargs.get('metallicity', 1.0),
                 natal_kick_velocity=kick2_velocity,
                 natal_kick_azimuthal_angle=kick2_azimuthal,
                 natal_kick_polar_angle=kick2_polar,
@@ -1163,7 +1144,6 @@ class BinaryGenerator:
             )
 
             star2_params = properties_massless_remnant()
-
 
         binary = BinaryStar(**binary_params,
                             star_1=SingleStar(**star1_params),
