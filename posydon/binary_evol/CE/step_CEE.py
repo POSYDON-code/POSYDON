@@ -183,8 +183,6 @@ class StepCEE(object):
         self.path_to_posydon = PATH_TO_POSYDON
 
 
-        #m_min_H = np.min(self.grid_Hrich.grid_mass)
-        #m_max_H = np.max(self.grid_Hrich.grid_mass)
         list_for_matching_HMS = [
                         ["mass", "center_h1", "he_core_mass"],
                         [20.0, 1.0, 10.0],
