@@ -113,7 +113,14 @@ class double_CO_evolution(detached_evolution):
         return y[0] - (self.r1 + self.r2)
 
     def gravitational_radiation(self):
-        """TODO: add description and reference for the equations."""
+        """Calculate the change in orbital separation and eccentricity due to 
+        gravitational wave radiation from two point masses. Calculated as 
+        according to [1].
+
+            [1] Peters, P. C. (1964). Gravitational Radiation and the 
+                Motion of Two Point Masses. Physical Review, 136(4B), 
+                B1224–B1232
+        """
         g = constants.standard_cgrav
         c = constants.clight
 
