@@ -103,7 +103,7 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
     'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_HMS_HMS_RLO',
-    'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
+    'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged','step_CE'
 ]
 
 
