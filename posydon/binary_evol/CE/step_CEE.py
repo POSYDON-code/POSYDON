@@ -1492,7 +1492,6 @@ class StepCEE(object):
                       f"The Roche lobe of the companion is: {RL2}, The radius is: {rc2_i}")
                 print("Adjusting the companion's radius by matching to single star.")
             t_i = binary.time
-            #m0, t0 = self.track_matcher.get_star_match_data(binary, comp_star)
             if comp_star == binary.star_1:
                 match_s1 = True
                 match_s2 = False
