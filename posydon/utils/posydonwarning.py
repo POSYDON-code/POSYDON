@@ -119,6 +119,11 @@ class SFHModelWarning(POSYDONWarning):
     def __init__(self, message=''):
         super().__init__(message)
 
+class DeprecationWarning(POSYDONWarning):
+    """Warnings related to deprecated features."""
+    def __init__(self, message=''):
+        super().__init__(message)
+
 class ValueWarning(POSYDONWarning):
     """Warnings related to a ValueError."""
     def __init__(self, message=''):

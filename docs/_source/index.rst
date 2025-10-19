@@ -27,6 +27,7 @@ How is this Documentation Structured?
 - **Getting Started:** A quick guide to get POSYDON up and running on your machine.
 - **User Guides:** Detailed guides on using various features.
 - **Tutorials and Examples:** Step-by-step walk-throughs of typical use-cases.
+- **POSYDON School Materials:** Access resources from the POSYDON school.
 - **In-Depth Components Overview:** Delve deep into the core components of POSYDON.
 - **API Reference:** A comprehensive reference for developers.
 - **Troubleshooting and FAQs:** Answers to common questions and problems.
@@ -61,6 +62,13 @@ How is this Documentation Structured?
    tutorials-examples/population-synthesis/binary-pop-syn
    tutorials-examples/generating-datasets/generating-datasets
    tutorials-examples/MESA-grids/running-grids
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
+   :caption: POSYDON school material
+
+   POSYDON School 2025 <https://github.com/POSYDON-code/POSYDON-class-materials-2025>
 
 .. toctree::
    :maxdepth: 1
