@@ -139,6 +139,10 @@ def default_sep_from_winds(a, e, primary, secondary, verbose = False):
     m1 = primary.latest["mass"] # Msol
     mdot_1 = primary.latest["mdot"] # Msol/yr
 
+    if verbose:
+        print("Wind mass loss rates (Msol/yr): ", mdot_1, mdot_2)
+        print("Masses (Msol): ", m1, m2)
+
     q1 = m2 / m1
     k11 = (1 / (1 + q1)) * (mdot_2 / m2)
     k21 = mdot_2 / m2
@@ -152,6 +156,11 @@ def default_sep_from_winds(a, e, primary, secondary, verbose = False):
     k22 = mdot_1 / m1
     k32 = mdot_1 / (m1 + m2)
     da_mt_pri = a * (2 * k12 - 2 * k22 + k32)
+
+    if not np.isfinite(da_mt_sec):
+        da_mt_sec = 0.0
+    if not np.isfinite(da_mt_pri):
+        da_mt_pri = 0.0
 
     if verbose:
         print("da_mt = ", da_mt_sec, da_mt_pri)

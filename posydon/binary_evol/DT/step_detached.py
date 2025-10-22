@@ -302,7 +302,8 @@ class detached_step:
             "do_magnetic_braking": self.do_magnetic_braking,
             "magnetic_braking_mode": self.magnetic_braking_mode,
             "do_stellar_evolution_and_spin_from_winds": self.do_stellar_evolution_and_spin_from_winds,
-            "do_gravitational_radiation": self.do_gravitational_radiation
+            "do_gravitational_radiation": self.do_gravitational_radiation,
+            "verbose": self.verbose,
         }
 
     def __repr__(self):
@@ -580,6 +581,13 @@ class detached_step:
             of the stars evolution through the detached step.
 
         """
+        if self.verbose:
+            print(f"Secondary t_max: {secondary.t_max}, t_offset: {secondary.t_offset}")
+            print(f"Primary t_max: {primary.t_max}, t_offset: {primary.t_offset}")
+            print(f"Binary time: {binary.time}, max_time: {self.max_time}")
+            print(f"Time span for ODE solver: ({binary.time}, {self.max_time})")
+            print(f"Delta time: {self.max_time - binary.time} years")
+
 
         try:
             res = solve_ivp(self.evo,
@@ -1153,8 +1161,8 @@ class detached_evolution:
         # updating star properties with interpolated values at current time
         # TODO: update star current/history progressively here rather than after evo?
         for key in self.phys_keys:
-                self.primary.latest[key] = self.primary.interp1d[key](t)
-                self.secondary.latest[key] = self.secondary.interp1d[key](t)
+            self.primary.latest[key] = self.primary.interp1d[key](t)
+            self.secondary.latest[key] = self.secondary.interp1d[key](t)
 
         # update omega, a, e, based on current diffeq solution
         y[0] = np.max([y[0], 0])  # We limit separation to non-negative values
@@ -1236,7 +1244,8 @@ class detached_evolution:
         .. [8] Gossage et al. 2021, ApJ, 912, 65
 
         """
-
+        print('t = ', t)
+        print('y = ', y)
         # update star/orbital props w/ current time during integration
         self.update_props(t, y)
 
@@ -1250,21 +1259,39 @@ class detached_evolution:
         if self.do_tides:
             self.tides()
 
+        print(f"After tides: da = {self.da}, de = {self.de}, "
+                  f"dOmega_sec = {self.dOmega_sec}, dOmega_pri = {self.dOmega_pri}")
+
         #  Gravitional radiation affecting the orbit
         if self.do_gravitational_radiation:
             self.gravitational_radiation()
+
+        print(f"After gravrad: da = {self.da}, de = {self.de}, "
+                  f"dOmega_sec = {self.dOmega_sec}, dOmega_pri = {self.dOmega_pri}")
 
         #  Magnetic braking affecting stellar spins
         if self.do_magnetic_braking:
             self.magnetic_braking()
 
+        if self.verbose:
+            print(f"After magbrake: da = {self.da}, de = {self.de}, "
+                  f"dOmega_sec = {self.dOmega_sec}, dOmega_pri = {self.dOmega_pri}")
+
         #  Mass Loss affecting orbital separation
         if self.do_wind_loss:
             self.sep_from_winds()
 
+        if self.verbose:
+            print(f"After winds: da = {self.da}, de = {self.de}, "
+                  f"dOmega_sec = {self.dOmega_sec}, dOmega_pri = {self.dOmega_pri}")
+
         # Mass loss affecting stellar spins
         if self.do_stellar_evolution_and_spin_from_winds:
             self.spin_from_winds()
+
+        if self.verbose:
+            print(f"After spin from winds: da = {self.da}, de = {self.de}, "
+                  f"dOmega_sec = {self.dOmega_sec}, dOmega_pri = {self.dOmega_pri}")
 
         result = [self.da, self.de, self.dOmega_sec, self.dOmega_pri]
 

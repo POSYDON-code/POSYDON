@@ -23,7 +23,7 @@ LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 
 class InitiallySingleStep(IsolatedStep):
     """
-    Prepare a runaway star to do an an isolated_step)
+    Prepare a runaway star to do an isolated_step
     """
 
     def __init__(self,

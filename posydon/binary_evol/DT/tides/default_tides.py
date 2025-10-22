@@ -156,7 +156,7 @@ def default_tides(a, e, primary, secondary, verbose=False):
             R1,
             m1
         )
-        print("convective tiimescales and efficiencies",
+        print("convective timescales and efficiencies",
             tau_conv_2, P_orb, P_spin_sec, P_tid_sec,
             f_conv_sec,
             F_tid,
@@ -328,6 +328,22 @@ def default_tides(a, e, primary, secondary, verbose=False):
             / (1 - e ** 2) ** 6
             * (f2 - (1 - e ** 2) ** (3 / 2) * f5 * omega1 / n)
     )
+    # check if values are finite
+    # secondary
+    if not np.isfinite(da_tides_sec):
+        da_tides_sec = 0.0
+    if not np.isfinite(de_tides_sec):
+        de_tides_sec = 0.0
+    if not np.isfinite(dOmega_tides_sec):
+        dOmega_tides_sec = 0.0
+    # primary
+    if not np.isfinite(da_tides_pri):
+        da_tides_pri = 0.0
+    if not np.isfinite(de_tides_pri):
+        de_tides_pri = 0.0
+    if not np.isfinite(dOmega_tides_pri):
+        dOmega_tides_pri = 0.0
+
     if verbose:
         print("da,de,dOmega_tides = ",
             da_tides_sec, de_tides_sec, dOmega_tides_sec,
