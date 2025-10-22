@@ -1257,14 +1257,16 @@ class detached_evolution:
         if self.do_tides:
             self.tides()
 
-        print(f"After tides: da = {self.da}, de = {self.de}, "
+        if self.verbose:
+            print(f"After tides: da = {self.da}, de = {self.de}, "
                   f"dOmega_sec = {self.dOmega_sec}, dOmega_pri = {self.dOmega_pri}")
 
         #  Gravitional radiation affecting the orbit
         if self.do_gravitational_radiation:
             self.gravitational_radiation()
 
-        print(f"After gravrad: da = {self.da}, de = {self.de}, "
+        if self.verbose:
+            print(f"After gravrad: da = {self.da}, de = {self.de}, "
                   f"dOmega_sec = {self.dOmega_sec}, dOmega_pri = {self.dOmega_pri}")
 
         #  Magnetic braking affecting stellar spins
