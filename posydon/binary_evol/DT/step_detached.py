@@ -1244,8 +1244,6 @@ class detached_evolution:
         .. [8] Gossage et al. 2021, ApJ, 912, 65
 
         """
-        print('t = ', t)
-        print('y = ', y)
         # update star/orbital props w/ current time during integration
         self.update_props(t, y)
 
