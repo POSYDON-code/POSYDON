@@ -1040,8 +1040,14 @@ class BinaryGenerator:
             'orbital_period': orbital_period,
             'S1_mass': m1,
             'S2_mass': m2,
-            'S1_natal_kick_array': kick1,
-            'S2_natal_kick_array': kick2,
+            'S1_natal_kick_velocity': kick1[:, 0] if kick1.ndim > 1 else kick1[0],
+            'S1_natal_kick_azimuthal_angle': kick1[:, 1] if kick1.ndim > 1 else kick1[1],
+            'S1_natal_kick_polar_angle': kick1[:, 2] if kick1.ndim > 1 else kick1[2],
+            'S1_natal_kick_mean_anomaly': kick1[:, 3] if kick1.ndim > 1 else kick1[3],
+            'S2_natal_kick_velocity': kick2[:, 0] if kick2.ndim > 1 else kick2[0],
+            'S2_natal_kick_azimuthal_angle': kick2[:, 1] if kick2.ndim > 1 else kick2[1],
+            'S2_natal_kick_polar_angle': kick2[:, 2] if kick2.ndim > 1 else kick2[2],
+            'S2_natal_kick_mean_anomaly': kick2[:, 3] if kick2.ndim > 1 else kick2[3],
         }
         self._num_gen += N_binaries
         return output_dict
@@ -1071,21 +1077,34 @@ class BinaryGenerator:
 
         formation_time = output['time'].item()
         m1 = output['S1_mass'].item()
-        kick1 = output['S1_natal_kick_array'][0]
+
+        # Extract individual kick components for star 1
+        kick1_velocity = output['S1_natal_kick_velocity'].item()
+        kick1_azimuthal = output['S1_natal_kick_azimuthal_angle'].item()
+        kick1_polar = output['S1_natal_kick_polar_angle'].item()
+        kick1_anomaly = output['S1_natal_kick_mean_anomaly'].item()
 
         star1_params = dict(
-                mass=m1,
-                state="H-rich_Core_H_burning",
-                metallicity=kwargs.get('metallicity', 1.0),
-                natal_kick_array=kick1,
-            )
+            mass=m1,
+            state="H-rich_Core_H_burning",
+            metallicity=kwargs.get('metallicity', 1.0),
+            natal_kick_velocity=kick1_velocity,
+            natal_kick_azimuthal_angle=kick1_azimuthal,
+            natal_kick_polar_angle=kick1_polar,
+            natal_kick_mean_anomaly=kick1_anomaly,
+        )
 
         if is_binary:
             separation = output['separation'].item()
             orbital_period = output['orbital_period'].item()
             eccentricity = output['eccentricity'].item()
             m2 = output['S2_mass'].item()
-            kick2 = output['S2_natal_kick_array'][0]
+
+            # Extract individual kick components for star 2
+            kick2_velocity = output['S2_natal_kick_velocity'].item()
+            kick2_azimuthal = output['S2_natal_kick_azimuthal_angle'].item()
+            kick2_polar = output['S2_natal_kick_polar_angle'].item()
+            kick2_anomaly = output['S2_natal_kick_mean_anomaly'].item()
 
             binary_params = dict(
                 index=kwargs.get('index', default_index),
@@ -1102,7 +1121,10 @@ class BinaryGenerator:
                 mass=m2,
                 state="H-rich_Core_H_burning",
                 metallicity=kwargs.get('metallicity', 1.0),
-                natal_kick_array=kick2,
+                natal_kick_velocity=kick2_velocity,
+                natal_kick_azimuthal_angle=kick2_azimuthal,
+                natal_kick_polar_angle=kick2_polar,
+                natal_kick_mean_anomaly=kick2_anomaly,
             )
         #If binary_fraction not default a initially single star binary is created.
         else:
@@ -1120,8 +1142,8 @@ class BinaryGenerator:
                 eccentricity=eccentricity,
                 history_verbose=self.kwargs.get("history_verbose", False)
             )
-            star2_params = properties_massless_remnant()
 
+            star2_params = properties_massless_remnant()
 
         binary = BinaryStar(**binary_params,
                             star_1=SingleStar(**star1_params),
