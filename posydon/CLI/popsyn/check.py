@@ -11,9 +11,7 @@ import subprocess
 
 import numpy as np
 
-from posydon.popsyn.io import binarypop_kwargs_from_ini
-from posydon.popsyn.synthetic_population import Population
-from posydon.utils.CLI.io import (
+from posydon.CLI.io import (
     clear_previous_lines,
     create_bash_submit_rescue_script,
     create_batch_rescue_script,
@@ -21,6 +19,8 @@ from posydon.utils.CLI.io import (
     print_separator_line,
     print_success,
 )
+from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.popsyn.synthetic_population import Population
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
 

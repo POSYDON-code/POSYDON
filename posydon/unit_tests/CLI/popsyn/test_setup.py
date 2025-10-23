@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 # import the module which will be tested
-import posydon.utils.CLI.popsyn.setup as totest
+import posydon.CLI.popsyn.setup as totest
 
 
 class TestSNModelValidation:

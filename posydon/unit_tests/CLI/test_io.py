@@ -11,7 +11,7 @@ from unittest.mock import MagicMock
 import pytest
 
 # import the module which will be tested
-import posydon.utils.CLI.io as totest
+import posydon.CLI.io as totest
 from posydon.utils.common_functions import convert_metallicity_to_string
 
 

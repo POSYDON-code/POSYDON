@@ -6,13 +6,13 @@ __authors__ = [
 
 import os
 
-from posydon.grids.SN_MODELS import get_SN_MODEL_NAME
-from posydon.popsyn.io import binarypop_kwargs_from_ini, simprop_kwargs_from_ini
-from posydon.utils.CLI.io import (
+from posydon.CLI.io import (
     create_bash_submit_script,
     create_python_scripts,
     create_slurm_scripts,
 )
+from posydon.grids.SN_MODELS import get_SN_MODEL_NAME
+from posydon.popsyn.io import binarypop_kwargs_from_ini, simprop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
 
 

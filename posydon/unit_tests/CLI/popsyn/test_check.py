@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 # import the module which will be tested
-import posydon.utils.CLI.popsyn.check as totest
+import posydon.CLI.popsyn.check as totest
 from posydon.utils.common_functions import convert_metallicity_to_string
 
 
