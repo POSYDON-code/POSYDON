@@ -10,8 +10,8 @@
 # Author: Max Briel
 
 import argparse
-from posydon.utils.CLI.popsyn.setup import setup_popsyn_function
-from posydon.utils.CLI.popsyn.check import check_popsyn_function
+from posydon.CLI.popsyn.setup import setup_popsyn_function
+from posydon.CLI.popsyn.check import check_popsyn_function
 from posydon.utils.posydonwarning import Pwarn
 
 def rescue_popsyn_function(args):
