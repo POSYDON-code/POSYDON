@@ -130,7 +130,7 @@ class TestValidateRunFolder:
 class TestGetBinaryParams:
     """Test class for get_binary_params function."""
 
-    @patch('posydon.utils.CLI.popsyn.check.binarypop_kwargs_from_ini')
+    @patch('posydon.CLI.popsyn.check.binarypop_kwargs_from_ini')
     def test_get_binary_params(self, mock_binarypop):
         """Test that binary parameters are extracted correctly."""
         mock_binarypop.return_value = {
@@ -157,9 +157,9 @@ class TestGetRunConfiguration:
         args.run_folder = str(tmp_path)
         return args
 
-    @patch('posydon.utils.CLI.popsyn.check.validate_run_folder')
-    @patch('posydon.utils.CLI.popsyn.check.get_ini_file')
-    @patch('posydon.utils.CLI.popsyn.check.get_binary_params')
+    @patch('posydon.CLI.popsyn.check.validate_run_folder')
+    @patch('posydon.CLI.popsyn.check.get_ini_file')
+    @patch('posydon.CLI.popsyn.check.get_binary_params')
     def test_get_run_configuration(
         self, mock_get_params, mock_get_ini, mock_validate, mock_args
     ):
@@ -215,7 +215,7 @@ class TestCheckPopulationFiles:
 class TestCheckBinaryCounts:
     """Test class for check_binary_counts function."""
 
-    @patch('posydon.utils.CLI.popsyn.check.Population')
+    @patch('posydon.CLI.popsyn.check.Population')
     def test_check_binary_counts_all_match(self, mock_population, tmp_path, capsys):
         """Test when all binary counts match expected."""
         metallicities = [0.01, 1.0]
@@ -237,7 +237,7 @@ class TestCheckBinaryCounts:
         assert all_match is True
         assert all(count == expected_count for count in counts.values())
 
-    @patch('posydon.utils.CLI.popsyn.check.Population')
+    @patch('posydon.CLI.popsyn.check.Population')
     def test_check_binary_counts_mismatch(self, mock_population, tmp_path, capsys):
         """Test when binary counts don't match expected."""
         metallicities = [0.01, 1.0]
@@ -267,7 +267,7 @@ class TestCheckBinaryCounts:
         captured = capsys.readouterr()
         assert "MISMATCH" in captured.out
 
-    @patch('posydon.utils.CLI.popsyn.check.Population')
+    @patch('posydon.CLI.popsyn.check.Population')
     def test_check_binary_counts_error_loading(self, mock_population, tmp_path, capsys):
         """Test when there's an error loading a population file."""
         metallicities = [0.01]
@@ -292,8 +292,8 @@ class TestCheckBinaryCounts:
 class TestCheckRunStatus:
     """Test class for check_run_status function."""
 
-    @patch('posydon.utils.CLI.popsyn.check.check_binary_counts')
-    @patch('posydon.utils.CLI.popsyn.check.check_population_files')
+    @patch('posydon.CLI.popsyn.check.check_binary_counts')
+    @patch('posydon.CLI.popsyn.check.check_population_files')
     def test_check_run_status_all_pass(self, mock_check_files, mock_check_counts):
         """Test when all files exist and counts match."""
         metallicities = [1.0]
@@ -309,8 +309,8 @@ class TestCheckRunStatus:
         assert counts_match is True
         assert file_status == {1.0: True}
 
-    @patch('posydon.utils.CLI.popsyn.check.check_binary_counts')
-    @patch('posydon.utils.CLI.popsyn.check.check_population_files')
+    @patch('posydon.CLI.popsyn.check.check_binary_counts')
+    @patch('posydon.CLI.popsyn.check.check_population_files')
     def test_check_run_status_files_missing(self, mock_check_files, mock_check_counts):
         """Test when some files are missing."""
         metallicities = [1.0]
@@ -326,8 +326,8 @@ class TestCheckRunStatus:
         assert counts_match is False
         mock_check_counts.assert_not_called()
 
-    @patch('posydon.utils.CLI.popsyn.check.check_binary_counts')
-    @patch('posydon.utils.CLI.popsyn.check.check_population_files')
+    @patch('posydon.CLI.popsyn.check.check_binary_counts')
+    @patch('posydon.CLI.popsyn.check.check_population_files')
     def test_check_run_status_counts_mismatch(self, mock_check_files, mock_check_counts):
         """Test when files exist but counts don't match."""
         metallicities = [1.0]
@@ -595,8 +595,8 @@ class TestAnalyzeMissingBatchLogs:
         # Should not print anything about reading logs
         assert "READING THE LOGS" not in captured.out
 
-    @patch('posydon.utils.CLI.popsyn.check.select_job_id')
-    @patch('posydon.utils.CLI.popsyn.check.read_batch_log_file')
+    @patch('posydon.CLI.popsyn.check.select_job_id')
+    @patch('posydon.CLI.popsyn.check.read_batch_log_file')
     def test_analyze_missing_batch_logs_with_job_id(
         self, mock_read_log, mock_select_job, tmp_path, capsys
     ):
@@ -615,7 +615,7 @@ class TestAnalyzeMissingBatchLogs:
         captured = capsys.readouterr()
         assert "READING THE LOGS" in captured.out
 
-    @patch('posydon.utils.CLI.popsyn.check.select_job_id')
+    @patch('posydon.CLI.popsyn.check.select_job_id')
     def test_analyze_missing_batch_logs_no_job_id(
         self, mock_select_job, tmp_path, capsys
     ):
@@ -642,8 +642,8 @@ class TestCheckBatch:
         assert result['found_count'] == 0
         assert result['metallicity'] == 1.0
 
-    @patch('posydon.utils.CLI.popsyn.check.get_expected_batch_count')
-    @patch('posydon.utils.CLI.popsyn.check.analyze_missing_batch_logs')
+    @patch('posydon.CLI.popsyn.check.get_expected_batch_count')
+    @patch('posydon.CLI.popsyn.check.analyze_missing_batch_logs')
     def test_check_batch_incomplete(
         self, mock_analyze, mock_get_expected, tmp_path, capsys
     ):
@@ -666,8 +666,8 @@ class TestCheckBatch:
         assert result['expected_count'] == 5
         assert result['missing_indices'] == {3, 4}
 
-    @patch('posydon.utils.CLI.popsyn.check.get_expected_batch_count')
-    @patch('posydon.utils.CLI.popsyn.check.analyze_missing_batch_logs')
+    @patch('posydon.CLI.popsyn.check.get_expected_batch_count')
+    @patch('posydon.CLI.popsyn.check.analyze_missing_batch_logs')
     def test_check_batch_complete(
         self, mock_analyze, mock_get_expected, tmp_path, capsys
     ):
@@ -691,8 +691,8 @@ class TestCheckBatch:
         assert result['expected_count'] == 5
         assert result['missing_indices'] is None  # None because status is complete
 
-    @patch('posydon.utils.CLI.popsyn.check.get_expected_batch_count')
-    @patch('posydon.utils.CLI.popsyn.check.analyze_missing_batch_logs')
+    @patch('posydon.CLI.popsyn.check.get_expected_batch_count')
+    @patch('posydon.CLI.popsyn.check.analyze_missing_batch_logs')
     def test_check_batch_expected_count_none(
         self, mock_analyze, mock_get_expected, tmp_path, capsys
     ):
@@ -719,7 +719,7 @@ class TestCheckBatch:
 class TestGetBatchesStatus:
     """Test class for get_batches_status function."""
 
-    @patch('posydon.utils.CLI.popsyn.check.check_batch')
+    @patch('posydon.CLI.popsyn.check.check_batch')
     def test_get_batches_status_no_missing_files(self, mock_check_batch):
         """Test when there are no missing files."""
         missing_files = {}
@@ -731,7 +731,7 @@ class TestGetBatchesStatus:
         mock_check_batch.assert_not_called()
         assert result == {}
 
-    @patch('posydon.utils.CLI.popsyn.check.check_batch')
+    @patch('posydon.CLI.popsyn.check.check_batch')
     def test_get_batches_status_with_missing_files(
         self, mock_check_batch, capsys
     ):
@@ -758,7 +758,7 @@ class TestGetBatchesStatus:
         assert result[0.01]['status'] == 'incomplete'
         assert result[1.0]['status'] == 'complete'
 
-    @patch('posydon.utils.CLI.popsyn.check.check_batch')
+    @patch('posydon.CLI.popsyn.check.check_batch')
     def test_get_batches_status_uses_temp_directory(
         self, mock_check_batch, capsys
     ):
@@ -893,7 +893,7 @@ class TestHandleBatchesComplete:
         result = totest.handle_batches_complete(mock_args, missing_files, batch_status)
         assert result is False
 
-    @patch('posydon.utils.CLI.popsyn.check.get_user_confirmation')
+    @patch('posydon.CLI.popsyn.check.get_user_confirmation')
     def test_handle_batches_complete_user_declines(
         self, mock_confirm, mock_args, capsys
     ):
@@ -908,8 +908,8 @@ class TestHandleBatchesComplete:
         captured = capsys.readouterr()
         assert "Merge jobs not resubmitted" in captured.out
 
-    @patch('posydon.utils.CLI.popsyn.check.get_user_confirmation')
-    @patch('posydon.utils.CLI.popsyn.check.submit_slurm_job')
+    @patch('posydon.CLI.popsyn.check.get_user_confirmation')
+    @patch('posydon.CLI.popsyn.check.submit_slurm_job')
     def test_handle_batches_complete_user_confirms(
         self, mock_submit, mock_confirm, mock_args, tmp_path, capsys
     ):
@@ -940,8 +940,8 @@ class TestCheckPopsynFunction:
         args.job_array = 10
         return args
 
-    @patch('posydon.utils.CLI.popsyn.check.get_run_configuration')
-    @patch('posydon.utils.CLI.popsyn.check.check_run_status')
+    @patch('posydon.CLI.popsyn.check.get_run_configuration')
+    @patch('posydon.CLI.popsyn.check.check_run_status')
     def test_check_popsyn_function_all_passed(
         self, mock_check_status, mock_get_config, mock_args, capsys
     ):
@@ -958,10 +958,10 @@ class TestCheckPopsynFunction:
         captured = capsys.readouterr()
         assert "All checks passed successfully" in captured.out
 
-    @patch('posydon.utils.CLI.popsyn.check.get_run_configuration')
-    @patch('posydon.utils.CLI.popsyn.check.check_run_status')
-    @patch('posydon.utils.CLI.popsyn.check.get_batches_status')
-    @patch('posydon.utils.CLI.popsyn.check.handle_batches_complete')
+    @patch('posydon.CLI.popsyn.check.get_run_configuration')
+    @patch('posydon.CLI.popsyn.check.check_run_status')
+    @patch('posydon.CLI.popsyn.check.get_batches_status')
+    @patch('posydon.CLI.popsyn.check.handle_batches_complete')
     def test_check_popsyn_function_needs_merge(
         self, mock_handle, mock_get_batches, mock_check_status,
         mock_get_config, mock_args
@@ -979,10 +979,10 @@ class TestCheckPopsynFunction:
 
         assert result == 2
 
-    @patch('posydon.utils.CLI.popsyn.check.get_run_configuration')
-    @patch('posydon.utils.CLI.popsyn.check.check_run_status')
-    @patch('posydon.utils.CLI.popsyn.check.get_batches_status')
-    @patch('posydon.utils.CLI.popsyn.check.handle_batches_complete')
+    @patch('posydon.CLI.popsyn.check.get_run_configuration')
+    @patch('posydon.CLI.popsyn.check.check_run_status')
+    @patch('posydon.CLI.popsyn.check.get_batches_status')
+    @patch('posydon.CLI.popsyn.check.handle_batches_complete')
     def test_check_popsyn_function_batch_folder_missing(
         self, mock_handle, mock_get_batches, mock_check_status,
         mock_get_config, mock_args, capsys
@@ -1003,11 +1003,11 @@ class TestCheckPopsynFunction:
         assert "One or more batch folders are missing" in captured.out
         assert "Cannot generate rescue scripts" in captured.out
 
-    @patch('posydon.utils.CLI.popsyn.check.get_run_configuration')
-    @patch('posydon.utils.CLI.popsyn.check.check_run_status')
-    @patch('posydon.utils.CLI.popsyn.check.get_batches_status')
-    @patch('posydon.utils.CLI.popsyn.check.handle_batches_complete')
-    @patch('posydon.utils.CLI.popsyn.check.get_user_confirmation')
+    @patch('posydon.CLI.popsyn.check.get_run_configuration')
+    @patch('posydon.CLI.popsyn.check.check_run_status')
+    @patch('posydon.CLI.popsyn.check.get_batches_status')
+    @patch('posydon.CLI.popsyn.check.handle_batches_complete')
+    @patch('posydon.CLI.popsyn.check.get_user_confirmation')
     def test_check_popsyn_function_incomplete_user_declines_rescue(
         self, mock_confirm, mock_handle, mock_get_batches,
         mock_check_status, mock_get_config, mock_args, capsys
@@ -1033,13 +1033,13 @@ class TestCheckPopsynFunction:
         captured = capsys.readouterr()
         assert "Rescue scripts not created" in captured.out
 
-    @patch('posydon.utils.CLI.popsyn.check.get_run_configuration')
-    @patch('posydon.utils.CLI.popsyn.check.check_run_status')
-    @patch('posydon.utils.CLI.popsyn.check.get_batches_status')
-    @patch('posydon.utils.CLI.popsyn.check.handle_batches_complete')
-    @patch('posydon.utils.CLI.popsyn.check.get_user_confirmation')
-    @patch('posydon.utils.CLI.popsyn.check.create_batch_rescue_script')
-    @patch('posydon.utils.CLI.popsyn.check.create_bash_submit_rescue_script')
+    @patch('posydon.CLI.popsyn.check.get_run_configuration')
+    @patch('posydon.CLI.popsyn.check.check_run_status')
+    @patch('posydon.CLI.popsyn.check.get_batches_status')
+    @patch('posydon.CLI.popsyn.check.handle_batches_complete')
+    @patch('posydon.CLI.popsyn.check.get_user_confirmation')
+    @patch('posydon.CLI.popsyn.check.create_batch_rescue_script')
+    @patch('posydon.CLI.popsyn.check.create_bash_submit_rescue_script')
     @patch('os.system')
     def test_check_popsyn_function_rescue_created_and_submitted(
         self, mock_os_system, mock_create_bash, mock_create_rescue,
@@ -1079,13 +1079,13 @@ class TestCheckPopsynFunction:
         assert mock_create_rescue.call_count == 2
         mock_os_system.assert_called_once_with('sh /test/folder/resubmit_slurm.sh')
 
-    @patch('posydon.utils.CLI.popsyn.check.get_run_configuration')
-    @patch('posydon.utils.CLI.popsyn.check.check_run_status')
-    @patch('posydon.utils.CLI.popsyn.check.get_batches_status')
-    @patch('posydon.utils.CLI.popsyn.check.handle_batches_complete')
-    @patch('posydon.utils.CLI.popsyn.check.get_user_confirmation')
-    @patch('posydon.utils.CLI.popsyn.check.create_batch_rescue_script')
-    @patch('posydon.utils.CLI.popsyn.check.create_bash_submit_rescue_script')
+    @patch('posydon.CLI.popsyn.check.get_run_configuration')
+    @patch('posydon.CLI.popsyn.check.check_run_status')
+    @patch('posydon.CLI.popsyn.check.get_batches_status')
+    @patch('posydon.CLI.popsyn.check.handle_batches_complete')
+    @patch('posydon.CLI.popsyn.check.get_user_confirmation')
+    @patch('posydon.CLI.popsyn.check.create_batch_rescue_script')
+    @patch('posydon.CLI.popsyn.check.create_bash_submit_rescue_script')
     def test_check_popsyn_function_rescue_created_not_submitted(
         self, mock_create_bash, mock_create_rescue,
         mock_confirm, mock_handle, mock_get_batches,
