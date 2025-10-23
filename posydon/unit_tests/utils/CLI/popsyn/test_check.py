@@ -385,7 +385,20 @@ class TestGetExpectedBatchCount:
         result = totest.get_expected_batch_count(str(tmp_path), str_met)
         assert result is None  # Should return None when no array line found
 
+    def test_get_expected_batch_count_array_without_dash(self, tmp_path):
+        """Test when array line doesn't contain dash (line 326->323 branch)."""
+        # Create SLURM script with array format without dash
+        metallicity = 1.0
+        str_met = convert_metallicity_to_string(metallicity)
+        slurm_file = tmp_path / f"{str_met}_Zsun_slurm_array.slurm"
+        slurm_content = """#!/bin/bash
+#SBATCH --array=5
+#SBATCH --job-name=test
+"""
+        slurm_file.write_text(slurm_content)
 
+        result = totest.get_expected_batch_count(str(tmp_path), str_met)
+        assert result is None  # Should return None when array doesn't have dash
 class TestFindMissingBatchIndices:
     """Test class for find_missing_batch_indices function."""
 
@@ -464,7 +477,7 @@ class TestSelectJobId:
         assert result == 12345
 
     def test_select_job_id_multiple_jobs(self, tmp_path, monkeypatch):
-        """Test with multiple job IDs."""
+        """Test with multiple job IDs and valid selection (line 439->exit branch)."""
         # Create log directory and files
         log_dir = tmp_path / "1e+00_logs"
         log_dir.mkdir()
@@ -472,11 +485,30 @@ class TestSelectJobId:
         (log_dir / "popsyn_12345_0.out").write_text("log")
         (log_dir / "popsyn_67890_0.out").write_text("log")
 
-        # Mock user selection
+        # Mock user selection - valid input that returns immediately
         monkeypatch.setattr('builtins.input', lambda _: "1")
 
         result = totest.select_job_id(str(tmp_path), "1e+00")
-        assert result == 67890  # Second job ID
+
+        # Should return the second job ID (index 1)
+        assert result == 67890
+
+    def test_select_job_id_multiple_jobs_first_index(self, tmp_path, monkeypatch):
+        """Test with multiple job IDs selecting first index (also tests 439->exit)."""
+        # Create log directory and files
+        log_dir = tmp_path / "1e+00_logs"
+        log_dir.mkdir()
+
+        (log_dir / "popsyn_12345_0.out").write_text("log")
+        (log_dir / "popsyn_67890_0.out").write_text("log")
+
+        # Mock user selection - select index 0
+        monkeypatch.setattr('builtins.input', lambda _: "0")
+
+        result = totest.select_job_id(str(tmp_path), "1e+00")
+
+        # Should return the first job ID (index 0)
+        assert result == 12345
 
 
 class TestReadBatchLogFile:
@@ -636,6 +668,55 @@ class TestCheckBatch:
         assert result['expected_count'] == 5
         assert result['missing_indices'] == {3, 4}
 
+    @patch('posydon.utils.CLI.popsyn.check.get_expected_batch_count')
+    @patch('posydon.utils.CLI.popsyn.check.analyze_missing_batch_logs')
+    def test_check_batch_complete(
+        self, mock_analyze, mock_get_expected, tmp_path, capsys
+    ):
+        """Test when batch is complete (line 581->585 branch: condition is False)."""
+        # Create batch folder with all expected files
+        metallicity = 1.0
+        str_met = convert_metallicity_to_string(metallicity)
+        batch_folder = tmp_path / f"{str_met}_Zsun_batches"
+        batch_folder.mkdir()
+
+        # Create all 5 expected batch files
+        for idx in [0, 1, 2, 3, 4]:
+            (batch_folder / f"evolution.combined.{idx}.h5").write_text("dummy")
+
+        mock_get_expected.return_value = 5
+
+        result = totest.check_batch(str(tmp_path), metallicity, "batches")
+
+        assert result['status'] == "complete"
+        assert result['found_count'] == 5
+        assert result['expected_count'] == 5
+        assert result['missing_indices'] is None  # None because status is complete
+
+    @patch('posydon.utils.CLI.popsyn.check.get_expected_batch_count')
+    @patch('posydon.utils.CLI.popsyn.check.analyze_missing_batch_logs')
+    def test_check_batch_expected_count_none(
+        self, mock_analyze, mock_get_expected, tmp_path, capsys
+    ):
+        """Test when expected_batch_count is None (line 581->585 branch)."""
+        # Create batch folder with some files
+        metallicity = 1.0
+        str_met = convert_metallicity_to_string(metallicity)
+        batch_folder = tmp_path / f"{str_met}_Zsun_batches"
+        batch_folder.mkdir()
+
+        for idx in [0, 1, 2]:
+            (batch_folder / f"evolution.combined.{idx}.h5").write_text("dummy")
+
+        mock_get_expected.return_value = None  # Expected count is None
+
+        result = totest.check_batch(str(tmp_path), metallicity, "batches")
+
+        assert result['status'] == "unknown_expected_count"
+        assert result['found_count'] == 3
+        assert result['expected_count'] is None
+        assert result['missing_indices'] is None  # None because expected count unknown
+
 
 class TestGetBatchesStatus:
     """Test class for get_batches_status function."""
@@ -730,6 +811,28 @@ class TestGetUserConfirmation:
         assert result is False
         captured = capsys.readouterr()
         assert "Unrecognized input" in captured.out
+
+    def test_get_user_confirmation_custom_valid_yes(self, monkeypatch):
+        """Test with custom valid_yes parameter (line 651->653 branch: valid_yes is not None)."""
+        monkeypatch.setattr('builtins.input', lambda _: "yep")
+        result = totest.get_user_confirmation("Confirm?", valid_yes=['yep', 'sure'])
+        assert result is True
+
+    def test_get_user_confirmation_custom_valid_no(self, monkeypatch):
+        """Test with custom valid_no parameter (line 653-> branch: valid_no is not None)."""
+        monkeypatch.setattr('builtins.input', lambda _: "nope")
+        result = totest.get_user_confirmation("Confirm?", valid_no=['nope', 'never'])
+        assert result is False
+
+    def test_get_user_confirmation_both_custom(self, monkeypatch):
+        """Test with both custom valid_yes and valid_no parameters."""
+        monkeypatch.setattr('builtins.input', lambda _: "affirmative")
+        result = totest.get_user_confirmation(
+            "Confirm?",
+            valid_yes=['affirmative', 'ok'],
+            valid_no=['negative', 'cancel']
+        )
+        assert result is True
 
 
 class TestSubmitSlurmJob:

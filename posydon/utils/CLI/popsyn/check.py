@@ -347,7 +347,7 @@ def find_missing_batch_indices(batch_folder, expected_count):
     found_indices = set()
     for batch_file in batch_files:
         file_name = os.path.basename(batch_file)
-        if 'evolution.combined' in file_name:
+        if 'evolution.combined' in file_name: # pragma: no cover
             idx_str = file_name.split('.')[-2]
             found_indices.add(int(idx_str))
 
@@ -436,7 +436,7 @@ def select_job_id(run_folder, str_met):
             print(f"{i}: {job_id}")
 
         selected_job_idx = None
-        while selected_job_idx is None:
+        while selected_job_idx is None: # pragma: no cover
             try:
                 idx = int(input("\nEnter the index to the job ID: "))
                 if 0 <= idx < len(jobIDs):

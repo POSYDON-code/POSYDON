@@ -290,6 +290,40 @@ class TestSlurmScriptCreation:
         finally:
             os.chdir(original_dir)
 
+    def test_create_slurm_merge_minimal(self, tmp_path):
+        """Test create_slurm_merge with no optional parameters to cover empty optional_section branch."""
+        original_dir = os.getcwd()
+        os.chdir(tmp_path)
+
+        try:
+            metallicity = 1.0
+            totest.create_slurm_merge(
+                metallicity=metallicity,
+                partition=None,  # No partition
+                email=None,       # No email
+                merge_walltime="12:00:00",
+                account=None,     # No account
+                mem_per_cpu="4G",
+                path_to_posydon="/posydon",
+                path_to_posydon_data="/data"
+            )
+
+            str_met = convert_metallicity_to_string(metallicity)
+            filename = f"{str_met}_Zsun_merge_popsyn.slurm"
+            assert os.path.exists(filename)
+
+            with open(filename, "r") as f:
+                content = f.read()
+                # Verify no optional directives are present
+                assert "#SBATCH --partition" not in content
+                assert "#SBATCH --account" not in content
+                assert "#SBATCH --mail-user" not in content
+                # But required directives should be there
+                assert "#SBATCH --job-name" in content
+                assert "#SBATCH --time=12:00:00" in content
+        finally:
+            os.chdir(original_dir)
+
     def test_create_slurm_rescue(self, tmp_path):
         """Test that create_slurm_rescue creates a rescue script."""
         original_dir = os.getcwd()
@@ -323,6 +357,45 @@ class TestSlurmScriptCreation:
                 assert f"#SBATCH --job-name={str_met}_popsyn_rescue" in content
                 assert f"export SLURM_ARRAY_TASK_COUNT={job_array_length}" in content
                 assert "export SLURM_ARRAY_TASK_MIN=0" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_slurm_rescue_minimal(self, tmp_path):
+        """Test create_slurm_rescue with no optional parameters to cover empty optional_section branch."""
+        original_dir = os.getcwd()
+        os.chdir(tmp_path)
+
+        try:
+            metallicity = 1.0
+            missing_indices = [2, 4]
+            job_array_length = 10
+
+            totest.create_slurm_rescue(
+                metallicity=metallicity,
+                missing_indices=missing_indices,
+                job_array_length=job_array_length,
+                partition=None,   # No partition
+                email=None,       # No email
+                walltime="20:00:00",
+                account=None,     # No account
+                mem_per_cpu="4G",
+                path_to_posydon="/posydon",
+                path_to_posydon_data="/data"
+            )
+
+            str_met = convert_metallicity_to_string(metallicity)
+            filename = f"{str_met}_Zsun_rescue.slurm"
+            assert os.path.exists(filename)
+
+            with open(filename, "r") as f:
+                content = f.read()
+                # Verify no optional directives are present
+                assert "#SBATCH --partition" not in content
+                assert "#SBATCH --account" not in content
+                assert "#SBATCH --mail-user" not in content
+                # But required directives should be there
+                assert "#SBATCH --array=2,4" in content
+                assert "#SBATCH --job-name=1e+00_popsyn_rescue" in content
         finally:
             os.chdir(original_dir)
 
@@ -455,5 +528,198 @@ class TestRescueScriptFunctions:
             content = rescue_script.read_text()
             assert "#SBATCH --array=1,2,5" in content
             assert "#SBATCH --job-name=1e+00_popsyn_rescue" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_batch_rescue_script_with_overrides(self, tmp_path, mock_batch_status):
+        """Test that create_batch_rescue_script properly overrides parameters from args."""
+        # Setup
+        run_folder = tmp_path / "run"
+        run_folder.mkdir()
+
+        # Create args with override parameters
+        args = MagicMock()
+        args.run_folder = str(run_folder)
+        args.walltime = "48:00:00"       # Override walltime
+        args.mem_per_cpu = "8G"          # Override memory
+        args.partition = "special"       # Override partition
+        args.account = "new_account"     # Override account
+        args.email = "new@example.com"   # Override email
+
+        # Create a mock SLURM array script with different values
+        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_content = textwrap.dedent("""\
+            #!/bin/bash
+            #SBATCH --array=0-9
+            #SBATCH --time=24:00:00
+            #SBATCH --mem-per-cpu=4G
+            #SBATCH --partition=old_partition
+            #SBATCH --account=old_account
+            #SBATCH --mail-user=old@example.com
+            export PATH_TO_POSYDON=/path/to/posydon
+            export PATH_TO_POSYDON_DATA=/path/to/data
+            srun python ./run_metallicity.py 1.0
+        """)
+        slurm_script.write_text(slurm_content)
+
+        original_dir = os.getcwd()
+        os.chdir(run_folder)
+
+        try:
+            result = totest.create_batch_rescue_script(args, mock_batch_status)
+
+            # Verify that the rescue script uses the overridden values
+            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            content = rescue_script.read_text()
+
+            # Check overridden values
+            assert "#SBATCH --time=48:00:00" in content
+            assert "#SBATCH --mem-per-cpu=8G" in content
+            assert "#SBATCH --partition=special" in content
+            assert "#SBATCH --account=new_account" in content
+            assert "#SBATCH --mail-user=new@example.com" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_batch_rescue_script_partial_overrides(self, tmp_path, mock_batch_status):
+        """Test create_batch_rescue_script with only some parameters overridden (None values)."""
+        # Setup
+        run_folder = tmp_path / "run"
+        run_folder.mkdir()
+
+        # Create args with only some override parameters (others are None)
+        args = MagicMock()
+        args.run_folder = str(run_folder)
+        args.walltime = None       # Don't override
+        args.mem_per_cpu = "16G"   # Override this one
+        args.partition = None      # Don't override
+        args.account = None        # Don't override
+        args.email = None          # Don't override
+
+        # Create a mock SLURM array script
+        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_content = textwrap.dedent("""\
+            #!/bin/bash
+            #SBATCH --array=0-9
+            #SBATCH --time=24:00:00
+            #SBATCH --mem-per-cpu=4G
+            #SBATCH --partition=original_partition
+            #SBATCH --account=original_account
+            #SBATCH --mail-user=original@example.com
+            export PATH_TO_POSYDON=/path/to/posydon
+            export PATH_TO_POSYDON_DATA=/path/to/data
+            srun python ./run_metallicity.py 1.0
+        """)
+        slurm_script.write_text(slurm_content)
+
+        original_dir = os.getcwd()
+        os.chdir(run_folder)
+
+        try:
+            result = totest.create_batch_rescue_script(args, mock_batch_status)
+
+            # Verify mixed values (some from original, some overridden)
+            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            content = rescue_script.read_text()
+
+            # Original values should be preserved
+            assert "#SBATCH --time=24:00:00" in content
+            assert "#SBATCH --partition=original_partition" in content
+            assert "#SBATCH --account=original_account" in content
+            assert "#SBATCH --mail-user=original@example.com" in content
+
+            # Overridden value
+            assert "#SBATCH --mem-per-cpu=16G" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_batch_rescue_script_no_overrides(self, tmp_path, mock_batch_status):
+        """Test create_batch_rescue_script when all args are None (no overrides)."""
+        # Setup
+        run_folder = tmp_path / "run"
+        run_folder.mkdir()
+
+        # Create args with all None override parameters
+        args = MagicMock()
+        args.run_folder = str(run_folder)
+        args.walltime = None       # Don't override
+        args.mem_per_cpu = None    # Don't override
+        args.partition = None      # Don't override
+        args.account = None        # Don't override
+        args.email = None          # Don't override
+
+        # Create a mock SLURM array script
+        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_content = textwrap.dedent("""\
+            #!/bin/bash
+            #SBATCH --array=0-9
+            #SBATCH --time=24:00:00
+            #SBATCH --mem-per-cpu=4G
+            #SBATCH --partition=original_partition
+            #SBATCH --account=original_account
+            #SBATCH --mail-user=original@example.com
+            export PATH_TO_POSYDON=/path/to/posydon
+            export PATH_TO_POSYDON_DATA=/path/to/data
+            srun python ./run_metallicity.py 1.0
+        """)
+        slurm_script.write_text(slurm_content)
+
+        original_dir = os.getcwd()
+        os.chdir(run_folder)
+
+        try:
+            result = totest.create_batch_rescue_script(args, mock_batch_status)
+
+            # Verify all values come from original script (no overrides)
+            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            content = rescue_script.read_text()
+
+            # All values should be from original script
+            assert "#SBATCH --time=24:00:00" in content
+            assert "#SBATCH --mem-per-cpu=4G" in content
+            assert "#SBATCH --partition=original_partition" in content
+            assert "#SBATCH --account=original_account" in content
+            assert "#SBATCH --mail-user=original@example.com" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_batch_rescue_script_array_without_dash(self, tmp_path, mock_batch_status):
+        """Test create_batch_rescue_script when array line doesn't contain dash (line 496->493 branch)."""
+        # Setup
+        run_folder = tmp_path / "run"
+        run_folder.mkdir()
+
+        args = MagicMock()
+        args.run_folder = str(run_folder)
+        args.walltime = None
+        args.mem_per_cpu = None
+        args.partition = None
+        args.account = None
+        args.email = None
+
+        # Create a mock SLURM array script with array format that doesn't have a dash
+        # (e.g., just a single number or comma-separated list)
+        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_content = textwrap.dedent("""\
+            #!/bin/bash
+            #SBATCH --array=5
+            #SBATCH --time=24:00:00
+            #SBATCH --mem-per-cpu=4G
+            export PATH_TO_POSYDON=/path/to/posydon
+            export PATH_TO_POSYDON_DATA=/path/to/data
+            srun python ./run_metallicity.py 1.0
+        """)
+        slurm_script.write_text(slurm_content)
+
+        original_dir = os.getcwd()
+        os.chdir(run_folder)
+
+        try:
+            # This should work but job_array_length will be None since no dash in array
+            result = totest.create_batch_rescue_script(args, mock_batch_status)
+
+            # Verify script was still created
+            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            assert rescue_script.exists()
         finally:
             os.chdir(original_dir)
