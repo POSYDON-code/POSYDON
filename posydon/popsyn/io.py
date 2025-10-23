@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 
 BINARYPROPERTIES_DTYPES = {
+    'binary_index' : 'int64',
     # The state and event of the system. For more information, see
     # `posydon.utils.common_functions.get_binary_state_and_event_and_mt_case()
     'state' : 'string',                    #

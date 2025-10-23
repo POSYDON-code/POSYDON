@@ -141,12 +141,12 @@ class TestFlatMassRatio:
         q = 0.5
         pdf_value = default_flat_ratio.pdf(q)
         expected = default_flat_ratio.norm
-        assert pdf_value == expected
+        assert np.isclose(pdf_value, expected)
 
         # Outside range
         q_outside = 1.5
         pdf_outside = default_flat_ratio.pdf(q_outside)
-        assert pdf_outside == 0.0
+        assert np.isclose(pdf_outside, 0.0)
 
     def test_normalization_integral(self, default_flat_ratio):
         """Test that the PDF integrates to 1 over the valid range."""

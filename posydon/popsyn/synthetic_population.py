@@ -1938,6 +1938,8 @@ class TransientPopulation(Population):
             met_indices = tmp_data.index[met_mask]
             met_indices =np.unique(met_indices)
             M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
+            if len(met_indices) == 0:
+                continue
             pop_data = self.oneline.select(where='index in '+str(met_indices.tolist()),
                                            columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
 

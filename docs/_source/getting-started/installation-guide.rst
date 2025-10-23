@@ -55,6 +55,10 @@ Anaconda (Recommended)
             import posydon
             print(posydon.__file__)
 
+        Use the parent directory of ``/posydon/__init__.py`` as the value for the environment variable
+        :code:`PATH_TO_POSYDON` in the next step, e.g. ``/Users/Documents/POSYDON/conda/site-packages/posydon/__init__.py``
+        becomes ``/Users/Documents/POSYDON/conda/site-packages``.
+
 .. _posydon-env:
 
 4. **Set Environment Variables**
@@ -251,6 +255,15 @@ Our tutorials are provided as Jupyter notebooks. If you want to run these notebo
 
     .. note::
         Remember to navigate to the directory containing the Jupyter notebooks or you won't see them listed in the Jupyter interface.
+
+.. note::
+    You might need to install a iPython kernel for the conda environment you are using.
+    You can do this by running inside your conda environment:
+
+    .. code-block:: bash
+
+        conda install -c conda-forge ipykernel
+        python -m ipykernel install --name=posydon_env
 
 
 
