@@ -711,6 +711,8 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "matthias_lbv_thermo_dedt_noAgeLimit-dcc42e1d6d89fc267826970643e7f4f1bf463171"
     elif rerun_type == 'zepei_mt_mesh':
         replace_text = "ZepeiX_otherj_fit_mesh-b95a8691f0fc72be3bb1761e0dbbc341cbc2a255"
+    elif rerun_type == 'zepei_mt_retrograde':
+        replace_text = "ZepeiX_otherj_fit_mesh-b836b444c9306ed411815d4e83594c49dd33ea3f"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -838,6 +840,7 @@ def logic_rerun(grid, rerun_type):
     elif ((rerun_type == 'HeMB_MLTp_mesh')
 #          or (rerun_type == 'LBV_wind+HeMB_MLTp_mesh') 
            or (rerun_type == 'zepei_mt_mesh')
+           or (rerun_type == 'zepei_mt_retrograde')
          ):
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'more_mesh':
