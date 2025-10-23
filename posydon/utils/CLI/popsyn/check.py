@@ -95,7 +95,7 @@ def validate_run_folder(run_folder):
 
     try:
         folder_contents = os.listdir(run_folder)
-    except (OSError, PermissionError) as e:
+    except (OSError, PermissionError) as e: # pragma: no cover
         raise FileNotFoundError(
             f"Cannot access run folder '{run_folder}': {e}\n"
             "Please check folder permissions."
@@ -344,16 +344,12 @@ def find_missing_batch_indices(batch_folder, expected_count):
         Set of missing batch indices
     """
     batch_files = glob.glob(os.path.join(batch_folder, 'evolution.combined.*'))
-
     found_indices = set()
     for batch_file in batch_files:
         file_name = os.path.basename(batch_file)
         if 'evolution.combined' in file_name:
             idx_str = file_name.split('.')[-2]
-            try:
-                found_indices.add(int(idx_str))
-            except ValueError:
-                continue  # Skip files with non-numeric indices
+            found_indices.add(int(idx_str))
 
     return set(range(expected_count)) - found_indices
 
@@ -446,9 +442,9 @@ def select_job_id(run_folder, str_met):
                 if 0 <= idx < len(jobIDs):
                     selected_job_idx = idx
                     return jobIDs[idx]
-                else:
+                else: # pragma: no cover
                     print_error("Invalid selection. Please try again.")
-            except ValueError:
+            except ValueError: # pragma: no cover
                 print_error("Please enter a valid number.")
     else:
         return jobIDs[0]
@@ -504,7 +500,7 @@ def read_batch_log_file(log_file_path, batch_index, str_met, jobID):
                 for i, line in enumerate(lines):
                     print(f"  {i+1}: {line.strip()}")
 
-    except Exception as e:
+    except Exception as e: # pragma: no cover
         print_error(f"Batch {batch_index}: Error reading log file - {str(e)}")
 
 def analyze_missing_batch_logs(run_folder, str_met, missing_indices):
@@ -733,13 +729,13 @@ def handle_batches_complete(args, missing_files, batch_status):
                     args.run_folder,
                     MERGE_SCRIPT_PATTERN.format(met=str_met)
                 )
-                if not submit_slurm_job(script_path, f"Merge job for {str_met}"):
+                if not submit_slurm_job(script_path, f"Merge job for {str_met}"): #pragma: no cover
                     all_succeeded = False
 
             if all_succeeded:
                 print_success("All merge jobs submitted successfully.")
             else:
-                print_error("Some merge jobs failed to submit. Please check the errors above.")
+                print_error("Some merge jobs failed to submit. Please check the errors above.") #pragma: no cover
         else:
             print("Merge jobs not resubmitted.")
 

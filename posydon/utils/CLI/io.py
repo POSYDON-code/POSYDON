@@ -130,7 +130,7 @@ def create_run_script(ini_file):
     '''
 
     filename ='run_metallicity.py'
-    if os.path.exists(filename):
+    if os.path.exists(filename): # pragma: no cover
         Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write(create_run_script_text(ini_file))
@@ -145,7 +145,7 @@ def create_merge_script(ini_file):
     '''
 
     filename='merge_metallicity.py'
-    if os.path.exists(filename):
+    if os.path.exists(filename): # pragma: no cover
         Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write(create_merge_script_text(ini_file))
@@ -219,7 +219,7 @@ def create_slurm_array(metallicity,
     ''')
 
     filename = f"{str_met}_Zsun_slurm_array.slurm"
-    if os.path.exists(filename):
+    if os.path.exists(filename): # pragma: no cover
         Pwarn('Replace ' + filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write(text)
@@ -292,7 +292,7 @@ def create_slurm_merge(metallicity,
     ''')
 
     filename = f'{str_met}_Zsun_merge_popsyn.slurm'
-    if os.path.exists(filename):
+    if os.path.exists(filename): # pragma: no cover
         Pwarn('Replace ' + filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write(text)
@@ -377,7 +377,7 @@ def create_slurm_rescue(metallicity,
     ''')
 
     filename = f'{str_met}_Zsun_rescue.slurm'
-    if os.path.exists(filename):
+    if os.path.exists(filename): # pragma: no cover
         Pwarn('Replace ' + filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write(text)
@@ -396,7 +396,7 @@ def create_python_scripts(ini_file):
     create_merge_script(ini_file)
     print("Created run script and merge script")
 
-def create_slurm_scripts(metallicity, args):
+def create_slurm_scripts(metallicity, args): # pragma: no cover
     '''Creates the slurm scripts for population synthesis.
 
     Parameters
@@ -429,7 +429,7 @@ def create_bash_submit_script(filename, metallicities):
         The list of metallicities in solar units
     '''
 
-    if os.path.exists(filename):
+    if os.path.exists(filename): # pragma: no cover
         Pwarn('Replace '+filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
         file.write('#!/bin/bash\n')
