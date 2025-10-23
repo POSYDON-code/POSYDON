@@ -6,7 +6,7 @@ __authors__ = [
 
 import os
 import textwrap
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 

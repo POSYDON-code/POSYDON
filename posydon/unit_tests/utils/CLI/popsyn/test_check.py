@@ -4,11 +4,9 @@ __authors__ = [
     "Max Briel <max.briel@gmail.com>",
 ]
 
-import glob
 import os
-from unittest.mock import MagicMock, call, mock_open, patch
+from unittest.mock import MagicMock, patch
 
-import numpy as np
 import pytest
 
 # import the module which will be tested

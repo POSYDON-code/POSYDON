@@ -5,8 +5,7 @@ __authors__ = [
 ]
 
 import os
-import tempfile
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
