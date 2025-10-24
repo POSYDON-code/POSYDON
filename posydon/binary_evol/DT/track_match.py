@@ -1416,7 +1416,7 @@ class TrackMatcher:
         with np.errstate(all="ignore"):
             # get the initial m0, t0 track
             if star.co:
-                match_m0, match_t0 = star.mass, copy_prev_t0
+                match_m0, match_t0 = copy_prev_m0, copy_prev_t0
             elif binary.event == 'ZAMS' or binary.event == 'redirect_from_ZAMS':
                 # ZAMS stars in wide (non-mass exchaging binaries) that are
                 # directed to detached step at birth
@@ -1843,7 +1843,7 @@ class TrackMatcher:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             self.get_star_match_data(binary, primary,
-                                     copy_prev_m0 = primary.mass,
+                                     copy_prev_m0 = m0,
                                      copy_prev_t0 = t0)
         elif self.primary_normal:
             # match primary
