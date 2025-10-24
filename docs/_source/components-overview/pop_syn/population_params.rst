@@ -695,7 +695,7 @@ The merger time due to gravitational wave emission is calculated.
       | ``['import.path', 'name_of_step']``
     - ``None``
 
-  * - ``n_o_steps_interval``
+  * - ``n_o_steps_history``
     - | The number of steps interval for the double compact object evolution.
     - ``None``
 
