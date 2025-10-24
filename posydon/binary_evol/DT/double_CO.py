@@ -51,8 +51,8 @@ class DoubleCO(detached_step):
     def __call__(self, binary):
 
         super().__call__(binary)
-        
-        binary.separation = self.res.y[0][-1] * 100_000 / constants.Rsun    
+
+        binary.separation = self.res.y[0][-1] * 100_000 / constants.Rsun
         binary.orbital_period = orbital_period_from_separation(
             binary.separation, binary.star_1.mass, binary.star_2.mass
         )
@@ -61,7 +61,7 @@ class DoubleCO(detached_step):
         if self.res.status == -1:
             set_binary_to_failed(binary)
             raise NumericalError(f"Integration failed for {binary.state} DCO "
-                                 f"({binary.star_1.state}, {binary.star_2.state}): ", 
+                                 f"({binary.star_1.state}, {binary.star_2.state}): ",
                                  self.res.message)
         # contact event triggered
         elif self.res.status == 1:
