@@ -51,16 +51,30 @@ class DoubleCO(detached_step):
     def __call__(self, binary):
 
         super().__call__(binary)
-
-        binary.state = "detached"
-        binary.time = self.max_time
-        binary.separation = self.res.y[0][-1] * 100_000 / constants.Rsun
-        binary.eccentricity = self.res.y[1][-1]
+        
+        binary.separation = self.res.y[0][-1] * 100_000 / constants.Rsun    
         binary.orbital_period = orbital_period_from_separation(
             binary.separation, binary.star_1.mass, binary.star_2.mass
         )
         binary.V_sys = binary.V_sys_history[-1]
-        binary.event = "maxtime"
+
+        if self.res.status == -1:
+            set_binary_to_failed(binary)
+            raise NumericalError(f"Integration failed for {binary.state} DCO "
+                                 f"({binary.star_1.state}, {binary.star_2.state}): ", 
+                                 self.res.message)
+        # contact event triggered
+        elif self.res.status == 1:
+            binary.time = self.res.t[-1]
+            binary.eccentricity = 0.0
+            binary.state = "contact"
+            binary.event = "CO_contact"
+        # max time reached
+        else:
+            binary.time = self.max_time
+            binary.eccentricity = self.res.y[1][-1]
+            binary.state = "detached"
+            binary.event = "maxtime"
 
     def solve_ODEs(self, binary, primary, secondary):
 
@@ -71,7 +85,7 @@ class DoubleCO(detached_step):
                             events=self.evo.ev_contact,
                             method="BDF",
                         t_span=(0, self.max_time - binary.time),
-                        y0=[binary.separation * constants.Rsun / 100000,
+                        y0=[binary.separation * constants.Rsun / 100_000,
                             binary.eccentricity,
                             secondary.omega0, primary.omega0],
                         rtol=1e-10,
@@ -129,6 +143,7 @@ class double_CO_evolution(detached_evolution):
 
         m1 = self.primary.latest["mass"] * constants.msol
         m2 = self.secondary.latest["mass"] * constants.msol
+
         a = a * 100_000
 
         da_gr = ((-64 / 5)
