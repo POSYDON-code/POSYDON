@@ -302,7 +302,8 @@ class detached_step:
             "do_magnetic_braking": self.do_magnetic_braking,
             "magnetic_braking_mode": self.magnetic_braking_mode,
             "do_stellar_evolution_and_spin_from_winds": self.do_stellar_evolution_and_spin_from_winds,
-            "do_gravitational_radiation": self.do_gravitational_radiation
+            "do_gravitational_radiation": self.do_gravitational_radiation,
+            "verbose": self.verbose,
         }
 
     def __repr__(self):
