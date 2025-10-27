@@ -143,7 +143,7 @@ def create_merge_script(ini_file):
     '''Creates a merge script for the population synthesis run.
 
     The created merge script will combine the "evolution.combined.h5" files
-    from the different job arrays in the "temp_directory" into a 
+    from the different job arrays in the "temp_directory" into a
     single "{MET}_Zsun_population.h5" file in the run directory.
 
     Parameters
