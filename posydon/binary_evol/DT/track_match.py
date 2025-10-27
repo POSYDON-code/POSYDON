@@ -1718,7 +1718,7 @@ class TrackMatcher:
 
         return omega0_pri, omega0_sec
 
-    def do_matching(self, binary, step_name="step_match", 
+    def do_matching(self, binary, step_name="step_match",
                     match_secondary=True, match_primary=True):
 
         """
