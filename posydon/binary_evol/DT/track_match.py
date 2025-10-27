@@ -1408,11 +1408,6 @@ class TrackMatcher:
 
         """
 
-        #if star == binary.star_1 and not self.match_s1:
-        #    return None, None
-        #elif star == binary.star_2 and not self.match_s2:
-        #    return None, None
-
         with np.errstate(all="ignore"):
             # get the initial m0, t0 track
             if star.co:
@@ -1833,7 +1828,7 @@ class TrackMatcher:
 
             self.get_star_match_data(binary, primary)
 
-        elif self.primary_not_normal:
+        elif self.match_primary and self.primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             self.get_star_match_data(binary, primary,
@@ -1857,8 +1852,6 @@ class TrackMatcher:
            (primary.interp1d == None and self.match_primary):
             failed_state = binary.state
             set_binary_to_failed(binary)
-            print(primary.interp1d, self.match_primary)
-            print(secondary.interp1d, self.match_secondary)
             raise MatchingError("Grid matching failed for "
                                 f"{failed_state} binary.")
 
