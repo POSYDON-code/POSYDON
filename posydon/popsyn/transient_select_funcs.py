@@ -167,7 +167,7 @@ def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
     return (m_1*a_1*np.cos(tilt_1)+m_2*a_2*np.cos(tilt_2))/(m_1+m_2)
 
 
-def precession(theta_1, theta_2, a1, a2, m1, m2):
+def effective_precession(theta_1, theta_2, a1, a2, m1, m2):
     """Calculate the effective spin precession.
 
     Following Equation 14 in Gerosa+2021, which
