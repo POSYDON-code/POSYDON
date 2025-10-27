@@ -174,7 +174,7 @@ def effective_precession(theta_1, theta_2, a1, a2, m1, m2):
     is used in the LVK analyses.
     https://arxiv.org/abs/2011.11948
 
-    \chi_p = max(a_1 sin(theta_1),
+    \chi_p = max(a_1 * sin(theta_1),
             q * ((4q + 3)/(4+3q)) * a_2 * sin(theta_2))
 
     Parameters
