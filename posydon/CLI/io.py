@@ -123,6 +123,10 @@ def create_run_script_text(ini_file):
 def create_run_script(ini_file):
     '''Creates a run script for the population synthesis run.
 
+    This function creates a script that will run the POSYDON population at a specific metallicity.
+    The script takes a metallicity as a command-line input.
+    It uses that metallicity to run the BinaryPopulation with.
+
     Parameters
     ----------
     ini_file : str
@@ -137,6 +141,10 @@ def create_run_script(ini_file):
 
 def create_merge_script(ini_file):
     '''Creates a merge script for the population synthesis run.
+
+    The created merge script will combine the "evolution.combined.h5" files
+    from the different job arrays in the "temp_directory" into a 
+    single "{MET}_Zsun_population.h5" file in the run directory.
 
     Parameters
     ----------
