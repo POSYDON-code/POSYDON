@@ -444,7 +444,7 @@ def evolve_binaries(verbose):
     STAR2 = SingleStar(**{'mass': 9.711216,
                           'state': 'H-rich_Core_H_burning',
                           'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-                          
+
 
     BINARY = BinaryStar(STAR1, STAR2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':79.83702, 'eccentricity': 0.0},
@@ -470,7 +470,7 @@ def evolve_binaries(verbose):
     star_1 = SingleStar(**{'mass': 38.741115,
                            'state': 'H-rich_Core_H_burning',\
                            'natal_kick_array': [21.113771, 2.060135, 2.224789, 4.089729]})
-    star_2 = SingleStar(**{'mass': 27.776178, 
+    star_2 = SingleStar(**{'mass': 27.776178,
                            'state': 'H-rich_Core_H_burning',\
                            'natal_kick_array': [282.712103, 0.296252, 1.628433, 5.623812]})
 
