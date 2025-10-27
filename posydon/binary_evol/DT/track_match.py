@@ -1408,10 +1408,10 @@ class TrackMatcher:
 
         """
 
-        if star == binary.star_1 and not self.match_s1:
-            return None, None
-        elif star == binary.star_2 and not self.match_s2:
-            return None, None
+        #if star == binary.star_1 and not self.match_s1:
+        #    return None, None
+        #elif star == binary.star_2 and not self.match_s2:
+        #    return None, None
 
         with np.errstate(all="ignore"):
             # get the initial m0, t0 track
@@ -1723,7 +1723,8 @@ class TrackMatcher:
 
         return omega0_pri, omega0_sec
 
-    def do_matching(self, binary, step_name="step_match", match_s1=True, match_s2=True):
+    def do_matching(self, binary, step_name="step_match", 
+                    match_secondary=True, match_primary=True):
 
         """
             Perform binary to single star grid matching. This is currently
@@ -1753,6 +1754,12 @@ class TrackMatcher:
             meant to indicate the relevant evolution step's name. This should
             normally match the name of the step in which the matching was
             made, e.g., "step_detached".
+
+        match_secondary : bool
+            A boolean that indicates whether to perform matching on star 1.
+
+        match_primary : bool
+            A boolean that indicates whether to perform matching on star 2.
 
         Returns
         -------
@@ -1797,16 +1804,12 @@ class TrackMatcher:
             return (None, None, None), (None, None, None), only_CO
 
         # record which star we performed matching on for reporting purposes
-        self.match_s1 = match_s1
-        self.match_s2 = match_s2
+        self.match_secondary = match_secondary
+        self.match_primary = match_primary
         self.matched_s1 = False
         self.matched_s2 = False
         primary.matched = False
         secondary.matched = False
-
-        # get the matched data of binary components
-        # match secondary:
-        m0, t0 = self.get_star_match_data(binary, secondary)
 
         # primary is a CO or massless remnant, or else it is "normal"
         # TODO: should these be star properties? also, do we only really need one?
@@ -1815,15 +1818,27 @@ class TrackMatcher:
         self.primary_not_normal = primary.co or has_non_existent
         self.primary_normal = not primary.co and all_exist
 
-        if self.primary_not_normal:
+        # get the matched data of binary components
+        # match secondary:
+        if self.match_secondary:
+            if self.verbose:
+                print("\nMatching secondary star...")
+
+            m0, t0 = self.get_star_match_data(binary, secondary)
+
+        if self.match_primary and self.primary_normal:
+            # match primary
+            if self.verbose:
+                print("\nMatching primary star...")
+
+            self.get_star_match_data(binary, primary)
+
+        elif self.primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             self.get_star_match_data(binary, primary,
                                      copy_prev_m0 = m0,
                                      copy_prev_t0 = t0)
-        elif self.primary_normal:
-            # match primary
-            self.get_star_match_data(binary, primary)
 
         elif not (self.primary_normal or self.primary_not_normal):
             raise ValueError("During matching, the primary should either be "
@@ -1838,9 +1853,12 @@ class TrackMatcher:
                             f"{binary.companion_2_exists}")
 
 
-        if (secondary.interp1d == None and secondary.matched) or (primary.interp1d == None and primary.matched):
+        if (secondary.interp1d == None and self.match_secondary) or \
+           (primary.interp1d == None and self.match_primary):
             failed_state = binary.state
             set_binary_to_failed(binary)
+            print(primary.interp1d, self.match_primary)
+            print(secondary.interp1d, self.match_secondary)
             raise MatchingError("Grid matching failed for "
                                 f"{failed_state} binary.")
 
