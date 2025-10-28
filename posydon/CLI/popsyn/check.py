@@ -267,7 +267,7 @@ def check_binary_counts(run_folder, metallicities, expected_count):
     return all_match, counts_dict
 
 def check_run_status(run_folder, metallicities, number_of_binaries):
-    """Check the whether population files exist and if they have
+    """Check whether the population files exist and if they have
     the expected number of binary counts.
 
     Parameters
