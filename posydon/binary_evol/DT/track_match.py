@@ -34,8 +34,8 @@ from posydon.binary_evol.flow_chart import (
     STAR_STATES_H_RICH,
     STAR_STATES_HE_RICH,
     STAR_STATES_FOR_Hestar_MATCHING,
+    STAR_STATES_FOR_postHeMS_MATCHING,
     STAR_STATES_FOR_postMS_MATCHING,
-    STAR_STATES_FOR_postHeMS_MATCHING
 )
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.interpolation.data_scaling import DataScaler
