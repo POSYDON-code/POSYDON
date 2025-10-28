@@ -55,8 +55,8 @@ from posydon.utils.common_functions import (
     calculate_Mejected_for_integrated_binding_energy,
     check_state_of_star,
 )
-from posydon.utils.posydonwarning import Pwarn
 from posydon.utils.constants import Zsun
+from posydon.utils.posydonwarning import Pwarn
 
 MODEL = {"prescription": 'alpha-lambda',
          "common_envelope_efficiency": 1.0,
