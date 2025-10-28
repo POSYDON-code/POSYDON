@@ -1156,7 +1156,7 @@ class StepCEE(object):
                 if star.metallicity is None:
                     star.surface_he4 = 1 - star.surface_h1 - 0.0142
                 else:
-                    star.surface_he4 = 1.0-star.surface_h1-star.metallicity
+                    star.surface_he4 = 1.0-star.surface_h1-star.metallicity * 0.0142
                 star.log_LH = -1e99
                 attributes_changing.extend([
                                         "surface_h1",

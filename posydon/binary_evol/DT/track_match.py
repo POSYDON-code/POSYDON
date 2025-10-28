@@ -32,8 +32,10 @@ from posydon.binary_evol.flow_chart import (
     STAR_STATES_CO,
     STAR_STATES_FOR_HMS_MATCHING,
     STAR_STATES_H_RICH,
+    STAR_STATES_HE_RICH,
     STAR_STATES_FOR_Hestar_MATCHING,
     STAR_STATES_FOR_postMS_MATCHING,
+    STAR_STATES_FOR_postHeMS_MATCHING
 )
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.interpolation.data_scaling import DataScaler
@@ -264,6 +266,7 @@ class TrackMatcher:
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None,
+            list_for_matching_postHeMS=None,
             record_matching=False,
             verbose=False
     ):
@@ -301,6 +304,7 @@ class TrackMatcher:
         self.list_for_matching_HMS = list_for_matching_HMS
         self.list_for_matching_postMS = list_for_matching_postMS
         self.list_for_matching_HeStar = list_for_matching_HeStar
+        self.list_for_matching_postHeMS = list_for_matching_postHeMS
 
         # mapping a combination of (key, htrack, method) to a pre-trained
         # DataScaler instance, created the first time it is requested
@@ -383,6 +387,14 @@ class TrackMatcher:
                 [m_min_He, m_max_He], [t_min_He, t_max_He]
             ]
 
+        if self.list_for_matching_postHeMS is None:
+            self.list_for_matching_postHeMS = [
+                ["he_core_mass", "log_R"],
+                [10.0, 2.0],
+                ["min_max", "min_max"],
+                [m_min_He, m_max_He], [t_min_He, t_max_He]
+            ]
+
         # Stellar parameter lists for alternative matching metrics
         # These are used in the event that an initial match can not be found
         self.list_for_matching_HMS_alternative = [
@@ -401,6 +413,13 @@ class TrackMatcher:
             ["he_core_mass", "center_he4", "log_R"],
             [10.0, 1.0, 2.0],
             ["min_max", "min_max", "min_max"],
+            [m_min_He, m_max_He], [t_min_He, t_max_He]
+        ]
+
+        self.list_for_matching_postHeMS_alternative = [
+            ["he_core_mass", "log_R"],
+            [10.0, 2.0],
+            ["min_max", "min_max"],
             [m_min_He, m_max_He], [t_min_He, t_max_He]
         ]
 
@@ -1080,6 +1099,8 @@ class TrackMatcher:
                     match_list = self.list_for_matching_postMS
                 elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
                     match_list = self.list_for_matching_HeStar
+                elif star.state in STAR_STATES_FOR_postHeMS_MATCHING:
+                    match_list = self.list_for_matching_postHeMS
                 else:
                     raise ValueError(f"{star.state} invalid for matching step")
 
@@ -1091,9 +1112,11 @@ class TrackMatcher:
                 if star.state in STAR_STATES_FOR_HMS_MATCHING:
                     match_list = self.list_for_matching_HMS_alternative
                 elif star.state in STAR_STATES_FOR_postMS_MATCHING:
-                    match_list = (self.list_for_matching_postMS_alternative)
+                    match_list = self.list_for_matching_postMS_alternative
                 elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
-                    match_list = (self.list_for_matching_HeStar_alternative)
+                    match_list = self.list_for_matching_HeStar_alternative
+                elif star.state in STAR_STATES_FOR_postHeMS_MATCHING:
+                    match_list = self.list_for_matching_postHeMS_alternative
                 else:
                     raise ValueError(f"{star.state} invalid for matching step")
 
@@ -1119,6 +1142,10 @@ class TrackMatcher:
                 elif star.state in STAR_STATES_FOR_postMS_MATCHING:
                     new_htrack = False
                     match_list = self.list_for_matching_postMS
+
+                elif star.state in STAR_STATES_FOR_postHeMS_MATCHING:
+                    new_htrack = True
+                    match_list = self.list_for_matching_postHeMS
 
             else:
                 raise POSYDONError("In getting match attributes, match_type "
@@ -1944,7 +1971,7 @@ class TrackMatcher:
         s_arr = np.array([binary.star_1, binary.star_2])
         s_CO = np.array([s.state in STAR_STATES_CO for s in s_arr])
         s_H = np.array([s.state in STAR_STATES_H_RICH for s in s_arr])
-        s_He = np.array([s.state in STAR_STATES_FOR_Hestar_MATCHING for s in s_arr])
+        s_He = np.array([s.state in STAR_STATES_HE_RICH for s in s_arr])
         s_massless = np.array([s.state == "massless_remnant" for s in s_arr])
         s_valid = s_H | s_He | s_CO | s_massless    # states considered here
         s_htrack = s_H & ~(s_CO)   # only true if h rich and not a CO
