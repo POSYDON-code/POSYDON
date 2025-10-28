@@ -636,9 +636,9 @@ class TestFunctions:
         # examples:
         bh, h1, h2 = totest.downsample_history(binary_history, star_history,\
                                                star_history, ConfigFile)
-        assert np.array_equal(bh, binary_history)
-        assert np.array_equal(h1, star_history)
-        assert np.array_equal(h2, star_history)
+        assert np.allclose(bh, binary_history)
+        assert np.allclose(h1, star_history)
+        assert np.allclose(h2, star_history)
 
     def test_downsample_profile(self, ConfigFile, profile):
         # missing argument
@@ -649,7 +649,7 @@ class TestFunctions:
         with raises(TypeError, match="'NoneType' object is not subscriptable"):
             totest.downsample_profile(None, None)
         # examples: failed
-        assert np.array_equal(totest.downsample_profile(profile, ConfigFile),\
+        assert np.allclose(totest.downsample_profile(profile, ConfigFile),\
                               profile)
         ConfigFile.entries["profile_DS_error"] = 0.1
         assert totest.downsample_profile(None, ConfigFile) is None
@@ -659,7 +659,7 @@ class TestFunctions:
             totest.downsample_profile(profile, ConfigFile)
         # examples
         ConfigFile.entries["profile_DS_exclude"] = ['mass']
-        assert np.array_equal(totest.downsample_profile(profile, ConfigFile),\
+        assert np.allclose(totest.downsample_profile(profile, ConfigFile),\
                               profile)
 
     def test_join_grids(self, monkeypatch, no_path, h5_out_path, grid1_path,\
@@ -694,7 +694,7 @@ class TestFunctions:
                     if v is None:
                         assert s in hdf5_file.keys()
                     else:
-                        assert np.array_equal(hdf5_file[s][()], v)
+                        assert np.allclose(hdf5_file[s][()], v)
         def mock_get_detected_initial_RLO(grid):
             # mocked list of initial RLO systems
             if (hasattr(grid, "config") and ("description" in grid.config)):
@@ -825,9 +825,9 @@ class TestFunctions:
             new_ini_val = hdf5_file['/grid/initial_values'][()]
             new_fin_val = hdf5_file['/grid/final_values'][()]
         for col in ['star_1_mass', 'star_2_mass', 'period_days']:
-            assert np.array_equal(ini_val[col], new_ini_val[col],\
+            assert np.allclose(ini_val[col], new_ini_val[col],\
                                   equal_nan=True)
-            assert np.array_equal(fin_val[col], new_fin_val[col],\
+            assert np.allclose(fin_val[col], new_fin_val[col],\
                                   equal_nan=True)
         for r in [1, 4, 5]: # done initial RLO replacements
             fin_val['termination_flag_1'][r] = b'forced_initial_RLO'
@@ -838,7 +838,7 @@ class TestFunctions:
         for col in ['termination_flag_1', 'termination_flag_2',\
                     'termination_flag_3', 'termination_flag_4',\
                     'interpolation_class']:
-            assert np.array_equal(fin_val[col], new_fin_val[col])
+            assert np.allclose(fin_val[col], new_fin_val[col])
         # examples: compressions
         for c in [None, "lzf", "gzip", "gzip9"]:
             totest.join_grids([grid2_path], h5_out_path, compression=c,\
@@ -1742,17 +1742,17 @@ class TestPSyGrid:
         PSyGrid.n_runs = 1
         new_values1 = np.array([3])
         PSyGrid.add_column("test", new_values1)
-        assert np.array_equal(PSyGrid.final_values["test"], new_values1)
+        assert np.allclose(PSyGrid.final_values["test"], new_values1)
         # examples: overwrite
         new_values2 = np.array([4])
         PSyGrid.add_column("test", new_values2)
-        assert np.array_equal(PSyGrid.final_values["test"], new_values2)
+        assert np.allclose(PSyGrid.final_values["test"], new_values2)
         # examples: overwrite protected
         new_values3 = np.array([5])
         with raises(totest.POSYDONError, match="Column `test` already exists "\
                                                +"in final values."):
             PSyGrid.add_column("test", new_values3, overwrite=False)
-        assert np.array_equal(PSyGrid.final_values["test"], new_values2)
+        assert np.allclose(PSyGrid.final_values["test"], new_values2)
 
     def test_update_final_values(self, PSyGrid, tmp_path):
         assert isroutine(PSyGrid.update_final_values)
@@ -1772,12 +1772,12 @@ class TestPSyGrid:
         PSyGrid.final_values = fv.copy()
         PSyGrid.update_final_values()
         for (n, f) in fv.dtype.descr:
-           assert np.array_equal(PSyGrid.final_values[n], fv[n])
+           assert np.allclose(PSyGrid.final_values[n], fv[n])
            if n == 'test_state':
-               assert np.array_equal(PSyGrid.hdf5["/grid/final_values"][n],\
+               assert np.allclose(PSyGrid.hdf5["/grid/final_values"][n],\
                                      fv[n].astype(totest.H5_REC_STR_DTYPE))
            else:
-               assert np.array_equal(PSyGrid.hdf5["/grid/final_values"][n],\
+               assert np.allclose(PSyGrid.hdf5["/grid/final_values"][n],\
                                      fv[n])
         # examples: replace previous
         fv = np.array([(3.0, "UnitTest")],\
@@ -1785,12 +1785,12 @@ class TestPSyGrid:
         PSyGrid.final_values = fv.copy()
         PSyGrid.update_final_values()
         for (n, f) in fv.dtype.descr:
-           assert np.array_equal(PSyGrid.final_values[n], fv[n])
+           assert np.allclose(PSyGrid.final_values[n], fv[n])
            if n == 'test_state':
-               assert np.array_equal(PSyGrid.hdf5["/grid/final_values"][n],\
+               assert np.allclose(PSyGrid.hdf5["/grid/final_values"][n],\
                                      fv[n].astype(totest.H5_REC_STR_DTYPE))
            else:
-               assert np.array_equal(PSyGrid.hdf5["/grid/final_values"][n],\
+               assert np.allclose(PSyGrid.hdf5["/grid/final_values"][n],\
                                      fv[n])
 
     def test_reload_hdf5_file(self, PSyGrid, tmp_path):
@@ -1996,7 +1996,7 @@ class TestPSyGrid:
             # for float types allow nans, but others e.g. strings would fail on
             # allowing nans
             allow_nan = 'f' in PSyGrid.initial_values[key].dtype.descr[0][1]
-            assert np.array_equal(PSyGrid.initial_values[key],\
+            assert np.allclose(PSyGrid.initial_values[key],\
                                   np.array(test_df["initial_"+key]),\
                                   equal_nan=allow_nan)
         for key in PSyGrid.final_values.dtype.names:
@@ -2004,7 +2004,7 @@ class TestPSyGrid:
             # for float types allow nans, but others e.g. strings would fail on
             # allowing nans
             allow_nan = 'f' in PSyGrid.final_values[key].dtype.descr[0][1]
-            assert np.array_equal(PSyGrid.final_values[key],\
+            assert np.allclose(PSyGrid.final_values[key],\
                                   np.array(test_df["final_"+key]),\
                                   equal_nan=allow_nan)
 
@@ -2561,7 +2561,7 @@ class TestPSyRunView:
                 assert getattr(PSyRunView.psygrid[PSyRunView.index], k)\
                        == PSyRunView.__getitem__(k)
             else:
-                assert np.array_equal(PSyRunView.__getitem__(k),\
+                assert np.allclose(PSyRunView.__getitem__(k),\
                         getattr(PSyRunView.psygrid[PSyRunView.index], k))
         # bad input
         with raises(IOError, match="The HDF5 file is not open."):

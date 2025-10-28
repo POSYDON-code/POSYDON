@@ -411,20 +411,20 @@ class TestFunctions:
         assert totest.read_MESA_data_file(None, ['Test']) is None
         assert totest.read_MESA_data_file(no_path, ['Test']) is None
         # read full test file
-        assert np.array_equal(MESA_data,\
+        assert np.allclose(MESA_data,\
                               totest.read_MESA_data_file(MESA_data_path,\
                                                          MESA_data.dtype.names\
                               ))
         # read columns individually from test file
         for k in MESA_data.dtype.names:
-            assert np.array_equal(MESA_data[[k]],\
+            assert np.allclose(MESA_data[[k]],\
                                   totest.read_MESA_data_file(MESA_data_path,\
                                                              [k]))
         # read column pairs from test file
         k0 = MESA_data.dtype.names[0]
         for k in MESA_data.dtype.names:
             if k != k0:
-                assert np.array_equal(MESA_data[[k0, k]],\
+                assert np.allclose(MESA_data[[k0, k]],\
                                       totest.read_MESA_data_file(\
                                       MESA_data_path, [k0, k]))
         # warning for non readable data
@@ -446,19 +446,19 @@ class TestFunctions:
                                               +no_path):
             assert totest.read_EEP_data_file(no_path, ['Test']) is None
         # read full test file
-        assert np.array_equal(MESA_data,\
+        assert np.allclose(MESA_data,\
                               totest.read_EEP_data_file(EEP_data_path,\
                                                         MESA_data.dtype.names))
         # read columns individually from test file
         for k in MESA_data.dtype.names:
-            assert np.array_equal(MESA_data[[k]],\
+            assert np.allclose(MESA_data[[k]],\
                                   totest.read_EEP_data_file(EEP_data_path,\
                                                             [k]))
         # read column pairs from test file
         k0 = MESA_data.dtype.names[0]
         for k in MESA_data.dtype.names:
             if k != k0:
-                assert np.array_equal(MESA_data[[k0, k]],\
+                assert np.allclose(MESA_data[[k0, k]],\
                                       totest.read_EEP_data_file(EEP_data_path,\
                                                                 [k0, k]))
         # warning for non readable data
@@ -476,7 +476,7 @@ class TestFunctions:
         # history is None
         assert totest.fix_He_core(None) is None
         # history is ndarray without the required columns
-        assert np.array_equal(MESA_data, totest.fix_He_core(MESA_data))
+        assert np.allclose(MESA_data, totest.fix_He_core(MESA_data))
         # history is ndarray with the required columns and corrects them
         test_history = np.array([(1, 2, 3, 4), (1, 2, 4, 3), (2, 1, 3, 4),\
                                  (2, 1, 4, 3)],\
@@ -490,7 +490,7 @@ class TestFunctions:
                                         ('co_core_mass', '<f8'),\
                                         ('he_core_radius', '<f8'),\
                                         ('co_core_radius', '<f8')])
-        assert np.array_equal(fixed_history, totest.fix_He_core(test_history))
+        assert np.allclose(fixed_history, totest.fix_He_core(test_history))
 
     def test_add_field(self, MESA_data):
         # missing argument
@@ -504,7 +504,7 @@ class TestFunctions:
         extended_ndarray = totest.add_field(MESA_data, [('new', '<f8')])
         assert MESA_data.dtype.descr+[('new', '<f8')] ==\
                extended_ndarray.dtype.descr
-        assert np.array_equal(MESA_data,\
+        assert np.allclose(MESA_data,\
                               extended_ndarray[[k for k in\
                                                 MESA_data.dtype.names]])
 

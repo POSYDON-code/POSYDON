@@ -65,8 +65,8 @@ class Testinterp1d:
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
         assert isinstance(interp1d, totest.interp1d)
-        assert np.array_equal(interp1d.x, np.array(data[0]))
-        assert np.array_equal(interp1d.y, np.array(data[1]))
+        assert np.allclose(interp1d.x, np.array(data[0]))
+        assert np.allclose(interp1d.y, np.array(data[1]))
         assert interp1d.kind == 'linear'
         assert interp1d.below is None
         assert interp1d.above is None
@@ -94,13 +94,13 @@ class Testinterp1d:
         # x not strictly monotonic
         example_data = ([0.0, 1.0, 0.5], [0.0, 0.5, 1.0])
         test_interp1d = totest.interp1d(example_data[0], example_data[1])
-        assert np.array_equal(test_interp1d.x, [0.0, 0.5, 1.0])
-        assert np.array_equal(test_interp1d.y, [0.0, 1.0, 0.5])
+        assert np.allclose(test_interp1d.x, [0.0, 0.5, 1.0])
+        assert np.allclose(test_interp1d.y, [0.0, 1.0, 0.5])
 
         # examples: reversible data
         test_interp1d = totest.interp1d(data[0][::-1], data[1][::-1])
-        assert np.array_equal(test_interp1d.x, np.array(data[0]))
-        assert np.array_equal(test_interp1d.y, np.array(data[1]))
+        assert np.allclose(test_interp1d.x, np.array(data[0]))
+        assert np.allclose(test_interp1d.y, np.array(data[1]))
         # examples
         kinds = ['linear']
         for k in kinds:

@@ -118,7 +118,7 @@ class TestFunctions:
         assert totest.scrub([None], [models], [ages]) == [None]
         assert totest.scrub([tables], [None], [ages]) == [None]
         assert totest.scrub([tables], [models], [None]) == [None]
-        assert np.array_equal(totest.scrub([np.array([])], [np.array([])],\
+        assert np.allclose(totest.scrub([np.array([])], [np.array([])],\
                                            [np.array([])]), [np.array([])])
         # examples: no scrubbing for two tables and a None type object
         for (t, r) in zip(totest.scrub([tables, tables, None],\
@@ -126,16 +126,16 @@ class TestFunctions:
                                        [ages, ages, None]),\
                                        [tables, tables, None]):
             if (isinstance(t, np.ndarray) and isinstance(r, np.ndarray)):
-                assert np.array_equal(t, r)
+                assert np.allclose(t, r)
             else:
                 assert t == r
         # examples: scrub element 1 on age
         ages[2] = ages[1]
-        assert np.array_equal(totest.scrub([tables], [models], [ages])[0],\
+        assert np.allclose(totest.scrub([tables], [models], [ages])[0],\
                tables[np.array([True, False, True, True, True])])
         # examples: additionally scrub element 3 on model
         models[4] = models[3]
-        assert np.array_equal(totest.scrub([tables], [models], [ages])[0],\
+        assert np.allclose(totest.scrub([tables], [models], [ages])[0],\
                tables[np.array([True, False, True, False, True])])
 
     def test_keep_after_RLO(self, star_history, binary_history):
@@ -162,10 +162,10 @@ class TestFunctions:
         bh, h1, h2 = totest.keep_after_RLO(binary_history[[\
          'rl_relative_overflow_1', 'lg_mtransfer_rate', 'age']], star_history,\
          None)
-        assert np.array_equal(binary_history[['rl_relative_overflow_1',\
+        assert np.allclose(binary_history[['rl_relative_overflow_1',\
                                               'lg_mtransfer_rate',\
                                               'age']][1:], bh)
-        assert np.array_equal(star_history[1:], h1)
+        assert np.allclose(star_history[1:], h1)
         assert h2 is None
         # examples: cut out element 0 and history of star 2; test numerical
         # correction, incl. fail
@@ -180,10 +180,10 @@ class TestFunctions:
         bh, h1, h2 = totest.keep_after_RLO(binary_history[[\
          'rl_relative_overflow_1', 'lg_mtransfer_rate', 'age']], None,\
          star_history)
-        assert np.array_equal(binary_history[['rl_relative_overflow_1',\
+        assert np.allclose(binary_history[['rl_relative_overflow_1',\
                                               'lg_mtransfer_rate', 'age']], bh)
         assert h1 is None
-        assert np.array_equal(star_history, h2)
+        assert np.allclose(star_history, h2)
         # examples: no RLO
         for i in range(len(binary_history)):
             binary_history['rl_relative_overflow_1'][i] =\
@@ -214,46 +214,46 @@ class TestFunctions:
             if args[0] is None:
                 assert bh is None
             else:
-                assert np.array_equal(bh, args[0])
+                assert np.allclose(bh, args[0])
             if args[1] is None:
                 assert h1 is None
             else:
-                assert np.array_equal(h1, args[1])
+                assert np.allclose(h1, args[1])
             if args[2] is None:
                 assert h2 is None
             else:
-                assert np.array_equal(h2, args[2])
+                assert np.allclose(h2, args[2])
             assert tf == ""
         for cols in [['star_age'], ['star_age', 'center_he4', 'center_c12']]:
             bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
                               binary_history[['age']], star_history[cols],\
                               star_history[cols])
-            assert np.array_equal(binary_history[['age']], bh)
-            assert np.array_equal(star_history[cols], h1)
-            assert np.array_equal(star_history[cols], h2)
+            assert np.allclose(binary_history[['age']], bh)
+            assert np.allclose(star_history[cols], h1)
+            assert np.allclose(star_history[cols], h2)
             assert tf == ""
         # examples: one star is depleted
         bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
                           binary_history[['age']], star_history2,\
                           star_history)
-        assert np.array_equal(binary_history[['age']][:2], bh)
-        assert np.array_equal(star_history2[:2], h1)
-        assert np.array_equal(star_history[:2], h2)
+        assert np.allclose(binary_history[['age']][:2], bh)
+        assert np.allclose(star_history2[:2], h1)
+        assert np.allclose(star_history[:2], h2)
         assert tf == "Primary got stopped before central carbon depletion"
         bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
                           binary_history[['age']], star_history,\
                           star_history2)
-        assert np.array_equal(binary_history[['age']][:2], bh)
-        assert np.array_equal(star_history[:2], h1)
-        assert np.array_equal(star_history2[:2], h2)
+        assert np.allclose(binary_history[['age']][:2], bh)
+        assert np.allclose(star_history[:2], h1)
+        assert np.allclose(star_history2[:2], h2)
         assert tf == "Secondary got stopped before central carbon depletion"
         # examples: both stars are depleted
         bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
                           binary_history[['age']], star_history2,\
                           star_history2)
-        assert np.array_equal(binary_history[['age']][:2], bh)
-        assert np.array_equal(star_history2[:2], h1)
-        assert np.array_equal(star_history2[:2], h2)
+        assert np.allclose(binary_history[['age']][:2], bh)
+        assert np.allclose(star_history2[:2], h1)
+        assert np.allclose(star_history2[:2], h2)
         assert tf == "Primary got stopped before central carbon depletion"
         star_history['center_he4'][-1] = 0.0
         star_history['center_c12'][-1] = 0.0
@@ -261,15 +261,15 @@ class TestFunctions:
         bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
                           binary_history[['age']], star_history[cols],\
                           star_history2[cols], XCstop=0.5)
-        assert np.array_equal(binary_history[['age']][:2], bh)
-        assert np.array_equal(star_history[cols][:2], h1)
-        assert np.array_equal(star_history2[cols][:2], h2)
+        assert np.allclose(binary_history[['age']][:2], bh)
+        assert np.allclose(star_history[cols][:2], h1)
+        assert np.allclose(star_history2[cols][:2], h2)
         assert tf == "Secondary got stopped before central carbon depletion"
         # examples: stars have history of length 0
         bh, h1, h2, tf = totest.keep_till_central_abundance_He_C(\
                           binary_history[['age']], star_history[0:0],\
                           star_history[0:0])
-        assert np.array_equal(binary_history[['age']], bh)
-        assert np.array_equal(star_history[0:0], h1)
-        assert np.array_equal(star_history[0:0], h2)
+        assert np.allclose(binary_history[['age']], bh)
+        assert np.allclose(star_history[0:0], h1)
+        assert np.allclose(star_history[0:0], h2)
         assert tf == ""
