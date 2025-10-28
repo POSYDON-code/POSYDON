@@ -56,6 +56,7 @@ from posydon.utils.common_functions import (
     check_state_of_star,
 )
 from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.constants import Zsun
 
 MODEL = {"prescription": 'alpha-lambda',
          "common_envelope_efficiency": 1.0,
@@ -1154,9 +1155,9 @@ class StepCEE(object):
                 star.he_core_mass = core_mass
                 star.he_core_radius = core_radius
                 if star.metallicity is None:
-                    star.surface_he4 = 1 - star.surface_h1 - 0.0142
+                    star.surface_he4 = 1 - star.surface_h1 - Zsun
                 else:
-                    star.surface_he4 = 1.0-star.surface_h1-star.metallicity * 0.0142
+                    star.surface_he4 = 1 - star.surface_h1 - star.metallicity * Zsun
                 star.log_LH = -1e99
                 attributes_changing.extend([
                                         "surface_h1",
