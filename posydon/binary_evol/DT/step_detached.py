@@ -1348,9 +1348,9 @@ class detached_evolution:
                 "'M15' for Matt et al. 2015"
                 "'CARB' for Van & Ivanova 2019", "UnsupportedModelWarning")
 
-        if self.verbose:
-            print("magnetic_braking_mode = ", self.magnetic_braking_mode)
-            print("dOmega_mb = ", dOmega_mb_sec, dOmega_mb_pri)
+        #if self.verbose:
+        #    print("magnetic_braking_mode = ", self.magnetic_braking_mode)
+        #    print("dOmega_mb = ", dOmega_mb_sec, dOmega_mb_pri)
 
         # update spins
         self.dOmega_sec += dOmega_mb_sec

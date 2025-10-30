@@ -129,6 +129,10 @@ STAR_STATES_FOR_postMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
 STAR_STATES_FOR_Hestar_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
                                    ("stripped_He" in st)]
 STAR_STATES_FOR_Hestar_MATCHING.extend(['accreted_He_Core_He_burning'])
+STAR_STATES_FOR_postHeMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                   (("Core_He_burning" not in st) & ("stripped_He" in st))]
+STAR_STATES_FOR_Hestar_MATCHING = list(set(STAR_STATES_FOR_Hestar_MATCHING)
+                                      - set(STAR_STATES_FOR_postHeMS_MATCHING))
 
 BINARY_STATES_ALL = [
     'initially_single_star',
