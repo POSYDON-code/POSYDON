@@ -7,19 +7,22 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.popsyn.rate_calculation as totest
+
 # aliases
 np = totest.np
 sp = totest.sp
 
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isroutine, isclass
+from pytest import approx, fixture, raises, warns
 from scipy.interpolate import CubicSpline
+
 
 # define test classes collecting several test functions
 class TestElements:
-    
+
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = ['DEFAULT_SFH_MODEL','np','sp','CubicSpline','Zsun','cosmology',\
@@ -62,12 +65,12 @@ class TestElements:
 
     def test_instance_get_redshift_bin_edges(self):
         assert isroutine(totest.get_redshift_bin_edges)
-        
+
     def test_instance_get_redshift_bin_centers(self):
         assert isroutine(totest.get_redshift_bin_centers)
 
 class TestFunctions:
-    
+
     # test functions
     def test_get_shell_comoving_volume(self):
         # 2 missing arguments
@@ -84,7 +87,7 @@ class TestFunctions:
                  (0.3, 2.0, approx(277.8780499884267, abs=6e-12))]
         for (z1, z2, v) in tests:
             assert totest.get_shell_comoving_volume(z1, z2) == v
-            
+
     def test_get_comoving_distance_from_redshift(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'z'"):
@@ -94,7 +97,7 @@ class TestFunctions:
                  (1.0, approx(3395.905311975348, abs=6e-12))]
         for (z, d) in tests:
             assert totest.get_comoving_distance_from_redshift(z) == d
-        
+
     def test_get_cosmic_time_from_redshift(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'z'"):
@@ -104,11 +107,11 @@ class TestFunctions:
                  (1.0, approx(5.862549255024051, abs=6e-12))]
         for (z, t) in tests:
             assert totest.get_cosmic_time_from_redshift(z) == t
-        
+
     def test_redshift_from_cosmic_time_interpolator(self):
         interp = totest.redshift_from_cosmic_time_interpolator()
-        assert isinstance(interp, CubicSpline) 
-        
+        assert isinstance(interp, CubicSpline)
+
     def test_get_redshift_from_cosmic_time(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 't_cosm'"):
@@ -117,8 +120,8 @@ class TestFunctions:
         tests = [(0.1, approx(29.832529897287746, abs=6e-12)),\
                  (1.0, approx(5.675847792368566, abs=6e-12))]
         for (t, z) in tests:
-            assert totest.get_redshift_from_cosmic_time(t) == z        
-        
+            assert totest.get_redshift_from_cosmic_time(t) == z
+
     def test_get_redshift_bin_edges(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'delta_t'"):
@@ -128,7 +131,7 @@ class TestFunctions:
                  (1000., approx(0.07301543666184201, abs=6e-12))]
         for (t,arr) in tests:
             assert totest.get_redshift_bin_edges(t)[1] == arr
-        
+
     def test_get_redshift_bin_centers(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'delta_t'"):
@@ -138,4 +141,4 @@ class TestFunctions:
                  (1000., approx(13.957133275502315, abs=6e-12))]
         for (t,arr) in tests:
             assert totest.get_redshift_bin_centers(t)[-1] == arr
-        
+

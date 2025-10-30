@@ -7,22 +7,26 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.popsyn.io as totest
+
 # aliases
 np = totest.np
 pd = totest.pd
 
+import ast
+import errno
+import importlib
+import os
+import pprint
+import textwrap
+from configparser import ConfigParser, MissingSectionHeaderError
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isroutine, isclass
-import importlib
-import textwrap
-import ast
-import os
-import errno
-import pprint
-from configparser import MissingSectionHeaderError, ConfigParser
+from pytest import approx, fixture, raises, warns
+
 from posydon.binary_evol.simulationproperties import SimulationProperties
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -53,16 +57,16 @@ class TestElements:
                                       +"Please check, whether they have been "\
                                       +"added on purpose and update this "\
                                       +"unit test."
- 
+
 class TestFunctions:
-    
+
     @fixture
     def simple_ini(self,tmp_path):
         file_path = os.path.join(tmp_path, "test.ini")
         with open(file_path, "w") as f:
             f.write("[section]\nkey=value\n")
         return file_path
-    
+
     @fixture
     def multi_ini(self,tmp_path):
         file1 = os.path.join(tmp_path, "a.ini")
@@ -79,7 +83,7 @@ class TestFunctions:
         with open(file_path, "w") as f:
             f.write("test")
         return file_path
-    
+
     @fixture
     def sim_ini(self,tmp_path):
         ini_content = """
@@ -106,7 +110,7 @@ class TestFunctions:
         with open(file_path, "w") as f:
             f.write(ini_content)
         return file_path
-    
+
     @fixture
     def binpop_ini(self, tmp_path):
         ini_content = """
@@ -193,7 +197,7 @@ class TestFunctions:
             'state',
             'mass',
             'log_R']
-            
+
         [SingleStar_2_output]
         include_S2 = True
         only_select_columns = [
@@ -212,7 +216,7 @@ class TestFunctions:
         with open(file_path, "w") as f:
             f.write(ini_content)
         return file_path
-    
+
     @fixture
     def history_df(self):
         data = {
@@ -222,7 +226,7 @@ class TestFunctions:
             'S2_spin': [0.3]
         }
         return pd.DataFrame(data)
-    
+
     @fixture
     def oneline_df(self):
         data = {
@@ -239,7 +243,7 @@ class TestFunctions:
         }
         df = pd.DataFrame(data)
         return df
-    
+
     def test_clean_binary_history_df(self, history_df):
         extra_binary = {'extra_binary': 'int32'}
         extra_S1 = {}
@@ -256,7 +260,7 @@ class TestFunctions:
         assert clean_df.dtypes['S1_mass'] == np.dtype('float64')
         assert clean_df.dtypes['S2_spin'] == np.dtype('float64')
         assert clean_df.dtypes['state'] == np.dtype('O')
-        
+
     def test_clean_binary_oneline_df(self, oneline_df):
         cleaned_df = totest.clean_binary_oneline_df(oneline_df)
         assert isinstance(cleaned_df, pd.DataFrame)
@@ -268,7 +272,7 @@ class TestFunctions:
         assert cleaned_df['S2_kick'].dtype == np.float64
         assert cleaned_df.loc[0, 'mass_i'] == 1.4
         assert cleaned_df.loc[1, 'state_f'] == 'merged'
-        
+
     def test_parse_inifile(self,simple_ini,multi_ini,textfile):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'path'"):
@@ -282,19 +286,19 @@ class TestFunctions:
             totest.parse_inifile(textfile)
         with raises(ValueError, match="Path must be a string or list of strings."):
             totest.parse_inifile(0)
-             
+
         # example: single inifile
         parser = totest.parse_inifile(simple_ini)
         assert isinstance(parser, ConfigParser)
         assert parser.has_section("section")
         assert parser.get("section", "key") == "value"
-        
+
         # example: multiple inifiles
         parser = totest.parse_inifile(multi_ini)
         assert parser.has_option("section", "key1")
         assert parser.has_option("section", "key2")
 
-        
+
     def test_simprop_kwargs_from_ini(self,monkeypatch,sim_ini,tmp_path):
         # example
         dummy_cls = type('DummyClass', (), {})()
@@ -329,7 +333,7 @@ class TestFunctions:
         assert hooks[0][1] == {}
         assert hooks[1][0] is dummy_cls
         assert hooks[1][1] == {}
-        
+
         # absolute imports
         dummy_code = """
 class MyDummyClass:
@@ -353,7 +357,7 @@ class MyDummyClass:
         instance = dummy_class()
         assert instance.value == 42
 
-        
+
     def test_binarypop_kwargs_from_ini(self,monkeypatch,binpop_ini,
                                        binpop_ini_mpi,binpop_ini_stars):
         # bad configuration: MPI and job array
@@ -389,7 +393,7 @@ class MyDummyClass:
         assert binkwargs['RANK'] is None
         assert binkwargs['size'] is None
 
-        
+
     def test_create_run_script_text(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'ini_file'"):
@@ -397,7 +401,7 @@ class MyDummyClass:
         # bad input
         with raises(NameError, match="name 'testfile' is not defined"):
             totest.create_run_script_text(testfile.ini)
-        # example        
+        # example
         out = textwrap.dedent("""\
             from posydon.popsyn.binarypopulation import BinaryPopulation
             from posydon.popsyn.io import binarypop_kwargs_from_ini
@@ -414,8 +418,8 @@ class MyDummyClass:
                 synpop = BinaryPopulation(**ini_kw)
                 synpop.evolve()""")
         assert totest.create_run_script_text('testfile.ini') == out
-        
-        
+
+
     def test_create_merge_script_text(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'ini_file'"):
@@ -423,7 +427,7 @@ class MyDummyClass:
         # bad input
         with raises(NameError, match="name 'testfile' is not defined"):
             totest.create_merge_script_text(testfile.ini)
-        # example        
+        # example
         out = textwrap.dedent("""\
             from posydon.popsyn.binarypopulation import BinaryPopulation
             from posydon.popsyn.io import binarypop_kwargs_from_ini
@@ -448,8 +452,8 @@ class MyDummyClass:
                     os.rmdir(path_to_batch)""")
         assert totest.create_merge_script_text('testfile.ini') == out
 
-        
-        
-        
-        
-        
+
+
+
+
+

@@ -7,13 +7,16 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.popsyn.normalized_pop_mass as totest
+
 # aliases
 np = totest.np
 
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isroutine, isclass
+from pytest import approx, fixture, raises, warns
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -33,8 +36,8 @@ class TestElements:
                                       +"Please check, whether they have been "\
                                       +"added on purpose and update this "\
                                       +"unit test."
-        
+
 class TestFunctions:
     def test_initial_total_underlying_mass(self):
         pass
-        
+

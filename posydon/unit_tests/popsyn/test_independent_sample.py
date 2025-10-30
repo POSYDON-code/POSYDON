@@ -7,18 +7,21 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.popsyn.independent_sample as totest
+
 # aliases
 np = totest.np
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 import re
-from pytest import raises, approx
-from inspect import isroutine, isclass
+from inspect import isclass, isroutine
+
+from pytest import approx, raises
+
 
 # define test classes collecting several test functions
 class TestElements:
-    
+
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = ['generate_independent_samples', 'generate_orbital_periods', \
@@ -60,12 +63,12 @@ class TestElements:
 
     def test_instance_generate_secondary_masses(self):
         assert isroutine(totest.generate_secondary_masses)
-        
+
     def test_instance_binary_fraction_value(self):
         assert isroutine(totest.binary_fraction_value)
 
 class TestFunctions:
-    
+
     # test functions
     def test_generate_independent_samples(self):
         # bad input
@@ -81,7 +84,7 @@ class TestFunctions:
             assert ecc[0] == approx(0.8797477186989253,abs=6e-12)
             assert m1[0] == approx(10.607132832170066,abs=6e-12)
             assert m2[0] == approx(9.182255718237206,abs=6e-12)
-            
+
     def test_generate_orbital_periods(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'primary_masses'"):
@@ -102,7 +105,7 @@ class TestFunctions:
                  (1.0,12,approx(3.4380527315000666,abs=6e-12))]
         for (m,r,p) in tests:
             assert totest.generate_orbital_periods(m,RNG = np.random.default_rng(seed=r))[0] == p
-        
+
     def test_generate_orbital_separations(self):
         # missing argument
         with raises(ValueError,match="For the `log_normal separation` scheme you must give `log_orbital_separation_mean`, `log_orbital_separation_sigma`."):
@@ -120,7 +123,7 @@ class TestFunctions:
         # examples
         tests_normal = [(0.,1.0,42,approx(39.83711402835139,abs=6e-12)),
                         (1.0,10.,42,approx(9799.179319004,abs=6e-9))]
-        # larger allowance for second test because of slightly different results between 
+        # larger allowance for second test because of slightly different results between
         # running pytest locally vs github actions workflow
         for (m,s,r,sep) in tests_normal:
             assert totest.generate_orbital_separations(orbital_separation_scheme='log_normal',
@@ -146,7 +149,7 @@ class TestFunctions:
         for (s,r,e) in tests:
             assert totest.generate_eccentricities(eccentricity_scheme=s,
                                                    RNG = np.random.default_rng(seed=r))[0] == e
-        
+
     def test_generate_primary_masses(self):
         # bad input
         with raises(TypeError, match="expected a sequence of integers or a single integer"):
@@ -162,7 +165,7 @@ class TestFunctions:
         for (s,r,m1) in tests:
             assert totest.generate_primary_masses(primary_mass_scheme=s,
                                                    RNG = np.random.default_rng(seed=r))[0] == m1
-            
+
     def test_generate_secondary_masses(self):
         # missing argument
         with raises(TypeError,match="missing 1 required positional argument: 'primary_masses'"):
@@ -191,7 +194,7 @@ class TestFunctions:
             assert totest.generate_secondary_masses(primary_masses=np.array([10.]),
                                                     secondary_mass_scheme=s,
                                                    RNG = np.random.default_rng(seed=r))[0] == m2
-            
+
     def test_binary_fraction_value(self):
         # missing argument
         with raises(ValueError, match="There was not a primary mass provided in the inputs."):
@@ -216,9 +219,9 @@ class TestFunctions:
         for (m1,f) in tests_moe:
             assert totest.binary_fraction_value(binary_fraction_scheme='Moe_17',
                                                 m1=m1) == f
-        
-        
-        
-        
 
-        
+
+
+
+
+

@@ -7,17 +7,21 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.popsyn.synthetic_population as totest
+
 # aliases
 np = totest.np
 pd = totest.pd
 
+import warnings
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isroutine, isclass
-import warnings
+from pytest import approx, fixture, raises, warns
+
 warnings.simplefilter("always")
 import os
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -26,9 +30,9 @@ class TestElements:
         elements = ['parameter_array', 'DFInterface','History','Oneline',
                     'Population','PopulationIO','PopulationRunner',
                     'Rates','TransientPopulation',
-                    '__authors__','__builtins__', '__cached__', '__doc__', 
-                    '__file__','__loader__', '__name__', '__package__', '__spec__', 
-                    'np', 'pd', 'tqdm', 'os', 'plt', 
+                    '__authors__','__builtins__', '__cached__', '__doc__',
+                    '__file__','__loader__', '__name__', '__package__', '__spec__',
+                    'np', 'pd', 'tqdm', 'os', 'plt',
                     'Zsun', 'binarypop_kwargs_from_ini',
                     'initial_total_underlying_mass','plot_pop',
                     'convert_metallicity_to_string','Pwarn','cosmology','const',
@@ -54,7 +58,7 @@ class TestElements:
                                       +"unit test."
 
 class TestPopulationRunner:
-        
+
     def test_init(self):
         # missing argument
         with raises(TypeError,match="missing 1 required positional argument: 'path_to_ini'"):
@@ -131,7 +135,7 @@ class TestPopulationRunner:
 
         monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs)
         monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
-        monkeypatch.setattr(totest, "convert_metallicity_to_string", 
+        monkeypatch.setattr(totest, "convert_metallicity_to_string",
                             lambda x: str(os.path.join(tmp_path, "0.1")))
         # 1) File exists case: should raise FileExistsError
         pop = DummyPop(metallicity=0.1, temp_directory=str(tmp_path))
@@ -177,9 +181,9 @@ class TestPopulationRunner:
         run.merge_parallel_runs(pop)
         assert not os.path.exists(temp_dir)
         monkeypatch.undo()
-             
+
 class TestDFInterface:
-    
+
     def test_head_tail_select(self, tmp_path):
         # Setup test HDF5 file
         data = pd.DataFrame({
@@ -218,13 +222,13 @@ class TestDFInterface:
         assert "x" in s
         assert isinstance(html, str)
         assert "<table" in html
-        
+
 class TestHistory:
-    
+
     def test_init(self, tmp_path):
         with raises(FileNotFoundError, match="does not exist!"):
             totest.History("nonexistent_file.h5")
-            
+
         df = pd.DataFrame({
             "binary_index": np.repeat(np.arange(3), 2),
             "a": np.random.rand(6),
@@ -249,18 +253,18 @@ class TestHistory:
         file_path = os.path.join(tmp_path, "test_getitem.h5")
         df.set_index("binary_index", inplace=True)
         df.to_hdf(file_path, key="history", format="table")
-        
+
         lengths_df = pd.DataFrame({'lengths': [2, 2, 2]}, index=[0, 1, 2])
         lengths_df.to_hdf(file_path, key="history_lengths")
 
         hist = totest.History(str(file_path))
-        
+
         # adding history_lengths
         assert hist.lengths.equals(lengths_df)
 
         # __len__
         assert len(hist) == 6
-        
+
         # __getitem__ with "none" slice indices
         out_startnone = hist[:3]
         out_stopnone = hist[2:]
@@ -291,7 +295,7 @@ class TestHistory:
         full_data = pd.read_hdf(file_path, key="history")
         mask = full_data["a"] > -1
         empty_mask = np.array([],dtype=bool)
-        out = hist[mask.to_numpy()] 
+        out = hist[mask.to_numpy()]
         out_none = hist[empty_mask]
         assert not out.empty
         assert (out["a"] > -1).all()
@@ -349,13 +353,13 @@ class TestHistory:
         assert isinstance(html, str)
         assert "val" in rep
         assert "<table" in html
-        
+
 class TestOneline:
-    
+
     def test_init(self, tmp_path):
         with raises(FileNotFoundError, match="does not exist!"):
             totest.Oneline("nonexistent_file.h5")
-        
+
         df = pd.DataFrame({
             "index": np.arange(5),
             "a": np.random.rand(5),
@@ -455,20 +459,20 @@ class TestOneline:
 
         with raises(ValueError, match="elements in list are not integers"):
             one[[1.1, 2.2]]
-        
+
 class TestPopulationIO:
-    
+
     def test_load_metadata(self):
         # missing argument
         # bad input
         # examples
         pass
-    
+
 class TestPopulation:
-    
+
     @fixture
     def fix(self):
-#         return 
+#         return
 
         pass
     def test_calculate_underlying_mass(self):
@@ -501,12 +505,12 @@ class TestPopulation:
         # bad input
         # examples
         pass
-        
+
 class TestTransientPopulation:
-    
+
     @fixture
     def fix(self):
-#         return 
+#         return
         pass
 
     def test_population(self):
@@ -534,12 +538,12 @@ class TestTransientPopulation:
         # bad input
         # examples
         pass
-        
+
 class TestRates:
-    
+
     @fixture
     def fix(self):
-        # return 
+        # return
         pass
 
     def test_weights(self):
@@ -605,6 +609,6 @@ class TestRates:
     def test_centers_redshift_bins(self):
         # missing argument
         # bad input
-        # examples    
+        # examples
         pass
-        
+

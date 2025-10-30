@@ -27,36 +27,42 @@ __authors__ = [
 
 __credits__ = ["Nam Tran <tranhn03@gmail.com>"]
 
-import signal
-import pandas as pd
-import numpy as np
-import traceback
 import atexit
 import os
-from tqdm import tqdm
-import psutil
+import signal
 import sys
+import traceback
+
+import numpy as np
+import pandas as pd
+import psutil
+from tqdm import tqdm
 
 if 'posydon.binary_evol.binarystar' not in sys.modules.keys():
     from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.singlestar import (SingleStar,properties_massless_remnant)
+
 from posydon.binary_evol.simulationproperties import SimulationProperties
-
-from posydon.popsyn.star_formation_history import get_formation_times
-
-from posydon.popsyn.independent_sample import (generate_independent_samples,
-                                               binary_fraction_value)
-from posydon.popsyn.sample_from_file import (get_samples_from_file,
-                                             get_kick_samples_from_file)
-from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
+from posydon.binary_evol.singlestar import SingleStar, properties_massless_remnant
 from posydon.popsyn.defaults import default_kwargs
-
+from posydon.popsyn.independent_sample import (
+    binary_fraction_value,
+    generate_independent_samples,
+)
 from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
+from posydon.popsyn.sample_from_file import (
+    get_kick_samples_from_file,
+    get_samples_from_file,
+)
+from posydon.popsyn.star_formation_history import get_formation_times
+from posydon.utils.common_functions import (
+    orbital_period_from_separation,
+    orbital_separation_from_period,
+    set_binary_to_failed,
+)
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import POSYDONError
-from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
-from posydon.utils.common_functions import (orbital_period_from_separation, orbital_separation_from_period, 
-                                            set_binary_to_failed)
+from posydon.utils.posydonwarning import Catch_POSYDON_Warnings, Pwarn
 
 saved_ini_parameters = ['metallicity',
                         "number_of_binaries",
@@ -65,8 +71,8 @@ saved_ini_parameters = ['metallicity',
                    'star_formation',
                    'max_simulation_time',
                    'primary_mass_scheme',
-                   'primary_mass_min',                              
-                   'primary_mass_max',                                  
+                   'primary_mass_min',
+                   'primary_mass_max',
                    'secondary_mass_scheme',
                    'secondary_mass_min',
                    'secondary_mass_max',
@@ -134,11 +140,11 @@ class BinaryPopulation:
         for key in STEP_NAMES_LOADING_GRIDS:
             if key in self.population_properties.kwargs:
                 self.population_properties.kwargs[key][1].update({'metallicity': self.metallicity})
-                          
+
 
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
-        
+
         self.history_verbose = self.kwargs.get("history_verbose", False)
 
         self.entropy = self.kwargs.get('entropy', None)
@@ -323,7 +329,7 @@ class BinaryPopulation:
             # then and of the "with" context; use a new registry for this
             # context instead of the global one
             with Catch_POSYDON_Warnings(record=True, own_registry=True) as cpw:
-                       
+
                 try:
                     binary.evolve()
 
@@ -341,18 +347,18 @@ class BinaryPopulation:
 
                     e.add_note(binary.initial_condition_message())
                     traceback.print_exception(e)
-                
+
                 # If a binary has failed, the signal alarm for a step duration
                 # will not be disabled, so we need to disable it here.
                 signal.alarm(0)
-                
+
                 # record if there were warnings caught during the binary
                 # evolution, this is needed to update the WARNINGS column in
                 # the oneline dataframe; this will only be updated if POSYDON
-                # warnings occur, NOT general python warnings      
+                # warnings occur, NOT general python warnings
                 if cpw.got_called():
                     binary.warnings = True
-                
+
                 # if the user wants to print all POSYDON warnings to stderr
                 # (warnings_verbose=True), no action is needed, because it will
                 # be printed at the end of the "with" context; to avoid the
@@ -361,7 +367,7 @@ class BinaryPopulation:
                 if not self.kwargs.get("warnings_verbose", False):
                     cpw.reset_cache()
 
-        
+
             if breakdown_to_df:
                 self.manager.breakdown_to_df(binary, **self.kwargs)
 
@@ -513,50 +519,50 @@ class BinaryPopulation:
         mode = kwargs.get('mode', 'a')
         complib = kwargs.get('complib', 'zlib')
         complevel = kwargs.get('complevel', 9)
-        
-        
+
+
         with pd.HDFStore(absolute_filepath, mode=mode, complevel=complevel, complib=complib) as store:
             simulated_mass = 0.0
             simulated_mass_single = 0.0
             simulated_mass_binaries = 0.0
             number_of_systems=0
-            
+
             for f in file_names:
                 # strings itemsize set by first append max value,
                 # which may not be largest string
                 try:
                     store.append('history', pd.read_hdf(f, key='history'),
                                  min_itemsize=history_min_itemsize)
-                    
+
                     oneline = pd.read_hdf(f, key='oneline')
-                    
+
                     # split weight between single and binary stars
                     mask = oneline["state_i"] == "initially_single_star"
                     filtered_data_single = oneline[mask]
                     filtered_data_binaries = oneline[~mask]
-                    
+
                     simulated_mass_binaries += np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
                     simulated_mass_single += np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
                     simulated_mass = simulated_mass_single + simulated_mass_binaries
-                       
+
                     if 'metallicity' not in oneline.columns:
                         met_df = pd.DataFrame(data={'metallicity': [self.metallicity] * len(oneline)}, index=oneline.index)
                         oneline = pd.concat([oneline, met_df], axis=1)
-                    
+
                     number_of_systems += len(oneline)
-                    
+
                     store.append('oneline', oneline,
                                  min_itemsize=oneline_min_itemsize)
-                    
+
                 except Exception:
                     print(traceback.format_exc(), flush=True)
-        
+
             # store population metadata
             tmp_df = pd.DataFrame()
             for c in saved_ini_parameters:
                 tmp_df[c] = [self.kwargs[c]]
             store.append('ini_parameters', tmp_df)
-            
+
             tmp_df = pd.DataFrame(
                 index=[self.metallicity],
                 data={'simulated_mass': simulated_mass,
@@ -565,7 +571,7 @@ class BinaryPopulation:
                       'number_of_systems': number_of_systems})
             tmp_df.index.name = 'metallicity'
             store.append('mass_per_metallicity', tmp_df)
-        
+
         # only remove the files once they've been written to the new file
         for f in file_names:
             os.remove(f)
@@ -753,16 +759,16 @@ class PopulationManager:
         if where is None:
             if indices is None:
                 raise ValueError("You must specify either the binary indices or a query string "
-                                 "to read from file.")               
+                                 "to read from file.")
             else:
-                query_str = 'index==indices'                
+                query_str = 'index==indices'
         else:
             query_str = str(where)
 
         with pd.HDFStore(self.store_file, mode='r') as store:
             hist = store.select(key='history', where=query_str)
             oneline = store.select(key='oneline', where=query_str)
-        
+
         binary_holder = []
         for i in np.unique(hist.index):
             binary = BinaryStar.from_df(
@@ -836,7 +842,7 @@ class PopulationManager:
 
             online_df = self.to_oneline_df(**kwargs)
             store.append('oneline', online_df)
-        
+
         return
 
 
@@ -923,7 +929,7 @@ class BinaryGenerator:
 
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
-        
+
         # kicks
         if (('read_samples_from_file' in kwargs) and (kwargs['read_samples_from_file'] != '')):
             kick1, kick2 = get_kick_samples_from_file(**kwargs)
@@ -934,7 +940,7 @@ class BinaryGenerator:
                 number_of_binaries = 1
             kick1 = np.array(number_of_binaries*[[None, None, None, None]])
             kick2 = np.array(number_of_binaries*[[None, None, None, None]])
-        
+
         # output
         output_dict = {
             'binary_index': indices,

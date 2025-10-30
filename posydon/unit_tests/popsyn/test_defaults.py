@@ -5,12 +5,13 @@ __authors__ = [
     "Elizabeth Teng <elizabethteng@u.northwestern.edu>"
 ]
 
-# import the module which will be tested
-import posydon.popsyn.defaults as totest
-
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 import pytest
+
+# import the module which will be tested
+import posydon.popsyn.defaults as totest
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -34,7 +35,7 @@ class TestElements:
                                       +"Please check, whether they have been "\
                                       +"added on purpose and update this "\
                                       +"unit test."
-    
+
     def test_kwargs(self):
         elements = [
             'entropy',
@@ -63,11 +64,11 @@ class TestElements:
         ]
         assert set(totest.default_kwargs.keys()) == set(elements), \
             "The default_kwargs dictionary keys have changed. Please update the test."
-    
+
     def test_instance_entropy(self):
         assert isinstance(totest.default_kwargs['entropy'], (type(None), float)), \
             "entropy should be None or a float"
-        
+
     def test_instance_number_of_binaries(self):
         assert isinstance(totest.default_kwargs['number_of_binaries'], int), \
             "number_of_binaries should be an integer"
@@ -75,7 +76,7 @@ class TestElements:
     def test_instance_metallicity(self):
         assert isinstance(totest.default_kwargs['metallicity'], float), \
             "metallicity should be a float"
-        
+
     def test_instance_star_formation(self):
         assert isinstance(totest.default_kwargs['star_formation'], str), \
             "star_formation should be a string"
@@ -83,63 +84,63 @@ class TestElements:
     def test_instance_max_simulation_time(self):
         assert isinstance(totest.default_kwargs['max_simulation_time'], (float, int)), \
             "max_simulation_time should be a float or int"
-        
+
     def test_instance_orbital_scheme(self):
         assert isinstance(totest.default_kwargs['orbital_scheme'], str), \
             "orbital_scheme should be a string"
-        
+
     def test_instance_orbital_separation_scheme(self):
         assert isinstance(totest.default_kwargs['orbital_separation_scheme'], str), \
             "orbital_scheme should be a string"
-        
+
     def test_instance_orbital_separation_min(self):
         assert isinstance(totest.default_kwargs['orbital_separation_min'], float), \
             "orbital_separation_min should be a float"
-        
+
     def test_instance_orbital_separation_max(self):
         assert isinstance(totest.default_kwargs['orbital_separation_max'], float), \
             "orbital_separation_max should be a float"
-        
+
     def test_instance_log_orbital_seperation_mean(self):
         assert isinstance(totest.default_kwargs['log_orbital_seperation_mean'], (type(None), float)), \
             "log_orbital_seperation_mean should be None or a float"
-        
+
     def test_instance_log_orbital_seperation_sigma(self):
         assert isinstance(totest.default_kwargs['log_orbital_seperation_sigma'], (type(None), float)), \
             "log_orbital_seperation_sigma should be None or a float"
-        
+
     def test_instance_orbital_period_min(self):
         assert isinstance(totest.default_kwargs['orbital_period_min'], float), \
             "orbital_period_min should be a float"
-        
+
     def test_instance_orbital_period_max(self):
         assert isinstance(totest.default_kwargs['orbital_period_max'], float), \
             "orbital_period_max should be a float"
-        
+
     def test_instance_eccentricity_scheme(self):
         assert isinstance(totest.default_kwargs['eccentricity_scheme'], str), \
             "eccentricity_scheme should be a string"
-        
+
     def test_instance_primary_mass_min(self):
         assert isinstance(totest.default_kwargs['primary_mass_min'], float), \
             "primary_mass_min should be a float"
-        
+
     def test_instance_primary_mass_max(self):
         assert isinstance(totest.default_kwargs['primary_mass_max'], float), \
             "primary_mass_max should be a float"
-        
+
     def test_instance_secondary_mass_min(self):
         assert isinstance(totest.default_kwargs['secondary_mass_min'], float), \
             "secondary_mass_min should be a float"
-        
+
     def test_instance_secondary_mass_max(self):
         assert isinstance(totest.default_kwargs['secondary_mass_max'], float), \
             "secondary_mass_max should be a float"
-        
+
     def test_instance_binary_fraction_const(self):
         assert isinstance(totest.default_kwargs['binary_fraction_const'], (float, int)), \
             "binary_fraction_const should be a float or int"
-        
+
     def test_instance_binary_fraction_scheme(self):
         assert isinstance(totest.default_kwargs['binary_fraction_scheme'], str), \
             "binary_fraction_scheme should be a string"

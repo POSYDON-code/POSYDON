@@ -14,6 +14,7 @@ __authors__ = [
 
 import numpy as np
 from scipy.stats import truncnorm
+
 from posydon.utils.common_functions import rejection_sampler
 
 
@@ -262,7 +263,7 @@ def generate_primary_masses(number_of_binaries=1,
 
     """
     RNG = kwargs.get('RNG', np.random.default_rng())
-    
+
     if primary_mass_max < primary_mass_min:
         raise ValueError("primary_mass_max must be larger than primary_mass_min.")
 
@@ -333,7 +334,7 @@ def generate_secondary_masses(primary_masses,
 
     """
     RNG = kwargs.get('RNG', np.random.default_rng())
-    
+
     if secondary_mass_max < secondary_mass_min:
         raise ValueError("secondary_mass_max must be larger than secondary_mass_min.")
 
@@ -366,17 +367,17 @@ def binary_fraction_value(binary_fraction_const=1,
                           binary_fraction_scheme = 'const',
                           m1 = None,**kwargs):
     """
-    Getting the binary fraction depending on the scheme. The two possible option are a constant binary fraction 
-    and a binary fraction based on the values given in Moe and Di Stefano (2017). 
+    Getting the binary fraction depending on the scheme. The two possible option are a constant binary fraction
+    and a binary fraction based on the values given in Moe and Di Stefano (2017).
 
     Parameters:
     --------------------
     binary scheme: string
-        Determines if the value of the binary fraction will be constant or not  
-    binary fraction const: int 
-        Gives the value the constant value of the binary if the constant scheme is choosen. 
+        Determines if the value of the binary fraction will be constant or not
+    binary fraction const: int
+        Gives the value the constant value of the binary if the constant scheme is choosen.
 
-    Returns 
+    Returns
     ------------------
     binary fraction: int
 
@@ -384,15 +385,15 @@ def binary_fraction_value(binary_fraction_const=1,
     binary_fraction_scheme_options = ['const','Moe_17']
 
     # Input parameter checks
-    if binary_fraction_scheme not in binary_fraction_scheme_options: 
+    if binary_fraction_scheme not in binary_fraction_scheme_options:
         raise ValueError("You must provide an allowed binary fraction scheme.")
-    
 
-    if binary_fraction_scheme == 'const': 
+
+    if binary_fraction_scheme == 'const':
         binary_fraction = binary_fraction_const
-    
+
     elif binary_fraction_scheme == 'Moe_17':
-        if m1 is None: 
+        if m1 is None:
             raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
         elif m1 < 0.8:
             raise ValueError("The scheme doesn't support values of m1 less than 0.8")
@@ -406,10 +407,10 @@ def binary_fraction_value(binary_fraction_const=1,
             binary_fraction = 0.84
         elif m1 > 16:
             binary_fraction = 0.94
-        else: 
+        else:
             raise ValueError(f'The primary mass provided {m1} is not supported by the Moe_17 scheme.')
     else: # pragma: no cover
         pass
     return binary_fraction
 
-    
+

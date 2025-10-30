@@ -7,18 +7,22 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.popsyn.transient_select_funcs as totest
+
 # aliases
 np = totest.np
 pd = totest.pd
 PATH_TO_POSYDON_DATA = totest.PATH_TO_POSYDON_DATA
 
+import warnings
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isroutine, isclass
+from pytest import approx, fixture, raises, warns
+
 import posydon.popsyn.selection_effects as selection_effects
 from posydon.utils.posydonwarning import ReplaceValueWarning
-import warnings
+
 warnings.simplefilter("always")
 
 # define test classes collecting several test functions
@@ -63,9 +67,9 @@ class TestElements:
 
     def test_instance_DCO_detectability(self):
         assert isroutine(totest.DCO_detectability)
-        
+
 class TestFunctions:
-    
+
     @fixture
     def history_chunk(self):
         return pd.DataFrame({
@@ -88,13 +92,13 @@ class TestFunctions:
             'S1_m_disk_radiated': [0.5],
             'S2_m_disk_radiated': [0.0],
         }, index=[10])
-    
+
     @fixture
     def formation_channels_chunk(self):
         return pd.DataFrame({
             'channel': ['foo_CC1','bar_CC2']
         }, index=[10,11])
-    
+
     @fixture
     def history_BBH(self):
         return pd.DataFrame({
@@ -129,15 +133,15 @@ class TestFunctions:
     @fixture
     def array(self):
         return np.array([1.0,2.0,3.0])
-    
+
     @fixture
     def nan_array(self):
         return np.array([np.nan,np.nan,np.nan])
-    
+
     @fixture
     def wrong_array(self):
         return np.array(['1.0','2.0','3.0'])
-    
+
     @fixture
     def transient_pop_chunk(self):
         return pd.DataFrame({
@@ -159,8 +163,8 @@ class TestFunctions:
     @fixture
     def z_events_chunk_with_nan(self):
         return pd.DataFrame({
-            'event_1': [1.0, np.nan],   
-            'event_2': [np.nan, np.nan] 
+            'event_1': [1.0, np.nan],
+            'event_2': [np.nan, np.nan]
         }, index=[0,1])
 
     @fixture
@@ -169,7 +173,7 @@ class TestFunctions:
             'event_1': [1.0, 1.0],
             'event_2': [1.0, 1.0]
         }, index=[0, 1])
-    
+
 
     def test_GRB_selection(self,history_chunk,oneline_chunk,
                            formation_channels_chunk):
@@ -197,7 +201,7 @@ class TestFunctions:
         df = totest.GRB_selection(history_chunk, oneline_chunk.copy(),
                            formation_channels_chunk=None, S1_S2='S1')
         assert not df.empty
-        assert 'channel' not in df.columns 
+        assert 'channel' not in df.columns
         # example with S2
         chunk = oneline_chunk.copy()
         chunk['S1_m_disk_radiated'] = [0.0]
@@ -207,13 +211,13 @@ class TestFunctions:
         assert not df.empty
         assert 'S2_mass_postSN' in df.columns
         assert 'metallicity' in df.columns
-        assert 'channel' in df.columns      
+        assert 'channel' in df.columns
         # example with no disk radiation
         chunk = oneline_chunk.copy()
         chunk['S1_m_disk_radiated'] = [0.0]
         df = totest.GRB_selection(history_chunk, chunk, formation_channels_chunk=None,S1_S2='S1')
         assert df.empty
-        
+
     def test_chi_eff(self,array,nan_array,wrong_array):
         # missing argument
         with raises(TypeError,match="missing 6 required positional arguments"):
@@ -233,26 +237,26 @@ class TestFunctions:
         # example
         assert totest.chi_eff(array,array,array,
                               array,array,array)[0] == 0.5403023058681398
-        
+
     def test_m_chirp(self):
         # missing argument
         with raises(TypeError,match="missing 1 required positional argument: 'm_2'"):
             totest.m_chirp(3.)
         # bad input
-        with raises(TypeError,match="can't multiply sequence by non-int of type 'str'"): 
+        with raises(TypeError,match="can't multiply sequence by non-int of type 'str'"):
             totest.m_chirp("3.","2.")
         # examples
         tests = [(4.,2.,2.433457367572823),
                  (40.,10.,16.65106414803746)]
         for (m1,m2,mc) in tests:
             assert totest.m_chirp(m1,m2) == mc
-            
+
     def test_mass_ratio(self):
         # missing argument
         with raises(TypeError,match="missing 1 required positional argument: 'm_2'"):
             totest.mass_ratio(3.)
         # bad input
-        with raises(TypeError,match="unsupported operand type"): 
+        with raises(TypeError,match="unsupported operand type"):
             totest.mass_ratio("3.","2.")
         # examples
         tests = [(5.,1.,0.2),
@@ -261,7 +265,7 @@ class TestFunctions:
         for (m1,m2,q) in tests:
             assert totest.mass_ratio(np.array([m1]),
                                      np.array([m2])) == q
-            
+
     def test_BBH_selection_function(self, history_BBH, oneline_BBH,
                                    formation_channels_BBH):
         # missing argument
@@ -270,7 +274,7 @@ class TestFunctions:
         # bad input
         with raises(AttributeError,match="'float' object has no attribute 'index'"):
             totest.BBH_selection_function(1.1, 1.2)
-        # example without formation channels 
+        # example without formation channels
         df = totest.BBH_selection_function(history_BBH, oneline_BBH)
         assert not df.empty
         assert all(col in df.columns for col in [
@@ -281,14 +285,14 @@ class TestFunctions:
         ])
         assert (df.index == oneline_BBH.index).all()
         assert df['t_inspiral'].iloc[1] == 0.0
-        # example with formation channels 
+        # example with formation channels
         df = totest.BBH_selection_function(history_BBH, oneline_BBH, formation_channels_BBH)
         assert 'channel' in df.columns
         assert (df['channel'] == formation_channels_BBH['channel']).all()
-    
+
     def test_DCO_detectability(self,
                                transient_pop_chunk,
-                               z_events_chunk, 
+                               z_events_chunk,
                                z_events_chunk_with_nan,
                                z_weights_chunk,
                                monkeypatch):
@@ -311,20 +315,20 @@ class TestFunctions:
                                      transient_pop_chunk,
                                      z_events_chunk,
                                      z_weights_chunk)
-        # example: basic functionality    
-        out = totest.DCO_detectability('O3actual_H1L1V1', transient_pop_chunk, 
+        # example: basic functionality
+        out = totest.DCO_detectability('O3actual_H1L1V1', transient_pop_chunk,
                                 z_events_chunk, z_weights_chunk)
         assert isinstance(out, pd.DataFrame)
         assert out.shape == z_weights_chunk.shape
         assert (out.values <= 1.0).all()
         # example: missing q
         transient = transient_pop_chunk.drop(columns=['q'])
-        out = totest.DCO_detectability('O3actual_H1L1V1', transient, 
+        out = totest.DCO_detectability('O3actual_H1L1V1', transient,
                                 z_events_chunk, z_weights_chunk)
         assert not out.empty
         # example: missing chi_eff
         transient = transient_pop_chunk.drop(columns=['chi_eff'])
-        out = totest.DCO_detectability('O3actual_H1L1V1', transient, 
+        out = totest.DCO_detectability('O3actual_H1L1V1', transient,
                                 z_events_chunk, z_weights_chunk)
         assert not out.empty
         assert (out.values <= 1.0).all()

@@ -7,20 +7,25 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.popsyn.sample_from_file as totest
+
 # aliases
 os = totest.os
 np = totest.np
 pd = totest.pd
 
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isroutine, isclass
-from posydon.popsyn.independent_sample import (generate_orbital_periods,
-                                               generate_orbital_separations,
-                                               generate_eccentricities,
-                                               generate_primary_masses,
-                                               generate_secondary_masses)
+from pytest import approx, fixture, raises, warns
+
+from posydon.popsyn.independent_sample import (
+    generate_eccentricities,
+    generate_orbital_periods,
+    generate_orbital_separations,
+    generate_primary_masses,
+    generate_secondary_masses,
+)
 from posydon.utils.posydonwarning import Pwarn
 
 
@@ -57,13 +62,13 @@ class TestElements:
         assert isroutine(totest.get_kick_samples_from_file)
 
 class TestFunctions:
-    
+
     def test_infer_key():
         pass
-        
+
     def test_get_samples_from_file():
         pass
-        
+
     def test_get_kick_samples_from_file():
         pass
-    
+
