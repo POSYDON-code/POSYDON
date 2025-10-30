@@ -451,9 +451,3 @@ class MyDummyClass:
                 if len(os.listdir(path_to_batch)) == 0:
                     os.rmdir(path_to_batch)""")
         assert totest.create_merge_script_text('testfile.ini') == out
-
-
-
-
-
-

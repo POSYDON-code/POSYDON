@@ -48,4 +48,3 @@ class TestFunctions:
 
     def test_get_GRB_properties():
         pass
-

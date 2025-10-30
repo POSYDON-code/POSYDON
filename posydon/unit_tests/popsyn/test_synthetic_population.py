@@ -611,4 +611,3 @@ class TestRates:
         # bad input
         # examples
         pass
-

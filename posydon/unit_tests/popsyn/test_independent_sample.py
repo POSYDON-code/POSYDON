@@ -219,9 +219,3 @@ class TestFunctions:
         for (m1,f) in tests_moe:
             assert totest.binary_fraction_value(binary_fraction_scheme='Moe_17',
                                                 m1=m1) == f
-
-
-
-
-
-

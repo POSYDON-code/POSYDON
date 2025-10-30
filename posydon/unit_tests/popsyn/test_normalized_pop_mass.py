@@ -40,4 +40,3 @@ class TestElements:
 class TestFunctions:
     def test_initial_total_underlying_mass(self):
         pass
-

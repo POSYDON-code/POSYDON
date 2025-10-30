@@ -412,5 +412,3 @@ def binary_fraction_value(binary_fraction_const=1,
     else: # pragma: no cover
         pass
     return binary_fraction
-
-

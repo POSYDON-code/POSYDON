@@ -71,4 +71,3 @@ class TestFunctions:
 
     def test_get_kick_samples_from_file():
         pass
-

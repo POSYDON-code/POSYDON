@@ -141,4 +141,3 @@ class TestFunctions:
                  (1000., approx(13.957133275502315, abs=6e-12))]
         for (t,arr) in tests:
             assert totest.get_redshift_bin_centers(t)[-1] == arr
-
