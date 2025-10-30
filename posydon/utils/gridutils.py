@@ -1,16 +1,17 @@
 """Various utility functions used for the manipulating grid data."""
 
-import gzip
 import os
+import gzip
 
 import numpy as np
 import pandas as pd
 
-from posydon.utils.constants import Msun, Rsun, clight
-from posydon.utils.constants import secyer as secyear
+from posydon.utils.constants import clight, Msun, Rsun
 from posydon.utils.constants import standard_cgrav as cgrav
+from posydon.utils.constants import secyer as secyear
 from posydon.utils.limits_thresholds import LG_MTRANSFER_RATE_THRESHOLD
 from posydon.utils.posydonwarning import Pwarn
+
 
 __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
@@ -558,3 +559,5 @@ def get_new_grid_name(path, compression, create_missing_directories=False):
         if not os.path.isdir(output_path):
             os.makedirs(output_path)
     return grid_output
+
+

@@ -4,27 +4,24 @@
 __authors__ = [
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
-    "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
-    "Max Briel <max.briel@gmail.com>",
+    "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>"
 ]
 
 
 import numpy as np
 
+from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massless_remnant
+from posydon.utils.common_functions import check_state_of_star
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
+from posydon.utils.posydonerror import ModelError
+from posydon.utils.posydonwarning import Pwarn
+
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_H_RICH,
     STAR_STATES_HE_RICH,
-    STAR_STATES_NOT_CO,
-)
-from posydon.binary_evol.singlestar import (
-    STARPROPERTIES,
-    convert_star_to_massless_remnant,
-)
-from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.utils.common_functions import check_state_of_star
-from posydon.utils.posydonerror import ModelError
-from posydon.utils.posydonwarning import Pwarn
+    STAR_STATES_NOT_CO
+    )
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 LIST_ACCEPTABLE_STATES_FOR_HeMS = ["stripped_He_Core_He_burning"]
@@ -100,7 +97,7 @@ class MergedStep(IsolatedStep):
                   "star_2.surface_he4: ", binary.star_1.center_he4,
                   binary.star_2.center_he4, binary.star_1.surface_he4,
                   binary.star_2.surface_he4)
-
+        
         if binary.state == "merged":
             if binary.event == 'oMerging1':
                 binary.star_1, binary.star_2 = merged_star_properties(binary.star_1, binary.star_2)
@@ -109,7 +106,7 @@ class MergedStep(IsolatedStep):
             else:
                 raise ValueError("binary.state='merged' but binary.event != 'oMerging1/2'")
 
-        ## assume that binaries in RLO with two He-rich stars always merge
+        ## assume that binaries in RLO with two He-rich stars always merge   
         elif binary.star_1.state in STAR_STATES_HE_RICH and binary.star_2.state in STAR_STATES_HE_RICH:
             binary.state = "merged"
             if binary.event == 'oRLO1':
@@ -133,7 +130,7 @@ class MergedStep(IsolatedStep):
 
         super().__call__(binary)
 
-    def merged_star_properties(self, star_base, comp):
+    def merged_star_properties(self,star_base,comp):
         """
         Make assumptions about the core/total mass, and abundances of the star of a merged product.
 
@@ -175,6 +172,7 @@ class MergedStep(IsolatedStep):
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
                 #these stellar attributes change value
                 merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
+
                 #TODO for key in ["center_h1", "center_he4", "center_c12", "center_n14","center_o16"]:
                 merged_star.center_h1 = mass_weighted_avg()
                 merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4")
@@ -232,6 +230,7 @@ class MergedStep(IsolatedStep):
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS):
 
+                merged_star = comp
                 merged_star.mass = star_base.mass + comp.mass
 
                 merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight2="H-rich_envelope_mass", mass_weight1="mass")
@@ -253,7 +252,7 @@ class MergedStep(IsolatedStep):
                 merged_star.log_LZ = comp.log_LZ
 
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
-                massless_remnant = convert_star_to_massless_remnant(comp)
+                massless_remnant = convert_star_to_massless_remnant(star_base)
 
         #postMS + postMS
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
@@ -261,7 +260,7 @@ class MergedStep(IsolatedStep):
 
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
+                    current = getattr(merged_star, key) + getattr(comp, key)
                     setattr(merged_star, key,current)
 
                 # weighted central abundances if merging cores. Else only from star_base
@@ -313,7 +312,7 @@ class MergedStep(IsolatedStep):
 
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
+                    current = getattr(merged_star, key) + getattr(comp, key)
                     setattr(merged_star, key,current)
 
                 # weighted central abundances if merging cores. Else only from star_base
@@ -343,9 +342,11 @@ class MergedStep(IsolatedStep):
         elif (s1 in  LIST_ACCEPTABLE_STATES_FOR_HeMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS):
 
+                merged_star = comp
+
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
+                    current = getattr(merged_star, key) + getattr(star_base, key)
                     setattr(merged_star, key,current)
 
                 # weighted central abundances if merging cores. Else only from star_base
@@ -368,9 +369,8 @@ class MergedStep(IsolatedStep):
                         if key in [ "c12_c12", "center_gamma",
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
-
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
-                massless_remnant = convert_star_to_massless_remnant(comp)
+                massless_remnant = convert_star_to_massless_remnant(star_base)
 
         #postMS + HeStar that is not in HeMS
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
@@ -378,7 +378,7 @@ class MergedStep(IsolatedStep):
 
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
+                    current = getattr(merged_star, key) + getattr(comp, key)
                     setattr(merged_star, key,current)
 
                 # weighted central abundances if merging cores. Else only from star_base
@@ -420,9 +420,10 @@ class MergedStep(IsolatedStep):
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTHeMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS):
 
+                merged_star = comp
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
+                    current = getattr(merged_star, key) + getattr(star_base, key)
                     setattr(merged_star, key,current)
                 # weighted central abundances if merging cores. Else only from star_base
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with Helium cores
@@ -457,7 +458,7 @@ class MergedStep(IsolatedStep):
                                    "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
-                massless_remnant = convert_star_to_massless_remnant(comp)
+                massless_remnant = convert_star_to_massless_remnant(star_base)
 
         # HeStar + HeStar
         elif (s1 in STAR_STATES_HE_RICH
@@ -465,7 +466,7 @@ class MergedStep(IsolatedStep):
 
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
+                    current = getattr(merged_star, key) + getattr(comp, key)
                     setattr(merged_star, key,current)
 
                 # weighted central abundances if merging cores. Else only from star_base
@@ -517,7 +518,7 @@ class MergedStep(IsolatedStep):
                 #WD is considered a stripped CO core
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, "mass")
+                    current = getattr(merged_star, key) + getattr(comp, "mass")
                     setattr(merged_star, key,current)
                 # weighted central abundances if merging cores. Else only from star_base
                 if (comp.co_core_mass > 0 and star_base.co_core_mass == 0): # comp with CO core and the star_base has not
@@ -549,13 +550,15 @@ class MergedStep(IsolatedStep):
         # Star + NS/BH
         elif (s1 in STAR_STATES_NOT_CO
             and s2 in ["NS", "BH"]):
+                merged_star = comp
                 # TODO: potentially flag a Thorne-Zytkov object
                 massless_remnant = convert_star_to_massless_remnant(star_base)
 
                 ## in this case, want CO companion object to stay the same, and base star to be assigned massless remnant
-                return massless_remnant, comp
+                return massless_remnant, merged_star
         else:
             raise ModelError(f"Combination of merging star states not expected: {s1} {s2}")
+
         # ad hoc spin of merged star to be used in the detached step
         merged_star.surf_avg_omega_div_omega_crit = self.merger_critical_rot
 

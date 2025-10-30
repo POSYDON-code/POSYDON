@@ -13,22 +13,17 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
-import copy
-
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-from posydon.utils.constants import Zsun
+import matplotlib.pyplot as plt
 from posydon.utils.gridutils import add_field
-from posydon.utils.posydonwarning import Pwarn
-from posydon.visualization.combine_TF import combine_TF12
+from posydon.utils.constants import Zsun
 from posydon.visualization.plot_defaults import (
-    DEFAULT_LABELS,
-    DEFAULT_MARKERS_COLORS_LEGENDS,
-    PLOT_PROPERTIES,
-    add_flag_to_MARKERS_COLORS_LEGENDS,
-)
+    DEFAULT_MARKERS_COLORS_LEGENDS, add_flag_to_MARKERS_COLORS_LEGENDS,
+    PLOT_PROPERTIES, DEFAULT_LABELS)
+from posydon.visualization.combine_TF import combine_TF12
+import copy
+from posydon.utils.posydonwarning import Pwarn
 
 
 class plot2D(object):
@@ -355,8 +350,8 @@ class plot2D(object):
             "debug",
             "interpolation_class",
             "interpolation_class_errors",
-        ] or ('SN_type' in termination_flag or
-              'CO_type' in termination_flag or
+        ] or ('SN_type' in termination_flag or 
+              'CO_type' in termination_flag or 
               'state' in termination_flag):
             self.all_termination_flags = False
             if 'SN_type' in termination_flag:
@@ -399,9 +394,9 @@ class plot2D(object):
             fig, axs = plt.subplots(nrows=self.n_rows, ncols=self.n_cols,
                                sharex=True, sharey=True, figsize=self.figsize)
             l_ax = fig.add_subplot(self.n_rows, self.n_cols, self.legend_pos)
-
+            
             self.plot_panels(axs, l_ax, legend_idxs=l_idxs)
-
+            
             # adjust spacing
             plt.subplots_adjust(wspace=self.wspace, hspace=self.hspace)
 
@@ -451,7 +446,7 @@ class plot2D(object):
 
         else:
             fig = plt.figure(figsize=self.figsize)
-
+            
             ax = plt.subplot(111)
             self.plot_panel(ax)
 
@@ -1151,10 +1146,10 @@ class plot2D(object):
             matplotlib scatter object.
         ax : object
             matplotlib figure axes.
-
+        
         """
         if self.colorbar["label"] is not None:
-            z_var_str = self.colorbar["label"]
+            z_var_str = self.colorbar["label"]         
             z_var_str = z_var_str.replace('INTERP_ERROR_', '')
             z_var_str = z_var_str.replace('CLASS_ERROR_', '')
             z_var_str = z_var_str.replace('VIOLIN_', '')
@@ -1176,7 +1171,7 @@ class plot2D(object):
                 label = None
         else:
             label = None
-
+        
         if ax is not None:
             cax = ax.inset_axes(self.colorbar["bounds"])
         else:

@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-
 class EvaluateIFInterpolator:
     """ Class that is helpful for evaluating interpolation performance
     """
@@ -61,7 +60,7 @@ class EvaluateIFInterpolator:
             self.errs["relative"] = np.abs((fv - i) / fv)
         self.errs["absolute"] = np.abs(fv - i)
         self.errs["valid_inds"] = ivalid_inds
-
+        
 
         cvalid_inds = np.where(
             self.test_grid.final_values["interpolation_class"] != "not_converged"
@@ -77,11 +76,11 @@ class EvaluateIFInterpolator:
         for key, value in c.items():
 
             labels = self.cfv[key]
-
+  
             classes = self.__find_labels(key)
 
             matrix = {}
-
+            
             # catch cases where nothing is classified, e.g.
             # S2_SN_MODEL_v2_XX_SN_type when S2 is a compact object
             if len(classes) == 1 and  classes[0] == 'None':
@@ -103,10 +102,10 @@ class EvaluateIFInterpolator:
         # saving classes
         self.c = c
         self.ic = ic
-
+                
 
     def __format(self, s, title = False):
-        """ Method that formats keys for plots
+        """ Method that formats keys for plots 
 
         Parameters
         ----------
@@ -124,7 +123,7 @@ class EvaluateIFInterpolator:
         ----------
         key : str
             name of the classifier
-
+            
         Returns
         -------
         list of class labels
@@ -134,7 +133,7 @@ class EvaluateIFInterpolator:
         labels = None
 
         for interp in self.interpolator.interpolators:
-
+            
             if key in interp.classifiers.keys():
                 # if classifier does not exist assign 'None' label
                 # this happens, e.g. for S2_SN_MODEL_v2_XX_SN_type, when S2 is
@@ -177,7 +176,7 @@ class EvaluateIFInterpolator:
             keys = self.out_keys
 
         k_inds = [self.out_keys.index(key) for key in keys]
-
+        
         errs = self.__clean_errs(self.errs[err_type].T[k_inds].T)
 
         n_tracks = self.test_grid.final_values["star_1_mass"].shape[0]
@@ -199,14 +198,14 @@ class EvaluateIFInterpolator:
         fig, axs = plt.subplots(1, 1,
                                 figsize = (24, 10),
                                 tight_layout = True)
-
+        
         rel_plot = axs.violinplot(np.log10(errs + 1.0e-8), showmedians = True, points = 1000)
         stable_plot = axs.violinplot(np.log10(stable_errs + 1.0e-8), showmedians = True, points = 1000)
         no_plot = axs.violinplot(np.log10(no_errs + 1.0e-8), showmedians = True, points = 1000)
         unstable_plot = axs.violinplot(np.log10(unstable_errs + 1.0e-8), showmedians = True, points = 1000)
 
         axs.set_title(f"Distribution of {err_type.capitalize()} Errors")
-        axs.set_xticks(np.arange(1, len(keys) + 1),
+        axs.set_xticks(np.arange(1, len(keys) + 1), 
             labels = [
                 f"{self.__format(ec)} ({(med * 100):.2f}%)" for ec, med in zip(keys, np.nanmedian(errs, axis = 0))
             ], rotation = 20)
@@ -215,7 +214,7 @@ class EvaluateIFInterpolator:
         axs.grid(axis = "y")
 
         def halve_paths(field, color, right = True):
-
+            
             for i, path in enumerate(field.get_paths()):
 
                 # getting mean
@@ -243,14 +242,14 @@ class EvaluateIFInterpolator:
                 pc.set_edgecolor(color)
                 pc.set_linewidth(4)
                 pc.set_alpha(0.75)
-
+        
         customize_violinplot(rel_plot, "coral")
         customize_violinplot(stable_plot, "#1e90ff", True, False)
         customize_violinplot(no_plot, "crimson", True, False)
         customize_violinplot(unstable_plot, "olive", True, False)
 
         axs.legend(
-            [rel_plot["bodies"][0], stable_plot["bodies"][0], no_plot["bodies"][0], unstable_plot["bodies"][0]],
+            [rel_plot["bodies"][0], stable_plot["bodies"][0], no_plot["bodies"][0], unstable_plot["bodies"][0]], 
             ["Relative Error", "Stable MT Error", "No MT Error", "Unstable MT Error"],
             bbox_to_anchor = (0, 1.02, 1, 0.2),
             loc = "lower left",
@@ -360,14 +359,14 @@ class EvaluateIFInterpolator:
     def plot2D(self, key, slice_3D_var_str, slice_3D_var_range, PLOT_PROPERTIES):
 
         k_ind = self.out_keys.index(key)
-
+        
         if slice_3D_var_str == 'mass_ratio':
             var = self.test_grid.initial_values["star_2_mass"] / self.test_grid.initial_values["star_1_mass"]
         elif slice_3D_var_str == 'star_2_mass':
             var = self.test_grid.initial_values["star_2_mass"]
         else:
             raise ValueError("slice_3D_var_str must be either 'mass_ratio' or 'star_2_mass'")
-
+        
         slice = (var >= slice_3D_var_range[0]) & (var <= slice_3D_var_range[1])
 
         slice_errs = self.errs["relative"].T[k_ind]
@@ -375,9 +374,11 @@ class EvaluateIFInterpolator:
 
         # find inf and assign large value else they are not plotted
         slice_errs[np.isinf(slice_errs)] = 1e99
-
+        
         fig = self.test_grid.plot2D('star_1_mass', 'period_days', slice_errs,
                     termination_flag='interpolation_class_errors',
                     grid_3D=True, slice_3D_var_str=slice_3D_var_str,
                     slice_3D_var_range=slice_3D_var_range,
                     verbose=False, **PLOT_PROPERTIES)
+
+

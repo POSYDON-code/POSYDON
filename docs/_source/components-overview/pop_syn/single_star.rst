@@ -109,9 +109,9 @@ Additional scalar properties are added during the evolution depending on which s
   * - Properties
     - Descriptions
   * - ``natal_kick_array``
-    - | The natal kick array for the star if it has undergone a SN.
+    - | The natal kick array for the star if it has undergone a SN. 
       | contains:
-
+      
       * velocity
       * theta
       * phi
@@ -150,7 +150,7 @@ We also have additional extra states for objects that are not stars.
     - The star has a stripped helium surface.
   * - ``accreted_He``
     - The star has accreted a helium rich layer on its surface.
-
+  
 .. list-table:: Burning state
   :header-rows: 1
   :widths: 10 30
@@ -165,13 +165,13 @@ We also have additional extra states for objects that are not stars.
     - The star is burning hydrogen in a shell.
   * - ``Core_He_burning``
     - The star is burning helium in its core.
-  * - ``Core_He_depleted``
+  * - ``Central_He_depleted``
     - The star has a helium depleted core.
   * - ``Shell_He_burning``
     - The star is burning helium in a shell.
   * - ``Core_C_burning``
     - The star is burning carbon in its core.
-  * - ``Core_C_depleted``
+  * - ``Central_C_depletion``
     - The star has a carbon depleted core.
 
 .. list-table:: Additional States
@@ -202,3 +202,4 @@ The simplest method is to provide `kwargs` of the initial stellar parameters.
   SingleStar(**kwargs)
 
 Now, the SingleStar object is ready to be used.
+

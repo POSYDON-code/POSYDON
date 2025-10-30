@@ -10,7 +10,7 @@ Van den Heuvel diagrams with POSYDON
    To use the visualization functionalities, install the optional visualization modules `pip install .[vis]`
 
 
-`VHdiagram` provides a visual representation of individual POSYDON binaries, offering a more intuitive sense of their properties. This tutorial uses the 'population.h5' dataset as an example. You can use the population in the `Stellar Transient Populations` tutorial.
+`VHdiagram` provides a visual representation of individual POSYDON binaries, offering a more intuitive sense of their properties. This tutorial uses the 'population.h5' dataset as an example. You can use the population in the `Stellar Transient Populations` tutorial. 
 
 Visualizing a Specific Binary
 -----------------------------
@@ -142,3 +142,4 @@ You can sort binaries based on filenames of images representing their steps:
                     displayMode=DisplayMode.INLINE_B)
 
 .. image:: pictures/diagram_multiple_sort.png
+

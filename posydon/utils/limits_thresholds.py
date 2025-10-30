@@ -8,6 +8,7 @@ __authors__ = [
 
 import numpy as np
 
+
 # THRESHOLD USED FOR INFERRING MASS-TRANSFER, AND RLO
 
 # This needs to be aligned with run_binary_extras.f
@@ -82,3 +83,4 @@ STATE_NS_STARMASS_UPPER_LIMIT = 2.5  # maximum mass of a neutron star (in Msol)
 # During a collapse escaping neutrinos reduce the mass ending up in the compact
 # object
 NEUTRINO_MASS_LOSS_UPPER_LIMIT = 0.5 # maximum loss in neutrinos (in Msol)
+

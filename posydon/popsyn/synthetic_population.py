@@ -32,42 +32,60 @@ __authors__ = [
     "Max Briel <max.briel@unige.ch>",
 ]
 
-import os
-import shutil
-
 import numpy as np
 import pandas as pd
-from astropy import constants as const
-from astropy.cosmology import Planck15 as cosmology
-from matplotlib import pyplot as plt
 from tqdm import tqdm
+import os
+from matplotlib import pyplot as plt
 
-import posydon.visualization.plot_pop as plot_pop
-from posydon.binary_evol.simulationproperties import SimulationProperties
-from posydon.popsyn.binarypopulation import (
-    HISTORY_MIN_ITEMSIZE,
-    ONELINE_MIN_ITEMSIZE,
-    BinaryPopulation,
-    saved_ini_parameters,
-)
+from posydon.utils.constants import Zsun
 from posydon.popsyn.io import binarypop_kwargs_from_ini
-from posydon.popsyn.norm_pop import calculate_model_weights
+from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
+import posydon.visualization.plot_pop as plot_pop
+from posydon.utils.common_functions import convert_metallicity_to_string
+from posydon.utils.posydonwarning import Pwarn
+from astropy.cosmology import Planck15 as cosmology
+from astropy import constants as const
+
 from posydon.popsyn.rate_calculation import (
-    DEFAULT_SFH_MODEL,
+    get_shell_comoving_volume,
     get_comoving_distance_from_redshift,
     get_cosmic_time_from_redshift,
-    get_redshift_bin_centers,
-    get_redshift_bin_edges,
-    get_shell_comoving_volume,
     redshift_from_cosmic_time_interpolator,
+    DEFAULT_SFH_MODEL,
+    get_redshift_bin_edges,
+    get_redshift_bin_centers,
 )
+
 from posydon.popsyn.star_formation_history import SFR_per_met_at_z
-from posydon.utils.common_functions import convert_metallicity_to_string
-from posydon.utils.constants import Zsun
-from posydon.utils.posydonwarning import Pwarn
+
+from posydon.popsyn.binarypopulation import (
+    BinaryPopulation,
+    HISTORY_MIN_ITEMSIZE,
+    ONELINE_MIN_ITEMSIZE,
+)
+
 
 ###############################################################################
 
+parameter_array = [
+    "number_of_binaries",
+    "binary_fraction_scheme",
+    "binary_fraction_const",
+    "star_formation",
+    "max_simulation_time",
+    "primary_mass_scheme",
+    "primary_mass_min",
+    "primary_mass_max",
+    "secondary_mass_scheme",
+    "secondary_mass_min",
+    "secondary_mass_max",
+    "orbital_scheme",
+    "orbital_period_scheme",
+    "orbital_period_min",
+    "orbital_period_max",
+    "eccentricity_scheme",
+]
 
 
 class PopulationRunner:
@@ -135,8 +153,6 @@ class PopulationRunner:
                     + "_Zsun_"
                     + ini_kw["temp_directory"]
                 )
-                simprops = SimulationProperties.from_ini(path_to_ini)
-                ini_kw['population_properties'] = simprops
                 self.binary_populations.append(BinaryPopulation(**ini_kw))
 
     def evolve(self, overwrite=False):
@@ -153,17 +169,19 @@ class PopulationRunner:
         for pop in self.binary_populations:
             # check if the temp directory exists
             if os.path.exists(pop.kwargs["temp_directory"]) and not overwrite:
-                raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.")
+                raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.") 
             elif os.path.exists(pop.kwargs["temp_directory"]) and overwrite:
-                if self.verbose:
-                    print(f"Removing pre-existing {pop.kwargs['temp_directory']} directory...")
-                shutil.rmtree(pop.kwargs["temp_directory"])
+                if self.verbose: # pragma: no cover
+                    print(f"Removing {pop.kwargs['temp_directory']} directory...")
+                os.removedirs(pop.kwargs["temp_directory"])    
+                pop.evolve()
+            else:
+                pop.evolve()
+                
+            if pop.comm is None: # pragma: no cover
+                self.merge_parallel_runs(pop)
 
-            pop.evolve(optimize_ram=True)
-            if pop.comm is None:
-                self.merge_parallel_runs(pop, overwrite)
-
-    def merge_parallel_runs(self, pop, overwrite=False):
+    def merge_parallel_runs(self, pop):
         """Merge the parallel runs of the population.
 
         Parameters
@@ -172,20 +190,14 @@ class PopulationRunner:
             The binary population whose files have to be merged.
 
         """
-        Zstr = convert_metallicity_to_string(pop.metallicity)
-        fname = Zstr + "_Zsun_population.h5"
-        if os.path.exists(fname) and not overwrite:
+        if os.path.exists(convert_metallicity_to_string(pop.metallicity) + "_Zsun_population.h5"):
             raise FileExistsError(
-                f"{Zstr}_Zsun_population.h5 already exists!\n"
+                f"{convert_metallicity_to_string(pop.metallicity)}_Zsun_population.h5 already exists!\n"
                 +"Files were not merged. You can use PopulationRunner.merge_parallel_runs() to merge the files manually."
             )
-        elif os.path.exists(fname) and overwrite:
-            if self.verbose:
-                print(f"Removing pre-exisiting {fname}...")
-            os.remove(fname)
-
+                
         path_to_batch = pop.kwargs["temp_directory"]
-
+        
         tmp_files = [
             os.path.join(path_to_batch, f)
             for f in os.listdir(path_to_batch)
@@ -193,14 +205,14 @@ class PopulationRunner:
         ]
         if self.verbose:
             print(f"Merging {len(tmp_files)} files...")
-
-        pop.combine_saved_files(fname, tmp_files)
-
+        
+        pop.combine_saved_files(
+            convert_metallicity_to_string(pop.metallicity) + "_Zsun_population.h5",
+            tmp_files,
+        )
         if self.verbose:
             print("Files merged!")
-            print(f"Saved merged files to {fname}...")
             print(f"Removing files in {path_to_batch}...")
-
         # remove files
         if len(os.listdir(path_to_batch)) == 0:
             os.rmdir(path_to_batch)
@@ -213,7 +225,7 @@ class PopulationRunner:
 
 class DFInterface:
     """A class to handle the interface between the population file and the History and Oneline classes."""
-
+    
     def __init__(self):
         self.filename = None
         self.chunksize = None
@@ -236,7 +248,7 @@ class DFInterface:
         """
         with pd.HDFStore(self.filename, mode="r") as store:
             return store.select(key, start=0, stop=n)
-
+        
     def tail(self, key, n=10):
         """
         Get the last n rows of the key table.
@@ -255,11 +267,11 @@ class DFInterface:
         """
         with pd.HDFStore(self.filename, mode="r") as store:
             return store.select(key, start=-n)
-
-
+        
+    
     def select(self, key, where=None, start=None, stop=None, columns=None):
         '''Select a subset of the key table based on the given conditions.
-
+        
         Parameters
         ----------
         key : str
@@ -272,7 +284,7 @@ class DFInterface:
             The ending index of the data to select.
         columns : list, optional
             A list of column names to select.
-
+        
         Returns
         -------
         pandas.DataFrame
@@ -287,32 +299,32 @@ class DFInterface:
                 out.append(chunk)
             out = pd.concat(out, axis=0)
         return out
-
+    
     def get_repr(self, key):
         '''Return a string representation of the key table.
-
+        
         Parameters
         ----------
         key : str
             The key of the table to return the string representation of.
-
+            
         Returns
         -------
         str
             The string representation of the key table.
-
+        
         '''
         with pd.HDFStore(self.filename, mode="r") as store:
             return store.select(key, start=0, stop=10).__repr__()
-
+        
     def get_html_repr(self, key):
         """Return the HTML representation of the key table.
-
+        
         Parameters
         ----------
         key : str
             The key of the table to return the HTML representation of.
-
+            
         Returns
         -------
         str
@@ -451,18 +463,18 @@ class History(DFInterface):
                 chunk = key.stop - pre
             indices = list(range(pre, pre + chunk))
             return self.select(where=f'index in {indices}')
-
+            
         # single index
         elif isinstance(key, int):
             return self.select(where=f"index == {key}")
-
+                
         # list of indices
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
             if len(key) == 0:
                 return pd.DataFrame()
             else:
                 return self.select(where=f"index in {key}")
-
+                
         # numpy array
         elif isinstance(key, np.ndarray) and (key.dtype == int):
             if len(key) == 0:
@@ -470,7 +482,7 @@ class History(DFInterface):
             else:
                 indices = key.tolist()
                 return self.select(where=f"index in {indices}")
-
+                
         # boolean mask
         elif (isinstance(key, np.ndarray) and key.dtype == bool) or (isinstance(key, pd.DataFrame) and all(key.dtypes == bool)):
             # return empty if no values
@@ -484,14 +496,14 @@ class History(DFInterface):
                 for i, chunk in enumerate(iterator):
                     out.append(chunk[key[i : i + self.chunksize]])
                 return pd.concat(out, axis=0)
-
+        
         # single column
         elif isinstance(key, str):
             if key in self.columns:
                 return self.select(columns=[key])
             else:
                 raise ValueError(f"{key} is not a valid column name!")
-
+            
         # multiple columns
         elif isinstance(key, list) and all(isinstance(x, str) for x in key):
             if all(x in self.columns for x in key):
@@ -550,7 +562,7 @@ class History(DFInterface):
             str: A string representation of the object.
         """
         return super().get_repr("history")
-
+        
     def _repr_html_(self):
         """Return the HTML representation of the history dataframe.
 
@@ -579,7 +591,7 @@ class History(DFInterface):
         ----------
         where : str, optional
             A string representing the query condition to apply to the data.
-            It is only possible to query on the index or string columns.
+            It is only possible to query on the index or string columns. 
         start : int, optional
             The starting index of the data to select.
         stop : int, optional
@@ -696,7 +708,7 @@ class Oneline(DFInterface):
                 chunk = key.stop - pre
             indices = list(range(pre, pre + chunk))
             return self.select(where=f'index in {indices}')
-
+        
         elif isinstance(key, int):
             return self.select(where=f"index == {key}")
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
@@ -725,7 +737,7 @@ class Oneline(DFInterface):
         else:
             raise ValueError("Invalid key type!")
 
-    def __len__(self):
+    def __len__(self): # pragma: no cover
         """
         Get the number of systems in the oneline table.
 
@@ -736,7 +748,7 @@ class Oneline(DFInterface):
         """
         return self.number_of_systems
 
-    def head(self, n=10):
+    def head(self, n=10): # pragma: no cover
         """Get the first n rows of the oneline table.
 
         Parameters
@@ -751,7 +763,7 @@ class Oneline(DFInterface):
         """
         return super().head("oneline", n)
 
-    def tail(self, n=10):
+    def tail(self, n=10): # pragma: no cover
         """
         Get the last n rows of the oneline table.
 
@@ -767,7 +779,7 @@ class Oneline(DFInterface):
         """
         return super().tail("oneline", n)
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         """
         Get a string representation of the oneline table.
 
@@ -778,7 +790,7 @@ class Oneline(DFInterface):
         """
         return super().get_repr("oneline")
 
-    def _repr_html_(self):
+    def _repr_html_(self): # pragma: no cover
         """
         Get an HTML representation of the oneline table.
 
@@ -789,7 +801,9 @@ class Oneline(DFInterface):
         """
         return super().get_html_repr("oneline")
 
-    def select(self, where=None, start=None, stop=None, columns=None):
+    def select(self, where=None, 
+               start=None, stop=None, 
+               columns=None): # pragma: no cover
         """Select a subset of the oneline table based on the given conditions.
 
         This method allows you to filter and extract a subset of rows from the oneline table stored in an HDF file.
@@ -798,8 +812,8 @@ class Oneline(DFInterface):
         Parameters
         ----------
         where : str, optional
-            A condition to filter the rows of the oneline table. Default is None.
-            It is only possible to query on the index or string columns.
+            A condition to filter the rows of the oneline table. Default is None. 
+            It is only possible to query on the index or string columns. 
         start : int, optional
             The starting index of the subset. Default is None.
         stop : int, optional
@@ -841,12 +855,12 @@ class PopulationIO:
     mass_per_metallicity : pandas.DataFrame
         A DataFrame containing mass per metallicity data.
     ini_params : dict
-        A dictionary containing some ini parameters, described in saved_ini_parameters.
+        A dictionary containing some ini parameters, described in parameter_array.
 
     """
 
     def __init__(self):
-        self.verbose = False
+        self.verbose = False        
 
 
     def _load_metadata(self, filename):
@@ -911,17 +925,14 @@ class PopulationIO:
         with pd.HDFStore(filename, mode="a") as store:
             # write ini parameters to file
             tmp_df = pd.DataFrame()
-            for c in saved_ini_parameters:
-                try:
-                    tmp_df[c] = [self.ini_params[c]]
-                except KeyError:
-                    print("Missing ini parameter:", c)
+            for c in parameter_array:
+                tmp_df[c] = [self.ini_params[c]]
             store.put("ini_parameters", tmp_df)
 
     def _load_ini_params(self, filename):
         """Load the ini parameters from the file.
 
-        The values loaded from file are stored in the saved_ini_parameters.
+        The values loaded from file are stored in the parameter_array.
 
         Parameters
         ----------
@@ -933,12 +944,8 @@ class PopulationIO:
         with pd.HDFStore(filename,mode="r",) as store:
             tmp_df = store["ini_parameters"]
             self.ini_params = {}
-            for c in saved_ini_parameters:
-                try:
-                    self.ini_params[c] = tmp_df[c][0]
-                except KeyError:
-                    print("Missing ini parameter:", c)
-
+            for c in parameter_array:
+                self.ini_params[c] = tmp_df[c][0]
 
 
 ##########################
@@ -1103,12 +1110,12 @@ class Population(PopulationIO):
             mask = tmp_data["state_i"] == "initially_single_star"
             filtered_data_single = tmp_data[mask]
             filtered_data_binaries = tmp_data[~mask]
-
+            
             simulated_mass_single = np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
             simulated_mass_binaries = np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
             simulated_mass = simulated_mass_single + simulated_mass_binaries
             del tmp_data, filtered_data_single, filtered_data_binaries
-
+            
             self.mass_per_metallicity = pd.DataFrame(
                     index=[metallicity],
                     data={"simulated_mass": simulated_mass,
@@ -1131,32 +1138,53 @@ class Population(PopulationIO):
         self.history_lengths = self.history.lengths
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
-
-    def __repr__(self):
-        """Return a string representation of the object.
-
+        
+    def calculate_underlying_mass(self, f_bin=0.7, overwrite=False):
+        """Calculate the underlying mass of the population.
+        
+        Adds the underlying mass of the population to the mass_per_metallicity table.
+        
+        This method calculates the underlying mass of the population based on the simulated mass
+        of the population and the boundaries of the sampled mass distribution.
+        You can specify the fraction of binaries in the population using the `f_bin` parameter.
+        
+        Parameters
+        ----------
+        f_bin : float, optional
+            The fraction of binaries in the population. Default is 0.7.
+        overwrite : bool, optional
+            If `True`, overwrite the underlying mass values if they already exist. Default is `False`.
+            
         Returns
         -------
-        str
-            A string representation of the object, including ini_params in table form.
+        np.ndarray
+            The underlying mass of the population.
         """
-        base_str = (
-            f"A population object with {self.number_of_systems} systems stored at {self.filename}.\n\n"
-        )
-        if hasattr(self, "mass_per_metallicity") and self.mass_per_metallicity is not None:
-            mpmt_table = self.mass_per_metallicity.to_string()
-            base_str += "mass_per_metallicity:\n" + mpmt_table + "\n\n"
-        else:
-            base_str += "mass_per_metallicity: Not set.\n\n"
-
-        if hasattr(self, "ini_params"):
-            # Create a DataFrame from ini_params with two columns: Parameter and Value.
-            ini_df = pd.DataFrame(list(self.ini_params.items()), columns=["Parameter", "Value"])
-            ini_table = ini_df.to_string(index=False)
-            base_str += "ini_params:\n" + ini_table
-        else:
-            base_str += "ini_params: Not set."
-        return base_str
+        
+        if 'underlying_mass' in self.mass_per_metallicity.columns:
+            warn_text="underlying_mass already exists in the mass_per_metallicity table."
+            if overwrite:
+                Pwarn(warn_text+" Overwriting the underlying_mass values.", "OverwriteWarning")
+            else:
+                Pwarn(warn_text+" Not overwriting the underlying_mass values, skipping it.", "IncompletenessWarning")
+                return
+    
+        
+        underlying_mass = np.zeros(len(self.mass_per_metallicity))
+        for i in range(len(self.mass_per_metallicity)):
+            underlying_mass[i] = initial_total_underlying_mass(
+                simulated_mass=self.mass_per_metallicity['simulated_mass'].iloc[i],
+                simulated_mass_single=self.mass_per_metallicity['simulated_mass_single'].iloc[i],
+                simulated_mass_binaries=self.mass_per_metallicity['simulated_mass_binaries'].iloc[i],
+                f_bin=f_bin, 
+                **self.ini_params)[0]
+        
+        self.mass_per_metallicity['underlying_mass'] = underlying_mass
+        
+        # save it to the file
+        self._save_mass_per_metallicity(self.filename)
+        
+        return underlying_mass
 
     def export_selection(self, selection, filename, overwrite=False, append=False, history_chunksize=1000000):
         """Export a selection of the population to a new file
@@ -1165,8 +1193,8 @@ class Population(PopulationIO):
         The selected systems are specified by their indices in the population.
 
         By default the selected systems will overwrite the file if it already exists.
-        If overwrite is set to False, the selected systems will be appended to
-        the existing file if it already exists and the indices will be shifted
+        If overwrite is set to False, the selected systems will be appended to 
+        the existing file if it already exists and the indices will be shifted 
         based on the current length of data in the file that is being appended to.
 
 
@@ -1214,15 +1242,15 @@ class Population(PopulationIO):
             raise ValueError(
                 f"{filename} does not contain .h5 in the se.\n Is this a valid population file?"
             )
-
+        
         # overwrite and append cannot both be True
         if append and overwrite:
             raise ValueError("Both overwrite and append cannot be True!")
-
+        
         # check for file existence
         if os.path.exists(filename) and not overwrite and not append:
             raise FileExistsError(f"{filename} already exists! Set overwrite or append to True to continue!")
-
+        
         if overwrite:
             mode = 'w'
         elif append:
@@ -1298,7 +1326,7 @@ class Population(PopulationIO):
                 total=len(selection) // self.chunksize,
                 disable=not self.verbose,
             ):
-
+                
                 tmp_df = self.oneline[selection[i : i + self.chunksize]]
                 if "metallicity" in tmp_df.columns:
                     tmp_df["metallicity"] = tmp_df["metallicity"].astype("float")
@@ -1538,13 +1566,13 @@ class Population(PopulationIO):
 
             self._write_formation_channels(self.filename, df)
             del df
-
+            
         if self.verbose:
             print("formation_channels written to population file!")
 
     def _write_formation_channels(self, filename, df):
         """Write the formation channels to the population file
-
+        
         This will append the formation channels to the population file, while restricting the maximum
         length of the channel and channel_debug columns to 100 characters.
 
@@ -1556,7 +1584,7 @@ class Population(PopulationIO):
             The dataframe containing the formation channels.
         """
         str_length = 100
-
+        
         with pd.HDFStore(filename, mode="a") as store:
             df['channel'] = df['channel'].str.slice(0, str_length)
             df['channel_debug'] = df['channel_debug'].str.slice(0, str_length)
@@ -1591,7 +1619,8 @@ class Population(PopulationIO):
         return {"history": self.history.columns, "oneline": self.oneline.columns}
 
     def create_transient_population(
-        self, func, transient_name, oneline_cols=None, hist_cols=None):
+        self, func, transient_name, oneline_cols=None, hist_cols=None
+    ):
         """Given a function, create a TransientPopulation
 
         This method creates a transient population using the provided function.
@@ -1698,12 +1727,6 @@ class Population(PopulationIO):
 
             syn_df = func(history_chunk, oneline_chunk, formation_channels_chunk)
 
-            # check if required columns are present
-            if "time" not in syn_df.columns:
-                raise ValueError("Transient population requires a time column!")
-            if "metallicity" not in syn_df.columns:
-                raise ValueError("Transient population requires a metallicity column!")
-
             if len(syn_df.columns) != len(syn_df.columns.unique()):
                 raise ValueError("Transient population contains duplicate columns!")
 
@@ -1721,7 +1744,7 @@ class Population(PopulationIO):
                 )
 
             previous = end
-
+            
         # it can happen that no systems are selected, in which case nothing has been appended to the file in the loop
         with pd.HDFStore(self.filename, mode="r") as store:
             if '/transients/'+transient_name not in store.keys():
@@ -1733,7 +1756,7 @@ class Population(PopulationIO):
         )
         return synth_pop
 
-    def plot_binary_evolution(self, index):
+    def plot_binary_evolution(self, index): # pragma: no cover
         """Plot the binary evolution of a system
 
         This method is not currently implemented.
@@ -1754,6 +1777,8 @@ class TransientPopulation(Population):
         DataFrame containing the whole transient population.
     transient_name : str
         Name of the transient population.
+    efficiency : pandas.DataFrame
+        DataFrame containing the efficiency of events per Msun for each solar metallicity.
     columns : list
         List of columns in the transient population.
 
@@ -1803,6 +1828,8 @@ class TransientPopulation(Population):
                 )
 
             self.transient_name = transient_name
+            if "/transients/" + transient_name + "/efficiencies" in store.keys():
+                self._load_efficiency(filename)
 
     @property
     def population(self):
@@ -1817,6 +1844,40 @@ class TransientPopulation(Population):
             A DataFrame containing the transient population data.
         """
         return pd.read_hdf(self.filename, key="transients/" + self.transient_name)
+
+    def _load_efficiency(self, filename):
+        """Load the efficiency from the file
+
+        Parameters:
+            filename (str): The path to the file containing the efficiency data.
+
+        Returns:
+            None
+
+        Raises:
+            None
+
+        """
+        with pd.HDFStore(filename, mode="r") as store:
+            self.efficiency = store[
+                "transients/" + self.transient_name + "/efficiencies"
+            ]
+            if self.verbose:
+                print("Efficiency table read from population file!")
+
+    def _save_efficiency(self, filename):
+        """Save the efficiency to the file.
+
+        Args:
+            filename (str): The name of the file to save the efficiency to.
+
+        Returns:
+            None
+        """
+        with pd.HDFStore(filename, mode="a") as store:
+            store.put(
+                "transients/" + self.transient_name + "/efficiencies", self.efficiency
+            )
 
     @property
     def columns(self):
@@ -1876,126 +1937,59 @@ class TransientPopulation(Population):
             columns=columns,
         )
 
-    def calculate_model_weights(self, model_weights_identifier, population_parameters=None, simulation_parameters=None):
-        """Calculate the model weights of the transient population based on the provided model parameters.
-
-        This method calculates the model weights of each event in the transient population based on the provided model parameters.
-        It performs various calculations and stores the results in an HDF5 file at the location '/transients/{transient_name}/weights/{model_weights_identifier}'.
-
-        Parameters
-        ----------
-        model_weights_identifier : str
-            Identifier for the model weights.
-        simulation_parameters : dict, optional
-            Dictionary containing the simulation parameters. If None, the simulation parameters in the file will be used.
-        population_parameters : dict, optional
-            Dictionary containing the population parameters. If None, the default population parameters will be used.
-
+    def get_efficiency_over_metallicity(self):
         """
-        if population_parameters is None:
-            population_parameters = {'number_of_binaries': 1000000,
-                                    'binary_fraction_scheme':'const',
-                                    'binary_fraction_const':0.7,
-                                    'star_formation': 'burst',
-                                    'max_simulation_time': 13800000000.0,
-                                    'primary_mass_scheme':'Kroupa2001',
-                                    'primary_mass_min':0.01,
-                                    'primary_mass_max': 200,
-                                    'secondary_mass_scheme':'flat_mass_ratio',
-                                    'secondary_mass_min':0.01*0.05,
-                                    'secondary_mass_max':200,
-                                    'orbital_scheme':'period',
-                                    'orbital_period_scheme':'Sana+12_period_extended',
-                                    'orbital_period_min':0.35,
-                                    'orbital_period_max':6e3,
-                                    'eccentricity_scheme':'zero',}
+        Compute the efficiency of events per Msun for each solar_metallicities.
 
-        if simulation_parameters is None:
-            simulation_parameters = self.ini_params
-        else:
-            # check for different parameters
-            for key in simulation_parameters.keys():
-                if key not in self.ini_params:
-                    Pwarn((f"Parameter {key} not found in the population"
-                            " parameters! Make sure this is intended"),
-                          "POSYDONWarning")
+        This method calculates the efficiency of events per solar mass for each solar metallicity value in the transient population.
+        It first checks if the efficiencies have already been computed and if so, overwrites them.
+        Then, it iterates over each metallicity value and calculates the efficiency by dividing the count of events with the underlying stellar mass.
+        The efficiencies are stored in a DataFrame with the metallicity values as the index and the 'total' column representing the efficiency for all channels.
+        If the 'channel' column is present, it also computes the merger efficiency per channel and adds the results to the DataFrame.
+        """
+        if hasattr(self, "efficiency"):
+            print("Efficiencies already computed! Overwriting them!")
+            with pd.HDFStore(self.filename, mode="a") as store:
+                if (
+                    "/transients/" + self.transient_name + "/efficiencies"
+                    in store.keys()
+                ):
+                    del store["transients/" + self.transient_name + "/efficiencies"]
 
+        metallicities = self.mass_per_metallicity.index.to_numpy()
+        
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
+        
+        met_columns = self.select(columns=["metallicity"]).value_counts()
+        
+        met_columns.index = [i[0] for i in met_columns.index.to_numpy().flatten()]
+
+        combined_df = pd.concat([met_columns, self.mass_per_metallicity], axis=1)
+        combined_df.fillna(0, inplace=True)
+        combined_df.sort_index(inplace=True)
+        
+        efficiencies = combined_df['count']/combined_df['underlying_mass']
         if self.verbose:
-            print("Simulation parameters:")
-            print(simulation_parameters)
-            print("Population parameters:")
-            print(population_parameters)
+            for MET, value in efficiencies.sort_index().items():
+                print(f"Efficiency at Z={MET:1.2E}: {value:1.2E} Msun^-1")
+            
+        self.efficiency = pd.DataFrame(
+            efficiencies, columns=["total"]
+        )
+        self.efficiency.index.name = "metallicity"
+        # if the channel column is present compute the merger efficiency per channel
+        if "channel" in self.columns:
+            
+            data = self.select(columns=["channel", "metallicity"]).value_counts()
+            channels = np.unique(data.index.get_level_values(0))
+            
+            for ch in channels:
+                self.efficiency[ch] = (data[ch] / self.mass_per_metallicity["underlying_mass"]).fillna(0)
+        # save the efficiency
+        self._save_efficiency(self.filename)
 
-        tmp_data = self.population[['metallicity']]
-        model_weights = pd.DataFrame(
-                    {model_weights_identifier: np.zeros(len(tmp_data))},
-                    index=tmp_data.index)
-        # loop over each metallicity since we sample each metallicity indivivually
-        # Looping per metallicity to reduce memory usage?
-        for i in range(len(self.mass_per_metallicity)):
-            # calculate weights
-            met_mask = tmp_data['metallicity'] == self.mass_per_metallicity.index[i]
-            met_indices = tmp_data.index[met_mask]
-            met_indices =np.unique(met_indices)
-            M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
-            if len(met_indices) == 0:
-                continue
-            pop_data = self.oneline.select(where='index in '+str(met_indices.tolist()),
-                                           columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
-
-            # For some reason some binaries might be flipped in the sampling
-            # S2_mass_i > S1_mass_i; Unclear why this happens
-            S1_tmp = pop_data['S1_mass_i'].copy()
-            S2_tmp = pop_data['S2_mass_i'].copy()
-            pop_data['S1_mass_i'] = np.maximum(S1_tmp, S2_tmp)
-            pop_data['S2_mass_i'] = np.minimum(S1_tmp, S2_tmp)
-            del S1_tmp, S2_tmp
-
-            calculated_weights =  calculate_model_weights(
-                                                    pop_data=pop_data,
-                                                    M_sim=M_sim,
-                                                    simulation_parameters=simulation_parameters,
-                                                    population_parameters=population_parameters)
-            weight_mapping = dict(zip(met_indices, calculated_weights))
-            model_weights[model_weights_identifier] = (
-                model_weights.index.to_series().map(weight_mapping).fillna(model_weights[model_weights_identifier]))
-
-        with pd.HDFStore(self.filename, mode="a") as store:
-            if '/transients/' + self.transient_name + '/weights/' + model_weights_identifier in store.keys():
-                Pwarn("Model weights already exist! Overwriting them!", "OverwriteWarning")
-                del store['transients/' + self.transient_name + '/weights/' + model_weights_identifier]
-
-            store.put('transients/' + self.transient_name + '/weights/' + model_weights_identifier, model_weights)
-        return model_weights
-
-    def model_weights(self, model_weights_identifier=None):
-        """Retrieve the model weights of the transient population.
-
-        This method retrieves the model weights of the transient population based on the provided model weights identifier.
-        The model weights are stored in an HDF5 file
-
-        Parameters
-        ----------
-        model_weights_identifier : str (optional)
-            Identifier for the model weights. If None, all model weights models are returned.
-
-        Returns
-        -------
-        pd.DataFrame
-            The model weights of the transient population.
-        """
-
-        if model_weights_identifier is None:
-            with pd.HDFStore(self.filename, mode="r") as store:
-                keys = [k.split('/')[-1] for k in store.keys() if k.startswith('/transients/' + self.transient_name + '/weights/')]
-                model_weights = pd.concat([store['transients/' + self.transient_name + '/weights/' + key] for key in keys], axis=1)
-        else:
-            with pd.HDFStore(self.filename, mode="r") as store:
-                model_weights = store['transients/' + self.transient_name + '/weights/' + model_weights_identifier]
-
-        return model_weights
-
-    def calculate_cosmic_weights(self, SFH_identifier, model_weights, MODEL_in=None):
+    def calculate_cosmic_weights(self, SFH_identifier, MODEL_in=None):
         """
         Calculate the cosmic weights of the transient population.
 
@@ -2009,8 +2003,6 @@ class TransientPopulation(Population):
         ----------
         SFH_identifier : str
             Identifier for the star formation history.
-        model_weights : str
-            Identifier for the model weights to be used in the calculation.
         MODEL_in : dict, optional
             Dictionary containing the model parameters. If not provided, the default model parameters will be used.
 
@@ -2041,6 +2033,7 @@ class TransientPopulation(Population):
         >>> transient_population = TransientPopulation('filename.h5', 'transient_name')
         >>> transient_population.calculate_cosmic_weights('IllustrisTNG', MODEL_in=DEFAULT_SFH_MODEL)
         """
+
         # Set model to DEFAULT or provided MODEL parameters
         # Allows for partial model specification
         if MODEL_in is None:
@@ -2053,10 +2046,9 @@ class TransientPopulation(Population):
         path_in_file = (
             "/transients/" + self.transient_name + "/rates/" + SFH_identifier + "/"
         )
-
-        if model_weights not in self.model_weights().columns:
-            raise ValueError("Model weights not present in the population file!")
-
+        
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
 
         with pd.HDFStore(self.filename, mode="a") as store:
             if path_in_file + "MODEL" in store.keys():
@@ -2091,15 +2083,14 @@ class TransientPopulation(Population):
         met_edges = rates.edges_metallicity_bins
         # sample the SFH for only the events that are within the Hubble time
         # only need to sample the SFH at each metallicity and z_birth
-        # Not for every event!
+        # Not for every event!        
         SFR_per_met_at_z_birth = SFR_per_met_at_z(z_birth, met_edges, rates.MODEL)
-
-        # the weight per model
-        M_model = self.model_weights(model_weights_identifier=model_weights)
-
-        #rates.mass_per_metallicity.loc[rates.centers_metallicity_bins / Zsun][
-        #    "underlying_mass"
-        #].values
+        
+        # simulated mass per given metallicity corrected for the unmodeled
+        # single and binary stellar mass
+        M_model = rates.mass_per_metallicity.loc[rates.centers_metallicity_bins / Zsun][
+            "underlying_mass"
+        ].values
 
         # speed of light
         c = const.c.to("Mpc/yr").value  # Mpc/yr
@@ -2120,6 +2111,7 @@ class TransientPopulation(Population):
             if len(selected_indices) == 0:
                 continue
 
+            # selected_indices = indices[i:i+self.chunksize]
             delay_time = (
                 self.select(
                     start=i, stop=i + self.chunksize, columns=["time"]
@@ -2145,9 +2137,7 @@ class TransientPopulation(Population):
                 .flatten()
                 * Zsun
             )
-
-            tmp_model_weights = M_model.iloc[i : i+self.chunksize].to_numpy()
-
+            
             weights = np.zeros((len(met_events), nr_of_birth_bins))
             for j, met in enumerate(rates.centers_metallicity_bins):
                 mask = met_events == met
@@ -2158,7 +2148,7 @@ class TransientPopulation(Population):
                     * D_c[mask] ** 2
                     * deltaT
                     * SFR_per_met_at_z_birth[:, j]
-                    * tmp_model_weights[mask]
+                    / M_model[j]
                 )  # yr^-1
 
             with pd.HDFStore(self.filename, mode="a") as store:
@@ -2174,46 +2164,37 @@ class TransientPopulation(Population):
                 )
         return rates
 
-    def plot_efficiency_over_metallicity(self, model_weight_identifier, channels=False, **kwargs):
+    def plot_efficiency_over_metallicity(self, **kwargs): # pragma: no cover
         """
         Plot the efficiency over metallicity.
 
         Parameters
         ----------
-        model_weight_identifier : str
-            Identifier for the model weights to be used for calculating efficiency.
         channel : bool, optional
             If True, plot the subchannels. Default is False.
         """
-        if model_weight_identifier is None:
-            raise ValueError("Model weight identifier not provided!")
-
-        efficiency = self.efficiency(model_weight_identifier, channels)
-
-
+        if not hasattr(self, "efficiency"):
+            raise ValueError(
+                "First you need to compute the efficiency over metallicity!"
+            )
         plot_pop.plot_merger_efficiency(
-            efficiency.index.to_numpy() * Zsun, efficiency, channels=channels, **kwargs
+            self.efficiency.index.to_numpy() * Zsun, self.efficiency, **kwargs
         )
 
     def plot_delay_time_distribution(
-        self, model_weights_identifier, metallicity=None, ax=None, bins=100, color="black"
-        ):
+        self, metallicity=None, ax=None, bins=100, color="black"
+    ):  # pragma: no cover
         """
         Plot the delay time distribution of the transient population.
 
-        This method plots the delay time distribution of the transient population
-        using model weights for normalization. If a specific metallicity is
-        provided, the delay time distribution of the population at that metallicity
-        will be plotted. Otherwise, the delay time distribution of the entire
-        population will be plotted.
+        This method plots the delay time distribution of the transient population. If a specific metallicity is provided,
+        the delay time distribution of the population at that metallicity will be plotted. Otherwise, the delay time distribution
+        of the entire population will be plotted.
 
         Parameters
         ----------
-        model_weights_identifier : str
-            Identifier for the model weights to use for normalization.
         metallicity : float or None
-            The metallicity value to select a specific population. If None, the delay time distribution
-            of the entire population will be plotted.
+            The metallicity value to select a specific population. If None, the delay time distribution of the entire population will be plotted.
         ax : matplotlib.axes.Axes or None
             The axes object to plot the distribution on. If None, a new figure and axes will be created.
         bins : int
@@ -2225,47 +2206,38 @@ class TransientPopulation(Population):
         ------
         ValueError
             If the specified metallicity is not present in the population.
-            If model_weights_identifier is not found in the population file.
 
         Notes
         -----
-        The delay time distribution is normalized by the total model weight of the population if no metallicity
-        is specified. Otherwise, it is normalized by the model weight of the population at the specified metallicity.
+        - The delay time distribution is normalized by the total mass of the population if no metallicity is specified.
+        Otherwise, it is normalized by the mass of the population at the specified metallicity.
 
         """
+        if 'underlying_mass' not in self.mass_per_metallicity.columns:
+            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
+        
         if ax is None:
             fig, ax = plt.subplots()
-
-        # Validate model weights
-        if model_weights_identifier not in self.model_weights().columns:
-            raise ValueError(f"Model weights identifier '{model_weights_identifier}' not found in the population file!")
-
-        # Get model weights for normalization
-        model_weights = self.model_weights(model_weights_identifier).to_numpy().flatten()
 
         if metallicity is None:
             time = self.select(columns=["time"]).values
             time = time * 1e6  # yr
-
-            # Create histogram with model weights
-            h, bin_edges = np.histogram(time, bins=bins, weights=model_weights)
-            h = h / np.diff(bin_edges)
+            h, bin_edges = np.histogram(time, bins=bins)
+            h = h / np.diff(bin_edges) / self.mass_per_metallicity["underlying_mass"].sum()
 
         else:
             if not any(np.isclose(metallicity, self.solar_metallicities)):
                 raise ValueError("The metallicity is not present in the population!")
 
-            time_df = self.select(columns=['metallicity', 'time'])
-            time = time_df[time_df['metallicity'] == metallicity].drop(columns=['metallicity']).values
+            time = self.select(columns=['metallicity', 'time'])
+            time = time[time['metallicity'] == metallicity].drop(columns=['metallicity']).values
             time = time * 1e6  # yr
-
-            # Get weights for the specific metallicity
-            metallicity_mask = self.population['metallicity'] == metallicity
-            weights_for_met = model_weights[metallicity_mask]
-
-            # Create histogram with metallicity-specific weights
-            h, bin_edges = np.histogram(time, bins=bins, weights=weights_for_met)
-            h = h / np.diff(bin_edges)
+            h, bin_edges = np.histogram(time, bins=bins)
+            h = (
+                h
+                / np.diff(bin_edges)
+                / self.mass_per_metallicity["underlying_mass"][metallicity]
+            )
 
         ax.step(bin_edges[:-1], h, where="post", color=color)
         ax.set_xscale("log")
@@ -2273,7 +2245,7 @@ class TransientPopulation(Population):
         ax.set_xlabel("Time [yr]")
         ax.set_ylabel("Number of events/Msun/yr")
 
-    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
+    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):  # pragma: no cover
         """
         Plot the transients over the grid slice.
 
@@ -2313,43 +2285,6 @@ class TransientPopulation(Population):
                 store.put(path_in_file + "MODEL", pd.DataFrame(MODEL, index=[0]))
             if self.verbose:
                 print("MODEL written to population file!")
-
-    def efficiency(self, model_weights_identifier, channels=False):
-        """Retrieve the efficiency of events per Msun for each solar metallicity.
-
-        This method retrieves the efficiency of events per Msun for each solar metallicity value in the transient population.
-
-        Parameters
-        ----------
-        model_weights_identifier : str
-            Identifier for the model weights to be used for calculating efficiency.
-        channels : bool, optional
-            If True, the efficiency will be calculated for each formation channel.
-            Default is False.
-
-        Returns
-        -------
-        pd.DataFrame
-            A DataFrame containing the efficiency of events per Msun for each solar metallicity.
-
-        """
-
-        efficiency = pd.DataFrame(index=self.mass_per_metallicity.index, columns=['total'])
-        model_weights = self.model_weights(model_weights_identifier).to_numpy().flatten()
-        for i, metallicity in enumerate(self.mass_per_metallicity.index):
-            mask = self.population['metallicity'] == metallicity
-            efficiency.loc[metallicity, 'total'] = np.sum(model_weights[mask])
-
-        if channels:
-            df = self.population[['metallicity', 'channel']]
-            df = df.assign(model_weight=model_weights)
-            grouped = df.groupby(['metallicity', 'channel'])['model_weight'].sum()
-
-            for (met, ch), w in grouped.items():
-                efficiency.loc[met, ch] = w
-
-        efficiency.fillna(0, inplace=True)
-        return efficiency
 
 
 class Rates(TransientPopulation):
@@ -2557,7 +2492,7 @@ class Rates(TransientPopulation):
         else:
             unique_channels = []
 
-        intrinsic_rate_density = pd.DataFrame(index=z_horizon[:-1], columns=["total"], dtype=np.float64)
+        intrinsic_rate_density = pd.DataFrame(index=z_horizon[:-1], columns=["total"])
 
         normalisation = np.zeros(n - 1)
 
@@ -2732,7 +2667,7 @@ class Rates(TransientPopulation):
 
     def plot_hist_properties(
         self, prop, intrinsic=True, observable=None, bins=50, channel=None, **kwargs
-    ):
+    ): # pragma: no cover
         """Plot a histogram of a given property available in the transient population.
 
         This method plots a histogram of a given property available in the transient population.
@@ -2812,7 +2747,7 @@ class Rates(TransientPopulation):
             # plot the histogram using plot_pop.plot_hist_properties
             plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
 
-    def plot_intrinsic_rate(self, channels=False, **kwargs):
+    def plot_intrinsic_rate(self, channels=False, **kwargs): # pragma: no cover
         """Plot the intrinsic rate density of the transient population."""
 
         plot_pop.plot_rate_density(self.intrinsic_rate_density, channels=channels, **kwargs)

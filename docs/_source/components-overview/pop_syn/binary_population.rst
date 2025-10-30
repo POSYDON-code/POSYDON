@@ -14,7 +14,7 @@ for example, to test a specific population of binaries with custom parameters.
 The initialization of the BinaryPopulation object
 -------------------------------------------------
 
-To create a ``BinaryPopulation`` object, you need to provide a set of parameters that define the population's characteristics.
+To create a ``BinaryPopulation`` object, you need to provide a set of parameters that define the population's characteristics. 
 The easiest way is to load in the parameters from the default population ``ini`` file.
 
 .. code-block:: python
@@ -47,7 +47,7 @@ Here's an example of how to initialize a ``BinaryPopulation`` object:
 This code will create a ``BinaryPopulation`` object with the parameters defined in the ``population_params.ini`` file and print the number of binaries in the population.
 You can adapt the ``ini_kwargs`` dictionary to change the parameters of the population, such as the number of binaries and the metallicity.
 
-You can also skip the read in from the ini file and create the ``BinaryPopulation`` object directly.
+You can also skip the read in from the ini file and create the ``BinaryPopulation`` object directly. 
 This performs the same task as the previous example, but automatically.
 
 .. code-block:: python
@@ -118,7 +118,7 @@ Evolving the population
 ------------------------
 
 With the population parameters defined, you can evolve the population using the ``evolve`` method.
-This method will
+This method will 
 
 1. Sample the initial system parameters (single or binary systems).
 2. Evolve each binary system through its evolutionary steps.
@@ -163,19 +163,19 @@ Additional ``kwargs`` can be passed to the ``evolve`` method to control the evol
      - "batches"
 
 
-Depending on the parameters, ``evolve`` will create a temporary directory to
+Depending on the parameters, ``evolve`` will create a temporary directory to 
 store the batches of binaries during the evolution process.
 Within this folder, a batch will write ``dump_rate`` binaries to a temporary file:
 ``{dump_rate}_evolution.batch``. At the end of the evolution, these files will be merged into a single HDF5 file:
-``evolution.combined.h5``.
+``evolution.combined``.
 
-If you're running with SLURM or MPI, all different processes will write to the
-same folder, with different batch indicators for each process: ``{dump_rate}_evolution.batch.{rank}.h5``.
+If you're running with SLURM or MPI, all different processes will write to the 
+same folder, with different batch indicators for each process: ``{dump_rate}_evolution.batch.{rank}``.
 
 .. note::
 
     The merging of different processes is different from the merging of batches within a single process!
-    We recommend running this with the ``PopulationRunner`` class, which will handle
+    We recommend running this with the ``PopulationRunner`` class, which will handle 
     the batch writing and merging the output of multiple processes automatically into a single HDF5 file.
 
 When evolving a population, you can read the starting conditions from an HDF5 file
@@ -192,14 +192,12 @@ Depending on the initialization parameters, the evolved population can be access
    You can access the individual binaries using the ``manager`` attribute:
 
   .. code-block:: python
-
     first_binary = population.manager.binaries[0]
     print(first_binary)
 
-  Additionally you can turn the binary into a history ``DataFrame`` or create a ``oneline`` summary ``DataFrame``:
+   Additionally you can show turn the binary into a history DataFrame or create a oneline summary DataFrame:
 
   .. code-block:: python
-
     history = population.to_df()
     print(history)
 
@@ -211,9 +209,8 @@ Depending on the initialization parameters, the evolved population can be access
    Make sure the file name has ``.h5`` extension, as this is required for the Population class to read the file correctly.
 
    .. code-block:: python
-
     from posydon.popsyn.synthetic_population import Population
-    population = Population('./batches/evolution.combined.h5')
+    population = Population('./population.h5')
 
 
 
@@ -224,3 +221,4 @@ The ``BinaryGenerator`` class is a helper class for generating binary systems ba
 It can be used to create a population of binaries with specific characteristics, such as mass ratios,
 metallicity, and initial conditions.
 Please see the :class:`BinaryGenerator <posydon.popsyn.binarypopulation.BinaryGenerator>` documentation for more details on how to use this class.
+

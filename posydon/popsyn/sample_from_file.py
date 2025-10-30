@@ -7,17 +7,13 @@ __authors__ = [
 
 
 import os
-
 import numpy as np
 import pandas as pd
-
-from posydon.popsyn.independent_sample import (
-    generate_eccentricities,
-    generate_orbital_periods,
-    generate_orbital_separations,
-    generate_primary_masses,
-    generate_secondary_masses,
-)
+from posydon.popsyn.independent_sample import (generate_orbital_periods,
+                                               generate_orbital_separations,
+                                               generate_eccentricities,
+                                               generate_primary_masses,
+                                               generate_secondary_masses)
 from posydon.utils.posydonwarning import Pwarn
 
 PRIMARY_MASS_NAMES = ['s1_mass', 'primary_mass', 'mass_1', 'm_1', 'm1']
@@ -26,17 +22,17 @@ PERIOD_NAMES = ['orbital_period', 'period', 'p_orb', 'porb', 'p']
 SEPARATION_NAMES = ['orbital_separation', 'separation', 'semi-major_axis',\
                     'semi_major_axis', 'a']
 ECCENTRICITY_NAMES = ['eccentricity', 'ecc', 'e']
-PRIMARY_KICK_VELOCITY_NAMES = ['s1_natal_kick_velocity', 's1_natal_kick_array_0', 'w_1', 'w1']
-SECONDARY_KICK_VELOCITY_NAMES = ['s2_natal_kick_velocity', 's2_natal_kick_array_0', 'w_2', 'w2']
-PRIMARY_KICK_AZIMUTHAL_ANGLE_NAMES = ['s1_natal_kick_azimuthal_angle', 's1_natal_kick_array_1', 'phi_1', 'phi1']
-SECONDARY_KICK_AZIMUTHAL_ANGLE_NAMES = ['s2_natal_kick_azimuthal_angle', 's2_natal_kick_array_1', 'phi_2',\
+PRIMARY_KICK_VELOCITY_NAMES = ['s1_natal_kick_array_0', 'w_1', 'w1']
+SECONDARY_KICK_VELOCITY_NAMES = ['s2_natal_kick_array_0', 'w_2', 'w2']
+PRIMARY_KICK_AZIMUTHAL_ANGLE_NAMES = ['s1_natal_kick_array_1', 'phi_1', 'phi1']
+SECONDARY_KICK_AZIMUTHAL_ANGLE_NAMES = ['s2_natal_kick_array_1', 'phi_2',\
                                         'phi2']
-PRIMARY_KICK_POLAR_ANGLE_NAMES = ['s1_natal_kick_polar_angle', 's1_natal_kick_array_2', 'theta_1', 'theta1']
-SECONDARY_KICK_POLAR_ANGLE_NAMES = ['s2_natal_kick_polar_angle', 's2_natal_kick_array_2', 'theta_2',\
+PRIMARY_KICK_POLAR_ANGLE_NAMES = ['s1_natal_kick_array_2', 'theta_1', 'theta1']
+SECONDARY_KICK_POLAR_ANGLE_NAMES = ['s2_natal_kick_array_2', 'theta_2',\
                                     'theta2']
-PRIMARY_KICK_MEAN_ANOMALY_NAMES = ['s1_natal_kick_mean_anomaly', 's1_natal_kick_array_3', 'mean_anomaly_1',\
+PRIMARY_KICK_MEAN_ANOMALY_NAMES = ['s1_natal_kick_array_3', 'mean_anomaly_1',\
                                    'mean_anomaly1']
-SECONDARY_KICK_MEAN_ANOMALY_NAMES = ['s2_natal_kick_mean_anomaly', 's2_natal_kick_array_3',\
+SECONDARY_KICK_MEAN_ANOMALY_NAMES = ['s2_natal_kick_array_3',\
                                      'mean_anomaly_2', 'mean_anomaly2']
 
 def infer_key(available_keys=[], allowed_keys=[]):
@@ -104,7 +100,7 @@ def get_samples_from_file(orbital_scheme='', **kwargs):
 
     # Get number of data frame entries
     set_n = len(df)
-
+    
     # Get eccentricities
     key = infer_key(available_keys=df.keys(), allowed_keys=ECCENTRICITY_NAMES)
     if key=='':
@@ -192,11 +188,11 @@ def get_kick_samples_from_file(**kwargs):
 
     Returns
     -------
-    s1_natal_kick_set : ndarray of floats
-        natal kick components for the primary star
+    s1_natal_kick_array_set : ndarray of floats
+        natal kick array for the primary star
         containing: kick velocity, azimuthal angle, polar angle, mean anomaly
-    s2_natal_kick_set : ndarray of floats
-        natal kick components for the secondary star
+    s2_natal_kick_array_set : ndarray of floats
+        natal kick array for the secondary star
         containing: kick velocity, azimuthal angle, polar angle, mean anomaly
 
     """
@@ -214,7 +210,7 @@ def get_kick_samples_from_file(**kwargs):
 
     # Get number of data frame entries
     set_n = len(df)
-
+    
     ## Get primary kick
     # Velocity
     key = infer_key(available_keys=df.keys(),\
@@ -310,3 +306,4 @@ def get_kick_samples_from_file(**kwargs):
                kick_2_set[index:index+number_of_binaries]
     else:
         return kick_1_set, kick_2_set
+

@@ -10,22 +10,22 @@ __authors__ = [
 ]
 
 import os
-from abc import ABC, abstractmethod
-
 import numpy as np
-import pandas as pd
 import scipy as sp
+import pandas as pd
 from scipy import stats
-
 from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.constants import age_of_universe
 from posydon.utils.common_functions import (
+    rejection_sampler,
     histogram_sampler,
     read_histogram_from_file,
-    rejection_sampler,
 )
-from posydon.utils.constants import Zsun, age_of_universe
+from posydon.utils.constants import Zsun
 from posydon.utils.interpolators import interp1d
+from abc import ABC, abstractmethod
 from posydon.utils.posydonwarning import Pwarn
+
 
 SFH_SCENARIOS = [
     "burst",
@@ -38,12 +38,12 @@ SFH_SCENARIOS = [
 
 
 class SFHBase(ABC):
-    """Abstract class for star formation history models"""
+    """Abstract class for star formation history models"""    
     def __init__(self, SFH_MODEL):
         """Initialise the SFH model
-
+        
         Adds the model parameters as attributes.
-
+        
         Parameters
         ----------
         SFH_MODEL : dict
@@ -58,12 +58,12 @@ class SFHBase(ABC):
         self.Z_max = None
         self.Z_min = None
         self.normalise = False
-
+        
         self.SFH_MODEL = SFH_MODEL
         # Automatically attach all model parameters as attributes
         for key, value in SFH_MODEL.items():
             setattr(self, key, value)
-
+        
         # check if Z_max is not larger than 1
         if self.Z_max is not None:
             if self.Z_max > 1:
@@ -82,29 +82,29 @@ class SFHBase(ABC):
         if self.Z_min is not None and self.Z_max is not None:
             if self.Z_min >= self.Z_max:
                 raise ValueError("Z_min must be smaller than Z_max!")
-
+        
 
     @abstractmethod
     def CSFRD(self, z): # pragma: no cover
         """Compute the cosmic star formation rate density.
-
+        
         This is an abstract method that must be implemented by subclasses.
         The implementation should calculate and return the cosmic star formation
         rate density at the given redshift(s).
-
+        
         Parameters
         ----------
         z : float or array-like
             Cosmological redshift.
-
+        
         Returns
         -------
         float or array-like
             The cosmic star formation rate density at the given redshift(s).
-
+            
         Raises
         -------
-            NotImplementedError: If the subclass does not implement this method.
+            NotImplementedError: If the subclass does not implement this method.  
         """
         pass
 
@@ -115,26 +115,26 @@ class SFHBase(ABC):
         This is an abstract method that must be implemented by subclasses.
         The implementation should calculate and return the mean metallicity
         at the given redshift(s).
-
+        
         Parameters
         ----------
         z : float or array-like
             Cosmological redshift.
-
+        
         Returns
         -------
         float or array-like
-            The mean metallicity at the given redshift(s).
-
+            The mean metallicity at the given redshift(s).      
+            
         Raises
         -------
-            NotImplementedError: If the subclass does not implement this method.
+            NotImplementedError: If the subclass does not implement this method.  
         """
         pass
-
+        
     @abstractmethod
     def fSFR(self, z, metallicity_bins): # pragma: no cover
-        """Compute the star formation rate fraction (fSFR) at a given redshift
+        """Compute the star formation rate fraction (fSFR) at a given redshift 
         using the specified metallicity bins.
 
         This is an abstract method that must be implemented by subclasses.
@@ -143,10 +143,10 @@ class SFHBase(ABC):
 
         Parameters
         ---------
-        z : float or array-like
+        z : float or array-like 
             The redshift(s) at which to compute the star formation rate.
         metallicity_bins : list or array-like
-            The metallicity bin boundaries or labels used in the computation to
+            The metallicity bin boundaries or labels used in the computation to 
             account for different metallicity contributions.
 
         Returns
@@ -159,17 +159,17 @@ class SFHBase(ABC):
             NotImplementedError: If the subclass does not implement this method.
         """
         pass
-
+          
     def _distribute_cdf(self, cdf_func, metallicity_bins):
         '''Distribute the SFR over the metallicity bins using the CDF
-
+        
         Parameters
         ----------
         cdf_func : function
             The cumulative density function to use.
         metallicity_bins : array
             Metallicity bins edges in absolute metallicity.
-
+        
         Returns
         -------
         ndarray
@@ -179,13 +179,13 @@ class SFHBase(ABC):
         if not np.all(np.diff(metallicity_bins) > 0):
             raise ValueError("Metallicity bins must be sorted "
                              "in ascending order.")
-
+        
         fSFR = (np.array(cdf_func(metallicity_bins[1:]))
                 - np.array(cdf_func(metallicity_bins[:-1])))
-
+        
         first_bin_index = 0
         last_bin_index = len(fSFR) - 1
-
+        
         # include material outside the metallicity bounds if requested
         if self.Z_max is not None:
             if self.Z_max >= metallicity_bins[-1]:
@@ -208,38 +208,38 @@ class SFHBase(ABC):
                 first_bin_index = np.searchsorted(metallicity_bins, self.Z_min) -1
                 fSFR[:first_bin_index] = 0.0
                 fSFR[first_bin_index] = cdf_func(metallicity_bins[first_bin_index+1]) - cdf_func(self.Z_min)
-
+        
         # Check if in the same bin
         if self.Z_max is not None and self.Z_min is not None:
             if first_bin_index == last_bin_index:
                 fSFR[first_bin_index] = cdf_func(self.Z_max) - cdf_func(self.Z_min)
                 fSFR[first_bin_index + 1:] = 0.0
                 fSFR[:first_bin_index] = 0.0
-
+                
         if self.normalise:
             fSFR /= np.sum(fSFR)
-
+            
         return fSFR
 
 
     def __call__(self, z, met_bins):
         """Return the star formation history at a given redshift and metallicity
         bins
-
+        
         Parameters
         ----------
         z : float or array-like
             Cosmological redshift.
         met_bins : array
             Metallicity bins edges in absolute metallicity.
-
+        
         Returns
         -------
         ndarray
             Star formation history per metallicity bin at the given redshift(s).
         """
         return self.CSFRD(z)[:, np.newaxis] * self.fSFR(z, met_bins)
-
+    
 class MadauBase(SFHBase):
     """
     Base class for Madau-style star-formation history implementations.
@@ -249,7 +249,7 @@ class MadauBase(SFHBase):
     """
     def __init__(self, SFH_MODEL):
         """Initialise the MadauBase class
-
+        
         Parameters
         ----------
         SFH_MODEL : dict
@@ -271,30 +271,30 @@ class MadauBase(SFHBase):
                 Parameters for the cosmic star formation rate density (CSFRD)
                 - a, b, c, d : float
                 Follows the Madau & Dickinson (2014) CSFRD formula (Eq. 15) in [1]_
-
+                
         References
         ----------
         .. [1] Madau, P., & Dickinson, M. (2014). Cosmic star formation history.
            Annual Review of Astronomy and Astrophysics, 52, 415-486.
-           https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract
-
+           https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract      
+        
         """
         if "sigma" not in SFH_MODEL:
             raise ValueError("sigma not given!")
         self.CSFRD_params = None
         super().__init__(SFH_MODEL)
-
+    
     def CSFRD(self, z):
         """The cosmic star formation rate density at a given redshift.
-
-        Follows the Madau & Dickinson (2014) cosmic star formation rate
+        
+        Follows the Madau & Dickinson (2014) cosmic star formation rate 
         density formula.
-
+        
         Parameters
         ----------
         z : float or np.array
             Cosmological redshift.
-
+        
         Returns
         -------
         float or array
@@ -302,14 +302,14 @@ class MadauBase(SFHBase):
         """
         p = self.CSFRD_params
         return p["a"] * (1.0 + z) ** p["b"] / (1.0 + ((1.0 + z) / p["c"]) ** p["d"])
-
+    
     def std_log_metallicity_dist(self):
-        """Return the standard deviation of the log-normal metallicity
+        """Return the standard deviation of the log-normal metallicity 
         distribution
-
-        Either recognised the strings "Bavera+20" (sigma=0.5)
+        
+        Either recognised the strings "Bavera+20" (sigma=0.5) 
         or "Neijssel+19" (sigma=0.39) or a float value.
-
+        
         Returns
         -------
         float
@@ -330,14 +330,14 @@ class MadauBase(SFHBase):
 
     def mean_metallicity(self, z):
         """The mean metallicity at a given redshift
-
+        
         Follows Madau & Fragos (2017) mean metallicity evolution
-
+        
         Parameters
         ----------
         z : float or np.array
             Cosmological redshift.
-
+        
         Returns
         -------
         float or array
@@ -346,20 +346,20 @@ class MadauBase(SFHBase):
         return 10 ** (0.153 - 0.074 * z ** 1.34) * Zsun
 
     def fSFR(self, z, metallicity_bins):
-        """Fraction of the SFR at a given redshift z in a given metallicity
+        """Fraction of the SFR at a given redshift z in a given metallicity 
         bin as described in Bavera et al. (2020).
-
+        
         Parameters
         ----------
         z : np.array
             Cosmological redshift.
         metallicity_bins : array
             Metallicity bins edges in absolute metallicity.
-
+        
         Returns
         -------
         ndarray
-            Fraction of the SFR in the given metallicity bin at the given
+            Fraction of the SFR in the given metallicity bin at the given 
             redshift.
         """
         sigma = self.std_log_metallicity_dist()
@@ -367,18 +367,18 @@ class MadauBase(SFHBase):
         mu = np.log10(self.mean_metallicity(z)) - sigma ** 2 * np.log(10) / 2.0
         # Ensure mu is an array for consistency
         mu_array = np.atleast_1d(mu)
-
+    
         fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
         for i, mean in enumerate(mu_array):
             cdf_func = lambda x: stats.norm.cdf(np.log10(x), mean, sigma)
             fSFR[i, :] = self._distribute_cdf(cdf_func, metallicity_bins)
-
+            
         return fSFR
 
 class MadauDickinson14(MadauBase):
-    """Madau & Dickinson (2014) [1]_ star formation history model using the
+    """Madau & Dickinson (2014) [1]_ star formation history model using the 
     mean metallicity evolution of Madau & Fragos (2017) [2]_.
-
+    
     References
     ----------
     .. [1] Madau, P., & Dickinson, M. (2014). ARA&A, 52, 415-486.
@@ -390,13 +390,13 @@ class MadauDickinson14(MadauBase):
     def __init__(self, SFH_MODEL):
         """Initialise the Madau & Dickinson (2014) [1]_ SFH model with the
         metallicity evolution of Madau & Fragos (2017) [2]_.
-
+        
         Parameters
         ----------
         SFH_MODEL : dict
             SFH model parameters. Madau+14 requires the following parameters:
             - sigma : float or str
-                The standard deviation of the log-normal metallicity
+                The standard deviation of the log-normal metallicity 
                 distribution.
                 Options are:
                 - Bavera+20
@@ -413,7 +413,7 @@ class MadauDickinson14(MadauBase):
                 Parameters for the cosmic star formation rate density (CSFRD)
                 - a, b, c, d : float
                 Follows the Madau & Dickinson (2014) CSFRD formula (Eq. 15) in [1]_
-
+                
         References
         ----------
         .. [1] Madau, P., & Dickinson, M. (2014). ARA&A, 52, 415-486.
@@ -431,10 +431,10 @@ class MadauDickinson14(MadauBase):
         }
 
 class MadauFragos17(MadauBase):
-    """The Madau & Fragos (2017) star formation history model with the
+    """The Madau & Fragos (2017) star formation history model with the 
     metallicity evolution of Madau & Fragos (2017) [1]_.
-
-
+    
+    
     References
     ----------
     .. [1] Madau, P., & Fragos, T. (2017). ApJ, 840(1), 39.
@@ -443,7 +443,7 @@ class MadauFragos17(MadauBase):
 
     def __init__(self, SFH_MODEL):
         """Initialise the Madau+17 model
-
+        
         Parameters
         ----------
         SFH_MODEL : dict
@@ -470,16 +470,16 @@ class MadauFragos17(MadauBase):
             "c": 3.2,
             "d": 6.2,
         }
-
+  
 class Neijssel19(MadauBase):
-    """The Neijssel et al. (2019) [1]_ star formation history model, which fits
+    """The Neijssel et al. (2019) [1]_ star formation history model, which fits 
     the Madau & Dickinson (2014) [2]_ cosmic star formation rate density formula
     with the BBH merger rate and uses a truncated log-normal distribution for
-    the mean metallicity distribution.
+    the mean metallicity distribution.    
     The mean metallicity evolution follows the Langer and Normal parameterisation
     also fitted to the BBH merger rate.
-
-
+    
+    
     References
     ----------
     .. [1] Neijssel, C. J., et al. (2019). MNRAS, 490, 3740.
@@ -489,7 +489,7 @@ class Neijssel19(MadauBase):
     """
     def __init__(self, SFH_MODEL):
         """Initialise the Neijssel+19 model
-
+        
         Parameters
         ----------
         SFH_MODEL : dict
@@ -516,42 +516,42 @@ class Neijssel19(MadauBase):
             "c": 2.9,
             "d": 4.7,
         }
-
-    # overwrite mean_metallicity method of MadauBase
+    
+    # overwrite mean_metallicity method of MadauBase    
     def mean_metallicity(self, z):
         """Calculate the mean metallicity at a given redshift
-
+        
         Overwrites the mean_metallicity method of MadauBase class.
-
+        
         Parameters
         ----------
         z : float or array-like
             Cosmological redshift.
-
+            
         Returns
         -------
         float or array-like
-            The mean metallicity at the given redshift(s).
+            The mean metallicity at the given redshift(s).    
         """
         return 0.035 * 10 ** (-0.23 * z)
-
+    
     def fSFR(self, z, metallicity_bins):
         """Fraction of the SFR at a given redshift z in a given metallicity bin
         as described in Neijssel et al. (2019).
-
+        
         Overwrites the fSFR method of MadauBase class.
-
+        
         Parameters
         ----------
         z : np.array
             Cosmological redshift.
         metallicity_bins : array
             Metallicity bins edges in absolute metallicity.
-
+        
         Returns
         -------
         ndarray
-            Fraction of the SFR in the given metallicity bins at the
+            Fraction of the SFR in the given metallicity bins at the 
             given redshift.
         """
         # assume a truncated ln-normal distribution of metallicities
@@ -563,18 +563,18 @@ class Neijssel19(MadauBase):
             cdf_func = lambda x: stats.norm.cdf(np.log(x), mean, sigma)
             fSFR[i,:] = self._distribute_cdf(cdf_func, metallicity_bins)
         return fSFR
-
+    
 class IllustrisTNG(SFHBase):
     """The IllustrisTNG star formation history model.
-
+    
     Uses the TNG100-1 model from the IllustrisTNG simulation.
-
+    
     https://www.tng-project.org/
     """
-
+    
     def __init__(self, SFH_MODEL):
         """Initialise the IllustrisTNG model
-
+        
         Parameters
         ----------
         SFH_MODEL : dict
@@ -585,20 +585,20 @@ class IllustrisTNG(SFHBase):
                 The minimum metallicity in absolute units.
             - normalise : bool
                 Normalise the metallicity distribution to 1.
-        """
+        """        
         super().__init__(SFH_MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
         # the data is stored in reverse order high to low redshift
         self.CSFRD_data = np.flip(illustris_data["SFR"])
         self.redshifts = np.flip(illustris_data["redshifts"])
-
+        
         self.Z = illustris_data["mets"]
         self.M = np.flip(illustris_data["M"], axis=0)  # Msun
-
+        
     def _get_illustrisTNG_data(self, verbose=False): # pragma: no cover
         """Load IllustrisTNG SFR dataset into the class.
-
+        
         Parameters
         ----------
         verbose : bool, optional
@@ -607,15 +607,15 @@ class IllustrisTNG(SFHBase):
         if verbose:
             print("Loading IllustrisTNG data...")
         return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.npz"))
-
+    
     def CSFRD(self, z):
         """The cosmic star formation rate density at a given redshift.
-
+        
         Parameters
         ----------
         z : float or np.array
             Cosmological redshift.
-
+        
         Returns
         -------
         float or array
@@ -623,15 +623,15 @@ class IllustrisTNG(SFHBase):
         """
         SFR_interp = interp1d(self.redshifts, self.CSFRD_data)
         return SFR_interp(z)
-
+        
     def mean_metallicity(self, z):
         """Calculate the mean metallicity at a given redshift
-
+        
         Parameters
         ----------
         z : float or array-like
             Cosmological redshift.
-
+            
         Returns
         -------
         float or array-like
@@ -645,18 +645,18 @@ class IllustrisTNG(SFHBase):
                 out[i] = np.average(self.Z, weights=self.M[i, :])
         Z_interp = interp1d(self.redshifts, out)
         return Z_interp(z)
-
+                
     def fSFR(self, z, metallicity_bins):
-        """Calculate the fractional SFR as a function of redshift and
+        """Calculate the fractional SFR as a function of redshift and 
         metallicity bins.
-
+        
         Parameters
         ----------
         z : float or array-like
             Cosmological redshift.
         metallicity_bins : array
             Metallicity bins edges in absolute metallicity.
-
+        
         Returns
         -------
         ndarray
@@ -674,33 +674,33 @@ class IllustrisTNG(SFHBase):
                 # Add a final point to the CDF and metallicities to ensure normalisation to 1
                 Z_dist_cdf = np.cumsum(Z_dist[i]) / Z_dist[i].sum()
                 Z_dist_cdf = np.append(Z_dist_cdf, 1)
-
+                
                 Z_x_values = np.append(np.log10(self.Z), 0)
                 Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
                 cdf_fun = lambda x: Z_dist_cdf_interp(np.log10(x))
                 fSFR[i, :] = self._distribute_cdf(cdf_fun, metallicity_bins)
-
+                        
         return fSFR
-
+    
 class Chruslinska21(SFHBase):
     """The Chruślińska+21 star formation history model [1]_.
-
-
+    
+    
     References
     ----------
     .. [1] Chruślińska, M., et al. (2021). MNRAS, 508, 4994.
         https://ui.adsabs.harvard.edu/abs/2021MNRAS.508.4994C
-
-    Data source:
+    
+    Data source: 
     https://ftp.science.ru.nl/astro/mchruslinska/Chruslinska_et_al_2021/
     """
     def __init__(self, SFH_MODEL):
         """Initialise the Chruslinska+21 model
-
+        
         Parameters
         ----------
         SFH_MODEL : dict
-            SFH model parameters. Chruslinska+21 requires the
+            SFH model parameters. Chruslinska+21 requires the 
             following parameters:
             - sub_model : str
                 The sub-model to use.
@@ -725,16 +725,16 @@ class Chruslinska21(SFHBase):
             raise ValueError("Z_solar_scaling not given!")
         super().__init__(SFH_MODEL)
         self._load_chruslinska_data()
-
+        
     def _load_chruslinska_data(self, verbose=False):
         """Load the data from the Chruslinska+21 models.
         Transforms the data to the format used in the classes.
-
+        
         Parameters
         ----------
         verbose : bool, optional
             Print information about the data loading.
-        """
+        """  
         # oxygen to hydrogen abundance ratio ( FOH == 12 + log(O/H) )
         # as used in the calculations - do not change
         # This is the metallicity bin edges used in the Chruslinska+21 calculations
@@ -742,11 +742,11 @@ class Chruslinska21(SFHBase):
         FOH_max = 9.7
         self.FOH_bins = np.linspace(FOH_min, FOH_max, 200)
         self.dFOH = self.FOH_bins[1] - self.FOH_bins[0]
-        # Need to use the Z_solar_scaling parameter to
+        # Need to use the Z_solar_scaling parameter to 
         # convert the FOH bins to absolute metallicity.
         # Use solar metallicity as the reference point
         self.Z = self._FOH_to_Z(self.FOH_bins)
-
+        
         self._data_folder = os.path.join(PATH_TO_POSYDON_DATA, "SFR/Chruslinska+21")
         _, self.redshifts, delta_T = self._load_redshift_data(verbose)
         M = self._load_raw_data()
@@ -754,16 +754,16 @@ class Chruslinska21(SFHBase):
 
     def _FOH_to_Z(self, FOH):
         """Convert the oxygen to hydrogen abundance ratio to absolute metallicity
-
+        
         Parameters
         ----------
         FOH : float or array-like
             The oxygen to hydrogen abundance ratio.
-
+        
         Returns
         -------
         float or array-like
-            The absolute metallicity.
+            The absolute metallicity.    
         """
         # scalings from Chruslinksa+21
         if self.Z_solar_scaling == "Asplund09":
@@ -779,47 +779,47 @@ class Chruslinska21(SFHBase):
             Zsun = 0.019
             FOHsun = 8.85
         else:
-            valid_options = ["Asplund09", "AndersGrevesse89",
+            valid_options = ["Asplund09", "AndersGrevesse89", 
                              "GrevesseSauval98", "Villante14"]
             raise ValueError(f"Invalid Z_solar_scaling "
                              f"'{self.Z_solar_scaling}'. "
                              f"Valid options: {valid_options}")
         logZ = np.log10(Zsun) + FOH - FOHsun
         return 10**logZ
-
+        
     def mean_metallicity(self, z):
         """Calculate the mean metallicity at a given redshift
-
+        
         Parameters
         ----------
         z : float or array-like
             Cosmological redshift.
-
+            
         Returns
         -------
         float or array-like
             The mean metallicity at the given redshift(s).
-        """
+        """ 
         mean_over_redshift = np.zeros_like(self.redshifts)
         for i in range(len(mean_over_redshift)):
             if np.sum(self.SFR_data[i]) == 0:
                 mean_over_redshift[i] = np.nan
             else:
                 mean_over_redshift[i] = np.average(self.Z, weights=self.SFR_data[i,:]*self.dFOH)
-
+        
         Z_interp = interp1d(self.redshifts, mean_over_redshift)
         return Z_interp(z)
-
+    
     def fSFR(self, z, metallicity_bins):
         """Calculate the fractional SFR as a function of redshift and metallicity bins
-
+        
         Parameters
         ----------
         z : float or array-like
             Cosmological redshift.
         metallicity_bins : array
             Metallicity bins edges in absolute metallicity.
-
+        
         Returns
         -------
         ndarray
@@ -829,7 +829,7 @@ class Chruslinska21(SFHBase):
         redshift_indices = np.array([np.where(self.redshifts <= i)[0][0] for i in z])
         Z_dist = self.SFR_data[redshift_indices]
         fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
-
+        
         for i in range(len(z)):
             if Z_dist[i].sum() == 0.0:
                 continue
@@ -841,14 +841,14 @@ class Chruslinska21(SFHBase):
                 cdf_fun = lambda x: Z_dist_cdf_interp(np.log10(x))
                 fSFR[i, :] = self._distribute_cdf(cdf_fun, metallicity_bins)
         return fSFR
-
+        
     def _load_redshift_data(self, verbose=False): # pragma: no cover
         """Load the redshift data from a Chruslinsk+21 model file.
-
+        
         Returns
         -------
         time : array
-            the center of the time bins
+            the center of the time bins 
         redshift : array
             the redshifts corresponding to the time bins
         delt : array
@@ -856,17 +856,17 @@ class Chruslinska21(SFHBase):
         """
         if verbose:
             print("Loading redshift data...")
-
+        
         time, redshift, delt = np.loadtxt(
             os.path.join(self._data_folder, "Time_redshift_deltaT.dat"), unpack=True)
         return time, redshift, delt
-
+             
     def _load_raw_data(self): # pragma: no cover
         """Read the sub-model data from the file
-
+        
         The data structure is as follows:
         - mass per unit (comoving) volume formed in each z (row) - FOH (column) bin
-
+        
         Returns
         -------
         array
@@ -878,12 +878,12 @@ class Chruslinska21(SFHBase):
 
     def CSFRD(self, z):
         """Interpolate the cosmic star formation rate density at the given redshift(s)
-
+        
         Parameters
         ----------
         z : float or array-like
             Cosmological redshift.
-
+        
         Returns
         -------
         float or array-like
@@ -891,17 +891,17 @@ class Chruslinska21(SFHBase):
         """
         SFR_interp = interp1d(self.redshifts, np.sum(self.SFR_data*self.dFOH, axis=1))
         return SFR_interp(z)
-
+    
 class Fujimoto24(MadauBase):
     """The Fujimoto et al. (2024) star formation history model.
     mean metallicity evolution of Madau & Fragos (2017).
-
+    
     Fujimoto et al. (2024), ApJ SS, 275, 2, 36, 59
     https://ui.adsabs.harvard.edu/abs/2024ApJS..275...36F/abstract
     """
     def __init__(self, SFH_MODEL):
         """Initialise the Fujimoto+24 model
-
+        
         Parameters
         ----------
         SFH_MODEL : dict
@@ -927,22 +927,22 @@ class Fujimoto24(MadauBase):
             "b": 2.8,
             "c": 3.3,
             "d": 6.6,
-        }
-
+        }   
+    
 class Zavala21(MadauBase):
     """The Zavala et al. (2021) star formation history model [1]_.
-
+    
     The "min" and "max" models are based on the obscured and unobscured
     star formation rate density models, respectively.
-
+    
     References
     ----------
     .. [1] Zavala, J., et al. (2021). ApJ, 909(2), 165.
-        https://ui.adsabs.harvard.edu/abs/2021ApJ...909..165Z/
+        https://ui.adsabs.harvard.edu/abs/2021ApJ...909..165Z/    
     """
     def __init__(self, SFH_MODEL):
         """Initialise the Zavala+21 model
-
+        
         Parameters
         ----------
         SFH_MODEL : dict
@@ -959,22 +959,22 @@ class Zavala21(MadauBase):
         """
         if "sub_model" not in SFH_MODEL:
             raise ValueError("Sub-model not given!")
-
+        
         super().__init__(SFH_MODEL)
         self._load_zavala_data()
-
+        
     def _load_zavala_data(self): # pragma: no cover
         """Load the data from the Zavala+21 models
         Transforms the data to the format used in the classes.
-
-        """
+        
+        """  
         data_file = os.path.join(PATH_TO_POSYDON_DATA, "SFR/Zavala+21.txt")
         tmp_data = pd.read_csv(data_file,
                                names=["redshift", "SFRD_min", "SFRD_max"],
                                skiprows=1,
                                sep=r"\s+")
         self.redshifts = tmp_data["redshift"].values
-        # The min / max values originally come from their obscured
+        # The min / max values originally come from their obscured 
         # and unobscured SFRD model.
         if self.sub_model == "min":
             self.SFR_data = tmp_data["SFRD_min"].values
@@ -983,19 +983,19 @@ class Zavala21(MadauBase):
         else:
             raise ValueError("Invalid sub-model!")
 
-    # overwrite the CSFRD method of MadauBase
+    # overwrite the CSFRD method of MadauBase        
     def CSFRD(self, z):
         SFR_interp = interp1d(self.redshifts, self.SFR_data)
         return SFR_interp(z)
-
+          
 def get_SFH_model(SFH_MODEL):
     """Return the appropriate SFH model based on the given parameters
-
+    
     Parameters
     ----------
     SFH_MODEL : dict
         SFH model parameters.
-
+    
     Returns
     -------
     a SFHBase instance or subclass
@@ -1020,7 +1020,7 @@ def get_SFH_model(SFH_MODEL):
 
 def SFR_per_met_at_z(z, met_bins, SFH_MODEL):
     """Calculate the SFR per metallicity bin at a given redshift(s)
-
+    
     Parameters
     ----------
     z : float or array-like
@@ -1029,12 +1029,12 @@ def SFR_per_met_at_z(z, met_bins, SFH_MODEL):
         Metallicity bins edges in absolute metallicity.
     SFH_MODEL : dict
         SFH model parameters.
-
+    
     Returns
     -------
     SFH : 2D array
         Star formation history per metallicity bin at the given redshift(s).
-
+    
     """
     SFH = get_SFH_model(SFH_MODEL)
     return SFH(z, met_bins)

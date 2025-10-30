@@ -8,21 +8,17 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.data_download as totest
-
 # aliases
 os = totest.os
 
-from contextlib import chdir
-from inspect import isclass, isroutine
-from shutil import rmtree
-from unittest.mock import patch
-
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import approx, fixture, raises, warns
-
+from pytest import fixture, raises, warns, approx
+from inspect import isclass, isroutine
+from shutil import rmtree
+from contextlib import chdir
+from unittest.mock import patch
 from posydon.utils.posydonwarning import ReplaceValueWarning
-
 
 # define test classes collecting several test functions
 class TestElements:

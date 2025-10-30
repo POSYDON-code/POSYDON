@@ -25,9 +25,9 @@ You can instantiate a new :samp:`PSyGrid` object with
 
 This calls the initializer, which can take two optional arguments
 
-- :samp:`filepath`: this is the path to the associated :samp:`h5` file; if the
+- :samp:`filepath`: this is the path to the associated :samp:`h5` file; if the 
   file exists, the initializer will load the contained `PSyGrid` object
-- :samp:`verbose`: this is a boolean indicating whether detailed output should
+- :samp:`verbose`: this is a boolean indicating whether detailed output should 
   be, given when calling functions of the :samp:`PSyGrid` object
 
 
@@ -35,8 +35,8 @@ Creating a `PSyGrid` object
 ---------------------------
 
 The :samp:`create` function of a :samp:`PSyGrid` object will read MESA output
-data into the :samp:`PSyGrid` object. It has a required argument,
-:samp:`MESA_grid_path`, which is the path to the directory containing the MESA
+data into the :samp:`PSyGrid` object. It has a required argument, 
+:samp:`MESA_grid_path`, which is the path to the directory containing the MESA 
 runs. There are several optional arguments as well:
 
 .. table:: Optional arguments of the :samp:`PSyGrid` creation
@@ -49,15 +49,15 @@ runs. There are several optional arguments as well:
     overwrite        False      if :samp:`True`, overwrite any file that exists
     slim             False      if :samp:`True`, only store initial/final values and metadata
     warn             "end"      if :samp:`normal`, warnings are printed, when they arise
-
+                              
                                 if :samp:`end`, all warnings are printed at the end
-
+                              
                                 if :samp:`suppress`, no warnings are printed
     fmt              "posydon"  grid format; only :samp:`posydon` is currently supported
     \*\*grid_kwargs             further grid configuration properties can be specified in a dictionary
     ===============  =========  ===========
 
-The :samp:`PSyGrid` object has the following grid configuration properties:
+The :samp:`PSyGrid` object has the following grid configuration properties: 
 
 .. _tab_grid_properties:
 
@@ -76,13 +76,13 @@ The :samp:`PSyGrid` object has the following grid configuration properties:
     'profile_DS_interval'           None          the maximum change in an downsampled interval relative to the change from initial to final
     'profile_DS_exclude'            default list  the profile columns to exclude from downsampling (default list = ["mass", "star_mass"])
     'star1_history_saved_columns'   "minimum"     specifies which history columns of star 1 should be read
-
+                                                  
                                                   if :samp:`all`, read all the columns in the MESA output
-
+                                                  
                                                   if :samp:`minimum`, use the default
-
+                                                  
                                                   if a tuple of column names, read only those columns
-
+                                                  
                                                   if a list of column names, read the default and those columns
     'star2_history_saved_columns'   "minimum"     specifies which history columns of star 2 should be read (same options as star1_history_saved_columns)
     'binary_history_saved_columns'  "minimum"     specifies which binary history columns should be read (same options as star1_history_saved_columns)
@@ -106,7 +106,7 @@ overwrite data:
 
     mygrid.create(MESA_grid_path=".")
 
-Alternatively, you can combine the initialization with creation of the grid
+Alternatively, you can combine the initialization with creation of the grid 
 based on MESA data:
 
 .. code-block:: python
@@ -117,7 +117,7 @@ based on MESA data:
 Loading a `PSyGrid` object
 --------------------------
 
-You can load an existing :samp:`h5` file (e.g. "myPSyGrid.h5") into a
+You can load an existing :samp:`h5` file (e.g. "myPSyGrid.h5") into a 
 :samp:`PSyGrid` object:
 
 .. code-block:: python
@@ -148,20 +148,20 @@ This will provide a summary, which tell you:
 
 - to which hdf5 file it is connected
 - how many runs are in the grid and how many have
-
+ 
   - a binary history
   - a history of star 1
   - a history of star 2
   - a final profile of star 1
   - a final profile of star 2
-
+   
 - which histories/profile fields are included in the last run
 - which initial and final values are stored in the grid
 - information about the grid configuration
 - a shorthand list of the MESA directories (the locations of the data the runs
   where extracted from)
 
-To access single runs, it is important to know how many are there to avoid
+To access single runs, it is important to know how many are there to avoid 
 calling a nonexisting run. You can find the number of runs with:
 
 .. code-block:: python
@@ -177,14 +177,14 @@ Accessing data in a `PSyGrid` object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The first data you may want to check are the
-:ref:`grid configuration properties <tab_grid_properties>`. You can get a list
+:ref:`grid configuration properties <tab_grid_properties>`. You can get a list 
 of the properties available for your :samp:`PSyGrid` object with
 
 .. code-block:: python
 
     mygrid.config.keys()
 
-You can access the value of any grid configuration property "PROPERTY" with
+You can access the value of any grid configuration property "PROPERTY" with 
 :samp:`mygrid.config[{PROPERTY}]`.
 
 Next, you can look at the initial and final values of the runs. All the values
@@ -196,11 +196,11 @@ respectively. To get a tuple of all the available values use
     mygrid.initial_values.dtype.names
     mygrid.final_values.dtype.names
 
-You can access the initial value of any physical grid property "PHYS" with
-:samp:`mygrid.initial_values[{PHYS}]`. It will return a numpy array with the
-values of this property for all the runs.
-Note that these physical properties of the binaries in the grid are different
-from the grid configuration properties listed above.
+You can access the initial value of any physical grid property "PHYS" with 
+:samp:`mygrid.initial_values[{PHYS}]`. It will return a numpy array with the 
+values of this property for all the runs. 
+Note that these physical properties of the binaries in the grid are different 
+from the grid configuration properties listed above. 
 Then, you can find the initial mass of star 1 in the third MESA run with
 
 .. code-block:: python
@@ -211,8 +211,8 @@ Then, you can find the initial mass of star 1 in the third MESA run with
     Remember that the first run has the index :samp:`0` and the last one
     :samp:`len(mygrid)-1`.
 
-Each grid property will have the same number and order of MESA run entries
-in the initial and final values. This holds for the list of MESA directories
+Each grid property will have the same number and order of MESA run entries 
+in the initial and final values. This holds for the list of MESA directories 
 from which the runs are extracted, too.
 
 .. code-block:: python
@@ -220,7 +220,7 @@ from which the runs are extracted, too.
     mygrid.MESA_dirs
 
 You can retrieve individual runs by index. :samp:`mygrid[{IDX}]` is a
-:samp:`PSyRunView` object, which contains the data of the run of index
+:samp:`PSyRunView` object, which contains the data of the run of index 
 :samp:`IDX`. The :samp:`PSyRunView` object contains seven components:
 
 .. table:: :samp:`PSyRunView` object components
@@ -245,10 +245,10 @@ Again, you can check for the contents of the individual runs with
     myrun = mygrid[0]
     myrun['binary_history'].dtype.names
 
-The example above finds the initial mass of star 1 in the third MESA run by
-indexing the list :samp:`mygrid.initial_values`.
-You can get the same value from the list of initial values associated with a
-single MESA run:
+The example above finds the initial mass of star 1 in the third MESA run by 
+indexing the list :samp:`mygrid.initial_values`. 
+You can get the same value from the list of initial values associated with a 
+single MESA run: 
 
 .. code-block :: python
 
@@ -260,7 +260,7 @@ You can get something close to the initial value with:
 
     mygrid[2]['binary_history']['star_1_mass'][0]
 
-But this will not give the initial value, while it is close to it.
+But this will not give the initial value, while it is close to it. 
 This is because MESA has a slightly different value in the
 first line of the history files compared to the given initial value. The final
 values and the derived initial values instead are the same as the last or first
@@ -268,7 +268,7 @@ values in the corresponding history.
 
 .. note::
     For efficiency reasons not all the :samp:`PSyGrid` object is loaded into
-    RAM. Instead parts are reads from the associated hdf5 file if needed.
+    RAM. Instead parts are reads from the associated hdf5 file if needed. 
     For this reason, it is discouraged to refer to the same values
     more than once in a code. If you need the same value more often, you should
     store it in a local variable.
@@ -277,16 +277,16 @@ values in the corresponding history.
 Plot a `PSyGrid` object
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Beside getting the values, there are plotting functionalities available
-to display the content of a :samp:`PSyGrid` object. There are three main
+Beside getting the values itself there are plotting functionalities available
+to display the content of a :samp:`PSyGrid` object. There are three main 
 plotting functionalities:
 
-- :samp:`plot`: This creates a one-dimensional plot from the :samp:`PSyGrid`.
+- :samp:`plot`: This creates a one dimensional plot from the :samp:`PSyGrid`.
   An example can be found in the :ref:`tutorials <plot_1d>`. The code details
   are available in the
   :py:func:`PSyGrid.plot <posydon.grids.psygrid.PSyGrid.plot>` code and the
   :py:class:`visualization <posydon.visualization.plot1D>` library.
-- :samp:`plot2D`: This creates a two-dimensional representation from the
+- :samp:`plot2D`: This creates a two dimensional representation from the
   :samp:`PSyGrid`. Again, an example can be found in the
   :ref:`tutorials <plot_2d>`. The code details are available in the
   :py:func:`PSyGrid.plot <posydon.grids.psygrid.PSyGrid.plot2D>` code and the
@@ -301,10 +301,10 @@ Work on/with a `PSyGrid` object
 Loop over a `PSyGrid` object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Similarly to accessing a single value in the :samp:`PSyGrid` object, we can
-loop over a :samp:`PSyGrid` object, which will loop over the individual runs
-in the :samp:`PSyGrid` object. Hence the following two code snippets will
-produce the same output. The first one loops through the numpy array of the
+Similarly to accessing a single value in the :samp:`PSyGrid` object, we can 
+loop over a :samp:`PSyGrid` object, which will loop over the individual runs 
+in the :samp:`PSyGrid` object. Hence the following two code snippets will 
+produce the same output. The first one loops through the numpy array of the 
 initial companion masses:
 
 .. code-block:: python
@@ -313,7 +313,7 @@ initial companion masses:
         print(mass)
 
 while the second one loops through the runs and prints the initial companion
-mass of each one:
+mass of each one: 
 
 .. code-block:: python
 
@@ -337,8 +337,8 @@ years instead of days:
     mygrid.add_column('period_years', new_column_data, where='final_values', overwrite=False)
 
 The four arguments are a string with the name of the new field, the data to be
-stored in the column, the component of the :samp:`PSyGrid` object to which the
-column will be added, and a boolean indicating whether the column should
+stored in the column, the component of the :samp:`PSyGrid` object to which the 
+column will be added, and a boolean indicating whether the column should 
 overwrite any existing column with the same name.
 
 .. warning::
@@ -355,14 +355,14 @@ Join two or more `PSyGrid` objects
 
 There are different reasons why you might have several :samp:`PSyGrid` objects
 that you would like to combine into a single grid later, e.g. adding reruns.
-POSYDON has a function called :samp:`join_grids` to do this for you.
-To avoid too many conflicts with possible modifications of already loaded
-:samp:`PSyGrid` objects, this function is not part of the :samp:`PSyGrid`
+POSYDON has a function called :samp:`join_grids` to do this for you. 
+To avoid too many conflicts with possible modifications of already loaded 
+:samp:`PSyGrid` objects, this function is not part of the :samp:`PSyGrid` 
 object class. Instead, it takes as an argument the list of
 paths to the hdf5 files containing :samp:`PSyGrid` objects to be combined to a
-new one, and then a path to the hdf5 file of the new grid to be generated.
-The :samp:`join_grids` function will check whether the grids are compatible
-and join them if possible. Additionally, you can optionally specify the
+new one, and then a path to the hdf5 file of the new grid to be generated. 
+The :samp:`join_grids` function will check whether the grids are compatible 
+and join them if possible. Additionally, you can optionally specify the 
 arguments :samp:`compression`, :samp:`description`, and :samp:`verbose`.
 
 .. table:: Arguments of the :samp:`join_grids` function
@@ -373,7 +373,7 @@ arguments :samp:`compression`, :samp:`description`, and :samp:`verbose`.
     input_paths        None      list of the paths to the grid files to be joined
     output_path        None      path for the new grid file containing the joined grid.
     compression        'gzip9'   compression details
-    description        'joined'  description of the new joined grid
+    description        'joined'  description of the new joined grid 
     verbose            True      whether the function reports by printing to standard output.
     =================  ========  ===========
 
@@ -382,7 +382,7 @@ arguments :samp:`compression`, :samp:`description`, and :samp:`verbose`.
     put the last run with same initial conditions in the newly combined
     :samp:`PSyGrid` object.
 
-We recommend that you use the :ref:`post-processing pipeline <pipeline>` to
+We recommend that you use the :ref:`post-processing pipeline <pipeline>` to 
 create and join grids.
 
 ..
@@ -395,11 +395,11 @@ Get reruns from a `PSyGrid` object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Usually, not all runs of a grid will be successfully run in MESA. You
-may want to rerun some of them with changed parameters. The function
-:samp:`rerun` exports runs from a :samp:`PSyGrid` object to be run again.
+may want to rerun some of them with changed parameters. The function 
+:samp:`rerun` exports runs from a :samp:`PSyGrid` object to be run again. 
 There are two options:
 
-1. Write your own logic and create a numpy array with the indices of the
+1. Write your own logic and create a numpy array with the indices of the 
 systems that you would like to run again.
 2. Specify which termination flag(s) necessitate a rerun of the system.
 
@@ -429,10 +429,10 @@ systems that you would like to run again.
 
 .. note::
     If both :samp:`runs_to_rerun` and :samp:`termination_flags` are given, all
-    systems matching at least one of the two conditions will be selected for
+    systems matching at least one of the two conditions will be selected for 
     rerun.
 
-The :ref:`post-processing pipeline <pipeline_stepR>` provides some pre-defined
+The :ref:`post-processing pipeline <pipeline_stepR>` provides some pre-defined 
 rerun options.
 
 

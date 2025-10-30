@@ -1,23 +1,21 @@
 """Module for post-processing POSYDON grids."""
 
-import copy
-
-import numpy as np
-from tqdm import tqdm
-
 from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.flow_chart import STAR_STATES_CC
 from posydon.binary_evol.singlestar import SingleStar
 from posydon.binary_evol.SN.step_SN import StepSN
-from posydon.grids.SN_MODELS import SN_MODELS, get_SN_MODEL
+from posydon.binary_evol.flow_chart import STAR_STATES_CC
 from posydon.utils.common_functions import (
-    CEE_parameters_from_core_abundance_thresholds,
     calculate_Patton20_values_at_He_depl,
-    check_state_of_star,
-)
-from posydon.utils.posydonwarning import Catch_POSYDON_Warnings, Pwarn
-from posydon.visualization.combine_TF import TF1_POOL_STABLE, combine_TF12
+    CEE_parameters_from_core_abundance_thresholds,
+    check_state_of_star)
+from posydon.grids.SN_MODELS import get_SN_MODEL, SN_MODELS
+from posydon.visualization.combine_TF import combine_TF12, TF1_POOL_STABLE
 from posydon.visualization.plot_defaults import DEFAULT_MARKERS_COLORS_LEGENDS
+import numpy as np
+from tqdm import tqdm
+import copy
+from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
+
 
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
@@ -247,26 +245,18 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
                     for val in [1, 10, 30, 'pure_He_star_10']:
                         EXTRA_COLUMNS[f'S{j+1}_{quantity}_{val}cent'].append(
                                             getattr(star, f'{quantity}_{val}cent'))
-
-                # abundances
-                # now that np.nan is used as default, this won't throw TypeError
-                #try:
-                s_o = (1. - star.surface_h1 - star.surface_he4 - star.surface_c12
+                # aboundances
+                try:
+                    s_o = (1. - star.surface_h1 - star.surface_he4 - star.surface_c12
                            - star.surface_n14 - star.surface_o16)
-                c_o = (1. - star.center_h1 - star.center_he4 - star.center_c12
+                    c_o = (1. - star.center_h1 - star.center_he4 - star.center_c12
                            - star.center_n14 - star.center_o16)
-
-                if np.isnan(s_o):
+                except TypeError as ex:
                     s_o = 0.
-                    Pwarn(f'While accessing abundances in star_{j+1}, surface abundances'+\
-                      f'were NaN. We have set s_o to 0.',
-                      "ReplaceValueWarning")
-                if np.isnan(c_o):
                     c_o = 0.
-                    Pwarn(f'While accessing abundances in star_{j+1}, central abundances'+\
-                      f'were NaN. We have set c_o to 0.',
-                      "ReplaceValueWarning")
-
+                    print(ex)
+                    print(f'The error was raised by {grid.MESA_dirs[i]} '
+                           f'while accessing aboundances in star_{j+1}.')
                 EXTRA_COLUMNS['S%s_surface_other' % (j+1)].append(s_o)
                 EXTRA_COLUMNS['S%s_center_other' % (j+1)].append(c_o)
             else:

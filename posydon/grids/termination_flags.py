@@ -21,30 +21,23 @@ __authors__ = [
 ]
 
 
-import gzip
 import os
-
+import gzip
 import numpy as np
 
 from posydon.utils.common_functions import (
-    cumulative_mass_transfer_flag,
-    infer_mass_transfer_case,
-    infer_star_state,
+    infer_star_state, cumulative_mass_transfer_flag, infer_mass_transfer_case
 )
 from posydon.utils.limits_thresholds import (
-    LG_MTRANSFER_RATE_THRESHOLD,
-    MIN_COUNT_INITIAL_RLO_BOUNDARY,
-    RL_RELATIVE_OVERFLOW_THRESHOLD,
+    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD,
+    MIN_COUNT_INITIAL_RLO_BOUNDARY
+)
+from posydon.visualization.combine_TF import (
+    TF1_POOL_STABLE, TF1_POOL_UNSTABLE, TF1_POOL_INITIAL_RLO, TF1_POOL_ERROR,
+    TF2_POOL_NO_RLO, TF2_POOL_INITIAL_RLO
 )
 from posydon.utils.posydonwarning import Pwarn
-from posydon.visualization.combine_TF import (
-    TF1_POOL_ERROR,
-    TF1_POOL_INITIAL_RLO,
-    TF1_POOL_STABLE,
-    TF1_POOL_UNSTABLE,
-    TF2_POOL_INITIAL_RLO,
-    TF2_POOL_NO_RLO,
-)
+
 
 # variables needed for inferring star states
 STAR_HISTORY_VARIABLES = ["surface_h1", "center_h1", "center_he4",
@@ -122,14 +115,14 @@ def get_mass_transfer_flag(binary_history, history1, history2,
     Returns
     -------
     flag_system_evolution_history : string
-        Possible flags are: "None", "initial_RLOF", "contact_during_MS",
+        Possible flags are: "None", "initial_RLOF", "contact_during_MS", 
         "no_RLOF", a cumulative MT flag, e.g, "case_A1/B1/A2" where the
         index indicates the donor star.
 
     """
     if mesa_flag in TF1_POOL_ERROR:
         return "None"
-
+        
     if mesa_flag in TF1_POOL_INITIAL_RLO:
         return "initial_RLOF"
 
@@ -151,9 +144,9 @@ def get_mass_transfer_flag(binary_history, history1, history2,
 
     if not np.any(where_rlof_1) and not np.any(where_rlof_2):
         return "no_RLOF"
-
+    
     MT = np.array([None]*len(where_rlof_1))
-
+    
     if np.any(where_rlof_1):
         star_history = history1
         star_mass = binary_history["star_1_mass"]
@@ -171,7 +164,7 @@ def get_mass_transfer_flag(binary_history, history1, history2,
                 lg_mtransfer_rate=rate[index], donor_state=star_state)
             mass_transfer_cases.append(mt_case)
         MT[where_rlof] = mass_transfer_cases
-
+        
     if np.any(where_rlof_2):
         star_history = history2
         star_mass = binary_history["star_2_mass"]
@@ -179,7 +172,7 @@ def get_mass_transfer_flag(binary_history, history1, history2,
         rel_overflow = rel2
         indices_with_rlo = np.arange(len(where_rlof))[where_rlof]
         if not start_at_RLO and indices_with_rlo[0] == 0:
-            return "initial_RLOF"
+            return "initial_RLOF"        
         mass_transfer_cases = []
         for index in indices_with_rlo:
             star_state = check_state_from_history(
@@ -306,12 +299,12 @@ def infer_interpolation_class(tf1, tf2):
 
 def get_detected_initial_RLO(grid):
     """Generates a list of already detected initial RLO
-
+    
     Parameters
     ----------
     grid : a PSyGrid
         The grid to check.
-
+    
     Retruns
     -------
     list
@@ -362,7 +355,7 @@ def get_detected_initial_RLO(grid):
 
 def get_nearest_known_initial_RLO(mass1, mass2, known_initial_RLO):
     """Find the nearest system of initial RLO in the known ones
-
+    
     Parameters
     ----------
     mass1 : float
@@ -371,7 +364,7 @@ def get_nearest_known_initial_RLO(mass1, mass2, known_initial_RLO):
         star_2_mass of the run to check.
     known_initial_RLO : list of dict
         Boundary to apply.
-
+    
     Retruns
     -------
     dict
@@ -397,3 +390,4 @@ def get_nearest_known_initial_RLO(mass1, mass2, known_initial_RLO):
             d2min = d2
             nearest = sys
     return nearest
+

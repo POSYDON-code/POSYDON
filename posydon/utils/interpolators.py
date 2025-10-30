@@ -3,11 +3,8 @@
 
 __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
-
-import copy
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator
@@ -42,7 +39,7 @@ class interp1d:
                     - size 1 : use y-value for below and above
                     - size 2 : use first y-value for below and second for above
 
-        """
+        """ 
         if kind not in ['linear']:
             raise NotImplementedError(f"kind = {kind} is not supported")
         self.kind = kind
@@ -59,7 +56,7 @@ class interp1d:
                 indices = np.argsort(self.x)
                 self.x = self.x[indices]
                 self.y = self.y[indices]
-
+                
         self.below = None
         self.above = None
         self.extrapolate = False
@@ -98,7 +95,6 @@ class interp1d:
             Interpolated y-values.
 
         """
-
         x_n = np.array(x_new)
         if self.kind == 'linear':
             y_interp = np.array(np.interp(x=x_n, xp=self.x, fp=self.y,
@@ -123,7 +119,7 @@ class interp1d:
 
 class PchipInterpolator2:
     """Interpolation class."""
-    def __init__(self, *args, positive=False, derivative=False, **kwargs):
+    def __init__(self, *args, positive=False, **kwargs):
         """Initialize the interpolator.
 
         Parameters
@@ -134,22 +130,8 @@ class PchipInterpolator2:
             Arguments passed to original PchipInterpolator init.
 
         """
-
-
-        # this will set whether or not the __call__ should return the y(x) or y'(x)
-        self.derivative = derivative
-
-        if self.derivative:
-            self.interpolator = PchipInterpolator(*args, **kwargs).derivative()
-        else:
-            self.interpolator = PchipInterpolator(*args, **kwargs)
-
+        self.interpolator = PchipInterpolator(*args, **kwargs)
         self.positive = positive
-
-        # potential offset (for example, we've matched a MESA sim to another
-        # but need to offset the matched track's age to fast forward to current
-        # age in the evolution)
-        self.offset = 0.0
 
     def __call__(self, *args, **kwargs):
         """Use the interpolator.
@@ -165,15 +147,8 @@ class PchipInterpolator2:
             Interpolated values.
 
         """
-
-        # offset x (the offset is 0 unless otherwise set)
-        args = np.array(list(args))
-        args_copy = copy.deepcopy(args)
-        args_copy[0] -= self.offset
-        args = tuple(args_copy)
-
         result = self.interpolator(*args, **kwargs)
-
         if self.positive:
             result = np.maximum(result, 0.0)
         return result
+

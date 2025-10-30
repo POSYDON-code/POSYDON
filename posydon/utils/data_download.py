@@ -11,17 +11,14 @@ __authors__ = [
 import argparse
 import hashlib
 import os
+import progressbar
 import tarfile
 import textwrap
 import urllib.request
-
-import progressbar
 from tqdm import tqdm
-
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.datasets import COMPLETE_SETS, ZENODO_COLLECTION
 from posydon.utils.posydonwarning import Pwarn
-
 
 def _parse_commandline():
     """Parse the arguments given on the command-line
@@ -84,7 +81,7 @@ class ProgressBar():
 
 def list_datasets(individual_sets=False, verbose=False):
     """Print a list of available datasets
-
+    
         Parameters
         ----------
         individual_sets : boolean (default: False)
@@ -231,7 +228,7 @@ def data_download(set_name='DR2', MD5_check=True, verbose=False):
 
 def _get_posydon_data():
     """Run the data download or list the datasets
-
+    
     """
     args = _parse_commandline()
     if args.listedsets == 'complete':

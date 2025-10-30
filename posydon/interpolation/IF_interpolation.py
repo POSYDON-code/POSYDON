@@ -44,7 +44,7 @@ for all classes.
 
 2. interp_classes: a list of classes that the simulation tracks can
 fall into. Usually specified as the mass transfer type. This only needs
-be specified if interp_method is a list. Note that when using class-wise normalization
+be specified if interp_method is a list. Note that when using class-wise normalization 
 only classes in interp_classes are normalized. This is the behavior for interpolation normalization
 but not classification normalization.
 
@@ -174,31 +174,27 @@ __authors__ = [
 import os
 import pickle
 from datetime import date
-
-# Plotting
-import matplotlib.pyplot as plt
-
+# POSYDON
+from posydon.grids.psygrid import PSyGrid
+from posydon.interpolation.data_scaling import DataScaler
+from posydon.utils.posydonwarning import Pwarn
 # Maths
 import numpy as np
 import pandas as pd
-from matplotlib.colors import ListedColormap
-from matplotlib.lines import Line2D
-from matplotlib.patches import Patch
-
 # Machine Learning
 from scipy.interpolate import LinearNDInterpolator
-from sklearn.metrics import balanced_accuracy_score, confusion_matrix
-from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
-
-# POSYDON
-from posydon.grids.psygrid import PSyGrid
-from posydon.interpolation.constraints import (
-    find_constraints_to_apply,
-    sanitize_interpolated_quantities,
-)
-from posydon.interpolation.data_scaling import DataScaler
-from posydon.utils.posydonwarning import Pwarn
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import balanced_accuracy_score
+from sklearn.metrics import confusion_matrix
+# Plotting
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
+from matplotlib.colors import ListedColormap
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
+from posydon.interpolation.constraints import (
+    find_constraints_to_apply, sanitize_interpolated_quantities)
 
 
 # INITIAL-FINAL INTERPOLATOR
@@ -432,7 +428,7 @@ class BaseIFInterpolator:
         for i in ignored_classes:
             while(i in self.valid_classes):
                 self.valid_classes.remove(i)
-
+        
         if interp_classes is not None:
             if not isinstance(interp_classes, list):
                 raise ValueError("interp_classes must be a list of "
@@ -1168,7 +1164,7 @@ class LinInterpolator(Interpolator):
             dists, _ = self.interpolator[1].kneighbors(Xt[wnan, :])
             max_distance = dists.argmax() # only finding information for furthest nearest neighbor
 
-            neighbors = scaler.denormalize(self.interpolator[1]._tree.data.base) # unnormalizing
+            neighbors = scaler.denormalize(self.interpolator[1]._tree.data.base) # unnormalizing 
             max_distance_point = scaler.denormalize(Xt[[max_distance]])
 
             nearest_neighbor = np.sum(np.square(neighbors - max_distance_point), axis = 1)
@@ -1176,7 +1172,7 @@ class LinInterpolator(Interpolator):
 
             Pwarn(f"1NN interpolation used for {np.sum(wnan)} "
                 f"binaries out of hull. Parameter-wise distance (Unnormalized) for point with"
-                f" maximum out-of-hull euclidian distance (Normalized): {np.abs(neighbors[nearest_neighbor] - max_distance_point[0])}",
+                f" maximum out-of-hull euclidian distance (Normalized): {np.abs(neighbors[nearest_neighbor] - max_distance_point[0])}", 
                 "InterpolationWarning")
         return Ypred
 
@@ -1476,7 +1472,7 @@ class Scaler:
                 c = None if c == "None" else c
 
                 if c not in self.scaler.keys():
-                    Pwarn(f"normalization was skipped during interpolation: c={c}, inds={inds}",
+                    Pwarn(f"normalization was skipped during interpolation: c={c}, inds={inds}", 
                                   "InterpolationWarning")
                     continue
 
@@ -1488,7 +1484,7 @@ class Scaler:
 
         if klass is None:
             return self.scaler[klass].denormalize(Xn)
-
+        
         else:
 
             normalized = Xn

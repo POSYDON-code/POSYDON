@@ -20,7 +20,6 @@ __authors__ = [
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 __credits__ = [
@@ -30,52 +29,40 @@ __credits__ = [
 ]
 
 
-import copy
-import json
 import os
-
 import numpy as np
-import pandas as pd
 import scipy as sp
-from pandas import read_csv
-from sklearn import neighbors
+import copy
+import pandas as pd
 
-import posydon.utils.constants as const
-from posydon.binary_evol.binarystar import BINARYPROPERTIES
-from posydon.binary_evol.flow_chart import (
-    STAR_STATES_C_DEPLETED,
-    STAR_STATES_CC,
-    STAR_STATES_CO,
-)
-from posydon.binary_evol.singlestar import (
-    STARPROPERTIES,
-    convert_star_to_massless_remnant,
-)
-from posydon.binary_evol.SN.profile_collapse import (
-    do_core_collapse_BH,
-    get_ejecta_element_mass_at_collapse,
-)
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.grids.SN_MODELS import DEFAULT_SN_MODEL, get_SN_MODEL_NAME
-from posydon.utils.common_functions import (
-    CO_radius,
-    calculate_Patton20_values_at_He_depl,
-    inspiral_timescale_from_separation,
-    is_number,
-    orbital_period_from_separation,
-    rotate,
-    separation_evol_wind_loss,
-    set_binary_to_failed,
-)
 from posydon.utils.data_download import data_download
-from posydon.utils.interpolators import interp1d
-from posydon.utils.limits_thresholds import (
-    NEUTRINO_MASS_LOSS_UPPER_LIMIT,
-    STATE_NS_STARMASS_UPPER_LIMIT,
-    THRESHOLD_CENTRAL_ABUNDANCE,
+import posydon.utils.constants as const
+from posydon.utils.common_functions import (is_number, CO_radius,
+    orbital_period_from_separation, inspiral_timescale_from_separation,
+    separation_evol_wind_loss, calculate_Patton20_values_at_He_depl, rotate
 )
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
+    STATE_NS_STARMASS_UPPER_LIMIT, NEUTRINO_MASS_LOSS_UPPER_LIMIT
+)
+
+from posydon.binary_evol.binarystar import BINARYPROPERTIES
+from posydon.binary_evol.singlestar import STARPROPERTIES, convert_star_to_massless_remnant
+from posydon.binary_evol.SN.profile_collapse import (do_core_collapse_BH,
+                                        get_ejecta_element_mass_at_collapse)
+from posydon.binary_evol.flow_chart import (STAR_STATES_CO, STAR_STATES_CC,
+                                            STAR_STATES_C_DEPLETION)
+
+from posydon.grids.SN_MODELS import get_SN_MODEL_NAME, DEFAULT_SN_MODEL
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.common_functions import set_binary_to_failed
+
+from pandas import read_csv
+from sklearn import neighbors
+from posydon.utils.interpolators import interp1d
+
+import json
 
 path_to_Sukhbold_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                          "Sukhbold+16/")
@@ -90,13 +77,9 @@ SN_MODEL = {
     # kick physics
     "kick": True,
     "kick_normalisation": 'one_over_mass',
-    "kick_prescription": 'maxwellian',
     "sigma_kick_CCSN_NS": 265.0,
-    "mean_kick_CCSN_NS": None,
     "sigma_kick_CCSN_BH": 265.0,
-    "mean_kick_CCSN_BH": None,
     "sigma_kick_ECSN": 20.0,
-    "mean_kick_ECSN": None,
     # other
     "verbose": False,
 }
@@ -271,16 +254,6 @@ class StepSN(object):
                 default_value = SN_MODEL[varname]
                 setattr(self, varname, default_value)
 
-        # backward compatibility for kick
-        if (self.kick_normalisation == 'asym_ej'
-            or self.kick_normalisation == 'linear'):
-            Pwarn("kick_normalisation 'asym_ej' and 'linear' are "
-                "deprecated, use kick_prescription instead. Setting "
-                "kick normalization to unity.",
-                "DeprecationWarning")
-            self.kick_prescription = self.kick_normalisation
-            self.kick_normalisation = 'one'
-
         if self.max_neutrino_mass_loss is None:
             self.max_neutrino_mass_loss = 0
 
@@ -406,9 +379,7 @@ class StepSN(object):
 
     def __repr__(self):
         """Get the string representation of the class and any parameters."""
-        return "StepSN:\n" + \
-            "\n".join([f"{key} = {getattr(self, key)}" for key in SN_MODEL])
-
+        return "SN step (kick distribution: {})".format(self.kick_distribution)
 
     def _reset_other_star_properties(self, star):
         """Reset the properties of the star that is not being collapsed."""
@@ -451,19 +422,6 @@ class StepSN(object):
         # do orbital_kick on the binary object
         if self.kick:
             self.orbital_kick(binary=binary)
-        else:
-            # no kick, but still need to unset the event after CC
-            # and update orbital period/separation
-            binary.event = None
-            new_separation = separation_evol_wind_loss(
-                    binary.star_1.mass, binary.star_1.mass_history[-1],
-                    binary.star_2.mass, binary.separation)
-            new_orbital_period = orbital_period_from_separation(
-                    new_separation, binary.star_1.mass, binary.star_2.mass)
-
-            binary.separation = new_separation
-            binary.orbital_period = new_orbital_period
-            binary.state = "detached"
 
         # Checks if the binary is not disrupted to compute the
         # inspiral time due to gravitational wave emission
@@ -478,9 +436,9 @@ class StepSN(object):
                 binary.eccentricity,
             )
         # Cover the case where CC of the companion is immediately followed
-        elif state1 in STAR_STATES_CO and state2 in STAR_STATES_C_DEPLETED:
+        elif state1 in STAR_STATES_CO and state2 in STAR_STATES_C_DEPLETION:
             binary.event = "CC2"
-        elif state1 in STAR_STATES_C_DEPLETED and state2 in STAR_STATES_CO:
+        elif state1 in STAR_STATES_C_DEPLETION and state2 in STAR_STATES_CO:
             binary.event = "CC1"
 
         if self.verbose:
@@ -643,7 +601,7 @@ class StepSN(object):
                         if getattr(star, 'SN_type') != 'PISN':
                             star.log_R = np.log10(CO_radius(star.mass, star.state))
                         return
-
+                        
             # Verifies the selection of core-collapse mechnism to perform
             # the collapse
             if self.mechanism in [
@@ -718,7 +676,7 @@ class StepSN(object):
                         # set post-collapse properties/information to store
                         for i in final_BH.keys():
                             setattr(star, i, final_BH[i])
-
+                        
                         # set specific properties manually
                         star.mass = final_BH['M_BH_total']
                         star.spin = final_BH['a_BH_total']
@@ -861,7 +819,7 @@ class StepSN(object):
                             print("The star formed a disk during the collapse "
                                   "and lost", round(final_BH['M_BH_total'] - m_rembar, 2),
                                   "M_sun.")
-
+                    
                     elif star.state == "NS":
                         star.mass = m_grav
                         star.m_disk_accreted = 0.0
@@ -995,21 +953,21 @@ class StepSN(object):
                         m_PISN = m_star
                     else:
                         m_PISN = m_He_core
-
+            
             elif self.PISN == 'Hendriks+23':
                 # Hendriks et al. 2023 PISN prescription
                 # 10.1093/mnras/stad2857
                 # Shifting PPI and PISN gap
                 # works by removing delta_M_PPI from the star
                 # and then applying any remnant mass prescription
-
+                
                 delta_M_CO_shift = self.PISN_CO_shift if self.PISN_CO_shift is not None else 0.0
                 delta_M_PPI_extra_ML = self.PPI_extra_mass_loss if self.PPI_extra_mass_loss is not None else 0.0
-
+                
                 m_CO_core_PISN_min = 38 + delta_M_CO_shift
                 m_CO_core_PISN_max = 114 + delta_M_CO_shift
-
-                if ((m_CO_core >= m_CO_core_PISN_min)
+                
+                if ((m_CO_core >= m_CO_core_PISN_min) 
                     and m_CO_core <= m_CO_core_PISN_max):
 
                     # delta_PPI -> -inf if Z -> 0
@@ -1031,7 +989,7 @@ class StepSN(object):
                         print(f"delta_M_PPI: {delta_M_PPI} Msun")
                 else:
                     delta_M_PPI = 0.0
-
+                    
                 if delta_M_PPI <= 0.0:
                     # no PPI -> use CCSN prescription
                     if self.conserve_hydrogen_envelope:
@@ -1039,12 +997,12 @@ class StepSN(object):
                     else:
                         m_PISN = m_He_core
                 else:
-                    # PPI occurs
+                    # PPI occurs 
                     if self.conserve_hydrogen_PPI:
                         m_PISN = m_star - delta_M_PPI
                     else:
                         m_PISN = m_He_core - delta_M_PPI
-
+                    
                     if m_PISN < 0.0:
                         m_PISN = np.nan
                     else:
@@ -1055,7 +1013,7 @@ class StepSN(object):
                         if PISN_star.co_core_mass > m_PISN:
                             PISN_star.co_core_mass = m_PISN
                         m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
-
+                    
                         if m_rembar < 10:
                             m_PISN = np.nan
                         else:
@@ -1497,8 +1455,8 @@ class StepSN(object):
             M_companion = binary.star_2.mass
 
             # check if a kick is passed, otherwise generate it
-            if not binary.star_1.natal_kick_velocity is None:
-                Vkick = binary.star_1.natal_kick_velocity
+            if not binary.star_1.natal_kick_array[0] is None:
+                Vkick = binary.star_1.natal_kick_array[0]
             else:
                 # Draw a random orbital kick
                 # Vkick is the kick velocity with components Vkx, Vky, Vkz in
@@ -1507,28 +1465,23 @@ class StepSN(object):
                 if binary.star_1.SN_type == "ECSN":
                     # Kick for electron-capture SN
                     Vkick = self.generate_kick(
-                        star=binary.star_1,
-                        sigma=self.sigma_kick_ECSN,
-                        mean=self.mean_kick_ECSN,
+                        star=binary.star_1, sigma=self.sigma_kick_ECSN
                     )
                 elif ((binary.star_1.SN_type == "CCSN")
                       or (binary.star_1.SN_type == "PPISN")
                       or (binary.star_1.SN_type == "PISN")):
                     if binary.star_1.state == 'NS':
                         sigma = self.sigma_kick_CCSN_NS
-                        mean = self.mean_kick_CCSN_NS
                     elif binary.star_1.state == 'BH':
                         sigma = self.sigma_kick_CCSN_BH
-                        mean = self.mean_kick_CCSN_BH
                     elif binary.star_1.state == 'massless_remnant':
                         # No kick on a massless object
                         sigma = None
-                        mean = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
                     # Kick for core-collapse SN
                     Vkick = self.generate_kick(
-                        star=binary.star_1, sigma=sigma, mean=mean
+                        star=binary.star_1, sigma=sigma
                     )
                 elif binary.star_1.SN_type == "WD":
                     # Kick for white dwarfs (allways f_fb = 1 => Vkick = 0)
@@ -1536,29 +1489,29 @@ class StepSN(object):
                 else:
                     raise ValueError("The SN type is not ECSN neither CCSN.")
 
-                binary.star_1.natal_kick_velocity = Vkick
+                binary.star_1.natal_kick_array[0] = Vkick
 
-            if not binary.star_1.natal_kick_azimuthal_angle is None:
-                phi = binary.star_1.natal_kick_azimuthal_angle
+            if not binary.star_1.natal_kick_array[1] is None:
+                phi = binary.star_1.natal_kick_array[1]
             else:
                 phi = np.random.uniform(0, 2 * np.pi)
-                binary.star_1.natal_kick_azimuthal_angle = phi
+                binary.star_1.natal_kick_array[1] = phi
 
-            if not binary.star_1.natal_kick_polar_angle is None:
-                cos_theta = np.cos(binary.star_1.natal_kick_polar_angle)
+            if not binary.star_1.natal_kick_array[2] is None:
+                cos_theta = np.cos(binary.star_1.natal_kick_array[2])
             else:
                 cos_theta = np.random.uniform(-1, 1)
-                binary.star_1.natal_kick_polar_angle = np.arccos(cos_theta)
+                binary.star_1.natal_kick_array[2] = np.arccos(cos_theta)
 
             # generate random point in the orbit where the kick happens
-            if not binary.star_1.natal_kick_mean_anomaly is None:
-                mean_anomaly = binary.star_1.natal_kick_mean_anomaly
+            if not binary.star_1.natal_kick_array[3] is None:
+                mean_anomaly = binary.star_1.natal_kick_array[3]
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
                     raise ValueError("mean_anomaly must be a single float value.")
             else:
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
-                binary.star_1.natal_kick_mean_anomaly = mean_anomaly
+                binary.star_1.natal_kick_array[3] = mean_anomaly
 
         elif binary.event == "CC2":
             if binary.star_2.SN_type == "WD":
@@ -1602,8 +1555,8 @@ class StepSN(object):
             M_companion = binary.star_1.mass
 
             # check if a kick is passed, otherwise generate it
-            if not binary.star_2.natal_kick_velocity is None:
-                Vkick = binary.star_2.natal_kick_velocity
+            if not binary.star_2.natal_kick_array[0] is None:
+                Vkick = binary.star_2.natal_kick_array[0]
             else:
                 # Draw a random orbital kick
                 # Vkick is the kick velocity with components Vkx, Vky, Vkz in
@@ -1612,53 +1565,47 @@ class StepSN(object):
                 if binary.star_2.SN_type == "ECSN":
                     # Kick for electron-capture SN
                     Vkick = self.generate_kick(star=binary.star_2,
-                                               sigma=self.sigma_kick_ECSN,
-                                               mean=self.mean_kick_ECSN)
+                                               sigma=self.sigma_kick_ECSN)
                 elif ((binary.star_2.SN_type == "CCSN")
                       or (binary.star_2.SN_type == "PPISN")
                       or (binary.star_2.SN_type == "PISN")):
                     if binary.star_2.state == 'NS':
                         sigma = self.sigma_kick_CCSN_NS
-                        mean = self.mean_kick_CCSN_NS
                     elif binary.star_2.state == 'BH':
                         sigma = self.sigma_kick_CCSN_BH
-                        mean = self.mean_kick_CCSN_BH
                     elif binary.star_2.state == 'massless_remnant':
                         # No kick on a massless object
                         sigma = None
-                        mean = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
                     # Kick for core-collapse SN
-                    Vkick = self.generate_kick(star=binary.star_2,
-                                               sigma=sigma,
-                                               mean=mean)
+                    Vkick = self.generate_kick(star=binary.star_2, sigma=sigma)
                 else:
                     raise ValueError("The SN type is not ECSN neither CCSN.")
 
-                binary.star_2.natal_kick_velocity = Vkick
+                binary.star_2.natal_kick_array[0] = Vkick
 
-            if not binary.star_2.natal_kick_azimuthal_angle is None:
-                phi = binary.star_2.natal_kick_azimuthal_angle
+            if not binary.star_2.natal_kick_array[1] is None:
+                phi = binary.star_2.natal_kick_array[1]
             else:
                 phi = np.random.uniform(0, 2 * np.pi)
-                binary.star_2.natal_kick_azimuthal_angle = phi
+                binary.star_2.natal_kick_array[1] = phi
 
-            if not binary.star_2.natal_kick_polar_angle is None:
-                cos_theta = np.cos(binary.star_2.natal_kick_polar_angle)
+            if not binary.star_2.natal_kick_array[2] is None:
+                cos_theta = np.cos(binary.star_2.natal_kick_array[2])
             else:
                 cos_theta = np.random.uniform(-1, 1)
-                binary.star_2.natal_kick_polar_angle = np.arccos(cos_theta)
+                binary.star_2.natal_kick_array[2] = np.arccos(cos_theta)
 
             # generate random point in the orbit where the kick happens
-            if not binary.star_2.natal_kick_mean_anomaly is None:
-                mean_anomaly = binary.star_2.natal_kick_mean_anomaly
+            if not binary.star_2.natal_kick_array[3] is None:
+                mean_anomaly = binary.star_2.natal_kick_array[3]
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
                     raise ValueError("mean_anomaly must be a single float value.")
             else:
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
-                binary.star_2.natal_kick_mean_anomaly = mean_anomaly
+                binary.star_2.natal_kick_array[3] = mean_anomaly
 
         # update the orbit
         if binary.state == "disrupted" or binary.state == "initially_single_star" or binary.state == "merged":
@@ -2000,7 +1947,7 @@ class StepSN(object):
     ##### Generating the CCSN SN kick of a single star #####
     """
 
-    def generate_kick(self, star, sigma, mean):
+    def generate_kick(self, star, sigma):
         """Draw a kick from a Maxwellian distribution.
 
         We follow Hobbs G., Lorimer D. R., Lyne A. G., Kramer M., 2005, MNRAS, 360, 974
@@ -2013,126 +1960,13 @@ class StepSN(object):
         ----------
         star : object
             Star object containing the star properties.
-        sigma : float
-            Velocity dispersion for maxwellian or log-normal distribution.
-        mean : float
-            Mean for the log-normal distribution.
 
         Returns
         -------
         Vkick : double
             Natal orbital kick in km/s.
 
-        -------------------------------------------------------------------------------------
-
-        The following natal kick prescriptions are based on the mass of the
-        ejected envelope during the supernova explosion:
-
-        "asym_ej" - reference [1]
-        "linear" - reference [2]
-
-        References
-        ----------
-
-        [1] Neutron Star Kicks by the Gravitational Tug-boat Mechanism in Asymmetric
-            Supernova Explosions: Progenitor and Explosion Dependence, Janka H.T., 2017,
-            ApJ 837(1):84, arXiv:1611.07562 [astro-ph.HE]
-
-        [2] New constraints on the Bray conservation-of-momentum natal kick model from
-            multiple distinct observations, Richards S. M., Eldridge J. J., Briel M. M.,
-            Stevance H. F., Willcox R., 2022, arXiv e-prints, p. arXiv:2208.02407
-
-        -------------------------------------------------------------------------------------
-
-        The "log_normal" precription draws kicks from a log-normal distribution,
-        based on Disberg P., Mandel I., 2025, arXiv e-prints, p. arXiv:2505.22102v1
-
-
         """
-        if sigma is None:
-            Vkick = 0.0
-        else:
-            norm = self._get_kick_normalisation(star)
-            Vkick_ej = self._get_kick_velocity(star, sigma=sigma, mean=mean)
-            Vkick = norm * Vkick_ej
-
-        return Vkick
-
-
-    def _get_kick_velocity(self, star, sigma=None, mean=None):
-        """Get the kick velocity based on the chosen prescription.
-
-        Parameters
-        ----------
-        star : object
-            Star object containing the star properties.
-        sigma : float, optional
-            Velocity dispersion for the distribution.
-        mean : float, optional
-            Mean for the log-normal distribution.
-
-        Returns
-        -------
-        Vkick_ej : float
-            Kick velocity drawn from the chosen distribution.
-        """
-
-        if self.kick_prescription == "maxwellian":
-            # sigma==None should never be reached, since in that case Vkick=0
-            # in generate_kick function
-            # this is a fallback
-            if sigma is None:
-                sigma = 265.0
-            Vkick_ej = sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
-
-        elif self.kick_prescription == "log_normal":
-            # sigma==None should never be reached, since in that case Vkick=0
-            # in generate_kick function
-            # this is a fallback
-            if sigma is None:
-                sigma = 0.68
-            if mean is None:
-                mean = np.exp(5.60)
-            Vkick_ej = sp.stats.lognorm.rvs(s=sigma, scale=mean, size=1)[0]
-
-        elif self.kick_prescription == "asym_ej":
-            f_kin = 0.1         # Fraction of SN explosion energy that is kinetic energy of the gas
-            beta = 0.1          # Fraction of ejecta mass that is neutrino heated
-            epsilon = 1
-            alpha_ej = 0.01
-            M_NS = star.mass                                    # Neutron star mass
-            M_rembar=(((3*M_NS/20 + 1)**2) - 1)/0.3             # Remnant baryonic mass
-            M_ej=abs(star.mass_history[-1] - M_rembar)          # Ejecta mass
-
-            Vkick_ej = 211*(f_kin*beta*epsilon)**(1/2)*(alpha_ej/0.1)*(M_ej/0.1)*(M_NS/1.5)**(-1)
-
-        elif self.kick_prescription == "linear":
-            M_ej = star.co_core_mass_history[-1]-star.mass        # Ejecta mass
-            M_rem = star.mass                                     # Neutron star mass
-            alpha = 115                                           # alpha and beta are best-fit parameters
-            beta = 15
-
-            Vkick_ej = alpha * (M_ej/M_rem) + beta
-
-        else:
-            raise ValueError('kick_prescription option not supported!')
-
-        return Vkick_ej
-
-    def _get_kick_normalisation(self, star):
-        """Get the kick normalisation method.
-
-        Parameters
-        ----------
-        star : object
-            Star object containing the star properties.
-        Returns
-        -------
-        norm : float
-            Normalisation factor for the natal kick.
-
-        """
-
         if self.kick_normalisation == 'one_minus_fallback':
             # Normalization from Eq. 21, Fryer, C. L., Belczynski, K., Wiktorowicz,
             # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
@@ -2156,7 +1990,15 @@ class StepSN(object):
         else:
             raise ValueError('kick_normalisation option not supported!')
 
-        return norm
+        if sigma is not None:
+            # f_fb = self.compute_m_rembar(star, None)[1]
+
+            Vkick = norm * sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
+        else:
+            Vkick = 0.0
+
+        return Vkick
+
 
     def get_combined_tilt(self, tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
         """Get the combined spin-orbit-tilt after two supernovae, assuming
@@ -2594,7 +2436,7 @@ class Couch20_corecollapse(object):
             Couch_data = json.load(Couch_data_file)
             Couch_data_file.close()
             Couch_data = Couch_data[turbulence_strength]
-
+            
             Couch_MZAMS = []
             Couch_Eexp = []
             Couch_state = []

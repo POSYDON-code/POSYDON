@@ -7,7 +7,7 @@ Documentation of the :samp:`ini` file for the post-processing pipeline
 Aim of the :samp:`ini` file
 ===========================
 
-Using an :samp:`ini` file should help to keep an overview on large grid
+Using an :samp:`ini` file should help to keep an overview on large grid 
 repositories and ensures that all workflows will be set up the same way.
 
 There is a script to set up the pipeline, it takes one argument:
@@ -16,8 +16,8 @@ There is a script to set up the pipeline, it takes one argument:
 
     posydon-setup-pipeline PATH_TO_INI
 
-The content of the :samp:`ini` file is described :ref:`below
-<pipeline_ini_sections>`. It will create two files for each step, plot or
+The content of the :samp:`ini` file is described :ref:`below 
+<pipeline_ini_sections>`. It will create two files for each step, plot or 
 check:
 
 1. \*.csv
@@ -59,17 +59,17 @@ example to show the supported key words:
         EMAIL = 'matthias.kruckow@unige.ch'
         GROUP = 'GL_S_Astro_POSYDON'
 
-The last one :samp:`GROUP` is a bit special. If it is set, ownership
-of all the files created by the pipeline will be assigned to :samp:`GROUP`.
+The last one :samp:`GROUP` is a bit special. If it is set, ownership 
+of all the files created by the pipeline will be assigned to :samp:`GROUP`. 
 This is especially helpful if more than one
 user is making changes to the data set.
 
 General pipeline settings
 -------------------------
 
-The next section outlines general information about the pipeline. The
-:samp:`PATH` specifies where you would like to have the pipeline files created.
-The :samp:`VERBOSE` option will be used for the creation of the pipeline files
+The next section outlines general information about the pipeline. The 
+:samp:`PATH` specifies where you would like to have the pipeline files created. 
+The :samp:`VERBOSE` option will be used for the creation of the pipeline files 
 and during the run of the pipeline.
 
 Finally, we have switches to turn on (:samp:`True`) and off (:samp:`False`)
@@ -87,7 +87,7 @@ as pages in a single PDF.
         VERSION = '' # to have a version below the grid type level
         PATH = '.' # working dir
         VERBOSE = True
-
+        
         # steps
         CREATE_GRID_SLICES = True
         COMBINE_GRID_SLICES = True
@@ -183,7 +183,7 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
         CREATE_PLOTS = []
         # supported checks: e.g. 'failure_rate'
         DO_CHECKS = []
-
+    
     #COMBINE_GRID_SLICES
     [step_2]
         GRID_TYPES = ['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']
@@ -238,7 +238,7 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
         CREATE_PLOTS = ['PLOT_AFTER_COMBINE']
         # supported checks: e.g. 'failure_rate'
         DO_CHECKS = ['CHECK_AFTER_COMBINE']
-
+    
     #CALCULATE_EXTRA_VALUES
     [step_3]
         GRID_TYPES = ['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']
@@ -275,7 +275,7 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
         CREATE_PLOTS = ['PLOT_AFTER_EXTRA']
         # supported checks: e.g. 'failure_rate', 'CO_TYPE', 'SN_TYPE'
         DO_CHECKS = ['CHECK_AFTER_EXTRA']
-
+    
     #TRAIN_INTERPOLATORS
     [step_4]
         GRID_TYPES = ['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']
@@ -313,7 +313,7 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
         CREATE_PLOTS = ['PLOT_AFTER_TRAINING']
         # supported checks: e.g. 'failure_rate'
         DO_CHECKS = ['CHECK_AFTER_TRAINING']
-
+    
     #EXPORT_DATASET
     [step_F]
         GRID_TYPES = ['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']
@@ -339,7 +339,7 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
                         ['LITE']
                        ]
         DROP_MISSING_FILES = True
-
+    
     #EXPORT_RERUNS
     [rerun]
         GRID_TYPES = ['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']
@@ -366,7 +366,7 @@ Here is an example of all the :ref:`steps <pipeline_steps>`:
                        ]
         DROP_MISSING_FILES = True
         # example reruns are 'PISN', 'reverse_MT', 'TPAGBwind', 'opacity_max'
-        RERUN_TYPE = 'opacity_max'
+        RERUN_TYPE = 'opacity_max' 
         CLUSTER = 'quest'
 
 There are some predefined shortcuts for lists of :ref:`plots <pipeline_plots>`
@@ -377,7 +377,7 @@ and :ref:`checks <pipeline_checks>`:
     =====================  =====
     Set name               plots
     =====================  =====
-    'PLOT_AFTER_CREATE'
+    'PLOT_AFTER_CREATE'    
     'PLOT_AFTER_COMBINE'   'combined_TF12', 'termination_flag_1', 'termination_flag_2', 'termination_flag_3', 'termination_flag_4', 'rl_relative_overflow_1', 'rl_relative_overflow_2', 'lg_mtransfer_rate'
     'PLOT_AFTER_EXTRA'     'S1_MODEL01_CO_type', 'S1_MODEL01_SN_type', 'S1_MODEL01_mass', 'S1_MODEL01_spin', 'S1_MODEL01_m_disk_radiated', 'S1_MODEL02_CO_type', 'S1_MODEL02_SN_type', 'S1_MODEL02_mass', 'S1_MODEL02_spin', 'S1_MODEL02_m_disk_radiated', 'S1_MODEL03_CO_type', 'S1_MODEL03_SN_type', 'S1_MODEL03_mass', 'S1_MODEL03_spin', 'S1_MODEL03_m_disk_radiated', 'S1_MODEL04_CO_type', 'S1_MODEL04_SN_type', 'S1_MODEL04_mass', 'S1_MODEL04_spin', 'S1_MODEL04_m_disk_radiated', 'S1_MODEL05_CO_type', 'S1_MODEL05_SN_type', 'S1_MODEL05_mass', 'S1_MODEL05_spin', 'S1_MODEL05_m_disk_radiated', 'S1_MODEL06_CO_type', 'S1_MODEL06_SN_type', 'S1_MODEL06_mass', 'S1_MODEL06_spin', 'S1_MODEL06_m_disk_radiated', 'S1_MODEL07_CO_type', 'S1_MODEL07_SN_type', 'S1_MODEL07_mass', 'S1_MODEL07_spin', 'S1_MODEL07_m_disk_radiated', 'S1_MODEL08_CO_type', 'S1_MODEL08_SN_type', 'S1_MODEL08_mass', 'S1_MODEL08_spin', 'S1_MODEL08_m_disk_radiated', 'S1_MODEL09_CO_type', 'S1_MODEL09_SN_type', 'S1_MODEL09_mass', 'S1_MODEL09_spin', 'S1_MODEL09_m_disk_radiated', 'S1_MODEL10_CO_type', 'S1_MODEL10_SN_type', 'S1_MODEL10_mass', 'S1_MODEL10_spin', 'S1_MODEL10_m_disk_radiated'
     'PLOT_AFTER_TRAINING'  'INTERP_ERROR_age', 'INTERP_ERROR_star_1_mass', 'INTERP_ERROR_star_2_mass', 'INTERP_ERROR_period_days', 'INTERP_ERROR_S1_co_core_mass', 'INTERP_ERROR_S1_co_core_radius', 'INTERP_ERROR_S1_he_core_mass', 'INTERP_ERROR_S1_he_core_radius', 'INTERP_ERROR_S1_center_h1', 'INTERP_ERROR_S1_center_he4', 'INTERP_ERROR_S1_surface_h1', 'INTERP_ERROR_S1_surface_he4', 'INTERP_ERROR_S1_surf_avg_omega_div_omega_crit', 'INTERP_ERROR_S1_log_Teff', 'INTERP_ERROR_S1_log_L', 'INTERP_ERROR_S1_log_R', 'INTERP_ERROR_S1_spin_parameter', 'INTERP_ERROR_S1_lambda_CE_10cent', 'INTERP_ERROR_S2_co_core_mass', 'INTERP_ERROR_S2_co_core_radius', 'INTERP_ERROR_S2_he_core_mass', 'INTERP_ERROR_S2_he_core_radius', 'INTERP_ERROR_S2_center_h1', 'INTERP_ERROR_S2_center_he4', 'INTERP_ERROR_S2_surface_h1', 'INTERP_ERROR_S2_surface_he4', 'INTERP_ERROR_S2_surf_avg_omega_div_omega_crit', 'INTERP_ERROR_S2_log_Teff', 'INTERP_ERROR_S2_log_L', 'INTERP_ERROR_S2_log_R', 'INTERP_ERROR_S2_spin_parameter', 'INTERP_ERROR_S2_lambda_CE_10cent', 'INTERP_ERROR_S1_MODEL01_mass', 'INTERP_ERROR_S1_MODEL01_spin', 'INTERP_ERROR_S1_MODEL01_m_disk_radiated', 'INTERP_ERROR_S1_MODEL05_mass', 'INTERP_ERROR_S1_MODEL05_spin', 'INTERP_ERROR_S1_MODEL05_m_disk_radiated', 'INTERP_ERROR_S1_MODEL06_mass', 'INTERP_ERROR_S1_MODEL06_spin', 'INTERP_ERROR_S1_MODEL06_m_disk_radiated', 'INTERP_ERROR_S1_MODEL10_mass', 'INTERP_ERROR_S1_MODEL10_spin', 'INTERP_ERROR_S1_MODEL10_m_disk_radiated'
@@ -388,8 +388,8 @@ and :ref:`checks <pipeline_checks>`:
     ======================  ======
     Set name                checks
     ======================  ======
-    'CHECK_AFTER_CREATE'
+    'CHECK_AFTER_CREATE'    
     'CHECK_AFTER_COMBINE'   'failure_rate'
     'CHECK_AFTER_EXTRA'     'CO_type', 'SN_type'
-    'CHECK_AFTER_TRAINING'
+    'CHECK_AFTER_TRAINING'  
     ======================  ======

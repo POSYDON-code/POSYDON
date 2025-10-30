@@ -6,23 +6,17 @@ __authors__ = [
 ]
 
 try:
-    from PyQt5.QtCore import QPoint, QSize, Qt
-    from PyQt5.QtGui import QFont, QPainter, QPixmap
-    from PyQt5.QtWidgets import (
-        QFrame,
-        QGridLayout,
-        QHBoxLayout,
-        QLabel,
-        QVBoxLayout,
-        QWidget,
-    )
+    from PyQt5.QtWidgets import (QWidget, QFrame, QHBoxLayout, QVBoxLayout,
+                                QLabel, QGridLayout)
+    from PyQt5.QtCore import Qt, QPoint, QSize
+    from PyQt5.QtGui import QPainter, QPixmap, QFont
 except ImportError:
     raise ImportError('PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory')
 
+from .MathTextLabel import MathTextLabel
+
 from dataclasses import dataclass
 from enum import Enum, auto
-
-from .MathTextLabel import MathTextLabel
 
 
 class INFOSTYPE(Enum):
@@ -470,7 +464,7 @@ class GraphVisualizerState(GraphVisualizerItem):
         if index >= len(self._bot_labels):
             print(f"Can't set text to bot label {index}")
             return
-
+        
         self._bot_labels[index].setText(text)
 
     def get_attach_point_top(self):

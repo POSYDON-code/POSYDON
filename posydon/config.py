@@ -1,23 +1,22 @@
 import os
-
 from dotenv import load_dotenv
 
 load_dotenv()
 
 def ensure_path(name):
     """Get the 'PATH_*' variable set in the environment
-
+    
     Parameters
     ----------
     name : str
         Name of the environment variable.
-
+    
     Returns
     -------
     str
         Defined path or raises an error if the variable is not defined and
         pointing to a valid path.
-
+    
     """
     if not isinstance(name, str):
         raise TypeError("'name' has to be a string.")

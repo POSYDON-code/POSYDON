@@ -32,7 +32,7 @@ class POSYDONError(Exception):
 # Subclasses of POSYODONError in alphabetic order
 # Before you add a new subclass check the list of python error classes at the
 # end of this file
-
+    
 class ClassificationError(POSYDONError):
     """POSYDON error specific for binary classification errors."""
 

@@ -5,28 +5,26 @@ __authors__ = [
     "Elizabeth Teng <elizabethteng@u.northwestern.edu>"
 ]
 
-# Math and ML
-import os
 import pickle
-import random
-
-import numpy as np
-import pandas as pd
 
 # POSYDON
 from posydon.grids.psygrid import PSyGrid
 from posydon.interpolation.IF_interpolation import IFInterpolator
-from posydon.utils.interpolators import interp1d
 from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.interpolators import interp1d
 
+# Math and ML
+import os
+import random
+import numpy as np
+import pandas as pd
 try:
     import tensorflow as tf
 except ImportError:
     raise ImportError('tensorflow is not installed. Please run `pip install .[ml]` in the POSYDON base directory')
 tf.get_logger().setLevel('ERROR')
+from tensorflow.keras import layers, losses, models, optimizers, backend, utils
 from sklearn.decomposition import PCA
-from tensorflow.keras import backend, layers, losses, models, optimizers, utils
-
 
 class CompileData:
 
@@ -42,14 +40,14 @@ class CompileData:
             profile_names (array-like) : list of profile quantities to extract.
         """
         self.names = profile_names
-
+        
         # extract testing data
         print("extracting testing data")
         test = PSyGrid(test_path)  # load PSyGrid object for testing grid
         self.test_scalars = pd.DataFrame()
         self.test_profiles = []
         testing_failed = []
-
+        
         for i in range(len(test)):
             try:
                 scalars,profiles = self.scrape(test,i,hms_s2)
@@ -59,7 +57,7 @@ class CompileData:
             except:
                 testing_failed.append(i)
                 pass
-
+                
         if len(testing_failed)>0:
             Pwarn(f"{len(testing_failed)} binaries failed",
                   "IncompletenessWarning")
@@ -70,7 +68,7 @@ class CompileData:
         self.scalars = pd.DataFrame()
         self.profiles = []
         training_failed = []
-
+        
         for i in range(len(train)):
             try:
                 scalars,profiles = self.scrape(train,i,hms_s2)
@@ -79,11 +77,11 @@ class CompileData:
                 self.profiles.append(profiles)
             except:
                 training_failed.append(i)
-                pass
-
+                pass       
+            
         if 'omega' in self.names:
             self.names.append('norm_omega')
-
+            
         if len(training_failed)>0:
             Pwarn(f"{len(training_failed)} training binaries failed",
                   "IncompletenessWarning")
@@ -95,13 +93,13 @@ class CompileData:
             ind (int) : index of run to be scraped.
             hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
         Returns:
-            scalars (array-like) : dictionary containing initial
-                                   m1, m2, p, mass transfer class,
+            scalars (array-like) : dictionary containing initial 
+                                   m1, m2, p, mass transfer class, 
                                    final star_state, final total_mass.
             profiles (array-like) : all N specified profiles, shape (N,200).
         """
         # open individual run as a DataFrame
-
+        
         if hms_s2==False: # default star 1 profile information
             df = pd.DataFrame(grid[ind]['final_profile1'])
             mass_key = "star_1_mass"
@@ -110,13 +108,13 @@ class CompileData:
             df = pd.DataFrame(grid[ind]['final_profile2'])
             mass_key = "star_2_mass"
             state_key = "S2_state"
-
+            
         df = df.sort_values(by="mass")
         df = df.reset_index(drop=True)
 
         # grab input values, final star 1 state, final star 1 mass
         total_mass = df["mass"].iloc[-1]
-
+        
         scalars = {"m1":[grid.initial_values["star_1_mass"][ind]],
                    "m2":[grid.initial_values["star_2_mass"][ind]],
                    "p":[grid.initial_values["period_days"][ind]],
@@ -128,7 +126,7 @@ class CompileData:
         profiles=np.zeros([1+len(self.names),200])
         for i,prof in enumerate(self.names):
             if prof in df.columns:
-
+            
                 f = interp1d(df['mass']/total_mass,df[prof],
                              fill_value="extrapolate")
                 profile_new = f(np.linspace(0,1,200))
@@ -136,12 +134,12 @@ class CompileData:
             else:
                 Pwarn(f"{prof} profile not saved in grid, will not be "
                       "included in file", "InappropriateValueWarning")
-
+        
         if 'omega' in self.names:
             profiles[-1]= profiles[self.names.index('omega')]/  \
                           (grid.final_values['S1_surf_avg_omega'][ind]/ \
                            grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind])
-
+        
             if not pd.isna(grid.final_values['S1_surf_avg_omega_div_omega_crit'][ind]):
                 return scalars, profiles
             else:
@@ -162,9 +160,9 @@ class CompileData:
         with open(filename, 'wb') as f:
             pickle.dump(myattrs, f)
 
-
+            
 class ProfileInterpolator:
-
+    
     def __init__(self,seed_value=None):
         """Interfaces with other classes, trains models and predicts profiles.
         Args:
@@ -188,27 +186,27 @@ class ProfileInterpolator:
             myattrs = pd.read_pickle(f)
             for key in myattrs:
                 setattr(self, key, myattrs[key])
-
+                
         # processing
         self.test_profiles = np.array(self.test_profiles)
         test_linear_initial = np.transpose([self.test_scalars["m1"],
                                              self.test_scalars["m2"],
-                                             self.test_scalars["p"]])
+                                             self.test_scalars["p"]]) 
         self.test_initial = np.log10(np.array(test_linear_initial))
-
+        
         linear_initial = np.transpose([self.scalars["m1"],
                                        self.scalars["m2"],
                                        self.scalars["p"]])
-
+        
         # random split for training and validation data (default 80/20)
         binaries = np.arange(len(self.profiles))
-        np.random.shuffle(binaries)
+        np.random.shuffle(binaries)    
         split = int(len(self.profiles)*valid_split) # index at which to split data
-
-        self.valid_profiles = np.array(self.profiles)[binaries[:split]]
-        self.valid_initial = np.log10(linear_initial)[binaries[:split]]
+    
+        self.valid_profiles = np.array(self.profiles)[binaries[:split]]      
+        self.valid_initial = np.log10(linear_initial)[binaries[:split]]  
         self.valid_scalars = self.scalars.iloc[binaries[:split]]
-
+        
         self.profiles = np.array(self.profiles)[binaries[split:]]
         self.initial = np.log10(linear_initial)[binaries[split:]]
         self.scalars = self.scalars.iloc[binaries[split:]]
@@ -216,7 +214,7 @@ class ProfileInterpolator:
     def train(self,IF_interpolator,train_density=True,train_comp=True,density_epochs=1000,
               density_patience=200,comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False,
               hms_s2=False,depth=12,width=256,depthn=12,widthn=256,learning_rate=0.0001):
-        """Trains models for density, H mass fraction, and He mass fraction profile models.
+        """Trains models for density, H mass fraction, and He mass fraction profile models. 
         Args:
             IF_interpolator (str) : path to '.pkl' file for IF interpolator.
             train_density (Boolean) : option to train Density model
@@ -233,25 +231,25 @@ class ProfileInterpolator:
             widthn (int) : width of neural network for normalizing value
             learning_rate (float) : learning rate for neural network training
         Returns:
-            self.dens.loss_history (array-like) : training and validation loss history for density profiles.
-                                                  Returned first if both models are trained.
+            self.dens.loss_history (array-like) : training and validation loss history for density profiles. 
+                                                  Returned first if both models are trained. 
             self.comp.loss_history (array-like) : training and validation loss history for composition profiles
-                                                  Returned second if both models are trained.
-
-        """
+                                                  Returned second if both models are trained. 
+            
+        """      
         self.train_comp=train_comp
         self.train_density=train_density
-
+        
         if train_comp==True:
             # instantiate and train composition (H and He mass fraction) profiles model
-            self.comp = Composition(self.initial,
-                                    self.profiles[:,self.names.index("x_mass_fraction_H")],
-                                    self.profiles[:,self.names.index("y_mass_fraction_He")],
-                                    self.scalars["star_state"],
-                                    self.valid_initial,
-                                    self.valid_profiles[:,self.names.index("x_mass_fraction_H")],
-                                    self.valid_profiles[:,self.names.index("y_mass_fraction_He")],
-                                    self.valid_scalars["star_state"],
+            self.comp = Composition(self.initial, 
+                                    self.profiles[:,self.names.index("x_mass_fraction_H")], 
+                                    self.profiles[:,self.names.index("y_mass_fraction_He")], 
+                                    self.scalars["star_state"], 
+                                    self.valid_initial, 
+                                    self.valid_profiles[:,self.names.index("x_mass_fraction_H")], 
+                                    self.valid_profiles[:,self.names.index("y_mass_fraction_He")], 
+                                    self.valid_scalars["star_state"], 
                                     IF_interpolator,
                                     comp_bounds_epochs,comp_bounds_patience,hms_s2)
         if train_density==True:
@@ -268,7 +266,7 @@ class ProfileInterpolator:
             self.dens.train(prof_epochs=density_epochs,
                             prof_patience=density_patience,
                             learning_rate=learning_rate)
-
+        
         if loss_history==True:
             if train_comp==True and train_density==True:
                 return self.dens.loss_history, self.comp.loss_history
@@ -279,7 +277,7 @@ class ProfileInterpolator:
             else:
                 PWarn("No models selected for training","IncompletenessWarning")
                 return
-
+    
     def predict(self,inputs):
         """Predict density, H mass fraction, and He mass fraction profiles from inputs.
         Args:
@@ -287,20 +285,20 @@ class ProfileInterpolator:
             density (Boolean) : option to train Density model
             comp (Boolean) : option to train Composition model
         Returns:
-            mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
-                                       Returned first.
-            density_profiles (array-like) : log-scale density profile coordinates.
-                                            Returned second if density model is trained.
-            h_profiles (array-like) : H mass fraction profile coordinates.
-                                      Returned after mass_coords (and density_profiles) if composition model is trained.
-            he_profiles (array-like) : He mass fraction profile coordinates.
-                                       Returned after h_profiles if composition model is trained.
+            mass_coords (array-like) : linear-scale mass enclosed profile coordinates. 
+                                       Returned first. 
+            density_profiles (array-like) : log-scale density profile coordinates. 
+                                            Returned second if density model is trained. 
+            h_profiles (array-like) : H mass fraction profile coordinates. 
+                                      Returned after mass_coords (and density_profiles) if composition model is trained. 
+            he_profiles (array-like) : He mass fraction profile coordinates. 
+                                       Returned after h_profiles if composition model is trained. 
         """
         if self.train_density==True:
             mass_coords, density_profiles = self.dens.predict(inputs)
         if self.train_comp==True:
             mass_coords, h_profiles, he_profiles = self.comp.predict(inputs)
-
+            
         if self.train_comp==True and self.train_density==True:
             return mass_coords, density_profiles, h_profiles, he_profiles
         elif self.train_comp!=True and self.train_density==True:
@@ -310,7 +308,7 @@ class ProfileInterpolator:
         else:
             PWarn("No models were trained","IncompletenessWarning")
             return
-
+            
     def save(self, filename):
         """Save complete profiles interpolation model.
         Args:
@@ -333,7 +331,7 @@ class ProfileInterpolator:
             myattrs = pickle.load(f)
             for key in myattrs:
                 setattr(self, key, myattrs[key])
-
+    
     def mono_decrease(self,profiles):
         """Enforce monotonicity in profiles such as density that must monotonically decrease
         Args:
@@ -341,7 +339,7 @@ class ProfileInterpolator:
         Returns:
             profiles_mono (array-like) : post-processed profiles
         """
-
+        
         def mono_renorm(arr):
             arr_copy = arr.copy()
             # starting from surface, force dropping points up
@@ -359,7 +357,7 @@ class ProfileInterpolator:
 
         return profiles_mono
 
-
+    
 class Density:
 
     def __init__(self,initial,profiles,mt,valid_initial,
@@ -368,13 +366,13 @@ class Density:
         """Creates and trains density profile model.
         Args:
             initial (array-like) : log-space initial conditions for training data.
-            profiles (array-like) : final density profiles for training data.
-            mt (array-like) : mass transfer classes corresponding to training set binaries.
+            profiles (array-like) : final density profiles for training data. 
+            mt (array-like) : mass transfer classes corresponding to training set binaries. 
             valid_initial (array-like) : log-space initial conditions for validation data.
             valid_profiles (array-like) : final density profiles for validation data.
-            valid_mt (array-like): mass transfer classes corresponding to validation set binaries.
+            valid_mt (array-like): mass transfer classes corresponding to validation set binaries. 
             IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values
-            n_comp (int) : number of PCA components.
+            n_comp (int) : number of PCA components. 
             hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
             depth (int) : depth of neural network for principal component weights
             width (int) : width of neural network for principal component weights
@@ -383,17 +381,17 @@ class Density:
         """
         self.n_comp = n_comp
         self.hms_s2 = hms_s2
-
-        # process training data
+        
+        # process training data 
         self.initial = initial  # initial conditions in log space
         self.mt = mt
-        self.surf_val = profiles[:,-1]
+        self.surf_val = profiles[:,-1] 
         self.center_val = profiles[:,0]
-
+        
         # process validation data
         self.valid_initial = valid_initial
         self.valid_mt = valid_mt
-        self.valid_surf_val = valid_profiles[:,-1]
+        self.valid_surf_val = valid_profiles[:,-1] 
         self.valid_center_val = valid_profiles[:,0]
 
         # process profiles for modeling
@@ -401,41 +399,41 @@ class Density:
                             /(self.center_val-self.surf_val)[:,np.newaxis]  # minmax normalized profiles
         valid_profiles_norm = (valid_profiles-self.valid_surf_val[:,np.newaxis])\
                             /(self.valid_center_val-self.valid_surf_val)[:,np.newaxis]
-
+           
         self.pca = PCA(n_components=self.n_comp).fit(profiles_norm) # perform PCA
         self.pca_weights = self.pca.transform(profiles_norm)
         self.valid_pca_weights = self.pca.transform(valid_profiles_norm)
-
+        
         # instantiate model
         self.prof_models = {}
         for mt in self.mt.unique():
             model = models.Sequential()
             model.add(layers.Dense(width,input_dim=3,activation='relu'))
             for i in range(depth-1):
-                model.add(layers.Dense(width,input_dim=width,activation='relu'))
+                model.add(layers.Dense(width,input_dim=width,activation='relu'))           
             model.add(layers.Dense(n_comp,input_dim=width,activation=None))
             self.prof_models[mt] = model
-
+                
         self.model_norm = models.Sequential()
         self.model_norm.add(layers.Dense(widthn,input_dim=3,activation="relu"))
         for i in range(depthn-1):
             self.model_norm.add(layers.Dense(widthn,input_dim=widthn,activation='relu'))
         self.model_norm.add(layers.Dense(1,input_dim=widthn,activation=None))
-
+        
         self.model_IF = IFInterpolator()  # instantiate POSYDON initial-final interpolator object
         self.model_IF.load(filename=IF_interpolator)
         self.interp = self.model_IF.interpolators[0]
 
     def train(self,loss=losses.MeanSquaredError(),prof_epochs=1000,prof_patience=200,learning_rate=0.0001):
-        """Trains NN models.
-        Args:
+        """Trains NN models. 
+        Args: 
             loss (object) : loss function for training.
             prof_epochs (int) : number of epochs used to train neural network
             prof_patience (int) : patience parameter for callback in neural network
             learning_rate (float) : learning rate for neural network training
         """
         print("training on PCA weights...")
-
+        
         self.loss_history = {}
         for mt in self.mt.unique():
             if mt=="not_converged" or mt=="initial_MT":
@@ -451,24 +449,24 @@ class Density:
                                               validation_data=(self.valid_initial[valid_inds],
                                                                self.valid_pca_weights[valid_inds]))
                 self.loss_history[mt] = np.array([history.history['loss'],history.history['val_loss']])
-
+        
         self.model_norm.compile(optimizers.Adam(clipnorm=1,learning_rate=learning_rate),loss=loss)
         callback = tf.keras.callbacks.EarlyStopping(monitor="loss",patience=40)
         self.model_norm.fit(self.initial,self.surf_val,epochs=300,callbacks=[callback],
                             validation_data = (self.valid_initial,self.valid_surf_val))
-
+                                     
         print("done training")
-
+    
     def predict(self,inputs):
         """Predicts profile for n sets of given inputs, in array of shape (n,3).
-        Args:
+        Args: 
             inputs (array-like) : positive linear-space initial conditions of N binaries to predict, shape (N,3).
         Returns:
             mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
             density_profiles (array_like) : log-scale density profile coordinates.
         """
         pred_profiles = np.zeros([len(inputs),200])
-
+        
         # predict MT class
         pred_mt = self.interp.test_classifiers(inputs)['interpolation_class']
         for mt in self.mt.unique():
@@ -481,33 +479,33 @@ class Density:
                 pca_weights_pred = regress_prof(np.log10(inputs[inds])).numpy()
                 pca_pred = self.pca.inverse_transform(pca_weights_pred)
                 pred_profiles[inds] = pca_pred
-
+                
         # predict surface density
         regress_norm = lambda x: self.model_norm(x)
         min_rho = regress_norm(np.log10(inputs)).numpy()[:,0]
-
-        # IF interpolate final mass, center density
+        
+        # IF interpolate final mass, center density 
         if self.hms_s2==False:
             m_ind = self.interp.out_keys.index("star_1_mass")
             center_ind = self.interp.out_keys.index('S1_log_center_Rho')
         else:
             m_ind = self.interp.out_keys.index("star_2_mass")
             center_ind = self.interp.out_keys.index('S2_log_center_Rho')
-        max_rho = self.interp.test_interpolator(inputs)[:,center_ind]
+        max_rho = self.interp.test_interpolator(inputs)[:,center_ind]                    
         pred_mass = self.interp.test_interpolator(inputs)[:,m_ind]
-
+            
         # reconstruct profile
         density_profiles = pred_profiles*(max_rho[:,np.newaxis]-min_rho[:,np.newaxis]) \
                            + min_rho[:,np.newaxis]
-
+        
         # construct mass enclosed profile coordinates
-        mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis]
-
+        mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
+        
         return mass_coords,density_profiles
 
-
+    
 class Composition:
-
+    
     def __init__(self,initial,h_profiles,he_profiles,star_state,
                  valid_initial,valid_h_profiles,valid_he_profiles,valid_star_state,
                  IF_interpolator, training_epochs=500, training_patience=50,hms_s2=False,
@@ -515,8 +513,8 @@ class Composition:
         """Creates and trains H mass fraction and He mass fraction profiles model.
         Args:
             initial (array-like) : log-space initial conditions for training data.
-            h_profiles (array-like) : final H mass fraction profiles for training data.
-            he_profiles (array-like) : final He mass fraction profiles for training data.
+            h_profiles (array-like) : final H mass fraction profiles for training data. 
+            he_profiles (array-like) : final He mass fraction profiles for training data. 
             star_state (array-like) : final star 1 state for training data.
             valid_initial (array-like) : log-space initial conditions for validation data.
             valid_h_profiles (array-like) : final H mass fraction profiles for validation data.
@@ -531,7 +529,7 @@ class Composition:
             learning_rate (float) : learning rate for neural network training
         """
         self.hms_s2 = hms_s2
-
+        
         self.initial = initial
         self.h_profiles = h_profiles
         self.he_profiles = he_profiles
@@ -545,7 +543,7 @@ class Composition:
         self.model_IF = IFInterpolator()  # instantiate POSYDON initial-final interpolator object
         self.model_IF.load(filename=IF_interpolator)
         self.interp = self.model_IF.interpolators[0]
-
+        
         if self.hms_s2==False: # default to star 1
             self.c_h_ind = self.interp.out_keys.index("S1_center_h1")
             self.s_h_ind = self.interp.out_keys.index("S1_surface_h1")
@@ -556,36 +554,36 @@ class Composition:
             self.s_h_ind = self.interp.out_keys.index("S2_surface_h1")
             self.c_he_ind = self.interp.out_keys.index("S2_center_he4")
             self.s_he_ind = self.interp.out_keys.index("S2_surface_he4")
-
+            
         # final star states
         self.star_states = ['None','WD','NS','BH',
                              'stripped_He_non_burning',
                              'stripped_He_Core_He_burning',
                              'stripped_He_Core_C_burning',
-                             'stripped_He_Core_He_depleted',
-                             'stripped_He_Core_C_depleted',
+                             'stripped_He_Central_He_depleted',
+                             'stripped_He_Central_C_depletion',
                              'H-rich_non_burning',
-                             'H-rich_Core_He_depleted',
-                             'H-rich_Core_C_depleted',
+                             'H-rich_Central_He_depleted',
+                             'H-rich_Central_C_depletion',
                              'H-rich_Shell_H_burning',
                              'H-rich_Core_H_burning',
                              'H-rich_Core_He_burning',
                              'H-rich_Core_C_burning']
-
+        
         # sort training data into classes by final star state
         self.sort_ind = {}
         self.valid_sort_ind = {}
         for name in self.star_states:
             self.sort_ind[name] = np.where(self.star_state==name)[0]
             self.valid_sort_ind[name] = np.where(self.valid_star_state==name)[0]
-
+        
         # create and train models for profile boundaries
         self.bounds_models, self.loss_history = self.learn_bounds(training_epochs,
                                                                   training_patience,
                                                                   depth=depth,
                                                                   width=width,
                                                                   learning_rate=learning_rate)
-
+        
     def learn_bounds(self,training_epochs,training_patience,depth,width,learning_rate):
         """Creates and trains NNs to predict boundary points for each star 1 state.
         Args:
@@ -600,8 +598,8 @@ class Composition:
         """
         b_models = {}
         loss_history = {}
-
-        def calc_bevel_bounds(profs):
+        
+        def calc_bevel_bounds(profs): 
             # calculate first and last points in each profile with large increases
             # i.e. boundaries of 'bevel' shape
             nonflat=[] # ensures that training data only has the correct "non-flat" shape
@@ -614,18 +612,18 @@ class Composition:
                 else:
                     bounds.append(np.array([np.nan,np.nan]))
             return np.array(bounds), nonflat
-
+        
         for state in ['stripped_He_Core_He_burning',
                       'stripped_He_Core_C_burning',
-                      'stripped_He_Core_He_depleted',
-                      'stripped_He_Core_C_depleted',
-                      'H-rich_Core_He_depleted',
-                      'H-rich_Core_C_depleted',
+                      'stripped_He_Central_He_depleted',
+                      'stripped_He_Central_C_depletion',
+                      'H-rich_Central_He_depleted',
+                      'H-rich_Central_C_depletion',
                       'H-rich_Shell_H_burning',
                       'H-rich_Core_H_burning',
                       'H-rich_Core_He_burning',
                       'H-rich_Core_C_burning']:
-
+            
             # identify input/output training data for class
             indices = self.sort_ind[state]
             inputs = self.initial[indices]
@@ -639,15 +637,15 @@ class Composition:
             valid_h_prof = self.valid_h_profiles[valid_indices]
             valid_he_prof = self.valid_he_profiles[valid_indices]
             valid_plus_prof = valid_h_prof + valid_he_prof
-
+            
             if len(indices)==0:
                 Pwarn(f"no training data available for {state}",
                       "InappropriateValueWarning")
                 loss_history[state]=np.nan
-
+                
             else:
-
-                # calculate boundary points for training and testing data
+                
+                # calculate boundary points for training and testing data 
                 if state in ['H-rich_Shell_H_burning',
                              'H-rich_Core_H_burning']:  # profiles with 2 boundary points
                     outs=2
@@ -655,7 +653,7 @@ class Composition:
                     # (He profiles have the same boundary points)
                     bounds,nonflat = calc_bevel_bounds(h_prof)
                     valid_bounds, valid_nonflat = calc_bevel_bounds(valid_h_prof)
-
+                
                 if state in ['H-rich_Core_He_burning',
                              'H-rich_Core_C_burning']:  # profiles with 2 boundary points
                     outs=4
@@ -670,10 +668,10 @@ class Composition:
                     bounds = np.transpose([hbounds[:,0],hbounds[:,1],pbounds[:,0],pbounds[:,1]])
                     valid_bounds = np.transpose([valid_hbounds[:,0],valid_hbounds[:,1],
                                                  valid_pbounds[:,0],valid_pbounds[:,1]])
-
-
-                elif state in ['H-rich_Core_He_depleted',
-                               'H-rich_Core_C_depleted']: # H profiles with 1 boundary point
+                
+                        
+                elif state in ['H-rich_Central_He_depleted',
+                               'H-rich_Central_C_depletion']: # H profiles with 1 boundary point
                     outs=3
                     # calculate the point in each H profile with the largest increase
                     hbound = (np.argmax(h_prof[:,1:]-h_prof[:,:-1],axis=1)+1)/200
@@ -683,16 +681,16 @@ class Composition:
                     valid_bounds, valid_nonflat = calc_bevel_bounds(valid_plus_prof)
                     bounds = np.insert(bounds,0,hbound,axis=1)
                     valid_bounds = np.insert(valid_bounds,0,valid_hbound,axis=1)
-
+            
                 elif state in ['stripped_He_Core_He_burning',
                              'stripped_He_Core_C_burning',
-                             'stripped_He_Core_He_depleted',
-                             'stripped_He_Core_C_depleted']:
+                             'stripped_He_Central_He_depleted',
+                             'stripped_He_Central_C_depletion']:
                     outs=2
                     # calculate first and points in each profile with large increases
                     bounds,nonflat = calc_bevel_bounds(he_prof)
                     valid_bounds, valid_nonflat = calc_bevel_bounds(valid_he_prof)
-
+                
                 # instantiate and train model on bounds
                 model = models.Sequential()
                 model.add(layers.Dense(width,input_dim=3,activation="relu"))
@@ -703,38 +701,38 @@ class Composition:
                 model.compile(optimizers.Adam(clipnorm=1,learning_rate=learning_rate),
                               loss=losses.MeanSquaredError())
                 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=training_patience)
-
+                        
                 history = model.fit(inputs[nonflat],bounds[nonflat],
                                     epochs=training_epochs,verbose=0,callbacks=[callback],
                                     validation_data=(valid_inputs[valid_nonflat],
                                                      valid_bounds[valid_nonflat]))
                 loss_history[state] = np.array([history.history['loss'],history.history['val_loss']])
-
+                        
                 b_models[state] = model
                 print(f"finished {state}")
         return b_models, loss_history
-
+            
     def predict_single(self,initial,center_H,surface_H,center_He,surface_He,star_state):
         """Predict a profile for a single binary
         Args:
             initial (array-like) : initial position of binary
-            center_H (float) : center H mass fraction
+            center_H (float) : center H mass fraction 
             surface_H (float) : surface H mass fraction
-            center_He (float) : center He mass fraction
+            center_He (float) : center He mass fraction 
             surface_He (float) : surface He mass fraction
             star_state (str) : final star state
         Returns:
-            H (array-like) : predicted H mass fraction profile
+            H (array-like) : predicted H mass fraction profile 
             He (array-like) : predicted He mass fraction profile
         """
         if "stripped_He" in star_state:
             H = np.zeros(200) # stripped Helium stars have no Hydrogen
-
+        
         # if there is no training data in the state, return nans
-        if len(self.sort_ind[star_state])==0:
+        if len(self.sort_ind[star_state])==0: 
             H = np.ones(200)*np.nan
             He = np.ones(200)*np.nan
-
+            
         elif star_state == "stripped_He_non_burning":
             if surface_He != center_He:
                 Pwarn("Non-burning helium star unexpectedly does not have a flat profile. "
@@ -743,9 +741,9 @@ class Composition:
                       "will be used to create a flat profile.",
                       "InappropriateValueWarning")
             He = np.ones(200)*np.mean([surface_He,center_He]) # non-burning stars have a flat He profile
-
+            
         elif 'stripped_He_C' in star_state:
-            # predicting profile shape parameters
+            # predicting profile shape parameters 
             b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]
             He = np.ones(200) * center_He
             He[int(b[1]*200):] = surface_He
@@ -753,20 +751,20 @@ class Composition:
                             fill_value=(center_He,surface_He))
             # use f to construct the profile points in the shell burning region
             He[int(b[0]*200):int(b[1]*200)] = f_He(np.linspace(0,1,200)[int(b[0]*200):int(b[1]*200)])
-
+            
         elif star_state in ["H-rich_non_burning","None"]: # these states have flat H and He profiles
             H = np.ones(200)*surface_H
             He = np.ones(200)*surface_He
-
+            
         elif star_state in ["WD","NS","BH"]: # profiles for compact objects are arbitrary -- return nans
             H = np.ones(200)*np.nan
             He = np.ones(200)*np.nan
-
+        
         # construct step-shaped profile - H and He profiles have symmetrical shapes
-        elif star_state in ["H-rich_Core_He_depleted",
-                  "H-rich_Core_C_depleted"]:
-            # predicting profile shape parameters
-            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]
+        elif star_state in ["H-rich_Central_He_depleted",
+                  "H-rich_Central_C_depletion"]:
+            # predicting profile shape parameters 
+            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]            
             H = np.ones(200)*center_H
             H[int(b[0]*200):] = surface_H
             # construct "H+He" profile
@@ -776,12 +774,12 @@ class Composition:
                               fill_value=(center_H + center_He, surface_H + surface_He))
             plus[int(b[1]*200):int(b[2]*200)] = f_plus(np.linspace(0,1,200)[int(b[1]*200):int(b[2]*200)])
             He = plus - H
-
+        
         # construct shell-shaped profile - H and He profiles have symmetrical shapes
         elif star_state in ["H-rich_Shell_H_burning",
                   "H-rich_Core_H_burning"]:
-            # predicting profile shape parameters
-            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]
+            # predicting profile shape parameters 
+            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]   
             H = np.ones(200) * center_H
             H[int(b[1]*200):] = surface_H
             f_H = interp1d(b,[center_H,surface_H],fill_value=(center_H,surface_H))
@@ -790,11 +788,11 @@ class Composition:
             # "H+He" profile is flat:
             plus = np.ones(200) * (surface_H + surface_He)
             He = plus - H
-
+        
         elif star_state in ["H-rich_Core_He_burning",
                   "H-rich_Core_C_burning"]:
-            # predicting profile shape parameters
-            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]
+            # predicting profile shape parameters 
+            b = self.bounds_models[star_state](tf.convert_to_tensor([initial])).numpy()[0]   
             H = np.ones(200) * center_H
             H[int(b[1]*200):] = surface_H
             f_H = interp1d(b[:2],[center_H,surface_H],fill_value=(center_H,surface_H))
@@ -807,9 +805,9 @@ class Composition:
                               fill_value=(center_H+center_He,surface_H+surface_He))
             plus[int(b[2]*200):int(b[3]*200)] = f_plus(np.linspace(0,1,200)[int(b[2]*200):int(b[3]*200)])
             He = plus - H
-
+        
         return H, He
-
+        
     def predict(self,inputs):
         """Predict H mass fraction profiles from inputs.
         Args:
@@ -824,16 +822,16 @@ class Composition:
         surface_h_vals = self.interp.test_interpolator(inputs)[:,self.s_h_ind]
         center_he_vals = self.interp.test_interpolator(inputs)[:,self.c_he_ind]
         surface_he_vals = self.interp.test_interpolator(inputs)[:,self.s_he_ind]
-
-        # IF interpolate final masses, final star states
+        
+        # IF interpolate final masses, final star states 
         if self.hms_s2==False:
             m_ind = self.model_IF.interpolators[0].out_keys.index("star_1_mass")
-            star_state_vals = self.interp.test_classifiers(inputs)['S1_state']
+            star_state_vals = self.interp.test_classifiers(inputs)['S1_state']   
         else:
             m_ind = self.model_IF.interpolators[0].out_keys.index("star_2_mass")
-            star_state_vals = self.interp.test_classifiers(inputs)['S2_state']
+            star_state_vals = self.interp.test_classifiers(inputs)['S2_state']   
         pred_mass = self.interp.test_interpolator(inputs)[:,m_ind]
-
+        
         # generate predicted profiles
         pred_profiles = []
         for i in range(len(inputs)):
@@ -846,8 +844,8 @@ class Composition:
             pred_profiles.append([pred_H,pred_He])
 
         # generate mass enclosed profile coordinates
-        mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis]
+        mass_coords = np.linspace(0,1,200)*pred_mass[:,np.newaxis] 
         h_profiles = np.array(pred_profiles)[:,0]
         he_profiles = np.array(pred_profiles)[:,1]
-
+            
         return mass_coords, h_profiles, he_profiles

@@ -179,60 +179,42 @@ __authors__ = [
 ]
 
 
-import ast
+import os
 import glob
 import json
-import os
-
+import ast
 import h5py
 import numpy as np
 import pandas as pd
 import tqdm
 
-from posydon.grids.downsampling import TrackDownsampler
-from posydon.grids.io import (
-    EEP_FILE_EXTENSIONS,
-    GridReader,
-    initial_values_from_dirname,
-    read_initial_values,
-)
-from posydon.grids.scrubbing import (
-    keep_after_RLO,
-    keep_till_central_abundance_He_C,
-    scrub,
-)
-from posydon.grids.termination_flags import (
-    check_state_from_history,
-    get_detected_initial_RLO,
-    get_flag_from_MESA_output,
-    get_flags_from_MESA_run,
-    get_nearest_known_initial_RLO,
-    infer_interpolation_class,
-)
-from posydon.utils.common_functions import (
-    check_state_of_star_history_array,
-    get_i_He_depl,
-    infer_star_state,
-    initialize_empty_array,
-    orbital_separation_from_period,
-)
+from posydon.utils.common_functions import check_state_of_star_history_array
+from posydon.grids.io import (GridReader, read_initial_values,
+                              initial_values_from_dirname, EEP_FILE_EXTENSIONS)
+from posydon.grids.termination_flags import (get_flags_from_MESA_run,
+                                             check_state_from_history,
+                                             get_flag_from_MESA_output,
+                                             infer_interpolation_class,
+                                             get_detected_initial_RLO,
+                                             get_nearest_known_initial_RLO)
 from posydon.utils.configfile import ConfigFile
-from posydon.utils.gridutils import (
-    add_field,
-    fix_He_core,
-    join_lists,
-    read_EEP_data_file,
-    read_MESA_data_file,
+from posydon.utils.common_functions import (orbital_separation_from_period,
+                                            initialize_empty_array,
+                                            infer_star_state,
+                                            get_i_He_depl)
+from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
+    THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C
 )
-from posydon.utils.ignorereason import IgnoreReason
-from posydon.utils.limits_thresholds import (
-    THRESHOLD_CENTRAL_ABUNDANCE,
-    THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C,
-)
-from posydon.utils.posydonerror import GridError, POSYDONError
-from posydon.utils.posydonwarning import Catch_POSYDON_Warnings, Pwarn
-from posydon.visualization.plot1D import plot1D
+from posydon.utils.gridutils import (read_MESA_data_file, read_EEP_data_file,
+                                     add_field, join_lists, fix_He_core)
 from posydon.visualization.plot2D import plot2D
+from posydon.visualization.plot1D import plot1D
+from posydon.grids.downsampling import TrackDownsampler
+from posydon.grids.scrubbing import scrub, keep_after_RLO, keep_till_central_abundance_He_C
+from posydon.utils.ignorereason import IgnoreReason
+from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
+from posydon.utils.posydonerror import POSYDONError, GridError
+
 
 HDF5_MEMBER_SIZE = 2**31 - 1            # maximum HDF5 file size when splitting
 H5_UNICODE_DTYPE = h5py.string_dtype()  # dtype for unicode strings in the HDF5

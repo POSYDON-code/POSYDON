@@ -9,9 +9,9 @@ __authors__ = [
 
 import numpy as np
 
-from posydon.binary_evol.DT.step_detached import detached_step
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.common_functions import orbital_separation_from_period
+from posydon.binary_evol.DT.step_detached import detached_step
 from posydon.utils.posydonerror import FlowError
 
 

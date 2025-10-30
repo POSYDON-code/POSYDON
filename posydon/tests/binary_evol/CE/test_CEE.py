@@ -1,13 +1,11 @@
-import os
 import unittest
-
+import os
 import numpy as np
-
-from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.CE.step_CEE import StepCEE
-from posydon.binary_evol.singlestar import SingleStar
 from posydon.config import PATH_TO_POSYDON
 from posydon.utils import common_functions as cf
+from posydon.binary_evol.binarystar import BinaryStar
+from posydon.binary_evol.singlestar import SingleStar
+from posydon.binary_evol.CE.step_CEE import StepCEE
 
 # spaces are read '\\ ' instead of ' '
 PATH_TO_DATA = os.path.join(

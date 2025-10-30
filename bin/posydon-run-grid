@@ -3,24 +3,23 @@
 #  IMPORT ALL NECESSARY PYTHON PACKAGES
 ##############################################################################
 import argparse
-import itertools
 import os
-import random
 import shutil
-import stat
-import string
 import sys
+import random
+import string
+import itertools
+import stat
 import time
-from collections import ChainMap
 
 import numpy as np
 import pandas
 
-from posydon.active_learning.psy_cris.utils import parse_inifile
-from posydon.grids.psygrid import PSyGrid
 from posydon.utils import gridutils as utils
 from posydon.utils.posydonwarning import Pwarn
-
+from posydon.grids.psygrid import PSyGrid
+from posydon.active_learning.psy_cris.utils import parse_inifile
+from collections import ChainMap
 try:
     from mpi4py import MPI
     MPI_IMPORTED = True
@@ -547,11 +546,8 @@ def get_next_grid_point(psycris_inifile_path, grid, n_new_points, **kwargs):
     pred_classess : array
         Predicted class of query point.
     """
-    from posydon.active_learning.psy_cris.utils import (
-        get_new_query_points,
-        parse_inifile,
-    )
     from posydon.grids.psygrid import PSyGrid
+    from posydon.active_learning.psy_cris.utils import get_new_query_points, parse_inifile
     from posydon.interpolation.data_scaling import DataScaler
 
     normed_grid = grid.copy()

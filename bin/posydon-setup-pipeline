@@ -187,7 +187,7 @@ class PostProcessingPipeline:
 
     def create_csv_and_slurm_job_files(self):
         """Creates all files the pipeline needs."""
-
+        
         def expand_runfile(runfile, step_number='step_X', last_step=''):
             """Add next entry to the script in runfile.
 
@@ -224,7 +224,7 @@ class PostProcessingPipeline:
             runfile.write(f"echo '{step_number}.slurm submitted as '$"
                           "{"f"ID{step_number}""}"f"\n")
             return step_number
-
+        
         def get_step_kwargs(self, step_number='step_X', last_step=''):
             """Provides the attributes of a step. Additionally, it replaces
             defined sets and it checks for missing attributes and may copies
@@ -296,7 +296,7 @@ class PostProcessingPipeline:
                         self.pipeline_kwargs[step_number]['DO_CHECKS'] = []
             # return attributes
             return self.pipeline_kwargs[step_number]
-
+        
         def has_substep(self, step_number='step_X', substep='ALL'):
             """Checks whether a step has substeps.
 
@@ -327,7 +327,7 @@ class PostProcessingPipeline:
                         return True
             # no entry for the substep(s)
             return False
-
+        
         # check for sections 'account' and 'pipeline setup' and store their
         # attributes
         if 'account' not in self.pipeline_kwargs.keys():
@@ -336,7 +336,7 @@ class PostProcessingPipeline:
             raise KeyError('pipeline setup not in pipeline_kwargs!')
         account_kwargs = self.pipeline_kwargs['account']
         setup_kwargs = self.pipeline_kwargs['pipeline setup']
-
+        
         # take verbose value from setup arguments
         if 'VERBOSE' in setup_kwargs.keys():
             VERBOSE = setup_kwargs['VERBOSE']
@@ -349,11 +349,11 @@ class PostProcessingPipeline:
                     'ACCOUNT', pformat(account_kwargs, indent=2),
                     'SETUP', pformat(setup_kwargs, indent=2) )
                  )
-
+        
         previously_created_files = []
         plot_dirs = []
         pipeline_steps = []
-
+        
         if os.path.exists('run_pipeline.sh'):
             Pwarn('Replace run_pipeline.sh', "OverwriteWarning")
         # create a runfile script
@@ -414,7 +414,7 @@ class PostProcessingPipeline:
                     if step_number == "step_5":
                         from posydon.interpolation.profile_interpolation\
                             import CompileData, ProfileInterpolator
-
+                
                 for sub_step, step_extension in SUB_STEPS_TO_EXTENSION.items():
                     if sub_step not in\
                         self.pipeline_kwargs[step_number].keys():
@@ -467,7 +467,7 @@ class PostProcessingPipeline:
                                        list(set(plot_dirs))
                 df.to_csv(os.path.join(PATH, 'pipeline_files.csv'),
                           header=False, index=False)
-
+                
                 # add cleanup to run script
                 submission_line = "IDpipeline_cleanup=$(sbatch --parsable "
                 for i, step in enumerate(pipeline_steps):
@@ -569,7 +569,7 @@ def slurm_job(job_name,
     path_to_csv_file = os.path.join(PATH, f'{job_name}.csv')
     if not os.path.isfile(path_to_csv_file):
         raise FileNotFoundError(f"Missing csv file: {path_to_csv_file}")
-
+    
     if os.path.exists(f'{job_name}.slurm'):
         Pwarn(f'Replace {job_name}.slurm', "OverwriteWarning")
     # create slurm file
@@ -909,7 +909,7 @@ def create_csv(GRID_TYPES=[],
                         # the grid type, the names of the files of the IF
                         # interpolators, the quantities to get profiles
                         # interpolated for, and the names of the files where
-                        # the interpolator data gets written to.
+                        # the interpolator data gets written to. 
                         if (isinstance(PROFILE_NAMES, list) and\
                             (len(PROFILE_NAMES)>0)):
                             for method in INTERPOLATION_METHODS:
@@ -942,7 +942,7 @@ def create_csv(GRID_TYPES=[],
                         else:
                             export_dir = grid_type+RLO
                         # This step needs the grids/interpolators to export and
-                        # the path where to export them to.
+                        # the path where to export them to. 
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
@@ -979,7 +979,7 @@ def create_csv(GRID_TYPES=[],
                         rerun_metallicities.append(metallicity)
                         rerun_type.append(RERUN_TYPE)
                         clusters.append(CLUSTER)
-
+                    
                     if (('plot' in step_name) or ('check' in step_name)):
                         # get output grid names for sub steps
                         if 'step_2' in step_name:
@@ -991,17 +991,17 @@ def create_csv(GRID_TYPES=[],
                             grid_s = CONTROL_GRIDS[l][i]
                         else:
                             grid_s = grid_slice
-
+                        
                         if grid_s == '': # skip that slice for sub steps
                             continue
-
-                        if (('step_4' not in step_name) and
+                        
+                        if (('step_4' not in step_name) and 
                             ('step_5' not in step_name)):
                             # all steps without interpolation method get an
                             # empty method
                             if len(INTERPOLATION_METHODS)==0:
                                 INTERPOLATION_METHODS = ['']
-
+                        
                         if 'plot' in step_name: # PLOTS
                             # only plot first compression type, but allow for
                             # with and without RLO flag
@@ -1079,7 +1079,7 @@ def create_csv(GRID_TYPES=[],
                                                 VERSION, metallicity,
                                                 'interpolation_objects',
                                                 'profile_'+method+RLO+'.pkl'))
-
+    
     # saving dataset to csv file (step 2 is special here, because the data
     # frame was already created.)
     if step_name != 'step_2':
@@ -1389,7 +1389,7 @@ def get_log_file_name(job_name, step_name):
 
 
 if __name__ == '__main__':
-
+    
     if len(sys.argv) >= 2:
         if str(sys.argv[1])=='--help':
             print('Programm to setup the posydon pipeline')
@@ -1401,7 +1401,9 @@ if __name__ == '__main__':
             ini_file_path = './' + ini_file_path
     else:
         raise ValueError('No ini file specified.')
-
+    
     pipeline = PostProcessingPipeline(ini_file_path)
     pipeline.create_csv_and_slurm_job_files()
     pipeline.create_log_dirs()
+
+

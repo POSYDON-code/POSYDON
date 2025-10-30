@@ -7,29 +7,25 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.grids.psygrid as totest
-
 # aliases
 np = totest.np
 os = totest.os
 h5py = totest.h5py
 
-from inspect import isclass, isroutine
-from shutil import rmtree
-
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises, warns
-
+from inspect import isclass, isroutine
+from shutil import rmtree
+from posydon.utils.posydonwarning import (InappropriateValueWarning,\
+                                          MissingFilesWarning,\
+                                          ReplaceValueWarning)
 from posydon.grids.scrubbing import keep_after_RLO
-from posydon.unit_tests._helper_functions_for_tests.MESA import add_MESA_run_files
-from posydon.unit_tests._helper_functions_for_tests.psygrid import get_simple_PSyGrid
 from posydon.utils.common_functions import initialize_empty_array
-from posydon.utils.posydonwarning import (
-    InappropriateValueWarning,
-    MissingFilesWarning,
-    ReplaceValueWarning,
-)
-
+from posydon.unit_tests._helper_functions_for_tests.MESA import\
+ add_MESA_run_files
+from posydon.unit_tests._helper_functions_for_tests.psygrid import\
+ get_simple_PSyGrid
 
 @fixture
 def star_history():
@@ -444,7 +440,7 @@ class TestFunctions:
     def h5_out_path(self, tmp_path):
         # a path to write to
         return os.path.join(tmp_path, "out.h5")
-
+    
     @fixture
     def grid1_path(self, tmp_path, binary_history, star_history, profile):
         # a path to a psygrid file for testing

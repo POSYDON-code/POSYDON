@@ -5,15 +5,13 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-from inspect import isclass, isroutine
+# import the module which will be tested
+import posydon.utils.posydonerror as totest
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises
-
-# import the module which will be tested
-import posydon.utils.posydonerror as totest
-
+from inspect import isclass, isroutine
 
 @fixture
 def artificial_object():
@@ -49,7 +47,7 @@ class TestElements:
         assert issubclass(totest.POSYDONError, Exception)
         with raises(totest.POSYDONError, match="Test"):
             raise totest.POSYDONError("Test")
-
+    
     def test_instance_ClassificationError(self):
         assert isclass(totest.ClassificationError)
         assert issubclass(totest.ClassificationError, totest.POSYDONError)
