@@ -47,6 +47,7 @@ jobs:
                          --cov=posydon.popsyn.norm_pop \
                          --cov=posydon.popsyn.distributions \
                          --cov=posydon.popsyn.star_formation_history \
+                         --cov=posydon.CLI \
                          --cov-branch \
                          --cov-report term-missing \
                          --cov-fail-under=100
