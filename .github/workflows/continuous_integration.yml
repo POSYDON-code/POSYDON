@@ -46,9 +46,9 @@ jobs:
                          posydon/unit_tests/popsyn/test_rate_calculation.py \
                          posydon/unit_tests/popsyn/test_io.py \
                          posydon/unit_tests/popsyn/test_synthetic_population.py \
-                         posyon/unit_tests/popsyn/IMFs.py \
-                         posyon/unit_tests/popsyn/norm_pop.py \
-                         posyon/unit_tests/popsyn/distributions.py \
+                         posyon/unit_tests/popsyn/test_IMFs.py \
+                         posyon/unit_tests/popsyn/test_norm_pop.py \
+                         posyon/unit_tests/popsyn/test_distributions.py \
                              --cov=posydon.popsyn.star_formation_history \
                              --cov=posydon.popsyn.independent_sample \
                              --cov=posydon.popsyn.defaults \
