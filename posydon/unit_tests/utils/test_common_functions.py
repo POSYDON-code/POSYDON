@@ -7,20 +7,29 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.common_functions as totest
+
 # aliases
 np = totest.np
 os = totest.os
 
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isroutine, isclass
+from pytest import approx, fixture, raises, warns
+
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.singlestar import SingleStar
-from posydon.utils.posydonwarning import (EvolutionWarning,\
-    InappropriateValueWarning, ApproximationWarning, InterpolationWarning,\
-    ReplaceValueWarning, ClassificationWarning)
 from posydon.utils.interpolators import interp1d
+from posydon.utils.posydonwarning import (
+    ApproximationWarning,
+    ClassificationWarning,
+    EvolutionWarning,
+    InappropriateValueWarning,
+    InterpolationWarning,
+    ReplaceValueWarning,
+)
+
 
 @fixture
 def binary():
@@ -110,7 +119,9 @@ class TestElements:
                     'roche_lobe_radius', 'check_for_RLO', 'rotate',\
                     'rzams', 'separation_evol_wind_loss',\
                     'set_binary_to_failed', 'spin_stable_mass_transfer',\
-                    'stefan_boltzmann_law'}
+                    'stefan_boltzmann_law', 'STAR_STATES_H_RICH',\
+                    'STAR_STATES_HE_RICH', 'zero_negative_values'}
+
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -339,7 +350,7 @@ class TestValues:
 
     def test_value_BURNING_STATES(self):
         for v in ["Core_H_burning", "Core_He_burning", "Shell_H_burning",\
-                  "Central_He_depleted", "Central_C_depletion"]:
+                  "Core_He_depleted", "Core_C_depleted"]:
             # check required values
             assert v in totest.BURNING_STATES, "missing entry"
 
@@ -1098,10 +1109,6 @@ class TestFunctions:
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'binary'"):
             totest.get_binary_state_and_event_and_mt_case()
-        # bad input
-        with raises(TypeError, match="argument of type 'NoneType' is not "\
-                                     +"iterable"):
-            totest.get_binary_state_and_event_and_mt_case(binary)
         # examples: no binary
         assert totest.get_binary_state_and_event_and_mt_case(None) ==\
                [None, None, 'None']
@@ -1201,10 +1208,6 @@ class TestFunctions:
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'binary'"):
             totest.get_binary_state_and_event_and_mt_case_array()
-        # bad input
-        with raises(TypeError, match="argument of type 'NoneType' is not "\
-                                     +"iterable"):
-            totest.get_binary_state_and_event_and_mt_case_array(binary)
         with raises(IndexError, match="list index out of range"):
             totest.get_binary_state_and_event_and_mt_case_array(binary, N=10)
         # examples: no binary
@@ -1397,10 +1400,10 @@ class TestFunctions:
                                     rich = "stripped_He"
                                 if ((cH1<=TCA) and (cHe4<=TCA) and\
                                     (cC12<=TCA)):
-                                    burn = "Central_C_depletion"
+                                    burn = "Core_C_depleted"
                                 elif ((cH1<=TCA) and (cHe4<=TCA) and\
                                       (cC12>TCA)):
-                                    burn = "Central_He_depleted"
+                                    burn = "Core_He_depleted"
                                 elif ((cH1>TCA) and (lgLH>LBT)):
                                     burn = "Core_H_burning"
                                 elif ((cH1>TCA) and (lgLH<=LBT)):
@@ -1451,12 +1454,12 @@ class TestFunctions:
                  ("H-rich_Core_H_burning", totest.MT_CASE_A),\
                  ("H-rich_Core_He_burning", totest.MT_CASE_B),\
                  ("H-rich_Shell_H_burning", totest.MT_CASE_B),\
-                 ("H-rich_Central_He_depleted", totest.MT_CASE_C),\
-                 ("H-rich_Central_C_depletion", totest.MT_CASE_C),\
+                 ("H-rich_Core_He_depleted", totest.MT_CASE_C),\
+                 ("H-rich_Core_C_depleted", totest.MT_CASE_C),\
                  ("H-rich_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("stripped_He_Core_He_burning", totest.MT_CASE_BA),\
-                 ("stripped_He_Central_He_depleted", totest.MT_CASE_BB),\
-                 ("stripped_He_Central_C_depletion", totest.MT_CASE_BB),\
+                 ("stripped_He_Core_He_depleted", totest.MT_CASE_BB),\
+                 ("stripped_He_Core_C_depleted", totest.MT_CASE_BB),\
                  ("stripped_He_undetermined", totest.MT_CASE_UNDETERMINED),\
                  ("test_undetermined", totest.MT_CASE_UNDETERMINED)]
         for (ds, c) in tests:
@@ -1644,17 +1647,17 @@ class TestFunctions:
         star.co_core_mass_at_He_depletion = 0.5
         star.avg_c_in_c_core_at_He_depletion = 0.5
         for s in ["test", "H-rich_Core_H_burning", "H-rich_Core_He_burning",\
-                  "H-rich_Shell_H_burning", "H-rich_Central_C_depletion",\
+                  "H-rich_Shell_H_burning", "H-rich_Core_C_depleted",\
                   "H-rich_undetermined", "stripped_He_Core_He_burning",\
-                  "stripped_He_Central_C_depletion",\
+                  "stripped_He_Core_C_depleted",\
                   "stripped_He_undetermined"]:
             star.state_history = [s]
             totest.calculate_Patton20_values_at_He_depl(star)
             assert star.co_core_mass_at_He_depletion is None
             assert star.avg_c_in_c_core_at_He_depletion is None
         # examples: loop through star types with He depletion
-        tests = [("H-rich_Central_He_depleted", 0.1),\
-                 ("stripped_He_Central_He_depleted", 0.2)]
+        tests = [("H-rich_Core_He_depleted", 0.1),\
+                 ("stripped_He_Core_He_depleted", 0.2)]
         for (s, v) in tests:
             star.state_history = ["test", s, s]
             star.co_core_mass_history = [0.0, v, 1.0]
@@ -1692,17 +1695,14 @@ class TestFunctions:
         with raises(AttributeError, match="'NoneType' object has no "\
                                           +"attribute 'mass'"):
             totest.CEE_parameters_from_core_abundance_thresholds(None)
-        with raises(TypeError) as error_info:
-            totest.CEE_parameters_from_core_abundance_thresholds(star)
-        assert error_info.value.args[0] == "unsupported operand type(s) for "\
-                                           + "** or pow(): 'float' and "\
-                                           + "'NoneType'"
+
+        totest.CEE_parameters_from_core_abundance_thresholds(star)
+        assert np.isnan(star.m_core_CE_1cent)
         star.log_R = 0.0
         star.profile = np.array([(1.0), (1.0), (1.0)],\
                                 dtype=([('mass', 'f8')]))
-        with raises(TypeError, match="argument of type 'NoneType' is not "\
-                                     +"iterable"):
-            totest.CEE_parameters_from_core_abundance_thresholds(star)
+
+        assert np.isnan(star.m_core_CE_1cent)
         # examples: missing state with profile and verbose
         star.state = "test_state"
         totest.CEE_parameters_from_core_abundance_thresholds(star,\
@@ -1742,7 +1742,7 @@ class TestFunctions:
                     assert np.isnan(getattr(star, attr))
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("m_core" in attr)):
-                    assert getattr(star, attr) == star.mass
+                    assert np.isnan(getattr(star, attr)) and np.isnan(star.mass)
                 elif (("stripped_He" in s) and ("pure_He" not in attr) and\
                       ("r_core" in attr)):
                     assert getattr(star, attr) == 10 ** star.log_R
@@ -2421,4 +2421,3 @@ class TestFunctions:
                            np.array([[0.54030231,-0.59500984, 0.59500984],\
                                      [0.59500984, 0.77015115, 0.22984885],\
                                      [-0.59500984, 0.22984885, 0.77015115]]))
-

@@ -5,12 +5,13 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-# import the module which will be tested
-import posydon.utils.constants as totest
-
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import approx
+
+# import the module which will be tested
+import posydon.utils.constants as totest
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -30,7 +31,7 @@ class TestElements:
                     'mn', 'mp', 'msol', 'pc', 'pi', 'planck_h', 'qe',\
                     'r_earth', 'r_jupiter', 'rad2a', 'rbohr', 'rhonuc',\
                     'rsol', 'secyer', 'semimajor_axis_jupiter', 'ssol',\
-                    'standard_cgrav', 'weinfre', 'weinlam'}
+                    'standard_cgrav', 'weinfre', 'weinlam', 'zams_table'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\

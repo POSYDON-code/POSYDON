@@ -7,13 +7,16 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.interpolators as totest
+
 # aliases
 np = totest.np
 
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isroutine, isclass
+from pytest import approx, fixture, raises, warns
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -22,7 +25,7 @@ class TestElements:
         elements = {'PchipInterpolator', 'PchipInterpolator2', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
-                    'interp1d', 'np'}
+                    'interp1d', 'np', 'copy'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -93,11 +96,11 @@ class Testinterp1d:
         test_interp1d = totest.interp1d(example_data[0], example_data[1])
         assert np.array_equal(test_interp1d.x, [0.0, 0.5, 1.0])
         assert np.array_equal(test_interp1d.y, [0.0, 1.0, 0.5])
-        
+
         # examples: reversible data
         test_interp1d = totest.interp1d(data[0][::-1], data[1][::-1])
         assert np.array_equal(test_interp1d.x, np.array(data[0]))
-        assert np.array_equal(test_interp1d.y, np.array(data[1]))        
+        assert np.array_equal(test_interp1d.y, np.array(data[1]))
         # examples
         kinds = ['linear']
         for k in kinds:
@@ -167,9 +170,15 @@ class TestPchipInterpolator2:
         return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
                                          positive=False)
 
+    @fixture
+    def PchipInterpolator2_Deriv(self):
+        # initialize an instance of the class with defaults
+        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
+                                         derivative=True)
+
     # test the PchipInterpolator2 class
     def test_init(self, PchipInterpolator2, PchipInterpolator2_True,\
-                  PchipInterpolator2_False):
+                  PchipInterpolator2_False, PchipInterpolator2_Deriv):
         assert isroutine(PchipInterpolator2.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
@@ -179,6 +188,10 @@ class TestPchipInterpolator2:
         assert PchipInterpolator2.positive == False
         assert PchipInterpolator2_True.positive == True
         assert PchipInterpolator2_False.positive == False
+        assert PchipInterpolator2.offset == 0.0
+        assert PchipInterpolator2.derivative == False
+        assert PchipInterpolator2_Deriv.derivative == True
+        assert type(PchipInterpolator2_Deriv.interpolator) == type(PchipInterpolator2.interpolator.derivative())
 
     def test_call(self, PchipInterpolator2, PchipInterpolator2_True,\
                   PchipInterpolator2_False):
@@ -192,4 +205,3 @@ class TestPchipInterpolator2:
                            np.array([0.0, 0.3]))
         assert np.allclose(PchipInterpolator2_False([0.1, 0.8]),\
                            np.array([-0.4, 0.3]))
-

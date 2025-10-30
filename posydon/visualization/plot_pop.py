@@ -4,16 +4,16 @@ __authors__ = [
     ]
 
 import os
-import numpy as np
+
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
-from posydon.visualization.plot_defaults import DEFAULT_LABELS
-from posydon.utils.constants import Zsun
 from posydon.grids.psygrid import PSyGrid
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.constants import Zsun
-import matplotlib.pyplot as plt
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 
 plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle"))
@@ -24,17 +24,17 @@ COLORS = [cm.colors[i] for i in range(len(cm.colors)) if i%2==0] + [cm.colors[i]
 
 def plot_perley16_rate_density(ax=None):
     '''Plot the GRB rate density from Perley et al. (2016)
-    
+
     plot the long gamma-ray burst rate density from Perley et al. (2016)
     if ax is None, it plotted on the latest axis, otherwise it is added to the given axis
-    
+
     Parameters
     ----------
     ax : matplotlib.axes.Axes (optional)
         Axes object to plot the data on
     '''
     # Perley et al. (2016)
-    
+
     z_P16 = np.array([0.3,0.75,1.35,1.75,2.3,3.1,4,5.2,7.])
     rate_P16 = np.array([2.07e-10,1.46e-9,1.816e-9,3.93e-9,8.27e-9,6.90e-9,4.20e-9,3.74e-9,1.11e-9])*1e9
     rate_P16_lower = rate_P16-np.array([1.12e-10,1.08e-9,1.30e-9,3.02e-9,6.78e-9,5.29e-9,2.82e-9,2.397e-9,5.96e-10])*1e9
@@ -73,7 +73,7 @@ def plot_rate_density(intrinsic_rates, channels=False, **kwargs):
         plt.show()
 
 def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channels=False):
-    title = r'Merger efficiency'
+    title = r'Event efficiency'
     plt.figure()
     plt.title(title)
     plt.plot(met/Zsun, merger_efficiency['total'], label='total', color='black')
@@ -169,10 +169,10 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
                                 show_fig=True, save_fig=True, close_fig=True,
                                 plot_extension='png', verbose=False):
     '''Plot the population synthesis data over a grid slice
-    
+
     Outputs one or multiple plots of the population synthesis data over a grid slice.
     Either stores the plots in a directory or shows them.
-    
+
     Parameters
     ----------
     pop : Population
@@ -223,7 +223,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
     # get population data from the popsyn for the given metallicity
     data = get_population_data(pop=pop, metallicity=met_Zsun,
                                grid_type=grid_type, channel=channel, prop=prop)
-    # Setup the grid 
+    # Setup the grid
     met = convert_metallicity_to_string(met_Zsun)
     grid_path = os.path.join(PATH_TO_POSYDON_DATA, f'{grid_type}/{met}_Zsun.h5')
     grid = PSyGrid(verbose=False)
@@ -237,9 +237,9 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
             if verbose:
                 print(f'Skipping {round(bin_center,2)}')
             continue
-        
+
         slice_3D_var_range = (bin_edges[i], bin_edges[i+1])
-        
+
         # add additional information about the plot_slice to the title
         if slice_3D_var_str == 'mass_ratio':
             PLOT_PROPERTIES['title'] = f'q = {bin_center:.2f}'
@@ -248,23 +248,23 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
         # Check for channel
         if channel is not None:
             PLOT_PROPERTIES['title'] += f'\n {channel}'
-        
+
         # change the file name for the plot
         PLOT_PROPERTIES['fname'] = tmp_fname % bin_center
-        
+
         # change size of the figure for properties
         if prop is not None:
             PLOT_PROPERTIES['figsize'] = (4,5.5)
-        
+
         # plot the grid slice
         plot_grid_slice(grid,
                         slice_3D_var_str,
                         slice_3D_var_range,
-                        termination_flag=termination_flag, 
+                        termination_flag=termination_flag,
                         PLOT_PROPERTIES=PLOT_PROPERTIES)
-        
+
         # plot data on top of the grid slice
-        plot_population_data(data, slice_3D_var_str, slice_3D_var_range, 
+        plot_population_data(data, slice_3D_var_str, slice_3D_var_range,
                              prop, prop_range, log_prop, alpha, s)
 
         if save_fig:
@@ -276,7 +276,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
 
 def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
     '''get the population data of a given metallicity for plotting
-    
+
     Parameters
     ----------
     pop : Population
@@ -288,34 +288,34 @@ def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
         Options are 'HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'CO-HeMS_RLO'.
     channel : str
         Formation channel to be plotted
-        
+
     Returns
     -------
     data : DataFrame
         Population data of the given metallicity and channel and grid type
     '''
-    
+
     # 1. mask channel
     if channel is not None:
         channel_mask = pop.population['channel'] == channel
     else:
         channel_mask = True
-    
+
     # 2. mask metallicity
     metallicity_mask = pop.population['metallicity'] == metallicity
-    
+
     # 3. Get the history data for the selected population based on the grid/step names
     selected_indices = pop.population.index[channel_mask & metallicity_mask].tolist()
-    
+
     where_string = "(index in "+str(selected_indices)+")"
-    
+
     data = pop.history.select(where=where_string,
                               columns=['S1_mass',
                                        'S2_mass',
                                        'orbital_period',
                                        'event',
                                        'step_names']).copy()
-    
+
     # select the right data based on the grid type
     if grid_type == 'HMS-HMS':
         data = data[data['event'] == 'ZAMS']
@@ -325,7 +325,7 @@ def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
         tmp_S1 = data['S2_mass'].copy()
         data['S2_mass'] = data['S1_mass'].copy()
         data['S1_mass'] = tmp_S1
-        
+
     elif grid_type == 'CO-HeMS':
         data = data[data['event'] == 'step_CE']
         # swap the masses since data has CO as the primary
@@ -339,20 +339,20 @@ def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
 
     # only relevant for Compact Object (CO) grids
     data.loc[data['q']>1, 'q'] = 1./data['q'][data['q']>1]
-    
+
     # add prop of DCO merger to the data
     if prop is not None:
         if prop not in pop.population.columns:
             raise ValueError(f'Property {prop} not available in pop.population.')
         data[prop] = pop.population[prop][channel_mask & metallicity_mask].values
-    
+
     # remove unnecessary columns
     data.drop(columns=['event', 'step_names'], inplace=True)
     return data
 
 def setup_grid_slice_plotting(grid, grid_type, plot_extension):
     '''Setup the values for plotting the grid slice
-    
+
     Parameters
     ----------
     grid : PSyGrid
@@ -362,7 +362,7 @@ def setup_grid_slice_plotting(grid, grid_type, plot_extension):
         Options are 'HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'CO-HeMS_RLO'.
     plot_extension : str
         File extension for saving the plot
-    
+
     Returns
     -------
     bin_centers : list
@@ -376,30 +376,30 @@ def setup_grid_slice_plotting(grid, grid_type, plot_extension):
     tmp_fname : str
         Template file name for saving the plot
     '''
-    
+
     if grid_type == "HMS-HMS":
         grid_q_unique = np.unique(np.around(grid.initial_values['star_2_mass']/grid.initial_values['star_1_mass'],2))
         delta_q = (grid_q_unique[1:]-grid_q_unique[:-1])*0.5
         q_edges = (grid_q_unique[:-1]+delta_q).tolist()
-        
+
         # set output variables
         bin_edges = [0.]+q_edges+[1.]
         bin_centers = grid_q_unique.tolist()
         tmp_fname = 'grid_q_%1.2f.' + plot_extension
         slice_3D_var_str='mass_ratio'
-        
+
     elif 'CO' in grid_type:
         m_COs = np.unique(np.around(grid.initial_values['star_2_mass'],1))
         m_COs_edges = 10**((np.log10(np.array(m_COs)[1:])+np.log10(np.array(m_COs)[:-1]))*0.5)
         m2 = [0.]+m_COs_edges.tolist()+[2*m_COs_edges[-1]]
-        
+
         bin_edges = m2
         bin_centers = m_COs
         tmp_fname = 'grid_m_%1.2f.' + plot_extension
         slice_3D_var_str='star_2_mass'
     else:
         print('grid type not recognized')
-        
+
     PLOT_PROPERTIES = {
         'show_fig' : False,
         'close_fig' : False,
@@ -419,7 +419,7 @@ def plot_population_data(data,
                          alpha=0.3,
                          s=5):
     '''Plot the population data based on the grid slice parameters
-    
+
     Parameters
     ----------
     data : DataFrame
@@ -447,25 +447,25 @@ def plot_population_data(data,
         var = 'S2_mass'
     else:
         raise ValueError(f"Unknown slice_3D_var_str: {slice_3D_var_str}")
-    
+
     # make it exclusive for the upper limit
     mask = (data[var] >= slice_3D_var_range[0]) & (data[var] < slice_3D_var_range[1])
-    
+
     if prop is not None:
         if prop not in data.columns:
             raise ValueError(f'Property {prop} not available in popsynth data.')
         if prop_range is None:
             prop_range = [data[prop].min(), data[prop].max()]
-        
+
         vmin = prop_range[0]
         vmax = prop_range[1]
         prop_values = data[prop][mask].values
-        
+
         if log_prop:
             prop_values = np.log10(prop_values)
             vmin = np.log10(vmin)
             vmax = np.log10(vmax)
-            
+
         plt.scatter(np.log10(data['S1_mass'][mask]),
                     np.log10(data['orbital_period'][mask]),
                     c=prop_values,
@@ -494,7 +494,7 @@ def plot_population_data(data,
                     color='black',
                     alpha=alpha,
                     zorder=0.5)
-    
+
 def plot_grid_slice(grid, slice_3D_var_str, slice_3D_var_range, termination_flag='combined_TF12', PLOT_PROPERTIES=None):
     grid.plot2D('star_1_mass', 'period_days', None,
                 termination_flag=termination_flag,
