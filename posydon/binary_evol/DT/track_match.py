@@ -1507,12 +1507,16 @@ class TrackMatcher:
         derivatives = [False]*len(y_keys)
 
         # Add derivatives where needed
-        y_data.append(kvalue["inertia"] / (const.msol * const.rsol**2))
+        if star.co:
+            # for compact objects, set Idot to zero
+            y_data.append(np.zeros_like(kvalue["inertia"]))
+        else:
+            y_data.append(kvalue["inertia"])
+
         y_keys.append("Idot")
         positives.append(False)
         derivatives.append(True)
         y_data = np.array(y_data)
-
 
         # validate age data
         i_bad = np.diff(age) <= 0
