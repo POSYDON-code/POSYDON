@@ -1515,13 +1515,17 @@ class TrackMatcher:
         # validate age data
         i_bad = np.diff(age) <= 0
         if np.any(i_bad):
-            # removing bad data points
-            age = age[~np.concatenate(([False], i_bad))]
-            y_data = y_data[:, ~np.concatenate(([False], i_bad))]
             if self.verbose:
                 print(f"Warning: found non-monotonic age data "
                       f"while matching star (m0={match_m0}). "
                       f"Removed {np.sum(i_bad)} bad data points.")
+            bad = [None]
+            while len(bad) != 0:
+                bad = np.where(i_bad)[0]
+                age = np.delete(age, bad)
+                y_data = np.delete(y_data, bad, axis=1)
+                i_bad = np.diff(age) <= 0
+
 
         interp1d = StellarInterpolator(age,
                             y_data,
