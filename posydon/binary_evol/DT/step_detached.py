@@ -1261,24 +1261,41 @@ class detached_evolution:
         #  Tidal forces affecting orbit and stellar spins
         if self.do_tides:
             self.tides()
+            if self.verbose:
+                print(f"After tides: da={self.da:.6e}, de={self.de:.6e}, dO_sec={self.dOmega_sec:.6e}, dO_pri={self.dOmega_pri:.6e}")
 
         #  Gravitional radiation affecting the orbit
         if self.do_gravitational_radiation:
             self.gravitational_radiation()
+            if self.verbose:
+                print(f"After GR: da={self.da:.6e}, de={self.de:.6e}")
+
 
         #  Magnetic braking affecting stellar spins
         if self.do_magnetic_braking:
             self.magnetic_braking()
+            if self.verbose:
+                print(f"After MB: dO_sec={self.dOmega_sec:.6e}, dO_pri={self.dOmega_pri:.6e}")
 
         #  Mass Loss affecting orbital separation
         if self.do_wind_loss:
             self.sep_from_winds()
+            if self.verbose:
+                print(f"After winds: da={self.da:.6e}")
 
         # Mass loss affecting stellar spins
         if self.do_stellar_evolution_and_spin_from_winds:
             self.spin_from_winds()
+            if self.verbose:
+                print(f"After spin winds: dO_sec={self.dOmega_sec:.6e}, dO_pri={self.dOmega_pri:.6e}")
 
         result = [self.da, self.de, self.dOmega_sec, self.dOmega_pri]
+
+        if self.verbose:
+            print(f"Final derivatives: {result}")
+            # Check for non-finite values
+            if not all(np.isfinite(result)):
+                print(f"ERROR: Non-finite derivative detected!")
 
         return result
 
