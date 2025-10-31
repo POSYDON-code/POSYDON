@@ -19,7 +19,6 @@ import types
 import numpy as np
 import pandas as pd
 import scipy
-from scipy.interpolate import PchipInterpolator
 from scipy.optimize import minimize, root
 
 import posydon.utils.constants as const
@@ -44,7 +43,7 @@ from posydon.utils.common_functions import (
     convert_metallicity_to_string,
     set_binary_to_failed,
 )
-from posydon.utils.interpolators import PchipInterpolator2, StellarInterpolator
+from posydon.utils.interpolators import StellarInterpolator
 from posydon.utils.posydonerror import MatchingError, NumericalError, POSYDONError
 from posydon.utils.posydonwarning import Pwarn
 
@@ -124,7 +123,7 @@ class TrackMatcher:
 
     KEYS_POSITIVE : list[str]
         Keys in this list are forced to be positive or else 0 by the
-        posydon.utils.PchipInterpolator2 class following interpolation
+        posydon.utils.StellarInterpolator class following interpolation
         of the associated quantity.
 
     path : str
@@ -1480,10 +1479,12 @@ class TrackMatcher:
         assert max_time > 0.0, "max_time is non-positive"
         # getting track of mass match_m0's age data
         age = np.array(get_track("age", match_m0))
+
         # max timelength of the track
         t_max = age.max()
-        #interp1d = dict()
 
+        # Getting the other track values
+        # and setting up the interpolator
         kvalue = dict()
         for key in self.KEYS[1:]:
             kvalue[key] = get_track(key, match_m0)
@@ -1510,68 +1511,29 @@ class TrackMatcher:
         positives.append(False)
         derivatives.append(True)
         y_data = np.array(y_data)
+
+        # validate age data
+        i_bad = np.diff(age) <= 0
+        if np.any(i_bad):
+            # removing bad data points
+            age = age[~np.concatenate(([False], i_bad))]
+            y_data = y_data[:, ~np.concatenate(([False], i_bad))]
+            if self.verbose:
+                print(f"Warning: found non-monotonic age data "
+                      f"while matching star (m0={match_m0}). "
+                      f"Removed {np.sum(i_bad)} bad data points.")
+
         interp1d = StellarInterpolator(age,
                             y_data,
                             y_keys,
                             positives=positives,
                             derivatives=derivatives)
 
+        # store additional info in StellarInterpolator object
         interp1d.t_max = t_max
         interp1d.max_time = max_time
         interp1d.t0 = match_t0
         interp1d.m0 = match_m0
-
-            #y_data_positive = [kvalue[key] for key in self.KEYS if key in self.KEYS_POSITIVE]
-            #y_data_other = [kvalue[key] for key in self.KEYS if key not in self.KEYS_POSITIVE]
-
-            #y_extra = [kvalue["inertia"] / (const.msol * const.rsol**2),
-            ##           kvalue['conv_env_turnover_time_l_b'] / const.secyer,
-             #          10 ** kvalue["log_L"],
-             #          10 ** kvalue["log_R"],
-             #          ]
-
-            #y_derivates = [kvalue["inertia"] / (const.msol * const.rsol**2),
-            #              ]
-
-            # for key in self.KEYS[1:]:
-            #     if key in self.KEYS_POSITIVE:
-            #         positive = True
-            #         interp1d[key] = PchipInterpolator2(age, kvalue[key],
-            #                                            positive=positive)
-            #     else:
-            #         interp1d[key] = PchipInterpolator2(age, kvalue[key])
-        # except ValueError:
-        #     i_bad = [None]
-        #     while len(i_bad) != 0:
-        #         i_bad = np.where(np.diff(age) <= 0)[0]
-        #         age = np.delete(age, i_bad)
-        #         for key in self.KEYS[1:]:
-        #             kvalue[key] = np.delete(kvalue[key], i_bad)
-
-        #     for key in self.KEYS[1:]:
-        #         if key in self.KEYS_POSITIVE:
-        #             positive = True
-        #             interp1d[key] = PchipInterpolator2(age, kvalue[key],
-        #                                                positive=positive)
-        #         else:
-        #             interp1d[key] = PchipInterpolator2(age, kvalue[key])
-
-        #interp1d["inertia"] = PchipInterpolator2(age,
-        #                                        kvalue["inertia"] / (const.msol * const.rsol**2))
-
-        # interp1d["Idot"] = PchipInterpolator2(age,
-        #                                       kvalue["inertia"] / (const.msol * const.rsol**2),
-        #                                       derivative=True)
-
-        # interp1d["conv_env_turnover_time_l_b"] = PchipInterpolator2(
-        #     age, kvalue['conv_env_turnover_time_l_b'] / const.secyer)
-
-        #interp1d["L"] = PchipInterpolator2(age, 10 ** kvalue["log_L"])
-        #interp1d["R"] = PchipInterpolator2(age, 10 ** kvalue["log_R"])
-        # interp1d["t_max"] = t_max
-        # interp1d["max_time"] = max_time
-        # interp1d["t0"] = match_t0
-        # interp1d["m0"] = match_m0
 
         # update star with interp1d object built from matched values
         star.interp1d = interp1d

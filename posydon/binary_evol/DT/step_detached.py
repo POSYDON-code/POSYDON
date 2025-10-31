@@ -19,7 +19,6 @@ import time
 import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
-from scipy.interpolate import PchipInterpolator
 
 import posydon.utils.constants as const
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
@@ -60,7 +59,6 @@ from posydon.utils.common_functions import (
     set_binary_to_failed,
     zero_negative_values,
 )
-from posydon.utils.interpolators import PchipInterpolator2
 from posydon.utils.posydonerror import (
     ClassificationError,
     FlowError,
@@ -376,16 +374,9 @@ class detached_step:
         # (for these interp1d, x = time)
         secondary.t_offset = binary.time - secondary.interp1d.t0
         secondary.interp1d.offset = secondary.t_offset
-        #for item in secondary.interp1d.values():
-        #    if type(item) == PchipInterpolator2:
-        #        item.offset = secondary.t_offset
 
         primary.t_offset = binary.time - primary.interp1d.t0
         primary.interp1d.offset = primary.t_offset
-
-        #for item in primary.interp1d.values():
-        #    if type(item) == PchipInterpolator2:
-        #        item.offset = primary.t_offset
 
         self.max_time = secondary.interp1d.max_time
 
@@ -1177,10 +1168,6 @@ class detached_evolution:
         for key in self.phys_keys:
             self.primary.latest[key] = primary_data[key]
             self.secondary.latest[key] = secondary_data[key]
-
-        #for key in self.phys_keys:
-        #        self.primary.latest[key] = self.primary.interp1d[key](t)
-        #        self.secondary.latest[key] = self.secondary.interp1d[key](t)
 
         # update omega, a, e, based on current diffeq solution
         y[0] = np.max([y[0], 0])  # We limit separation to non-negative values
