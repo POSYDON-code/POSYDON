@@ -121,6 +121,121 @@ class interp1d:
             raise NotImplementedError(f"kind = {self.kind} is not supported")
 
 
+class StellarInterpolator:
+    """Interpolation class for stellar evolution tracks."""
+
+    def __init__(self, t, y_data, y_keys, positives=None, derivatives=None):
+        """Initialize the interpolator.
+
+        Parameters
+        ----------
+        t : 1D-ndarray
+            Time coordinates of the data to interpolate.
+        y_data : list of 1D-ndarray
+            List of Y-coordinates of the data to interpolate. Each entry
+            needs to have the same length as `t`.
+        y_leys : list of str
+            List of keys corresponding to each y_data entry.
+        positives : list of bool (default: None)
+            List indicating for each y_data entry whether to request positive
+            y-values. If `None`, all entries are assumed to be non-positive.
+        derivatives : list of bool (default: None)
+            List indicating for each y_data entry whether to return the
+            derivative of the interpolator. If `None`, all entries are assumed
+            to return the interpolated y-values.
+            """
+
+        # get all positive flags
+        if positives is None:
+            positives = [False for _ in y_data]
+        if derivatives is None:
+            derivatives = [False for _ in y_data]
+
+        # Create interpolators for each combination
+        self._interpolators = {}
+        self._keys = {}
+        for is_positive in [True, False]:
+            for is_derivative in [True, False]:
+                # Filter data for this combination
+                mask = [(p == is_positive and d == is_derivative)
+                        for p, d in zip(positives, derivatives)]
+                filtered_data = [y for i, y in enumerate(y_data) if mask[i]]
+                filtered_keys = [y_keys[i] for i in range(len(y_keys)) if mask[i]]
+
+                if not filtered_data:
+                    continue
+
+                # Create interpolator only if there is data for this combination
+                key = (is_positive, is_derivative)
+                if filtered_data:
+                    base_interp = PchipInterpolator(t, np.array(filtered_data).T)
+                    self._keys[key] = filtered_keys
+                    if is_derivative:
+                        self._interpolators[key] = base_interp.derivative()
+                    else:
+                        self._interpolators[key] = base_interp
+
+        self.t_max = t.max()
+        self.max_time = np.inf
+        self.t0 = 0.0
+        self.m0 = 0.0
+
+        # potential offset (for example, we've matched a MESA sim to another
+        # but need to offset the matched track's age to fast forward to current
+        # age in the evolution)
+        self.offset = 0.0
+        self._positives = positives
+        self._derivatives = derivatives
+
+
+    @property
+    def keys(self):
+        """List of all keys in the interpolator."""
+        return [key for key_list in self._keys.values() for key in key_list]
+
+
+    def __call__(self, t):
+        """Use the interpolator.
+
+        Parameters
+        ----------
+        t : float or ndarray
+            Time coordinate(s) to get interpolated y-value(s) for.
+
+        Returns
+        -------
+        list of ndarray-like
+            List of interpolated y-values for each y_data entry.
+
+        """
+        results = {}
+
+        # offset t
+
+        t = t - self.offset
+
+        for (is_positive, is_derivative), interp in self._interpolators.items():
+            # Evaluate interpolator
+            values = interp(t)
+
+            # Apply positive constraint if needed
+            if is_positive:
+                values = np.maximum(values, 0.0)
+
+            # Map values to keys
+            keys = self._keys[(is_positive, is_derivative)]
+
+            if np.ndim(values) == 1:
+                for i, key in enumerate(keys):
+                    results[key] = values[i]
+            else:
+                for i, key in enumerate(keys):
+                    results[key] = values[:, i]
+
+        return results
+
+
+
 class PchipInterpolator2:
     """Interpolation class."""
     def __init__(self, *args, positive=False, derivative=False, **kwargs):
@@ -134,7 +249,6 @@ class PchipInterpolator2:
             Arguments passed to original PchipInterpolator init.
 
         """
-
 
         # this will set whether or not the __call__ should return the y(x) or y'(x)
         self.derivative = derivative
@@ -167,12 +281,19 @@ class PchipInterpolator2:
         """
 
         # offset x (the offset is 0 unless otherwise set)
-        args = np.array(list(args))
-        args_copy = copy.deepcopy(args)
-        args_copy[0] -= self.offset
-        args = tuple(args_copy)
 
-        result = self.interpolator(*args, **kwargs)
+
+        # offset x (the offset is 0 unless otherwise set)
+        if self.offset != 0.0:
+            x = args[0] - self.offset
+            result = self.interpolator(x, *args[1:], **kwargs)
+        else:
+            result = self.interpolator(*args, **kwargs)
+        #args = np.array(list(args))
+        #args_copy = copy.deepcopy(args)
+        #args_copy[0] -= self.offset
+        #args = tuple(args_copy)
+        #result = self.interpolator(*args, **kwargs)
 
         if self.positive:
             result = np.maximum(result, 0.0)
