@@ -23,7 +23,11 @@ import numpy as np
 import pandas as pd
 
 from posydon.grids.SN_MODELS import SN_MODELS
-from posydon.popsyn.io import SCALAR_NAMES_DTYPES, STARPROPERTIES_DTYPES
+from posydon.popsyn.io import (
+    EXTRA_STAR_COLUMNS_DTYPES,
+    SCALAR_NAMES_DTYPES,
+    STARPROPERTIES_DTYPES,
+)
 from posydon.utils.common_functions import (
     CO_radius,
     check_state_of_star,
