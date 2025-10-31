@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 
 from posydon.grids.SN_MODELS import SN_MODELS
-from posydon.popsyn.io import STARPROPERTIES_DTYPES
+from posydon.popsyn.io import SCALAR_NAMES_DTYPES, STARPROPERTIES_DTYPES
 from posydon.utils.common_functions import (
     CO_radius,
     check_state_of_star,
@@ -151,6 +151,14 @@ class SingleStar:
         setattr(self, 'metallicity', kwargs.pop('metallicity', 1.0))
         state = kwargs.get('state', 'H-rich_Core_H_burning')
         CO_states = ['massless_remnant', 'WD', 'NS', 'BH']
+
+        if "natal_kick_array" in kwargs:
+            tmp = kwargs['natal_kick_array']
+            kwargs['natal_kick_velocity'] = tmp[0]
+            kwargs['natal_kick_azimuthal_angle'] = tmp[1]
+            kwargs['natal_kick_polar_angle'] = tmp[2]
+            kwargs['natal_kick_mean_anomaly'] = tmp[3]
+            del kwargs['natal_kick_array']
 
         if state in CO_states:
             Z_div_Zsun = self.metallicity
@@ -306,6 +314,9 @@ class SingleStar:
 
         for key, val in kwargs.items():
             setattr(self, key, val)
+            # do not create history for scalar values
+            if key in SCALAR_NAMES_DTYPES.keys() or key in EXTRA_STAR_COLUMNS_DTYPES.keys():
+                continue
             setattr(self, key + '_history', [val])
 
         # store extra values in the star object without a history
