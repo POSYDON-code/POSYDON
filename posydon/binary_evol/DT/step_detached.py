@@ -694,8 +694,8 @@ class detached_step:
             sep_interp, mass_interp_sec,
             mass_interp_pri)
 
-        result_interp_secondary["porb"] = p_orb_interp
         result_interp_primary["porb"] = p_orb_interp
+        result_interp_secondary["porb"] = p_orb_interp
 
         for obj, prop in zip([secondary, primary, binary],
                                 [STARPROPERTIES, STARPROPERTIES, BINARYPROPERTIES]):
@@ -999,7 +999,6 @@ class detached_evolution:
 
         RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
         RL_diff = result_primary["R"] - 0.95*RL
-
         return RL_diff
 
     # detects secondary RLO via relative difference btwn. R and R_RL

@@ -1489,16 +1489,17 @@ class TrackMatcher:
         for key in self.KEYS[1:]:
             kvalue[key] = get_track(key, match_m0)
 
-        if star.co:
-            kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star.mass
-            kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
-            kvalue["R"] = np.zeros_like(kvalue["log_R"])
-
         # change data types
         kvalue["inertia"] = kvalue["inertia"] / (const.msol * const.rsol**2)
         kvalue['conv_env_turnover_time_l_b'] = kvalue['conv_env_turnover_time_l_b'] / const.secyer
         kvalue["L"] = 10 ** kvalue["log_L"]
         kvalue["R"] = 10 ** kvalue["log_R"]
+
+        # overwrite certain values for compact objects
+        if star.co:
+            kvalue["mass"] = np.zeros_like(kvalue["mass"]) + star.mass
+            kvalue["mdot"] = np.zeros_like(kvalue["mdot"])
+            kvalue["R"] = np.zeros_like(kvalue["log_R"])
 
         y_keys = [key for key in kvalue.keys() ]
         y_data = [kvalue[key] for key in y_keys]
@@ -1512,13 +1513,13 @@ class TrackMatcher:
         derivatives.append(True)
         y_data = np.array(y_data)
 
+
         # validate age data
         i_bad = np.diff(age) <= 0
         if np.any(i_bad):
             if self.verbose:
                 print(f"Warning: found non-monotonic age data "
-                      f"while matching star (m0={match_m0}). "
-                      f"Removed {np.sum(i_bad)} bad data points.")
+                      f"while matching star (m0={match_m0}). ")
             bad = [None]
             while len(bad) != 0:
                 bad = np.where(i_bad)[0]
