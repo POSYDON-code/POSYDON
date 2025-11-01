@@ -575,7 +575,6 @@ class detached_step:
             of the stars evolution through the detached step.
 
         """
-
         try:
             res = solve_ivp(self.evo,
                             events=[self.evo.ev_rlo1, self.evo.ev_rlo2,
@@ -585,7 +584,9 @@ class detached_step:
                             y0=[binary.separation, binary.eccentricity,
                                 secondary.omega0, primary.omega0],
                             dense_output=True)
-        except Exception:
+        except Exception as e:
+            if self.verbose:
+                print(f"RK45 failed with error {e}, trying with 'RK45' method.")
             res = solve_ivp(self.evo,
                             events=[self.evo.ev_rlo1, self.evo.ev_rlo2,
                                     self.evo.ev_max_time1, self.evo.ev_max_time2],
@@ -1251,7 +1252,6 @@ class detached_evolution:
 
         # update star/orbital props w/ current time during integration
         self.update_props(t, y)
-
         # initialize deltas for this timestep
         self.da = 0.0
         self.de = 0.0
@@ -1306,6 +1306,12 @@ class detached_evolution:
                                                                         self.primary,
                                                                         self.secondary,
                                                                         self.verbose)
+        # sanitize output
+        if not np.isfinite(dOmega_sec_winds):
+            dOmega_sec_winds = 0.0
+        if not np.isfinite(dOmega_pri_winds):
+            dOmega_pri_winds = 0.0
+
         # update spins
         self.dOmega_sec += dOmega_sec_winds
         self.dOmega_pri += dOmega_pri_winds
@@ -1315,6 +1321,10 @@ class detached_evolution:
         da_winds = default_sep_from_winds(self.a, self.e,
                                             self.primary, self.secondary,
                                             self.verbose)
+        # sanitize output
+        if not np.isfinite(da_winds):
+            da_winds = 0.0
+
         # update separation
         self.da += da_winds
 
@@ -1325,6 +1335,15 @@ class detached_evolution:
                                                                                 self.primary,
                                                                                 self.secondary,
                                                                                 self.verbose)
+        if not np.isfinite(da_tides):
+            da_tides = 0.0
+        if not np.isfinite(de_tides):
+            de_tides = 0.0
+        if not np.isfinite(dOmega_sec_tides):
+            dOmega_sec_tides = 0.0
+        if not np.isfinite(dOmega_pri_tides):
+            dOmega_pri_tides = 0.0
+
         # update orbital params and spin
         self.da += da_tides
         self.de += de_tides
@@ -1336,6 +1355,12 @@ class detached_evolution:
         da_gr, de_gr = default_gravrad(self.a, self.e,
                                         self.primary, self.secondary,
                                         self.verbose)
+
+        # sanitize output
+        if not np.isfinite(da_gr):
+            da_gr = 0.0
+        if not np.isfinite(de_gr):
+            de_gr = 0.0
 
         # update orbital params
         self.da += da_gr
@@ -1379,6 +1404,12 @@ class detached_evolution:
         #if self.verbose:
         #    print("magnetic_braking_mode = ", self.magnetic_braking_mode)
         #    print("dOmega_mb = ", dOmega_mb_sec, dOmega_mb_pri)
+
+        # Sanitise output
+        if not np.isfinite(dOmega_mb_sec):
+            dOmega_mb_sec = 0.0
+        if not np.isfinite(dOmega_mb_pri):
+            dOmega_mb_pri = 0.0
 
         # update spins
         self.dOmega_sec += dOmega_mb_sec
