@@ -213,18 +213,22 @@ def create_slurm_array(metallicity,
     if optional_section:
         optional_section += "\n"
 
-    text = textwrap.dedent(f'''\
+    text_pre = textwrap.dedent(f'''\
         #!/bin/bash
         #SBATCH --array=0-{job_array_length}
         #SBATCH --job-name={str_met}_popsyn
         #SBATCH --output=./{str_met}_logs/popsyn_%A_%a.out
         #SBATCH --time={walltime}
         #SBATCH --mem-per-cpu={mem_per_cpu}
-        {optional_section}
+    ''')
+
+    text_post = textwrap.dedent(f'''\
         export PATH_TO_POSYDON={path_to_posydon}
         export PATH_TO_POSYDON_DATA={path_to_posydon_data}
         srun python ./run_metallicity.py {metallicity}
     ''')
+
+    text = text_pre + optional_section + text_post
 
     filename = f"{str_met}_Zsun_slurm_array.slurm"
     if os.path.exists(filename): # pragma: no cover
@@ -287,17 +291,20 @@ def create_slurm_merge(metallicity,
     if optional_section:
         optional_section += "\n"
 
-    text = textwrap.dedent(f'''\
+    text_pre = textwrap.dedent(f'''\
         #!/bin/bash
         #SBATCH --job-name={str_met}_Zsun_merge
         #SBATCH --output=./{str_met}_logs/popsyn_merge.out
         #SBATCH --mem-per-cpu={mem_per_cpu}
         #SBATCH --time={merge_walltime}
-        {optional_section}
+    ''')
+    text_post = textwrap.dedent(f'''\
         export PATH_TO_POSYDON={path_to_posydon}
         export PATH_TO_POSYDON_DATA={path_to_posydon_data}
         srun python ./merge_metallicity.py {metallicity}
     ''')
+
+    text = text_pre + optional_section + text_post
 
     filename = f'{str_met}_Zsun_merge_popsyn.slurm'
     if os.path.exists(filename): # pragma: no cover
@@ -367,14 +374,16 @@ def create_slurm_rescue(metallicity,
     if optional_section:
         optional_section += "\n"
 
-    text = textwrap.dedent(f'''\
+    text_pre = textwrap.dedent(f'''\
         #!/bin/bash
         #SBATCH --array={job_array_str}
         #SBATCH --job-name={str_met}_popsyn_rescue
         #SBATCH --output=./{str_met}_logs/rescue_%A_%a.out
         #SBATCH --time={walltime}
         #SBATCH --mem-per-cpu={mem_per_cpu}
-        {optional_section}
+    ''')
+
+    text_post = textwrap.dedent(f'''
         export PATH_TO_POSYDON={path_to_posydon}
         export PATH_TO_POSYDON_DATA={path_to_posydon_data}
 
@@ -383,6 +392,8 @@ def create_slurm_rescue(metallicity,
 
         srun python ./run_metallicity.py {metallicity}
     ''')
+
+    text = text_pre + optional_section + text_post
 
     filename = f'{str_met}_Zsun_rescue.slurm'
     if os.path.exists(filename): # pragma: no cover
