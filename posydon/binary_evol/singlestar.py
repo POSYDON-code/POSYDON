@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 
 from posydon.grids.SN_MODELS import SN_MODELS
-from posydon.popsyn.io import STARPROPERTIES_DTYPES
+from posydon.popsyn.io import SCALAR_NAMES_DTYPES, STARPROPERTIES_DTYPES
 from posydon.utils.common_functions import (
     CO_radius,
     check_state_of_star,
@@ -151,6 +151,14 @@ class SingleStar:
         setattr(self, 'metallicity', kwargs.pop('metallicity', 1.0))
         state = kwargs.get('state', 'H-rich_Core_H_burning')
         CO_states = ['massless_remnant', 'WD', 'NS', 'BH']
+
+        if "natal_kick_array" in kwargs:
+            tmp = kwargs['natal_kick_array']
+            kwargs['natal_kick_velocity'] = tmp[0]
+            kwargs['natal_kick_azimuthal_angle'] = tmp[1]
+            kwargs['natal_kick_polar_angle'] = tmp[2]
+            kwargs['natal_kick_mean_anomaly'] = tmp[3]
+            del kwargs['natal_kick_array']
 
         if state in CO_states:
             Z_div_Zsun = self.metallicity
@@ -306,13 +314,22 @@ class SingleStar:
 
         for key, val in kwargs.items():
             setattr(self, key, val)
+            # do not create history for scalar values
+            if key in SCALAR_NAMES_DTYPES.keys() or key in EXTRA_STAR_COLUMNS_DTYPES.keys():
+                continue
             setattr(self, key + '_history', [val])
 
         # store extra values in the star object without a history
 
         # these quantities are updated in step_SN.py
-        if not hasattr(self, 'natal_kick_array'):
-            self.natal_kick_array = [None] * 4
+        if not hasattr(self, 'natal_kick_velocity'):
+            self.natal_kick_velocity = None
+        if not hasattr(self, 'natal_kick_azimuthal_angle'):
+            self.natal_kick_azimuthal_angle = None
+        if not hasattr(self, 'natal_kick_polar_angle'):
+            self.natal_kick_polar_angle = None
+        if not hasattr(self, 'natal_kick_mean_anomaly'):
+            self.natal_kick_mean_anomaly = None
         if not hasattr(self, 'spin_orbit_tilt_first_SN'):
             self.spin_orbit_tilt_first_SN = None
         if not hasattr(self, 'spin_orbit_tilt_second_SN'):
@@ -528,14 +545,34 @@ class SingleStar:
                                       columns=oneline_names)
         else:
             oneline_df = pd.DataFrame()
-
         for name in scalar_names:
             if hasattr(self, name):
+                # Handle legacy natal_kick_array for backward compatibility
                 if name == 'natal_kick_array':
-                    natal_kick_array = getattr(self, name)
+                    Pwarn("The 'natal_kick_array' attribute will be deprecated. "
+                            "Please use 'natal_kick_velocity', "
+                            "'natal_kick_azimuthal_angle', "
+                            "'natal_kick_polar_angle', and "
+                            "'natal_kick_mean_anomaly' instead. "
+                            "Adding both properties to the DataFrame.",
+                            "DeprecationWarning"
+                    )
+                    # Create array from individual properties
+                    natal_kick_array = [
+                        getattr(self, 'natal_kick_velocity', None),
+                        getattr(self, 'natal_kick_azimuthal_angle', None),
+                        getattr(self, 'natal_kick_polar_angle', None),
+                        getattr(self, 'natal_kick_mean_anomaly', None)
+                    ]
                     for i in range(4):
                         col_name = prefix+name+'_{}'.format(int(i))
-                        oneline_df[col_name] = [natal_kick_array[i]]
+                        oneline_df[col_name] = natal_kick_array[i]
+
+                    # also output better named columns
+                    oneline_df[prefix+'natal_kick_velocity'] = natal_kick_array[0]
+                    oneline_df[prefix+'natal_kick_azimuthal_angle'] = natal_kick_array[1]
+                    oneline_df[prefix+'natal_kick_polar_angle'] = natal_kick_array[2]
+                    oneline_df[prefix+'natal_kick_mean_anomaly'] = natal_kick_array[3]
                 else:
                     oneline_df[prefix+name] = [getattr(self, name)]
         return oneline_df

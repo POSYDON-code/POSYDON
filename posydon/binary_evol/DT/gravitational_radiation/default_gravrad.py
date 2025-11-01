@@ -70,8 +70,8 @@ def default_gravrad(a, e, primary, secondary, verbose = False):
         ) * const.secyer
     # eq. (36) of Junker et al. 1992, 254, 146
 
-    if verbose:
-        print("da, de_gr = ", da_gr, de_gr)
+    #if verbose:
+    #    print("da, de_gr = ", da_gr, de_gr)
 
     da = da_gr
     de = de_gr

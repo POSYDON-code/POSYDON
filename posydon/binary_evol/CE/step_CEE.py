@@ -55,6 +55,7 @@ from posydon.utils.common_functions import (
     calculate_Mejected_for_integrated_binding_energy,
     check_state_of_star,
 )
+from posydon.utils.constants import Zsun
 from posydon.utils.posydonwarning import Pwarn
 
 MODEL = {"prescription": 'alpha-lambda',
@@ -1154,9 +1155,9 @@ class StepCEE(object):
                 star.he_core_mass = core_mass
                 star.he_core_radius = core_radius
                 if star.metallicity is None:
-                    star.surface_he4 = 1 - star.surface_h1 - 0.0142
+                    star.surface_he4 = 1 - star.surface_h1 - Zsun
                 else:
-                    star.surface_he4 = 1.0-star.surface_h1-star.metallicity
+                    star.surface_he4 = 1 - star.surface_h1 - star.metallicity * Zsun
                 star.log_LH = -1e99
                 attributes_changing.extend([
                                         "surface_h1",
@@ -1492,16 +1493,14 @@ class StepCEE(object):
                       f"The Roche lobe of the companion is: {RL2}, The radius is: {rc2_i}")
                 print("Adjusting the companion's radius by matching to single star.")
             t_i = binary.time
-            if comp_star == binary.star_1:
-                match_s1 = True
-                match_s2 = False
-            else:
-                match_s1 = False
-                match_s2 = True
+
+
+            match_primary = False
+            match_secondary = True
 
             _, _, only_CO = self.track_matcher.do_matching(binary, step_name="step_CE",
-                                                           match_s1=match_s1,
-                                                           match_s2=match_s2)
+                                                           match_primary=match_primary,
+                                                           match_secondary=match_secondary)
 
             rc2_i = 10**comp_star.interp1d['log_R'](t_i)
 

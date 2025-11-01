@@ -2196,19 +2196,24 @@ class TransientPopulation(Population):
         )
 
     def plot_delay_time_distribution(
-        self, metallicity=None, ax=None, bins=100, color="black"
+        self, model_weights_identifier, metallicity=None, ax=None, bins=100, color="black"
         ):
         """
         Plot the delay time distribution of the transient population.
 
-        This method plots the delay time distribution of the transient population. If a specific metallicity is provided,
-        the delay time distribution of the population at that metallicity will be plotted. Otherwise, the delay time distribution
-        of the entire population will be plotted.
+        This method plots the delay time distribution of the transient population
+        using model weights for normalization. If a specific metallicity is
+        provided, the delay time distribution of the population at that metallicity
+        will be plotted. Otherwise, the delay time distribution of the entire
+        population will be plotted.
 
         Parameters
         ----------
+        model_weights_identifier : str
+            Identifier for the model weights to use for normalization.
         metallicity : float or None
-            The metallicity value to select a specific population. If None, the delay time distribution of the entire population will be plotted.
+            The metallicity value to select a specific population. If None, the delay time distribution
+            of the entire population will be plotted.
         ax : matplotlib.axes.Axes or None
             The axes object to plot the distribution on. If None, a new figure and axes will be created.
         bins : int
@@ -2220,38 +2225,47 @@ class TransientPopulation(Population):
         ------
         ValueError
             If the specified metallicity is not present in the population.
+            If model_weights_identifier is not found in the population file.
 
         Notes
         -----
-        - The delay time distribution is normalized by the total mass of the population if no metallicity is specified.
-        Otherwise, it is normalized by the mass of the population at the specified metallicity.
+        The delay time distribution is normalized by the total model weight of the population if no metallicity
+        is specified. Otherwise, it is normalized by the model weight of the population at the specified metallicity.
 
         """
-        if 'underlying_mass' not in self.mass_per_metallicity.columns:
-            raise ValueError("Underlying mass not calculated! Please calculate the underlying mass first!")
-
         if ax is None:
             fig, ax = plt.subplots()
+
+        # Validate model weights
+        if model_weights_identifier not in self.model_weights().columns:
+            raise ValueError(f"Model weights identifier '{model_weights_identifier}' not found in the population file!")
+
+        # Get model weights for normalization
+        model_weights = self.model_weights(model_weights_identifier).to_numpy().flatten()
 
         if metallicity is None:
             time = self.select(columns=["time"]).values
             time = time * 1e6  # yr
-            h, bin_edges = np.histogram(time, bins=bins)
-            h = h / np.diff(bin_edges) / self.mass_per_metallicity["underlying_mass"].sum()
+
+            # Create histogram with model weights
+            h, bin_edges = np.histogram(time, bins=bins, weights=model_weights)
+            h = h / np.diff(bin_edges)
 
         else:
             if not any(np.isclose(metallicity, self.solar_metallicities)):
                 raise ValueError("The metallicity is not present in the population!")
 
-            time = self.select(columns=['metallicity', 'time'])
-            time = time[time['metallicity'] == metallicity].drop(columns=['metallicity']).values
+            time_df = self.select(columns=['metallicity', 'time'])
+            time = time_df[time_df['metallicity'] == metallicity].drop(columns=['metallicity']).values
             time = time * 1e6  # yr
-            h, bin_edges = np.histogram(time, bins=bins)
-            h = (
-                h
-                / np.diff(bin_edges)
-                / self.mass_per_metallicity["underlying_mass"][metallicity]
-            )
+
+            # Get weights for the specific metallicity
+            metallicity_mask = self.population['metallicity'] == metallicity
+            weights_for_met = model_weights[metallicity_mask]
+
+            # Create histogram with metallicity-specific weights
+            h, bin_edges = np.histogram(time, bins=bins, weights=weights_for_met)
+            h = h / np.diff(bin_edges)
 
         ax.step(bin_edges[:-1], h, where="post", color=color)
         ax.set_xscale("log")

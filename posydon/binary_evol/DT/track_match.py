@@ -32,7 +32,9 @@ from posydon.binary_evol.flow_chart import (
     STAR_STATES_CO,
     STAR_STATES_FOR_HMS_MATCHING,
     STAR_STATES_H_RICH,
+    STAR_STATES_HE_RICH,
     STAR_STATES_FOR_Hestar_MATCHING,
+    STAR_STATES_FOR_postHeMS_MATCHING,
     STAR_STATES_FOR_postMS_MATCHING,
 )
 from posydon.config import PATH_TO_POSYDON_DATA
@@ -264,6 +266,7 @@ class TrackMatcher:
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
             list_for_matching_HeStar=None,
+            list_for_matching_postHeMS=None,
             record_matching=False,
             verbose=False
     ):
@@ -301,6 +304,7 @@ class TrackMatcher:
         self.list_for_matching_HMS = list_for_matching_HMS
         self.list_for_matching_postMS = list_for_matching_postMS
         self.list_for_matching_HeStar = list_for_matching_HeStar
+        self.list_for_matching_postHeMS = list_for_matching_postHeMS
 
         # mapping a combination of (key, htrack, method) to a pre-trained
         # DataScaler instance, created the first time it is requested
@@ -383,6 +387,14 @@ class TrackMatcher:
                 [m_min_He, m_max_He], [t_min_He, t_max_He]
             ]
 
+        if self.list_for_matching_postHeMS is None:
+            self.list_for_matching_postHeMS = [
+                ["he_core_mass", "log_R"],
+                [10.0, 2.0],
+                ["min_max", "min_max"],
+                [m_min_He, m_max_He], [t_min_He, t_max_He]
+            ]
+
         # Stellar parameter lists for alternative matching metrics
         # These are used in the event that an initial match can not be found
         self.list_for_matching_HMS_alternative = [
@@ -401,6 +413,13 @@ class TrackMatcher:
             ["he_core_mass", "center_he4", "log_R"],
             [10.0, 1.0, 2.0],
             ["min_max", "min_max", "min_max"],
+            [m_min_He, m_max_He], [t_min_He, t_max_He]
+        ]
+
+        self.list_for_matching_postHeMS_alternative = [
+            ["he_core_mass", "log_R"],
+            [10.0, 2.0],
+            ["min_max", "min_max"],
             [m_min_He, m_max_He], [t_min_He, t_max_He]
         ]
 
@@ -1080,6 +1099,8 @@ class TrackMatcher:
                     match_list = self.list_for_matching_postMS
                 elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
                     match_list = self.list_for_matching_HeStar
+                elif star.state in STAR_STATES_FOR_postHeMS_MATCHING:
+                    match_list = self.list_for_matching_postHeMS
                 else:
                     raise ValueError(f"{star.state} invalid for matching step")
 
@@ -1091,9 +1112,11 @@ class TrackMatcher:
                 if star.state in STAR_STATES_FOR_HMS_MATCHING:
                     match_list = self.list_for_matching_HMS_alternative
                 elif star.state in STAR_STATES_FOR_postMS_MATCHING:
-                    match_list = (self.list_for_matching_postMS_alternative)
+                    match_list = self.list_for_matching_postMS_alternative
                 elif star.state in STAR_STATES_FOR_Hestar_MATCHING:
-                    match_list = (self.list_for_matching_HeStar_alternative)
+                    match_list = self.list_for_matching_HeStar_alternative
+                elif star.state in STAR_STATES_FOR_postHeMS_MATCHING:
+                    match_list = self.list_for_matching_postHeMS_alternative
                 else:
                     raise ValueError(f"{star.state} invalid for matching step")
 
@@ -1119,6 +1142,10 @@ class TrackMatcher:
                 elif star.state in STAR_STATES_FOR_postMS_MATCHING:
                     new_htrack = False
                     match_list = self.list_for_matching_postMS
+
+                elif star.state in STAR_STATES_FOR_postHeMS_MATCHING:
+                    new_htrack = True
+                    match_list = self.list_for_matching_postHeMS
 
             else:
                 raise POSYDONError("In getting match attributes, match_type "
@@ -1407,11 +1434,6 @@ class TrackMatcher:
             Age (in years) of the matched model.
 
         """
-
-        if star == binary.star_1 and not self.match_s1:
-            return None, None
-        elif star == binary.star_2 and not self.match_s2:
-            return None, None
 
         with np.errstate(all="ignore"):
             # get the initial m0, t0 track
@@ -1723,7 +1745,8 @@ class TrackMatcher:
 
         return omega0_pri, omega0_sec
 
-    def do_matching(self, binary, step_name="step_match", match_s1=True, match_s2=True):
+    def do_matching(self, binary, step_name="step_match",
+                    match_secondary=True, match_primary=True):
 
         """
             Perform binary to single star grid matching. This is currently
@@ -1753,6 +1776,12 @@ class TrackMatcher:
             meant to indicate the relevant evolution step's name. This should
             normally match the name of the step in which the matching was
             made, e.g., "step_detached".
+
+        match_secondary : bool
+            A boolean that indicates whether to perform matching on star 1.
+
+        match_primary : bool
+            A boolean that indicates whether to perform matching on star 2.
 
         Returns
         -------
@@ -1797,40 +1826,12 @@ class TrackMatcher:
         #    return binary.star_1, binary.star_2, only_CO
 
         # record which star we performed matching on for reporting purposes
-        self.match_s1 = match_s1
-        self.match_s2 = match_s2
+        self.match_secondary = match_secondary
+        self.match_primary = match_primary
         self.matched_s1 = False
         self.matched_s2 = False
         primary.matched = False
         secondary.matched = False
-
-        self.secondary_not_normal = secondary.co
-        self.secondary_normal = not secondary.co
-
-        # get the matched data of binary components
-        # match secondary:
-        if self.secondary_not_normal:
-            m0, t0 = self.get_star_match_data(binary, secondary,
-                                     copy_prev_m0 = secondary.mass,
-                                     copy_prev_t0 = binary.time)
-        elif self.secondary_normal:
-            m0, t0 = self.get_star_match_data(binary, secondary)
-            # record which star got matched
-            if secondary == binary.star_2:
-                self.matched_s2 = True
-            elif secondary == binary.star_1:
-                self.matched_s1 = True
-        else:
-            raise ValueError("During matching, the secondary should either be "
-                             "normal (stellar object) or "
-                             "not normal (a CO or nonexistent companion).",
-                            f"\nsecondary.co = {secondary.co}",
-                            "\nnon_existent_companion = "
-                            f"{binary.non_existent_companion}",
-                            "\ncompanion_1_exists = "
-                            f"{binary.companion_1_exists}",
-                            "\ncompanion_2_exists = "
-                            f"{binary.companion_2_exists}")
 
         # primary is a CO or massless remnant, or else it is "normal"
         # TODO: should these be star properties? also, do we only really need one?
@@ -1839,15 +1840,27 @@ class TrackMatcher:
         self.primary_not_normal = primary.co or has_non_existent
         self.primary_normal = not primary.co and all_exist
 
-        if self.primary_not_normal:
+        # get the matched data of binary components
+        # match secondary:
+        if self.match_secondary:
+            if self.verbose:
+                print("\nMatching secondary star...")
+
+            m0, t0 = self.get_star_match_data(binary, secondary)
+
+        if self.match_primary and self.primary_normal:
+            # match primary
+            if self.verbose:
+                print("\nMatching primary star...")
+
+            self.get_star_match_data(binary, primary)
+
+        elif self.match_primary and self.primary_not_normal:
             # copy the secondary star except mass which is of the primary,
             # and radius, mdot, Idot = 0
             self.get_star_match_data(binary, primary,
                                      copy_prev_m0 = m0,
                                      copy_prev_t0 = t0)
-        elif self.primary_normal:
-            # match primary
-            self.get_star_match_data(binary, primary)
 
         elif not (self.primary_normal or self.primary_not_normal):
             raise ValueError("During matching, the primary should either be "
@@ -1862,7 +1875,8 @@ class TrackMatcher:
                             f"{binary.companion_2_exists}")
 
 
-        if (secondary.interp1d == None and secondary.matched) or (primary.interp1d == None and primary.matched):
+        if (secondary.interp1d == None and self.match_secondary) or \
+           (primary.interp1d == None and self.match_primary):
             failed_state = binary.state
             set_binary_to_failed(binary)
             raise MatchingError("Grid matching failed for "
@@ -1957,7 +1971,7 @@ class TrackMatcher:
         s_arr = np.array([binary.star_1, binary.star_2])
         s_CO = np.array([s.state in STAR_STATES_CO for s in s_arr])
         s_H = np.array([s.state in STAR_STATES_H_RICH for s in s_arr])
-        s_He = np.array([s.state in STAR_STATES_FOR_Hestar_MATCHING for s in s_arr])
+        s_He = np.array([s.state in STAR_STATES_HE_RICH for s in s_arr])
         s_massless = np.array([s.state == "massless_remnant" for s in s_arr])
         s_valid = s_H | s_He | s_CO | s_massless    # states considered here
         s_htrack = s_H & ~(s_CO)   # only true if h rich and not a CO
