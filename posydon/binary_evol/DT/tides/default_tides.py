@@ -51,29 +51,17 @@ def default_tides(a, e, primary, secondary, verbose=False):
 
     """
 
-    m1 = primary.latest["mass"]
-    R1 = primary.latest["R"]
-    m_env1 = primary.latest["mass_conv_reg_fortides"]
-    dr_env1 = primary.latest["thickness_conv_reg_fortides"]
-    rmid_env1 = primary.latest["radius_conv_reg_fortides"]
-    omega1 = primary.latest["omega"]
-    rtop_env1 = primary.latest["conv_mx1_top_r"]
-    rbot_env1 = primary.latest["conv_mx1_bot_r"]
-    Xsurf_1 = primary.latest["surface_h1"]
-    L1 = primary.latest["L"]
-    MOI_1 = primary.latest["inertia"]
+    p1 = primary.latest
+    p2 = secondary.latest
+    m1, R1, omega1 = p1["mass"], p1["R"], p1["omega"]
+    m_env1, dr_env1, rmid_env1 = p1["mass_conv_reg_fortides"], p1["thickness_conv_reg_fortides"], p1["radius_conv_reg_fortides"]
+    rtop_env1, rbot_env1 = p1["conv_mx1_top_r"], p1["conv_mx1_bot_r"]
+    Xsurf_1, L1, MOI_1 = p1["surface_h1"], p1["L"], p1["inertia"]
 
-    m2 = secondary.latest["mass"]
-    R2 = secondary.latest["R"]
-    m_env2 = secondary.latest["mass_conv_reg_fortides"]
-    dr_env2 = secondary.latest["thickness_conv_reg_fortides"]
-    rmid_env2 = secondary.latest["radius_conv_reg_fortides"]
-    omega2 = secondary.latest["omega"]
-    rtop_env2 = secondary.latest["conv_mx1_top_r"]
-    rbot_env2 = secondary.latest["conv_mx1_bot_r"]
-    Xsurf_2 = secondary.latest["surface_h1"]
-    L2 = secondary.latest["L"]
-    MOI_2 = secondary.latest["inertia"]
+    m2, R2, omega2 = p2["mass"], p2["R"], p2["omega"]
+    m_env2, dr_env2, rmid_env2 = p2["mass_conv_reg_fortides"], p2["thickness_conv_reg_fortides"], p2["radius_conv_reg_fortides"]
+    rtop_env2, rbot_env2 = p2["conv_mx1_top_r"], p2["conv_mx1_bot_r"]
+    Xsurf_2, L2, MOI_2 = p2["surface_h1"], p2["L"], p2["inertia"]
 
     q1 = m1/ m2
     q2 = m2 / m1
