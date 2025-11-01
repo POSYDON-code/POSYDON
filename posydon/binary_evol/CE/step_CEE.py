@@ -1501,9 +1501,10 @@ class StepCEE(object):
             _, _, only_CO = self.track_matcher.do_matching(binary, step_name="step_CE",
                                                            match_primary=match_primary,
                                                            match_secondary=match_secondary)
-            rc2_i = comp_star.interp1d(t_i)["R"]
-
-            #rc2_i = 10**comp_star.interp1d['log_R'](t_i)
+            if comp_star.interp1d:
+                rc2_i = comp_star.interp1d(t_i)["R"]
+            else:
+                rc2_i = rc2_i  # keep original radius if no interp1d available
 
         if self.verbose:
             print(f"After matching to single star the companion's radius is : {rc2_i} ")
