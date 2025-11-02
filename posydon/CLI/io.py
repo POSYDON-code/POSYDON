@@ -165,6 +165,8 @@ def create_slurm_array(metallicity,
                         walltime,
                         account,
                         mem_per_cpu,
+                        max_concurrent_jobs,
+                        exclude,
                         path_to_posydon,
                         path_to_posydon_data):
     '''Creates the slurm array script for population synthesis job arrays.
@@ -208,10 +210,15 @@ def create_slurm_array(metallicity,
             "#SBATCH --mail-type=FAIL",
             f"#SBATCH --mail-user={email}"
         ])
+    if exclude is not None:
+        optional_directives.append(f"#SBATCH --exclude={exclude}")
 
     optional_section = "\n".join(optional_directives)
     if optional_section:
         optional_section += "\n"
+
+    if max_concurrent_jobs is not None:
+        job_array_length = f"{job_array_length}%{max_concurrent_jobs}"
 
     text_pre = textwrap.dedent(f'''\
         #!/bin/bash
@@ -425,6 +432,7 @@ def create_slurm_scripts(metallicity, args): # pragma: no cover
     '''
     create_slurm_array(metallicity, args.job_array, args.partition, args.email,
                        args.walltime, args.account, args.mem_per_cpu,
+                       args.max_concurrent_jobs, args.exclude,
                        PATH_TO_POSYDON,
                        os.path.dirname(PATH_TO_POSYDON_DATA))
 

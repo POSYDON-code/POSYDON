@@ -71,7 +71,18 @@ if __name__ == '__main__':
         '--account',
         help='the account you would like to use',
         default=None)
+    setup_parser.add_argument(
+        '--max_concurrent_jobs',
+        help='the maximum number of concurrent jobs to run in the job array',
+        type=int,
+        default=None)
+    setup_parser.add_argument(
+        '--exclude',
+        help='a comma-separated list of nodes to exclude when submitting the job',
+        type=str,
+        default=None)
     setup_parser.set_defaults(func=setup_popsyn_function)
+    
 
     # Check the run subcommand
     check_parser = subparsers.add_parser(
