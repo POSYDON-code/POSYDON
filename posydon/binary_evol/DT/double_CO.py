@@ -58,19 +58,19 @@ class DoubleCO(detached_step):
         )
         binary.V_sys = binary.V_sys_history[-1]
 
-        if self.res.status == -1:
-            set_binary_to_failed(binary)
-            raise NumericalError(f"Integration failed for {binary.state} DCO "
-                                 f"({binary.star_1.state}, {binary.star_2.state}): ",
-                                 self.res.message)
+        #if self.res.status == -1:
+        #    set_binary_to_failed(binary)
+        #    raise NumericalError(f"Integration failed for {binary.state} DCO "
+        #                         f"({binary.star_1.state}, {binary.star_2.state}): "
+        #                         f"{self.res.message}")
         # contact event triggered
-        elif self.res.status == 1:
+        if self.res.status == 1:
             binary.time = self.res.t[-1]
             binary.eccentricity = 0.0
             binary.state = "contact"
             binary.event = "CO_contact"
         # max time reached
-        else:
+        elif self.res.status != -1:
             binary.time = self.max_time
             binary.eccentricity = self.res.y[1][-1]
             binary.state = "detached"
@@ -79,21 +79,37 @@ class DoubleCO(detached_step):
     def solve_ODEs(self, binary, primary, secondary):
 
         self.max_time = binary.properties.max_simulation_time
+        time_sol = []
+        sol = []
+        t0 = binary.time
+        n = 0
+        a = binary.separation * constants.Rsun / 100_000
+        e = binary.eccentricity
+        status = -1
 
-        try:
-            res = solve_ivp(self.evo,
-                            events=self.evo.ev_contact,
-                            method="BDF",
-                        t_span=(0, self.max_time - binary.time),
-                        y0=[binary.separation * constants.Rsun / 100_000,
-                            binary.eccentricity,
-                            secondary.omega0, primary.omega0],
-                        rtol=1e-10,
-                        atol=1e-10,
-                        dense_output=True)
-        except Exception as e:
-            set_binary_to_failed(binary)
-            raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
+        while status == -1 and n < 6:
+            try:
+                res = solve_ivp(self.evo,
+                                events=self.evo.ev_contact,
+                                method="BDF",
+                            t_span=(0, self.max_time - t0),
+                            y0=[a, e,
+                                secondary.omega0, primary.omega0],
+                            rtol=1e-10,
+                            atol=1e-10,
+                            dense_output=True)
+
+            except Exception as e:
+                set_binary_to_failed(binary)
+                raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
+
+            t0 += res.t[-1]
+            status = res.status
+            n += 1
+            a = res.y[0][-1]
+            e = res.y[1][-1]
+            time_sol.append(res.t)
+            sol.append(res) 
 
         return res
 

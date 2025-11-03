@@ -1839,6 +1839,8 @@ class TrackMatcher:
         all_exist = binary.non_existent_companion == 0
         self.primary_not_normal = primary.co or has_non_existent
         self.primary_normal = not primary.co and all_exist
+        self.secondary_not_normal = secondary.co
+        self.secondary_normal = not secondary.co
 
         # get the matched data of binary components
         # match secondary:
@@ -1846,33 +1848,61 @@ class TrackMatcher:
             if self.verbose:
                 print("\nMatching secondary star...")
 
-            m0, t0 = self.get_star_match_data(binary, secondary)
+            if self.secondary_not_normal:
+                m0, t0 = self.get_star_match_data(binary, secondary,
+                                        copy_prev_m0 = secondary.mass,
+                                        copy_prev_t0 = binary.time)
+            elif self.secondary_normal:
+                m0, t0 = self.get_star_match_data(binary, secondary)
+                # record which star got matched
+                if secondary == binary.star_2:
+                    self.matched_s2 = True
+                elif secondary == binary.star_1:
+                    self.matched_s1 = True
+            else:
+                raise ValueError("During matching, the secondary should either be "
+                                "normal (stellar object) or "
+                                "not normal (a CO or nonexistent companion).",
+                                f"\nsecondary.co = {secondary.co}",
+                                "\nnon_existent_companion = "
+                                f"{binary.non_existent_companion}",
+                                "\ncompanion_1_exists = "
+                                f"{binary.companion_1_exists}",
+                                "\ncompanion_2_exists = "
+                                f"{binary.companion_2_exists}")
 
-        if self.match_primary and self.primary_normal:
+        if self.match_primary:
             # match primary
             if self.verbose:
                 print("\nMatching primary star...")
 
-            self.get_star_match_data(binary, primary)
+            if self.primary_not_normal:
+                # copy the secondary star except mass which is of the primary,
+                # and radius, mdot, Idot = 0
+                self.get_star_match_data(binary, primary,
+                                        copy_prev_m0 = m0,
+                                        copy_prev_t0 = t0)
+                
+            elif self.primary_normal:
 
-        elif self.match_primary and self.primary_not_normal:
-            # copy the secondary star except mass which is of the primary,
-            # and radius, mdot, Idot = 0
-            self.get_star_match_data(binary, primary,
-                                     copy_prev_m0 = m0,
-                                     copy_prev_t0 = t0)
+                self.get_star_match_data(binary, primary)
+                
+                if primary == binary.star_2:
+                    self.matched_s2 = True
+                elif primary == binary.star_1:
+                    self.matched_s1 = True
 
-        elif not (self.primary_normal or self.primary_not_normal):
-            raise ValueError("During matching, the primary should either be "
-                             "normal (stellar object) or "
-                             "not normal (a CO or nonexistent companion).",
-                            f"\nprimary.co = {primary.co}",
-                            "\nnon_existent_companion = "
-                            f"{binary.non_existent_companion}",
-                            "\ncompanion_1_exists = "
-                            f"{binary.companion_1_exists}",
-                            "\ncompanion_2_exists = "
-                            f"{binary.companion_2_exists}")
+            elif not (self.primary_normal or self.primary_not_normal):
+                raise ValueError("During matching, the primary should either be "
+                                "normal (stellar object) or "
+                                "not normal (a CO or nonexistent companion).",
+                                f"\nprimary.co = {primary.co}",
+                                "\nnon_existent_companion = "
+                                f"{binary.non_existent_companion}",
+                                "\ncompanion_1_exists = "
+                                f"{binary.companion_1_exists}",
+                                "\ncompanion_2_exists = "
+                                f"{binary.companion_2_exists}")
 
 
         if (secondary.interp1d == None and self.match_secondary) or \
@@ -1880,7 +1910,9 @@ class TrackMatcher:
             failed_state = binary.state
             set_binary_to_failed(binary)
             raise MatchingError("Grid matching failed for "
-                                f"{failed_state} binary.")
+                                f"{failed_state} binary. "
+                                f"\nsecondary.interp1d = {secondary.interp1d}"
+                                f"\nprimary.interp1d = {primary.interp1d}")
 
         # recalculate rotation quantities after matching
         omega0_pri, omega0_sec = self.update_rotation_info(primary, secondary)
@@ -2019,7 +2051,7 @@ class TrackMatcher:
                 secondary.htrack = s_htrack[~CO_mask].item()
 
             else:
-                # both stars are compact objects, should redirect to step_dco
+                # both stars are compact objects
                 primary = s_arr[0]
                 primary.co = s_CO[0]
                 primary.htrack = s_htrack[0]

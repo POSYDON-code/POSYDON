@@ -408,6 +408,12 @@ class detached_step:
                 self.res = self.solve_ODEs(binary, primary, secondary)
                 t_after_ODEsolution = time.time()
 
+            if self.res.status == -1:
+                print(f"Integration failed for {binary.state} "
+                      f"({binary.star_1.state}, {binary.star_2.state}): "
+                      f"{self.res.message}")
+                return
+
             # clear dictionaries that held current properties during ODE solution
             if hasattr(primary, "latest"):
                 del primary.latest
@@ -418,11 +424,6 @@ class detached_step:
                 ivp_tspan = t_after_ODEsolution - t_before_ODEsolution
                 print(f"\nODE solver duration: {ivp_tspan:.6g} sec")
                 print("solution of ODE", self.res)
-
-            if self.res.status == -1:
-                failed_state = binary.state
-                set_binary_to_failed(binary)
-                raise NumericalError(f"Integration failed for {failed_state} binary.")
 
             # update binary/star properties after detached evolution
             t = self.get_time_after_evo(binary)
@@ -603,6 +604,12 @@ class detached_step:
                             y0=[binary.separation, binary.eccentricity,
                                 secondary.omega0, primary.omega0],
                             dense_output=True)
+            
+        if res.status == -1:
+            failed_state = binary.state
+            set_binary_to_failed(binary)
+            raise NumericalError(f"Integration failed for {failed_state} binary.")
+
         return res
 
     def get_time_after_evo(self, binary):
