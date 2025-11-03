@@ -604,7 +604,7 @@ class detached_step:
                             y0=[binary.separation, binary.eccentricity,
                                 secondary.omega0, primary.omega0],
                             dense_output=True)
-            
+
         if res.status == -1:
             failed_state = binary.state
             set_binary_to_failed(binary)
