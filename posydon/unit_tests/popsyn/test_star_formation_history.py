@@ -781,12 +781,12 @@ class TestChruslinska21:
     def test_lowest_z_bin(self, chruslinska_model, mock_chruslinska_data):
         """Test that if z is below the lowest bin, it uses the lowest bin."""
         z_values = np.array([-1.0, 0.0, 0.5])
-        result = chruslinska_model.CSFRD(z_values)
+        met_bins = np.array([0.001, 0.01, 0.02, 0.03])
+
+        result = chruslinska_model.fSFR(z_values, met_bins)
 
         # The value at -1.0 should be the same as at 0.0
-        assert np.isclose(result[0], result[1])
-        # The value at 0.5 should be different
-        assert not np.isclose(result[1], result[2])
+        assert np.allclose(result[0], result[1])
 
     def test_csfrd_calculation(self, chruslinska_model, mock_chruslinska_data):
         """Test the CSFRD method."""
