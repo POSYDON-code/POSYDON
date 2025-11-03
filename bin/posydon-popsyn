@@ -20,7 +20,7 @@ def rescue_popsyn_function(args):
     This function is deprecated and will be removed in a future version.
     Use 'posydon-popsyn check' instead.
     """
-    Pwarn.warn(
+    Pwarn(
         "The 'rescue' command is deprecated and will be removed in a future version. "
         "Please use 'posydon-popsyn check' instead, which now includes rescue functionality.",
         "DeprecationWarning"
