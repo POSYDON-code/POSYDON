@@ -778,6 +778,16 @@ class TestChruslinska21:
         with pytest.raises(AssertionError):
             result = chruslinska_model.mean_metallicity(z_values)
 
+    def test_lowest_z_bin(self, chruslinska_model, mock_chruslinska_data):
+        """Test that if z is below the lowest bin, it uses the lowest bin."""
+        z_values = np.array([-1.0, 0.0, 0.5])
+        result = chruslinska_model.CSFRD(z_values)
+
+        # The value at -1.0 should be the same as at 0.0
+        assert np.isclose(result[0], result[1])
+        # The value at 0.5 should be different (interpolated)
+        assert not np.isclose(result[1], result[2])
+
     def test_csfrd_calculation(self, chruslinska_model, mock_chruslinska_data):
         """Test the CSFRD method."""
         # Test at specific redshifts
