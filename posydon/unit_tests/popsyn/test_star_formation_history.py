@@ -785,7 +785,7 @@ class TestChruslinska21:
 
         # The value at -1.0 should be the same as at 0.0
         assert np.isclose(result[0], result[1])
-        # The value at 0.5 should be different (interpolated)
+        # The value at 0.5 should be different
         assert not np.isclose(result[1], result[2])
 
     def test_csfrd_calculation(self, chruslinska_model, mock_chruslinska_data):
