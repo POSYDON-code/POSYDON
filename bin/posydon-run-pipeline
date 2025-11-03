@@ -715,6 +715,10 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         replace_text = "ZepeiX_otherj_fit_mesh-b836b444c9306ed411815d4e83594c49dd33ea3f"
     elif rerun_type == 'zepei_mt_dedt':
         replace_text = "ZepeiX_otherj_fit_mesh_dedt-188bbfb332447b813c6b82118d8b6ea1c87e82e5"
+    elif rerun_type == 'zepei_mt_dedt_mt':
+        replace_text = "ZepeiX_otherj_fit_mesh_dedt_mtseg-aa6f5a1a130cbb80bd321c46a042a9b9c8bdecad"
+    elif rerub_tyoe == 'zepei_mt_dedt_mt_conv_bdy_weight':
+        replace_text = "ZepeiX_otherj_fit_mesh_dedt_mtseg-aa6f5a1a130cbb80bd321c46a042a9b9c8bdecad"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -844,6 +848,7 @@ def logic_rerun(grid, rerun_type):
            or (rerun_type == 'zepei_mt_mesh')
            or (rerun_type == 'zepei_mt_retrograde')
            or (rerun_type == 'zepei_mt_dedt')
+           or (rerun_type == 'zepei_mt_dedt_mt')
          ):
         termination_flags = TF1_POOL_ERROR
     elif rerun_type == 'more_mesh':
@@ -851,7 +856,9 @@ def logic_rerun(grid, rerun_type):
         # may put this in a MESA-inlist PR
         new_mesa_flag = {'mesh_Pgas_div_P_exponent' : 2,\
                          'max_allowed_nz' : 50000}
-    elif rerun_type == 'conv_bdy_weight':
+    elif ((rerun_type == 'conv_bdy_weight')
+           or (rerun_type == 'zepei_mt_dedt_mt_conv_bdy_weight')
+          ):
         N_runs = len(grid)
         runs_to_rerun = []
         for i in range(N_runs):
