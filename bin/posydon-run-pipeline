@@ -716,9 +716,9 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
     elif rerun_type == 'zepei_mt_dedt':
         replace_text = "ZepeiX_otherj_fit_mesh_dedt-188bbfb332447b813c6b82118d8b6ea1c87e82e5"
     elif rerun_type == 'zepei_mt_dedt_mt':
-        replace_text = "ZepeiX_otherj_fit_mesh_dedt_mtseg-aa6f5a1a130cbb80bd321c46a042a9b9c8bdecad"
+        replace_text = "ZepeiX_otherj_fit_mesh_dedt_mtseg-ae2fc80506ca0853b5e3b22605b1c32ddce08cdd"
     elif rerub_tyoe == 'zepei_mt_dedt_mt_conv_bdy_weight':
-        replace_text = "ZepeiX_otherj_fit_mesh_dedt_mtseg-aa6f5a1a130cbb80bd321c46a042a9b9c8bdecad"
+        replace_text = "ZepeiX_otherj_fit_mesh_dedt_mtseg-ae2fc80506ca0853b5e3b22605b1c32ddce08cdd"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
