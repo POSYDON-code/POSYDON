@@ -331,6 +331,8 @@ def create_slurm_rescue(metallicity,
                         walltime,
                         account,
                         mem_per_cpu,
+                        max_concurrent_jobs,
+                        exclude,
                         path_to_posydon,
                         path_to_posydon_data):
     '''Creates the slurm rescue script for resubmitting failed population synthesis jobs.
@@ -378,19 +380,26 @@ def create_slurm_rescue(metallicity,
             "#SBATCH --mail-type=FAIL",
             f"#SBATCH --mail-user={email}"
         ])
+    if exclude is not None:
+        optional_directives.append(f"#SBATCH --exclude={exclude}")
 
     optional_section = "\n".join(optional_directives)
     if optional_section:
         optional_section += "\n"
 
-    text = textwrap.dedent(f'''\
+    if max_concurrent_jobs is not None:
+        job_array_str = f"{job_array_str}%{max_concurrent_jobs}"
+            
+    text_ptr = textwrap.dedent(f'''\
         #!/bin/bash
         #SBATCH --array={job_array_str}
         #SBATCH --job-name={str_met}_popsyn_rescue
         #SBATCH --output=./{str_met}_logs/rescue_%A_%a.out
         #SBATCH --time={walltime}
         #SBATCH --mem-per-cpu={mem_per_cpu}
-        {optional_section}
+    ''')
+    
+    text_post = textwrap.dedent(f'''\
         export PATH_TO_POSYDON={path_to_posydon}
         export PATH_TO_POSYDON_DATA={path_to_posydon_data}
 
@@ -399,6 +408,8 @@ def create_slurm_rescue(metallicity,
 
         srun python ./run_metallicity.py {metallicity}
     ''')
+    
+    text = text_ptr + optional_section + text_post
 
     filename = f'{str_met}_Zsun_rescue.slurm'
     if os.path.exists(filename): # pragma: no cover
@@ -518,8 +529,11 @@ def create_batch_rescue_script(args, batch_status):
     for line in lines:
         if line.startswith('#SBATCH --array='):
             array_range = line.split('=')[1].strip()
-            if '-' in array_range:
-                start, end = map(int, array_range.split('-'))
+            if '%' in array_range:
+                tmp_array_range = array_range.split('%')[0]
+                max_concurrent_jobs = array_range.split('%')[1]
+            if '-' in tmp_array_range:
+                start, end = map(int, tmp_array_range.split('-'))
                 job_array_length = end - start + 1
         elif line.startswith("#SBATCH --time="):
             walltime = line.split('=')[1].strip()
@@ -535,6 +549,9 @@ def create_batch_rescue_script(args, batch_status):
             path_to_posydon = line.split('=')[1].strip()
         elif line.startswith("export PATH_TO_POSYDON_DATA="):
             path_to_posydon_data = line.split('=')[1].strip()
+        elif line.startswith('#SBATCH --exclude='):
+            print(line)
+            exclude = line.split('=')[1].strip()
 
     # Override with command-line arguments if provided
     if args.walltime is not None:
@@ -547,6 +564,10 @@ def create_batch_rescue_script(args, batch_status):
         account = args.account
     if args.email is not None:
         email = args.email
+    if args.max_concurrent_jobs is not None:
+        max_concurrent_jobs = args.max_concurrent_jobs
+    if args.exclude is not None:
+        exclude = args.exclude
 
     # Create the rescue script
     create_slurm_rescue(
@@ -558,6 +579,8 @@ def create_batch_rescue_script(args, batch_status):
         walltime=walltime,
         account=account,
         mem_per_cpu=mem_per_cpu,
+        max_concurrent_jobs=max_concurrent_jobs,
+        exclude=exclude,
         path_to_posydon=path_to_posydon,
         path_to_posydon_data=path_to_posydon_data
     )

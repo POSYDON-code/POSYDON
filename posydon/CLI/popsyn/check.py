@@ -324,6 +324,9 @@ def get_expected_batch_count(run_folder, str_met):
         for line in f:
             if line.startswith('#SBATCH --array='):
                 array_range = line.split('=')[1].strip()
+                # remove any job limit specifiers
+                if '%' in array_range:
+                    array_range = array_range.split('%')[0]
                 if '-' in array_range:
                     start, end = map(int, array_range.split('-'))
                     return end - start + 1
