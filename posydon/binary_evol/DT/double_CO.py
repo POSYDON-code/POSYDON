@@ -109,7 +109,7 @@ class DoubleCO(detached_step):
             a = res.y[0][-1]
             e = res.y[1][-1]
             time_sol.append(res.t)
-            sol.append(res) 
+            sol.append(res)
 
         return res
 

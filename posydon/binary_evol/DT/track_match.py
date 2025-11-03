@@ -1882,11 +1882,11 @@ class TrackMatcher:
                 self.get_star_match_data(binary, primary,
                                         copy_prev_m0 = m0,
                                         copy_prev_t0 = t0)
-                
+
             elif self.primary_normal:
 
                 self.get_star_match_data(binary, primary)
-                
+
                 if primary == binary.star_2:
                     self.matched_s2 = True
                 elif primary == binary.star_1:
