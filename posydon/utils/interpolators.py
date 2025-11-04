@@ -134,7 +134,7 @@ class StellarInterpolator:
         y_data : list of 1D-ndarray
             List of Y-coordinates of the data to interpolate. Each entry
             needs to have the same length as `t`.
-        y_leys : list of str
+        y_keys : list of str
             List of keys corresponding to each y_data entry.
         positives : list of bool (default: None)
             List indicating for each y_data entry whether to request positive
