@@ -652,7 +652,8 @@ class IllustrisTNG(SFHBase):
 
         Note:
         We are using the closest redshift bin in the IllustrisTNG simulation
-        to extract the metallicity distribution for the requested redshift.
+        that is smaller than the requested redshift to extract the metallicity
+        distribution for the requested redshift.
 
         Parameters
         ----------
