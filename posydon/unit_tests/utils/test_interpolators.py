@@ -22,10 +22,10 @@ from pytest import approx, fixture, raises, warns
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = {'PchipInterpolator', 'PchipInterpolator2', '__authors__',\
+        elements = {'interp1d', 'SingleStarInterpolator', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
-                    'interp1d', 'np', 'copy'}
+                    'np', 'PchipInterpolator', 'copy'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -40,13 +40,6 @@ class TestElements:
                                       +"Please check, whether they have been "\
                                       +"added on purpose and update this "\
                                       +"unit test."
-
-    def test_instance_interp1d(self):
-        assert isclass(totest.interp1d)
-
-    def test_instance_PchipInterpolator2(self):
-        assert isclass(totest.PchipInterpolator2)
-
 
 class Testinterp1d:
     @fixture
@@ -152,56 +145,56 @@ class Testinterp1d:
             interp1d(0.2)
 
 
-class TestPchipInterpolator2:
+class TestSingleStarInterpolator:
     @fixture
-    def PchipInterpolator2(self):
+    def SingleStarInterpolator(self):
         # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [1.0, 0.0])
+        return totest.SingleStarInterpolator([0.0, 1.0], [1.0, 0.0])
 
     @fixture
-    def PchipInterpolator2_True(self):
+    def SSI_True(self):
         # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
+        return totest.SingleStarInterpolator([0.0, 1.0], [-0.5, 0.5],\
                                          positive=True)
 
     @fixture
-    def PchipInterpolator2_False(self):
+    def SSI_False(self):
         # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
+        return totest.SingleStarInterpolator([0.0, 1.0], [-0.5, 0.5],\
                                          positive=False)
 
     @fixture
-    def PchipInterpolator2_Deriv(self):
+    def SSI_Deriv(self):
         # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
+        return totest.SingleStarInterpolator([0.0, 1.0], [-0.5, 0.5],\
                                          derivative=True)
 
-    # test the PchipInterpolator2 class
-    def test_init(self, PchipInterpolator2, PchipInterpolator2_True,\
-                  PchipInterpolator2_False, PchipInterpolator2_Deriv):
-        assert isroutine(PchipInterpolator2.__init__)
+    # test the SingleStarInterpolator class
+    def test_init(self, SingleStarInterpolator, SSI_True,\
+                  SSI_False, SSI_Deriv):
+        assert isroutine(SingleStarInterpolator.__init__)
         # check that the instance is of correct type and all code in the
         # __init__ got executed: the elements are created and initialized
-        assert isinstance(PchipInterpolator2, totest.PchipInterpolator2)
-        assert isinstance(PchipInterpolator2.interpolator,\
+        assert isinstance(SingleStarInterpolator, totest.SingleStarInterpolator)
+        assert isinstance(SingleStarInterpolator.interpolator,\
                           totest.PchipInterpolator)
-        assert PchipInterpolator2.positive == False
-        assert PchipInterpolator2_True.positive == True
-        assert PchipInterpolator2_False.positive == False
-        assert PchipInterpolator2.offset == 0.0
-        assert PchipInterpolator2.derivative == False
-        assert PchipInterpolator2_Deriv.derivative == True
-        assert type(PchipInterpolator2_Deriv.interpolator) == type(PchipInterpolator2.interpolator.derivative())
+        assert SingleStarInterpolator.positive == False
+        assert SSI_True.positive == True
+        assert SSI_False.positive == False
+        assert SingleStarInterpolator.offset == 0.0
+        assert SingleStarInterpolator.derivative == False
+        assert SSI_Deriv.derivative == True
+        assert type(SSI_Deriv.interpolator) == type(SingleStarInterpolator.interpolator.derivative())
 
-    def test_call(self, PchipInterpolator2, PchipInterpolator2_True,\
-                  PchipInterpolator2_False):
-        assert isroutine(PchipInterpolator2.__call__)
-        assert PchipInterpolator2(0.1) == 0.9
-        assert PchipInterpolator2_True(0.1) == 0.0
-        assert PchipInterpolator2_False(0.1) == -0.4
-        assert np.allclose(PchipInterpolator2([0.1, 0.8]),\
+    def test_call(self, SingleStarInterpolator, SSI_True,\
+                  SSI_False):
+        assert isroutine(SingleStarInterpolator.__call__)
+        assert SingleStarInterpolator(0.1) == 0.9
+        assert SSI_True(0.1) == 0.0
+        assert SSI_False(0.1) == -0.4
+        assert np.allclose(SingleStarInterpolator([0.1, 0.8]),\
                            np.array([0.9, 0.2]))
-        assert np.allclose(PchipInterpolator2_True([0.1, 0.8]),\
+        assert np.allclose(SSI_True([0.1, 0.8]),\
                            np.array([0.0, 0.3]))
-        assert np.allclose(PchipInterpolator2_False([0.1, 0.8]),\
+        assert np.allclose(SSI_False([0.1, 0.8]),\
                            np.array([-0.4, 0.3]))
