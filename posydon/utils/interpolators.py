@@ -167,13 +167,12 @@ class SingleStarInterpolator:
 
                 # Create interpolator only if there is data for this combination
                 key = (is_positive, is_derivative)
-                if filtered_data:
-                    base_interp = PchipInterpolator(t, np.array(filtered_data).T)
-                    self._keys[key] = filtered_keys
-                    if is_derivative:
-                        self._interpolators[key] = base_interp.derivative()
-                    else:
-                        self._interpolators[key] = base_interp
+                base_interp = PchipInterpolator(t, np.array(filtered_data).T)
+                self._keys[key] = filtered_keys
+                if is_derivative:
+                    self._interpolators[key] = base_interp.derivative()
+                else:
+                    self._interpolators[key] = base_interp
 
         self.t_max = t.max()
         self.max_time = np.inf
