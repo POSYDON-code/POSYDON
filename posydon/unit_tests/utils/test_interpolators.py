@@ -238,7 +238,7 @@ class TestSingleStarInterpolator:
         # effectively querying at t=0.0
         assert np.allclose(res["y"], 1.0)
 
-    def test_full_combinations_call(SSI_full_combinations):
+    def test_full_combinations_call(self,SSI_full_combinations):
         res = SSI_full_combinations(0.5)
         # Check that all keys exist
         assert set(res.keys()) == {"a", "b", "c", "d"}
