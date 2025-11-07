@@ -242,6 +242,6 @@ class TestSingleStarInterpolator:
         res = SSI_full_combinations(0.5)
         assert set(res.keys()) == {"a", "b", "c", "d"}
         assert np.allclose(res["a"], 1.5)
-        assert np.allclose(res["b"], 2.0)  
+        assert np.allclose(res["b"], 2.0)
         assert np.allclose(res["c"], -0.5)
         assert np.allclose(res["d"], 3.0)
