@@ -228,7 +228,8 @@ class SingleStarInterpolator:
                 for i, key in enumerate(keys):
                     results[key] = values[i]
             else:
-                for i, key in enumerate(keys):
-                    results[key] = values[:, i]
+                if len(keys)>0:
+                    for i, key in enumerate(keys):
+                        results[key] = values[:, i]
 
         return results
