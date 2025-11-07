@@ -121,7 +121,7 @@ class interp1d:
             raise NotImplementedError(f"kind = {self.kind} is not supported")
 
 
-class StellarInterpolator:
+class SingleStarInterpolator:
     """Interpolation class for stellar evolution tracks."""
 
     def __init__(self, t, y_data, y_keys, positives=None, derivatives=None):
