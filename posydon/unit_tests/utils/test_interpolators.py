@@ -194,7 +194,7 @@ class TestSingleStarInterpolator:
         return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
 
     @fixture
-    def SSI_two_outputs_same_combination():
+    def SSI_two_outputs_same_combination(self):
         t = np.array([0.0, 1.0])
         y_data = [
             [1.0, 2.0],   # positive=False, derivative=False
