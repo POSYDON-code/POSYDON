@@ -147,54 +147,78 @@ class Testinterp1d:
 
 class TestSingleStarInterpolator:
     @fixture
-    def SingleStarInterpolator(self):
-        # initialize an instance of the class with defaults
-        return totest.SingleStarInterpolator([0.0, 1.0], [1.0, 0.0])
+    def SSI_simple(self):
+        # Single y_data, no positives, no derivatives
+        t = np.array([0.0, 1.0])
+        y_data = [np.array([1.0, 0.0])]
+        y_keys = ["y"]
+        return totest.SingleStarInterpolator(t, y_data, y_keys)
 
     @fixture
-    def SSI_True(self):
-        # initialize an instance of the class with defaults
-        return totest.SingleStarInterpolator([0.0, 1.0], [-0.5, 0.5],\
-                                         positive=True)
+    def SSI_positive(self):
+        t = np.array([0.0, 1.0])
+        y_data = [np.array([-0.5, 0.5])]
+        y_keys = ["y"]
+        positives = [True]
+        return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives)
 
     @fixture
-    def SSI_False(self):
-        # initialize an instance of the class with defaults
-        return totest.SingleStarInterpolator([0.0, 1.0], [-0.5, 0.5],\
-                                         positive=False)
+    def SSI_derivative(self):
+        t = np.array([0.0, 1.0])
+        y_data = [np.array([-0.5, 0.5])]
+        y_keys = ["y"]
+        derivatives = [True]
+        return totest.SingleStarInterpolator(t, y_data, y_keys, derivatives=derivatives)
 
     @fixture
-    def SSI_Deriv(self):
-        # initialize an instance of the class with defaults
-        return totest.SingleStarInterpolator([0.0, 1.0], [-0.5, 0.5],\
-                                         derivative=True)
+    def SSI_multiple(self):
+        t = np.array([0.0, 1.0])
+        y_data = [np.array([1.0, 0.0]), np.array([-1.0, 2.0])]
+        y_keys = ["a", "b"]
+        positives = [False, True]
+        derivatives = [False, False]
+        return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
 
     # test the SingleStarInterpolator class
-    def test_init(self, SingleStarInterpolator, SSI_True,\
-                  SSI_False, SSI_Deriv):
-        assert isroutine(SingleStarInterpolator.__init__)
-        # check that the instance is of correct type and all code in the
-        # __init__ got executed: the elements are created and initialized
-        assert isinstance(SingleStarInterpolator, totest.SingleStarInterpolator)
-        assert isinstance(SingleStarInterpolator.interpolator,\
-                          totest.PchipInterpolator)
-        assert SingleStarInterpolator.positive == False
-        assert SSI_True.positive == True
-        assert SSI_False.positive == False
-        assert SingleStarInterpolator.offset == 0.0
-        assert SingleStarInterpolator.derivative == False
-        assert SSI_Deriv.derivative == True
-        assert type(SSI_Deriv.interpolator) == type(SingleStarInterpolator.interpolator.derivative())
+    def test_init(self, SSI_simple, SSI_positive, SSI_derivative, SSI_multiple):
+        # Basic type checks
+        for instance in [SSI_simple, SSI_positive, SSI_derivative, SSI_multiple]:
+            assert isinstance(instance, totest.SingleStarInterpolator)
+            assert hasattr(instance, "_interpolators")
+            assert hasattr(instance, "_keys")
+            assert hasattr(instance, "offset")
 
-    def test_call(self, SingleStarInterpolator, SSI_True,\
-                  SSI_False):
-        assert isroutine(SingleStarInterpolator.__call__)
-        assert SingleStarInterpolator(0.1) == 0.9
-        assert SSI_True(0.1) == 0.0
-        assert SSI_False(0.1) == -0.4
-        assert np.allclose(SingleStarInterpolator([0.1, 0.8]),\
-                           np.array([0.9, 0.2]))
-        assert np.allclose(SSI_True([0.1, 0.8]),\
-                           np.array([0.0, 0.3]))
-        assert np.allclose(SSI_False([0.1, 0.8]),\
-                           np.array([-0.4, 0.3]))
+        # Check that keys match
+        assert SSI_simple.keys == ["y"]
+        assert SSI_positive.keys == ["y"]
+        assert SSI_derivative.keys == ["y"]
+        assert set(SSI_multiple.keys) == {"a", "b"}
+
+    def test_call(self, SSI_simple, SSI_positive, SSI_derivative, SSI_multiple):
+        # Single output, no positive, no derivative
+        res = SSI_simple(0.1)
+        assert isinstance(res, dict)
+        assert "y" in res
+        assert np.allclose(res["y"], 0.9)
+
+        # Positive output
+        res_pos = SSI_positive(0.1)
+        assert np.allclose(res_pos["y"], 0.0)  # clipped to 0
+
+        # Derivative output
+        res_deriv = SSI_derivative(0.1)
+        # derivative between -0.5 -> 0.5 is 1.0 slope
+        assert np.allclose(res_deriv["y"], 1.0)
+
+        # Multiple outputs
+        res_multi = SSI_multiple(0.5)
+        assert np.allclose(res_multi["a"], 0.5)  # linear interp 1 -> 0
+        # 'b' is positive, should clip -0.5 to 0
+        expected_b = max(-1.0 + (2.0 + 1.0) * 0.5, 0.0)  # linear interp
+        assert np.allclose(res_multi["b"], expected_b)
+
+    def test_offset(self, SSI_simple):
+        SSI_simple.offset = 0.5
+        res = SSI_simple(0.5)
+        # effectively querying at t=0.0
+        assert np.allclose(res["y"], 1.0)
