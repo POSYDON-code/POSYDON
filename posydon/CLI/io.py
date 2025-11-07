@@ -220,7 +220,7 @@ def create_slurm_array(metallicity,
     if max_concurrent_jobs is not None:
         job_array_length = f"{job_array_length}%{max_concurrent_jobs}"
 
-    text_pre = textwrap.dedent(f'''\
+    text_pre_pre = textwrap.dedent(f'''\
         #!/bin/bash
         #SBATCH --array=0-{job_array_length}
         #SBATCH --job-name={str_met}_popsyn
