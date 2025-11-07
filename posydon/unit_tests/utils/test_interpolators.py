@@ -179,6 +179,21 @@ class TestSingleStarInterpolator:
         derivatives = [False, False]
         return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
 
+    @fixture
+    def SSI_full_combinations():
+        t = np.array([0.0, 1.0])
+        y_data = [
+            np.array([1.0, 2.0]),   # positive=False, derivative=False
+            np.array([3.0, 1.0]),   # positive=True, derivative=False
+            np.array([0.5, 0.0]),   # positive=False, derivative=True
+            np.array([-1.0, 2.0])   # positive=True, derivative=True
+        ]
+        y_keys = ["a", "b", "c", "d"]
+        positives = [False, True, False, True]
+        derivatives = [False, False, True, True]
+        return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
+
+
     # test the SingleStarInterpolator class
     def test_init(self, SSI_simple, SSI_positive, SSI_derivative, SSI_multiple):
         # Basic type checks
@@ -222,3 +237,14 @@ class TestSingleStarInterpolator:
         res = SSI_simple(0.5)
         # effectively querying at t=0.0
         assert np.allclose(res["y"], 1.0)
+
+    def test_full_combinations_call(SSI_full_combinations):
+        res = SSI_full_combinations(0.5)
+        # Check that all keys exist
+        assert set(res.keys()) == {"a", "b", "c", "d"}
+        # Simple numerical checks to ensure values are reasonable
+        assert np.allclose(res["a"], 1.5)
+        assert np.allclose(res["b"], 2.0)  # positive clipped if needed
+        assert np.allclose(res["c"], 0.25) # derivative value
+        assert np.allclose(res["d"], max(0.5, 0.0))  # positive+derivative
+    
