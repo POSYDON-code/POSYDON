@@ -203,7 +203,7 @@ class TestSingleStarInterpolator:
         y_keys = ["a", "b"]
         positives = [False, False]
         derivatives = [False, False]  # both same combination
-        return SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
+        return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
 
     # test the SingleStarInterpolator class
     def test_init(self, SSI_simple, SSI_positive, SSI_derivative, SSI_multiple):
