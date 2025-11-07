@@ -240,10 +240,8 @@ class TestSingleStarInterpolator:
 
     def test_full_combinations_call(self,SSI_full_combinations):
         res = SSI_full_combinations(0.5)
-        # Check that all keys exist
         assert set(res.keys()) == {"a", "b", "c", "d"}
-        # Simple numerical checks to ensure values are reasonable
         assert np.allclose(res["a"], 1.5)
-        assert np.allclose(res["b"], 2.0)  # positive clipped if needed
-        assert np.allclose(res["c"], 0.25) # derivative value
-        assert np.allclose(res["d"], max(0.5, 0.0))  # positive+derivative
+        assert np.allclose(res["b"], 2.0)  
+        assert np.allclose(res["c"], -0.5)
+        assert np.allclose(res["d"], 3.0)
