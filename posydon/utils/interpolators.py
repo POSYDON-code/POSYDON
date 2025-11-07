@@ -225,7 +225,7 @@ class SingleStarInterpolator:
             keys = self._keys[(is_positive, is_derivative)]
 
             values = np.atleast_2d(values)
-            
+
             for i, key in enumerate(keys):
                 results[key] = values[:, i] if values.shape[0] > 1 else values[0, i]
 
