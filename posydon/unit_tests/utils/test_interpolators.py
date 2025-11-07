@@ -247,4 +247,3 @@ class TestSingleStarInterpolator:
         assert np.allclose(res["b"], 2.0)  # positive clipped if needed
         assert np.allclose(res["c"], 0.25) # derivative value
         assert np.allclose(res["d"], max(0.5, 0.0))  # positive+derivative
-
