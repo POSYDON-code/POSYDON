@@ -43,7 +43,7 @@ from posydon.utils.common_functions import (
     convert_metallicity_to_string,
     set_binary_to_failed,
 )
-from posydon.utils.interpolators import StellarInterpolator
+from posydon.utils.interpolators import SingleStarInterpolator
 from posydon.utils.posydonerror import MatchingError, NumericalError, POSYDONError
 from posydon.utils.posydonwarning import Pwarn
 
@@ -123,7 +123,7 @@ class TrackMatcher:
 
     KEYS_POSITIVE : list[str]
         Keys in this list are forced to be positive or else 0 by the
-        posydon.utils.StellarInterpolator class following interpolation
+        posydon.utils.SingleStarInterpolator class following interpolation
         of the associated quantity.
 
     path : str
@@ -1531,14 +1531,13 @@ class TrackMatcher:
                 y_data = np.delete(y_data, bad, axis=1)
                 i_bad = np.diff(age) <= 0
 
-
-        interp1d = StellarInterpolator(age,
+        interp1d = SingleStarInterpolator(age,
                             y_data,
                             y_keys,
                             positives=positives,
                             derivatives=derivatives)
 
-        # store additional info in StellarInterpolator object
+        # store additional info in SingleStarInterpolator object
         interp1d.t_max = t_max
         interp1d.max_time = max_time
         interp1d.t0 = match_t0
