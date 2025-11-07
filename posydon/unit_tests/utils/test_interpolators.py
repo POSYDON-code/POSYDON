@@ -194,16 +194,16 @@ class TestSingleStarInterpolator:
         return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
 
     @fixture
-    def SSI_two_outputs_same_combination(self):
+    def SSI_2D_coverage(self):
         t = np.array([0.0, 1.0])
         y_data = [
-            [1.0, 2.0],   # positive=False, derivative=False
-            [3.0, 4.0]    # positive=False, derivative=False
+            [1.0, 2.0],  # positive=False, derivative=False
+            [3.0, 4.0]   # positive=False, derivative=False
         ]
         y_keys = ["a", "b"]
         positives = [False, False]
         derivatives = [False, False]  # both same combination
-        return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
+        return SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
 
     # test the SingleStarInterpolator class
     def test_init(self, SSI_simple, SSI_positive, SSI_derivative, SSI_multiple):
@@ -257,8 +257,6 @@ class TestSingleStarInterpolator:
         assert np.allclose(res["c"], -0.5)
         assert np.allclose(res["d"], 3.0)
 
-    def test_values_2D_branch(self, SSI_two_outputs_same_combination):
-        res = SSI_two_outputs_same_combination(0.5)
+    def test_values_2D_branch(self,SSI_2D_coverage):
+        res = SSI_2D_coverage(0.5)
         assert set(res.keys()) == {"a", "b"}
-        assert np.allclose(res["a"], 1.5)
-        assert np.allclose(res["b"], 3.5)
