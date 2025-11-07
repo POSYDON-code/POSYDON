@@ -262,4 +262,3 @@ class TestSingleStarInterpolator:
         assert set(res.keys()) == {"a", "b"}
         assert np.allclose(res["a"], 1.5)
         assert np.allclose(res["b"], 3.5)
-
