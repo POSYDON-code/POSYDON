@@ -1126,9 +1126,6 @@ class detached_evolution:
         self.secondary = secondary
         # update list of tracked physical properties
         self.phys_keys = list(secondary.interp1d.keys)
-        # except we don't evolve these:
-        #for prop in ["t0", "m0", "t_max", "max_time"]:
-        #    self.phys_keys.remove(prop)
 
         # dictionaries to track current properties during evolution
         self.primary.latest = {}
