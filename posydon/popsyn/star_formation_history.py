@@ -650,6 +650,11 @@ class IllustrisTNG(SFHBase):
         """Calculate the fractional SFR as a function of redshift and
         metallicity bins.
 
+        Note:
+        We are using the closest redshift bin in the IllustrisTNG simulation
+        that is smaller than the requested redshift to extract the metallicity
+        distribution for the requested redshift.
+
         Parameters
         ----------
         z : float or array-like
@@ -813,6 +818,11 @@ class Chruslinska21(SFHBase):
     def fSFR(self, z, metallicity_bins):
         """Calculate the fractional SFR as a function of redshift and metallicity bins
 
+        Note:
+        We are using the closest redshift from Chruslinska+21 models
+        that is smaller than the requested redshift to extract the
+        metallicity distribution.
+
         Parameters
         ----------
         z : float or array-like
@@ -826,7 +836,17 @@ class Chruslinska21(SFHBase):
             Fraction of the SFR in the given metallicity bin at the given redshift.
         """
         # only use data within the metallicity bounds (no lower bound)
-        redshift_indices = np.array([np.where(self.redshifts <= i)[0][0] for i in z])
+        if np.min(z) < np.min(self.redshifts):
+            Pwarn('Some redshift values are lower than the minimum '
+                    'redshift in the Chruslinska+21 data. '
+                    'Using the minimum redshift available.',
+                    'SFHModelWarning')
+            redshift_indices = np.array([-1 if i < np.min(self.redshifts)
+                                    else np.where(self.redshifts <= i)[0][0]
+                                    for i in z])
+        else:
+            redshift_indices = np.array([np.where(self.redshifts <= i)[0][0] for i in z])
+
         Z_dist = self.SFR_data[redshift_indices]
         fSFR = np.zeros((len(z), len(metallicity_bins) - 1))
 
