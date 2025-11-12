@@ -1491,8 +1491,6 @@ class TrackMatcher:
         except ValueError:
             age = np.array([0.0, max_time])
 
-        print("max_time = ", max_time)
-        print("age = ", age)
         # max timelength of the track
         t_max = age.max()
 
