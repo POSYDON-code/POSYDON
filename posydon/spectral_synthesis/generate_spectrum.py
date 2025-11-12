@@ -45,9 +45,12 @@ def check_boundaries(grids,grid_name,**kwargs):
     grid = grids.spectral_grids[grid_name]
     axis_labels = grid.axis_labels
     tol = 0.1
+
     for axis_label in axis_labels:
         if axis_label == 'log(g)':
-                tol = 0.2
+            tol = 0.2
+            if x['log(g)'] > 6.5:
+                return 'failed_grid',x
         if x[axis_label] < grid.axis_x_min[axis_label]:
             if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_min[axis_label]
@@ -407,6 +410,11 @@ def rescale_log_g(grids,label,**x):
     for key in x:
         if key not in grid.axis_labels:
             old_x.pop(key)
+    
+    #Removing the post-AGB systems
+    if old_x['log(g)'] > 6.5: 
+        return x 
+
 
     for axis_label in grid.axis_labels:
         dx[axis_label] = 0.0
