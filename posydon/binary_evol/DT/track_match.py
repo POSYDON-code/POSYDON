@@ -1535,7 +1535,7 @@ class TrackMatcher:
 
         interp1d["L"] = PchipInterpolator2(age, 10 ** kvalue["log_L"])
         interp1d["R"] = PchipInterpolator2(age, 10 ** kvalue["log_R"])
-    
+
         interp1d["t_max"] = t_max
 
         interp1d["max_time"] = max_time
