@@ -730,7 +730,7 @@ def handle_batches_complete(args, missing_files, batch_status):
                     args.run_folder,
                     MERGE_SCRIPT_PATTERN.format(met=str_met)
                 )
-                if not submit_slurm_job(script_path, f"Merge job for {str_met}"): #pragma: no cover
+                if not submit_slurm_job(script_path): #pragma: no cover
                     all_succeeded = False
 
             if all_succeeded:

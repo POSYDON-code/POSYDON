@@ -187,7 +187,7 @@ def evolve_binaries(verbose):
     star_1 = SingleStar(**{'mass': 11.948472796094759, 'state': 'H-rich_Core_H_burning','metallicity':1,
                     'natal_kick_array': [231.97383621190582, 5.927334890264575, 1.5990566013567014, 6.137994236518587]})
     star_2 = SingleStar(**{'mass': 7.636958434479617, 'state': 'H-rich_Core_H_burning','metallicity':1,
-                    'natal_kick_array': [0, 0, 0, 0]})
+                    'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  190925.99636740884,'eccentricity': 0.0}, properties = sim_prop)
     evolve_binary(binary)
@@ -197,7 +197,7 @@ def evolve_binaries(verbose):
     star_1 = SingleStar(**{'mass': 30.169861921689556, 'state': 'H-rich_Core_H_burning','metallicity':1,
                 'natal_kick_array':  [77.96834852144123, 0.05021460132555987, 2.3146518208348152, 1.733054979982291]})
     star_2 = SingleStar(**{'mass': 10.972734402996027, 'state': 'H-rich_Core_H_burning','metallicity':1,
-                    'natal_kick_array': [0, 0, 0, 0]})
+                    'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  20479.71919353725,'eccentricity': 0.0}, properties = sim_prop)
     evolve_binary(binary)
@@ -207,7 +207,7 @@ def evolve_binaries(verbose):
     star_1 = SingleStar(**{'mass': 9.474917413943635, 'state': 'H-rich_Core_H_burning','metallicity':1,
                 'natal_kick_array':  [133.5713935237759, 4.398754864537542, 2.703102872841114, 1.4633904612711142]})
     star_2 = SingleStar(**{'mass': 9.311073918196263, 'state': 'H-rich_Core_H_burning','metallicity':1,
-                    'natal_kick_array': [0, 0, 0, 0]})
+                    'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  18.605997832086413,'eccentricity': 0.0}, properties = sim_prop)
 
@@ -216,9 +216,9 @@ def evolve_binaries(verbose):
     # flipped S1 and S2
     ########################################
     star_1 = SingleStar(**{'mass': 10.438541, 'state': 'H-rich_Core_H_burning','metallicity':1,
-                'natal_kick_array':  [0, 0, 0, 0]})
+                'natal_kick_array':  [0.0, 0.0, 0.0, 0.0]})
     star_2 = SingleStar(**{'mass': 1.400713, 'state': 'H-rich_Core_H_burning','metallicity':1,
-                    'natal_kick_array': [0, 4.190728383757787, 1.1521129697118118, 5.015343794234789]})
+                    'natal_kick_array': [0.0, 4.190728383757787, 1.1521129697118118, 5.015343794234789]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  9.824025,'eccentricity': 0.0}, properties = sim_prop)
     evolve_binary(binary)
@@ -226,9 +226,9 @@ def evolve_binaries(verbose):
     # flipped S1 and S2
     ########################################
     star_1= SingleStar(**{'mass': 9.845907 , 'state': 'H-rich_Core_H_burning','metallicity':1,
-                'natal_kick_array':  [0, 4.190728383757787, 1.1521129697118118, 5.015343794234789]})
+                'natal_kick_array':  [0.0, 4.190728383757787, 1.1521129697118118, 5.015343794234789]})
     star_2 = SingleStar(**{'mass': 9.611029, 'state': 'H-rich_Core_H_burning','metallicity':1,
-                    'natal_kick_array': [0, 0, 0, 0]})
+                    'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  3.820571,'eccentricity': 0.0}, properties = sim_prop)
     evolve_binary(binary)
@@ -236,9 +236,9 @@ def evolve_binaries(verbose):
     # Normal binary evolution
     ########################################
     star_1= SingleStar(**{'mass': 30.845907 , 'state': 'H-rich_Core_H_burning','metallicity':1,
-                'natal_kick_array':  [0, 4.190728383757787, 1.1521129697118118, 5.015343794234789]})
+                'natal_kick_array':  [0.0, 4.190728383757787, 1.1521129697118118, 5.015343794234789]})
     star_2 = SingleStar(**{'mass': 30.611029, 'state': 'H-rich_Core_H_burning','metallicity':1,
-                    'natal_kick_array': [0, 0, 0, 0]})
+                    'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  30.820571,'eccentricity': 0.0}, properties = sim_prop)
     evolve_binary(binary)
@@ -248,7 +248,7 @@ def evolve_binaries(verbose):
     star_1= SingleStar(**{'mass': 9.213534679594247 , 'state': 'H-rich_Core_H_burning','metallicity':1,
                 'natal_kick_array':  [327.5906384501521, 1.7707176050073297, 1.573225822966838, 1.6757313876001914]})
     star_2 = SingleStar(**{'mass': 7.209878522799272, 'state': 'H-rich_Core_H_burning','metallicity':1,
-                    'natal_kick_array': [0, 0, 0, 0]})
+                    'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  63123.74544474666,'eccentricity': 0.0}, properties = sim_prop)
     evolve_binary(binary)
@@ -258,7 +258,7 @@ def evolve_binaries(verbose):
     star_1= SingleStar(**{'mass': 9.561158487732602 , 'state': 'H-rich_Core_H_burning','metallicity':1,
                 'natal_kick_array':  [317.5423844462847, 2.9095984678057603, 1.754121288652108, 2.3693917842468784]})
     star_2 = SingleStar(**{'mass': 9.382732464319286, 'state': 'H-rich_Core_H_burning','metallicity':1,
-                    'natal_kick_array': [0, 0, 0, 0]})
+                    'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  27.77657038557851,'eccentricity': 0.0}, properties = sim_prop)
     evolve_binary(binary)
@@ -270,7 +270,7 @@ def evolve_binaries(verbose):
                       'natal_kick_array': [40.91509926587841, 2.6295454150818256, 1.6718337470964977, 6.0408769315244895]})
     star2 = SingleStar(**{'mass': 6.742063, #481560266,
                         'state': 'H-rich_Core_H_burning',
-                        'natal_kick_array': [0, 0, 0, 0]})
+                        'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star1, star2, **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS',
                         'orbital_period': 17.957531550841225, 'eccentricity': 0.0,},
                         properties=sim_prop)
@@ -281,7 +281,7 @@ def evolve_binaries(verbose):
     star_1 = SingleStar(**{'mass': 31.616785, 'state': 'H-rich_Core_H_burning',
                 'natal_kick_array':  [10, 4.190728383757787, 1.1521129697118118, 5.015343794234789]})
     star_2 = SingleStar(**{'mass': 26.874267, 'state': 'H-rich_Core_H_burning',
-                    'natal_kick_array': [0, 0, 0, 0]})
+                    'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  501.99252706449792,'eccentricity': 0.0}, properties = sim_prop)
     evolve_binary(binary)
@@ -291,7 +291,7 @@ def evolve_binaries(verbose):
     star_1 = SingleStar(**{'mass': 18.107506844123645, 'state': 'H-rich_Core_H_burning',
                 'natal_kick_array':  [528.2970725443025, 4.190728383757787, 1.1521129697118118, 5.015343794234789]})
     star_2 = SingleStar(**{'mass': 15.641392951875442, 'state': 'H-rich_Core_H_burning',
-                    'natal_kick_array': [0, 0, 0, 0]})
+                    'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                         'orbital_period':  151.99252706449792,'eccentricity': 0.0}, properties = sim_prop)
     ########################################
@@ -622,7 +622,7 @@ def evolve_binaries(verbose):
                            'natal_kick_array':  [0.0, 0.2965418610971261, 2.0789170290719117, 3.207488023705968]})
     star_2 = SingleStar(**{'mass': 83.66522615073987,
                            'state': 'H-rich_Core_H_burning',
-                           'natal_kick_array': [0, 0, 0, 0]})
+                           'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  1449.1101985875678,'eccentricity': 0.0}, properties = sim_prop)
     evolve_binary(binary)
@@ -634,7 +634,7 @@ def evolve_binaries(verbose):
                            'natal_kick_array':  [11.818027275431337, 2.812412688633058, 0.4998731824233789, 2.9272630485628643]})
     star_2 = SingleStar(**{'mass': 8.584716012668551,
                            'state': 'H-rich_Core_H_burning',
-                           'natal_kick_array': [0, 0, 0, 0]})
+                           'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  20.82030114750744,'eccentricity': 0.0}, properties = sim_prop)
     evolve_binary(binary)
@@ -688,10 +688,10 @@ def evolve_binaries(verbose):
     ########################################
     star1 = SingleStar(**{'mass': 8.161885721822461,
                           'state': 'H-rich_Core_H_burning',
-                          'natal_kick_array': [0, 0, 0, 0]})
+                          'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     star2 = SingleStar(**{'mass': 3.5907829421526154,
                           'state': 'H-rich_Core_H_burning',
-                          'natal_kick_array': [0, 0, 0, 0]})
+                          'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
 
     binary = BinaryStar(star1, star2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 36.873457164644144, 'eccentricity': 0.0},
@@ -707,7 +707,7 @@ def evolve_binaries(verbose):
                                           1.434617029858906]})
     star2 = SingleStar(**{'mass': 30.000450298072902,
                         'state': 'H-rich_Core_H_burning',
-                        'natal_kick_array': [0, 0, 0, 0]})
+                        'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
 
     binary = BinaryStar(star1, star2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 24060.02101364665, 'eccentricity': 0.8085077857996965},
@@ -719,10 +719,10 @@ def evolve_binaries(verbose):
     ########################################
     star1 = SingleStar(**{'mass': 11.862930493162692,
                           'state': 'H-rich_Core_H_burning',
-                          'natal_kick_array': [0, 0, 0, 0]})
+                          'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     star2 = SingleStar(**{'mass': 1.4739109294156703,
                         'state': 'H-rich_Core_H_burning',
-                        'natal_kick_array': [0, 0, 0, 0]})
+                        'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
 
     binary = BinaryStar(star1, star2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 4111.083887312003, 'eccentricity':0.0},
@@ -734,10 +734,10 @@ def evolve_binaries(verbose):
     ########################################
     star1 = SingleStar(**{'mass': 8.527361341212108,
                           'state': 'H-rich_Core_H_burning',
-                          'natal_kick_array': [0, 0, 0, 0]})
+                          'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     star2 = SingleStar(**{'mass': 0.7061748406821822,
                           'state': 'H-rich_Core_H_burning',
-                          'natal_kick_array': [0, 0, 0, 0]})
+                          'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
 
     binary = BinaryStar(star1, star2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 2521.1927287891444, 'eccentricity':0.0},
@@ -749,10 +749,10 @@ def evolve_binaries(verbose):
     ########################################
     star1 = SingleStar(**{'mass': 13.661942533447398   ,#29829485,
                           'state': 'H-rich_Core_H_burning',
-                          'natal_kick_array': [0, 0, 0, 0]})
+                          'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
     star2 = SingleStar(**{'mass': 4.466151109802313    , #481560266,
                           'state': 'H-rich_Core_H_burning',
-                          'natal_kick_array': [0, 0, 0, 0]})
+                          'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
 
     binary = BinaryStar(star1, star2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':3110.1346707516914, 'eccentricity':0.0},

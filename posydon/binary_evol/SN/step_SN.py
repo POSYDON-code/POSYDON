@@ -1555,7 +1555,8 @@ class StepSN(object):
                 mean_anomaly = binary.star_1.natal_kick_mean_anomaly
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
-                    raise ValueError("mean_anomaly must be a single float value.")
+                    raise ValueError("mean_anomaly must be a single float value."
+                                     f"\n mean_anomaly = {mean_anomaly}")
             else:
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
                 binary.star_1.natal_kick_mean_anomaly = mean_anomaly
