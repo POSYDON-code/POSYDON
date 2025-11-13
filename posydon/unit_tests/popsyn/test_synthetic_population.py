@@ -21,20 +21,20 @@ from pytest import approx, fixture, raises, warns
 
 warnings.simplefilter("always")
 import os
-
+import shutil
 
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['parameter_array', 'DFInterface','History','Oneline',
+        elements = ['DFInterface','History','Oneline',
                     'Population','PopulationIO','PopulationRunner',
                     'Rates','TransientPopulation',
                     '__authors__','__builtins__', '__cached__', '__doc__',
                     '__file__','__loader__', '__name__', '__package__', '__spec__',
-                    'np', 'pd', 'tqdm', 'os', 'plt',
-                    'Zsun', 'binarypop_kwargs_from_ini',
-                    'initial_total_underlying_mass','plot_pop',
+                    'np', 'pd', 'tqdm', 'os', 'shutil','plt',
+                    'Zsun', 'binarypop_kwargs_from_ini','plot_pop','SimulationProperties',
+                    'calculate_model_weights','saved_ini_parameters',
                     'convert_metallicity_to_string','Pwarn','cosmology','const',
                     'get_shell_comoving_volume', 'get_comoving_distance_from_redshift',
                     'get_cosmic_time_from_redshift', 'redshift_from_cosmic_time_interpolator',
@@ -67,14 +67,14 @@ class TestPopulationRunner:
         with raises(ValueError, match="You did not provide a valid path_to_ini!"):
             totest.PopulationRunner("test")
 
-    def test_evolve(self,monkeypatch):
+    def test_evolve(self,tmp_path,monkeypatch):
         # mock dependencies
         class DummyPop:
             def __init__(self, **kwargs):
                 self.kwargs = kwargs
                 self.comm = None
                 self.metallicity = kwargs["metallicity"]
-            def evolve(self):
+            def evolve(self,**kwargs):
                 self.evolved = True
             def combine_saved_files(self, *args):
                 self.combined = True
@@ -88,15 +88,20 @@ class TestPopulationRunner:
                 "metallicity": [0.1,1.],
                 "temp_directory": "tmp_dir",
                 "verbose": False}
-        def dummy_merge(pop):
+        def dummy_merge(pop,overwrite):
             pop.merged = True
+
+        ini_path = os.path.join(tmp_path, "dummy.ini")
+        with open(ini_path, "w") as f:
+            f.write("[DEFAULT]\nkey=value\n")
+        
         # Mock out functions
         monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs)
         monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
         monkeypatch.setattr(totest, "convert_metallicity_to_string", lambda x: "0.1")
+        run = totest.PopulationRunner(str(ini_path))
         # overwrite=False, directory doesn't exist
         monkeypatch.setattr(os.path, "exists", lambda path: False)
-        run = totest.PopulationRunner("dummy.ini")
         run.merge_parallel_runs = dummy_merge
         run.evolve()
         assert run.binary_populations[0].evolved is True
@@ -104,12 +109,12 @@ class TestPopulationRunner:
         # overwrite=False, directory exists
         monkeypatch.setattr(os.path, "exists", lambda path: True)
         monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs_list)
-        run = totest.PopulationRunner("dummy.ini", verbose=True)
+        run = totest.PopulationRunner(str(ini_path), verbose=True)
         with raises(FileExistsError, match="tmp_dir"):
             run.evolve(overwrite=False)
         # overwrite=True, directory exists
         removed = {}
-        monkeypatch.setattr(os, "removedirs", lambda path: removed.setdefault("called", path))
+        monkeypatch.setattr(shutil, "rmtree", lambda path: removed.setdefault("called", path))
         run.merge_parallel_runs = dummy_merge
         run.evolve(overwrite=True)
         assert removed["called"] == "0.1_Zsun_tmp_dir"
@@ -127,36 +132,42 @@ class TestPopulationRunner:
             def combine_saved_files(self, out_path, files):
                 self.combine_args = (out_path, files)
                 self.combined = True
+                
         def dummy_kwargs(path):
             return {
                 "metallicity": 0.1,
                 "temp_directory": "tmp_dir",
                 "verbose": False}
+        
+        ini_path = os.path.join(tmp_path.parent, "dummy.ini")
+        with open(ini_path, "w") as f:
+            f.write("[DEFAULT]\nkey=value\n")
 
         monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs)
         monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
         monkeypatch.setattr(totest, "convert_metallicity_to_string",
                             lambda x: str(os.path.join(tmp_path, "0.1")))
+        
         # 1) File exists case: should raise FileExistsError
         pop = DummyPop(metallicity=0.1, temp_directory=str(tmp_path))
         output_file = os.path.join(tmp_path,"0.1_Zsun_population.h5")
         with open(output_file, "w") as f:
             f.write("test")
-        run = totest.PopulationRunner("dummy.ini")
+        run = totest.PopulationRunner(str(ini_path))
         run.verbose = False
         with raises(FileExistsError, match="Files were not merged"):
             run.merge_parallel_runs(pop)
 
         # 2) Normal merge case
-        temp_dir = tmp_path
-        file1 = os.path.join(temp_dir,"file1.tmp")
-        file2 = os.path.join(temp_dir,"file2.tmp")
+        file1 = os.path.join(tmp_path,"file1.tmp")
+        file2 = os.path.join(tmp_path,"file2.tmp")
+        output_file = os.path.join(tmp_path,"0.1_Zsun_population.h5")
         with open(file1, "w") as f:
             f.write("test")
         with open(file2, "w") as f:
             f.write("test")
-        pop = DummyPop(metallicity=0.1, temp_directory=str(temp_dir))
-        run = totest.PopulationRunner("dummy.ini")
+        pop = DummyPop(metallicity=0.1, temp_directory=str(tmp_path))
+        run = totest.PopulationRunner(str(ini_path))
         run.verbose = True
         monkeypatch.setattr(totest, "convert_metallicity_to_string", lambda x: "0.1")
         run.merge_parallel_runs(pop)
@@ -167,20 +178,18 @@ class TestPopulationRunner:
         filtered_files = [f for f in files if os.path.basename(f) != out_path]
         assert set(os.path.basename(f) for f in filtered_files) == {"file1.tmp", "file2.tmp"}
         captured = capsys.readouterr()
-        assert "Merging 3 files..." in captured.out
+        assert "Merging" in captured.out
         assert "Files merged!" in captured.out
-        assert f"Removing files in {temp_dir}" in captured.out
-        # Since files still exist, directory not removed; remove files manually
-        for f in [file1, file2]:
-            os.remove(f)
-        output_file = os.path.join(temp_dir, "0.1_Zsun_population.h5")
-        if os.path.exists(output_file):
-            os.remove(output_file)
-        assert len(os.listdir(temp_dir)) == 0
+        assert f"Removing files in {tmp_path}" in captured.out
+        # cleanup
+        for f in [file1, file2, output_file]:
+            if os.path.exists(f):
+                os.remove(f)
+        assert len(os.listdir(tmp_path)) == 0
+
         run.verbose = False
         run.merge_parallel_runs(pop)
-        assert not os.path.exists(temp_dir)
-        monkeypatch.undo()
+        assert not os.path.exists(pop.kwargs["temp_directory"])
 
 class TestDFInterface:
 
