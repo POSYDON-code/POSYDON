@@ -1506,9 +1506,9 @@ class StepCEE(object):
             else:
                 rc2_i = rc2_i  # no change
                 Pwarn("The companion star radius within the common envelope cannot be updated. "
-                      "Using the initial companion radius. This should never happen.", 
+                      "Using the initial companion radius. This should never happen.",
                       'InterpolationWarning')
-        
+
         if self.verbose:
             print(f"After matching to single star the companion's radius is : {rc2_i} ")
 
