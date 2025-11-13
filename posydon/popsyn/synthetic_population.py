@@ -164,7 +164,7 @@ class PopulationRunner:
 
             if pop.comm is None: # pragma: no cover
                 self.merge_parallel_runs(pop, overwrite)
-                
+
     def merge_parallel_runs(self, pop, overwrite=False):
         """Merge the parallel runs of the population.
 
@@ -183,10 +183,10 @@ class PopulationRunner:
                     +"Files were not merged. You can use PopulationRunner.merge_parallel_runs() to merge the files manually."
                 )
             else: # pragma: no cover
-                if self.verbose: 
+                if self.verbose:
                     print(f"Removing pre-exisiting {fname}...")
                 os.remove(fname)
-        
+
         path_to_batch = pop.kwargs["temp_directory"]
 
         tmp_files = [
@@ -848,8 +848,8 @@ class PopulationIO:
 
     """
 
-    def __init__(self): 
-        self.verbose = False  
+    def __init__(self):
+        self.verbose = False
 
 
     def _load_metadata(self, filename):
@@ -1129,7 +1129,7 @@ class Population(PopulationIO):
 
             else: # no inifile # pragma: no cover
                 raise ValueError(
-                    f"{filename} does not contain a mass_per_metallicity table and no ini file was given!") # need to check if this makes sense. 
+                    f"{filename} does not contain a mass_per_metallicity table and no ini file was given!") # need to check if this makes sense.
 
         # add number of systems
         self.history_lengths = self.history.lengths
@@ -2178,8 +2178,8 @@ class TransientPopulation(Population):
                 )
         return rates
 
-    def plot_efficiency_over_metallicity(self, 
-                                         model_weight_identifier, 
+    def plot_efficiency_over_metallicity(self,
+                                         model_weight_identifier,
                                          channels=False, **kwargs):  # pragma: no cover
         """
         Plot the efficiency over metallicity.
@@ -2824,7 +2824,7 @@ class Rates(TransientPopulation):
         plot_pop.plot_rate_density(self.intrinsic_rate_density, channels=channels, **kwargs)
 
     @property
-    def edges_metallicity_bins(self): 
+    def edges_metallicity_bins(self):
         """Return the edges of the metallicity bins.
 
         Returns
@@ -2896,4 +2896,4 @@ class Rates(TransientPopulation):
 
         """
         return get_redshift_bin_centers(self.MODEL["delta_t"])
-    
+

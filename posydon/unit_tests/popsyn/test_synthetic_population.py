@@ -24,6 +24,7 @@ warnings.simplefilter("always")
 import os
 import shutil
 
+
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
@@ -95,7 +96,7 @@ class TestPopulationRunner:
         ini_path = os.path.join(tmp_path, "dummy.ini")
         with open(ini_path, "w") as f:
             f.write("[DEFAULT]\nkey=value\n")
-        
+
         # Mock out functions
         monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs)
         monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
@@ -133,13 +134,13 @@ class TestPopulationRunner:
             def combine_saved_files(self, out_path, files):
                 self.combine_args = (out_path, files)
                 self.combined = True
-                
+
         def dummy_kwargs(path):
             return {
                 "metallicity": 0.1,
                 "temp_directory": "tmp_dir",
                 "verbose": False}
-        
+
         ini_path = os.path.join(tmp_path.parent, "dummy.ini")
         with open(ini_path, "w") as f:
             f.write("[DEFAULT]\nkey=value\n")
@@ -148,7 +149,7 @@ class TestPopulationRunner:
         monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
         monkeypatch.setattr(totest, "convert_metallicity_to_string",
                             lambda x: str(os.path.join(tmp_path, "0.1")))
-        
+
         # 1) File exists case: should raise FileExistsError
         pop = DummyPop(metallicity=0.1, temp_directory=str(tmp_path))
         output_file = os.path.join(tmp_path,"0.1_Zsun_population.h5")
@@ -471,7 +472,7 @@ class TestOneline:
             one[[1.1, 2.2]]
 
 class TestPopulationIO:
-    
+
     @fixture
     def popio(self):
         p = totest.PopulationIO()
@@ -525,7 +526,7 @@ class TestPopulationIO:
         assert "param3" not in popio.ini_params
 
 class TestPopulation:
-    
+
     def create_minimal_population_file(self,tmp_path):
         filename = tmp_path / "pop.h5"
 
@@ -577,8 +578,8 @@ class TestPopulation:
             store.put("mass_per_metallicity", mass_df, format="table")
 
         return filename
- 
-    
+
+
     def test_population_init(self, tmp_path, monkeypatch):
 
         # bad input
@@ -608,22 +609,22 @@ class TestPopulation:
         })
         with pd.HDFStore(filename, "a") as store:
             store.append("oneline", oneline_df, format="table")
-            store.put("mass_per_metallicity", 
+            store.put("mass_per_metallicity",
                       pd.DataFrame({"simulated_mass": [0]}, index=[0.02]),
                      format="table")
         with raises(ValueError,match='does not contain an ini_parameters table'):
             pop = totest.Population(str(filename))
 
-        # /history and /oneline exist, yes ini_parameters, no mass_per_metallicity 
+        # /history and /oneline exist, yes ini_parameters, no mass_per_metallicity
         filename_no_mass = os.path.join(tmp_path, "pop_no_mass.h5")
         with pd.HDFStore(filename_no_mass, "w") as store:
             store.put("history", history_df,format="table")
             store.put("oneline", oneline_df, format="table")
-            store.put("ini_parameters", 
+            store.put("ini_parameters",
                       pd.DataFrame({"Parameter": ["metallicity"], "Value": [0.02]}),format="table")
         with raises(ValueError,match='does not contain a mass_per_metallicity table'):
             pop = totest.Population(str(filename_no_mass))
-            
+
         # metallicity specified
         monkeypatch.setattr(
             "posydon.popsyn.synthetic_population.binarypop_kwargs_from_ini",
@@ -649,7 +650,7 @@ class TestPopulation:
         assert pop.number_of_systems == 1
         assert isinstance(pop.history, totest.History)
         assert isinstance(pop.oneline, totest.Oneline)
-        
+
         # Metallicity specified
         dummy_ini_file = os.path.join(tmp_path,"dummy.ini")
         pop_with_metallicity = totest.Population(
@@ -658,19 +659,19 @@ class TestPopulation:
         assert pop_with_metallicity.mass_per_metallicity is not None
         assert pop_with_metallicity.solar_metallicities[0] == 0.02
         assert pop_with_metallicity.metallicities[0] == 0.02 * Zsun
-        
-    def test_export_selection(self,tmp_path,monkeypatch):            
+
+    def test_export_selection(self,tmp_path,monkeypatch):
         filename = self.create_minimal_population_file(tmp_path)
         pop = totest.Population(str(filename))
         export_file = tmp_path / "exp.h5"
-        
+
         # bad input
         with raises(ValueError,match='does not contain .h5'):
             pop.export_selection([0],'hello.txt')
-            
+
         with raises(ValueError,match="Both overwrite and append cannot be True!"):
             pop.export_selection([0],str(export_file),append=True,overwrite=True)
-            
+
         dummy_file = tmp_path / "exists.h5"
         pd.DataFrame({"a": [1]}).to_hdf(dummy_file, "dummy", format="table")
         with raises(FileExistsError,match='Set overwrite or append to True'):
@@ -679,12 +680,12 @@ class TestPopulation:
         # overwrite export
         out_file = tmp_path / "out.h5"
         pop.export_selection([0], str(out_file), overwrite=True, history_chunksize=1)
-        
+
         # append export
         pop.export_selection([0], str(out_file), append=True, history_chunksize=1)
-        
+
         # write export
-        pop.export_selection([0], os.path.join(tmp_path,'new.h5'), append=False, 
+        pop.export_selection([0], os.path.join(tmp_path,'new.h5'), append=False,
                              overwrite=False,
                              history_chunksize=1)
 
