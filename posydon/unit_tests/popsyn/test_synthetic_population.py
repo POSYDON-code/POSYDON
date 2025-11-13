@@ -470,12 +470,58 @@ class TestOneline:
             one[[1.1, 2.2]]
 
 class TestPopulationIO:
+    
+    @fixture
+    def popio(self):
+        p = totest.PopulationIO()
+        p.mass_per_metallicity = pd.DataFrame({"Z": [0.02], "mass": [1.0]})
+        p.ini_params = {"param1": 42, "param2": "abc"}
+        return p
 
-    def test_load_metadata(self):
-        # missing argument
+    def test_load_metadata(self,monkeypatch,popio):
         # bad input
+        with raises(ValueError,match='does not contain .h5'):
+            popio._load_metadata("not_pop.txt")
         # examples
-        pass
+        called={}
+        monkeypatch.setattr(popio, "_load_ini_params", lambda f: called.setdefault("ini", f))
+        monkeypatch.setattr(popio, "_load_mass_per_metallicity", lambda f: called.setdefault("mass", f))
+        popio._load_metadata("file.h5")
+        assert called == {"ini": "file.h5", "mass": "file.h5"}
+
+    def test_save_mass_per_metallicity(self, tmp_path, popio):
+        filename = os.path.join(tmp_path, "mass.h5")
+        popio._save_mass_per_metallicity(filename)
+
+        with pd.HDFStore(filename, "r") as store:
+            df = store["mass_per_metallicity"]
+
+        pd.testing.assert_frame_equal(df, popio.mass_per_metallicity)
+
+    def test_save_ini_params(self,tmp_path,popio,monkeypatch):
+        filename = os.path.join(tmp_path, "ini_out.h5")
+        monkeypatch.setattr("posydon.popsyn.synthetic_population.saved_ini_parameters", ["param1", "param3"])
+
+        popio._save_ini_params(filename)
+
+        with pd.HDFStore(filename, "r") as store:
+            df = store["ini_parameters"]
+
+        assert list(df.columns) == ["param1"]
+        assert df["param1"][0] == 42
+    def test_load_ini_params(self,tmp_path,popio,monkeypatch):
+        filename = os.path.join(tmp_path, "ini.h5")
+        monkeypatch.setattr("posydon.popsyn.synthetic_population.saved_ini_parameters", ["param1", "param2", "param3"])
+
+        df = pd.DataFrame({"param1": [1], "param2": ["x"]})
+        with pd.HDFStore(filename, "w") as store:
+            store.put("ini_parameters", df)
+
+        popio._load_ini_params(filename)
+
+        assert popio.ini_params["param1"] == 1
+        assert popio.ini_params["param2"] == "x"
+        assert "param3" not in popio.ini_params
 
 class TestPopulation:
 
