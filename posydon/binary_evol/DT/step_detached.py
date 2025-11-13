@@ -363,11 +363,11 @@ class detached_step:
         # match stars to single star models for detached evolution
         primary, secondary, only_CO = self.track_matcher.do_matching(binary, next_step_name)
 
-        if only_CO:
-            if self.verbose:
-                print("Binary system only contains compact objects."
-                      "Exiting step_detached, nothing left to do here.")
-            return
+        #if only_CO:
+        #    if self.verbose:
+        #        print("Binary system only contains compact objects."
+        #              "Exiting step_detached, nothing left to do here.")
+        #    return
 
         secondary.t_max = secondary.interp1d["t_max"]
         primary.t_max = primary.interp1d["t_max"]
@@ -391,7 +391,8 @@ class detached_step:
         self.evo.set_stars(primary, secondary, t0 = binary.time)
 
         if (self.evo.ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
-            or self.evo.ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0):
+            or self.evo.ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0) \
+            and not only_CO:
             binary.state = "initial_RLOF"
             return
         else:
@@ -419,9 +420,10 @@ class detached_step:
                 print("solution of ODE", self.res)
 
             if self.res.status == -1:
-                failed_state = binary.state
-                set_binary_to_failed(binary)
-                raise NumericalError(f"Integration failed for {failed_state} binary.")
+                print(f"Integration failed for {binary.state} "
+                      f"({binary.star_1.state}, {binary.star_2.state}): "
+                      f"{self.res.message}")
+                return
 
             # update binary/star properties after detached evolution
             t = self.get_time_after_evo(binary)
@@ -429,11 +431,12 @@ class detached_step:
             self.update_co_stars(t, primary, secondary)
 
             # check primary/secondary star states
-            secondary.state = check_state_of_star(secondary, star_CO=False)
-            for timestep in range(-len(t[:-1]), 0):
-                secondary.state_history[timestep] = check_state_of_star(secondary, i=timestep, star_CO=False)
+            if not secondary.co:
+                secondary.state = check_state_of_star(secondary, star_CO=False)
+                for timestep in range(-len(t[:-1]), 0):
+                    secondary.state_history[timestep] = check_state_of_star(secondary, i=timestep, star_CO=False)
 
-            if primary.state == "massless_remnant":
+            if (primary.state == "massless_remnant") or (primary.co and secondary.co):
                 pass
             elif primary.co:
                 mdot_acc = np.atleast_1d(bondi_hoyle(
@@ -446,112 +449,113 @@ class detached_step:
                 for timestep in range(-len(t[:-1]), 0):
                     primary.state_history[timestep] = check_state_of_star(primary, i=timestep, star_CO=False)
 
-            ## CHECK IF THE BINARY IS IN RLO
-            if self.res.t_events[0] or self.res.t_events[1]:
+            if not (primary.co and secondary.co):
+                ## CHECK IF THE BINARY IS IN RLO
+                if self.res.t_events[0] or self.res.t_events[1]:
 
-                if self.RLO_orbit_at_orbit_with_same_am:
-                    # final circular orbit conserves angular momentum
-                    # compared to the eccentric orbit
-                    binary.separation *= (1 - self.res.y[1][-1]**2)
-                    binary.orbital_period *= (1 - self.res.y[1][-1]**2) ** 1.5
-                else:
-                    # final circular orbit is at periastron of the ecc. orbit
-                    binary.separation *= (1 - self.res.y[1][-1])
-                    binary.orbital_period *= (1 - self.res.y[1][-1]) ** 1.5
-
-                abs_diff_porb = np.abs(binary.orbital_period - orbital_period_from_separation(
-                                binary.separation, secondary.mass, primary.mass)) / binary.orbital_period
-
-
-                abs_diff_porb_str = f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
-                    f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
-                    "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) = " + \
-                    f"{orbital_period_from_separation(binary.separation, secondary.mass, primary.mass):.4f}"
-
-                if self.verbose:
-                    print(abs_diff_porb_str)
-
-                assert abs_diff_porb < 1e-2, \
-                        "detached_step: abs_diff_porb >= 1e-2\n" + \
-                         abs_diff_porb_str
-
-                # instantly circularize at RLO
-                binary.eccentricity = 0
-
-                if self.res.t_events[0]:
-                    if secondary == binary.star_1:
-                        binary.state = "RLO1"
-                        binary.event = "oRLO1"
+                    if self.RLO_orbit_at_orbit_with_same_am:
+                        # final circular orbit conserves angular momentum
+                        # compared to the eccentric orbit
+                        binary.separation *= (1 - self.res.y[1][-1]**2)
+                        binary.orbital_period *= (1 - self.res.y[1][-1]**2) ** 1.5
                     else:
-                        binary.state = "RLO2"
-                        binary.event = "oRLO2"
+                        # final circular orbit is at periastron of the ecc. orbit
+                        binary.separation *= (1 - self.res.y[1][-1])
+                        binary.orbital_period *= (1 - self.res.y[1][-1]) ** 1.5
 
-                elif self.res.t_events[1]:
+                    abs_diff_porb = np.abs(binary.orbital_period - orbital_period_from_separation(
+                                    binary.separation, secondary.mass, primary.mass)) / binary.orbital_period
+
+
+                    abs_diff_porb_str = f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
+                        f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
+                        "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) = " + \
+                        f"{orbital_period_from_separation(binary.separation, secondary.mass, primary.mass):.4f}"
+
+                    if self.verbose:
+                        print(abs_diff_porb_str)
+
+                    assert abs_diff_porb < 1e-2, \
+                            "detached_step: abs_diff_porb >= 1e-2\n" + \
+                            abs_diff_porb_str
+
+                    # instantly circularize at RLO
+                    binary.eccentricity = 0
+
+                    if self.res.t_events[0]:
+                        if secondary == binary.star_1:
+                            binary.state = "RLO1"
+                            binary.event = "oRLO1"
+                        else:
+                            binary.state = "RLO2"
+                            binary.event = "oRLO2"
+
+                    elif self.res.t_events[1]:
+                        if secondary == binary.star_1:
+                            binary.state = "RLO2"
+                            binary.event = "oRLO2"
+                        else:
+                            binary.state = "RLO1"
+                            binary.event = "oRLO1"
+
+                    if ('step_HMS_HMS_RLO' not in all_step_names):
+                        if ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE
+                            and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE)
+                        or (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
+                            and binary.star_2.state in STAR_STATES_HE_RICH_EVOLVABLE)):
+                            set_binary_to_failed(binary)
+                            raise FlowError("Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after "
+                                        "HMS-HMS not yet supported.")
+
+                        elif (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
+                            and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE):
+                            set_binary_to_failed(binary)
+                            raise ClassificationError("Binary is in the detached step but has stable RLO with two HMS stars - "
+                                                "should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)")
+
+
+                ## CHECK IF STARS WILL UNDERGO CC
+                elif self.res.t_events[2]:
+                    # reached t_max of track. End of life (possible collapse) of secondary
                     if secondary == binary.star_1:
-                        binary.state = "RLO2"
-                        binary.event = "oRLO2"
+                        binary.event = "CC1"
                     else:
-                        binary.state = "RLO1"
-                        binary.event = "oRLO1"
+                        binary.event = "CC2"
 
-                if ('step_HMS_HMS_RLO' not in all_step_names):
-                    if ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE
-                         and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE)
-                    or (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
-                         and binary.star_2.state in STAR_STATES_HE_RICH_EVOLVABLE)):
-                        set_binary_to_failed(binary)
-                        raise FlowError("Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after "
-                                    "HMS-HMS not yet supported.")
+                    self.track_matcher.get_star_final_values(secondary)
+                    self.track_matcher.get_star_profile(secondary)
 
-                    elif (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
-                         and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE):
-                        set_binary_to_failed(binary)
-                        raise ClassificationError("Binary is in the detached step but has stable RLO with two HMS stars - "
-                                              "should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)")
+                    if not primary.co and primary.state in STAR_STATES_CC:
+                        # simultaneous core-collapse of the other star as well
+                        primary_time = primary.t_max + primary.t_offset - t[-1]
+                        secondary_time = secondary.t_max + secondary.t_offset - t[-1]
 
+                        if primary_time == secondary_time:
+                            # we manually check if s.t_events[3] should also be happening simultaneously
+                            self.track_matcher.get_star_final_values(primary)
+                            self.track_matcher.get_star_profile(primary)
 
-            ## CHECK IF STARS WILL UNDERGO CC
-            elif self.res.t_events[2]:
-                # reached t_max of track. End of life (possible collapse) of secondary
-                if secondary == binary.star_1:
-                    binary.event = "CC1"
-                else:
-                    binary.event = "CC2"
+                        if primary.mass != secondary.mass:
+                            raise POSYDONError(
+                                "Both stars are found to be ready for collapse "
+                                "(i.e. end of their life) during the detached "
+                                "step, but do not have the same mass")
 
-                self.track_matcher.get_star_final_values(secondary)
-                self.track_matcher.get_star_profile(secondary)
+                elif self.res.t_events[3]:
+                    # reached t_max of track. End of life (possible collapse) of primary
+                    if secondary == binary.star_1:
+                        binary.event = "CC2"
+                    else:
+                        binary.event = "CC1"
 
-                if not primary.co and primary.state in STAR_STATES_CC:
-                    # simultaneous core-collapse of the other star as well
-                    primary_time = primary.t_max + primary.t_offset - t[-1]
-                    secondary_time = secondary.t_max + secondary.t_offset - t[-1]
+                    self.track_matcher.get_star_final_values(primary)
+                    self.track_matcher.get_star_profile(primary)
 
-                    if primary_time == secondary_time:
-                        # we manually check if s.t_events[3] should also be happening simultaneously
-                        self.track_matcher.get_star_final_values(primary)
-                        self.track_matcher.get_star_profile(primary)
-
-                    if primary.mass != secondary.mass:
-                        raise POSYDONError(
-                            "Both stars are found to be ready for collapse "
-                            "(i.e. end of their life) during the detached "
-                            "step, but do not have the same mass")
-
-            elif self.res.t_events[3]:
-                # reached t_max of track. End of life (possible collapse) of primary
-                if secondary == binary.star_1:
-                    binary.event = "CC2"
-                else:
-                    binary.event = "CC1"
-
-                self.track_matcher.get_star_final_values(primary)
-                self.track_matcher.get_star_profile(primary)
-
-            else:  # Reached max_time asked.
-                if binary.properties.max_simulation_time - binary.time < 0.0:
-                    binary.event = "MaxTime_exceeded"
-                else:
-                    binary.event = "maxtime"
+                else:  # Reached max_time asked.
+                    if binary.properties.max_simulation_time - binary.time < 0.0:
+                        binary.event = "MaxTime_exceeded"
+                    else:
+                        binary.event = "maxtime"
 
     def solve_ODEs(self, binary, primary, secondary):
         """
@@ -600,6 +604,12 @@ class detached_step:
                             y0=[binary.separation, binary.eccentricity,
                                 secondary.omega0, primary.omega0],
                             dense_output=True)
+
+        if res.status == -1:
+            failed_state = binary.state
+            set_binary_to_failed(binary)
+            raise NumericalError(f"Integration failed for {failed_state} binary.")
+
         return res
 
     def get_time_after_evo(self, binary):
@@ -1154,8 +1164,8 @@ class detached_evolution:
         # updating star properties with interpolated values at current time
         # TODO: update star current/history progressively here rather than after evo?
         for key in self.phys_keys:
-                self.primary.latest[key] = self.primary.interp1d[key](t)
-                self.secondary.latest[key] = self.secondary.interp1d[key](t)
+            self.primary.latest[key] = self.primary.interp1d[key](t)
+            self.secondary.latest[key] = self.secondary.interp1d[key](t)
 
         # update omega, a, e, based on current diffeq solution
         y[0] = np.max([y[0], 0])  # We limit separation to non-negative values

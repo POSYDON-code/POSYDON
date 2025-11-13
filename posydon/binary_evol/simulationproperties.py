@@ -290,7 +290,7 @@ class SimulationProperties:
         """
 
         # these steps and the flow do not require a metallicity
-        ignore_for_met = ["flow", "step_SN","step_dco", "step_end"]
+        ignore_for_met = ["flow", "step_SN", "step_end"]
 
         # grab kwargs from ini file for given step
         if os.path.isfile(from_ini):
