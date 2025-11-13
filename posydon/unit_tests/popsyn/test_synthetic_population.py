@@ -7,6 +7,7 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.popsyn.synthetic_population as totest
+from posydon.utils.constants import Zsun
 
 # aliases
 np = totest.np
@@ -524,37 +525,202 @@ class TestPopulationIO:
         assert "param3" not in popio.ini_params
 
 class TestPopulation:
+    
+    def create_minimal_population_file(self,tmp_path):
+        filename = tmp_path / "pop.h5"
 
-    @fixture
-    def fix(self):
-#         return
+        # Minimal History table
+        history_df = pd.DataFrame({
+            "event": [0],
+            "time": [0.0]
+        })
+        history_df.index.name = "binary_index"
 
-        pass
-    def test_calculate_underlying_mass(self):
-        # missing argument
+        # History lengths table
+        history_lengths_df = pd.DataFrame({
+            "length": [len(history_df)]
+        }, index=history_df.index)
+
+        # Minimal Oneline table
+        oneline_df = pd.DataFrame({
+            "S1_mass_i": [1],
+            "S2_mass_i": [1],
+            "state_i": ["initial"],
+            "metallicity": [0.02],
+            "interp_class_HMS_HMS": ["stable_MT"],
+            "mt_history_HMS_HMS": ["Stable contact phase"]
+        })
+        oneline_df.index.name = "binary_index"
+
+        ini_df = pd.DataFrame({
+            "Parameter": [
+                "metallicity", "number_of_binaries", "binary_fraction_scheme",
+                "binary_fraction_const", "star_formation", "max_simulation_time",
+                "primary_mass_scheme", "primary_mass_min", "primary_mass_max",
+                "secondary_mass_scheme", "secondary_mass_min", "secondary_mass_max",
+                "orbital_scheme", "orbital_period_scheme", "orbital_period_min",
+                "orbital_period_max", "orbital_separation_scheme", "orbital_separation_min",
+                "orbital_separation_max", "eccentricity_scheme"
+            ],
+            "Value": [0.02]*20  # dummy values for testing
+        })
+
+        # Mass per metallicity table
+        mass_df = pd.DataFrame({"simulated_mass": [0]}, index=[0.02])
+
+        # Save all tables
+        with pd.HDFStore(filename, "w") as store:
+            store.put("history", history_df, format="table")
+            store.put("history_lengths", history_lengths_df, format="table")
+            store.put("oneline", oneline_df, format="table")
+            store.put("ini_parameters", ini_df, format="table")
+            store.put("mass_per_metallicity", mass_df, format="table")
+
+        return filename
+ 
+    
+    def test_population_init(self, tmp_path, monkeypatch):
+
         # bad input
-        # examples
-        pass
-    def test_export_selection(self):
-        # missing argument
+        with raises(ValueError, match="does not contain .h5"):
+            totest.Population("hello.txt")
+
+        # missing /history
+        filename = os.path.join(tmp_path, "pop_missing.h5")
+        with pd.HDFStore(filename, "w") as store:
+            store.append("ini_parameters", pd.DataFrame({"Parameter": [], "Value": []}), format="table")
+        with raises(ValueError, match="does not contain a history table"):
+            totest.Population(str(filename))
+
+        # /history exists, /oneline missing
+        history_df = pd.DataFrame({"event": [0], "time": [0.0], "binary_index": [0]})
+        with pd.HDFStore(filename, "a") as store:
+            store.append("history", history_df, format="table")
+        with raises(ValueError, match="does not contain an oneline table"):
+            totest.Population(str(filename))
+
+        # /history and /oneline exist, no ini_parameters
+        oneline_df = pd.DataFrame({
+            "S1_mass_i": [1],
+            "S2_mass_i": [1],
+            "state_i": ["initially_single_star"],  # <- must match the branch
+            "metallicity": [0.02]
+        })
+        with pd.HDFStore(filename, "a") as store:
+            store.append("oneline", oneline_df, format="table")
+            store.put("mass_per_metallicity", 
+                      pd.DataFrame({"simulated_mass": [0]}, index=[0.02]),
+                     format="table")
+        with raises(ValueError,match='does not contain an ini_parameters table'):
+            pop = totest.Population(str(filename))
+
+        # /history and /oneline exist, yes ini_parameters, no mass_per_metallicity 
+        filename_no_mass = os.path.join(tmp_path, "pop_no_mass.h5")
+        with pd.HDFStore(filename_no_mass, "w") as store:
+            store.put("history", history_df,format="table")
+            store.put("oneline", oneline_df, format="table")
+            store.put("ini_parameters", 
+                      pd.DataFrame({"Parameter": ["metallicity"], "Value": [0.02]}),format="table")
+        with raises(ValueError,match='does not contain a mass_per_metallicity table'):
+            pop = totest.Population(str(filename_no_mass))
+            
+        # metallicity specified
+        monkeypatch.setattr(
+            "posydon.popsyn.synthetic_population.binarypop_kwargs_from_ini",
+            lambda ini_file: {"dummy_param": 1})
+        dummy_ini_file = os.path.join(tmp_path,"dummy.ini")
+        pop_with_metallicity = totest.Population(
+            str(filename_no_mass), metallicity=0.02, ini_file=str(dummy_ini_file)
+        )
+        assert pop_with_metallicity.mass_per_metallicity is not None
+        assert pop_with_metallicity.solar_metallicities[0] == 0.02
+        assert pop_with_metallicity.metallicities[0] == 0.02 * Zsun
+
+        # everything exists
+        filename_full = os.path.join(tmp_path, "pop_full.h5")
+        with pd.HDFStore(filename_full, "w") as store:
+            store.put("history", history_df,format="table")
+            store.put("oneline", oneline_df,format="table")
+            store.put("ini_parameters", pd.DataFrame({"param1": [1]}),format="table")
+            store.put("mass_per_metallicity", pd.DataFrame({"simulated_mass": [0]}, index=[0.02]),
+                      format="table")
+            store.put("formation_channels", pd.DataFrame({"channel": ["dynamic"]}))
+        pop = totest.Population(str(filename_full))
+        assert pop.number_of_systems == 1
+        assert isinstance(pop.history, totest.History)
+        assert isinstance(pop.oneline, totest.Oneline)
+        
+        # Metallicity specified
+        dummy_ini_file = os.path.join(tmp_path,"dummy.ini")
+        pop_with_metallicity = totest.Population(
+            str(filename_full), metallicity=0.02, ini_file=str(dummy_ini_file)
+        )
+        assert pop_with_metallicity.mass_per_metallicity is not None
+        assert pop_with_metallicity.solar_metallicities[0] == 0.02
+        assert pop_with_metallicity.metallicities[0] == 0.02 * Zsun
+        
+    def test_export_selection(self,tmp_path,monkeypatch):            
+        filename = self.create_minimal_population_file(tmp_path)
+        pop = totest.Population(str(filename))
+        export_file = tmp_path / "exp.h5"
+        
         # bad input
-        # examples
-        pass
-    def test_formation_channels(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_calculate_formation_channels(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_columns(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
+        with raises(ValueError,match='does not contain .h5'):
+            pop.export_selection([0],'hello.txt')
+            
+        with raises(ValueError,match="Both overwrite and append cannot be True!"):
+            pop.export_selection([0],str(export_file),append=True,overwrite=True)
+            
+        dummy_file = tmp_path / "exists.h5"
+        pd.DataFrame({"a": [1]}).to_hdf(dummy_file, "dummy", format="table")
+        with raises(FileExistsError,match='Set overwrite or append to True'):
+            pop.export_selection([0], str(dummy_file),overwrite=False,append=False)
+
+        # overwrite export
+        out_file = tmp_path / "out.h5"
+        pop.export_selection([0], str(out_file), overwrite=True, history_chunksize=1)
+        
+        # append export
+        pop.export_selection([0], str(out_file), append=True, history_chunksize=1)
+        
+        # write export
+        pop.export_selection([0], os.path.join(tmp_path,'new.h5'), append=False, 
+                             overwrite=False,
+                             history_chunksize=1)
+
+        # No metallicity column
+        class DummyOnelineNoMetal:
+            columns = ["S1_mass_i", "S2_mass_i", "state_i"]  # no 'metallicity'
+            number_of_systems = 1
+
+            def __getitem__(self, cols):
+                import pandas as pd
+                return pd.DataFrame({
+                    "S1_mass_i": [1],
+                    "S2_mass_i": [1],
+                    "state_i": ["initial"]
+                })
+
+            def __len__(self):
+                return self.number_of_systems
+
+        pop.oneline = DummyOnelineNoMetal()
+        pop.export_selection([0], str(tmp_path/"out2.h5"), overwrite=True)
+
+        # Check mass_per_metallicity updated
+        df = pd.read_hdf(out_file, "mass_per_metallicity")
+        assert "number_of_systems" in df.columns
+
+    def test_calculate_formation_channels(self,tmp_path):
+        filename = self.create_minimal_population_file(tmp_path)
+
+        pop = totest.Population(str(filename))
+
+        # Should not error even with empty data
+        pop.calculate_formation_channels()
+
+        # Result should be a dataframe (even if empty)
+        assert hasattr(pop.formation_channels, "columns")
     def test_create_transient_population(self):
         # missing argument
         # bad input
