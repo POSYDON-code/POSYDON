@@ -79,10 +79,10 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     if len(indices_selection) == 0:
         return pd.DataFrame()
     # filter out the events that are not relevant for the LGRB formation
-    selection = history_chunk.loc[indices_selection]
+    selection = history_chunk[history_chunk['binary_index'].isin(indices_selection)]
     if S1_S2 == 'S1':
         S_mask = (selection['S1_state'] == 'BH') & (selection['S1_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
-    elif S1_S2 == 'S2':
+    else:
         S_mask = (selection['S2_state'] == 'BH') & (selection['S2_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
 
     GRB_df_synthetic = pd.DataFrame(index=indices_selection)
@@ -94,10 +94,9 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     if S1_S2 == 'S1':
         columns_pre_post.append('S1_mass')
         columns.append('S2_mass')
-    elif S1_S2 == 'S2':
+    else:
         columns_pre_post.append('S2_mass')
         columns.append('S1_mass')
-
 
     for col in columns_pre_post:
         GRB_df_synthetic[col+'_preSN'] = pre_SN_hist[col].values
@@ -111,11 +110,11 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     for col in oneline_chunk.columns:
         GRB_df_synthetic[col] = oneline_chunk.loc[indices_selection][col].values
 
-    if any(formation_channels_chunk != None):
+    if formation_channels_chunk is not None:
         formation_channels_chunk = formation_channels_chunk.loc[indices_selection]
         if S1_S2 == 'S1':
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC1').str[0].apply(lambda x: x+'_CC1')
-        elif S1_S2 == 'S2':
+        else:
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC2').str[0].apply(lambda x: x+'_CC2')
 
     # calculate the time!
@@ -165,38 +164,6 @@ def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
               'ReplaceValueWarning')
         tilt_2[pd.isna(tilt_2)] = 0.
     return (m_1*a_1*np.cos(tilt_1)+m_2*a_2*np.cos(tilt_2))/(m_1+m_2)
-
-
-def effective_precession(theta_1, theta_2, a1, a2, m1, m2):
-    """Calculate the effective spin precession.
-
-    Following Equation 14 in Gerosa+2021, which
-    is used in the LVK analyses.
-    https://arxiv.org/abs/2011.11948
-
-    \chi_p = max(a_1 * sin(theta_1),
-            q * ((4q + 3)/(4+3q)) * a_2 * sin(theta_2))
-
-    Parameters
-    ----------
-    theta_1 : float or np.ndarray
-        Tilt angle of the primary spin (in radians).
-    theta_2 : float or np.ndarray
-        Tilt angle of the secondary spin (in radians).
-    a1 : float or np.ndarray
-        Dimensionless spin magnitude of the primary.
-    a2 : float or np.ndarray
-        Dimensionless spin magnitude of the secondary.
-    m1 : float or np.ndarray
-        Mass of the primary.
-    m2 : float or np.ndarray
-        Mass of the secondary.
-    """
-    q = m2/m1
-    a_1_perp = np.abs(a1 * np.sin(theta_1))
-    a_2_perp = q * ((4*q + 3)/(4+3*q)) * a2 * np.sin(theta_2)
-    chi_p = np.maximum(a_1_perp, a_2_perp)
-    return chi_p
 
 def m_chirp(m_1, m_2):
     '''Calculate the chirp mass of two masses.'''
@@ -294,9 +261,9 @@ def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
     These have to be present and a valid value. If not, the function will raise an error!
 
     '''
-    available_sensitiveies = ['O3actual_H1L1V1', 'O4low_H1L1V1', 'O4high_H1L1V1', 'design_H1L1V1']
-    if sensitivity not in available_sensitiveies:
-        raise ValueError(f'Unknown sensitivity {sensitivity}. Available sensitivities are {available_sensitiveies}')
+    available_sensitivities = ['O3actual_H1L1V1', 'O4low_H1L1V1', 'O4high_H1L1V1', 'design_H1L1V1']
+    if sensitivity not in available_sensitivities:
+        raise ValueError(f'Unknown sensitivity {sensitivity}. Available sensitivities are {available_sensitivities}')
     else:
         sel_eff = selection_effects.KNNmodel(grid_path=PATH_TO_PDET_GRID,
                                                       sensitivity_key=sensitivity)
@@ -325,7 +292,7 @@ def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
         data_slice['z'] = z_events_chunk.iloc[:,i]
         mask = pd.notna(data_slice['z']).to_numpy()
         if np.sum(mask) == 0:
-            detectable_weights[mask, i] = 0.0
+            detectable_weights[:, i] = 0.0
         else:
             detectable_weights[mask, i] = detectable_weights[mask, i] * sel_eff.predict_pdet(data_slice[mask])
 

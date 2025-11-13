@@ -1,4 +1,4 @@
-__author__ = ['Simone Bavera <Simone.Bavera@unige.ch>']
+__authors__ = ['Simone Bavera <Simone.Bavera@unige.ch>']
 
 import numpy as np
 

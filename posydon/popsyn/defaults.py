@@ -37,7 +37,7 @@ default_kwargs = {
     # if orbital_scheme == period
     'orbital_period_scheme': 'Sana+12_period_extended',
     'orbital_period_min': 0.75,  # in days
-    'orbital_period_max': 6000,  # in days
+    'orbital_period_max': 6000.,  # in days
     # 'log_orbital_seperation_mean': None,
     # 'log_orbital_seperation_sigma': None,
 

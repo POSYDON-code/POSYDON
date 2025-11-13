@@ -9,17 +9,13 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Emmanouil Zapartas <ezapartas@gmail.com>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
-    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
 
 import numpy as np
 from scipy.stats import truncnorm
 
-from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils.common_functions import rejection_sampler
-
-_gen_Moe_17_PsandQs = None
 
 
 def generate_independent_samples(orbital_scheme='period', **kwargs):
@@ -44,77 +40,25 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
         Randomly drawn secondary masses
 
     """
-    global _gen_Moe_17_PsandQs
+    # Generate eccentricities
+    eccentricity_set = generate_eccentricities(**kwargs)
 
     # Generate primary masses
     m1_set = generate_primary_masses(**kwargs)
 
-    if use_Moe_17_PsandQs(orbital_scheme=orbital_scheme, **kwargs):
-        # initialize generator for Moe+17-PsandQs
-        if _gen_Moe_17_PsandQs is None:
-            _gen_Moe_17_PsandQs = Moe_17_PsandQs()
-        # use same defaults as generate_primary_masses
-        M1_min = kwargs.get("primary_mass_min", 7)
-        M1_max = kwargs.get("primary_mass_max", 120)
-        # generate samples
-        m2_set, orbital_scheme_set, eccentricity_set, metallicity_set\
-         = _gen_Moe_17_PsandQs(m1_set, M_min=M1_min, M_max=M1_max,
-                               all_binaries=False)
+    # Generate secondary masses
+    m2_set = generate_secondary_masses(m1_set, **kwargs)
 
-        ecc_scheme = kwargs.get('eccentricity_scheme', 'zero')
-        if ecc_scheme != 'Moe+17-PsandQs':
-            # ensure that kwargs hold the current retrieved or
-            # set value of eccentricity_scheme
-            kwargs['eccentricity_scheme'] = ecc_scheme
-            eccentricity_set = generate_eccentricities(**kwargs)
+    if orbital_scheme == 'separation':
+        # Generate orbital separations
+        orbital_scheme_set = generate_orbital_separations(**kwargs)
+    elif orbital_scheme == 'period':
+        # Generate orbital periods
+        orbital_scheme_set = generate_orbital_periods(m1_set, **kwargs)
     else:
-
-        # Generate secondary masses
-        m2_set = generate_secondary_masses(m1_set, **kwargs)
-
-        if orbital_scheme == 'separation':
-            # Generate orbital separations
-            orbital_scheme_set = generate_orbital_separations(**kwargs)
-        elif orbital_scheme == 'period':
-            # Generate orbital periods
-            orbital_scheme_set = generate_orbital_periods(m1_set, **kwargs)
-        else:
-            raise ValueError("Allowed orbital schemes are separation or"
-                             " period.")
-
-        # Generate eccentricities
-        eccentricity_set = generate_eccentricities(**kwargs)
-
-        # Calculate the binary fraction
-        RNG = kwargs.get('RNG', np.random.default_rng())
-        binary_fraction = generate_binary_fraction(m1=m1_set, **kwargs)
-
-        # Set values to nan for single stars
-        idx = np.where(RNG.uniform(size = len(m1_set)) > binary_fraction)[0]
-        orbital_scheme_set[idx] = np.nan
-        eccentricity_set[idx] = np.nan
-        m2_set[idx] = np.nan
+        raise ValueError("Allowed orbital schemes are separation or period.")
 
     return orbital_scheme_set, eccentricity_set, m1_set, m2_set
-
-
-def use_Moe_17_PsandQs(secondary_mass_scheme='', orbital_scheme='',
-                       orbital_period_scheme='', eccentricity_scheme='',
-                       **kwargs):
-    """Check whether Moe & Di Stefano (2017) [1]_ should be used for the
-    initial sampling.
-
-    References
-    ----------
-    .. [1] Moe, M. and Di Stefano, R., “Mind Your Ps and Qs: The Interrelation
-        between Period (P) and Mass-ratio (Q) Distributions of Binary Stars”,
-        <i>The Astrophysical Journal Supplement Series</i>, vol. 230, no. 2,
-        Art. no. 15, IOP, 2017. doi:10.3847/1538-4365/aa6fb6.
-    """
-    return ((secondary_mass_scheme=='Moe+17-PsandQs')
-            or ((orbital_scheme=='period')
-                and (orbital_period_scheme=='Moe+17-PsandQs'))
-            or (eccentricity_scheme=='Moe+17-PsandQs'))
 
 
 def generate_orbital_periods(primary_masses,
@@ -123,7 +67,7 @@ def generate_orbital_periods(primary_masses,
                              orbital_period_max=10**3.5,
                              orbital_period_scheme='Sana+12_period_extended',
                              **kwargs):
-    """Randomaly generate orbital periods for a sample of binaries."""
+    """Randomly generate orbital periods for a sample of binaries."""
     RNG = kwargs.get('RNG', np.random.default_rng())
 
     # Check inputs
@@ -156,7 +100,7 @@ def generate_orbital_periods(primary_masses,
                 elif 0.15 <= logp_j and logp_j < np.log10(orbital_period_max):
                     pdf[j] = C*logp_j**(-pi)
 
-                else:
+                else: # pragma: no cover
                     pdf[j] = 0.
 
             return pdf
@@ -221,10 +165,6 @@ def generate_orbital_separations(number_of_binaries=1,
             high=np.log10(orbital_separation_max),
             size=number_of_binaries)
 
-    if orbital_separation_max < orbital_separation_min:
-        raise ValueError("`orbital_separation_max` must be "
-                         "larger than the orbital_separation_min.")
-
     elif orbital_separation_scheme == 'log_normal':
         if (log_orbital_separation_mean is None
                 or log_orbital_separation_sigma is None):
@@ -248,7 +188,7 @@ def generate_orbital_separations(number_of_binaries=1,
             random_state=RNG)
         orbital_separations = 10**log_orbital_separations
 
-    else:
+    else: # pragma: no cover
         pass
 
     return orbital_separations
@@ -289,7 +229,7 @@ def generate_eccentricities(number_of_binaries=1,
         eccentricities = RNG.uniform(size=number_of_binaries)
     elif eccentricity_scheme == 'zero':
         eccentricities = np.zeros(number_of_binaries)
-    else:
+    else: # pragma: no cover
         # This should never be reached
         pass
 
@@ -324,6 +264,9 @@ def generate_primary_masses(number_of_binaries=1,
     """
     RNG = kwargs.get('RNG', np.random.default_rng())
 
+    if primary_mass_max < primary_mass_min:
+        raise ValueError("primary_mass_max must be larger than primary_mass_min.")
+
     primary_mass_scheme_options = ['Salpeter', 'Kroupa1993', 'Kroupa2001']
 
     if primary_mass_scheme not in primary_mass_scheme_options:
@@ -355,7 +298,7 @@ def generate_primary_masses(number_of_binaries=1,
         random_variable = RNG.uniform(size=number_of_binaries)
         primary_masses = (random_variable*(1.0-alpha)/normalization_constant
                           + primary_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
-    else:
+    else: # pragma: no cover
         pass
 
     return primary_masses
@@ -392,6 +335,9 @@ def generate_secondary_masses(primary_masses,
     """
     RNG = kwargs.get('RNG', np.random.default_rng())
 
+    if secondary_mass_max < secondary_mass_min:
+        raise ValueError("secondary_mass_max must be larger than secondary_mass_min.")
+
     secondary_mass_scheme_options = ['flat_mass_ratio', 'q=1']
 
     # Input parameter checks
@@ -417,48 +363,52 @@ def generate_secondary_masses(primary_masses,
 
     return secondary_masses
 
-def generate_binary_fraction(m1=None, binary_fraction_const=1,
-                             binary_fraction_scheme='const', **kwargs):
+def binary_fraction_value(binary_fraction_const=1,
+                          binary_fraction_scheme = 'const',
+                          m1 = None,**kwargs):
     """
-    Getting the binary fraction depending on the scheme. The two possible
-    option are a constant binary fraction and a binary fraction based on the
-    values given in Moe and Di Stefano (2017).
+    Getting the binary fraction depending on the scheme. The two possible option are a constant binary fraction
+    and a binary fraction based on the values given in Moe and Di Stefano (2017).
 
     Parameters:
     --------------------
     binary scheme: string
         Determines if the value of the binary fraction will be constant or not
     binary fraction const: int
-        Gives the value the constant value of the binary if the constant scheme
-        is choosen.
+        Gives the value the constant value of the binary if the constant scheme is choosen.
 
     Returns
     ------------------
     binary fraction: int
 
     """
-    binary_fraction_scheme_options = ['const','Moe+17-massdependent']
+    binary_fraction_scheme_options = ['const','Moe_17']
 
-    if m1 is None:
-        raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
-    elif not isinstance(m1,np.ndarray):
-        m1 = np.asarray(m1)
-    binary_fraction = np.zeros_like(m1, dtype=float)
     # Input parameter checks
     if binary_fraction_scheme not in binary_fraction_scheme_options:
         raise ValueError("You must provide an allowed binary fraction scheme.")
 
+
     if binary_fraction_scheme == 'const':
         binary_fraction = binary_fraction_const
 
-    elif binary_fraction_scheme == 'Moe+17-massdependent':
-        binary_fraction[(m1 > 16)] = 0.94
-        binary_fraction[(m1 <= 16) & (m1 > 9)] = 0.84
-        binary_fraction[(m1 <= 9) & (m1 > 5)] = 0.76
-        binary_fraction[(m1 <= 5) & (m1 > 2)] = 0.59
-        binary_fraction[(m1 <= 2)] = 0.4
-
-    else:
+    elif binary_fraction_scheme == 'Moe_17':
+        if m1 is None:
+            raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
+        elif m1 < 0.8:
+            raise ValueError("The scheme doesn't support values of m1 less than 0.8")
+        elif m1 <= 2  and m1 >= 0.8:
+            binary_fraction = 0.4
+        elif m1 <= 5 and m1 > 2:
+            binary_fraction = 0.59
+        elif m1<=9 and m1 > 5 :
+            binary_fraction = 0.76
+        elif m1<= 16 and m1 > 9:
+            binary_fraction = 0.84
+        elif m1 > 16:
+            binary_fraction = 0.94
+        else:
+            raise ValueError(f'The primary mass provided {m1} is not supported by the Moe_17 scheme.')
+    else: # pragma: no cover
         pass
-
     return binary_fraction

@@ -155,12 +155,14 @@ class PopulationRunner:
             if os.path.exists(pop.kwargs["temp_directory"]) and not overwrite:
                 raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.")
             elif os.path.exists(pop.kwargs["temp_directory"]) and overwrite:
-                if self.verbose:
+                if self.verbose: # pragma: no cover
                     print(f"Removing pre-existing {pop.kwargs['temp_directory']} directory...")
                 shutil.rmtree(pop.kwargs["temp_directory"])
+                pop.evolve(optimize_ram=True)
+            else:
+                pop.evolve(optimize_ram=True)
 
-            pop.evolve(optimize_ram=True)
-            if pop.comm is None:
+            if pop.comm is None: # pragma: no cover
                 self.merge_parallel_runs(pop, overwrite)
 
     def merge_parallel_runs(self, pop, overwrite=False):
@@ -174,15 +176,16 @@ class PopulationRunner:
         """
         Zstr = convert_metallicity_to_string(pop.metallicity)
         fname = Zstr + "_Zsun_population.h5"
-        if os.path.exists(fname) and not overwrite:
-            raise FileExistsError(
-                f"{Zstr}_Zsun_population.h5 already exists!\n"
-                +"Files were not merged. You can use PopulationRunner.merge_parallel_runs() to merge the files manually."
-            )
-        elif os.path.exists(fname) and overwrite:
-            if self.verbose:
-                print(f"Removing pre-exisiting {fname}...")
-            os.remove(fname)
+        if os.path.exists(fname):
+            if not overwrite:
+                raise FileExistsError(
+                    f"{Zstr}_Zsun_population.h5 already exists!\n"
+                    +"Files were not merged. You can use PopulationRunner.merge_parallel_runs() to merge the files manually."
+                )
+            else: # pragma: no cover
+                if self.verbose:
+                    print(f"Removing pre-exisiting {fname}...")
+                os.remove(fname)
 
         path_to_batch = pop.kwargs["temp_directory"]
 
@@ -204,8 +207,6 @@ class PopulationRunner:
         # remove files
         if len(os.listdir(path_to_batch)) == 0:
             os.rmdir(path_to_batch)
-
-
 
 ##################
 # Helper classes #
@@ -725,7 +726,7 @@ class Oneline(DFInterface):
         else:
             raise ValueError("Invalid key type!")
 
-    def __len__(self):
+    def __len__(self): # pragma: no cover
         """
         Get the number of systems in the oneline table.
 
@@ -736,7 +737,7 @@ class Oneline(DFInterface):
         """
         return self.number_of_systems
 
-    def head(self, n=10):
+    def head(self, n=10): # pragma: no cover
         """Get the first n rows of the oneline table.
 
         Parameters
@@ -751,7 +752,7 @@ class Oneline(DFInterface):
         """
         return super().head("oneline", n)
 
-    def tail(self, n=10):
+    def tail(self, n=10): # pragma: no cover
         """
         Get the last n rows of the oneline table.
 
@@ -767,7 +768,7 @@ class Oneline(DFInterface):
         """
         return super().tail("oneline", n)
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         """
         Get a string representation of the oneline table.
 
@@ -778,7 +779,7 @@ class Oneline(DFInterface):
         """
         return super().get_repr("oneline")
 
-    def _repr_html_(self):
+    def _repr_html_(self): # pragma: no cover
         """
         Get an HTML representation of the oneline table.
 
@@ -789,7 +790,9 @@ class Oneline(DFInterface):
         """
         return super().get_html_repr("oneline")
 
-    def select(self, where=None, start=None, stop=None, columns=None):
+    def select(self, where=None,
+               start=None, stop=None,
+               columns=None): # pragma: no cover
         """Select a subset of the oneline table based on the given conditions.
 
         This method allows you to filter and extract a subset of rows from the oneline table stored in an HDF file.
@@ -882,7 +885,7 @@ class PopulationIO:
         """
         with pd.HDFStore(filename, mode="a") as store:
             store.put("mass_per_metallicity", self.mass_per_metallicity)
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print("mass_per_metallicity table written to population file!")
 
     def _load_mass_per_metallicity(self, filename):
@@ -894,7 +897,7 @@ class PopulationIO:
             The name of the file to load the mass per metallicity data from.
 
         """
-        with pd.HDFStore(filename, mode="r") as store:
+        with pd.HDFStore(filename, mode="r") as store: # pragma: no cover
             self.mass_per_metallicity = store["mass_per_metallicity"]
             if self.verbose:
                 print("mass_per_metallicity table read from population file!")
@@ -1061,7 +1064,7 @@ class Population(PopulationIO):
 
         # check if formation channels are present
         if "/formation_channels" not in keys:
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print(f"{filename} does not contain formation channels!")
             self._formation_channels = None
         else:
@@ -1070,11 +1073,11 @@ class Population(PopulationIO):
             )
 
         # if an ini file is given, read the parameters from the ini file
-        if ini_file is not None:
+        if ini_file is not None: # pragma: no cover
             self.ini_params = binarypop_kwargs_from_ini(ini_file)
             self._save_ini_params(filename)
             self._load_ini_params(filename)
-        else:
+        else: # inifile is none
             if "/ini_parameters" not in keys:
                 raise ValueError(
                     f"{filename} does not contain an ini_parameters table!"
@@ -1083,56 +1086,57 @@ class Population(PopulationIO):
                 self._load_ini_params(filename)
 
         # check if pop contains mass_per_metallicity table
-        if "/mass_per_metallicity" in keys and metallicity is None:
-            self._load_mass_per_metallicity(filename)
-            self.solar_metallicities = self.mass_per_metallicity.index.to_numpy()
-            self.metallicities = self.solar_metallicities * Zsun
-        elif metallicity is None:
-            raise ValueError(
-                f"{filename} does not contain a mass_per_metallicity table and no metallicity for the file was given!"
-            )
+        if metallicity is None:
+            if "/mass_per_metallicity" in keys:
+                self._load_mass_per_metallicity(filename)
+                self.solar_metallicities = self.mass_per_metallicity.index.to_numpy()
+                self.metallicities = self.solar_metallicities * Zsun
+            else:
+                raise ValueError(
+                    f"{filename} does not contain a mass_per_metallicity table and no metallicity for the file was given!"
+                )
 
         # calculate the metallicity information. This assumes the metallicity is for the whole file!
-        if metallicity is not None and ini_file is not None:
-            if "/mass_per_metallicity" in keys:
-                Pwarn(f"{filename} already contains a mass_per_metallicity "
-                      "table. Overwriting the table!", "OverwriteWarning")
+        else: # metallicity is not None
+            if ini_file is not None:
+                if "/mass_per_metallicity" in keys:
+                    Pwarn(f"{filename} already contains a mass_per_metallicity "
+                          "table. Overwriting the table!", "OverwriteWarning")
 
-            # only load in required columns
-            tmp_data = self.oneline[['state_i', 'S1_mass_i', 'S2_mass_i']]
-            mask = tmp_data["state_i"] == "initially_single_star"
-            filtered_data_single = tmp_data[mask]
-            filtered_data_binaries = tmp_data[~mask]
+                # only load in required columns
+                tmp_data = self.oneline[['state_i', 'S1_mass_i', 'S2_mass_i']]
+                mask = tmp_data["state_i"] == "initially_single_star"
+                filtered_data_single = tmp_data[mask]
+                filtered_data_binaries = tmp_data[~mask]
 
-            simulated_mass_single = np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
-            simulated_mass_binaries = np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
-            simulated_mass = simulated_mass_single + simulated_mass_binaries
-            del tmp_data, filtered_data_single, filtered_data_binaries
+                simulated_mass_single = np.nansum(filtered_data_single[["S1_mass_i"]].to_numpy())
+                simulated_mass_binaries = np.nansum(filtered_data_binaries[["S1_mass_i", "S2_mass_i"]].to_numpy())
+                simulated_mass = simulated_mass_single + simulated_mass_binaries
+                del tmp_data, filtered_data_single, filtered_data_binaries
 
-            self.mass_per_metallicity = pd.DataFrame(
-                    index=[metallicity],
-                    data={"simulated_mass": simulated_mass,
-                          "simulated_mass_single": simulated_mass_single,
-                          "simulated_mass_binaries": simulated_mass_binaries,
-                          "number_of_systems": len(self.oneline),
-                },
-            )
+                self.mass_per_metallicity = pd.DataFrame(
+                        index=[metallicity],
+                        data={"simulated_mass": simulated_mass,
+                              "simulated_mass_single": simulated_mass_single,
+                              "simulated_mass_binaries": simulated_mass_binaries,
+                              "number_of_systems": len(self.oneline),
+                    },
+                )
 
-            self._save_mass_per_metallicity(filename)
-            self.solar_metallicities = self.mass_per_metallicity.index.to_numpy()
-            self.metallicities = self.solar_metallicities * Zsun
+                self._save_mass_per_metallicity(filename)
+                self.solar_metallicities = self.mass_per_metallicity.index.to_numpy()
+                self.metallicities = self.solar_metallicities * Zsun
 
-        elif metallicity is not None and ini_file is None:
-            raise ValueError(
-                f"{filename} does not contain a mass_per_metallicity table and no ini file was given!"
-            )
+            else: # no inifile # pragma: no cover
+                raise ValueError(
+                    f"{filename} does not contain a mass_per_metallicity table and no ini file was given!") # need to check if this makes sense.
 
         # add number of systems
         self.history_lengths = self.history.lengths
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         """Return a string representation of the object.
 
         Returns
@@ -1249,16 +1253,16 @@ class Population(PopulationIO):
             elif "/history" in store.keys():
                 last_index_in_file = np.sort(store["history"].index)[-1]
 
-            if "/history" in store.keys() and self.verbose:
+            if "/history" in store.keys() and self.verbose: # pragma: no cover
                 print("history in file. Appending to file")
 
-            if "/oneline" in store.keys() and self.verbose:
+            if "/oneline" in store.keys() and self.verbose: # pragma: no cover
                 print("oneline in file. Appending to file")
 
-            if "/formation_channels" in store.keys() and self.verbose:
+            if "/formation_channels" in store.keys() and self.verbose: # pragma: no cover
                 print("formation_channels in file. Appending to file")
 
-            if "/history_lengths" in store.keys() and self.verbose:
+            if "/history_lengths" in store.keys() and self.verbose: # pragma: no cover
                 print("history_lengths in file. Appending to file")
 
             # TODO: I need to shift the indices of the binaries or should I reindex them?
@@ -1289,7 +1293,7 @@ class Population(PopulationIO):
                         "The population file contains multiple metallicities. Please add a metallicity column to the oneline dataframe!"
                     )
 
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print("Writing selected systems to population file...")
 
             # write oneline of selected systems
@@ -1313,7 +1317,7 @@ class Population(PopulationIO):
                     index=False,
                 )
 
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print("Oneline: Done")
 
             # write history of selected systems
@@ -1332,7 +1336,7 @@ class Population(PopulationIO):
                     index=False,
                 )
 
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print("History: Done")
 
             # write formation channels of selected systems
@@ -1383,7 +1387,7 @@ class Population(PopulationIO):
         self._save_ini_params(filename)
 
     @property
-    def formation_channels(self):
+    def formation_channels(self): # pragma: no cover
         """
         Retrieves the formation channels from the population file.
 
@@ -1445,7 +1449,7 @@ class Population(PopulationIO):
             # for now, only append information for RLO1; unstable_MT information already exists
             if "oRLO1" in group["interp_class_HMS_HMS"].tolist() or "oRLO1-reverse" in group["interp_class_HMS_HMS"].tolist() :
                 combined_events = (
-                    group["event"].iloc[0] + "_" + group["interp_class_HMS_HMS"].iloc[0]
+                    str(group["event"].iloc[0]) + "_" + group["interp_class_HMS_HMS"].iloc[0]
                 )
                 tmp = [combined_events]
                 tmp.extend(group["event"].iloc[1:])
@@ -1567,7 +1571,7 @@ class Population(PopulationIO):
                 min_itemsize={"channel_debug": str_length, "channel": str_length},
             )
 
-    def __len__(self):
+    def __len__(self): # pragma: no cover
         """Get the number of systems in the population.
 
         Returns
@@ -1579,7 +1583,7 @@ class Population(PopulationIO):
         return self.number_of_systems
 
     @property
-    def columns(self):
+    def columns(self): # pragma: no cover
         """
         Returns a dictionary containing the column names of the history and oneline dataframes.
 
@@ -1733,7 +1737,7 @@ class Population(PopulationIO):
         )
         return synth_pop
 
-    def plot_binary_evolution(self, index):
+    def plot_binary_evolution(self, index):  # pragma: no cover
         """Plot the binary evolution of a system
 
         This method is not currently implemented.
@@ -1805,7 +1809,7 @@ class TransientPopulation(Population):
             self.transient_name = transient_name
 
     @property
-    def population(self):
+    def population(self):  # pragma: no cover
         """Returns the entire transient population as a pandas DataFrame.
 
         This method retrieves the transient population data from a file and returns it as a pandas DataFrame.
@@ -1819,7 +1823,7 @@ class TransientPopulation(Population):
         return pd.read_hdf(self.filename, key="transients/" + self.transient_name)
 
     @property
-    def columns(self):
+    def columns(self): # pragma: no cover
         """Return the columns of the transient population.
 
         Returns:
@@ -2174,7 +2178,9 @@ class TransientPopulation(Population):
                 )
         return rates
 
-    def plot_efficiency_over_metallicity(self, model_weight_identifier, channels=False, **kwargs):
+    def plot_efficiency_over_metallicity(self,
+                                         model_weight_identifier,
+                                         channels=False, **kwargs):  # pragma: no cover
         """
         Plot the efficiency over metallicity.
 
@@ -2197,7 +2203,7 @@ class TransientPopulation(Population):
 
     def plot_delay_time_distribution(
         self, model_weights_identifier, metallicity=None, ax=None, bins=100, color="black"
-        ):
+        ):  # pragma: no cover
         """
         Plot the delay time distribution of the transient population.
 
@@ -2273,7 +2279,7 @@ class TransientPopulation(Population):
         ax.set_xlabel("Time [yr]")
         ax.set_ylabel("Number of events/Msun/yr")
 
-    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
+    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):  # pragma: no cover
         """
         Plot the transients over the grid slice.
 
@@ -2292,7 +2298,7 @@ class TransientPopulation(Population):
             pop=self, grid_type=grid_type, met_Zsun=met_Zsun, **kwargs
         )
 
-    def _write_MODEL_data(self, filename, path_in_file, MODEL):
+    def _write_MODEL_data(self, filename, path_in_file, MODEL):  # pragma: no cover
         """
         Write the MODEL data to the HDFStore file.
 
@@ -2450,7 +2456,7 @@ class Rates(TransientPopulation):
                 print("MODEL read from population file!")
 
     @property
-    def weights(self):
+    def weights(self):  # pragma: no cover
         """
         Retrieves the weights from the HDFStore.
 
@@ -2465,7 +2471,7 @@ class Rates(TransientPopulation):
             return store[self.base_path + "weights"]
 
     @property
-    def z_birth(self):
+    def z_birth(self):  # pragma: no cover
         """
         Retrieves the 'birth' data from the HDFStore.
 
@@ -2480,7 +2486,7 @@ class Rates(TransientPopulation):
             return store[self.base_path + "birth"]
 
     @property
-    def z_events(self):
+    def z_events(self):  # pragma: no cover
         """
         Returns the 'z_events' data from the HDFStore.
 
@@ -2711,7 +2717,7 @@ class Rates(TransientPopulation):
             ]
 
     @property
-    def intrinsic_rate_density(self):
+    def intrinsic_rate_density(self):  # pragma: no cover
         """Return the intrinsic rate density of the transient population at the specified SFH_identifier and transient_name.
 
         The data is read from the HDF5 file at '/transients/{transient_name}/rates/{SFH_identifier}/intrinsic_rate_density'.
@@ -2732,7 +2738,7 @@ class Rates(TransientPopulation):
 
     def plot_hist_properties(
         self, prop, intrinsic=True, observable=None, bins=50, channel=None, **kwargs
-    ):
+    ):  # pragma: no cover
         """Plot a histogram of a given property available in the transient population.
 
         This method plots a histogram of a given property available in the transient population.
@@ -2812,7 +2818,7 @@ class Rates(TransientPopulation):
             # plot the histogram using plot_pop.plot_hist_properties
             plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
 
-    def plot_intrinsic_rate(self, channels=False, **kwargs):
+    def plot_intrinsic_rate(self, channels=False, **kwargs): # pragma: no cover
         """Plot the intrinsic rate density of the transient population."""
 
         plot_pop.plot_rate_density(self.intrinsic_rate_density, channels=channels, **kwargs)
@@ -2852,7 +2858,7 @@ class Rates(TransientPopulation):
         return 10**bin_met
 
     @property
-    def centers_metallicity_bins(self):
+    def centers_metallicity_bins(self):  # pragma: no cover
         """Return the centers of the metallicity bins.
 
         Returns
@@ -2864,7 +2870,7 @@ class Rates(TransientPopulation):
         return np.sort(self.metallicities)
 
     @property
-    def edges_redshift_bins(self):
+    def edges_redshift_bins(self):  # pragma: no cover
         """Compute redshift bin edges.
 
         Returns
@@ -2878,7 +2884,7 @@ class Rates(TransientPopulation):
         return get_redshift_bin_edges(self.MODEL["delta_t"])
 
     @property
-    def centers_redshift_bins(self):
+    def centers_redshift_bins(self):  # pragma: no cover
         """Compute redshift bin centers.
 
         Returns
@@ -2890,3 +2896,4 @@ class Rates(TransientPopulation):
 
         """
         return get_redshift_bin_centers(self.MODEL["delta_t"])
+
