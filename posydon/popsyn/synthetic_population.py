@@ -155,7 +155,7 @@ class PopulationRunner:
             if os.path.exists(pop.kwargs["temp_directory"]) and not overwrite:
                 raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.")
             elif os.path.exists(pop.kwargs["temp_directory"]) and overwrite:
-                if self.verbose:
+                if self.verbose: # pragma: no cover
                     print(f"Removing pre-existing {pop.kwargs['temp_directory']} directory...")
                 shutil.rmtree(pop.kwargs["temp_directory"])
                 pop.evolve(optimize_ram=True)
@@ -182,7 +182,7 @@ class PopulationRunner:
                 +"Files were not merged. You can use PopulationRunner.merge_parallel_runs() to merge the files manually."
             )
         elif os.path.exists(fname) and overwrite:
-            if self.verbose:
+            if self.verbose:  # pragma: no cover
                 print(f"Removing pre-exisiting {fname}...")
             os.remove(fname)
 
@@ -847,8 +847,8 @@ class PopulationIO:
 
     """
 
-    def __init__(self):
-        self.verbose = False
+    def __init__(self): 
+        self.verbose = False  
 
 
     def _load_metadata(self, filename):
