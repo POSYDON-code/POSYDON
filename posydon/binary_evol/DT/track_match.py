@@ -1486,6 +1486,7 @@ class TrackMatcher:
 
 
         # getting track of mass match_m0's age data
+        # try/except logic required to avoid errors with compact objects
         try:
             age = get_track("age", match_m0)
         except ValueError:
@@ -1495,6 +1496,7 @@ class TrackMatcher:
         t_max = age.max()
 
         for key in self.KEYS[1:]:
+            # try/except logic required to avoid errors with compact objects
             try:
                 kvalue[key] = get_track(key, match_m0)
             except ValueError:
