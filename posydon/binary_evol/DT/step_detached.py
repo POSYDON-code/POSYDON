@@ -780,7 +780,7 @@ class detached_step:
 
                     history = np.array(interp1d[self.translate[key]])
                     history = np.where(history > 0.0, np.log10(np.abs(history)), -99.0)
-                    
+
 
                 elif (self.translate[key] in interp1d and obj != binary):
                     history = interp1d[self.translate[key]]
