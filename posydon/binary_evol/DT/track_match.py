@@ -1496,7 +1496,7 @@ class TrackMatcher:
         for key in self.KEYS[1:]:
             # try/except logic required to avoid errors with compact objects
             try:
-                kvalue[key] = np.array(get_track(key, match_m0))
+                kvalue[key] = get_track(key, match_m0)
             except ValueError:
                 kvalue[key] = np.array([0.0, 0.0])
 
