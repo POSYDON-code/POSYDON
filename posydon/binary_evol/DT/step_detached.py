@@ -730,7 +730,7 @@ class detached_step:
                         * interp1d[self.translate["mass"]] * const.msol
                         / (interp1d[self.translate["R"]] * const.rsol)**3)
 
-                    history = (interp1d["omega"] / const.secyer / omega_crit_hist)
+                    history = interp1d["omega"] / const.secyer / omega_crit_hist
 
                     # ensure positive rotation values
                     history = zero_negative_values(history, key)
@@ -762,6 +762,8 @@ class detached_step:
                     tot_j_hist = (interp1d["omega"] / const.secyer) \
                                    * (interp1d[self.translate["total_moment_of_inertia"]] \
                                    * (const.msol * const.rsol**2))
+                    tot_j_hist = np.atleast_1d(tot_j_hist)
+                    
                     history = np.where(tot_j_hist > 0.0, np.log10(tot_j_hist), -99.0)
                     history = zero_negative_values(history, key)
 
@@ -778,7 +780,7 @@ class detached_step:
 
                 elif (key in ["lg_mdot", "lg_wind_mdot"] and obj != binary):
 
-                    history = np.abs(np.array(interp1d[self.translate[key]]))
+                    history = np.abs(np.atleast_1d(interp1d[self.translate[key]]))
                     history = np.where(history > 0.0, np.log10(history), -99.0)
 
 
