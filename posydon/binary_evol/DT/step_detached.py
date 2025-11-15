@@ -764,8 +764,9 @@ class detached_step:
                                    * (const.msol * const.rsol**2))
                     tot_j_hist = np.atleast_1d(tot_j_hist)
 
-                    history = np.where(tot_j_hist > 0.0, np.log10(tot_j_hist), -99.0)
-                    history = zero_negative_values(history, key)
+                    tot_j_hist = zero_negative_values(tot_j_hist, key)
+                    history = np.where(tot_j_hist > 0, tot_j_hist, -99.0)
+                    np.log10(history, out=history, where=(history > 0))
 
                 elif (key in ["spin"] and obj != binary):
 
@@ -781,8 +782,8 @@ class detached_step:
                 elif (key in ["lg_mdot", "lg_wind_mdot"] and obj != binary):
 
                     history = np.abs(np.atleast_1d(interp1d[self.translate[key]]))
-                    history = np.where(history > 0.0, np.log10(history), -99.0)
-
+                    history = np.where(history > 0, history, -99.0)
+                    np.log10(history, out=history, where=(history > 0))
 
                 elif (self.translate[key] in interp1d and obj != binary):
                     history = interp1d[self.translate[key]]
