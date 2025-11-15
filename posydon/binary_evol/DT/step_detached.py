@@ -778,8 +778,8 @@ class detached_step:
 
                 elif (key in ["lg_mdot", "lg_wind_mdot"] and obj != binary):
 
-                    history = np.array(interp1d[self.translate[key]])
-                    history = np.where(history > 0.0, np.log10(np.abs(history)), -99.0)
+                    history = np.abs(np.array(interp1d[self.translate[key]]))
+                    history = np.where(history > 0.0, np.log10(history), -99.0)
 
 
                 elif (self.translate[key] in interp1d and obj != binary):
