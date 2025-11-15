@@ -763,7 +763,7 @@ class detached_step:
                                    * (interp1d[self.translate["total_moment_of_inertia"]] \
                                    * (const.msol * const.rsol**2))
                     tot_j_hist = np.atleast_1d(tot_j_hist)
-                    
+
                     history = np.where(tot_j_hist > 0.0, np.log10(tot_j_hist), -99.0)
                     history = zero_negative_values(history, key)
 
