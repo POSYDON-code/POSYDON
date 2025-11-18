@@ -22,10 +22,10 @@ from pytest import approx, fixture, raises, warns
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = {'PchipInterpolator', 'PchipInterpolator2', '__authors__',\
+        elements = {'interp1d', 'SingleStarInterpolator', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
-                    'interp1d', 'np', 'copy'}
+                    'np', 'PchipInterpolator', 'copy'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -40,13 +40,6 @@ class TestElements:
                                       +"Please check, whether they have been "\
                                       +"added on purpose and update this "\
                                       +"unit test."
-
-    def test_instance_interp1d(self):
-        assert isclass(totest.interp1d)
-
-    def test_instance_PchipInterpolator2(self):
-        assert isclass(totest.PchipInterpolator2)
-
 
 class Testinterp1d:
     @fixture
@@ -152,56 +145,118 @@ class Testinterp1d:
             interp1d(0.2)
 
 
-class TestPchipInterpolator2:
+class TestSingleStarInterpolator:
     @fixture
-    def PchipInterpolator2(self):
-        # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [1.0, 0.0])
-
-    @fixture
-    def PchipInterpolator2_True(self):
-        # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
-                                         positive=True)
+    def SSI_simple(self):
+        # Single y_data, no positives, no derivatives
+        t = np.array([0.0, 1.0])
+        y_data = [np.array([1.0, 0.0])]
+        y_keys = ["y"]
+        return totest.SingleStarInterpolator(t, y_data, y_keys)
 
     @fixture
-    def PchipInterpolator2_False(self):
-        # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
-                                         positive=False)
+    def SSI_positive(self):
+        t = np.array([0.0, 1.0])
+        y_data = [np.array([-0.5, 0.5])]
+        y_keys = ["y"]
+        positives = [True]
+        return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives)
 
     @fixture
-    def PchipInterpolator2_Deriv(self):
-        # initialize an instance of the class with defaults
-        return totest.PchipInterpolator2([0.0, 1.0], [-0.5, 0.5],\
-                                         derivative=True)
+    def SSI_derivative(self):
+        t = np.array([0.0, 1.0])
+        y_data = [np.array([-0.5, 0.5])]
+        y_keys = ["y"]
+        derivatives = [True]
+        return totest.SingleStarInterpolator(t, y_data, y_keys, derivatives=derivatives)
 
-    # test the PchipInterpolator2 class
-    def test_init(self, PchipInterpolator2, PchipInterpolator2_True,\
-                  PchipInterpolator2_False, PchipInterpolator2_Deriv):
-        assert isroutine(PchipInterpolator2.__init__)
-        # check that the instance is of correct type and all code in the
-        # __init__ got executed: the elements are created and initialized
-        assert isinstance(PchipInterpolator2, totest.PchipInterpolator2)
-        assert isinstance(PchipInterpolator2.interpolator,\
-                          totest.PchipInterpolator)
-        assert PchipInterpolator2.positive == False
-        assert PchipInterpolator2_True.positive == True
-        assert PchipInterpolator2_False.positive == False
-        assert PchipInterpolator2.offset == 0.0
-        assert PchipInterpolator2.derivative == False
-        assert PchipInterpolator2_Deriv.derivative == True
-        assert type(PchipInterpolator2_Deriv.interpolator) == type(PchipInterpolator2.interpolator.derivative())
+    @fixture
+    def SSI_multiple(self):
+        t = np.array([0.0, 1.0])
+        y_data = [np.array([1.0, 0.0]), np.array([-1.0, 2.0])]
+        y_keys = ["a", "b"]
+        positives = [False, True]
+        derivatives = [False, False]
+        return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
 
-    def test_call(self, PchipInterpolator2, PchipInterpolator2_True,\
-                  PchipInterpolator2_False):
-        assert isroutine(PchipInterpolator2.__call__)
-        assert PchipInterpolator2(0.1) == 0.9
-        assert PchipInterpolator2_True(0.1) == 0.0
-        assert PchipInterpolator2_False(0.1) == -0.4
-        assert np.allclose(PchipInterpolator2([0.1, 0.8]),\
-                           np.array([0.9, 0.2]))
-        assert np.allclose(PchipInterpolator2_True([0.1, 0.8]),\
-                           np.array([0.0, 0.3]))
-        assert np.allclose(PchipInterpolator2_False([0.1, 0.8]),\
-                           np.array([-0.4, 0.3]))
+    @fixture
+    def SSI_full_combinations(self):
+        t = np.array([0.0, 1.0])
+        y_data = [
+            np.array([1.0, 2.0]),   # positive=False, derivative=False
+            np.array([3.0, 1.0]),   # positive=True, derivative=False
+            np.array([0.5, 0.0]),   # positive=False, derivative=True
+            np.array([-1.0, 2.0])   # positive=True, derivative=True
+        ]
+        y_keys = ["a", "b", "c", "d"]
+        positives = [False, True, False, True]
+        derivatives = [False, False, True, True]
+        return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
+
+    @fixture
+    def SSI_2D_coverage(self):
+        t = np.array([0.0, 1.0])
+        y_data = [
+            [1.0, 2.0],  # positive=False, derivative=False
+            [3.0, 4.0]   # positive=False, derivative=False
+        ]
+        y_keys = ["a", "b"]
+        positives = [False, False]
+        derivatives = [False, False]  # both same combination
+        return totest.SingleStarInterpolator(t, y_data, y_keys, positives=positives, derivatives=derivatives)
+
+    # test the SingleStarInterpolator class
+    def test_init(self, SSI_simple, SSI_positive, SSI_derivative, SSI_multiple):
+        # Basic type checks
+        for instance in [SSI_simple, SSI_positive, SSI_derivative, SSI_multiple]:
+            assert isinstance(instance, totest.SingleStarInterpolator)
+            assert hasattr(instance, "_interpolators")
+            assert hasattr(instance, "_keys")
+            assert hasattr(instance, "offset")
+
+        # Check that keys match
+        assert SSI_simple.keys == ["y"]
+        assert SSI_positive.keys == ["y"]
+        assert SSI_derivative.keys == ["y"]
+        assert set(SSI_multiple.keys) == {"a", "b"}
+
+    def test_call(self, SSI_simple, SSI_positive, SSI_derivative, SSI_multiple):
+        # Single output, no positive, no derivative
+        res = SSI_simple(0.1)
+        assert isinstance(res, dict)
+        assert "y" in res
+        assert np.allclose(res["y"], 0.9)
+
+        # Positive output
+        res_pos = SSI_positive(0.1)
+        assert np.allclose(res_pos["y"], 0.0)  # clipped to 0
+
+        # Derivative output
+        res_deriv = SSI_derivative(0.1)
+        # derivative between -0.5 -> 0.5 is 1.0 slope
+        assert np.allclose(res_deriv["y"], 1.0)
+
+        # Multiple outputs
+        res_multi = SSI_multiple(0.5)
+        assert np.allclose(res_multi["a"], 0.5)  # linear interp 1 -> 0
+        # 'b' is positive, should clip -0.5 to 0
+        expected_b = max(-1.0 + (2.0 + 1.0) * 0.5, 0.0)  # linear interp
+        assert np.allclose(res_multi["b"], expected_b)
+
+    def test_offset(self, SSI_simple):
+        SSI_simple.offset = 0.5
+        res = SSI_simple(0.5)
+        # effectively querying at t=0.0
+        assert np.allclose(res["y"], 1.0)
+
+    def test_full_combinations_call(self,SSI_full_combinations):
+        res = SSI_full_combinations(0.5)
+        assert set(res.keys()) == {"a", "b", "c", "d"}
+        assert np.allclose(res["a"], 1.5)
+        assert np.allclose(res["b"], 2.0)
+        assert np.allclose(res["c"], -0.5)
+        assert np.allclose(res["d"], 3.0)
+
+    def test_values_2D_branch(self,SSI_2D_coverage):
+        res = SSI_2D_coverage(0.5)
+        assert set(res.keys()) == {"a", "b"}
