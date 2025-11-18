@@ -794,7 +794,7 @@ class detached_step:
                 else:
                     history = np.ones_like(t) * np.nan
 
-                history = np.atleast_1d(history)
+                history = np.atleast_1d(history)[:-1]
                 current = history[-1]
 
                 setattr(obj, key, current)
