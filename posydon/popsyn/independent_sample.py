@@ -3,7 +3,7 @@
 
 __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
-    "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+    "Jeffrey Andrews <jeffrey.andrews@ufl.edu>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
