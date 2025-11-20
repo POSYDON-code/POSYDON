@@ -36,18 +36,27 @@ __authors__ = [
 
 import numpy as np
 import pandas as pd
+
+from posydon.binary_evol.binarystar import BINARYPROPERTIES
+from posydon.binary_evol.DT.track_match import TrackMatcher
+from posydon.binary_evol.flow_chart import (
+    STAR_STATES_CO,
+    STAR_STATES_H_RICH,
+    STAR_STATES_HE_RICH,
+    STAR_STATES_POST_MS,
+    STAR_STATES_POST_HeMS,
+)
+from posydon.binary_evol.singlestar import STARPROPERTIES
+from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.utils import common_functions as cf
 from posydon.utils import constants as const
-from posydon.binary_evol.binarystar import BINARYPROPERTIES
-from posydon.binary_evol.singlestar import STARPROPERTIES
-from posydon.config import PATH_TO_POSYDON
-from posydon.utils.common_functions import check_state_of_star
-from posydon.utils.common_functions import (calculate_lambda_from_profile, 
-                                            calculate_Mejected_for_integrated_binding_energy)
+from posydon.utils.common_functions import (
+    calculate_lambda_from_profile,
+    calculate_Mejected_for_integrated_binding_energy,
+    check_state_of_star,
+)
+from posydon.utils.constants import Zsun
 from posydon.utils.posydonwarning import Pwarn
-from posydon.binary_evol.flow_chart import (STAR_STATES_POST_MS, 
-                                            STAR_STATES_POST_HeMS)
-
 
 MODEL = {"prescription": 'alpha-lambda',
          "common_envelope_efficiency": 1.0,
@@ -60,11 +69,12 @@ MODEL = {"prescription": 'alpha-lambda',
          "CEE_tolerance_err": 0.001,
          "verbose": False,
          "common_envelope_option_after_succ_CEE": 'two_phases_stableMT',
-         "mass_loss_during_CEE_merged": False # If False, then no mass loss from this step for a merged star
+         "mass_loss_during_CEE_merged": False, # If False, then no mass loss from this step for a merged star
                                               # If True, then we remove mass according to the alpha-lambda prescription
                                               # assuming a final separation where the inner core RLOF starts.
          # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
-
+         "metallicity": None,
+         "record_matching": False
          }
 
 
@@ -140,6 +150,8 @@ class StepCEE(object):
             CEE_tolerance_err=MODEL['CEE_tolerance_err'],
             mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged'],
             verbose=MODEL['verbose'],
+            metallicity = MODEL['metallicity'],
+            record_matching = MODEL['record_matching'],
             **kwargs):
         """Initialize a StepCEE instance."""
         # read kwargs to initialize the class
@@ -166,10 +178,30 @@ class StepCEE(object):
             self.common_envelope_option_after_succ_CEE = \
                 common_envelope_option_after_succ_CEE
             self.mass_loss_during_CEE_merged = mass_loss_during_CEE_merged
-
+        self.metallicity = metallicity
+        self.record_matching = record_matching
         self.verbose = verbose
         self.path_to_posydon = PATH_TO_POSYDON
 
+
+        list_for_matching_HMS = [
+                        ["mass", "center_h1", "he_core_mass"],
+                        [20.0, 1.0, 10.0],
+                        ["log_min_max", "min_max", "min_max"],
+                        [0.1, 300], [0.0, None]
+                    ]
+        self.track_matcher = TrackMatcher(grid_name_Hrich = None,
+                                    grid_name_strippedHe = None,
+                                    path=PATH_TO_POSYDON_DATA,
+                                    metallicity = self.metallicity,
+                                    matching_method = "minimize",
+                                    matching_tolerance=1e-2,
+                                    matching_tolerance_hard=1e-1,
+                                    list_for_matching_HMS = list_for_matching_HMS,
+                                    list_for_matching_HeStar = None,
+                                    list_for_matching_postMS = None,
+                                    record_matching = self.record_matching,
+                                    verbose = self.verbose)
     def __call__(self, binary):
         """Perform the CEE step for a BinaryStar object."""
         # Determine which star is the donor and which is the companion
@@ -384,7 +416,7 @@ class StepCEE(object):
         """Calculate the post-common-envelope core masses and radii.
 
         It determines the post-CE parameters based on the core properties.
-        Note that these parameters may be updated in a subsequent step 
+        Note that these parameters may be updated in a subsequent step
         depending on assumptions about whether and how the final layers
         of the CE are removed from the cores.
 
@@ -612,8 +644,8 @@ class StepCEE(object):
             Pwarn("A double CE cannot have a stable mass transfer afterwards "
                   "as both cores are donors, switch to losing the mass as "
                   "wind.", "ReplaceValueWarning")
-            return self.CEE_two_phases_windloss(donor, mc1_i, rc1_i, 
-                                                donor_type, comp_star, mc2_i, 
+            return self.CEE_two_phases_windloss(donor, mc1_i, rc1_i,
+                                                donor_type, comp_star, mc2_i,
                                                 rc2_i, comp_type, double_CE,
                                                 separation_postCEE, verbose)
         # First find the post-CE parameters for each star
@@ -663,7 +695,7 @@ class StepCEE(object):
             mc1_f, mc2_f)
 
         # Check once more to see if the system has merged during stable MT
-        merger = cf.check_for_RLO(mc1_f, rc1_f, mc2_f, rc2_f, separation_f, 
+        merger = cf.check_for_RLO(mc1_f, rc1_f, mc2_f, rc2_f, separation_f,
             self.CEE_tolerance_err)
 
         if verbose:
@@ -929,13 +961,16 @@ class StepCEE(object):
             print("separation_i in Rsun", separation_i/const.Rsun)
             print("separation_postCEE in Rsun", separation_postCEE/const.Rsun)
 
+        if ((not double_CE) and (comp_star.state not in STAR_STATES_CO)):
+            rc2_i = self.adjust_secondary_radius(comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE)
+
 
         # Calculate the post-CE binary properties
         if (common_envelope_option_after_succ_CEE
             == "one_phase_variable_core_definition"):
             (mc1_f, rc1_f, mc2_f, rc2_f, separation_f, orbital_period_f,
-             merger) = self.CEE_one_phase_variable_core_definition(donor, 
-                        mc1_i, rc1_i, comp_star, mc2_i, rc2_i, 
+             merger) = self.CEE_one_phase_variable_core_definition(donor,
+                        mc1_i, rc1_i, comp_star, mc2_i, rc2_i,
                         separation_postCEE, verbose=verbose)
         elif (common_envelope_option_after_succ_CEE
               == "two_phases_stableMT"):
@@ -1038,7 +1073,7 @@ class StepCEE(object):
             Which type of post-common envelope evolution is used to remove
             the final layers around the core
         core_definition_H_fraction : float
-            The fractional abundance of H defining the He core (0.3, 0.1, or 
+            The fractional abundance of H defining the He core (0.3, 0.1, or
             0.01)
         core_definition_He_fraction : float
             The fractional abundance of He defining the CO core (typically 0.1)
@@ -1120,9 +1155,9 @@ class StepCEE(object):
                 star.he_core_mass = core_mass
                 star.he_core_radius = core_radius
                 if star.metallicity is None:
-                    star.surface_he4 = 1 - star.surface_h1 - 0.0142
+                    star.surface_he4 = 1 - star.surface_h1 - Zsun
                 else:
-                    star.surface_he4 = 1.0-star.surface_h1-star.metallicity
+                    star.surface_he4 = 1 - star.surface_h1 - star.metallicity * Zsun
                 star.log_LH = -1e99
                 attributes_changing.extend([
                                         "surface_h1",
@@ -1242,7 +1277,7 @@ class StepCEE(object):
             Mass ejected from the companion (in Msun)
         """
         # we calculate the ejected mass from part of the common envelope, using
-        # a_f = separation_postCEE so that one of the cores (or MS star) is 
+        # a_f = separation_postCEE so that one of the cores (or MS star) is
         # filling its inner Roche lobe
 
         # First, make sure we have information to calculate ejected mass
@@ -1358,7 +1393,7 @@ class StepCEE(object):
                                       verbose=False):
         """Update the binary and component stars upon merging within a CEE.
 
-        The binary's state and event are updated along with the donor and 
+        The binary's state and event are updated along with the donor and
         companion star masses and radii corresponding to a merger event.
 
         Parameters
@@ -1407,3 +1442,74 @@ class StepCEE(object):
             comp_star.he_core_radius = np.nan
 
         return
+
+    def adjust_secondary_radius(self,comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE):
+        """
+        Check and adjust the radius of the companion star if the star overfills its Roche
+        lobe due to inflated radius from short accretion prior to CE.
+        If so, the star's evolutionary track is adjusted
+        and the radius is re-matched to a corresponding single-star track.
+
+        Parameters
+        ----------
+        comp_star : SingleStar object
+            The companion star
+        binary : BinaryStar object
+            The binary system
+        mc1_i : float
+            Core mass of the donor star upon entering the CEE (in Msun).
+        mc2_i : float
+            Core mass of the companion star upon entering the CEE (in Msun).
+        rc1_i : float
+            Radius of the donor star at the onset of the CEE (in Rsun).
+        rc2_i : float
+            Radius of the companion star at the onset of the CEE (in Rsun).
+        separation_postCEE : float
+            Post CE orbital separation of the binary (in cm)
+
+        Returns
+        -------
+        rc2_i : float
+            Updated radius of the companion star (in Rsun). If no adjustment is needed,
+            the input `rc2_i` is returned unchanged.
+
+        """
+        comp_star.co = False
+        RL1 = cf.roche_lobe_radius(mc1_i,mc2_i, separation_postCEE/const.Rsun)
+        RL2 = cf.roche_lobe_radius(mc2_i,mc1_i, separation_postCEE/const.Rsun)
+
+        if ((rc1_i - RL1) < self.CEE_tolerance_err
+                and (rc2_i - RL2) > self.CEE_tolerance_err):
+
+            if comp_star.state in STAR_STATES_H_RICH:
+                comp_star.htrack = True
+            elif comp_star.state in STAR_STATES_HE_RICH:
+                comp_star.htrack = False
+            else:
+                raise ValueError("state = %s of donor of CEE not recognized"
+                           % comp_star.state)
+            if self.verbose:
+                print(f"The binary overfilled its RL due to the companion's inflated radius \n"
+                      f"The Roche lobe of the companion is: {RL2}, The radius is: {rc2_i}")
+                print("Adjusting the companion's radius by matching to single star.")
+            t_i = binary.time
+
+
+            match_primary = False
+            match_secondary = True
+
+            _, _, only_CO = self.track_matcher.do_matching(binary, step_name="step_CE",
+                                                           match_primary=match_primary,
+                                                           match_secondary=match_secondary)
+            if comp_star.interp1d:
+                rc2_i = comp_star.interp1d(t_i)["R"]
+            else:
+                rc2_i = rc2_i  # no change
+                Pwarn("The companion star radius within the common envelope cannot be updated. "
+                      "Using the initial companion radius. This should never happen.",
+                      'InterpolationWarning')
+
+        if self.verbose:
+            print(f"After matching to single star the companion's radius is : {rc2_i} ")
+
+        return rc2_i

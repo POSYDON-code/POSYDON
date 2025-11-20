@@ -21,16 +21,21 @@ __authors__ = [
 
 import numpy as np
 import pandas as pd
-from posydon.utils.common_functions import (check_state_of_star,
-                                            infer_star_state,
-                                            CO_radius)
+
 from posydon.grids.SN_MODELS import SN_MODELS
-from posydon.popsyn.io import STARPROPERTIES_DTYPES
+from posydon.popsyn.io import (
+    EXTRA_STAR_COLUMNS_DTYPES,
+    SCALAR_NAMES_DTYPES,
+    STARPROPERTIES_DTYPES,
+)
+from posydon.utils.common_functions import (
+    CO_radius,
+    check_state_of_star,
+    infer_star_state,
+)
 from posydon.utils.constants import Zsun, zams_table
-from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE)
+from posydon.utils.limits_thresholds import THRESHOLD_CENTRAL_ABUNDANCE
 from posydon.utils.posydonwarning import Pwarn
-
-
 
 STARPROPERTIES = [
     'state',            # the evolutionary state of the star. For more info see
@@ -140,9 +145,9 @@ class SingleStar:
         """
 
         # Initialize composition and radius at least.
-        # This is needed to match to a star and for 
-        # evolution to be possible. Ideally the matcher 
-        # would check things like burning luminosity and more 
+        # This is needed to match to a star and for
+        # evolution to be possible. Ideally the matcher
+        # would check things like burning luminosity and more
         # elements beyong He. So, in the future we might
         # consider making more robust matching criteria.
 
@@ -150,17 +155,25 @@ class SingleStar:
         setattr(self, 'metallicity', kwargs.pop('metallicity', 1.0))
         state = kwargs.get('state', 'H-rich_Core_H_burning')
         CO_states = ['massless_remnant', 'WD', 'NS', 'BH']
-        
+
+        if "natal_kick_array" in kwargs:
+            tmp = kwargs['natal_kick_array']
+            kwargs['natal_kick_velocity'] = tmp[0]
+            kwargs['natal_kick_azimuthal_angle'] = tmp[1]
+            kwargs['natal_kick_polar_angle'] = tmp[2]
+            kwargs['natal_kick_mean_anomaly'] = tmp[3]
+            del kwargs['natal_kick_array']
+
         if state in CO_states:
             Z_div_Zsun = self.metallicity
             Y = np.nan
-            Z = np.nan     
+            Z = np.nan
             X = np.nan
             LOW_ABUNDANCE = np.nan
             # a low/high value to guess with, seems to work well
             LOW_LOGR_GUESS = np.nan
             HIGH_LOGR_GUESS = np.nan
-    
+
             # start by guessing a smallish radius and no He core
             default_log_R = np.nan
             default_He_core_mass = np.nan
@@ -170,7 +183,7 @@ class SingleStar:
                 Y = zams_table[Z_div_Zsun]
             else:
                 raise KeyError(f"{Z_div_Zsun} is a not defined metallicity")
-            Z = Z_div_Zsun*Zsun        
+            Z = Z_div_Zsun*Zsun
             X = 1.0 - Y - Z
             LOW_ABUNDANCE = 1e-6
             # a low/high value to guess with, seems to work well
@@ -180,7 +193,7 @@ class SingleStar:
             # start by guessing a smallish radius and no He core
             default_log_R = LOW_LOGR_GUESS
             default_He_core_mass = 0.0
-        
+
         # MAIN SEQUENCE
         if "Core_H_burning" in state:
             # default HMS ZAMS
@@ -193,8 +206,8 @@ class SingleStar:
             default_core_Y = 1.0 - default_core_X - Z
             if "stripped_He" in state:
                 default_core_X = LOW_ABUNDANCE
-                default_core_Y = LOW_ABUNDANCE  
-                default_He_core_mass = kwargs.get('mass')             
+                default_core_Y = LOW_ABUNDANCE
+                default_He_core_mass = kwargs.get('mass')
 
         # ADVANCED BURNING
         elif "Core_He_burning" in state:
@@ -215,11 +228,11 @@ class SingleStar:
             # make radius big to encourage match to giant
             default_log_R = HIGH_LOGR_GUESS
             # This stays big after He core forms
-            default_He_core_mass = kwargs.get('mass')     
+            default_He_core_mass = kwargs.get('mass')
         elif ("Core_" in state) and ("_depleted" in state):
             # core He or heavier depleted
             # default to end of He burn. Matching does not check
-            # other elements havier than He, so this is best 
+            # other elements havier than He, so this is best
             # we can do.
             default_core_X = LOW_ABUNDANCE
             default_core_Y = LOW_ABUNDANCE
@@ -231,13 +244,13 @@ class SingleStar:
             default_core_Y = np.nan
             default_log_R = np.log10(CO_radius(kwargs.get('mass'), state))
             default_He_core_mass = np.nan
-            # If a user gives a mass that does not comply with our 
+            # If a user gives a mass that does not comply with our
             # CO star state logic, you can get weird stuff like a
             # BH or NS turning into a WD.
-            inferred_state = infer_star_state(star_mass=kwargs.get('mass'), 
-                             surface_h1=kwargs.get('surface_h1', np.nan), 
-                             center_h1=kwargs.get('center_h1', np.nan), 
-                             center_he4=kwargs.get('center_he4', np.nan), 
+            inferred_state = infer_star_state(star_mass=kwargs.get('mass'),
+                             surface_h1=kwargs.get('surface_h1', np.nan),
+                             center_h1=kwargs.get('center_h1', np.nan),
+                             center_he4=kwargs.get('center_he4', np.nan),
                              center_c12=kwargs.get('center_c12', np.nan),
                              star_CO=True)
             if state != inferred_state:
@@ -251,7 +264,7 @@ class SingleStar:
             # some state not caught above, default HMS ZAMS
             Pwarn(f"The initial state {state} was not caught in "
                   "SingleStar.__init__() so it was initialized " \
-                  "as an H-rich_Core_H_burning star.", 
+                  "as an H-rich_Core_H_burning star.",
                   "InitializationWarning")
             default_core_X = X
             default_core_Y = Y
@@ -274,10 +287,10 @@ class SingleStar:
                 setattr(self, item, kwargs.pop(item, default_core_Y))
             elif 'core_mass' in item:
                 # intiailize all core_mass values to 0
-                # they are used in matching, but we will rely on 
+                # they are used in matching, but we will rely on
                 # abundances set above to find a good match
                 if item == 'he_core_mass':
-                    default_core_mass = default_He_core_mass 
+                    default_core_mass = default_He_core_mass
                 else:
                     if state in CO_states:
                         default_core_mass = 0.0
@@ -305,13 +318,22 @@ class SingleStar:
 
         for key, val in kwargs.items():
             setattr(self, key, val)
+            # do not create history for scalar values
+            if key in SCALAR_NAMES_DTYPES.keys() or key in EXTRA_STAR_COLUMNS_DTYPES.keys():
+                continue
             setattr(self, key + '_history', [val])
 
         # store extra values in the star object without a history
 
         # these quantities are updated in step_SN.py
-        if not hasattr(self, 'natal_kick_array'):
-            self.natal_kick_array = [None] * 4
+        if not hasattr(self, 'natal_kick_velocity'):
+            self.natal_kick_velocity = None
+        if not hasattr(self, 'natal_kick_azimuthal_angle'):
+            self.natal_kick_azimuthal_angle = None
+        if not hasattr(self, 'natal_kick_polar_angle'):
+            self.natal_kick_polar_angle = None
+        if not hasattr(self, 'natal_kick_mean_anomaly'):
+            self.natal_kick_mean_anomaly = None
         if not hasattr(self, 'spin_orbit_tilt_first_SN'):
             self.spin_orbit_tilt_first_SN = None
         if not hasattr(self, 'spin_orbit_tilt_second_SN'):
@@ -527,14 +549,34 @@ class SingleStar:
                                       columns=oneline_names)
         else:
             oneline_df = pd.DataFrame()
-
         for name in scalar_names:
             if hasattr(self, name):
+                # Handle legacy natal_kick_array for backward compatibility
                 if name == 'natal_kick_array':
-                    natal_kick_array = getattr(self, name)
+                    Pwarn("The 'natal_kick_array' attribute will be deprecated. "
+                            "Please use 'natal_kick_velocity', "
+                            "'natal_kick_azimuthal_angle', "
+                            "'natal_kick_polar_angle', and "
+                            "'natal_kick_mean_anomaly' instead. "
+                            "Adding both properties to the DataFrame.",
+                            "DeprecationWarning"
+                    )
+                    # Create array from individual properties
+                    natal_kick_array = [
+                        getattr(self, 'natal_kick_velocity', None),
+                        getattr(self, 'natal_kick_azimuthal_angle', None),
+                        getattr(self, 'natal_kick_polar_angle', None),
+                        getattr(self, 'natal_kick_mean_anomaly', None)
+                    ]
                     for i in range(4):
                         col_name = prefix+name+'_{}'.format(int(i))
-                        oneline_df[col_name] = [natal_kick_array[i]]
+                        oneline_df[col_name] = natal_kick_array[i]
+
+                    # also output better named columns
+                    oneline_df[prefix+'natal_kick_velocity'] = natal_kick_array[0]
+                    oneline_df[prefix+'natal_kick_azimuthal_angle'] = natal_kick_array[1]
+                    oneline_df[prefix+'natal_kick_polar_angle'] = natal_kick_array[2]
+                    oneline_df[prefix+'natal_kick_mean_anomaly'] = natal_kick_array[3]
                 else:
                     oneline_df[prefix+name] = [getattr(self, name)]
         return oneline_df

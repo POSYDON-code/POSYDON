@@ -1,40 +1,41 @@
 import numpy as np
 
+
 def default_spin_from_winds(a, e, primary, secondary, verbose = False):
 
     """
-        This function calculates the change in angular rotation rates 
+        This function calculates the change in angular rotation rates
     from wind loss.
 
     Parameters
     ----------
         a : float
-            The current orbital separation (unused in calculation, 
+            The current orbital separation (unused in calculation,
             and only present in debugging output). [Rsolar]
 
         e : float
-            The current orbital eccentricity (unused in calculation, 
+            The current orbital eccentricity (unused in calculation,
             and only present in debugging output).
 
         primary : SingleStar object
-            A single star object, representing the primary (more evolved) star 
+            A single star object, representing the primary (more evolved) star
             in the binary and containing its properties.
-        
+
         secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star 
+            A single star object, representing the secondary (less evolved) star
             in the binary and containing its properties.
 
         verbose : bool
             True if we want to print stuff.
-    
+
     Returns
     -------
         dOmega_sec : float
-            The change in rotation rate of the secondary (less evolved) 
+            The change in rotation rate of the secondary (less evolved)
         star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-        
+
         dOmega_pri : float
-            The change in rotation rate of the primary (more evolved) 
+            The change in rotation rate of the primary (more evolved)
         star for a time step in step_detached's solve_ivp(). [rad/yr^2]
     """
 
@@ -75,19 +76,19 @@ def default_spin_from_winds(a, e, primary, secondary, verbose = False):
     dOmega_deformation_pri = np.min(
         [-omega1 * Idot_1 / MOI_1, 100]
     )
-    if verbose:
-        print(
-            "dOmega_spin_wind , dOmega_deformation = ",
-            dOmega_spin_wind_sec,
-            dOmega_deformation_sec,
-            dOmega_spin_wind_pri,
-            dOmega_deformation_pri,
-        )
+    #if verbose:
+    #    print(
+    #        "dOmega_spin_wind , dOmega_deformation = ",
+    #        dOmega_spin_wind_sec,
+    #        dOmega_deformation_sec,
+    #        dOmega_spin_wind_pri,
+    #        dOmega_deformation_pri,
+    #    )
     dOmega_sec = dOmega_spin_wind_sec + dOmega_deformation_sec
     dOmega_pri = dOmega_spin_wind_pri + dOmega_deformation_pri
 
-    if verbose:
-        print("a[Ro],e,Omega[rad/yr] have been =", a, e, omega2, omega1)
+    #if verbose:
+    #    print("a[Ro],e,Omega[rad/yr] have been =", a, e, omega2, omega1)
         #print("da,de,dOmega (all) in 1yr is = ",
         #    da, de, dOmega_sec, dOmega_pri)
 
@@ -96,13 +97,13 @@ def default_spin_from_winds(a, e, primary, secondary, verbose = False):
 def default_sep_from_winds(a, e, primary, secondary, verbose = False):
 
     """
-        This function calculates the change in orbital separation from 
+        This function calculates the change in orbital separation from
     wind loss, as e.g., in:
 
         Tauris, T. M., & van den Heuvel, E. 2006,
                 Compact stellar X-ray sources, 1, 623
 
-        from simple arguments regarding the balance of orbital angular 
+        from simple arguments regarding the balance of orbital angular
     momentum.
 
     Parameters
@@ -114,20 +115,20 @@ def default_sep_from_winds(a, e, primary, secondary, verbose = False):
             The current orbital eccentricity.
 
         primary : SingleStar object
-            A single star object, representing the primary (more evolved) star 
+            A single star object, representing the primary (more evolved) star
             in the binary and containing its properties.
-        
+
         secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star 
+            A single star object, representing the secondary (less evolved) star
             in the binary and containing its properties.
 
         verbose : bool
             True if we want to print stuff.
-    
+
     Returns
     -------
         da_mt_tot : float
-            The change in orbital separation from both stars 
+            The change in orbital separation from both stars
         for a time step in step_detached's solve_ivp(). [Rsolar/yr]
 
     """
@@ -152,8 +153,8 @@ def default_sep_from_winds(a, e, primary, secondary, verbose = False):
     k32 = mdot_1 / (m1 + m2)
     da_mt_pri = a * (2 * k12 - 2 * k22 + k32)
 
-    if verbose:
-        print("da_mt = ", da_mt_sec, da_mt_pri)
+    #if verbose:
+    #    print("da_mt = ", da_mt_sec, da_mt_pri)
 
     da_mt_tot = da_mt_sec + da_mt_pri
 
