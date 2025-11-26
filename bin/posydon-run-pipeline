@@ -685,7 +685,7 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
     elif rerun_type == 'more_mesh':
         replace_text = "development-435d16c9158e4608530f21b8169ce6f31160e23e"
     elif rerun_type == 'conv_bdy_weight':
-        replace_text = "ZepeiX_otherj_fit_lowovershoot-b512034b72143322997106f1a4b2fd518d357441"
+        replace_text = "ZepeiX_otherj_fit-0814285c05f370ef2ad2590e257496772ddcfd61"
     elif rerun_type == 'initial_He':
         replace_text = "fix_iniHe_pre_rerun5-0e736a853c3c2e522b76299a54aea8f5eea15d08"
     elif rerun_type == "dedt_energy_eqn":
