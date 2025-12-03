@@ -1,5 +1,5 @@
 {% set name = "posydon" %}
-{% set version = "2.1.8" %}
+{% set version = "2.2.0" %}
 
 package:
   name: "{{ name|lower }}"

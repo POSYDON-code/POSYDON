@@ -117,7 +117,7 @@ def zero_negative_values(arr, key): # pragma no cover
         np.ndarray
             The processed array with negative values set to zero.
     """
-    arr = np.array(arr)
+    arr = np.atleast_1d(arr)
 
     if np.any(arr < 0):
         Pwarn("A " + key + " value is negative. Setting to zero.",

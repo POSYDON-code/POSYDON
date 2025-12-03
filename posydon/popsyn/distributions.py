@@ -259,15 +259,18 @@ class Sana12Period():
         B = 1./beta * (np.log10(self.p_max)**beta - np.log10(10**0.15)**beta)
         C = 1./(A + B)
         logp_valid = logp[mask2]
-        result[mask2] = np.where(
-            (np.log10(self.p_min) <= logp_valid) & (logp_valid < 0.15),
-            C * 0.15**(-self.slope),
-            np.where(
-                (0.15 <= logp_valid) & (logp_valid <= np.log10(self.p_max)),
-                C * logp_valid**(-self.slope),
-                0
-            )
-        )
+
+        temp_result = np.zeros_like(logp_valid, dtype=float)
+
+        # Handle the first region: p_min <= logp < 0.15
+        mask_region1 = (np.log10(self.p_min) <= logp_valid) & (logp_valid < 0.15)
+        temp_result[mask_region1] = C * 0.15**(-self.slope)
+
+        # Handle the second region: 0.15 <= logp <= p_max
+        mask_region2 = (0.15 <= logp_valid) & (logp_valid <= np.log10(self.p_max))
+        temp_result[mask_region2] = C * logp_valid[mask_region2]**(-self.slope)
+
+        result[mask2] = temp_result
 
         return result
 

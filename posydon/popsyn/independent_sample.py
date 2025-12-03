@@ -3,7 +3,7 @@
 
 __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
-    "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+    "Jeffrey Andrews <jeffrey.andrews@ufl.edu>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
@@ -60,6 +60,13 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
         m2_set, orbital_scheme_set, eccentricity_set, metallicity_set\
          = _gen_Moe_17_PsandQs(m1_set, M_min=M1_min, M_max=M1_max,
                                all_binaries=False)
+
+        ecc_scheme = kwargs.get('eccentricity_scheme', 'zero')
+        if ecc_scheme != 'Moe+17-PsandQs':
+            # ensure that kwargs hold the current retrieved or
+            # set value of eccentricity_scheme
+            kwargs['eccentricity_scheme'] = ecc_scheme
+            eccentricity_set = generate_eccentricities(**kwargs)
     else:
 
         # Generate secondary masses
