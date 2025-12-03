@@ -177,7 +177,7 @@ for key, value in config.items():</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.utils.configfile.ConfigFile">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.utils.configfile.</span></span><span class="sig-name descname"><span class="pre">ConfigFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#ConfigFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.ConfigFile" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class handling input, process and output of configurations.</p>
 <p>Initialize a ConfigFile with or without a path.</p>
 <dl class="py method">
@@ -205,9 +205,9 @@ for key, value in config.items():</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><em>None</em></a>) – The path of the JSON file. If <cite>None</cite> it will use the path which
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><em>None</em></a>) – The path of the JSON file. If <cite>None</cite> it will use the path which
 which the ConfigFile instance was initialized.</p></li>
-<li><p><strong>can_update</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, if a key already exists, it will get the new value.
+<li><p><strong>can_update</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, if a key already exists, it will get the new value.
 If False, an Exception is thrown.</p></li>
 </ul>
 </dd>
@@ -221,8 +221,8 @@ If False, an Exception is thrown.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><em>None</em></a>) – Where to save. If None, save to the path from the initialization.</p></li>
-<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, it will overwrite if the path exists.</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><em>None</em></a>) – Where to save. If None, save to the path from the initialization.</p></li>
+<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, it will overwrite if the path exists.</p></li>
 </ul>
 </dd>
 </dl>
@@ -245,7 +245,7 @@ If False, an Exception is thrown.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.utils.configfile.VariableKey">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.utils.configfile.</span></span><span class="sig-name descname"><span class="pre">VariableKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/utils/configfile.html#VariableKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.utils.configfile.VariableKey" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A dictionary key which is a variable.</p>
 <p>&#64;ivar item: The variable AST object.</p>
 <p>Construct the object by giving a <cite>name</cite> to it.</p>
@@ -289,6 +289,8 @@ If False, an Exception is thrown.</p></li>
             <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
             
             <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
             
         </dl>
         

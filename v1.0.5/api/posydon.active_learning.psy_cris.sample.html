@@ -106,7 +106,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.active_learning.psy_cris.sample.Sampler">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.active_learning.psy_cris.sample.</span></span><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regressor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/active_learning/psy_cris/sample.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.active_learning.psy_cris.sample.Sampler" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class implementing PTMCMC and MCMC for PSY-CRIS algorith.</p>
 <p>Modular implementation of PTMCMC and MCMC designed to
 implement the PSY-CRIS algorithm of sampling points
@@ -132,7 +132,7 @@ $frac{16}{3pi} left( expleft[-mu^2 - (9 + 4mu^2 + 8nu)^2right]
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of algorithm to use. For this method None.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of algorithm to use. For this method None.</p></li>
 <li><p><strong>args</strong> (<em>array</em>) – 2D location to get the value of the function.</p></li>
 <li><p><strong>**kwargs</strong> – Kwargs for more complex target distributions.</p></li>
 </ul>
@@ -141,7 +141,7 @@ $frac{16}{3pi} left( expleft[-mu^2 - (9 + 4mu^2 + 8nu)^2right]
 <dd class="field-even"><p></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+<dd class="field-odd"><p>array or <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -154,7 +154,7 @@ $frac{16}{3pi} left( expleft[-mu^2 - (9 + 4mu^2 + 8nu)^2right]
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – String to specify the trained classification algorithm to use.</p></li>
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – String to specify the trained classification algorithm to use.</p></li>
 <li><p><strong>position</strong> (<em>array</em>) – Single location in parameter space for the target distribution to
 be evaluated at.</p></li>
 <li><p><strong>**kwargs</strong> – <dl class="simple">
@@ -221,13 +221,13 @@ so that the initial starting points are not chosen automatically
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>step_history</strong> (<em>ndarray</em>) – </p></li>
-<li><p><strong>N_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – </p></li>
-<li><p><strong>Kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – </p></li>
-<li><p><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>norm_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>var_mult</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>add_mvns_together</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>N_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – </p></li>
+<li><p><strong>Kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – </p></li>
+<li><p><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>norm_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>var_mult</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>add_mvns_together</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -253,19 +253,19 @@ which keeps training data from being proposed again.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>step_history</strong> (<em>ndarray</em>) – List of points from a PTMCMC or MCMC. (posterior)</p></li>
-<li><p><strong>N_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of points desired to be drawn from the posterior but may not
+<li><p><strong>N_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of points desired to be drawn from the posterior but may not
 actually be the number of points accepted. Contributes to the
 length scale of the MVN distribution of accepted points
 (along with kappa).</p></li>
-<li><p><strong>Kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Scaling factor that sets the initial size of the MVN for accepted
+<li><p><strong>Kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Scaling factor that sets the initial size of the MVN for accepted
 points. This should be proportional to the filling factor of the
 area of iterest described by the target distribution used to
 create the posterior.</p></li>
-<li><p><strong>var_mult</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>ndarray</em><em>, </em><em>optional</em>) – Variance multiplier for the MVN of accepted points.</p></li>
-<li><p><strong>add_mvns_together</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Add MVNs together when creating the accepted point distribution.</p></li>
-<li><p><strong>include_training_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Include the trainind data in the target distribution before
+<li><p><strong>var_mult</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>ndarray</em><em>, </em><em>optional</em>) – Variance multiplier for the MVN of accepted points.</p></li>
+<li><p><strong>add_mvns_together</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Add MVNs together when creating the accepted point distribution.</p></li>
+<li><p><strong>include_training_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Include the trainind data in the target distribution before
 sampling.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print useful diagnostic information.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Print useful diagnostic information.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -292,7 +292,7 @@ with classification terms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Trained classifier name to use for predictions.</p></li>
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Trained classifier name to use for predictions.</p></li>
 <li><p><strong>position</strong> (<em>array</em>) – Position in parameter space to eval</p></li>
 <li><p><strong>**kwargs</strong> – <dl class="simple">
 <dt>TD_verbose<span class="classifier">bool</span></dt><dd><p>Print useful output</p>
@@ -330,19 +330,19 @@ with the largest average distance is chosen.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>step_history</strong> (<em>ndarray</em>) – Posterior from which to sample new query points.</p></li>
-<li><p><strong>N_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – N query points to converge to.</p></li>
-<li><p><strong>Kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Multiplies the length scale of MVNs and changes such that the
+<li><p><strong>N_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – N query points to converge to.</p></li>
+<li><p><strong>Kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Multiplies the length scale of MVNs and changes such that the
 desired number of query points is found.</p></li>
-<li><p><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Shuffle points in posterior in place before sampling.</p></li>
-<li><p><strong>norm_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Normalize steps before sampling.</p></li>
-<li><p><strong>add_mvns_together</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Add MVNs of accepted point distribution together.</p></li>
-<li><p><strong>include_training_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Include training data in the accpeted point distribution before
+<li><p><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Shuffle points in posterior in place before sampling.</p></li>
+<li><p><strong>norm_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Normalize steps before sampling.</p></li>
+<li><p><strong>add_mvns_together</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Add MVNs of accepted point distribution together.</p></li>
+<li><p><strong>include_training_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Include training data in the accpeted point distribution before
 sampling.</p></li>
 <li><p><strong>var_mult</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Variance multiplier.</p></li>
-<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Random seed to use for random sampling.</p></li>
-<li><p><strong>n_repeats</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of times to converge to the correct number of points. Each
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Random seed to use for random sampling.</p></li>
+<li><p><strong>n_repeats</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of times to converge to the correct number of points. Each
 iteration may be a different realization of the posterior.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Print useful information.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Print useful information.</p></li>
 <li><p><strong>**kwargs</strong> – show_plots : bool, optional
 Show 2D plot of proposed points with step history &amp; training data.</p></li>
 </ul>
@@ -396,19 +396,19 @@ from the classifier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>N_trials</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of proposals or trial steps to take before stopping.</p></li>
-<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Related to the step size of the MCMC walker.
+<li><p><strong>N_trials</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of proposals or trial steps to take before stopping.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Related to the step size of the MCMC walker.
 Defines the standard deviation of a zero mean normal
 from which the step is randomly drawn.</p></li>
-<li><p><strong>step_history</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – Initial starting location in parameter space.
+<li><p><strong>step_history</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Initial starting location in parameter space.
 Could contain an arbitrary number of previous steps
 but a walker will start at the last step in the list.</p></li>
 <li><p><strong>targe_dist</strong> (<em>callable</em>) – The target distribution to sample.
 Must take arguments ( method_name, element_of_step_history )
 (A 2D analytic function is provided - TD_2d_analytic)</p></li>
-<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of interpolation technique used in the target_dist.</p></li>
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Temperature of the MCMC.</p></li>
-<li><p><strong>upper_limit_reject</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Sets the maximum number of rejected steps before the MCMC
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of interpolation technique used in the target_dist.</p></li>
+<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Temperature of the MCMC.</p></li>
+<li><p><strong>upper_limit_reject</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Sets the maximum number of rejected steps before the MCMC
 stops walking. Avoiding a slowly converging walk with few
 accepted points.</p></li>
 </ul>
@@ -434,22 +434,22 @@ accepted points.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>T_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Sets the maximum temperature MCMC in the chain.</p></li>
-<li><p><strong>N_tot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The total number of iterations for the PTMCMC.</p></li>
+<li><p><strong>T_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Sets the maximum temperature MCMC in the chain.</p></li>
+<li><p><strong>N_tot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The total number of iterations for the PTMCMC.</p></li>
 <li><p><strong>target_dist</strong> (<em>callable</em>) – The target distribution to sample.
 Must take arguments (method_name, location_to_eval)
 (A 2D analytic function is provided - analytic_target_dist)</p></li>
-<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – A single string or list of strings specifying the interpolator to
+<li><p><strong>classifier_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – A single string or list of strings specifying the interpolator to
 use for classification or classification &amp; regression respectively.</p></li>
 <li><p><strong>init_pos</strong> (<em>array</em>) – Initial position of walkers in each axis. Default is the median of
 the input data in TableData.</p></li>
-<li><p><strong>N_draws_per_swap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of draws to perform for each MCMC before swap proposals.</p></li>
-<li><p><strong>c_spacing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Sets the spacing of temperatures in each chain.
+<li><p><strong>N_draws_per_swap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of draws to perform for each MCMC before swap proposals.</p></li>
+<li><p><strong>c_spacing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Sets the spacing of temperatures in each chain.
 T_{i+1} = T_{i}^{1/c}, range: [T_max , T=1]</p></li>
-<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Sets the standard deviation of steps taken by the walkers. Default
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Sets the standard deviation of steps taken by the walkers. Default
 is 1/5 the range of training data from TableData.</p></li>
-<li><p><strong>upper_limit_reject</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Sets the upper limit of rejected points.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Useful print statements during execution.</p></li>
+<li><p><strong>upper_limit_reject</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Sets the upper limit of rejected points.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Useful print statements during execution.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -513,6 +513,8 @@ in the original range of the axes based off the range in TableData.</p>
             <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
             
             <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
             
         </dl>
         

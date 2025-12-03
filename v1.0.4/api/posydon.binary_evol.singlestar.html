@@ -110,12 +110,12 @@ while his past history with <cite>star.mass_history</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.singlestar.SingleStar">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.singlestar.</span></span><span class="sig-name descname"><span class="pre">SingleStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/singlestar.html#SingleStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.singlestar.SingleStar" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class describing a single star.</p>
 <p>Initialize the star.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – List of initialization parameters for a star.</p>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – List of initialization parameters for a star.</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -136,7 +136,7 @@ while his past history with <cite>star.mass_history</cite>.</p>
 <dd><p>Restore the object to the i-th state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Index of the star object history to reset the star to. By default
+<dd class="field-odd"><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Index of the star object history to reset the star to. By default
 i == 0, i.e. the star will be restored to its initial state.</p>
 </dd>
 </dl>
@@ -150,19 +150,19 @@ i == 0, i.e. the star will be restored to its initial state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>extra_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – Extra star history parameters to return in DataFrame that are not
+<li><p><strong>extra_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Extra star history parameters to return in DataFrame that are not
 included in STARPROPERTIES.
 Can be used in combination with <cite>only_select_columns</cite>.
 Assumes names have no suffix.</p></li>
-<li><p><strong>ignore_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – Names of STARPROPERTIES parameters to ignore.
+<li><p><strong>ignore_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Names of STARPROPERTIES parameters to ignore.
 Assumes names have <cite>_history</cite> suffix.</p></li>
-<li><p><strong>only_select_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – Names of the only columns to include.
+<li><p><strong>only_select_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Names of the only columns to include.
 Can be used in combination with <cite>extra_columns</cite>.
 Assumes names have <cite>_history</cite> suffix.</p></li>
-<li><p><strong>include_profile</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Include the star’s profile in the dataframe (NOT RECOMMENDED)</p></li>
-<li><p><strong>null_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Replace all None values with something else (for saving).
+<li><p><strong>include_profile</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Include the star’s profile in the dataframe (NOT RECOMMENDED)</p></li>
+<li><p><strong>null_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Replace all None values with something else (for saving).
 Default is np.NAN.</p></li>
-<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Prefix to all column names. (e.g. ‘star_1’, ‘S1’)
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Prefix to all column names. (e.g. ‘star_1’, ‘S1’)
 Default has no prefix.</p></li>
 </ul>
 </dd>
@@ -185,8 +185,8 @@ method. Any scalar values can also be added.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>scalar_names</strong> (<em>list of str</em>) – Names of any values to be added to the oneline DataFrame.</p></li>
-<li><p><strong>history</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Include the history initial-final values from to_df method.</p></li>
-<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Any prefix to go at the beginning of all columns names.</p></li>
+<li><p><strong>history</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Include the history initial-final values from to_df method.</p></li>
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Any prefix to go at the beginning of all columns names.</p></li>
 <li><p><strong>**kwargs</strong> – All options for the to_df method.</p></li>
 </ul>
 </dd>
@@ -233,6 +233,8 @@ method. Any scalar values can also be added.</p>
             <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
             
             <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
             
         </dl>
         

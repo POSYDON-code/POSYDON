@@ -130,7 +130,7 @@ for the donor star, else we use the default values</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.CE.step_CEE.StepCEE">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.CE.step_CEE.</span></span><span class="sig-name descname"><span class="pre">StepCEE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prescription</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alpha-lambda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_efficiency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_lambda_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_option_for_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lambda_from_grid_final_values'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_option_for_HG_star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'optimistic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_option_after_succ_CEE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'core_not_replaced_noMT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_envelope_alpha_thermal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_definition_H_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_definition_He_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CEE_tolerance_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/CE/step_CEE.html#StepCEE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.CE.step_CEE.StepCEE" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Compute supernova final remnant mass, fallback fraction &amp; stellar state.</p>
 <p>This consider the nearest neighboor of the He core mass of the star,
 previous to the collapse. Considering a set of data for which the He core
@@ -138,10 +138,10 @@ mass of the compact object projenitos previous the collapse, the final
 remnant mass and final stellar state of the compact object is known.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, the messages will be prited in the console.</p>
+<dd class="field-odd"><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, the messages will be prited in the console.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>prescription</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – <p>Prescription to use for computing the prediction of common enevelope
+<dd class="field-even"><p><strong>prescription</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <p>Prescription to use for computing the prediction of common enevelope
 evolution. Available options are:</p>
 <ul class="simple">
 <li><p>’alpha-lambda’ : Considers the the alpha-lambda prescription</p></li>
@@ -180,20 +180,20 @@ their new masses, during a common-envelope phase.</p>
 <li><p><strong>binary</strong> (<em>BinaryStar object</em>) – Instance of the binary to evolve.</p></li>
 <li><p><strong>donor</strong> (<em>SingleStar object</em>) – The donor star</p></li>
 <li><p><strong>comp_star</strong> (<em>SingleStar object</em>) – The companion star</p></li>
-<li><p><strong>lambda1_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Lambda previously calculated for the donor’s envelope
+<li><p><strong>lambda1_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Lambda previously calculated for the donor’s envelope
 binding energy.</p></li>
-<li><p><strong>mc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – core mass of the donor</p></li>
-<li><p><strong>rc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – core radius of the donor</p></li>
+<li><p><strong>mc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – core mass of the donor</p></li>
+<li><p><strong>rc1_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – core radius of the donor</p></li>
 <li><p><strong>donor_type</strong> (<em>string</em>) – String dictating whether the donor has a H-envelope or He-envelope</p></li>
-<li><p><strong>lambda2_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Lambda previously calculated for the companion’s envelope
+<li><p><strong>lambda2_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Lambda previously calculated for the companion’s envelope
 binding energy.</p></li>
-<li><p><strong>mc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – core mass of the companion</p></li>
-<li><p><strong>rc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – core radius of the companion</p></li>
+<li><p><strong>mc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – core mass of the companion</p></li>
+<li><p><strong>rc2_i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – core radius of the companion</p></li>
 <li><p><strong>comp_type</strong> (<em>string</em>) – String dictating whether the companion has a
 H-envelope or He-envelope.</p></li>
-<li><p><strong>double_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we have a double CE situation.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE.</p></li>
-<li><p><strong>common_envelope_option_after_succ_CEE</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – <p>Options are:
+<li><p><strong>double_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – In case we have a double CE situation.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – In case we want information about the CEE.</p></li>
+<li><p><strong>common_envelope_option_after_succ_CEE</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <p>Options are:
 1) “core_replaced_noMT”</p>
 <blockquote>
 <div><p>he_core_mass/radius (or co_core_mass/radius for CEE of
@@ -235,9 +235,9 @@ core_definition_H/He_fraction).</p>
 </li>
 </ol>
 </p></li>
-<li><p><strong>core_definition_H_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The value of the H abundance to define the envelope-core boundary
+<li><p><strong>core_definition_H_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The value of the H abundance to define the envelope-core boundary
 in He_cores.</p></li>
-<li><p><strong>core_definition_He_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The value of the He abundance to define the envelope-core boundary
+<li><p><strong>core_definition_He_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The value of the He abundance to define the envelope-core boundary
 in CO_cores.</p></li>
 </ul>
 </dd>
@@ -254,7 +254,7 @@ accurate calculation of the donor core mass for the purposes of CEE.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>donor</strong> (<em>instance of SingleStar</em>) – The donor star to calculate pre-CE quantities.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – In case we want information about the CEE  (the default is False).</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – In case we want information about the CEE  (the default is False).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -305,6 +305,8 @@ of CEE.</p></li>
             <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
             
             <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
             
         </dl>
         
