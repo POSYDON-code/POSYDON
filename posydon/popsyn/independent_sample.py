@@ -356,25 +356,39 @@ def generate_primary_masses(number_of_binaries=1,
     
     #General power-law IMF (GPL_IMF)
     elif primary_mass_scheme == 'GPL_IMF':
-        alpha1 = kwargs.get('alpha1',2.35)
-        alpha2 = kwargs.get('alpha2',2.35)
+        #Power of the low part
+        alpha1 = kwargs.get('alpha1', -2.35)
+        #Power of the high part
+        alpha2 = kwargs.get('alpha2',-2.35)
         m1 = kwargs.get('m1',primary_mass_min)
-
-        normalization_constant = (1.0/(alpha1 + 1.0) *(m1**(alpha1 + 1.0 ) - primary_mass_min**(alpha1 + 1.0 ) ) 
-                            + ((m1**(alpha1-alpha2))/(alpha2 +1.0 )) * (primary_mass_max**(alpha2+1.0 ) - m1**(alpha2 + 1.0 )))**(-1.0)
-
         random_variable = RNG.uniform(size=number_of_binaries)
-        #The lower part of the imf 
-        def f1(x):
-            return ((alpha1 + 1.0)/normalization_constant * x + primary_mass_min**(alpha1 + 1.0 ) )**(1.0/(1.0+alpha1))
-        #The upper part of the imf
-        def f2(x):
-            return (((alpha2 + 1)/( m1**(alpha1-alpha2)))*((x/normalization_constant) - (m1**(alpha1 +1 ) 
-                                - primary_mass_min**(alpha1 +1 ))/(alpha1+ 1)) + m1**(alpha2+1))**(1/(alpha2 +1.0 ))
+        if primary_mass_min > m1:
+            normalization_constant = (1.0+alpha2) / (primary_mass_max**(1.0+alpha2)
+                                    - primary_mass_min**(1.0+alpha2))
+            
+            primary_masses = (random_variable*(1.0+alpha2)/normalization_constant
+                          + primary_mass_min**(1.0+alpha2))**(1.0/(1.0+alpha2))           
+        elif primary_mass_max < m1 :
+            normalization_constant = (1.0+alpha1) / (primary_mass_max**(1.0+alpha1)
+                                                - primary_mass_min**(1.0+alpha1))
+            primary_masses = (random_variable*(1+alpha1)/normalization_constant
+                          + primary_mass_min**(1.0+alpha1))**(1.0/(1.0+alpha1))
 
-        x1 = (normalization_constant/(alpha1 +1)* ( m1**(alpha1 +1 ) - primary_mass_min**(alpha1 +1 )))
-        
-        primary_masses = np.where(random_variable < x1, f1(random_variable), f2(random_variable))
+        elif (primary_mass_max > m1) & (primary_mass_min < m1) :
+            normalization_constant = (1.0/(alpha1 + 1.0) *(m1**(alpha1 + 1.0 ) - primary_mass_min**(alpha1 + 1.0 ) ) 
+                                + ((m1**(alpha1-alpha2))/(alpha2 +1.0 )) * (primary_mass_max**(alpha2+1.0 ) - m1**(alpha2 + 1.0 )))**(-1.0)
+
+            #The lower part of the imf 
+            def f1(x):
+                return ((alpha1 + 1.0)/normalization_constant * x + primary_mass_min**(alpha1 + 1.0 ) )**(1.0/(1.0+alpha1))
+            #The upper part of the imf
+            def f2(x):
+                return (((alpha2 + 1)/( m1**(alpha1-alpha2)))*((x/normalization_constant) - (m1**(alpha1 +1 ) 
+                                    - primary_mass_min**(alpha1 +1 ))/(alpha1+ 1)) + m1**(alpha2+1))**(1/(alpha2 +1.0 ))
+
+            x1 = (normalization_constant/(alpha1 +1)* ( m1**(alpha1 +1 ) - primary_mass_min**(alpha1 +1 )))
+            
+            primary_masses = np.where(random_variable < x1, f1(random_variable), f2(random_variable))
 
     else:
         pass
